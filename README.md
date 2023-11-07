@@ -1,4 +1,4 @@
-# mobile_app
+# mbta_app
 
 The MBTA Mobile App
 

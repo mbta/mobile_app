@@ -1,4 +1,4 @@
-package com.example.mobile_app
+package com.mbta.tid.mbta_app
 
 import io.flutter.embedding.android.FlutterActivity
 
