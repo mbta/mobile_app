@@ -70,24 +70,3 @@ Merging to main will automatically kick off deploys that are visible for interna
 ### Production Deploys
 
 todo
-
-## Code Signing
-
-The Android code signing key is managed in AWS Secrets Manager.
-
-To upload from local development:
-
-```shell
-$ base64 --encode < /path/to/upload-keystore.jks > upload-keystore-base64.txt
-$ aws secretsmanager put-secret-value --secret-id mobile-app-test-android-upload-key --secret-string file://upload-keystore-base64.txt
-$ cat key.properties | grep storePassword | cut -f2 -d= | tr -d '\n' > passphrase.txt
-$ aws secretsmanager put-secret-value --secret-id mobile-app-test-android-upload-key-passphrase --secret-string file://passphrase.txt
-$ shred --remove upload-keystore-base64.txt passphrase.txt
-```
-
-To download for local development:
-
-```shell
-$ aws secretsmanager get-secret-value --secret-id mobile-app-test-android-upload-key --output json | jq -r '.SecretString' | base64 --decode > /path/to/upload-keystore.jks
-$ aws secretsmanager get-secret-value --secret-id mobile-app-test-android-upload-key-passphrase --output json | jq -r '"storePassword=\(.SecretString)"' >> /path/to/key.properties
-```
