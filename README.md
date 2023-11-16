@@ -70,7 +70,7 @@ Some specifics for this repo:
 
 Merging to main will automatically kick off deploys that are visible for internal testing (TestFlight for ios, internal track for android).
 
-To upload the code signing key:
+To upload the code signing key if it needs to be updated (which is unlikely):
 
 ```
 $ aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key --secret-binary fileb://upload-keystore.jks
@@ -79,7 +79,7 @@ $ aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key-
 $ shred --remove passphrase.txt
 ```
 
-To download the code signing key:
+To download the code signing key if you need it locally (which is unlikely):
 
 ```
 $ aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > /path/to/upload-keystore.jks
