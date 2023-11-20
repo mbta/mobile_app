@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -16,4 +19,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
+  # Enable generation of localized Strings from arb files.
+  generate: true 
   uses-material-design: true
