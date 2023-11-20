@@ -7,7 +7,7 @@
   <key>CFBundleExecutable</key>
   <string>App</string>
   <key>CFBundleIdentifier</key>
-  <string>com.mbta.tid.mbta_app</string>
+  <string>io.flutter.flutter.app</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
