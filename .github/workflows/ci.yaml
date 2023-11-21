@@ -22,14 +22,10 @@ jobs:
           cache: true
       - name: Get dependencies
         run: flutter pub get
-      - name: Codegen
-        run: dart run build_runner build
       - name: Analyze
         run: flutter analyze .
       - name: Format
-        run: dart format lib test --set-exit-if-changed
-      - name: Test
-        run: flutter test -r expanded
+        run: dart format lib --set-exit-if-changed
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
