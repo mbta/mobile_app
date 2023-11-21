@@ -16,9 +16,13 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Read asdf versions
+        id: asdf
+        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ steps.asdf.outputs.flutter }}
           cache: true
       - name: Get dependencies
         run: flutter pub get
