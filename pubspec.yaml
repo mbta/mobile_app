@@ -9,11 +9,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
+  import_sorter: ^4.6.0
 
 flutter:
+  # Enable generation of localized Strings from arb files.
+  generate: true
   uses-material-design: true
+
+import_sorter:
+  comments: false
