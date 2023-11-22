@@ -5,6 +5,10 @@ repos:
   - id: check-yaml
   - id: end-of-file-fixer
   - id: trailing-whitespace
+  - id: pretty-format-json
+    types: [text]
+    files: \.(json|arb)$
+    args: ['--autofix']
 - repo: https://github.com/fluttercommunity/import_sorter
   rev: 'f350497a11b1285c695595049e95a420068e7a9f'
   hooks:
