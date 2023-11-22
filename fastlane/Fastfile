@@ -10,19 +10,9 @@
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 setup_ci if ENV['CI']
 
-default_platform(:android)
-
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "app:test")
-  end
-
   desc "Deploy a new version to Google Play for internal testing"
   lane :internal do |options|
     version_codes = google_play_track_version_codes(
@@ -34,7 +24,7 @@ platform :android do
       # only draft releases can be created - https://github.com/fastlane/fastlane/discussions/18293
       release_status: "draft",
       track: "internal",
-      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      aab: "build/app/outputs/bundle/release/app-release.aab",
       validate_only: options[:validate_only],
     )
   end

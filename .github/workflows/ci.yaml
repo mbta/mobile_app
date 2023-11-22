@@ -65,8 +65,7 @@ jobs:
         with:
           bundler-cache: true
       - name: Patch Fastlane to pick up application default credentials
-        run: android/patch-fastlane.sh
+        run: bin/patch-fastlane.sh
       - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
         run: |
-          cd android
           bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}

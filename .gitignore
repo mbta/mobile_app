@@ -44,4 +44,4 @@ app.*.map.json
 /android/app/release
 
 # Fastlane related
-/android/fastlane/report.xml
+/fastlane/report.xml

@@ -1,2 +1,0 @@
-json_key_data_raw("{}") # Not used by patched Fastlane, but required
-package_name("com.mbta.tid.mbta_app")
