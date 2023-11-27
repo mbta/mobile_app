@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Analyze, test, build, and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read asdf versions
+        id: asdf
+        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ steps.asdf.outputs.flutter }}
+          cache: true
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze .
+      - name: Format
+        run: dart format lib --set-exit-if-changed
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      - name: Configure GCP Credentials
+        uses: google-github-actions/auth@v1
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Fetch AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        with:
+          secret-ids: |
+            mobile-app-android-upload-key-passphrase
+      - name: Load code signing key
+        run: |
+          cd android
+          aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
+          echo "storePassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
+          echo "keyPassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
+          echo "keyAlias=upload" >> key.properties
+          echo "storeFile=$(pwd)/upload-keystore.jks" >> key.properties
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Patch Fastlane to pick up application default credentials
+        run: bin/patch-fastlane.sh
+      - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+        run: |
+          bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}
