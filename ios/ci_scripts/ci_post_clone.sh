@@ -28,11 +28,4 @@ brew install --quiet cocoapods
 # Install CocoaPods dependencies.
 cd ios && pod install && cd ..
 
-# Prepare Flutter integration tests.
-if [ "$CI_XCODEBUILD_ACTION" = "test-without-building" ]; then
-  # Somehow, if this is run with `--config-only` as the documentation suggests,
-  # the test will hang at exit.
-  flutter build ios integration_test/navigation_test.dart --release --no-codesign
-fi
-
 exit 0
