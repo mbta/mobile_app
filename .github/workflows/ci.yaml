@@ -29,7 +29,14 @@ jobs:
       - name: Analyze
         run: flutter analyze .
       - name: Format
-        run: dart format lib --set-exit-if-changed
+        run: dart format lib test --set-exit-if-changed
+      - name: Test
+        run: flutter test --coverage
+      - name: Report test coverage
+        uses: mbta/github-actions-report-lcov@v1
+        with:
+          coverage-files: coverage/lcov.info
+          artifact-name: code-coverage-report
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
