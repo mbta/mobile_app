@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() {
-  runApp(const MainApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  String dsn = const String.fromEnvironment('SENTRY_DSN', defaultValue: '');
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dsn;
+      // TODO: Set sample rate to a lower percentage
+      options.tracesSampleRate = 1.0;
+      options.release = packageInfo.version;
+      options.dist = packageInfo.buildNumber;
+    },
+    appRunner: () => runApp(const MainApp()),
+  );
+  try {
+    throw Error();
+  } catch (exception, stackTrace) {
+    await Sentry.captureException(
+      exception,
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 class MainApp extends StatelessWidget {

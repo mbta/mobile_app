@@ -1,0 +1,3 @@
+export SENTRY_DSN= # Find under the Client Keys settings of the mobile_app project in Sentry
+export SENTRY_ENVIRONMENT=debug
+export FLUTTER_ROOT="$(asdf where flutter)"

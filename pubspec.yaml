@@ -12,6 +12,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  package_info_plus: ^4.2.0
+  sentry_flutter: ^7.13.2
 
 dev_dependencies:
   flutter_test:

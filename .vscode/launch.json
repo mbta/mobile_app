@@ -7,19 +7,31 @@
         {
             "name": "mobile_app",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define", "SENTRY_DSN=${env:SENTRY_DSN}",
+                "--dart-define", "SENTRY_ENVIRONMENT=${env:SENTRY_ENVIRONMENT}",
+            ],
         },
         {
             "name": "mobile_app (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--dart-define", "SENTRY_DSN=${env:SENTRY_DSN}",
+                "--dart-define", "SENTRY_ENVIRONMENT=${env:SENTRY_ENVIRONMENT}",
+            ],
         },
         {
             "name": "mobile_app (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "toolArgs": [
+                "--dart-define", "SENTRY_DSN=${env:SENTRY_DSN}",
+                "--dart-define", "SENTRY_ENVIRONMENT=${env:SENTRY_ENVIRONMENT}",
+            ],
         }
     ]
 }
