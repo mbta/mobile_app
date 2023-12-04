@@ -25,6 +25,8 @@ export HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew's automatic updates
 export HOMEBREW_NO_INSTALL_CLEANUP=1 # disable automatic cleanup
 brew install --quiet cocoapods
 
+flutter build ios --config-only --dart-define SENTRY_DSN=$SENTRY_DSN --dart-define SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
+
 # Install CocoaPods dependencies.
 cd ios && pod install && cd ..
 
