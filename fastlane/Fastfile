@@ -18,7 +18,12 @@ platform :android do
     version_codes = google_play_track_version_codes(
       track: "internal",
     )
-    sh("flutter", "build", "appbundle", "--build-number", (version_codes.max + 1).to_s)
+    sh(
+      "flutter", "build", "appbundle",
+      "--dart-define", "SENTRY_DSN=" + (ENV['SENTRY_DSN'] || ''),
+      "--dart-define", "SENTRY_ENVIRONMENT=" + (ENV['SENTRY_ENVIRONMENT'] || ''),
+      "--build-number", (version_codes.max + 1).to_s
+    )
     upload_to_play_store(
       # in either a fastlane bug or an Android Publisher API bug, until the app is reviewed and in alpha,
       # only draft releases can be created - https://github.com/fastlane/fastlane/discussions/18293

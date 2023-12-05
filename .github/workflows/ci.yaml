@@ -67,5 +67,8 @@ jobs:
       - name: Patch Fastlane to pick up application default credentials
         run: bin/patch-fastlane.sh
       - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: staging
         run: |
           bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}
