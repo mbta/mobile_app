@@ -18,14 +18,6 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MainApp()),
   );
-  try {
-    throw Error();
-  } catch (exception, stackTrace) {
-    await Sentry.captureException(
-      exception,
-      stackTrace: stackTrace,
-    );
-  }
 }
 
 class MainApp extends StatelessWidget {
