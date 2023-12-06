@@ -8,6 +8,8 @@ The MBTA mobile app.
 
 Development for this project requires Ruby and Flutter, as described in .tool-versions. You can use [asdf](https://asdf-vm.com/) to help manage the required versions.
 
+Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
+
 Follow the [official Flutter](https://docs.flutter.dev/get-started/install/macos) docs for directions on installing other requirements, including XCode and Android Studio.
 
 Run `flutter doctor -v` to check that your environment is properly set up.
@@ -31,7 +33,7 @@ Run `dart run build_runner watch` to automatically run code generation as files 
 
 ## Running Locally
 
-Run `flutter run -d <Device ID>`, where Device ID is a local emulator or connected device.
+Run `flutter run -d <Device ID> --dart-define SENTRY_DSN=$SENTRY_DSN --dart-define SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT`, where Device ID is a local emulator or connected device.
 You can check what devices are available with `flutter devices`.
 
 ## Running Tests
