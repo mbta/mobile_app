@@ -36,6 +36,8 @@ Run `dart run build_runner watch` to automatically run code generation as files 
 Run `flutter run -d <Device ID> --dart-define SENTRY_DSN=$SENTRY_DSN --dart-define SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT`, where Device ID is a local emulator or connected device.
 You can check what devices are available with `flutter devices`.
 
+When the app is run in debug mode, you're able to use the [Flutter DevTools](https://docs.flutter.dev/tools/devtools/overview) for debugging.
+
 ## Running Tests
 
 ### Unit Tests
