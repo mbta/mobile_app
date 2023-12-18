@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  android:
     name: Analyze, test, build, and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
     runs-on: ubuntu-latest
     permissions:
@@ -73,3 +73,9 @@ jobs:
           echo "keyPassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
           echo "keyAlias=upload" >> key.properties
           echo "storeFile=$(pwd)/upload-keystore.jks" >> key.properties
+  ios:
+    name: static checks for ios app
+    runs-on: ubuntu-latest
+    steps:
+      - run: brew install swiftlint
+      - run: swiftlint
