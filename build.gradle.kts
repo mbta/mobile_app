@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     // trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.androidApplication).apply(false)
@@ -22,6 +25,24 @@ subprojects {
             ktfmt().kotlinlangStyle()
         }
         kotlinGradle { ktfmt().kotlinlangStyle() }
+    }
+
+    tasks.withType<org.gradle.api.tasks.testing.Test> {
+        testLogging {
+            // set options for log level LIFECYCLE
+            events = setOf(
+                TestLogEvent.FAILED,
+                TestLogEvent.PASSED,
+                TestLogEvent.SKIPPED,
+                TestLogEvent.STANDARD_OUT,
+            )
+
+            exceptionFormat = TestExceptionFormat.FULL
+            showStandardStreams = true
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
+        }
     }
 }
 
