@@ -1,7 +1,30 @@
 plugins {
-    //trick: for the same plugin versions in all sub-modules
+    // trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.androidApplication).apply(false)
     alias(libs.plugins.androidLibrary).apply(false)
     alias(libs.plugins.kotlinAndroid).apply(false)
     alias(libs.plugins.kotlinMultiplatform).apply(false)
+    id("com.diffplug.spotless").version("6.21.0")
+}
+
+spotless {
+    kotlinGradle {
+        ktlint()
+    }
+}
+
+subprojects {
+    apply(plugin = "com.diffplug.spotless")
+
+    spotless {
+        kotlin {
+            target("src/**/*.kt")
+            ktfmt().kotlinlangStyle()
+        }
+        kotlinGradle { ktfmt().kotlinlangStyle() }
+    }
+}
+
+tasks.getByName("clean", Delete::class) {
+    delete(rootProject.buildDir)
 }

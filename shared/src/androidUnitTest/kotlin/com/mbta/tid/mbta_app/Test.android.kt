@@ -1,12 +1,13 @@
 package com.mbta.tid.mbta_app
 
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class AndroidGreetingTest {
 
     @Test
     fun testExample() {
-        assertTrue("Check Android is mentioned", Greeting().greet().contains("Android"))
+        // TODO: Switch back to assertTrue. See how test failure is represented in CI
+        assertFalse("Check Android is mentioned", Greeting().greet().contains("Android"))
     }
 }
