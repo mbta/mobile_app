@@ -20,25 +20,6 @@ jobs:
       - name: Read asdf versions
         id: asdf
         run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: ${{ steps.asdf.outputs.flutter }}
-          cache: true
-      - name: Get dependencies
-        run: flutter pub get
-      - name: Analyze
-        run: flutter analyze .
-      - name: Format
-        run: dart format lib test --set-exit-if-changed
-      - name: Test
-        run: flutter test --coverage
-      - name: Report test coverage
-        uses: mbta/github-actions-report-lcov@v1
-        with:
-          coverage-files: coverage/lcov.info
-          artifact-name: code-coverage-report
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -63,21 +44,9 @@ jobs:
             mobile-app-android-upload-key-passphrase
       - name: Load code signing key
         run: |
-          cd android
+          cd androidApp
           aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
           echo "storePassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
           echo "keyPassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
           echo "keyAlias=upload" >> key.properties
           echo "storeFile=$(pwd)/upload-keystore.jks" >> key.properties
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Patch Fastlane to pick up application default credentials
-        run: bin/patch-fastlane.sh
-      - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: staging
-        run: |
-          bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}

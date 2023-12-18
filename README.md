@@ -10,14 +10,7 @@ Development for this project requires Ruby and Flutter, as described in .tool-ve
 
 Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
 
-Follow the [official Flutter](https://docs.flutter.dev/get-started/install/macos) docs for directions on installing other requirements, including XCode and Android Studio.
-
-Run `flutter doctor -v` to check that your environment is properly set up.
-
 ### Editor
-
-You can use any editor, though we recommend using VSCode with the [flutter extension](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter).
-See the official Flutter [Set up an editor](https://docs.flutter.dev/get-started/editor?tab=vscode) docs for more details and alternatives, including Android Studio and IntelliJ.
 
 #### Gotchas
 
@@ -25,28 +18,15 @@ See the official Flutter [Set up an editor](https://docs.flutter.dev/get-started
 
 ### Project Dependencies
 
-Update dependencies via `flutter pub get`
-
 ### Code Generation
 
-Run `dart run build_runner watch` to automatically run code generation as files are edited. For one-time generation, run `dart run build_runner build`.
-
 ## Running Locally
-
-Run `flutter run -d <Device ID> --dart-define SENTRY_DSN=$SENTRY_DSN --dart-define SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT`, where Device ID is a local emulator or connected device.
-You can check what devices are available with `flutter devices`.
-
-When the app is run in debug mode, you're able to use the [Flutter DevTools](https://docs.flutter.dev/tools/devtools/overview) for debugging.
 
 ## Running Tests
 
 ### Unit Tests
 
-`flutter test`
-
 ### Integration Tests
-
-`flutter test integration_test -d <Device ID>`
 
 ## Team Conventions
 
@@ -54,7 +34,6 @@ When the app is run in debug mode, you're able to use the [Flutter DevTools](htt
 
 - Create each new feature in its own branch named with the following naming format: initials-description (for example, Jane Smith writing a search function might create a branch called js-search-function).
 - This repo uses [pre-commit hooks](https://pre-commit.com/), which will automatically run and update files before committing. Install with `brew install pre-commit` and set up the git hook scripts by running `pre-commit install`.
-- Ensure code is properly formatted before commiting. This can be done by running `dart format` before committing. For automatic formatting in VSCode, set the `formatOnSave` setting to true. For more details and alternative editor settings, see the official Flutter [Code formatting](https://docs.flutter.dev/tools/formatting#automatically-formatting-code-in-vs-code) docs.
 - Use meaningfully descriptive commit messages to help reviewers understand the changes. Consider following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) guidelines.
 
 ### Code Review
@@ -77,17 +56,17 @@ Merging to main will automatically kick off deploys that are visible for interna
 To upload the code signing key if it needs to be updated (which is unlikely):
 
 ```
-$ aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key --secret-binary fileb://upload-keystore.jks
-$ cat key.properties | grep storePassword | cut -f2 -d= | tr -d '\n' > passphrase.txt
-$ aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key-passphrase --secret-string file://passphrase.txt
-$ shred --remove passphrase.txt
+aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key --secret-binary fileb://upload-keystore.jks
+cat key.properties | grep storePassword | cut -f2 -d= | tr -d '\n' > passphrase.txt
+aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key-passphrase --secret-string file://passphrase.txt
+shred --remove passphrase.txt
 ```
 
 To download the code signing key if you need it locally (which is unlikely):
 
 ```
-$ aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > /path/to/upload-keystore.jks
-$ aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key-passphrase --output json | jq -r '"storePassword=\(.SecretString)"' >> /path/to/key.properties
+aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > /path/to/upload-keystore.jks
+aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key-passphrase --output json | jq -r '"storePassword=\(.SecretString)"' >> /path/to/key.properties
 ```
 
 ### Production Deploys
