@@ -1,9 +1,19 @@
 ### Summary
 
-*Ticket:* [Name](URL)
+_Ticket:_ [Name](URL)
 
 What is this PR for?
 
 ### Testing
 
 What testing have you done?
+
+<!--
+Automated tests are expected with every code change.
+
+For UI changes, include tests for the accessibility of elements. This can include:
+* Run the application locally with accessibility features such as VoiceOver/TalkBack enabled.
+* Write UI tests that find elements by their accessible label
+    * assert that elements have the expected properties - isEnabled, isSelected, etc.
+* Run accessibility audit using XCode Accessibility Inspector or Android Accessibility Scanner
+-->
