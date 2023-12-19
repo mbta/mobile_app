@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  android:
     name: Analyze, test, build, and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
     runs-on: ubuntu-latest
     permissions:
@@ -20,6 +20,15 @@ jobs:
       - name: Read asdf versions
         id: asdf
         run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+      - name: Parse java version
+        id: java-spec
+        run: |
+          DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
+          VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
+          echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
+          echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -34,9 +43,30 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{steps.java-spec.outputs.java-distribution}}
+          java-version: ${{steps.java-spec.outputs.java-version}}
           cache: gradle
+      - uses: actions/cache@v3
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
+          restore-keys: konan-${{ runner.os }}
+      - run: ./gradlew spotlessCheck
+      - name: shared checks & unit tests
+        run: ./gradlew shared:check
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: android-shared-reports
+          path: shared/build/reports
+      - name: android checks & unit tests
+        run: ./gradlew androidApp:check
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: android-android-reports
+          path: androidApp/build/reports
+
       - name: Fetch AWS secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:

@@ -34,7 +34,5 @@ fun GreetingView(text: String) {
 @Preview
 @Composable
 fun DefaultPreview() {
-    MyApplicationTheme {
-        GreetingView("Hello, Android!")
-    }
+    MyApplicationTheme { GreetingView("Hello, Android!") }
 }
