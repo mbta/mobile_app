@@ -13,3 +13,8 @@ repos:
     rev: 0.54.0
     hooks:
       - id: swiftlint
+  - repo: https://github.com/jguttman94/pre-commit-gradle
+    rev: v0.3.0
+    hooks:
+      - id: gradle-spotless
+        entry: gradle-spotless -w
