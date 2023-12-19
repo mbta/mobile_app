@@ -20,6 +20,15 @@ jobs:
       - name: Read asdf versions
         id: asdf
         run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+      - name: Parse java version
+        id: java-spec
+        run: |
+          DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
+          VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
+          echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
+          echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -31,19 +40,17 @@ jobs:
           create_credentials_file: true
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      # TODO: Get java version from .tool-versions?
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: ${{steps.java-spec.outputs.java-distribution}}
+          java-version: ${{steps.java-spec.outputs.java-version}}
           cache: gradle
       - uses: actions/cache@v3
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
           restore-keys: konan-${{ runner.os }}
-      # TODO: pre-commit run spotless
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check

@@ -7,7 +7,6 @@ class AndroidGreetingTest {
 
     @Test
     fun testExample() {
-        // TODO: Switch back to assertTrue. See how test failure is represented in CI
         assertTrue("Check Android is mentioned", Greeting().greet().contains("Android"))
     }
 }
