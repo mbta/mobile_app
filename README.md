@@ -47,6 +47,20 @@ Some specifics for this repo:
 - When adding commits after an initial review has been performed, avoid force-pushing to help reviewers follow the updated changes.
 - Once a PR has been approved and all outstanding comments acknowledged, squash merge it to the main branch.
 
+## CI
+
+### iOS
+
+XCode Cloud workflows are triggered on changes to the following directories:
+
+- /iosApp
+- /shared/common\*
+- /shared/src/ios\*
+
+If files are changed outside of those target directories but a new workflow run is reason, you can manually trigger a run through the XCode Cloud UI.
+
+If new files or directories need to be added to the list of triggers, be sure to update the list for _each_ relevant XCode Cloud workflow
+
 ## Deploying
 
 ### Development Deploys
