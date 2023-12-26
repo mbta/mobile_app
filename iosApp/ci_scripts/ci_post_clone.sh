@@ -10,16 +10,12 @@ swiftlint
 # Install Java
 JDK_PATH="${CI_DERIVED_DATA_PATH}/JDK"
 
-cd "${CI_DERIVED_DATA_PATH}"
-echo "ls derived data path"
-ls "${CI_DERIVED_DATA_PATH}"
-
 echo "Checking for cached JDK"
 # If the JDK isn't already installed, download it JDK and move it to JDK_PATH
 # JAVA_HOME env var must be manually configured to match JDK_PATH
 if [ -d $JDK_PATH ]; then
-    echo "JDK already found, skipping download"
-    exit
+  echo "JDK already found, skipping download"
+  exit
 fi
 
 brew install asdf
