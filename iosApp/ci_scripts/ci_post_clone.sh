@@ -10,6 +10,11 @@ swiftlint
 # Install Java
 JDK_PATH="${CI_DERIVED_DATA_PATH}/JDK"
 
+cd "${CI_DERIVED_DATA_PATH}"
+echo "ls derived data path"
+ls "${CI_DERIVED_DATA_PATH}"
+
+echo "Checking for cached JDK"
 # If the JDK isn't already installed, download it JDK and move it to JDK_PATH
 # JAVA_HOME env var must be manually configured to match JDK_PATH
 if [ -d $JDK_PATH ]; then
@@ -20,7 +25,6 @@ fi
 brew install asdf
 asdf plugin-add java
 asdf install java
-echo "$(asdf where java)"
 DEFAULT_JAVA_PATH="$(asdf where java)"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
 rm -rf $JDK_PATH
@@ -29,4 +33,3 @@ mkdir -p $JDK_PATH
 mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
-cd "${CI_DERIVED_DATA_PATH}"
