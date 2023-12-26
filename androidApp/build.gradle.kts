@@ -10,8 +10,9 @@ android {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode =
+            Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
+        versionName = (findProperty("android.injected.version.name") ?: "0.1.0") as String
     }
     buildFeatures { compose = true }
     composeOptions { kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get() }
