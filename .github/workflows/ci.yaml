@@ -28,7 +28,6 @@ jobs:
           echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
           echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
 
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -76,7 +75,17 @@ jobs:
         run: |
           cd androidApp
           aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
-          echo "storePassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
-          echo "keyPassword=$MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE" >> key.properties
-          echo "keyAlias=upload" >> key.properties
-          echo "storeFile=$(pwd)/upload-keystore.jks" >> key.properties
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Patch Fastlane to pick up application default credentials
+        run: bin/patch-fastlane.sh
+      - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+        env:
+          KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
+          KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
+          KEY_ALIAS: "upload"
+          KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
+        run: |
+          bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}
