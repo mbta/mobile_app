@@ -10,7 +10,10 @@ kotlin {
     androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
 
     listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
-        it.binaries.framework { baseName = "shared" }
+        it.binaries.framework {
+            baseName = "shared"
+            binaryOption("bundleId", "com.mbta.tid.mobileapp")
+        }
     }
 
     sourceSets {
