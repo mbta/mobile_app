@@ -9,6 +9,11 @@
 import XCTest
 
 final class IosAppUITests: XCTestCase {
+
+    override func setUp() {
+        executionTimeAllowance = 120
+    }
+
     func testExample() throws {
         let app = XCUIApplication()
         app.launch()
@@ -20,7 +25,7 @@ final class IosAppUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         let missingButton = app.buttons.firstMatch
-        XCTAssertTrue(missingButton.waitForExistence(timeout: 120), "When a timeout is > 60 seconds, the default max setting of 60 seconds is still enforced")
+        XCTAssertTrue(missingButton.waitForExistence(timeout: 360), "When a timeout is > 60 seconds, the default max setting of 60 seconds is still enforced")
     }
 
     func testLaunchPerformance() throws {
