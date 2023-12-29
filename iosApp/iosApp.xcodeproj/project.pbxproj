@@ -52,6 +52,7 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* IOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSApp.swift; sourceTree = "<group>"; };
+		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
 		6EED5E8C2B3DC69F0052A1B8 /* iosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAppTests.swift; sourceTree = "<group>"; };
 		6EED5E992B3DC6C10052A1B8 /* iosAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,6 +127,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
 				7555FF7D242A565900829871 /* iosApp */,
 				6EED5E8D2B3DC69F0052A1B8 /* iosAppTests */,
 				6EED5E9A2B3DC6C10052A1B8 /* iosAppUITests */,
