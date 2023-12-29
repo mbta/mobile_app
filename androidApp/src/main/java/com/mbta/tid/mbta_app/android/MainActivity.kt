@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.Greeting
+import com.mbta.tid.mbta_app.Strings
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Strings.context = this
         setContent {
             MyApplicationTheme {
                 Surface(
