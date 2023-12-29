@@ -9,11 +9,14 @@
         ],
         "defaultTestExecutionTimeAllowance" : 60,
         "maximumTestExecutionTimeAllowance" : 60,
-        "testExecutionOrdering" : "alphabetical"
+        "testExecutionOrdering" : "alphabetical",
+        "testTimeoutsEnabled" : true
       }
     }
   ],
   "defaultOptions" : {
+    "defaultTestExecutionTimeAllowance" : 60,
+    "maximumTestExecutionTimeAllowance" : 60,
     "targetForVariableExpansion" : {
       "containerPath" : "container:iosApp.xcodeproj",
       "identifier" : "7555FF7A242A565900829871",
