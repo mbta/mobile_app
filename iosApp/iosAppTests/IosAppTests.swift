@@ -10,6 +10,9 @@ import XCTest
 
 final class IosAppTests: XCTestCase {
 
+    override func setUp() {
+        executionTimeAllowance = 60
+    }
 
     func testSampleGreeting() throws {
     }

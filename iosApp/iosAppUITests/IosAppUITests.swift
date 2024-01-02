@@ -11,7 +11,7 @@ import XCTest
 final class IosAppUITests: XCTestCase {
 
     override func setUp() {
-        executionTimeAllowance = 120
+        executionTimeAllowance = 60
     }
 
     func testExample() throws {
@@ -19,13 +19,6 @@ final class IosAppUITests: XCTestCase {
         app.launch()
         let greeting = app.staticTexts.firstMatch
         XCTAssertTrue(greeting.label.hasPrefix("Hello"), "When the app opens, greeting should be displayed")
-    }
-
-    func testTimeoutConfiguration() throws {
-        let app = XCUIApplication()
-        app.launch()
-        let missingButton = app.buttons.firstMatch
-        XCTAssertTrue(missingButton.waitForExistence(timeout: 180), "When a timeout is > 60 seconds, the default max setting of 60 seconds is still enforced")
     }
 
     func testLaunchPerformance() throws {

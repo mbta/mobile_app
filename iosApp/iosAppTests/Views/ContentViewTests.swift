@@ -12,6 +12,10 @@ import ViewInspector
 
 final class ContentViewTests: XCTestCase {
 
+    override func setUp() {
+        executionTimeAllowance = 60
+    }
+
     func testExample() throws {
         let sut = ContentView()
 

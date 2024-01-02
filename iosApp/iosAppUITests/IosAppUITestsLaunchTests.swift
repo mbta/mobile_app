@@ -10,6 +10,10 @@ import XCTest
 
 final class IosAppUITestsLaunchTests: XCTestCase {
 
+    override func setUp() {
+        executionTimeAllowance = 60
+    }
+
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
