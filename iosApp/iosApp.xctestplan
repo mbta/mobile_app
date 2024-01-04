@@ -1,0 +1,46 @@
+{
+  "configurations" : [
+    {
+      "id" : "6934E8EF-0A08-4EB8-9754-068EEB78353B",
+      "name" : "Test Scheme Action",
+      "options" : {
+        "commandLineArgumentEntries" : [
+
+        ],
+        "defaultTestExecutionTimeAllowance" : 60,
+        "maximumTestExecutionTimeAllowance" : 60,
+        "testExecutionOrdering" : "alphabetical",
+        "testTimeoutsEnabled" : true
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "defaultTestExecutionTimeAllowance" : 60,
+    "maximumTestExecutionTimeAllowance" : 60,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:iosApp.xcodeproj",
+      "identifier" : "7555FF7A242A565900829871",
+      "name" : "iosApp"
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:iosApp.xcodeproj",
+        "identifier" : "6EED5E8B2B3DC69F0052A1B8",
+        "name" : "iosAppTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:iosApp.xcodeproj",
+        "identifier" : "6EED5E982B3DC6C10052A1B8",
+        "name" : "iosAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

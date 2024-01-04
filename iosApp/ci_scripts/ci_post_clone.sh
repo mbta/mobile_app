@@ -29,3 +29,11 @@ mkdir -p $JDK_PATH
 mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
+
+
+# Run tests from shared directory
+if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
+  echo "Running shared tests"
+  cd $CI_PRIMARY_REPOSITORY_PATH
+  ./gradlew shared:iosX64Test
+fi

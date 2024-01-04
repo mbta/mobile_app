@@ -27,7 +27,7 @@ subprojects {
         kotlinGradle { ktfmt().kotlinlangStyle() }
     }
 
-    tasks.withType<org.gradle.api.tasks.testing.Test> {
+    tasks.withType<AbstractTestTask> {
         testLogging {
             // set options for log level LIFECYCLE
             events = setOf(
