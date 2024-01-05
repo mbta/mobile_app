@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.androidLibrary).apply(false)
     alias(libs.plugins.kotlinAndroid).apply(false)
     alias(libs.plugins.kotlinMultiplatform).apply(false)
-    id("com.diffplug.spotless").version("6.21.0")
+    alias(libs.plugins.spotless)
 }
 
 spotless {
