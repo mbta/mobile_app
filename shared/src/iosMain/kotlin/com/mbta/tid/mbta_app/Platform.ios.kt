@@ -1,10 +1,13 @@
 package com.mbta.tid.mbta_app
 
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.darwin.Darwin
 import platform.UIKit.UIDevice
 
 class IOSPlatform : Platform {
     override val name: String =
         UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
+    override val httpClientEngine: HttpClientEngine = Darwin.create(s)
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
