@@ -16,6 +16,7 @@
 		6EED5EAB2B3E1B550052A1B8 /* ContentViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5EAA2B3E1B550052A1B8 /* ContentViewTests.swift */; };
 		6EED5EAE2B3E1BA80052A1B8 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 6EED5EAD2B3E1BA80052A1B8 /* ViewInspector */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		8C1C78512B50596400E36302 /* Mapbox in Frameworks */ = {isa = PBXBuildFile; productRef = 8C1C78502B50596400E36302 /* Mapbox */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C1C78512B50596400E36302 /* Mapbox in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +224,9 @@
 			dependencies = (
 			);
 			name = iosApp;
+			packageProductDependencies = (
+				8C1C78502B50596400E36302 /* Mapbox */,
+			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
 			productType = "com.apple.product-type.application";
@@ -260,6 +265,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
+				8C1C784F2B50596400E36302 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -684,6 +690,14 @@
 				minimumVersion = 0.9.9;
 			};
 		};
+		8C1C784F2B50596400E36302 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.13.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -691,6 +705,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		8C1C78502B50596400E36302 /* Mapbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C1C784F2B50596400E36302 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = Mapbox;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
