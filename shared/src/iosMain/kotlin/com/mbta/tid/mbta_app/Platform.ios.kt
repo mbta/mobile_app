@@ -7,7 +7,7 @@ import platform.UIKit.UIDevice
 class IOSPlatform : Platform {
     override val name: String =
         UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
-    override val httpClientEngine: HttpClientEngine = Darwin.create(s)
+    override val httpClientEngine: HttpClientEngine = Darwin.create()
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()

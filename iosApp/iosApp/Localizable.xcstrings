@@ -1,7 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "HELLO" : {
+    "a" : {
+
+    },
+    "b" : {
+
+    },
+    "Click me" : {
 
     },
     "HELLO %@" : {

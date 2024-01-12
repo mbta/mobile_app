@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 import InstantSearchSwiftUI
 import InstantSearchCore
-
+import InstantSearch
 
 
 struct SearchResultsView: View {
@@ -36,15 +36,85 @@ struct ContentView: View {
     let names = ["Holly", "Josh", "Rhonda", "Ted"]
 
     @State private var searchText = ""
+    @State private var toggled = false
 
 
 
 
     var body: some View {
         NavigationView {
-            SearchResultsView(viewModel: .init(givenSearch: searchText))
+
+            List {
+                Button(action: {toggled.toggle()}) {
+                    Text("Click me")
+                }
+                Text(toggled ? "I'm toggled" : "I'm not")
+                Text("a")
+                Text("a")
+
+                Text("a")
+                Text("a")
+                Text("a")
+                Text("a")
+
+                Text("a")
+
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+
+                Text("a")
+                Text("a")
+                Text("b")
+                Text("b")
+
+                Text("b")
+                Text("b")
+
+                Text("b")
+
+                Text("b")
+
+
+                Text("b")
+
+                Text("b")
+
+                Text("b")
+
+                Text("b")
+
+
+                Text("b")
+
+                Text("b")
+
+                Text("b")
+
+                Text("b")
+
+
+            }.overlay(searchText == "" ? nil :
+            SearchResultsView(viewModel: .init(givenSearch: searchText)))
         }
-        .searchable(text: $searchText)
+        .searchable(text: $searchText )
         }
     }
 

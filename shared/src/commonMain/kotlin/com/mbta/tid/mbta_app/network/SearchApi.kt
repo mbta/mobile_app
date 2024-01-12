@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 
-class MbtaApi(httpClientEngine: HttpClientEngine = getPlatform().httpClientEngine) {
+/*class MbtaApi(httpClientEngine: HttpClientEngine = getPlatform().httpClientEngine) {
     private val httpClient =
         HttpClient(httpClientEngine) {
             install(ContentNegotiation) {
@@ -101,4 +101,4 @@ class MbtaApi(httpClientEngine: HttpClientEngine = getPlatform().httpClientEngin
             delay(interval)
         }
     }
-}
+}*/
