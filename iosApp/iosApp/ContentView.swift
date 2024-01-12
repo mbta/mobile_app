@@ -97,7 +97,16 @@ e@m@SSo@_@k@Yu@c@??_B}@s@_@cCkA??WK]Oq@Ow@Oe@GqCe@_BUsB]gCe@iA[oBy@??sAi@g@Yy@]g
 """.replacingOccurrences(of: "\n", with: ""), color: .gray)
 ]
 
+private let vehicleFeatures = [
+    pointFeature(latitude: 42.356997, longitude: -71.063912, attributes: ["heading": 120]),
+    pointFeature(latitude: 42.358710, longitude: -71.066561, attributes: ["heading": 320])
+]
+
 class MapViewDelegate: NSObject, MGLMapViewDelegate {
+    var vehiclesTimer: Timer? = nil
+
+    var nextVehicleIndex = 0
+
     func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle) {
         // Set the tiles
         let tileSource = MGLRasterTileSource(
@@ -114,70 +123,66 @@ class MapViewDelegate: NSObject, MGLMapViewDelegate {
         style.layers = [tileLayer]
 
         // Add some stops
-        let stopsData: [String: CLLocationCoordinate2D] = [
-            "place-chmnl": .init(latitude: 42.361166, longitude: -71.070628),
-            "place-armnl": .init(latitude: 42.351902, longitude: -71.070893),
-            "place-boyls": .init(latitude: 42.35302, longitude: -71.06459),
-            "place-chncl": .init(latitude: 42.352547, longitude: -71.062752),
-            "place-bomnl": .init(latitude: 42.361365, longitude: -71.062037),
-            "place-gover": .init(latitude: 42.359705, longitude: -71.059215),
-            "place-pktrm": .init(latitude: 42.356395, longitude: -71.062424),
-            "place-state": .init(latitude: 42.358978, longitude: -71.057598),
-            "place-dwnxg": .init(latitude: 42.355518, longitude: -71.060225),
-            "place-tumnl": .init(latitude: 42.349662, longitude: -71.063917),
-            "177": .init(latitude: 42.351039, longitude: -71.070502),
-            "9981": .init(latitude: 42.356954, longitude: -71.065766),
-            "9983": .init(latitude: 42.351039, longitude: -71.066798),
-            "8281": .init(latitude: 42.349606, longitude: -71.065439),
-            "146": .init(latitude: 42.34881, longitude: -71.069533),
-            "171": .init(latitude: 42.348569, longitude: -71.071717),
-            "36540": .init(latitude: 42.347293, longitude: -71.071004),
-            "168": .init(latitude: 42.346361, longitude: -71.069294),
-            "9980": .init(latitude: 42.356083, longitude: -71.06926),
-            "8279": .init(latitude: 42.353247, longitude: -71.064353),
-            "9982": .init(latitude: 42.357656, longitude: -71.06328),
-            "10000": .init(latitude: 42.355692, longitude: -71.062911),
-            "6550": .init(latitude: 42.352188, longitude: -71.057992),
-            "16535": .init(latitude: 42.354243, longitude: -71.058557),
-            "16538": .init(latitude: 42.354271, longitude: -71.059508),
-            "6567": .init(latitude: 42.352461, longitude: -71.062552),
-            "6537": .init(latitude: 42.352288, longitude: -71.062581),
-            "4511": .init(latitude: 42.362126, longitude: -71.058975),
-            "4510": .init(latitude: 42.360043, longitude: -71.0598),
-            "191": .init(latitude: 42.360387, longitude: -71.057129),
-            "204": .init(latitude: 42.359546, longitude: -71.057192),
-            "190": .init(latitude: 42.358789, longitude: -71.056733),
-            "65": .init(latitude: 42.358863, longitude: -71.057481),
-            "49704": .init(latitude: 42.358108, longitude: -71.060394),
-            "11891": .init(latitude: 42.357495, longitude: -71.056251),
-            "6551": .init(latitude: 42.355286, longitude: -71.056411),
-            "6535": .init(latitude: 42.355521, longitude: -71.057253),
-            "65471": .init(latitude: 42.357732, longitude: -71.057373),
-            "6548": .init(latitude: 42.356837, longitude: -71.057414),
-            "16539": .init(latitude: 42.356727, longitude: -71.05748),
-            "49001": .init(latitude: 42.355385, longitude: -71.062211),
-            "16551": .init(latitude: 42.35555, longitude: -71.055682),
-            "1242": .init(latitude: 42.348777, longitude: -71.066481),
-            "1239": .init(latitude: 42.34818, longitude: -71.067595),
-            "147": .init(latitude: 42.347374, longitude: -71.068436),
-            "1238": .init(latitude: 42.347348, longitude: -71.068556),
-            "1241": .init(latitude: 42.351748, longitude: -71.067101),
-            "145": .init(latitude: 42.351105, longitude: -71.070442),
-            "144": .init(latitude: 42.351234, longitude: -71.07295),
-            "6555": .init(latitude: 42.35068, longitude: -71.059655),
-            "6542": .init(latitude: 42.350845, longitude: -71.062868),
-            "148": .init(latitude: 42.346575, longitude: -71.064724),
-            "49003": .init(latitude: 42.346457, longitude: -71.064695),
-            "11481": .init(latitude: 42.346122, longitude: -71.062369),
-            "15095": .init(latitude: 42.345582, longitude: -71.064848),
-            "6565": .init(latitude: 42.34997, longitude: -71.063413),
-            "49002": .init(latitude: 42.349908, longitude: -71.063684),
+        let stopsData: [String: MGLPointFeature] = [
+            "place-chmnl": pointFeature(latitude: 42.361166, longitude: -71.070628),
+            "place-armnl": pointFeature(latitude: 42.351902, longitude: -71.070893),
+            "place-boyls": pointFeature(latitude: 42.35302, longitude: -71.06459),
+            "place-chncl": pointFeature(latitude: 42.352547, longitude: -71.062752),
+            "place-bomnl": pointFeature(latitude: 42.361365, longitude: -71.062037),
+            "place-gover": pointFeature(latitude: 42.359705, longitude: -71.059215),
+            "place-pktrm": pointFeature(latitude: 42.356395, longitude: -71.062424),
+            "place-state": pointFeature(latitude: 42.358978, longitude: -71.057598),
+            "place-dwnxg": pointFeature(latitude: 42.355518, longitude: -71.060225),
+            "place-tumnl": pointFeature(latitude: 42.349662, longitude: -71.063917),
+            "177": pointFeature(latitude: 42.351039, longitude: -71.070502),
+            "9981": pointFeature(latitude: 42.356954, longitude: -71.065766),
+            "9983": pointFeature(latitude: 42.351039, longitude: -71.066798),
+            "8281": pointFeature(latitude: 42.349606, longitude: -71.065439),
+            "146": pointFeature(latitude: 42.34881, longitude: -71.069533),
+            "171": pointFeature(latitude: 42.348569, longitude: -71.071717),
+            "36540": pointFeature(latitude: 42.347293, longitude: -71.071004),
+            "168": pointFeature(latitude: 42.346361, longitude: -71.069294),
+            "9980": pointFeature(latitude: 42.356083, longitude: -71.06926),
+            "8279": pointFeature(latitude: 42.353247, longitude: -71.064353),
+            "9982": pointFeature(latitude: 42.357656, longitude: -71.06328),
+            "10000": pointFeature(latitude: 42.355692, longitude: -71.062911),
+            "6550": pointFeature(latitude: 42.352188, longitude: -71.057992),
+            "16535": pointFeature(latitude: 42.354243, longitude: -71.058557),
+            "16538": pointFeature(latitude: 42.354271, longitude: -71.059508),
+            "6567": pointFeature(latitude: 42.352461, longitude: -71.062552),
+            "6537": pointFeature(latitude: 42.352288, longitude: -71.062581),
+            "4511": pointFeature(latitude: 42.362126, longitude: -71.058975),
+            "4510": pointFeature(latitude: 42.360043, longitude: -71.0598),
+            "191": pointFeature(latitude: 42.360387, longitude: -71.057129),
+            "204": pointFeature(latitude: 42.359546, longitude: -71.057192),
+            "190": pointFeature(latitude: 42.358789, longitude: -71.056733),
+            "65": pointFeature(latitude: 42.358863, longitude: -71.057481),
+            "49704": pointFeature(latitude: 42.358108, longitude: -71.060394),
+            "11891": pointFeature(latitude: 42.357495, longitude: -71.056251),
+            "6551": pointFeature(latitude: 42.355286, longitude: -71.056411),
+            "6535": pointFeature(latitude: 42.355521, longitude: -71.057253),
+            "65471": pointFeature(latitude: 42.357732, longitude: -71.057373),
+            "6548": pointFeature(latitude: 42.356837, longitude: -71.057414),
+            "16539": pointFeature(latitude: 42.356727, longitude: -71.05748),
+            "49001": pointFeature(latitude: 42.355385, longitude: -71.062211),
+            "16551": pointFeature(latitude: 42.35555, longitude: -71.055682),
+            "1242": pointFeature(latitude: 42.348777, longitude: -71.066481),
+            "1239": pointFeature(latitude: 42.34818, longitude: -71.067595),
+            "147": pointFeature(latitude: 42.347374, longitude: -71.068436),
+            "1238": pointFeature(latitude: 42.347348, longitude: -71.068556),
+            "1241": pointFeature(latitude: 42.351748, longitude: -71.067101),
+            "145": pointFeature(latitude: 42.351105, longitude: -71.070442),
+            "144": pointFeature(latitude: 42.351234, longitude: -71.07295),
+            "6555": pointFeature(latitude: 42.35068, longitude: -71.059655),
+            "6542": pointFeature(latitude: 42.350845, longitude: -71.062868),
+            "148": pointFeature(latitude: 42.346575, longitude: -71.064724),
+            "49003": pointFeature(latitude: 42.346457, longitude: -71.064695),
+            "11481": pointFeature(latitude: 42.346122, longitude: -71.062369),
+            "15095": pointFeature(latitude: 42.345582, longitude: -71.064848),
+            "6565": pointFeature(latitude: 42.34997, longitude: -71.063413),
+            "49002": pointFeature(latitude: 42.349908, longitude: -71.063684),
         ]
-        let stopsSource = MGLShapeSource(identifier: "stops", shapes: stopsData.values.map({loc in
-            let result = MGLPointAnnotation()
-            result.coordinate = loc
-            return result
-        }))
+        let stopsSource = MGLShapeSource(identifier: "stops", shapes: Array(stopsData.values))
 
         let stopsLayer = MGLSymbolStyleLayer(identifier: "stops", source: stopsSource)
         stopsLayer.iconImageName = NSExpression(forConstantValue: "stop")
@@ -198,7 +203,30 @@ class MapViewDelegate: NSObject, MGLMapViewDelegate {
 
         style.addSource(routesSource)
         style.addLayer(routesLayer)
+
+        // Set up vehicles
+        let vehiclesSource = MGLShapeSource(identifier: "vehicles", features: [vehicleFeatures[nextVehicleIndex]])
+
+        vehiclesTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+            self.nextVehicleIndex = (self.nextVehicleIndex + 1) % vehicleFeatures.count
+            vehiclesSource.shape = vehicleFeatures[self.nextVehicleIndex]
+        }
+
+        let vehiclesLayer = MGLSymbolStyleLayer(identifier: "vehicles", source: vehiclesSource)
+        vehiclesLayer.iconImageName = NSExpression(forConstantValue: "stop")
+        vehiclesLayer.iconColor = NSExpression(forConstantValue: UIColor.red)
+        vehiclesLayer.iconRotation = NSExpression(forKeyPath: "heading")
+
+        style.addSource(vehiclesSource)
+        style.addLayer(vehiclesLayer)
     }
+}
+
+private func pointFeature(latitude: CLLocationDegrees, longitude: CLLocationDegrees, attributes: [String: Any] = [:]) -> MGLPointFeature {
+    let result = MGLPointFeature()
+    result.coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    result.attributes = attributes
+    return result
 }
 
 private func routeFeature(polyline: String, color: UIColor) -> MGLPolylineFeature {
