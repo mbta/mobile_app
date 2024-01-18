@@ -13,24 +13,21 @@ import Foundation
 struct HomeMap: UIViewRepresentable {
     typealias UIViewType = MKMapView
     let mapView = MKMapView();
-   
+
 
     @ObservedObject var mapVM: HomeMapViewModel
     func makeUIView(context: Context) -> MKMapView {
         mapView.pointOfInterestFilter = .excludingAll
 
         mapView.region = context.coordinator.mapRegion
-        
+
         mapView.delegate = context.coordinator
-        
+
         routeFeatures.values.forEach  { rf in
             mapView.addOverlay(rf, level: .aboveLabels)
         }
-     /*   stopsData.values.forEach { stop in
-            mapView.addAnnotation(stop)
-            
-        }*/
-
+     
+   
         return mapView
     }
     func makeCoordinator() -> HomeMapViewModel {
@@ -39,20 +36,18 @@ struct HomeMap: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         uiView.delegate = context.coordinator
         print("UPDATING")
+        
+        let vehicleAnnotations = mapView.annotations.filter { annotation in
+            annotation is VehicleAnnotation
+        }
+        
+        // TODO: don't remove the vehicles that don't change position,
+        // only add vehicles which have moved or are new
+        mapView.removeAnnotations(vehicleAnnotations)
+        mapView.addAnnotations(context.coordinator.vehicles)
+            
+        
 
-        // clear old annotations to redraw vehicles in updated positions
-    //    let oldAnnotations = uiView.annotations
-     //   uiView.removeAnnotations(oldAnnotations)
-      /*  let stopPoint = [StopAnnotation(id: "testStop", title: "Test stop",
-                                        coordinate: context.coordinator.mapRegion.center)]
-
-        uiView.addAnnotations(stopPoint)
-
-        uiView.addAnnotations(context.coordinator.vehicles.map({ vehicle in
-            VehicleAnnotation(id: vehicle.id, title: vehicle.id,
-                              coordinate: .init(latitude: vehicle.latitude, longitude: vehicle.longitude))
-
-        }))*/
     }
     static func dismantleUIView(_ uiView: MKMapView, coordinator: HomeMapViewModel) {
     }
@@ -185,7 +180,27 @@ class StopAnnotation: NSObject, MKAnnotation {
     dynamic var coordinate: CLLocationCoordinate2D
 
     init(coordinate: CLLocationCoordinate2D) {
-   
+
+        self.coordinate = coordinate
+    }
+}
+class Vehicle {
+    let id: String
+    dynamic var coordinate: CLLocationCoordinate2D
+
+    init(id: String, coordinate: CLLocationCoordinate2D) {
+        self.id = id
+        self.coordinate = coordinate
+    }
+}
+
+class VehicleAnnotation: NSObject, MKAnnotation {
+
+    let id: String
+    dynamic var coordinate: CLLocationCoordinate2D
+
+    init(id: String, coordinate: CLLocationCoordinate2D) {
+        self.id = id
         self.coordinate = coordinate
     }
 }
@@ -204,42 +219,71 @@ final class HomeMapViewModel: NSObject, ObservableObject {
                                                                        longitude: -71.057083),
                                                          span: .init(latitudeDelta: 0.1,
                                                                      longitudeDelta: 0.1))
-    @Published var vehicles = []
+    @Published var vehicles: [VehicleAnnotation] = []
      var shouldShowStops = false
+    var vehiclesTimer: Timer? = nil
+    
+    
+    
+    override init() {
+        super.init()
+        vehicles = [VehicleAnnotation(id: "1", coordinate: .init(latitude: 42.347348, longitude: -71.068556)), VehicleAnnotation(id: "2", coordinate: .init(latitude: 42.358863, longitude: -71.057481))];
+        vehiclesTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+            print("MOVING")
+            
+            self.vehicles = self.vehicles.map { v in
+                // keep one vehicle that doesn't move
+                if (v.id == "1") {
+                    return v
+                }
+                else {
+                    return VehicleAnnotation(id: v.id, coordinate: .init(latitude: v.coordinate.latitude + 0.0002, longitude: v.coordinate.longitude))
+                }
+            }
+            self.vehicles.forEach { v in
+                print("\(v.id) \(v.coordinate.latitude)")
+            }
+           
+       }
+    }
+    
+     
 
 
 }
 
 extension HomeMapViewModel: MKMapViewDelegate {
-   
-    
+
+
     func mapView(_ asdf: MKMapView, regionDidChangeAnimated animated: Bool) {
         // This feels ripe for race conditions
         print("DID CHANGE")
         let shouldShowStopsThreshold = 0.05
-        
-     
-        
+
+
+
         if (!shouldShowStops && asdf.region.span.longitudeDelta <= shouldShowStopsThreshold) {
 
             print("ADDING ANNOTATIONS")
             stopsData.values.forEach { stop in
                 asdf.addAnnotation(stop)
-                
+
             }
             shouldShowStops = true
         }
-            
-            
+
+
             if (shouldShowStops && asdf.region.span.longitudeDelta > shouldShowStopsThreshold) {
                 print("REMOVING ANNOTATIONS")
-                let annotations = asdf.annotations
-                asdf.removeAnnotations(annotations)
+                let stopAnnotations =  asdf.annotations.filter { annotation in
+                    annotation is StopAnnotation
+                }
+                asdf.removeAnnotations(stopAnnotations)
                 shouldShowStops = false
 
             }
-        
-        
+
+
     }
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -248,13 +292,23 @@ extension HomeMapViewModel: MKMapViewDelegate {
                                                   reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
 
                 stopMarkerView.image = UIImage(named: "mbta-logo-t")
-            
+
             return stopMarkerView
         }
-      
+        
+        if annotation is VehicleAnnotation {
+                   let vehicleAnnotationView = MKAnnotationView(annotation: annotation,
+                                                                reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+                   let icon = UIImage(named: "bus-vehicle-icon")
+                   icon?.withTintColor(.orange)
+                   vehicleAnnotationView.image = icon
+                   return vehicleAnnotationView
+               }
+               return nil
+
         return nil
     }
-    
+
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKTileOverlay {
             let tileOverlay = MKTileOverlayRenderer(overlay: overlay)
