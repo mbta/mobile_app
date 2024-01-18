@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "polyline",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raphaelmor/Polyline",
+      "state" : {
+        "branch" : "master",
+        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23"
+      }
+    },
+    {
       "identity" : "viewinspector",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector",

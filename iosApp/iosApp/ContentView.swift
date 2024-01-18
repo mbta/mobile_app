@@ -1,11 +1,14 @@
 import SwiftUI
 import shared
+import MapKit
 
 struct ContentView: View {
 	let greet = "Hello" // TODO: Add iOS i18n
+    let mapVM = HomeMapViewModel()
 
 	var body: some View {
 		Text(greet)
+        HomeMap(mapVM: mapVM)
 	}
 }
 
