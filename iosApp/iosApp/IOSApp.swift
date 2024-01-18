@@ -2,9 +2,12 @@ import SwiftUI
 
 @main
 struct IOSApp: App {
-	var body: some Scene {
-		WindowGroup {
-			ContentView()
-		}
-	}
+    @StateObject var locationDataManager = LocationDataManager()
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environmentObject(locationDataManager)
+        }
+    }
 }
