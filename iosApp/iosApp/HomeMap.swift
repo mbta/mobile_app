@@ -26,8 +26,8 @@ struct HomeMap: UIViewRepresentable {
         routeFeatures.values.forEach  { rf in
             mapView.addOverlay(rf, level: .aboveLabels)
         }
-     
-   
+
+
         return mapView
     }
     func makeCoordinator() -> HomeMapViewModel {
@@ -35,21 +35,146 @@ struct HomeMap: UIViewRepresentable {
     }
     func updateUIView(_ uiView: MKMapView, context: Context) {
         uiView.delegate = context.coordinator
-        print("UPDATING")
         
         let vehicleAnnotations = mapView.annotations.filter { annotation in
             annotation is VehicleAnnotation
         }
-        
+
         // TODO: don't remove the vehicles that don't change position,
         // only add vehicles which have moved or are new
+        // adding before removing prevents obvious blinking, but if there is a big jump,
+        // then there will momentarily be 2 icons for 1 vehicle.
         mapView.removeAnnotations(vehicleAnnotations)
         mapView.addAnnotations(context.coordinator.vehicles)
-            
-        
+
+     
+
 
     }
     static func dismantleUIView(_ uiView: MKMapView, coordinator: HomeMapViewModel) {
+    }
+}
+
+class StopAnnotation: NSObject, MKAnnotation {
+
+    dynamic var coordinate: CLLocationCoordinate2D
+
+    init(coordinate: CLLocationCoordinate2D) {
+
+        self.coordinate = coordinate
+    }
+}
+
+class VehicleAnnotation: NSObject, MKAnnotation {
+
+    let id: String
+    dynamic var coordinate: CLLocationCoordinate2D
+
+    init(id: String, coordinate: CLLocationCoordinate2D) {
+        self.id = id
+        self.coordinate = coordinate
+    }
+}
+
+class CustomPolyline:  MKPolyline {
+    var color: UIColor?
+
+}
+
+
+final class HomeMapViewModel: NSObject, ObservableObject {
+    @Published var mapRegion: MKCoordinateRegion = .init(center: .init(latitude: 42.361145,
+                                                                       longitude: -71.057083),
+                                                         span: .init(latitudeDelta: 0.1,
+                                                                     longitudeDelta: 0.1))
+    @Published var vehicles: [VehicleAnnotation] = []
+     var shouldShowStops = false
+    var vehiclesTimer: Timer? = nil
+
+
+
+    override init() {
+        super.init()
+        vehicles = [VehicleAnnotation(id: "1", coordinate: .init(latitude: 42.347348, longitude: -71.068556)), VehicleAnnotation(id: "2", coordinate: .init(latitude: 42.358863, longitude: -71.057481))];
+        vehiclesTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+
+            self.vehicles = self.vehicles.map { v in
+                // keep one vehicle that doesn't move
+                if (v.id == "1") {
+                    return VehicleAnnotation(id: v.id, coordinate: .init(latitude: v.coordinate.latitude, longitude: v.coordinate.longitude))
+                }
+                else {
+                    return VehicleAnnotation(id: v.id, coordinate: .init(latitude: v.coordinate.latitude + 0.0002, longitude: v.coordinate.longitude))
+                }
+            }
+
+       }
+    }
+}
+
+extension HomeMapViewModel: MKMapViewDelegate {
+
+
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        // This way of conditionally rendering stops based on zoom level seems ripe for race conditions
+        let shouldShowStopsThreshold = 0.05
+
+        if (!shouldShowStops && mapView.region.span.longitudeDelta <= shouldShowStopsThreshold) {
+
+            stopsData.values.forEach { stop in
+                mapView.addAnnotation(stop)
+
+            }
+            shouldShowStops = true
+        }
+
+            if (shouldShowStops && mapView.region.span.longitudeDelta > shouldShowStopsThreshold) {
+                let stopAnnotations =  mapView.annotations.filter { annotation in
+                    annotation is StopAnnotation
+                }
+                mapView.removeAnnotations(stopAnnotations)
+                shouldShowStops = false
+
+            }
+
+
+    }
+
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is StopAnnotation {
+            let stopMarkerView = MKAnnotationView(annotation: annotation,
+                                                  reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+
+                stopMarkerView.image = UIImage(named: "mbta-logo-t")
+
+            return stopMarkerView
+        }
+
+        if annotation is VehicleAnnotation {
+                   let vehicleAnnotationView = MKAnnotationView(annotation: annotation,
+                                                                reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+            let icon = UIImage(named: "bus-vehicle-icon")
+                   icon?.withTintColor(.orange)
+                   vehicleAnnotationView.image = icon
+            
+                   return vehicleAnnotationView
+               }
+               return nil
+
+    }
+
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if overlay is MKTileOverlay {
+            let tileOverlay = MKTileOverlayRenderer(overlay: overlay)
+            return tileOverlay
+        }
+        if let polyline = overlay as? CustomPolyline {
+            let polylineOverlay = MKPolylineRenderer(overlay: polyline)
+            polylineOverlay.strokeColor = polyline.color ?? UIColor.black
+            polylineOverlay.lineWidth = 3
+            return polylineOverlay
+        }
+        return MKOverlayRenderer(overlay: overlay)
     }
 }
 
@@ -170,41 +295,6 @@ private let stopsData  = [
            "49002": pointFeature(latitude: 42.349908, longitude: -71.063684),
        ]
 
-
-private func pointFeature(latitude: CLLocationDegrees, longitude: CLLocationDegrees) -> StopAnnotation {
-    return StopAnnotation.init(coordinate: .init(latitude: latitude, longitude: longitude))
-}
-
-class StopAnnotation: NSObject, MKAnnotation {
-
-    dynamic var coordinate: CLLocationCoordinate2D
-
-    init(coordinate: CLLocationCoordinate2D) {
-
-        self.coordinate = coordinate
-    }
-}
-class Vehicle {
-    let id: String
-    dynamic var coordinate: CLLocationCoordinate2D
-
-    init(id: String, coordinate: CLLocationCoordinate2D) {
-        self.id = id
-        self.coordinate = coordinate
-    }
-}
-
-class VehicleAnnotation: NSObject, MKAnnotation {
-
-    let id: String
-    dynamic var coordinate: CLLocationCoordinate2D
-
-    init(id: String, coordinate: CLLocationCoordinate2D) {
-        self.id = id
-        self.coordinate = coordinate
-    }
-}
-
 private func routeFeature(encodedPolyline: String, color: UIColor) -> CustomPolyline {
     let routePolyline = Polyline(encodedPolyline: encodedPolyline)
     let mkPolyline = CustomPolyline(coordinates:
@@ -214,117 +304,7 @@ private func routeFeature(encodedPolyline: String, color: UIColor) -> CustomPoly
     return mkPolyline
 }
 
-final class HomeMapViewModel: NSObject, ObservableObject {
-    @Published var mapRegion: MKCoordinateRegion = .init(center: .init(latitude: 42.361145,
-                                                                       longitude: -71.057083),
-                                                         span: .init(latitudeDelta: 0.1,
-                                                                     longitudeDelta: 0.1))
-    @Published var vehicles: [VehicleAnnotation] = []
-     var shouldShowStops = false
-    var vehiclesTimer: Timer? = nil
-    
-    
-    
-    override init() {
-        super.init()
-        vehicles = [VehicleAnnotation(id: "1", coordinate: .init(latitude: 42.347348, longitude: -71.068556)), VehicleAnnotation(id: "2", coordinate: .init(latitude: 42.358863, longitude: -71.057481))];
-        vehiclesTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-            print("MOVING")
-            
-            self.vehicles = self.vehicles.map { v in
-                // keep one vehicle that doesn't move
-                if (v.id == "1") {
-                    return v
-                }
-                else {
-                    return VehicleAnnotation(id: v.id, coordinate: .init(latitude: v.coordinate.latitude + 0.0002, longitude: v.coordinate.longitude))
-                }
-            }
-            self.vehicles.forEach { v in
-                print("\(v.id) \(v.coordinate.latitude)")
-            }
-           
-       }
-    }
-    
-     
 
-
-}
-
-extension HomeMapViewModel: MKMapViewDelegate {
-
-
-    func mapView(_ asdf: MKMapView, regionDidChangeAnimated animated: Bool) {
-        // This feels ripe for race conditions
-        print("DID CHANGE")
-        let shouldShowStopsThreshold = 0.05
-
-
-
-        if (!shouldShowStops && asdf.region.span.longitudeDelta <= shouldShowStopsThreshold) {
-
-            print("ADDING ANNOTATIONS")
-            stopsData.values.forEach { stop in
-                asdf.addAnnotation(stop)
-
-            }
-            shouldShowStops = true
-        }
-
-
-            if (shouldShowStops && asdf.region.span.longitudeDelta > shouldShowStopsThreshold) {
-                print("REMOVING ANNOTATIONS")
-                let stopAnnotations =  asdf.annotations.filter { annotation in
-                    annotation is StopAnnotation
-                }
-                asdf.removeAnnotations(stopAnnotations)
-                shouldShowStops = false
-
-            }
-
-
-    }
-
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if annotation is StopAnnotation {
-            let stopMarkerView = MKAnnotationView(annotation: annotation,
-                                                  reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
-
-                stopMarkerView.image = UIImage(named: "mbta-logo-t")
-
-            return stopMarkerView
-        }
-        
-        if annotation is VehicleAnnotation {
-                   let vehicleAnnotationView = MKAnnotationView(annotation: annotation,
-                                                                reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
-                   let icon = UIImage(named: "bus-vehicle-icon")
-                   icon?.withTintColor(.orange)
-                   vehicleAnnotationView.image = icon
-                   return vehicleAnnotationView
-               }
-               return nil
-
-        return nil
-    }
-
-    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        if overlay is MKTileOverlay {
-            let tileOverlay = MKTileOverlayRenderer(overlay: overlay)
-            return tileOverlay
-        }
-        if let polyline = overlay as? CustomPolyline {
-            let polylineOverlay = MKPolylineRenderer(overlay: polyline)
-            polylineOverlay.strokeColor = polyline.color ?? UIColor.black
-            polylineOverlay.lineWidth = 3
-            return polylineOverlay
-        }
-        return MKOverlayRenderer(overlay: overlay)
-    }
-}
-
-class CustomPolyline:  MKPolyline {
-    var color: UIColor?
-
+private func pointFeature(latitude: CLLocationDegrees, longitude: CLLocationDegrees) -> StopAnnotation {
+    return StopAnnotation.init(coordinate: .init(latitude: latitude, longitude: longitude))
 }
