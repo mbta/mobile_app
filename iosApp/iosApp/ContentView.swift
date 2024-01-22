@@ -11,7 +11,7 @@ struct ContentView: View {
             switch locationDataManager.authorizationStatus {
             case .notDetermined:
                 Button("Allow Location", action: {
-                    locationDataManager.locationManager.requestWhenInUseAuthorization()
+                    locationDataManager.locationFetcher.requestWhenInUseAuthorization()
                 })
             case .authorizedAlways, .authorizedWhenInUse:
                 Text(locationDataManager.currentLocation.debugDescription)
