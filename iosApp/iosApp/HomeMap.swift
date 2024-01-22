@@ -68,10 +68,12 @@ class StopAnnotation: NSObject, MKAnnotation {
 class VehicleAnnotation: NSObject, MKAnnotation {
 
     let id: String
+    let title: String?
     dynamic var coordinate: CLLocationCoordinate2D
 
     init(id: String, coordinate: CLLocationCoordinate2D) {
         self.id = id
+        self.title = id
         self.coordinate = coordinate
     }
 }
@@ -153,9 +155,14 @@ extension HomeMapViewModel: MKMapViewDelegate {
         if annotation is VehicleAnnotation {
                    let vehicleAnnotationView = MKAnnotationView(annotation: annotation,
                                                                 reuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+            var label = UILabel()
+            label.text = "HELLO"
             let icon = UIImage(named: "bus-vehicle-icon")
                    icon?.withTintColor(.orange)
                    vehicleAnnotationView.image = icon
+            vehicleAnnotationView.canShowCallout = true
+         
+            vehicleAnnotationView.detailCalloutAccessoryView = label
             
                    return vehicleAnnotationView
                }
