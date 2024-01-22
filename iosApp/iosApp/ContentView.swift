@@ -2,12 +2,15 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    let greet = "Hello" // TODO: Add iOS i18n
+    let platform = Platform_iosKt.getPlatform().name
     @EnvironmentObject var locationDataManager: LocationDataManager
 
     var body: some View {
         VStack {
-            Text(greet)
+            Text(String.init(
+                format: NSLocalizedString("hello_platform", comment: "Hello world greeting"),
+                arguments: [platform]
+            ))
             switch locationDataManager.authorizationStatus {
             case .notDetermined:
                 Button("Allow Location", action: {
