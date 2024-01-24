@@ -8,34 +8,33 @@
 
 
 import SwiftUI
-import UIKit
-import MapboxMaps
-import MapboxCommon
 import Polyline
 @_spi(Experimental) import MapboxMaps
 
 
-struct HomeMap: UIViewControllerRepresentable {
-    
-
+struct HomeMapView: View {
     @ObservedObject var mapVM: HomeMapViewModel
-
-    func makeUIViewController(context: Context) -> MapViewController {
-        return MapViewController()
-    }
+   
     
-    func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
-        let vehicleAnnotations = mapVM.vehicles.map {v in
+    
+    var body: some View {
+        
+        Map(initialViewport: .camera(center: CLLocationCoordinate2D(latitude:42.355, longitude: -71.06555), zoom: 12, bearing: 0, pitch: 0)) {
+           
+            PointAnnotationGroup(mapVM.vehicles) { vehicle in
+                PointAnnotation(id: vehicle.id, coordinate: vehicle.coordinate).image(named: "bus-icon")
+            }
             
-        }
-        print("Called update")
-    
+  
+     
+            
+            
+        }.mapStyle(.light)
     }
-    
 }
 
 final class HomeMapViewModel: NSObject, ObservableObject {
-   
+
     @Published var vehicles: [VehicleAnnotation] = []
      var shouldShowStops = false
     var vehiclesTimer: Timer? = nil
@@ -62,7 +61,7 @@ final class HomeMapViewModel: NSObject, ObservableObject {
 }
 
 
-class VehicleAnnotation: NSObject {
+class VehicleAnnotation: NSObject, Identifiable {
 
     let id: String
     let title: String?
@@ -73,36 +72,6 @@ class VehicleAnnotation: NSObject {
         self.coordinate = coordinate
     }
 }
-
-class MapViewController: UIViewController {
-    internal var mapView: MapView!
-    
-    
-    
-    override public func viewDidLoad() {
-        mapView = MapView(frame: view.bounds)
-        let cameraOptions = CameraOptions(center:CLLocationCoordinate2D(latitude: 42.355, longitude: -71.06555), zoom: 14)
-        
-        mapView.mapboxMap.setCamera(to: cameraOptions)
-              mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-              self.view.addSubview(mapView)
-        
-   //     let lineAnnotationManger = mapView.annotations.makePolylineAnnotationManager()
-        
-        
-        // PolylineAnnotation causing problem?
-       // let lines: [PolylineAnnotation] = routeFeatures.values.map { route in
-       //     var routeAnnotationData = PolylineAnnotation(lineCoordinates: route.coordinates)
-           //  routeAnnotationData.lineColor = StyleColor(route.color ?? .black)
-        //    return routeAnnotationData
-      //  }
-        
-      //  lineAnnotationManger.annotations = lines
-        
-
-    }
-}
-            
 
 
 private let routeFeatures = [
