@@ -11,6 +11,7 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* IOSApp.swift */; };
 		6E0AE6592B61987B008BA2EB /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 6E0AE6582B61987B008BA2EB /* MapboxMaps */; };
+		6E0AE65C2B61BF3E008BA2EB /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 6E0AE65B2B61BF3E008BA2EB /* Polyline */; };
 		6E69A6562B618D7400F12634 /* HomeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E69A6552B618D7400F12634 /* HomeMap.swift */; };
 		6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */; };
 		6EED5E9C2B3DC6C10052A1B8 /* IosAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E9B2B3DC6C10052A1B8 /* IosAppUITests.swift */; };
@@ -90,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E0AE65C2B61BF3E008BA2EB /* Polyline in Frameworks */,
 				6E0AE6592B61987B008BA2EB /* MapboxMaps in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -243,6 +245,7 @@
 			name = iosApp;
 			packageProductDependencies = (
 				6E0AE6582B61987B008BA2EB /* MapboxMaps */,
+				6E0AE65B2B61BF3E008BA2EB /* Polyline */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -284,6 +287,7 @@
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				6E0AE6572B61987B008BA2EB /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				6E0AE65A2B61BF3E008BA2EB /* XCRemoteSwiftPackageReference "Polyline" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -728,6 +732,14 @@
 				minimumVersion = 11.0.0;
 			};
 		};
+		6E0AE65A2B61BF3E008BA2EB /* XCRemoteSwiftPackageReference "Polyline" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/raphaelmor/Polyline";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nalexn/ViewInspector";
@@ -743,6 +755,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6E0AE6572B61987B008BA2EB /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
 			productName = MapboxMaps;
+		};
+		6E0AE65B2B61BF3E008BA2EB /* Polyline */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6E0AE65A2B61BF3E008BA2EB /* XCRemoteSwiftPackageReference "Polyline" */;
+			productName = Polyline;
 		};
 		6EED5EAD2B3E1BA80052A1B8 /* ViewInspector */ = {
 			isa = XCSwiftPackageProductDependency;

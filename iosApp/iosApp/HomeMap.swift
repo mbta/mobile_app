@@ -14,6 +14,7 @@ import Polyline
 
 struct HomeMapView: View {
     @ObservedObject var mapVM: HomeMapViewModel
+    
    
     
     
@@ -21,9 +22,19 @@ struct HomeMapView: View {
         
         Map(initialViewport: .camera(center: CLLocationCoordinate2D(latitude:42.355, longitude: -71.06555), zoom: 12, bearing: 0, pitch: 0)) {
            
+     
+ 
+            PolylineAnnotationGroup(mapVM.routes) { route in
+                PolylineAnnotation(id: route.id, lineCoordinates: route.coordinates).lineColor(StyleColor(route.color ?? .black)).lineWidth(3)
+                 
+            }
+            PointAnnotationGroup(Array(stopsData.values)) { stop in
+                PointAnnotation(coordinate:stop.coordinate).image(named: "t-logo")
+            }
             PointAnnotationGroup(mapVM.vehicles) { vehicle in
                 PointAnnotation(id: vehicle.id, coordinate: vehicle.coordinate).image(named: "bus-icon")
             }
+            
             
   
      
@@ -36,6 +47,7 @@ struct HomeMapView: View {
 final class HomeMapViewModel: NSObject, ObservableObject {
 
     @Published var vehicles: [VehicleAnnotation] = []
+    @Published var routes: [CustomPolyline] = Array(routeFeatures.values)
      var shouldShowStops = false
     var vehiclesTimer: Timer? = nil
 
@@ -192,7 +204,8 @@ private let stopsData  = [
        ]
 
 
-struct CustomPolyline {
+struct CustomPolyline: Identifiable {
+    var id: String
     var coordinates: [LocationCoordinate2D]
     var color: UIColor?
 
@@ -201,15 +214,16 @@ struct CustomPolyline {
 
 private func routeFeature(encodedPolyline: String, color: UIColor) -> CustomPolyline {
     let routePolyline = Polyline(encodedPolyline: encodedPolyline)
-    let mkPolyline = CustomPolyline(coordinates:
+    let mkPolyline = CustomPolyline(id: encodedPolyline, coordinates:
                                         (routePolyline.coordinates ?? []), color: color)
     return mkPolyline
 }
-struct StopAnnotation{
+struct StopAnnotation: Identifiable{
+    var id: String
 
      var coordinate: CLLocationCoordinate2D
 }
 
 private func pointFeature(latitude: CLLocationDegrees, longitude: CLLocationDegrees) -> StopAnnotation {
-    return StopAnnotation.init(coordinate: .init(latitude: latitude, longitude: longitude))
+    return StopAnnotation.init(id: "\(latitude) \(longitude)", coordinate: .init(latitude: latitude, longitude: longitude))
 }
