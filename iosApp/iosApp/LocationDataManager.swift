@@ -3,7 +3,7 @@
 //  iosApp
 //
 //  Created by Horn, Melody on 2024-01-18.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024 MBTA. All rights reserved.
 //
 
 import Foundation

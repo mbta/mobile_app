@@ -3,7 +3,7 @@
 //  iosAppTests
 //
 //  Created by Horn, Melody on 2024-01-22.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024 MBTA. All rights reserved.
 //
 
 import XCTest
