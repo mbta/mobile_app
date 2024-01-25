@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
@@ -28,7 +29,7 @@ class Backend(engine: HttpClientEngine) {
             get() = Backend(getPlatform().httpClientEngine)
     }
 
-    @Throws(IOException::class, CancellationException::class)
+    @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
     suspend fun getNearby(latitude: Double, longitude: Double): NearbyResponse =
         httpClient
             .get("https://mobile-app-backend-staging.mbtace.com/api/nearby") {
