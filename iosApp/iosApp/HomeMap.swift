@@ -82,7 +82,7 @@ struct HomeMapView: View {
 
 
 
-        }.mapStyle(rasterTiles ?  MapStyle(json: "{\"version\": 8, \"name\": \"dotcom\",  \"sources\": {\"dotcom\": {\"type\": \"raster\", \"tiles\": [\"https://cdn.mbta.com/osm_tiles/{z}/{x}/{y}.png\"]}}}"): .light)
+        }.mapStyle(rasterTiles ?  MapStyle(json: "{\"version\": 8, \"name\": \"dotcom\", \"layers\": [{\"id\": \"boston\", \"type\": \"raster\", \"source\": \"dotcom\"}],  \"sources\": {\"dotcom\": {\"type\": \"raster\", \"tiles\": [\"https://cdn.mbta.com/osm_tiles/{z}/{x}/{y}.png\"]}}}"): .light)
         // This is continuous - not like .onCameraChangeFinished. Debouncing recommended in docs
         // https://docs.mapbox.com/ios/maps/api/11.1.0/documentation/mapboxmaps/swiftui-user-guide/#Using-Viewport-to-manage-camera
             .onCameraChanged { cameraChanged in
