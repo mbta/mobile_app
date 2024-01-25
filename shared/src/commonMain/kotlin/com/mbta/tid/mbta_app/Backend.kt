@@ -3,7 +3,9 @@ package com.mbta.tid.mbta_app
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.request.get
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
@@ -29,7 +31,12 @@ class Backend(engine: HttpClientEngine) {
             get() = Backend(getPlatform().httpClientEngine)
     }
 
-    @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class
+    )
     suspend fun getNearby(latitude: Double, longitude: Double): NearbyResponse =
         httpClient
             .get("https://mobile-app-backend-staging.mbtace.com/api/nearby") {
@@ -38,6 +45,7 @@ class Backend(engine: HttpClientEngine) {
                     parameters.append("longitude", longitude.toString())
                     parameters.append("source", "v3")
                 }
+                expectSuccess = true
             }
             .body()
 }
