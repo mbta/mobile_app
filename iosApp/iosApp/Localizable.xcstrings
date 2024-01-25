@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "HELLO %@!" : {
+
+    },
     "hello_platform" : {
       "extractionState" : "manual",
       "localizations" : {
