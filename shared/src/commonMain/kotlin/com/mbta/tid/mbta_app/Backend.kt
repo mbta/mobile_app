@@ -36,6 +36,7 @@ class Backend(engine: HttpClientEngine) {
                 url {
                     parameters.append("latitude", latitude.toString())
                     parameters.append("longitude", longitude.toString())
+                    parameters.append("source", "v3")
                 }
             }
             .body()
