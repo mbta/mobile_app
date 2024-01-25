@@ -16,8 +16,8 @@ struct NearbyTransitView: View {
 
     var body: some View {
         if let nearby = viewModel.nearby {
-            List(nearby.routePatternsByStop(), id: \.first?.id) {
-                NearbyRoutePatternView(data: ($0.first!, $0.second!))
+            List(nearby.routePatternsByStop(), id: \.first!.id) {
+                NearbyRoutePatternView(routePattern: $0.first!, stop: $0.second!)
             }
         } else {
             Text("Loading...")
@@ -26,13 +26,14 @@ struct NearbyTransitView: View {
 }
 
 struct NearbyRoutePatternView: View {
-    let data: (RoutePattern, Stop)
+    let routePattern: RoutePattern
+    let stop: Stop
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Route \(data.0.route!.shortName) \(data.0.route!.longName)")
-            Text("Pattern \(data.0.id) \(data.0.name)")
-            Text("Stop \(data.1.name)")
+            Text("Route \(routePattern.route!.shortName) \(routePattern.route!.longName)")
+            Text("Pattern \(routePattern.id) \(routePattern.name)")
+            Text("Stop \(stop.name)")
         }
     }
 }
@@ -71,8 +72,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             backend: BackendDispatcher(backend: IdleBackend())
         )).previewDisplayName("NearbyTransitView")
 
-        NearbyRoutePatternView(data: (
-            RoutePattern(
+        NearbyRoutePatternView(
+            routePattern: RoutePattern(
                 id: "206-_-1",
                 directionId: 1,
                 name: "Houghs Neck - Quincy Center Station",
@@ -86,7 +87,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     shortName: "216",
                     sortOrder: 52160,
                     textColor: "000000")),
-            Stop(id: "3276", latitude: 42.265969, longitude: -70.969853, name: "Sea St opp Peterson Rd", parentStation: nil)
-        )).previewDisplayName("NearbyRoutePatternView")
+            stop: Stop(id: "3276", latitude: 42.265969, longitude: -70.969853, name: "Sea St opp Peterson Rd", parentStation: nil)
+        ).previewDisplayName("NearbyRoutePatternView")
     }
 }
