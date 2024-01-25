@@ -17,71 +17,80 @@ struct HomeMapView: View {
     @State private var viewport: Viewport = .camera(center: CLLocationCoordinate2D(latitude:42.355, longitude: -71.06555), zoom: 12, bearing: 0, pitch: 0)
     var shouldShowStops = false
     
+    @State var rasterTiles: Bool = false
     
     
-    
-    
+
+
+
+
     var body: some View {
-      
-        
+        Button("Toggle Tiles") {
+            rasterTiles.toggle()
+        }
+
+
         Map(viewport: $viewport) {
+             
+           
+            
             PolylineAnnotationGroup(mapVM.routes) { route in
                 PolylineAnnotation(id: route.id, lineCoordinates: route.coordinates).lineColor(StyleColor(route.color ?? .black)).lineWidth(3)
-                
-            }
-            
-            if (mapVM.zoom > 14) {
-      
-                PointAnnotationGroup(Array(stopsData.values)) { stop in
-                    PointAnnotation(coordinate:stop.coordinate).image(named: "t-logo")
-                 
-                }
-                
 
             }
-            
+
+            if (mapVM.zoom > 14) {
+
+                PointAnnotationGroup(Array(stopsData.values)) { stop in
+                    PointAnnotation(coordinate:stop.coordinate).image(named: "t-logo")
+
+                }
+
+
+            }
+
             ForEvery(mapVM.vehicles) { vehicle in
                 MapViewAnnotation(layerId: "vehicles", featureId: vehicle.id) {
                     Text("HELLO \(vehicle.id)!")
                         .background(.white)
                         .font(.callout)
                         .offset(y:-25)
-                     
-                        
+
+
                 }.visible(mapVM.selectedVehicle == vehicle.id).selected(mapVM.selectedVehicle == vehicle.id)
 
             }
-            
-    
-            
+
+
+
             PointAnnotationGroup(mapVM.vehicles) { vehicle in
                 PointAnnotation(id: vehicle.id, coordinate: vehicle.coordinate).image(named: "bus-icon")
                     .onTapGesture {
                         print("TAPPED")
                         mapVM.selectedVehicle = vehicle.id
                         viewport = .camera(center: vehicle.coordinate, zoom: 15)
-                    
+
                 }
             }.layerId("vehicles")
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        }.mapStyle(.light)
+
+
+
+
+
+
+
+
+
+
+        }.mapStyle(rasterTiles ?  MapStyle(json: "{\"tilejson\": \"3.0.0\", \"version\": \"1.0.0\", \"name\": \"dotcom\", \"scheme\": \"xyz\",  \"tiles\": [\"https://cdn.mbta.com/osm_tiles/{z}/{x}/{y}.png\"]}"): .light)
         // This is continuous - not like .onCameraChangeFinished. Debouncing recommended in docs
         // https://docs.mapbox.com/ios/maps/api/11.1.0/documentation/mapboxmaps/swiftui-user-guide/#Using-Viewport-to-manage-camera
             .onCameraChanged { cameraChanged in
                 mapVM.zoom = cameraChanged.cameraState.zoom
-                
+
             }
-        
-        
+
+
     }
 }
 
