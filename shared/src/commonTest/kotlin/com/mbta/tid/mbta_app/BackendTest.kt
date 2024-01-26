@@ -15,7 +15,7 @@ class BackendTest {
     fun testGetNearby() {
         runBlocking {
             val mockEngine = MockEngine { request ->
-                assertEquals("latitude=12.34&longitude=-56.78", request.url.encodedQuery)
+                assertEquals("latitude=12.34&longitude=-56.78&source=v3", request.url.encodedQuery)
                 respond(
                     content =
                         ByteReadChannel(
