@@ -17,7 +17,9 @@ final class ContentViewTests: XCTestCase {
     }
 
     func testExample() throws {
-        let sut = ContentView().environmentObject(LocationDataManager())
+        let sut = ContentView()
+            .environmentObject(LocationDataManager())
+            .environmentObject(BackendDispatcher(backend: IdleBackend()))
 
         let greeting = try sut.inspect().view(ContentView.self).vStack().first!.text().string()
         XCTAssertTrue(greeting.hasPrefix("Hello"), "displays greeting")

@@ -4,6 +4,7 @@ import shared
 struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @EnvironmentObject var locationDataManager: LocationDataManager
+    @EnvironmentObject var backend: BackendDispatcher
 
     var body: some View {
         VStack {
@@ -23,6 +24,10 @@ struct ContentView: View {
             @unknown default:
                 Text("Location access state unknown")
             }
+            Spacer()
+            if let location = locationDataManager.currentLocation {
+                NearbyTransitView(viewModel: .init(location: location.coordinate, backend: backend))
+            }
         }
     }
 }
@@ -31,5 +36,6 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(LocationDataManager())
+            .environmentObject(BackendDispatcher(backend: IdleBackend()))
     }
 }

@@ -3,7 +3,7 @@
 //  iosApp
 //
 //  Created by Horn, Melody on 2024-01-18.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024 MBTA. All rights reserved.
 //
 
 import Foundation
@@ -25,12 +25,20 @@ public class LocationDataManager : NSObject, LocationFetcherDelegate, Observable
         authorizationStatus = fetcher.authorizationStatus
         // TODO only if requested
         if (fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways) {
+            // ignore updates less than 0.1km
+            fetcher.distanceFilter = 100
             fetcher.startUpdatingLocation()
         }
     }
 
     public func locationFetcher(_ fetcher: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
+
+        // workaround for denver not having any nearby stops
+        guard let coordinate = locations.last?.coordinate else { return }
+        if coordinate.longitude < -80 {
+            currentLocation = CLLocation(latitude: coordinate.latitude + 2.8, longitude: coordinate.longitude + 33.9)
+        }
     }
 }
 
@@ -45,9 +53,10 @@ extension LocationDataManager : CLLocationManagerDelegate {
 }
 
 // https://developer.apple.com/videos/play/wwdc2018/417/
-public protocol LocationFetcher {
+public protocol LocationFetcher: AnyObject {
     var locationFetcherDelegate: LocationFetcherDelegate? { get set }
     var authorizationStatus: CLAuthorizationStatus { get }
+    var distanceFilter: CLLocationDistance { get set }
     func startUpdatingLocation()
     func requestWhenInUseAuthorization()
 }

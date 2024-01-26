@@ -3,7 +3,7 @@
 //  iosAppTests
 //
 //  Created by Horn, Melody on 2024-01-22.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Copyright © 2024 MBTA. All rights reserved.
 //
 
 import CoreLocation
@@ -21,6 +21,7 @@ final class LocationDataManagerTests: XCTestCase {
     }
 
     class MockLocationFetcher: LocationFetcher {
+        var distanceFilter: CLLocationDistance = 0
         weak var locationFetcherDelegate: LocationFetcherDelegate?
 
         var authorizationStatus: CLAuthorizationStatus = .notDetermined {
@@ -46,6 +47,8 @@ final class LocationDataManagerTests: XCTestCase {
     func testInit() async throws {
         let locationFetcher = MockLocationFetcher()
 
+        XCTAssertEqual(locationFetcher.distanceFilter, 0)
+
         let manager = LocationDataManager(locationFetcher: locationFetcher)
 
         XCTAssertEqual(manager.authorizationStatus, .notDetermined)
@@ -63,6 +66,7 @@ final class LocationDataManagerTests: XCTestCase {
 
         XCTAssertEqual(manager.authorizationStatus, .authorizedWhenInUse)
         XCTAssertNil(manager.currentLocation)
+        XCTAssertEqual(locationFetcher.distanceFilter, 100)
 
         let location = CLLocation(latitude: 1.2, longitude: 3.4)
 
