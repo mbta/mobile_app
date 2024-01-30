@@ -1,5 +1,5 @@
-import SwiftUI
 import shared
+import SwiftUI
 
 struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
@@ -8,7 +8,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text(String.init(
+            Text(String(
                 format: NSLocalizedString("hello_platform", comment: "Hello world greeting"),
                 arguments: [platform]
             ))
