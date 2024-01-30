@@ -64,15 +64,17 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            mapOf(
-                route1 to
-                    mapOf(
-                        stop1 to listOf(route1rp1, route1rp2),
+            listOf(
+                NearbyRoute(
+                    route1,
+                    listOf(
+                        NearbyPatternsByStop(stop1, listOf(route1rp1, route1rp2)),
                         // TODO: This is filtering out route1rp1 for stop2, presumably because that
                         // is already listed under stop1. Potentially unexpected?
-                        stop2 to listOf(route1rp3)
-                    ),
-                route2 to mapOf(stop2 to listOf(route2rp1))
+                        NearbyPatternsByStop(stop2, listOf(route1rp3))
+                    )
+                ),
+                NearbyRoute(route2, listOf(NearbyPatternsByStop(stop2, listOf(route2rp1))))
             ),
             response.byRouteAndStop()
         )

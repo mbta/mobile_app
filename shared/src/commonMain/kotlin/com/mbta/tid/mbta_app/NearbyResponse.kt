@@ -25,16 +25,18 @@ data class NearbyResponse(
         }
     }
 
-    fun byRouteAndStop(): Map<Route, Map<Stop, List<RoutePattern>>> {
+    fun byRouteAndStop(): List<NearbyRoute> {
         val pairsByRoute = routePatternsByStop().groupBy { it.first.route }
 
-        print(pairsByRoute)
-
-        return pairsByRoute.mapValues { entry ->
+        return pairsByRoute.map { entry ->
+            val route = entry.key
             val patterns = entry.value
 
-            // group by stop
-            patterns.groupBy({ it.second }, { it.first })
+            val patternsByStop =
+                patterns.groupBy({ it.second }, { it.first }).map { (stop, routePatterns) ->
+                    NearbyPatternsByStop(stop, routePatterns)
+                }
+            NearbyRoute(route, patternsByStop)
         }
     }
 }
