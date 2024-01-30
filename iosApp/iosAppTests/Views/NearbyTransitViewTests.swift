@@ -47,7 +47,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [getNearbyExpectation], timeout: 1)
     }
 
-    @MainActor func testLoaded() throws {
+    @MainActor func testRoutePatternsGroupedByRouteAndStop() throws {
         struct FakeBackend : BackendProtocol {
             func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
                 struct AlreadyLoadedError: Error {}
@@ -73,7 +73,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 Stop(id: "84791",
                      latitude: 42.289995,
                      longitude: -71.191092,
-                     name: "Sawmill Brook Pkwy @ Walsh Rd",
+                     name: "Sawmill Brook Pkwy @ Walsh Rd - opposite side",
                      parentStation: nil)
             ],
             routePatterns: [
@@ -111,22 +111,15 @@ final class NearbyTransitViewTests: XCTestCase {
         ))
             .environmentObject(LocationDataManager())
 
-        let routePatterns = try sut.inspect().findAll(NearbyRoutePatternView.self)
+        let routes = try sut.inspect().findAll(NearbyRouteView.self)
 
-        XCTAssertEqual(try routePatterns[0].vStack().text(0).string(), "Route 52 Dedham Mall - Watertown Yard")
-        XCTAssertEqual(try routePatterns[0].vStack().text(1).string(), "Pattern 52-5-0 Watertown - Dedham Mall via Meadowbrook Rd")
-        XCTAssertEqual(try routePatterns[0].vStack().text(2).string(), "Stop Sawmill Brook Pkwy @ Walsh Rd")
 
-        XCTAssertEqual(try routePatterns[1].vStack().text(0).string(), "Route 52 Dedham Mall - Watertown Yard")
-        XCTAssertEqual(try routePatterns[1].vStack().text(1).string(), "Pattern 52-4-0 Watertown - Charles River Loop via Meadowbrook Rd")
-        XCTAssertEqual(try routePatterns[1].vStack().text(2).string(), "Stop Sawmill Brook Pkwy @ Walsh Rd")
 
-        XCTAssertEqual(try routePatterns[2].vStack().text(0).string(), "Route 52 Dedham Mall - Watertown Yard")
-        XCTAssertEqual(try routePatterns[2].vStack().text(1).string(), "Pattern 52-5-1 Dedham Mall - Watertown via Meadowbrook Rd")
-        XCTAssertEqual(try routePatterns[2].vStack().text(2).string(), "Stop Sawmill Brook Pkwy @ Walsh Rd")
+        XCTAssertNotNil(try routes[0].find(text: "52 Dedham Mall - Watertown Yard"))
+        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd").parent().find(text: "Watertown - Dedham Mall via Meadowbrook Rd"))
+        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd").parent().find(text: "Watertown - Charles River Loop via Meadowbrook Rd"))
 
-        XCTAssertEqual(try routePatterns[3].vStack().text(0).string(), "Route 52 Dedham Mall - Watertown Yard")
-        XCTAssertEqual(try routePatterns[3].vStack().text(1).string(), "Pattern 52-4-1 Charles River Loop - Watertown via Meadowbrook Rd")
-        XCTAssertEqual(try routePatterns[3].vStack().text(2).string(), "Stop Sawmill Brook Pkwy @ Walsh Rd")
+        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side").parent().find(text: "Charles River Loop - Watertown via Meadowbrook Rd"))
+        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side").parent().find(text: "Dedham Mall - Watertown via Meadowbrook Rd"))
     }
 }

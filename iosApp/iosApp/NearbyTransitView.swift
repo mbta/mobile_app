@@ -16,13 +16,51 @@ struct NearbyTransitView: View {
 
     var body: some View {
         if let nearby = viewModel.nearby {
-            List(nearby.routePatternsByStop(), id: \.first!.id) {
-                NearbyRoutePatternView(routePattern: $0.first!, stop: $0.second!)
+            List {
+                ForEach(nearby.byRouteAndStop(), id: \.route.id) { nearbyRoute in
+                    NearbyRouteView(nearbyRoute: nearbyRoute)
+                }
             }
         } else {
             Text("Loading...")
         }
     }
+}
+
+ struct NearbyRouteView: View {
+    let nearbyRoute: NearbyRoute
+
+    var body: some View {
+        Section {
+            ForEach(nearbyRoute.nearbyPatterns, id: \.stop.id) { nearbyPatternsByStop in
+
+                NearbyStopView(nearbyPatternsByStop: nearbyPatternsByStop)
+            }
+        }
+    header: {
+            Text("\(nearbyRoute.route.shortName) \(nearbyRoute.route.longName)")
+        }
+    }
+}
+
+ struct NearbyStopView: View {
+    let nearbyPatternsByStop: NearbyPatternsByStop
+    var body: some View {
+        VStack(alignment:  .leading) {
+            Text(nearbyPatternsByStop.stop.name).fontWeight(.bold)
+
+            VStack(alignment:  .leading) {
+                ForEach(nearbyPatternsByStop.routePatterns, id: \.id) { routePattern in
+                    Text(routePattern.name)
+                }
+            }
+
+        }
+
+
+
+    }
+
 }
 
 struct NearbyRoutePatternView: View {
@@ -31,7 +69,7 @@ struct NearbyRoutePatternView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Route \(routePattern.route!.shortName) \(routePattern.route!.longName)")
+            Text("Route \(routePattern.route.shortName) \(routePattern.route.longName)")
             Text("Pattern \(routePattern.id) \(routePattern.name)")
             Text("Stop \(stop.name)")
         }
