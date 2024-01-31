@@ -68,6 +68,7 @@
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8C304C652B69C0C300263886 /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 		8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManagerTests.swift; sourceTree = "<group>"; };
 		8C7FA8702B5F2EF2009B699D /* NearbyTransitViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitViewTests.swift; sourceTree = "<group>"; };
 		8C7FA8722B5F36D6009B699D /* Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
@@ -141,6 +142,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				8C304C652B69C0C300263886 /* .swift-version */,
 				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
 				7555FF7D242A565900829871 /* iosApp */,
 				6EED5E8D2B3DC69F0052A1B8 /* iosAppTests */,

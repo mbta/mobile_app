@@ -6,11 +6,11 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
+import Foundation
 
-public class LocationDataManager : NSObject, LocationFetcherDelegate, ObservableObject {
+public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableObject {
     var locationFetcher: LocationFetcher
     @Published public var currentLocation: CLLocation? = nil
     @Published public var authorizationStatus = CLAuthorizationStatus.notDetermined
@@ -23,15 +23,15 @@ public class LocationDataManager : NSObject, LocationFetcherDelegate, Observable
 
     public func locationFetcherDidChangeAuthorization(_ fetcher: LocationFetcher) {
         authorizationStatus = fetcher.authorizationStatus
-        // TODO only if requested
-        if (fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways) {
+        // TODO: only if requested
+        if fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
             // ignore updates less than 0.1km
             fetcher.distanceFilter = 100
             fetcher.startUpdatingLocation()
         }
     }
 
-    public func locationFetcher(_ fetcher: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
+    public func locationFetcher(_: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
 
         // workaround for denver not having any nearby stops
@@ -42,13 +42,13 @@ public class LocationDataManager : NSObject, LocationFetcherDelegate, Observable
     }
 }
 
-extension LocationDataManager : CLLocationManagerDelegate {
+extension LocationDataManager: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.locationFetcherDidChangeAuthorization(manager)
+        locationFetcherDidChangeAuthorization(manager)
     }
 
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.locationFetcher(manager, didUpdateLocations: locations)
+        locationFetcher(manager, didUpdateLocations: locations)
     }
 }
 
@@ -69,7 +69,7 @@ public protocol LocationFetcherDelegate: AnyObject {
 extension CLLocationManager: LocationFetcher {
     public var locationFetcherDelegate: LocationFetcherDelegate? {
         // swiftlint:disable:next force_cast
-        get { return delegate as! LocationFetcherDelegate? }
+        get { delegate as! LocationFetcherDelegate? }
         // swiftlint:disable:next force_cast
         set { delegate = newValue as! CLLocationManagerDelegate? }
     }

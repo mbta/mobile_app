@@ -7,8 +7,8 @@
 //
 
 import CoreLocation
-import SwiftUI
 import shared
+import SwiftUI
 
 struct NearbyTransitView: View {
     @ObservedObject private(set) var viewModel: ViewModel
@@ -27,7 +27,7 @@ struct NearbyTransitView: View {
     }
 }
 
- struct NearbyRouteView: View {
+struct NearbyRouteView: View {
     let nearbyRoute: NearbyRoute
 
     var body: some View {
@@ -37,30 +37,25 @@ struct NearbyTransitView: View {
                 NearbyStopView(nearbyPatternsByStop: nearbyPatternsByStop)
             }
         }
-    header: {
+        header: {
             Text("\(nearbyRoute.route.shortName) \(nearbyRoute.route.longName)")
         }
     }
 }
 
- struct NearbyStopView: View {
+struct NearbyStopView: View {
     let nearbyPatternsByStop: NearbyPatternsByStop
     var body: some View {
-        VStack(alignment:  .leading) {
+        VStack(alignment: .leading) {
             Text(nearbyPatternsByStop.stop.name).fontWeight(.bold)
 
-            VStack(alignment:  .leading) {
+            VStack(alignment: .leading) {
                 ForEach(nearbyPatternsByStop.routePatterns, id: \.id) { routePattern in
                     Text(routePattern.name)
                 }
             }
-
         }
-
-
-
     }
-
 }
 
 struct NearbyRoutePatternView: View {
@@ -95,7 +90,7 @@ extension NearbyTransitView {
                 guard let location = self.location else { return }
                 do {
                     nearby = try await backend.getNearby(latitude: location.latitude, longitude: location.longitude)
-                } catch let error {
+                } catch {
                     debugPrint(error)
                 }
             }
@@ -115,7 +110,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 id: "206-_-1",
                 directionId: 1,
                 name: "Houghs Neck - Quincy Center Station",
-                sortOrder: 521601000,
+                sortOrder: 521_601_000,
                 route: Route(
                     id: "216",
                     color: "FFC72C",
@@ -124,7 +119,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     longName: "Houghs Neck - Quincy Center Station via Germantown",
                     shortName: "216",
                     sortOrder: 52160,
-                    textColor: "000000")),
+                    textColor: "000000"
+                )
+            ),
             stop: Stop(id: "3276", latitude: 42.265969, longitude: -70.969853, name: "Sea St opp Peterson Rd", parentStation: nil)
         ).previewDisplayName("NearbyRoutePatternView")
     }
