@@ -1,5 +1,5 @@
 //
-//  BackendProtocol.swift
+//  Backend.swift
 //  iosApp
 //
 //  Created by Horn, Melody on 2024-01-22.
@@ -9,7 +9,7 @@
 import Foundation
 import shared
 
-class BackendDispatcher : ObservableObject {
+class BackendDispatcher: ObservableObject {
     let backend: any BackendProtocol
 
     init(backend: any BackendProtocol) {
@@ -17,7 +17,7 @@ class BackendDispatcher : ObservableObject {
     }
 
     @MainActor func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
-        try await self.backend.getNearby(latitude: latitude, longitude: longitude)
+        try await backend.getNearby(latitude: latitude, longitude: longitude)
     }
 }
 
@@ -25,10 +25,10 @@ protocol BackendProtocol {
     func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse
 }
 
-extension Backend : BackendProtocol {}
+extension Backend: BackendProtocol {}
 
-struct IdleBackend : BackendProtocol {
-    func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
+struct IdleBackend: BackendProtocol {
+    func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
         while true {
             try await Task.sleep(nanoseconds: .max)
         }

@@ -6,14 +6,13 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import XCTest
-import ViewInspector
 import CoreLocation
-import shared
 @testable import iosApp
+import shared
+import ViewInspector
+import XCTest
 
 final class NearbyTransitViewTests: XCTestCase {
-
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -26,11 +25,11 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testLoading() throws {
-        struct FakeBackend : BackendProtocol {
-            let getNearbyExpectation: XCTestExpectation;
-            func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
+        struct FakeBackend: BackendProtocol {
+            let getNearbyExpectation: XCTestExpectation
+            func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
                 getNearbyExpectation.fulfill()
-                struct NotUnderTestError : Error {}
+                struct NotUnderTestError: Error {}
                 throw NotUnderTestError()
             }
         }
@@ -41,15 +40,15 @@ final class NearbyTransitViewTests: XCTestCase {
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             backend: BackendDispatcher(backend: FakeBackend(getNearbyExpectation: getNearbyExpectation))
         ))
-            .environmentObject(LocationDataManager())
+        .environmentObject(LocationDataManager())
 
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).text().string(), "Loading...")
         wait(for: [getNearbyExpectation], timeout: 1)
     }
 
     @MainActor func testLoaded() throws {
-        struct FakeBackend : BackendProtocol {
-            func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
+        struct FakeBackend: BackendProtocol {
+            func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
                 struct AlreadyLoadedError: Error {}
                 throw AlreadyLoadedError()
             }
@@ -74,33 +73,33 @@ final class NearbyTransitViewTests: XCTestCase {
                      latitude: 42.289995,
                      longitude: -71.191092,
                      name: "Sawmill Brook Pkwy @ Walsh Rd",
-                     parentStation: nil)
+                     parentStation: nil),
             ],
             routePatterns: [
                 "52-4-0": RoutePattern(id: "52-4-0",
                                        directionId: 0,
                                        name: "Watertown - Charles River Loop via Meadowbrook Rd",
-                                       sortOrder: 505200020,
+                                       sortOrder: 505_200_020,
                                        route: route52),
                 "52-4-1": RoutePattern(id: "52-4-1",
                                        directionId: 1,
                                        name: "Charles River Loop - Watertown via Meadowbrook Rd",
-                                       sortOrder: 505201010,
+                                       sortOrder: 505_201_010,
                                        route: route52),
                 "52-5-0": RoutePattern(id: "52-5-0",
                                        directionId: 0,
                                        name: "Watertown - Dedham Mall via Meadowbrook Rd",
-                                       sortOrder: 505200000,
+                                       sortOrder: 505_200_000,
                                        route: route52),
                 "52-5-1": RoutePattern(id: "52-5-1",
                                        directionId: 1,
                                        name: "Dedham Mall - Watertown via Meadowbrook Rd",
-                                       sortOrder: 505201000,
+                                       sortOrder: 505_201_000,
                                        route: route52),
             ],
             patternIdsByStop: [
                 "8552": ["52-5-0", "52-4-0"],
-                "84791": ["52-5-1", "52-4-1"]
+                "84791": ["52-5-1", "52-4-1"],
             ]
         )
 
@@ -109,7 +108,7 @@ final class NearbyTransitViewTests: XCTestCase {
             backend: BackendDispatcher(backend: FakeBackend()),
             nearby: nearby
         ))
-            .environmentObject(LocationDataManager())
+        .environmentObject(LocationDataManager())
 
         let routePatterns = try sut.inspect().findAll(NearbyRoutePatternView.self)
 

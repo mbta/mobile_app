@@ -1,5 +1,5 @@
 //
-//  iosAppUITestsLaunchTests.swift
+//  IosAppUITestsLaunchTests.swift
 //  iosAppUITests
 //
 //  Created by Brady, Kayla on 12/28/23.
@@ -9,7 +9,6 @@
 import XCTest
 
 final class IosAppUITestsLaunchTests: XCTestCase {
-
     override func setUp() {
         executionTimeAllowance = 60
     }

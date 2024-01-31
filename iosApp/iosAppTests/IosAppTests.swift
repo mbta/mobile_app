@@ -1,5 +1,5 @@
 //
-//  iosAppTests.swift
+//  IosAppTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 12/28/23.
@@ -9,13 +9,11 @@
 import XCTest
 
 final class IosAppTests: XCTestCase {
-
     override func setUp() {
         executionTimeAllowance = 60
     }
 
-    func testSampleGreeting() throws {
-    }
+    func testSampleGreeting() throws {}
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
@@ -23,5 +21,4 @@ final class IosAppTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
 }
