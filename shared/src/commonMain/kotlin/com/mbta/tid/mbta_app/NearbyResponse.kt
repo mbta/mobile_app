@@ -9,34 +9,39 @@ data class NearbyResponse(
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
     @SerialName("pattern_ids_by_stop") val patternIdsByStop: Map<String, List<String>>,
 ) {
-    fun routePatternsByStop(): List<Pair<RoutePattern, Stop>> = buildList {
+    fun byRouteAndStop(): List<NearbyRoute> {
         val routePatternsUsed = mutableSetOf<String>()
+
+        val patternsByRouteAndStop = mutableMapOf<Route, MutableMap<Stop, List<RoutePattern>>>()
+
         stops.forEach { stop ->
             val newPatternIds =
                 patternIdsByStop
                     .getOrElse(stop.id) { emptyList() }
                     .filter { !routePatternsUsed.contains(it) }
             routePatternsUsed.addAll(newPatternIds)
-            val newPatterns =
+
+            val newPatternsByRoute =
                 newPatternIds
-                    .mapNotNull { patternId -> routePatterns[patternId]?.let { Pair(it, stop) } }
-                    .sortedBy { it.first.sortOrder }
-            this@buildList.addAll(newPatterns)
+                    .mapNotNull { patternId -> routePatterns[patternId] }
+                    .sortedBy { it.sortOrder }
+                    .groupBy { it.route }
+
+            newPatternsByRoute.forEach { (route, routePatterns) ->
+                val routeStops = patternsByRouteAndStop.getOrElse(route) { mutableMapOf() }
+                routeStops[stop] = routePatterns
+                patternsByRouteAndStop[route] = routeStops
+            }
         }
-    }
 
-    fun byRouteAndStop(): List<NearbyRoute> {
-        val pairsByRoute = routePatternsByStop().groupBy { it.first.route }
-
-        return pairsByRoute.map { entry ->
-            val route = entry.key
-            val patterns = entry.value
-
-            val patternsByStop =
-                patterns.groupBy({ it.second }, { it.first }).map { (stop, routePatterns) ->
-                    NearbyPatternsByStop(stop, routePatterns)
-                }
-            NearbyRoute(route, patternsByStop)
+        return patternsByRouteAndStop.map { (route, patternsByStop) ->
+            NearbyRoute(
+                route = route,
+                nearbyPatterns =
+                    patternsByStop.map { (stop, patterns) ->
+                        NearbyPatternsByStop(stop = stop, routePatterns = patterns)
+                    }
+            )
         }
     }
 }

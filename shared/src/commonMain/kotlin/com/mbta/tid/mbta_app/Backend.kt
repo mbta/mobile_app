@@ -47,5 +47,5 @@ class Backend(engine: HttpClientEngine) {
                 }
                 expectSuccess = true
             }
-            .body()
+            .body<NearbyResponse>()
 }
