@@ -20,7 +20,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(LocationDataManager())
             .environmentObject(BackendDispatcher(backend: IdleBackend()))
 
-        let greeting = try sut.inspect().view(ContentView.self).vStack().first!.text().string()
+        let greeting = try sut.inspect().navigationView().vStack()[1].text().string()
         XCTAssertTrue(greeting.hasPrefix("Hello"), "displays greeting")
     }
 }

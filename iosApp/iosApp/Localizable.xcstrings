@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "hello_platform" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -27,6 +37,9 @@
     "Location access state unknown" : {
 
     },
+    "No results found" : {
+
+    },
     "Pattern %@ %@" : {
       "localizations" : {
         "en" : {
@@ -47,7 +60,13 @@
         }
       }
     },
+    "Routes" : {
+
+    },
     "Stop %@" : {
+
+    },
+    "Stops" : {
 
     }
   },

@@ -13,6 +13,8 @@ import ViewInspector
 import XCTest
 
 final class NearbyTransitViewTests: XCTestCase {
+    struct NotUnderTestError : Error {}
+
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -29,7 +31,9 @@ final class NearbyTransitViewTests: XCTestCase {
             let getNearbyExpectation: XCTestExpectation
             func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
                 getNearbyExpectation.fulfill()
-                struct NotUnderTestError: Error {}
+                throw NotUnderTestError()
+            }
+            func getSearchResults(query: String) async throws -> SearchResponse {
                 throw NotUnderTestError()
             }
         }
@@ -51,6 +55,9 @@ final class NearbyTransitViewTests: XCTestCase {
             func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
                 struct AlreadyLoadedError: Error {}
                 throw AlreadyLoadedError()
+            }
+            func getSearchResults(query: String) async throws -> SearchResponse {
+                throw NotUnderTestError()
             }
         }
 
