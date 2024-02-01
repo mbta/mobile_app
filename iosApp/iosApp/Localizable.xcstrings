@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@"
-          }
-        }
-      }
-    },
     "hello_platform" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -35,29 +25,6 @@
 
     },
     "Location access state unknown" : {
-
-    },
-    "Pattern %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Pattern %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "Route %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Route %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "Stop %@" : {
 
     }
   },
