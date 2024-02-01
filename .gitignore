@@ -11,3 +11,5 @@ xcuserdata
 .envrc
 
 fastlane/report.xml
+
+/iosApp/secrets/*

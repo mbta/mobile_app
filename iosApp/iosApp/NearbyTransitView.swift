@@ -16,11 +16,10 @@ struct NearbyTransitView: View {
 
     var body: some View {
         if let nearby = viewModel.nearby {
-            List {
-                ForEach(nearby, id: \.route.id) { nearbyRoute in
-                    NearbyRouteView(nearbyRoute: nearbyRoute)
-                }
+            List(nearby, id: \.route.id) { nearbyRoute in
+                NearbyRouteView(nearbyRoute: nearbyRoute)
             }
+
         } else {
             Text("Loading...")
         }

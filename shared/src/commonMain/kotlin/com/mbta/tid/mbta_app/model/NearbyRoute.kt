@@ -14,6 +14,10 @@ data class NearbyRoute(
     val patternsByStop: List<NearbyPatternsByStop>,
 )
 
+/**
+ * Aggregate nearby stops and the patterns that serve them by route. Preserves the sort order of the
+ * stops received by the server in [NearbyResponse.stops]
+ */
 fun NearbyResponse.byRouteAndStop(): List<NearbyRoute> {
     val routePatternsUsed = mutableSetOf<String>()
 
