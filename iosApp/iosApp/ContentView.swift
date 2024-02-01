@@ -9,11 +9,9 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            VStack{
-                if !searchObserver.debouncedText.isEmpty {
-                    SearchResultView(viewModel: .init(query: searchObserver.debouncedText, backend: backend))
-                }
-                Text(String.init(
+            VStack {
+                SearchView(query: searchObserver.debouncedText, backend: backend)
+                Text(String(
                     format: NSLocalizedString("hello_platform", comment: "Hello world greeting"),
                     arguments: [platform]
                 ))
@@ -31,7 +29,7 @@ struct ContentView: View {
                 }
                 Spacer()
                 if let location = locationDataManager.currentLocation {
-                    NearbyTransitView(viewModel: .init(location: location.coordinate, backend: backend))
+                    NearbyTransitView(location: location.coordinate, backend: backend)
                 }
             }
         }

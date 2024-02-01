@@ -21,7 +21,7 @@ class BackendDispatcher: ObservableObject {
     }
 
     @MainActor func getSearchResults(query: String) async throws -> SearchResponse {
-        try await self.backend.getSearchResults(query: query)
+        try await backend.getSearchResults(query: query)
     }
 }
 
@@ -39,7 +39,7 @@ struct IdleBackend: BackendProtocol {
         }
     }
 
-    func getSearchResults(query: String) async throws -> SearchResponse {
+    func getSearchResults(query _: String) async throws -> SearchResponse {
         while true {
             try await Task.sleep(nanoseconds: .max)
         }

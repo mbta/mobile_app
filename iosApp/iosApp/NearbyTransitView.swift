@@ -10,17 +10,47 @@ import CoreLocation
 import shared
 import SwiftUI
 
+extension CLLocationCoordinate2D: Equatable {}
+
+public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+    lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+}
+
 struct NearbyTransitView: View {
-    @ObservedObject private(set) var viewModel: ViewModel
-    @EnvironmentObject var locationDataManager: LocationDataManager
+    let location: CLLocationCoordinate2D?
+    let backend: BackendDispatcher
+    @State var nearby: NearbyResponse?
+
+    var didAppear: ((Self) -> Void)?
+    var didChange: ((Self) -> Void)?
+
+    func getNearby(location: CLLocationCoordinate2D?) {
+        Task {
+            if location == nil { return }
+            do {
+                nearby = try await backend.getNearby(latitude: location!.latitude, longitude: location!.longitude)
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
 
     var body: some View {
-        if let nearby = viewModel.nearby {
-            List(nearby.routePatternsByStop(), id: \.first!.id) {
-                NearbyRoutePatternView(routePattern: $0.first!, stop: $0.second!)
+        VStack {
+            if nearby != nil {
+                List(nearby!.routePatternsByStop(), id: \.first!.id) {
+                    NearbyRoutePatternView(routePattern: $0.first!, stop: $0.second!)
+                }
+            } else {
+                Text("Loading...")
             }
-        } else {
-            Text("Loading...")
+        }.onAppear {
+            getNearby(location: location)
+            didAppear?(self)
+        }
+        .onChange(of: location) { location in
+            getNearby(location: location)
+            didChange?(self)
         }
     }
 }
@@ -38,39 +68,12 @@ struct NearbyRoutePatternView: View {
     }
 }
 
-extension NearbyTransitView {
-    @MainActor class ViewModel: ObservableObject {
-        let backend: BackendDispatcher
-        @Published var nearby: NearbyResponse? = nil
-        let location: CLLocationCoordinate2D?
-
-        init(location: CLLocationCoordinate2D?, backend: BackendDispatcher, nearby: NearbyResponse? = nil) {
-            self.location = location
-            self.backend = backend
-            self.nearby = nearby
-            getNearby()
-        }
-
-        func getNearby() {
-            Task {
-                nearby = nil
-                guard let location = self.location else { return }
-                do {
-                    nearby = try await backend.getNearby(latitude: location.latitude, longitude: location.longitude)
-                } catch {
-                    debugPrint(error)
-                }
-            }
-        }
-    }
-}
-
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
-        NearbyTransitView(viewModel: .init(
+        NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 42.271405, longitude: -71.080781),
             backend: BackendDispatcher(backend: IdleBackend())
-        )).previewDisplayName("NearbyTransitView")
+        ).previewDisplayName("NearbyTransitView")
 
         NearbyRoutePatternView(
             routePattern: RoutePattern(
@@ -89,7 +92,13 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     textColor: "000000"
                 )
             ),
-            stop: Stop(id: "3276", latitude: 42.265969, longitude: -70.969853, name: "Sea St opp Peterson Rd", parentStation: nil)
+            stop: Stop(
+                id: "3276",
+                latitude: 42.265969,
+                longitude: -70.969853,
+                name: "Sea St opp Peterson Rd",
+                parentStation: nil
+            )
         ).previewDisplayName("NearbyRoutePatternView")
     }
 }

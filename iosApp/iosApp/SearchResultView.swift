@@ -6,54 +6,97 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import CoreLocation
 import Combine
-import SwiftUI
+import CoreLocation
 import shared
+import SwiftUI
 
-class TextFieldObserver : ObservableObject {
+class TextFieldObserver: ObservableObject {
     @Published var debouncedText = ""
     @Published var searchText = ""
-    
+
     private var subscriptions = Set<AnyCancellable>()
-    
+
     init() {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] t in
-                self?.debouncedText = t
-            } )
+            .sink(receiveValue: { [weak self] nextText in
+                self?.debouncedText = nextText
+            })
             .store(in: &subscriptions)
     }
 }
 
-struct SearchResultView: View {
-    @ObservedObject private(set) var viewModel: ViewModel
+struct SearchView: View {
+    let query: String
+    let backend: BackendDispatcher?
+    @State private var results: SearchResponse?
+
+    var didAppear: ((Self) -> Void)?
+    var didChange: ((Self) -> Void)?
+
+    init(query: String = "", backend: BackendDispatcher?) {
+        self.query = query
+        self.backend = backend
+    }
+
+    func loadResults(query: String) {
+        Task {
+            do {
+                results = try await backend?.getSearchResults(query: query)
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
 
     var body: some View {
-        if let response = viewModel.response {
-            if (response.data.stops.isEmpty && response.data.routes.isEmpty) {
+        VStack {
+            if !query.isEmpty {
+                SearchResultView(results: results)
+            }
+        }
+        .onAppear {
+            loadResults(query: query)
+            didAppear?(self)
+        }
+        .onChange(of: query) { query in
+            loadResults(query: query)
+            didChange?(self)
+        }
+    }
+}
+
+struct SearchResultView: View {
+    private var results: SearchResponse?
+    init(results: SearchResponse? = nil) {
+        self.results = results
+    }
+
+    var body: some View {
+        if results == nil {
+            Text("Loading...")
+        } else {
+            if results!.data.stops.isEmpty, results!.data.routes.isEmpty {
                 Text("No results found")
             } else {
                 List {
-                    if (!response.data.stops.isEmpty) {
+                    if !results!.data.stops.isEmpty {
                         Section(header: Text("Stops")) {
-                            ForEach(response.data.stops, id: \.id) {
+                            ForEach(results!.data.stops, id: \.id) {
                                 StopResultView(stop: $0)
                             }
                         }
                     }
-                    if (!response.data.routes.isEmpty) {
+                    if !results!.data.routes.isEmpty {
                         Section(header: Text("Routes")) {
-                            ForEach(response.data.routes, id: \.id) {
+                            ForEach(results!.data.routes, id: \.id) {
                                 RouteResultView(route: $0)
                             }
                         }
                     }
                 }
             }
-        } else {
-            Text("Loading...")
         }
     }
 }
@@ -73,7 +116,7 @@ struct RouteResultView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if (route.routeType == RouteType.bus) {
+            if route.routeType == RouteType.bus {
                 Text("\(route.shortName) \(route.longName)")
             } else {
                 Text(route.longName)
@@ -82,44 +125,16 @@ struct RouteResultView: View {
     }
 }
 
-extension SearchResultView {
-    @MainActor class ViewModel: ObservableObject {
-        let backend: BackendDispatcher
-        @Published var response: SearchResponse? = nil
-        @Published var query: String? = nil
-
-        init(query: String?, backend: BackendDispatcher, response: SearchResponse? = nil) {
-            self.query = query
-            self.backend = backend
-            self.response = response
-            getResults()
-        }
-
-        func getResults() {
-            Task {
-                guard let query = self.query else { return }
-                do {
-                    response = try await backend.getSearchResults(query: query)
-                } catch let error {
-                    debugPrint(error)
-                }
-            }
-        }
-    }
-}
-
 struct SearchResultView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchResultView(viewModel: .init(
-            query: "Hay",
-            backend: BackendDispatcher(backend: IdleBackend()),
-            response: SearchResponse(
+        SearchResultView(
+            results: SearchResponse(
                 data: SearchResults(
                     routes: [
                         RouteResult(
                             id: "428",
                             rank: 5,
-                            longName: "Oaklandvale - Haymarket Station", 
+                            longName: "Oaklandvale - Haymarket Station",
                             shortName: "428",
                             routeType: RouteType.bus
                         )
@@ -141,6 +156,6 @@ struct SearchResultView_Previews: PreviewProvider {
                     ]
                 )
             )
-        )).previewDisplayName("SearchResultView")
+        ).previewDisplayName("SearchResultView")
     }
 }

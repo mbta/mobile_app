@@ -13,17 +13,16 @@ import ViewInspector
 import XCTest
 
 final class NearbyTransitViewTests: XCTestCase {
-    struct NotUnderTestError : Error {}
+    struct NotUnderTestError: Error {}
 
     override func setUp() {
         executionTimeAllowance = 60
     }
 
     @MainActor func testPending() throws {
-        let sut = NearbyTransitView(viewModel: .init(location: nil, backend: .init(backend: IdleBackend()), nearby: nil))
-            .environmentObject(LocationDataManager())
+        let sut = NearbyTransitView(location: nil, backend: .init(backend: IdleBackend()), nearby: nil)
 
-        XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).text().string(), "Loading...")
+        XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
 
     @MainActor func testLoading() throws {
@@ -33,20 +32,24 @@ final class NearbyTransitViewTests: XCTestCase {
                 getNearbyExpectation.fulfill()
                 throw NotUnderTestError()
             }
-            func getSearchResults(query: String) async throws -> SearchResponse {
+
+            func getSearchResults(query _: String) async throws -> SearchResponse {
                 throw NotUnderTestError()
             }
         }
 
         let getNearbyExpectation = expectation(description: "getNearby")
 
-        let sut = NearbyTransitView(viewModel: .init(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             backend: BackendDispatcher(backend: FakeBackend(getNearbyExpectation: getNearbyExpectation))
-        ))
-        .environmentObject(LocationDataManager())
+        )
 
-        XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).text().string(), "Loading...")
+        let hasAppeared = sut.on(\.didAppear) { _ in }
+        ViewHosting.host(view: sut)
+
+        wait(for: [hasAppeared], timeout: 1)
+        XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
         wait(for: [getNearbyExpectation], timeout: 1)
     }
 
@@ -56,7 +59,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 struct AlreadyLoadedError: Error {}
                 throw AlreadyLoadedError()
             }
-            func getSearchResults(query: String) async throws -> SearchResponse {
+
+            func getSearchResults(query _: String) async throws -> SearchResponse {
                 throw NotUnderTestError()
             }
         }
@@ -110,12 +114,10 @@ final class NearbyTransitViewTests: XCTestCase {
             ]
         )
 
-        let sut = NearbyTransitView(viewModel: .init(
-            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
-            backend: BackendDispatcher(backend: FakeBackend()),
-            nearby: nearby
-        ))
-        .environmentObject(LocationDataManager())
+        let sut = NearbyTransitView(location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                                    backend: BackendDispatcher(backend: FakeBackend()),
+                                    nearby: nearby)
+            .environmentObject(LocationDataManager())
 
         let routePatterns = try sut.inspect().findAll(NearbyRoutePatternView.self)
 

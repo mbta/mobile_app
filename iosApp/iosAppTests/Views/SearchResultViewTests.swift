@@ -1,72 +1,73 @@
 //
-//  SearchResultViewTest.swift
+//  SearchResultViewTests.swift
 //  iosAppTests
 //
 //  Created by Simon, Emma on 1/30/24.
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import XCTest
-import ViewInspector
-import SwiftUI
-import shared
 @testable import iosApp
+import shared
+import SwiftUI
+import ViewInspector
+import XCTest
+
+private extension UIHostingController {
+    func forceRender() {
+        _render(seconds: 5)
+    }
+}
 
 final class SearchResultViewTests: XCTestCase {
-    struct NotUnderTestError : Error {}
+    struct NotUnderTestError: Error {}
 
     override func setUp() {
         executionTimeAllowance = 60
     }
 
     @MainActor func testPending() throws {
-        let sut = SearchResultView(viewModel: .init(query: nil, backend: .init(backend: IdleBackend()), response: nil))
+        let sut = SearchResultView(results: nil)
 
         XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "Loading...")
     }
-    
-    @MainActor func testNoResults() throws {
-        struct FakeBackend : BackendProtocol {
+
+    @MainActor func testResultLoad() throws {
+        struct FakeBackend: BackendProtocol {
             let getSearchResultsExpectation: XCTestExpectation
-            func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
+            func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
                 throw NotUnderTestError()
             }
-            func getSearchResults(query: String) async throws -> SearchResponse {
+
+            func getSearchResults(query _: String) async throws -> SearchResponse {
                 getSearchResultsExpectation.fulfill()
                 throw NotUnderTestError()
             }
         }
-        
+
         let getSearchResultsExpectation = expectation(description: "getSearchResults")
 
-        let sut = SearchResultView(viewModel: .init(
-            query: "nothing",
-            backend: BackendDispatcher(backend: FakeBackend(getSearchResultsExpectation: getSearchResultsExpectation)),
-            response: SearchResponse(data: SearchResults(routes: [], stops: []))
-        ))
-        
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "No results found")
+        var sut = SearchView(
+            query: "hay",
+            backend: BackendDispatcher(backend: FakeBackend(getSearchResultsExpectation: getSearchResultsExpectation))
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { _ in }
+        ViewHosting.host(view: sut)
+
+        wait(for: [hasAppeared], timeout: 1)
         wait(for: [getSearchResultsExpectation], timeout: 1)
     }
-    
-    @MainActor func testWithResults() throws {
-        struct FakeBackend : BackendProtocol {
-            let getSearchResultsExpectation: XCTestExpectation
-            func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
-                throw NotUnderTestError()
-            }
-            func getSearchResults(query: String) async throws -> SearchResponse {
-                getSearchResultsExpectation.fulfill()
-                throw NotUnderTestError()
-            }
-        }
 
-        let getSearchResultsExpectation = expectation(description: "getSearchResults")
+    @MainActor func testNoResults() throws {
+        let sut = SearchResultView(
+            results: SearchResponse(data: SearchResults(routes: [], stops: []))
+        )
+        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "No results found")
+    }
 
-        let sut = SearchResultView(viewModel: .init(
-            query: "hay",
-            backend: BackendDispatcher(backend: FakeBackend(getSearchResultsExpectation: getSearchResultsExpectation)),
-            response: SearchResponse(
+    @MainActor func testFullResults() throws {
+        let sut = SearchResultView(
+            results: SearchResponse(
                 data: SearchResults(
                     routes: [
                         RouteResult(
@@ -75,7 +76,7 @@ final class SearchResultViewTests: XCTestCase {
                             longName: "Oaklandvale - Haymarket Station",
                             shortName: "428",
                             routeType: RouteType.bus
-                        )
+                        ),
                     ],
                     stops: [
                         StopResult(
@@ -88,35 +89,23 @@ final class SearchResultViewTests: XCTestCase {
                                 StopResultRoute(
                                     type: RouteType.subway,
                                     icon: "orange_line"
-                                )
+                                ),
                             ]
-                        )
+                        ),
                     ]
                 )
             )
-        ))
+        )
 
         XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list()[0].section().header().text().string(), "Stops")
         XCTAssertEqual(try sut.inspect().findAll(StopResultView.self)[0].vStack()[0].text().string(), "Haymarket")
         XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list()[1].section().header().text().string(), "Routes")
         XCTAssertEqual(try sut.inspect().findAll(RouteResultView.self)[0].vStack()[0].text().string(), "428 Oaklandvale - Haymarket Station")
-        wait(for: [getSearchResultsExpectation], timeout: 1)
     }
 
     @MainActor func testOnlyRoutes() throws {
-        struct FakeBackend : BackendProtocol {
-            func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
-                throw NotUnderTestError()
-            }
-            func getSearchResults(query: String) async throws -> SearchResponse {
-                throw NotUnderTestError()
-            }
-        }
-
-        let sut = SearchResultView(viewModel: .init(
-            query: "hay",
-            backend: BackendDispatcher(backend: FakeBackend()),
-            response: SearchResponse(
+        let sut = SearchResultView(
+            results: SearchResponse(
                 data: SearchResults(
                     routes: [
                         RouteResult(
@@ -125,32 +114,21 @@ final class SearchResultViewTests: XCTestCase {
                             longName: "Oaklandvale - Haymarket Station",
                             shortName: "428",
                             routeType: RouteType.bus
-                        )
+                        ),
                     ],
                     stops: []
                 )
             )
-        ))
-        
+        )
+
         XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list().section(1).header().text().string(), "Routes")
         XCTAssertEqual(try sut.inspect().findAll(RouteResultView.self)[0].vStack()[0].text().string(), "428 Oaklandvale - Haymarket Station")
         XCTAssertThrowsError(try sut.inspect().view(SearchResultView.self).list().section(0))
     }
 
     @MainActor func testOnlyStops() throws {
-        struct FakeBackend : BackendProtocol {
-            func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
-                throw NotUnderTestError()
-            }
-            func getSearchResults(query: String) async throws -> SearchResponse {
-                throw NotUnderTestError()
-            }
-        }
-
-        let sut = SearchResultView(viewModel: .init(
-            query: "hay",
-            backend: BackendDispatcher(backend: FakeBackend()),
-            response: SearchResponse(
+        let sut = SearchResultView(
+            results: SearchResponse(
                 data: SearchResults(
                     routes: [],
                     stops: [
@@ -164,13 +142,13 @@ final class SearchResultViewTests: XCTestCase {
                                 StopResultRoute(
                                     type: RouteType.subway,
                                     icon: "orange_line"
-                                )
+                                ),
                             ]
-                        )
+                        ),
                     ]
                 )
             )
-        ))
+        )
 
         XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list().section(0).header().text().string(), "Stops")
         XCTAssertEqual(try sut.inspect().findAll(StopResultView.self)[0].vStack()[0].text().string(), "Haymarket")
