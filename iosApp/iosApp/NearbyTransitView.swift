@@ -17,7 +17,7 @@ struct NearbyTransitView: View {
     var body: some View {
         if let nearby = viewModel.nearby {
             List {
-                ForEach(nearby.byRouteAndStop(), id: \.route.id) { nearbyRoute in
+                ForEach(nearby, id: \.route.id) { nearbyRoute in
                     NearbyRouteView(nearbyRoute: nearbyRoute)
                 }
             }
@@ -74,10 +74,10 @@ struct NearbyRoutePatternView: View {
 extension NearbyTransitView {
     @MainActor class ViewModel: ObservableObject {
         let backend: BackendDispatcher
-        @Published var nearby: NearbyResponse? = nil
+        @Published var nearby: [NearbyRoute]? = nil
         let location: CLLocationCoordinate2D?
 
-        init(location: CLLocationCoordinate2D?, backend: BackendDispatcher, nearby: NearbyResponse? = nil) {
+        init(location: CLLocationCoordinate2D?, backend: BackendDispatcher, nearby: [NearbyRoute]? = nil) {
             self.location = location
             self.backend = backend
             self.nearby = nearby
@@ -89,7 +89,7 @@ extension NearbyTransitView {
                 nearby = nil
                 guard let location = self.location else { return }
                 do {
-                    nearby = try await backend.getNearby(latitude: location.latitude, longitude: location.longitude)
+                    nearby = try await backend.getNearby(latitude: location.latitude, longitude: location.longitude).byRouteAndStop()
                 } catch {
                     debugPrint(error)
                 }
