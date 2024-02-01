@@ -1,12 +1,13 @@
-package com.mbta.tid.mbta_app
+package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NearbyResponseTest {
 
     @Test
-    fun `testByRouteAndStop when a route pattern serves multiple stops it is only included for the first one`() {
+    fun `byRouteAndStop when a route pattern serves multiple stops it is only included for the first one`() {
 
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
@@ -42,7 +43,7 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `testByRouteAndStop when there are no new route patterns for a stop then it is omitted`() {
+    fun `byRouteAndStop when there are no new route patterns for a stop then it is omitted`() {
 
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
@@ -71,7 +72,7 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `testByRouteAndStop when there is a stop that is served by multiple routes`() {
+    fun `byRouteAndStop when there is a stop that is served by multiple routes`() {
 
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)

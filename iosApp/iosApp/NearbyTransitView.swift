@@ -32,9 +32,9 @@ struct NearbyRouteView: View {
 
     var body: some View {
         Section {
-            ForEach(nearbyRoute.nearbyPatterns, id: \.stop.id) { nearbyPatternsByStop in
+            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsByStopByStop in
 
-                NearbyStopView(nearbyPatternsByStop: nearbyPatternsByStop)
+                NearbyStopView(patternsByStopByStop: patternsByStopByStop)
             }
         }
         header: {
@@ -44,13 +44,13 @@ struct NearbyRouteView: View {
 }
 
 struct NearbyStopView: View {
-    let nearbyPatternsByStop: NearbyPatternsByStop
+    let patternsByStopByStop: NearbyPatternsByStop
     var body: some View {
         VStack(alignment: .leading) {
-            Text(nearbyPatternsByStop.stop.name).fontWeight(.bold)
+            Text(patternsByStopByStop.stop.name).fontWeight(.bold)
 
             VStack(alignment: .leading) {
-                ForEach(nearbyPatternsByStop.routePatterns, id: \.id) { routePattern in
+                ForEach(patternsByStopByStop.routePatterns, id: \.id) { routePattern in
                     Text(routePattern.name)
                 }
             }
