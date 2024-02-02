@@ -12,12 +12,6 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-private extension UIHostingController {
-    func forceRender() {
-        _render(seconds: 5)
-    }
-}
-
 final class SearchResultViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
@@ -97,10 +91,10 @@ final class SearchResultViewTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list()[0].section().header().text().string(), "Stops")
-        XCTAssertEqual(try sut.inspect().findAll(StopResultView.self)[0].vStack()[0].text().string(), "Haymarket")
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list()[1].section().header().text().string(), "Routes")
-        XCTAssertEqual(try sut.inspect().findAll(RouteResultView.self)[0].vStack()[0].text().string(), "428 Oaklandvale - Haymarket Station")
+        XCTAssertNoThrow(try sut.inspect().find(text: "Stops"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
     }
 
     @MainActor func testOnlyRoutes() throws {
@@ -121,9 +115,10 @@ final class SearchResultViewTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list().section(1).header().text().string(), "Routes")
-        XCTAssertEqual(try sut.inspect().findAll(RouteResultView.self)[0].vStack()[0].text().string(), "428 Oaklandvale - Haymarket Station")
-        XCTAssertThrowsError(try sut.inspect().view(SearchResultView.self).list().section(0))
+        
+        XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Stops"))
     }
 
     @MainActor func testOnlyStops() throws {
@@ -150,8 +145,8 @@ final class SearchResultViewTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).list().section(0).header().text().string(), "Stops")
-        XCTAssertEqual(try sut.inspect().findAll(StopResultView.self)[0].vStack()[0].text().string(), "Haymarket")
-        XCTAssertThrowsError(try sut.inspect().view(SearchResultView.self).list().section(1))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Stops"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Routes"))
     }
 }

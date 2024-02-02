@@ -117,7 +117,7 @@ struct RouteResultView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if route.routeType == RouteType.bus {
-                Text("\(route.shortName) \(route.longName)")
+                Text(verbatim: "\(route.shortName) \(route.longName)")
             } else {
                 Text(route.longName)
             }
