@@ -9,22 +9,6 @@
 import Foundation
 import shared
 
-class BackendDispatcher: ObservableObject {
-    let backend: any BackendProtocol
-
-    init(backend: any BackendProtocol) {
-        self.backend = backend
-    }
-
-    @MainActor func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse {
-        try await backend.getNearby(latitude: latitude, longitude: longitude)
-    }
-
-    @MainActor func getSearchResults(query: String) async throws -> SearchResponse {
-        try await backend.getSearchResults(query: query)
-    }
-}
-
 protocol BackendProtocol {
     func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse
     func getSearchResults(query: String) async throws -> SearchResponse

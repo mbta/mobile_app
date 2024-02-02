@@ -29,21 +29,15 @@ class TextFieldObserver: ObservableObject {
 
 struct SearchView: View {
     let query: String
-    let backend: BackendDispatcher?
-    @State private var results: SearchResponse?
+    @ObservedObject var fetcher: SearchResultFetcher
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
 
-    init(query: String = "", backend: BackendDispatcher?) {
-        self.query = query
-        self.backend = backend
-    }
-
     func loadResults(query: String) {
         Task {
             do {
-                results = try await backend?.getSearchResults(query: query)
+                try await fetcher.getSearchResults(query: query)
             } catch {
                 debugPrint(error)
             }
@@ -53,7 +47,7 @@ struct SearchView: View {
     var body: some View {
         VStack {
             if !query.isEmpty {
-                SearchResultView(results: results)
+                SearchResultView(results: fetcher.results)
             }
         }
         .onAppear {
@@ -68,8 +62,8 @@ struct SearchView: View {
 }
 
 struct SearchResultView: View {
-    private var results: SearchResponse?
-    init(results: SearchResponse? = nil) {
+    private var results: SearchResults?
+    init(results: SearchResults? = nil) {
         self.results = results
     }
 
@@ -77,20 +71,20 @@ struct SearchResultView: View {
         if results == nil {
             Text("Loading...")
         } else {
-            if results!.data.stops.isEmpty, results!.data.routes.isEmpty {
+            if results!.stops.isEmpty, results!.routes.isEmpty {
                 Text("No results found")
             } else {
                 List {
-                    if !results!.data.stops.isEmpty {
+                    if !results!.stops.isEmpty {
                         Section(header: Text("Stops")) {
-                            ForEach(results!.data.stops, id: \.id) {
+                            ForEach(results!.stops, id: \.id) {
                                 StopResultView(stop: $0)
                             }
                         }
                     }
-                    if !results!.data.routes.isEmpty {
+                    if !results!.routes.isEmpty {
                         Section(header: Text("Routes")) {
-                            ForEach(results!.data.routes, id: \.id) {
+                            ForEach(results!.routes, id: \.id) {
                                 RouteResultView(route: $0)
                             }
                         }
@@ -128,33 +122,31 @@ struct RouteResultView: View {
 struct SearchResultView_Previews: PreviewProvider {
     static var previews: some View {
         SearchResultView(
-            results: SearchResponse(
-                data: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: RouteType.subway,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                )
+            results: SearchResults(
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
+                stops: [
+                    StopResult(
+                        id: "place-haecl",
+                        rank: 2,
+                        name: "Haymarket",
+                        zone: nil,
+                        isStation: true,
+                        routes: [
+                            StopResultRoute(
+                                type: RouteType.subway,
+                                icon: "orange_line"
+                            ),
+                        ]
+                    ),
+                ]
             )
         ).previewDisplayName("SearchResultView")
     }

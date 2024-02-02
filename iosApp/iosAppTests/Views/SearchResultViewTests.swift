@@ -26,13 +26,15 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testResultLoad() throws {
-        struct FakeBackend: BackendProtocol {
+        class FakeFetcher: SearchResultFetcher {
             let getSearchResultsExpectation: XCTestExpectation
-            func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
-                throw NotUnderTestError()
+
+            init(getSearchResultsExpectation: XCTestExpectation) {
+                self.getSearchResultsExpectation = getSearchResultsExpectation
+                super.init(backend: IdleBackend())
             }
 
-            func getSearchResults(query _: String) async throws -> SearchResponse {
+            override func getSearchResults(query _: String) async throws {
                 getSearchResultsExpectation.fulfill()
                 throw NotUnderTestError()
             }
@@ -42,8 +44,11 @@ final class SearchResultViewTests: XCTestCase {
 
         var sut = SearchView(
             query: "hay",
-            backend: BackendDispatcher(backend: FakeBackend(getSearchResultsExpectation: getSearchResultsExpectation))
+            fetcher: FakeFetcher(getSearchResultsExpectation: getSearchResultsExpectation)
         )
+        sut.environmentObject(FakeFetcher(
+            getSearchResultsExpectation: getSearchResultsExpectation
+        ))
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)
@@ -54,40 +59,38 @@ final class SearchResultViewTests: XCTestCase {
 
     @MainActor func testNoResults() throws {
         let sut = SearchResultView(
-            results: SearchResponse(data: SearchResults(routes: [], stops: []))
+            results: SearchResults(routes: [], stops: [])
         )
         XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "No results found")
     }
 
     @MainActor func testFullResults() throws {
         let sut = SearchResultView(
-            results: SearchResponse(
-                data: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: RouteType.subway,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                )
+            results: SearchResults(
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
+                stops: [
+                    StopResult(
+                        id: "place-haecl",
+                        rank: 2,
+                        name: "Haymarket",
+                        zone: nil,
+                        isStation: true,
+                        routes: [
+                            StopResultRoute(
+                                type: RouteType.subway,
+                                icon: "orange_line"
+                            ),
+                        ]
+                    ),
+                ]
             )
         )
 
@@ -99,19 +102,17 @@ final class SearchResultViewTests: XCTestCase {
 
     @MainActor func testOnlyRoutes() throws {
         let sut = SearchResultView(
-            results: SearchResponse(
-                data: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: []
-                )
+            results: SearchResults(
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
+                stops: []
             )
         )
 
@@ -122,25 +123,23 @@ final class SearchResultViewTests: XCTestCase {
 
     @MainActor func testOnlyStops() throws {
         let sut = SearchResultView(
-            results: SearchResponse(
-                data: SearchResults(
-                    routes: [],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: RouteType.subway,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                )
+            results: SearchResults(
+                routes: [],
+                stops: [
+                    StopResult(
+                        id: "place-haecl",
+                        rank: 2,
+                        name: "Haymarket",
+                        zone: nil,
+                        isStation: true,
+                        routes: [
+                            StopResultRoute(
+                                type: RouteType.subway,
+                                icon: "orange_line"
+                            ),
+                        ]
+                    ),
+                ]
             )
         )
 

@@ -4,13 +4,15 @@ import SwiftUI
 @main
 struct IOSApp: App {
     @StateObject var locationDataManager = LocationDataManager()
-    @StateObject var backendDispatcher = BackendDispatcher(backend: Backend.companion.platformDefault)
+    @StateObject var nearbyFetcher = NearbyFetcher(backend: Backend.companion.platformDefault)
+    @StateObject var searchResultFetcher = SearchResultFetcher(backend: Backend.companion.platformDefault)
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(locationDataManager)
-                .environmentObject(backendDispatcher)
+                .environmentObject(nearbyFetcher)
+                .environmentObject(searchResultFetcher)
         }
     }
 }

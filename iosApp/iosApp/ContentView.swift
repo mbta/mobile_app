@@ -5,12 +5,16 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var backend: BackendDispatcher
+    @EnvironmentObject var nearbyFetcher: NearbyFetcher
+    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
 
     var body: some View {
         NavigationView {
             VStack {
-                SearchView(query: searchObserver.debouncedText, backend: backend)
+                SearchView(
+                    query: searchObserver.debouncedText,
+                    fetcher: searchResultFetcher
+                )
                 Text(String(
                     format: NSLocalizedString("hello_platform", comment: "Hello world greeting"),
                     arguments: [platform]
@@ -29,13 +33,16 @@ struct ContentView: View {
                 }
                 Spacer()
                 if let location = locationDataManager.currentLocation {
-                    NearbyTransitView(location: location.coordinate, backend: backend)
+                    NearbyTransitView(
+                        location: location.coordinate,
+                        fetcher: nearbyFetcher
+                    )
                 }
             }
         }
         .searchable(
             text: $searchObserver.searchText,
-            placement: .navigationBarDrawer,
+            placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Find nearby transit"
         )
     }
@@ -45,6 +52,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(LocationDataManager())
-            .environmentObject(BackendDispatcher(backend: IdleBackend()))
+            .environmentObject(NearbyFetcher(backend: IdleBackend()))
+            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
     }
 }
