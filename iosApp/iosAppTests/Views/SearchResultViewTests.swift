@@ -115,7 +115,6 @@ final class SearchResultViewTests: XCTestCase {
             )
         )
 
-        
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
         XCTAssertThrowsError(try sut.inspect().find(text: "Stops"))

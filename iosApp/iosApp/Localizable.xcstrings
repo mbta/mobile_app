@@ -30,30 +30,7 @@
     "No results found" : {
 
     },
-    "Pattern %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Pattern %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "Route %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Route %1$@ %2$@"
-          }
-        }
-      }
-    },
     "Routes" : {
-
-    },
-    "Stop %@" : {
 
     },
     "Stops" : {

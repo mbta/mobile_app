@@ -137,7 +137,7 @@ struct SearchResultView_Previews: PreviewProvider {
                             longName: "Oaklandvale - Haymarket Station",
                             shortName: "428",
                             routeType: RouteType.bus
-                        )
+                        ),
                     ],
                     stops: [
                         StopResult(
@@ -150,9 +150,9 @@ struct SearchResultView_Previews: PreviewProvider {
                                 StopResultRoute(
                                     type: RouteType.subway,
                                     icon: "orange_line"
-                                )
+                                ),
                             ]
-                        )
+                        ),
                     ]
                 )
             )

@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app
+package com.mbta.tid.mbta_app.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,5 +9,5 @@ data class RoutePattern(
     @SerialName("direction_id") val directionId: Int,
     val name: String,
     @SerialName("sort_order") val sortOrder: Int,
-    val route: Route?
+    val route: Route
 )

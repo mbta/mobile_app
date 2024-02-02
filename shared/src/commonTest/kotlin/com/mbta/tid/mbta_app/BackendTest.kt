@@ -1,5 +1,9 @@
 package com.mbta.tid.mbta_app
 
+import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
