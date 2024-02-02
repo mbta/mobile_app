@@ -10,18 +10,47 @@ import CoreLocation
 import shared
 import SwiftUI
 
+extension CLLocationCoordinate2D: Equatable {}
+
+public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+    lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+}
+
 struct NearbyTransitView: View {
-    @ObservedObject private(set) var viewModel: ViewModel
-    @EnvironmentObject var locationDataManager: LocationDataManager
+    let location: CLLocationCoordinate2D?
+    @ObservedObject var fetcher: NearbyFetcher
+
+    var didAppear: ((Self) -> Void)?
+    var didChange: ((Self) -> Void)?
+
+    func getNearby(location: CLLocationCoordinate2D?) {
+        Task {
+            if location == nil { return }
+            do {
+                try await fetcher
+                    .getNearby(latitude: location!.latitude, longitude: location!.longitude)
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
 
     var body: some View {
-        if let nearby = viewModel.nearby {
-            List(nearby, id: \.route.id) { nearbyRoute in
-                NearbyRouteView(nearbyRoute: nearbyRoute)
+        VStack {
+            if let nearby = fetcher.nearbyByRouteAndStop {
+                List(nearby, id: \.route.id) { nearbyRoute in
+                    NearbyRouteView(nearbyRoute: nearbyRoute)
+                }
+            } else {
+                Text("Loading...")
             }
-
-        } else {
-            Text("Loading...")
+        }.onAppear {
+            getNearby(location: location)
+            didAppear?(self)
+        }
+        .onChange(of: location) { location in
+            getNearby(location: location)
+            didChange?(self)
         }
     }
 }
@@ -32,7 +61,6 @@ struct NearbyRouteView: View {
     var body: some View {
         Section {
             ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsByStopByStop in
-
                 NearbyStopView(patternsByStopByStop: patternsByStopByStop)
             }
         }
@@ -57,69 +85,50 @@ struct NearbyStopView: View {
     }
 }
 
-extension NearbyTransitView {
-    @MainActor class ViewModel: ObservableObject {
-        let backend: BackendDispatcher
-        @Published var nearby: [NearbyRoute]?
-        let location: CLLocationCoordinate2D?
-
-        init(location: CLLocationCoordinate2D?, backend: BackendDispatcher, nearby: [NearbyRoute]? = nil) {
-            self.location = location
-            self.backend = backend
-            self.nearby = nearby
-            getNearby()
-        }
-
-        func getNearby() {
-            Task {
-                nearby = nil
-                guard let location = self.location else { return }
-                do {
-                    nearby = try await backend.getNearby(latitude: location.latitude, longitude: location.longitude)
-                        .byRouteAndStop()
-                } catch {
-                    debugPrint(error)
-                }
-            }
-        }
-    }
-}
-
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
-        NearbyTransitView(viewModel: .init(
-            location: CLLocationCoordinate2D(latitude: 42.271405, longitude: -71.080781),
-            backend: BackendDispatcher(backend: IdleBackend())
-        )).previewDisplayName("NearbyTransitView")
-
         NearbyRouteView(
-            nearbyRoute: NearbyRoute(route: Route(
-                id: "216",
-                color: "FFC72C",
-                directionNames: ["Outbound", "Inbound"],
-                directionDestinations: ["Houghs Neck", "Quincy Center Station"],
-                longName: "Houghs Neck - Quincy Center Station via Germantown",
-                shortName: "216",
-                sortOrder: 52160,
-                textColor: "000000"
-            ), patternsByStop: [NearbyPatternsByStop(stop: Stop(id: "3276", latitude: 42.265969, longitude: -70.969853,
-                                                                name: "Sea St opp Peterson Rd", parentStation: nil),
-                                                     routePatterns: [RoutePattern(
-                                                         id: "206-_-1",
-                                                         directionId: 1,
-                                                         name: "Houghs Neck - Quincy Center Station",
-                                                         sortOrder: 521_601_000,
-                                                         route: Route(
-                                                             id: "216",
-                                                             color: "FFC72C",
-                                                             directionNames: ["Outbound", "Inbound"],
-                                                             directionDestinations: ["Houghs Neck", "Quincy Center Station"],
-                                                             longName: "Houghs Neck - Quincy Center Station via Germantown",
-                                                             shortName: "216",
-                                                             sortOrder: 52160,
-                                                             textColor: "000000"
-                                                         )
-                                                     )])])
+            nearbyRoute: NearbyRoute(
+                route: Route(
+                    id: "216",
+                    color: "FFC72C",
+                    directionNames: ["Outbound", "Inbound"],
+                    directionDestinations: ["Houghs Neck", "Quincy Center Station"],
+                    longName: "Houghs Neck - Quincy Center Station via Germantown",
+                    shortName: "216",
+                    sortOrder: 52160,
+                    textColor: "000000"
+                ),
+                patternsByStop: [
+                    NearbyPatternsByStop(
+                        stop: Stop(
+                            id: "3276",
+                            latitude: 42.265969,
+                            longitude: -70.969853,
+                            name: "Sea St opp Peterson Rd",
+                            parentStation: nil
+                        ),
+                        routePatterns: [
+                            RoutePattern(
+                                id: "206-_-1",
+                                directionId: 1,
+                                name: "Houghs Neck - Quincy Center Station",
+                                sortOrder: 521_601_000,
+                                route: Route(
+                                    id: "216",
+                                    color: "FFC72C",
+                                    directionNames: ["Outbound", "Inbound"],
+                                    directionDestinations: ["Houghs Neck", "Quincy Center Station"],
+                                    longName: "Houghs Neck - Quincy Center Station via Germantown",
+                                    shortName: "216",
+                                    sortOrder: 52160,
+                                    textColor: "000000"
+                                )
+                            ),
+                        ]
+                    ),
+                ]
+            )
         ).previewDisplayName("NearbyRouteView")
     }
 }

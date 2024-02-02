@@ -232,4 +232,194 @@ class BackendTest {
             )
         }
     }
+
+    @Test
+    fun testGetSearchResults() {
+        runBlocking {
+            val mockEngine = MockEngine { request ->
+                assertEquals("query=hay", request.url.encodedQuery)
+                respond(
+                    content =
+                        ByteReadChannel(
+                            """
+                        {
+                          "data": {
+                            "routes": [
+                              {
+                                "id": "428",
+                                "name": "428",
+                                "type": "route",
+                                "long_name": "Oaklandvale - Haymarket Station",
+                                "route_type": 3,
+                                "rank": 5
+                              },
+                              {
+                                "id": "111",
+                                "name": "111",
+                                "type": "route",
+                                "long_name": "Woodlawn - Haymarket Station",
+                                "route_type": 3,
+                                "rank": 5
+                              },
+                              {
+                                "id": "426",
+                                "name": "426",
+                                "type": "route",
+                                "long_name": "Central Square, Lynn - Haymarket or Wonderland Station",
+                                "route_type": 3,
+                                "rank": 5
+                              },
+                              {
+                                "id": "450",
+                                "name": "450",
+                                "type": "route",
+                                "long_name": "Salem Depot - Wonderland or Haymarket Station",
+                                "route_type": 3,
+                                "rank": 5
+                              },
+                              {
+                                "id": "Green-D",
+                                "name": "Green Line D",
+                                "type": "route",
+                                "long_name": "Green Line D",
+                                "route_type": 0,
+                                "rank": 2
+                              }
+                            ],
+                            "stops": [
+                              {
+                                "id": "place-haecl",
+                                "name": "Haymarket",
+                                "type": "stop",
+                                "routes": [
+                                  {
+                                    "type": 1,
+                                    "icon": "orange_line"
+                                  },
+                                  {
+                                    "type": 0,
+                                    "icon": "green_line_d"
+                                  },
+                                  {
+                                    "type": 0,
+                                    "icon": "green_line_e"
+                                  }
+                                ],
+                                "rank": 2,
+                                "zone": null,
+                                "station?": true
+                              },
+                              {
+                                "id": "78741",
+                                "name": "Worthen Rd @ Hayden Rec Ctr",
+                                "type": "stop",
+                                "routes": [
+                                  {
+                                    "type": 3,
+                                    "icon": "bus"
+                                  }
+                                ],
+                                "rank": 5,
+                                "zone": null,
+                                "station?": false
+                              }
+                            ]
+                          }
+                        }
+                    """
+                                .trimIndent()
+                        ),
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+
+            val backend = Backend(mockEngine)
+            val response = backend.getSearchResults("hay")
+
+            assertEquals(
+                SearchResponse(
+                    data =
+                        SearchResults(
+                            routes =
+                                listOf(
+                                    RouteResult(
+                                        id = "428",
+                                        shortName = "428",
+                                        longName = "Oaklandvale - Haymarket Station",
+                                        routeType = RouteType.BUS,
+                                        rank = 5
+                                    ),
+                                    RouteResult(
+                                        id = "111",
+                                        shortName = "111",
+                                        longName = "Woodlawn - Haymarket Station",
+                                        routeType = RouteType.BUS,
+                                        rank = 5
+                                    ),
+                                    RouteResult(
+                                        id = "426",
+                                        shortName = "426",
+                                        longName =
+                                            "Central Square, Lynn - Haymarket or Wonderland Station",
+                                        routeType = RouteType.BUS,
+                                        rank = 5
+                                    ),
+                                    RouteResult(
+                                        id = "450",
+                                        shortName = "450",
+                                        longName = "Salem Depot - Wonderland or Haymarket Station",
+                                        routeType = RouteType.BUS,
+                                        rank = 5
+                                    ),
+                                    RouteResult(
+                                        id = "Green-D",
+                                        shortName = "Green Line D",
+                                        longName = "Green Line D",
+                                        routeType = RouteType.TRAM,
+                                        rank = 2
+                                    )
+                                ),
+                            stops =
+                                listOf(
+                                    StopResult(
+                                        id = "place-haecl",
+                                        name = "Haymarket",
+                                        routes =
+                                            listOf(
+                                                StopResultRoute(
+                                                    type = RouteType.SUBWAY,
+                                                    icon = "orange_line"
+                                                ),
+                                                StopResultRoute(
+                                                    type = RouteType.TRAM,
+                                                    icon = "green_line_d"
+                                                ),
+                                                StopResultRoute(
+                                                    type = RouteType.TRAM,
+                                                    icon = "green_line_e"
+                                                ),
+                                            ),
+                                        rank = 2,
+                                        zone = null,
+                                        isStation = true
+                                    ),
+                                    StopResult(
+                                        id = "78741",
+                                        name = "Worthen Rd @ Hayden Rec Ctr",
+                                        routes =
+                                            listOf(
+                                                StopResultRoute(type = RouteType.BUS, icon = "bus")
+                                            ),
+                                        rank = 5,
+                                        zone = null,
+                                        isStation = false
+                                    )
+                                )
+                        )
+                ),
+                response
+            )
+        }
+    }
 }
