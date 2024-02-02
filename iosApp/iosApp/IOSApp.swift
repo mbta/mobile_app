@@ -4,8 +4,14 @@ import SwiftUI
 @main
 struct IOSApp: App {
     @StateObject var locationDataManager = LocationDataManager()
-    @StateObject var nearbyFetcher = NearbyFetcher(backend: Backend.companion.platformDefault)
-    @StateObject var searchResultFetcher = SearchResultFetcher(backend: Backend.companion.platformDefault)
+    @StateObject var nearbyFetcher: NearbyFetcher
+    @StateObject var searchResultFetcher: SearchResultFetcher
+
+    init() {
+        let backend = Backend()
+        _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
+        _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
+    }
 
     var body: some Scene {
         WindowGroup {
