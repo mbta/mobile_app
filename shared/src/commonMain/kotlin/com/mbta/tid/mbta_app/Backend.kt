@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app
 
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
