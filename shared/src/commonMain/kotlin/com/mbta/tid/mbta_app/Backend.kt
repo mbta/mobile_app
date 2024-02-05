@@ -17,6 +17,8 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.serialization.json.Json
 
 class Backend(engine: HttpClientEngine) {
+    constructor() : this(getPlatform().httpClientEngine)
+
     private val mobileBackendBaseUrl = "https://mobile-app-backend-staging.mbtace.com"
     private val httpClient =
         HttpClient(engine) {
@@ -30,11 +32,6 @@ class Backend(engine: HttpClientEngine) {
             }
             defaultRequest { url(mobileBackendBaseUrl) }
         }
-
-    companion object {
-        val platformDefault
-            get() = Backend(getPlatform().httpClientEngine)
-    }
 
     @Throws(
         IOException::class,
