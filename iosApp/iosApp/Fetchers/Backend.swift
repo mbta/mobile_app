@@ -12,20 +12,27 @@ import shared
 protocol BackendProtocol {
     func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse
     func getSearchResults(query: String) async throws -> SearchResponse
+    func predictionsStopsChannel(stopIds: [String]) async throws -> PredictionsStopsChannel
 }
 
 extension Backend: BackendProtocol {}
 
 struct IdleBackend: BackendProtocol {
-    func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
+    private func hang() async -> Never {
         while true {
-            try await Task.sleep(nanoseconds: .max)
+            try? await Task.sleep(nanoseconds: .max)
         }
     }
 
+    func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
+        await hang()
+    }
+
     func getSearchResults(query _: String) async throws -> SearchResponse {
-        while true {
-            try await Task.sleep(nanoseconds: .max)
-        }
+        await hang()
+    }
+
+    func predictionsStopsChannel(stopIds _: [String]) async throws -> PredictionsStopsChannel {
+        await hang()
     }
 }

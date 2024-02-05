@@ -7,6 +7,7 @@ struct ContentView: View {
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
+    @EnvironmentObject var predictionsFetcher: PredictionsFetcher
 
     var body: some View {
         NavigationView {
@@ -35,7 +36,8 @@ struct ContentView: View {
                 if let location = locationDataManager.currentLocation {
                     NearbyTransitView(
                         location: location.coordinate,
-                        fetcher: nearbyFetcher
+                        nearbyFetcher: nearbyFetcher,
+                        predictionsFetcher: predictionsFetcher
                     )
                 }
             }
@@ -54,5 +56,6 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(LocationDataManager())
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
+            .environmentObject(PredictionsFetcher(backend: IdleBackend()))
     }
 }
