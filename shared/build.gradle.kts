@@ -22,9 +22,11 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
 
                 implementation(libs.kotlinx.coroutines.core)
+                api(libs.kotlinx.datetime)
             }
         }
         val commonTest by getting {
@@ -33,7 +35,7 @@ kotlin {
                 implementation(libs.ktor.client.mock)
             }
         }
-        val androidMain by getting { dependencies { implementation(libs.ktor.client.android) } }
+        val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }
         val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
     }
 }
