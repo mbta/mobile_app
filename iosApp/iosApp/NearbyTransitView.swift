@@ -75,7 +75,6 @@ struct NearbyTransitView: View {
         .onChange(of: location) { location in
             getNearby(location: location)
             didChange?(self)
-            joinPredictions()
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             joinPredictions()
