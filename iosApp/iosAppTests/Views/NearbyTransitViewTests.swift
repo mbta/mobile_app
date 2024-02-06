@@ -147,11 +147,7 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testWithPredictions() throws {
-        // Unfortunately, since we test in multiple time zones and there appears to be no way to override the device time zone in the tests,
-        // we need to construct fake data that will appear correct in the current time zone.
-        func localInstant(isoString: String) -> Instant {
-            LocalDateTime.companion.parse(isoString: isoString).toInstant(timeZone: .companion.currentSystemDefault())
-        }
+        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
         @MainActor class FakePredictionsFetcher: PredictionsFetcher {
             init() {
@@ -159,8 +155,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 predictions = [
                     Prediction(
                         id: "prediction-60451421-8552-38",
-                        arrivalTime: localInstant(isoString: "2024-02-05T15:20:24"),
-                        departureTime: localInstant(isoString: "2024-02-05T15:20:24"),
+                        arrivalTime: Instant.companion.parse(isoString: "2024-02-05T15:20:24-05:00"),
+                        departureTime: Instant.companion.parse(isoString: "2024-02-05T15:20:24-05:00"),
                         directionId: 0,
                         revenue: true,
                         scheduleRelationship: .scheduled,
@@ -170,8 +166,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     ),
                     Prediction(
                         id: "prediction-60451426-84791-18",
-                        arrivalTime: localInstant(isoString: "2024-02-05T16:04:59"),
-                        departureTime: localInstant(isoString: "2024-02-05T16:04:59"),
+                        arrivalTime: Instant.companion.parse(isoString: "2024-02-05T16:04:59-05:00"),
+                        departureTime: Instant.companion.parse(isoString: "2024-02-05T16:04:59-05:00"),
                         directionId: 1,
                         revenue: true,
                         scheduleRelationship: .scheduled,
