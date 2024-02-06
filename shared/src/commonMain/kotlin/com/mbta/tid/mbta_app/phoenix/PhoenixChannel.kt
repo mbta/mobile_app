@@ -7,16 +7,16 @@ abstract class PhoenixChannel(
     private val topic: String,
     private val joinPayload: JsonObject
 ) {
-    private val joinReference = socket.putChannel(this)
+    private val joinRef = socket.putChannel(this)
 
     suspend fun join(): RawPhoenixChannelMessage {
-        val reply = socket.sendAsync(joinReference, topic, "phx_join", joinPayload)
+        val reply = socket.sendAsync(joinRef, topic, "phx_join", joinPayload)
         handle("phx_join", reply.payload)
         return reply
     }
 
     suspend fun leave(): RawPhoenixChannelMessage {
-        val reply = socket.sendAsync(joinReference, topic, "phx_leave")
+        val reply = socket.sendAsync(joinRef, topic, "phx_leave")
         handle("phx_leave", reply.payload)
         return reply
     }
@@ -24,6 +24,6 @@ abstract class PhoenixChannel(
     abstract suspend fun handle(event: String, payload: JsonObject)
 
     protected fun removeFromSocket() {
-        socket.deleteChannel(joinReference)
+        socket.deleteChannel(joinRef)
     }
 }

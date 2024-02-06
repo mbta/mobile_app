@@ -16,36 +16,34 @@ import kotlinx.coroutines.isActive
 import kotlinx.serialization.json.JsonObject
 
 class PhoenixSocket(private var conn: WebSocketSession) {
-    private var nextJoin = 0
-    private var nextMessage = 0
+    private var nextJoinRef = 0
+    private var nextRef = 0
 
     private var channels = mutableMapOf<String, PhoenixChannel>()
     private var messages = mutableMapOf<String, CompletableDeferred<RawPhoenixChannelMessage>>()
 
     internal fun putChannel(channel: PhoenixChannel): String {
-        val joinReference = "$nextJoin"
-        nextJoin++
-        channels[joinReference] = channel
-        return joinReference
+        val joinRef = "$nextJoinRef"
+        nextJoinRef++
+        channels[joinRef] = channel
+        return joinRef
     }
 
-    internal fun deleteChannel(joinReference: String) {
-        channels.remove(joinReference)
+    internal fun deleteChannel(joinRef: String) {
+        channels.remove(joinRef)
     }
 
     internal suspend fun sendAsync(
-        joinReference: String? = null,
+        joinRef: String? = null,
         topic: String,
         event: String,
         payload: JsonObject = JsonObject(emptyMap())
     ): RawPhoenixChannelMessage {
         val result = CompletableDeferred<RawPhoenixChannelMessage>()
-        val messageReference = "$nextMessage"
-        nextMessage++
-        messages[messageReference] = result
-        conn.sendSerialized(
-            RawPhoenixChannelMessage(joinReference, messageReference, topic, event, payload)
-        )
+        val ref = "$nextRef"
+        nextRef++
+        messages[ref] = result
+        conn.sendSerialized(RawPhoenixChannelMessage(joinRef, ref, topic, event, payload))
         return result.await()
     }
 
