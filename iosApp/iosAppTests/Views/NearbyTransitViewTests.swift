@@ -197,4 +197,84 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Dedham Mall - Watertown via Meadowbrook Rd")
             .parent().find(text: "4:04\u{202F}PM"))
     }
+
+    func testRefetchesPredictionsOnNewStops() throws {
+        let sawmillAtWalshExpectation = expectation(description: "joins predictions for Sawmill @ Walsh")
+        let lechmereExpectation = expectation(description: "joins predictions for Lechmere")
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            let sawmillAtWalshExpectation: XCTestExpectation
+            let lechmereExpectation: XCTestExpectation
+
+            init(sawmillAtWalshExpectation: XCTestExpectation, lechmereExpectation: XCTestExpectation) {
+                self.sawmillAtWalshExpectation = sawmillAtWalshExpectation
+                self.lechmereExpectation = lechmereExpectation
+                super.init(backend: IdleBackend())
+            }
+
+            override func run(stopIds: [String]) async throws {
+                if stopIds.sorted() == ["84791", "8552"] {
+                    sawmillAtWalshExpectation.fulfill()
+                } else if stopIds == ["place-lech"] {
+                    lechmereExpectation.fulfill()
+                } else {
+                    XCTFail("unexpected stop IDs \(stopIds)")
+                }
+            }
+        }
+
+        let nearbyFetcher = Route52NearbyFetcher()
+        let predictionsFetcher = FakePredictionsFetcher(sawmillAtWalshExpectation: sawmillAtWalshExpectation, lechmereExpectation: lechmereExpectation)
+        let sut = NearbyTransitView(
+            location: .init(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+        )
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [sawmillAtWalshExpectation], timeout: 1)
+
+        nearbyFetcher.nearbyByRouteAndStop = [
+            NearbyRoute(
+                route: nearbyFetcher.nearbyByRouteAndStop![0].route,
+                patternsByStop: [
+                    NearbyPatternsByStop(
+                        stop: Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil),
+                        routePatterns: []
+                    ),
+                ]
+            ),
+        ]
+
+        wait(for: [lechmereExpectation], timeout: 1)
+    }
+
+    func testRendersUpdatedPredictions() throws {
+        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+
+        let predictionsFetcher = PredictionsFetcher(backend: IdleBackend())
+        let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(), predictionsFetcher: predictionsFetcher)
+
+        func prediction(departureTime: String) -> Prediction {
+            Prediction(
+                id: "",
+                arrivalTime: nil,
+                departureTime: Instant.companion.parse(isoString: departureTime),
+                directionId: 0,
+                revenue: true,
+                scheduleRelationship: .scheduled,
+                status: nil,
+                stopSequence: 1,
+                trip: Trip(id: "", routePatternId: "52-5-0", stops: nil)
+            )
+        }
+
+        predictionsFetcher.predictions = [prediction(departureTime: "2024-02-06T10:58:06-05:00")]
+
+        XCTAssertNotNil(try sut.inspect().find(text: "10:58\u{202F}AM"))
+
+        predictionsFetcher.predictions = [prediction(departureTime: "2024-02-06T11:03:00-05:00")]
+
+        XCTAssertNotNil(try sut.inspect().find(text: "11:03\u{202F}AM"))
+    }
 }
