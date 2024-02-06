@@ -5,7 +5,9 @@
       "name" : "Test Scheme Action",
       "options" : {
         "commandLineArgumentEntries" : [
-
+          {
+            "argument" : "--skip-map"
+          }
         ],
         "defaultTestExecutionTimeAllowance" : 60,
         "maximumTestExecutionTimeAllowance" : 60,
@@ -15,6 +17,9 @@
     }
   ],
   "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+
+    ],
     "defaultTestExecutionTimeAllowance" : 60,
     "maximumTestExecutionTimeAllowance" : 60,
     "targetForVariableExpansion" : {
