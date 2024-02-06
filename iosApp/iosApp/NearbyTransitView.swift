@@ -36,7 +36,7 @@ struct NearbyTransitView: View {
         }
     }
 
-    func startPredictions() {
+    func joinPredictions() {
         Task {
             guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?.flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
             do {
@@ -48,10 +48,10 @@ struct NearbyTransitView: View {
         }
     }
 
-    func stopPredictions() {
+    func leavePredictions() {
         Task {
             do {
-                try await predictionsFetcher.stop()
+                try await predictionsFetcher.leave()
             } catch {
                 debugPrint(error)
             }
@@ -70,18 +70,18 @@ struct NearbyTransitView: View {
         }.onAppear {
             getNearby(location: location)
             didAppear?(self)
-            startPredictions()
+            joinPredictions()
         }
         .onChange(of: location) { location in
             getNearby(location: location)
             didChange?(self)
-            startPredictions()
+            joinPredictions()
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
-            startPredictions()
+            joinPredictions()
         }
         .onDisappear {
-            stopPredictions()
+            leavePredictions()
         }
     }
 }

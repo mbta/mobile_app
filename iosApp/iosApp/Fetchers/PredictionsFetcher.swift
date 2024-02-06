@@ -28,7 +28,7 @@ class PredictionsFetcher: ObservableObject {
         }
     }
 
-    func stop() async throws {
+    func leave() async throws {
         let _ = try await channel?.leave()
         channel = nil
     }
