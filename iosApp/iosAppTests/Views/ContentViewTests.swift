@@ -20,6 +20,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(LocationDataManager())
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
+            .environmentObject(PredictionsFetcher(backend: IdleBackend()))
 
         let greeting = try sut.inspect().navigationView().vStack()[1].text().string()
         XCTAssertTrue(greeting.hasPrefix("Hello"), "displays greeting")

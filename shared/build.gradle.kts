@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.skie)
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -14,6 +15,7 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
+            export(libs.kotlinx.datetime)
         }
     }
 
