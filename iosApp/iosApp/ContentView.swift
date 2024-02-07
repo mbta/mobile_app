@@ -32,6 +32,7 @@ struct ContentView: View {
                 @unknown default:
                     Text("Location access state unknown")
                 }
+                HomeMapView()
                 Spacer()
                 if let location = locationDataManager.currentLocation {
                     NearbyTransitView(

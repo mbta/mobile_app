@@ -28,4 +28,12 @@ final class IosAppUITests: XCTestCase {
             }
         }
     }
+
+    func testMapShown() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--skip-map"]
+        app.launch()
+        XCTAssertNotNil(app.otherElements["About this map"].label)
+        print(app.debugDescription)
+    }
 }

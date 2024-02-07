@@ -10,8 +10,6 @@ import CoreLocation
 import shared
 import SwiftUI
 
-extension CLLocationCoordinate2D: Equatable {}
-
 public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
     lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
 }

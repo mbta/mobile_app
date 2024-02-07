@@ -37,3 +37,19 @@ if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   cd $CI_PRIMARY_REPOSITORY_PATH
   ./gradlew shared:iosX64Test
 fi
+
+
+# Configure Mapbox token for installation
+touch ~/.netrc
+
+echo "machine api.mapbox.com" > ~/.netrc
+echo "login mapbox" >> ~/.netrc
+echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
+
+# Skip adding mapbox API key when testing
+if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
+  echo "configuring mapbox public key"
+  cd iosApp/secrets
+  touch mapbox
+  echo "${MAPBOX_PUBLIC_TOKEN}" >> mapbox
+fi
