@@ -34,10 +34,13 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     public func locationFetcher(_: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
 
-        // workaround for denver not having any nearby stops
+        // spoof coordinates if not near MBTA system (useful for remote work)
         guard let coordinate = locations.last?.coordinate else { return }
-        if coordinate.longitude < -80 {
-            currentLocation = CLLocation(latitude: coordinate.latitude + 2.8, longitude: coordinate.longitude + 33.9)
+        if !((41 ... 43).contains(coordinate.latitude) && (-72 ... -70).contains(coordinate.longitude)) {
+            currentLocation = CLLocation(
+                latitude: .random(in: 42.31 ... 42.38),
+                longitude: .random(in: -71.24 ... -71.05)
+            )
         }
     }
 }
