@@ -67,7 +67,7 @@ final class LocationDataManagerTests: XCTestCase {
         XCTAssertNil(manager.currentLocation)
         XCTAssertEqual(locationFetcher.distanceFilter, 100)
 
-        let location = CLLocation(latitude: 1.2, longitude: 3.4)
+        let location = CLLocation(latitude: 42, longitude: -71)
 
         locationFetcher.updateLocations(locations: [location])
 
