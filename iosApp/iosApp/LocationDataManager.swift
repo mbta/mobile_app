@@ -14,9 +14,11 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     var locationFetcher: LocationFetcher
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus = CLAuthorizationStatus.notDetermined
+    private var distanceFilter: Double
 
-    public init(locationFetcher: LocationFetcher = CLLocationManager()) {
+    public init(locationFetcher: LocationFetcher = CLLocationManager(), distanceFilter: Double = kCLDistanceFilterNone) {
         self.locationFetcher = locationFetcher
+        self.distanceFilter = distanceFilter
         super.init()
         self.locationFetcher.locationFetcherDelegate = self
     }
@@ -25,8 +27,7 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
         authorizationStatus = fetcher.authorizationStatus
         // TODO: only if requested
         if fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
-            // ignore updates less than 0.1km
-            fetcher.distanceFilter = 100
+            fetcher.distanceFilter = self.distanceFilter
             fetcher.startUpdatingLocation()
         }
     }

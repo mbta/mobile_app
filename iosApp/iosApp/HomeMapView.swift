@@ -14,10 +14,19 @@ let defaultZoom: CGFloat = 12
 
 struct HomeMapView: View {
     @State private var viewport: Viewport = .camera(center: defaultCenter, zoom: defaultZoom)
+    @StateObject var locationDataManager: LocationDataManager = LocationDataManager(distanceFilter: 1)
 
     var body: some View {
-            Map(viewport: $viewport)
-                .mapStyle(.light)
-        
+        Map(viewport: $viewport) {
+            if let location = locationDataManager.currentLocation  {
+              let annotation =  PointAnnotation(point: .init(location.coordinate))
+                annotation.image(named: "location-puck")
+            }
+
+        }
+        .mapStyle(.light).onChange(of:locationDataManager.currentLocation?.coordinate)  { location in
+            viewport = .camera(center: location, zoom: viewport.camera?.zoom)
+        }
+
     }
 }
