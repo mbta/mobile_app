@@ -33,12 +33,6 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
 
     public func locationFetcher(_: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
-
-        // workaround for denver not having any nearby stops
-        guard let coordinate = locations.last?.coordinate else { return }
-        if coordinate.longitude < -80 {
-            currentLocation = CLLocation(latitude: coordinate.latitude + 2.8, longitude: coordinate.longitude + 33.9)
-        }
     }
 }
 
