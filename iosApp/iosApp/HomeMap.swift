@@ -88,6 +88,8 @@ struct HomeMapView: View {
             .onCameraChanged { cameraChanged in
                 mapVM.zoom = cameraChanged.cameraState.zoom
 
+            }.onChange(of: mapVM.vehicles) { vehicles in
+                viewport = .camera(center: vehicles[1].coordinate, zoom: viewport.camera?.zoom)
             }
 
 
