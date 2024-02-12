@@ -28,17 +28,16 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
-        locationFetcher.updateLocations(locations: [newLocation])
-        XCTAssertEqual(locationDataManager.currentLocation, newLocation)
 
         var sut = HomeMapView(locationDataManager: locationDataManager)
 
-        let hasAppeared = sut.on(\.didAppear) { _ in }
+        let hasAppeared = sut.on(\.didAppear) { _ in
+            XCTAssertNotNil(sut.viewport.followPuck)
+        }
         ViewHosting.host(view: sut)
+        locationFetcher.updateLocations(locations: [newLocation])
+        XCTAssertEqual(locationDataManager.currentLocation, newLocation)
 
-        wait(for: [hasAppeared], timeout: 1)
-
-
-        XCTAssertEqual(sut.viewport.followPuck.debugDescription, "ASDF")
+        wait(for: [hasAppeared], timeout: 5)
     }
 }

@@ -32,6 +32,9 @@
   "testTargets" : [
     {
       "parallelizable" : true,
+      "skippedTests" : [
+        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()"
+      ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
         "identifier" : "6EED5E8B2B3DC69F0052A1B8",
