@@ -28,7 +28,7 @@ struct ContentView: View {
                 @unknown default:
                     Text("Location access state unknown")
                 }
-                HomeMapView()
+                _HomeMapView()
                 Spacer()
                 if let location = locationDataManager.currentLocation {
                     NearbyTransitView(
@@ -45,6 +45,15 @@ struct ContentView: View {
             prompt: "Find nearby transit"
         )
     }
+}
+
+struct _HomeMapView: View {
+    @StateObject var locationManager: LocationDataManager = .init(distanceFilter: 1)
+var body: some View {
+    HomeMapView(locationDataManager: locationManager)
+}
+
+
 }
 
 struct ContentView_Previews: PreviewProvider {

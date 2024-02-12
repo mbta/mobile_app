@@ -13,6 +13,7 @@
 		6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 6E35D4CD2B72C74500A2BF95 /* MapboxMaps */; };
 		6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */; };
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
+		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
 		6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */; };
 		6EED5E9C2B3DC6C10052A1B8 /* IosAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E9B2B3DC6C10052A1B8 /* IosAppUITests.swift */; };
 		6EED5E9E2B3DC6C10052A1B8 /* IosAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E9D2B3DC6C10052A1B8 /* IosAppUITestsLaunchTests.swift */; };
@@ -68,6 +69,7 @@
 		2152FB032600AC8F00CF470E /* IOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSApp.swift; sourceTree = "<group>"; };
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
+		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
 		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
 		6EED5E8C2B3DC69F0052A1B8 /* iosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAppTests.swift; sourceTree = "<group>"; };
@@ -128,9 +130,18 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		6E4EACFA2B7A829C0011AB8B /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		6EED5E8D2B3DC69F0052A1B8 /* iosAppTests */ = {
 			isa = PBXGroup;
 			children = (
+				6E4EACFA2B7A829C0011AB8B /* Mocks */,
 				6EED5EA92B3DF1BF0052A1B8 /* Views */,
 				6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */,
 				8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */,
@@ -425,6 +436,7 @@
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
 				8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */,
+				6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
