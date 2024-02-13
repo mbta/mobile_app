@@ -1,6 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ minutes" : {
+
+    },
+    "20+ minutes" : {
+
+    },
+    "Approaching" : {
+
+    },
+    "Arriving" : {
+
+    },
     "hello_platform" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -25,6 +37,9 @@
 
     },
     "Location access state unknown" : {
+
+    },
+    "No Predictions" : {
 
     },
     "No results found" : {

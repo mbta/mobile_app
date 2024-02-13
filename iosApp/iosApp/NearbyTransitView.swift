@@ -143,30 +143,30 @@ struct NearbyStopRoutePatternView: View {
         HStack {
             Text(routePattern.name).layoutPriority(1)
             Spacer()
-            let predictionText =
+            let predictionText: Text =
                 switch prediction {
                 case let .some(prediction):
                     switch onEnum(of: prediction) {
                     case let .overridden(overridden):
-                        overridden.text
+                        .init(verbatim: overridden.text)
                     case .hidden:
                         // should have been filtered out already
-                        ""
+                        .init(verbatim: "")
                     case .arriving:
-                        String(localized: "Arriving")
+                        .init("Arriving")
                     case .approaching:
-                        String(localized: "Approaching")
+                        .init("Approaching")
                     case .distantFuture:
-                        String(localized: "20+ minutes")
+                        .init("20+ minutes")
                     case let .minutes(format):
-                        String(localized: "\(format.minutes) minutes")
+                        .init("\(format.minutes) minutes")
                     }
                 case .none:
-                    String(localized: "No Predictions")
+                    .init("No Predictions")
                 case .loading:
-                    String(localized: "Loading...")
+                    .init("Loading...")
                 }
-            Text(verbatim: predictionText)
+            predictionText
                 .lineLimit(1)
                 .layoutPriority(2)
                 .frame(minWidth: 64, alignment: .trailing)
