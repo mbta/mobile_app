@@ -166,7 +166,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     ),
                     Prediction(
                         id: "prediction-60451426-84791-18",
-                        arrivalTime: Date.now.addingTimeInterval(1 * 60).toKotlinInstant(),
+                        arrivalTime: Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant(),
                         departureTime: Date.now.addingTimeInterval(2 * 60).toKotlinInstant(),
                         directionId: 1,
                         revenue: true,
@@ -195,7 +195,7 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Charles River Loop - Watertown via Meadowbrook Rd")
             .parent().find(text: "No Predictions"))
         XCTAssertNotNil(try stops[1].find(text: "Dedham Mall - Watertown via Meadowbrook Rd")
-            .parent().find(text: "Approaching"))
+            .parent().find(text: "1 minute"))
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
