@@ -4,7 +4,8 @@ import SwiftUI
 @main
 struct IOSApp: App {
     let backend = Backend()
-    @StateObject var locationDataManager = LocationDataManager()
+    // ignore updates less than 0.1km
+    @StateObject var locationDataManager = LocationDataManager(distanceFilter: 100)
     @StateObject var nearbyFetcher: NearbyFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher

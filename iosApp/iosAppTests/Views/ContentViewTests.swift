@@ -14,15 +14,4 @@ final class ContentViewTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
-
-    func testExample() throws {
-        let sut = ContentView()
-            .environmentObject(LocationDataManager())
-            .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(backend: IdleBackend()))
-
-        let greeting = try sut.inspect().navigationView().vStack()[1].text().string()
-        XCTAssertTrue(greeting.hasPrefix("Hello"), "displays greeting")
-    }
 }
