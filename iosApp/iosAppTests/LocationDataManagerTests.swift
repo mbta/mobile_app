@@ -41,7 +41,7 @@ final class LocationDataManagerTests: XCTestCase {
 
         XCTAssertEqual(manager.authorizationStatus, .authorizedWhenInUse)
         XCTAssertNil(manager.currentLocation)
-        XCTAssertEqual(locationFetcher.distanceFilter, 100)
+        XCTAssertEqual(locationFetcher.distanceFilter, kCLDistanceFilterNone)
 
         let location = CLLocation(latitude: 1.2, longitude: 3.4)
 
