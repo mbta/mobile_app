@@ -29,6 +29,7 @@ kotlin {
 
                 implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
+                implementation(libs.skie.configuration.annotations)
             }
         }
         val commonTest by getting {

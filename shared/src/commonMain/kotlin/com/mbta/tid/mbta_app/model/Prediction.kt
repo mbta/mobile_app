@@ -1,5 +1,11 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -24,5 +30,50 @@ data class Prediction(
         @SerialName("skipped") Skipped,
         @SerialName("unscheduled") Unscheduled,
         @SerialName("scheduled") Scheduled
+    }
+
+    /**
+     * The state in which a prediction should be shown.
+     *
+     * Can be localized in the frontend layer, except for `Overridden` which is always English.
+     */
+    sealed class Format {
+        data class Overridden(val text: String) : Format()
+
+        data object Hidden : Format()
+
+        data object Arriving : Format()
+
+        data object Approaching : Format()
+
+        data object DistantFuture : Format()
+
+        data class Minutes(val minutes: Int) : Format()
+    }
+
+    @DefaultArgumentInterop.Enabled
+    fun format(now: Instant = Clock.System.now()): Format {
+        if (status != null) {
+            return Format.Overridden(status)
+        }
+        if (departureTime == null) {
+            return Format.Hidden
+        }
+        val predictionTime = arrivalTime ?: departureTime
+        val timeRemaining = predictionTime.minus(now)
+        if (timeRemaining < 0.seconds) {
+            return Format.Hidden
+        }
+        if (timeRemaining <= 30.seconds) {
+            return Format.Arriving
+        }
+        if (timeRemaining <= 60.seconds) {
+            return Format.Approaching
+        }
+        if (timeRemaining > 20.minutes) {
+            return Format.DistantFuture
+        }
+        val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
+        return Format.Minutes(minutes)
     }
 }

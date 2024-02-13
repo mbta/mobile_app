@@ -110,7 +110,12 @@ struct NearbyStopView: View {
                 ForEach(patternsByStopByStop.routePatterns, id: \.id) { routePattern in
                     let prediction: NearbyStopRoutePatternView.PredictionState =
                         if let predictions = allPredictions {
-                            if let firstPrediction = predictions.filter({ $0.trip.routePatternId == routePattern.id }).first {
+                            if let firstPrediction = predictions
+                                .filter({ $0.trip.routePatternId == routePattern.id })
+                                .map({ $0.format() })
+                                .filter({ ($0 as? Prediction.FormatHidden) == nil })
+                                .first
+                            {
                                 .some(firstPrediction)
                             } else { .none }
                         } else { .loading }
@@ -131,7 +136,7 @@ struct NearbyStopRoutePatternView: View {
     enum PredictionState {
         case loading
         case none
-        case some(Prediction)
+        case some(Prediction.Format)
     }
 
     var body: some View {
@@ -141,15 +146,25 @@ struct NearbyStopRoutePatternView: View {
             let predictionText =
                 switch prediction {
                 case let .some(prediction):
-                    if let time = prediction.departureTime ?? prediction.arrivalTime {
-                        DateFormatter.localizedString(from: Date(timeIntervalSince1970: TimeInterval(time.epochSeconds)), dateStyle: .none, timeStyle: .short)
-                    } else {
-                        prediction.description()
+                    switch onEnum(of: prediction) {
+                    case let .overridden(overridden):
+                        overridden.text
+                    case .hidden:
+                        // should have been filtered out already
+                        ""
+                    case .arriving:
+                        String(localized: "Arriving")
+                    case .approaching:
+                        String(localized: "Approaching")
+                    case .distantFuture:
+                        String(localized: "20+ minutes")
+                    case let .minutes(format):
+                        String(localized: "\(format.minutes) minutes")
                     }
                 case .none:
-                    "No Predictions"
+                    String(localized: "No Predictions")
                 case .loading:
-                    "Loading..."
+                    String(localized: "Loading...")
                 }
             Text(verbatim: predictionText)
                 .lineLimit(1)
