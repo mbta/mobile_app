@@ -14,6 +14,7 @@
 		6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */; };
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
+		6E6634D12B7BB0CB0073DBFE /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 6E6634D02B7BB0CB0073DBFE /* MapboxMaps */; };
 		6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */; };
 		6EED5E9C2B3DC6C10052A1B8 /* IosAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E9B2B3DC6C10052A1B8 /* IosAppUITests.swift */; };
 		6EED5E9E2B3DC6C10052A1B8 /* IosAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5E9D2B3DC6C10052A1B8 /* IosAppUITestsLaunchTests.swift */; };
@@ -100,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E6634D12B7BB0CB0073DBFE /* MapboxMaps in Frameworks */,
 				6EED5EAE2B3E1BA80052A1B8 /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,6 +251,7 @@
 			name = iosAppTests;
 			packageProductDependencies = (
 				6EED5EAD2B3E1BA80052A1B8 /* ViewInspector */,
+				6E6634D02B7BB0CB0073DBFE /* MapboxMaps */,
 			);
 			productName = iosAppTests;
 			productReference = 6EED5E8C2B3DC69F0052A1B8 /* iosAppTests.xctest */;
@@ -838,6 +841,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		6E35D4CD2B72C74500A2BF95 /* MapboxMaps */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
+			productName = MapboxMaps;
+		};
+		6E6634D02B7BB0CB0073DBFE /* MapboxMaps */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
 			productName = MapboxMaps;

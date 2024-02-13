@@ -1,5 +1,5 @@
 //
-//  LocationFetcherMock.swift
+//  MockLocationFetcher.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 2/12/24.

@@ -14,8 +14,13 @@ struct HomeMapView: View {
     static let defaultZoom: CGFloat = 12
 
     @State var viewport: Viewport = .camera(center: defaultCenter, zoom: defaultZoom)
-    @ObservedObject var locationDataManager: LocationDataManager
-    var didAppear: ((Self) -> Void)? // 1.
+    @StateObject private var locationDataManager: LocationDataManager
+
+    init(locationDataManager: LocationDataManager = .init(distanceFilter: 1)) {
+        _locationDataManager = StateObject(wrappedValue: locationDataManager)
+    }
+
+    var didAppear: ((Self) -> Void)?
 
     var body: some View {
         MapReader { proxy in
