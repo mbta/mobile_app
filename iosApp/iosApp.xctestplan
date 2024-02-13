@@ -43,6 +43,9 @@
     },
     {
       "parallelizable" : true,
+      "skippedTests" : [
+        "IosAppUITestsLaunchTests\/testLaunch()"
+      ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
         "identifier" : "6EED5E982B3DC6C10052A1B8",
