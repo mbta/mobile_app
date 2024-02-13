@@ -19,30 +19,6 @@ final class LocationDataManagerTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    class MockLocationFetcher: LocationFetcher {
-        var distanceFilter: CLLocationDistance = 0
-        weak var locationFetcherDelegate: LocationFetcherDelegate?
-
-        var authorizationStatus: CLAuthorizationStatus = .notDetermined {
-            didSet {
-                locationFetcherDelegate?.locationFetcherDidChangeAuthorization(self)
-            }
-        }
-
-        var handleStartUpdatingLocation: (() -> Void)?
-        func startUpdatingLocation() {
-            handleStartUpdatingLocation?()
-        }
-
-        func requestWhenInUseAuthorization() {
-            XCTFail("should not have requested when-in-use authorization")
-        }
-
-        func updateLocations(locations: [CLLocation]) {
-            locationFetcherDelegate?.locationFetcher(self, didUpdateLocations: locations)
-        }
-    }
-
     func testInit() async throws {
         let locationFetcher = MockLocationFetcher()
 
@@ -65,12 +41,22 @@ final class LocationDataManagerTests: XCTestCase {
 
         XCTAssertEqual(manager.authorizationStatus, .authorizedWhenInUse)
         XCTAssertNil(manager.currentLocation)
-        XCTAssertEqual(locationFetcher.distanceFilter, 100)
+        XCTAssertEqual(locationFetcher.distanceFilter, kCLDistanceFilterNone)
 
         let location = CLLocation(latitude: 1.2, longitude: 3.4)
 
         locationFetcher.updateLocations(locations: [location])
 
         XCTAssertEqual(manager.currentLocation, location)
+    }
+
+    func testCustomDistanceFilter() async throws {
+        let locationFetcher = MockLocationFetcher()
+
+        XCTAssertEqual(locationFetcher.distanceFilter, 0)
+
+        _ = LocationDataManager(locationFetcher: locationFetcher, distanceFilter: 10)
+
+        XCTAssertEqual(locationFetcher.distanceFilter, 10)
     }
 }

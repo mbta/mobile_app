@@ -16,10 +16,6 @@ struct ContentView: View {
                     query: searchObserver.debouncedText,
                     fetcher: searchResultFetcher
                 )
-                Text(String(
-                    format: NSLocalizedString("hello_platform", comment: "Hello world greeting"),
-                    arguments: [platform]
-                ))
                 switch locationDataManager.authorizationStatus {
                 case .notDetermined:
                     Button("Allow Location", action: {
