@@ -19,7 +19,7 @@ data class Prediction(
     val status: String?,
     @SerialName("stop_sequence") val stopSequence: Int?,
     val trip: Trip
-) {
+) : Comparable<Prediction> {
     @Serializable
     enum class ScheduleRelationship {
         @SerialName("added") Added,
@@ -29,6 +29,10 @@ data class Prediction(
         @SerialName("unscheduled") Unscheduled,
         @SerialName("scheduled") Scheduled
     }
+
+    override fun compareTo(other: Prediction): Int =
+        nullsLast<Instant>()
+            .compare(arrivalTime ?: departureTime, other.arrivalTime ?: other.departureTime)
 
     /**
      * The state in which a prediction should be shown.

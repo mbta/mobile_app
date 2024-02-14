@@ -33,7 +33,7 @@ class PredictionsStopsChannel(socket: PhoenixSocket, stopIds: List<String>) :
             "stream_data" -> {
                 val predictions: List<Prediction> =
                     Json.decodeFromJsonElement(payload["predictions"]!!)
-                _predictionsChannel.send(predictions)
+                _predictionsChannel.send(predictions.sorted())
             }
             "phx_leave",
             "phx_close" -> {
