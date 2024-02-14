@@ -1,11 +1,9 @@
 package com.mbta.tid.mbta_app.model
 
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -51,8 +49,7 @@ data class Prediction(
         data class Minutes(val minutes: Int) : Format()
     }
 
-    @DefaultArgumentInterop.Enabled
-    fun format(now: Instant = Clock.System.now()): Format {
+    fun format(now: Instant): Format {
         if (status != null) {
             return Format.Overridden(status)
         }

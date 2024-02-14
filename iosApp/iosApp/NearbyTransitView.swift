@@ -18,6 +18,8 @@ struct NearbyTransitView: View {
     let location: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
+    @State var now = Date.now
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
@@ -60,7 +62,7 @@ struct NearbyTransitView: View {
         VStack {
             if let nearby = nearbyFetcher.nearbyByRouteAndStop {
                 List(nearby, id: \.route.id) { nearbyRoute in
-                    NearbyRouteView(nearbyRoute: nearbyRoute, allPredictions: predictionsFetcher.predictions)
+                    NearbyRouteView(nearbyRoute: nearbyRoute, allPredictions: predictionsFetcher.predictions, now: now.toKotlinInstant())
                 }
             } else {
                 Text("Loading...")
@@ -77,6 +79,9 @@ struct NearbyTransitView: View {
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             joinPredictions()
         }
+        .onReceive(timer) { input in
+            now = input
+        }
         .onDisappear {
             leavePredictions()
         }
@@ -86,11 +91,12 @@ struct NearbyTransitView: View {
 struct NearbyRouteView: View {
     let nearbyRoute: NearbyRoute
     let allPredictions: [Prediction]?
+    let now: Instant
 
     var body: some View {
         Section {
             ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsByStopByStop in
-                NearbyStopView(patternsByStopByStop: patternsByStopByStop, allPredictions: allPredictions)
+                NearbyStopView(patternsByStopByStop: patternsByStopByStop, allPredictions: allPredictions, now: now)
             }
         }
         header: {
@@ -102,6 +108,8 @@ struct NearbyRouteView: View {
 struct NearbyStopView: View {
     let patternsByStopByStop: NearbyPatternsByStop
     let allPredictions: [Prediction]?
+    let now: Instant
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(patternsByStopByStop.stop.name).fontWeight(.bold)
@@ -112,7 +120,7 @@ struct NearbyStopView: View {
                         if let predictions = allPredictions {
                             if let firstPrediction = predictions
                                 .filter({ $0.trip.routePatternId == routePattern.id })
-                                .map({ $0.format() })
+                                .map({ $0.format(now: now) })
                                 .filter({ ($0 as? Prediction.FormatHidden) == nil })
                                 .first
                             {
@@ -231,7 +239,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         stopSequence: 30,
                         trip: Trip(id: "", routePatternId: "206-_-1", stops: nil)
                     ),
-                ]
+                ],
+                now: Date.now.toKotlinInstant()
             )
         }.previewDisplayName("NearbyRouteView")
     }

@@ -37,13 +37,16 @@ class PredictionTest {
         fun `status is non-null`() {
             assertEquals(
                 Prediction.Format.Overridden("Custom Text"),
-                prediction(status = "Custom Text").format()
+                prediction(status = "Custom Text").format(Clock.System.now())
             )
         }
 
         @Test
         fun `departure_time is null`() {
-            assertEquals(Prediction.Format.Hidden, prediction(departureTime = null).format())
+            assertEquals(
+                Prediction.Format.Hidden,
+                prediction(departureTime = null).format(Clock.System.now())
+            )
         }
 
         @Test
