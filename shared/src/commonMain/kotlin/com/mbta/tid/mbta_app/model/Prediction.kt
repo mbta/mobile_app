@@ -53,14 +53,11 @@ data class Prediction(
         if (status != null) {
             return Format.Overridden(status)
         }
-        if (departureTime == null) {
+        if (departureTime == null || departureTime < now) {
             return Format.Hidden
         }
         val predictionTime = arrivalTime ?: departureTime
         val timeRemaining = predictionTime.minus(now)
-        if (timeRemaining < 0.seconds) {
-            return Format.Hidden
-        }
         if (timeRemaining <= 30.seconds) {
             return Format.Arriving
         }

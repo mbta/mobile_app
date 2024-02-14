@@ -50,15 +50,19 @@ class PredictionTest {
         }
 
         @Test
-        fun `seconds less than 0`() {
+        fun `departure_time in the past`() {
             val now = Clock.System.now()
             assertEquals(
                 Prediction.Format.Hidden,
                 prediction(arrivalTime = null, departureTime = now.minus(2.seconds)).format(now)
             )
-            // TODO is this actually correct?
+        }
+
+        @Test
+        fun `seconds less than 0`() {
+            val now = Clock.System.now()
             assertEquals(
-                Prediction.Format.Hidden,
+                Prediction.Format.Arriving,
                 prediction(arrivalTime = now.minus(2.seconds), departureTime = now.plus(10.seconds))
                     .format(now)
             )
