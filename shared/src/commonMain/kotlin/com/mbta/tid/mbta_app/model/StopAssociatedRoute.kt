@@ -14,8 +14,8 @@ data class StopAssociatedRoute(
 )
 
 /**
- * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the
- * stops received by the server in [StopAndRoutePatternResponse.stops]
+ * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the stops
+ * received by the server in [StopAndRoutePatternResponse.stops]
  */
 fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
     val routePatternsUsed = mutableSetOf<String>()

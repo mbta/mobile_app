@@ -103,11 +103,10 @@ class Backend(engine: HttpClientEngine) {
         JsonConvertException::class,
         ResponseException::class
     )
-    suspend fun getAllStops(): StopAndRoutePatternResponse = httpClient
+    suspend fun getAllStops(): StopAndRoutePatternResponse =
+        httpClient
             .get {
-                url {
-                    path("api/stops")
-                }
+                url { path("api/stops") }
                 expectSuccess = true
             }
             .body()
