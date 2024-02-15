@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.phoenix
 
 import com.mbta.tid.mbta_app.PredictionsStopsChannel
+import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Trip
 import kotlin.test.Test
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.Instant
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
@@ -49,7 +49,7 @@ class PhoenixSocketTest {
                     event = "stream_data",
                     payload =
                         buildJsonObject {
-                            put("predictions", Json.encodeToJsonElement(listOf(prediction)))
+                            put("predictions", json.encodeToJsonElement(listOf(prediction)))
                         }
                 )
                 expectSend(
