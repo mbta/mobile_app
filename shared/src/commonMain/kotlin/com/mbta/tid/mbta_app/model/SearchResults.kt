@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app
+package com.mbta.tid.mbta_app.model
 
 import kotlinx.serialization.Serializable
 

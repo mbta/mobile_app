@@ -84,7 +84,7 @@ struct NearbyTransitView: View {
 }
 
 struct NearbyRouteView: View {
-    let nearbyRoute: NearbyRoute
+    let nearbyRoute: StopAssociatedRoute
     let allPredictions: [Prediction]?
 
     var body: some View {
@@ -100,7 +100,7 @@ struct NearbyRouteView: View {
 }
 
 struct NearbyStopView: View {
-    let patternsByStopByStop: NearbyPatternsByStop
+    let patternsByStopByStop: PatternsByStop
     let allPredictions: [Prediction]?
     var body: some View {
         VStack(alignment: .leading) {
@@ -163,7 +163,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             NearbyRouteView(
-                nearbyRoute: NearbyRoute(
+                nearbyRoute: StopAssociatedRoute(
                     route: Route(
                         id: "216",
                         color: "FFC72C",
@@ -175,7 +175,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         textColor: "000000"
                     ),
                     patternsByStop: [
-                        NearbyPatternsByStop(
+                        PatternsByStop(
                             stop: Stop(
                                 id: "3276",
                                 latitude: 42.265969,

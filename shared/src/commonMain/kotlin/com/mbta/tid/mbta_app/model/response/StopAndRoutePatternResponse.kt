@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NearbyResponse(
+data class StopAndRoutePatternResponse(
     val stops: List<Stop>,
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
     @SerialName("pattern_ids_by_stop") val patternIdsByStop: Map<String, List<String>>,

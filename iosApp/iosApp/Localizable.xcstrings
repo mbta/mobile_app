@@ -1,23 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "hello_platform" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hello %@!"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¡Hola, %@!"
-          }
-        }
-      }
-    },
     "Loading..." : {
 
     },

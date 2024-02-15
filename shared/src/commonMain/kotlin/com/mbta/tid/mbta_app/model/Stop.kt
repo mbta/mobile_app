@@ -9,5 +9,5 @@ data class Stop(
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    @SerialName("parent_station") val parentStation: Stop?
+    @SerialName("parent_station") val parentStation: Stop? = null
 )

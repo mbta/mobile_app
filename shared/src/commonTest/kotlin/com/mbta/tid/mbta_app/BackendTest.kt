@@ -2,8 +2,14 @@ package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteResult
+import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.StopResult
+import com.mbta.tid.mbta_app.model.StopResultRoute
+import com.mbta.tid.mbta_app.model.response.SearchResponse
+import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -169,7 +175,7 @@ class BackendTest {
                     textColor = "000000"
                 )
             assertEquals(
-                NearbyResponse(
+                StopAndRoutePatternResponse(
                     stops =
                         listOf(
                             Stop(

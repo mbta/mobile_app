@@ -77,10 +77,10 @@ final class NearbyTransitViewTests: XCTestCase {
                              longitude: -71.191092,
                              name: "Sawmill Brook Pkwy @ Walsh Rd - opposite side",
                              parentStation: nil)
-            nearbyByRouteAndStop = [NearbyRoute(
+            nearbyByRouteAndStop = [StopAssociatedRoute(
                 route: route52,
                 patternsByStop: [
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: stop1,
                         routePatterns: [
                             RoutePattern(
@@ -99,7 +99,7 @@ final class NearbyTransitViewTests: XCTestCase {
                             ),
                         ]
                     ),
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: stop2,
                         routePatterns: [
                             RoutePattern(
@@ -235,10 +235,10 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
         nearbyFetcher.nearbyByRouteAndStop = [
-            NearbyRoute(
+            StopAssociatedRoute(
                 route: nearbyFetcher.nearbyByRouteAndStop![0].route,
                 patternsByStop: [
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil),
                         routePatterns: []
                     ),
