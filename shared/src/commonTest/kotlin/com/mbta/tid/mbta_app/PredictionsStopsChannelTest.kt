@@ -29,7 +29,7 @@ class PredictionsStopsChannelTest {
                 scheduleRelationship = Prediction.ScheduleRelationship.Scheduled,
                 status = null,
                 stopSequence = 40,
-                trip = Trip(id = "one", routePatternId = null, stops = null)
+                trip = Trip(id = "one", headsign = "Headsign")
             )
 
         val latePrediction =
@@ -42,7 +42,7 @@ class PredictionsStopsChannelTest {
                 scheduleRelationship = Prediction.ScheduleRelationship.Scheduled,
                 status = null,
                 stopSequence = 90,
-                trip = Trip(id = "two", routePatternId = null, stops = null)
+                trip = Trip(id = "two", headsign = "Headsign")
             )
 
         val session = MockWebSocketSession(this) {}

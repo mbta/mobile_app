@@ -19,7 +19,7 @@ class PredictionTest {
                 Prediction.ScheduleRelationship.Scheduled,
             status: String? = null,
             stopSequence: Int? = null,
-            trip: Trip = Trip("", "", listOf())
+            trip: Trip = Trip("", "")
         ) =
             Prediction(
                 id,
