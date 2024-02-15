@@ -21,7 +21,6 @@ import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.json.Json
 
 class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
@@ -29,7 +28,6 @@ class Backend(engine: HttpClientEngine) {
     private val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
     private val httpClient =
         HttpClient(engine) {
-            val json = Json { ignoreUnknownKeys = true }
             install(ContentNegotiation) { json(json) }
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             defaultRequest { url("https://$mobileBackendHost") }
