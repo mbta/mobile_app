@@ -25,7 +25,7 @@ class BackendTest {
     fun testGetNearby() {
         runBlocking {
             val mockEngine = MockEngine { request ->
-                assertEquals("latitude=12.34&longitude=-56.78&source=v3", request.url.encodedQuery)
+                assertEquals("latitude=12.34&longitude=-56.78", request.url.encodedQuery)
                 respond(
                     content =
                         ByteReadChannel(
@@ -69,7 +69,9 @@ class BackendTest {
                               },
                               "sort_order": 505200020,
                               "direction_id": 0,
-                              "representative_trip": null
+                              "representative_trip": {
+                                "headsign": "Charles River Loop"
+                              }
                             },
                             "52-4-1": {
                               "id": "52-4-1",
@@ -92,7 +94,9 @@ class BackendTest {
                               },
                               "sort_order": 505201010,
                               "direction_id": 1,
-                              "representative_trip": null
+                              "representative_trip": {
+                                "headsign": "Charles River Loop"
+                              }
                             },
                             "52-5-0": {
                               "id": "52-5-0",
@@ -115,7 +119,9 @@ class BackendTest {
                               },
                               "sort_order": 505200000,
                               "direction_id": 0,
-                              "representative_trip": null
+                              "representative_trip": {
+                                "headsign": "Dedham Mall"
+                              }
                             },
                             "52-5-1": {
                               "id": "52-5-1",
@@ -138,7 +144,9 @@ class BackendTest {
                               },
                               "sort_order": 505201000,
                               "direction_id": 1,
-                              "representative_trip": null
+                              "representative_trip": {
+                                "headsign": "Dedham Mall"
+                              }
                             }
                           },
                           "pattern_ids_by_stop": {
