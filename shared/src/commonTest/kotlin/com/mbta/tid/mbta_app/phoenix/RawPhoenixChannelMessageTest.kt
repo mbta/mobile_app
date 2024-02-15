@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.phoenix
 
+import com.mbta.tid.mbta_app.json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -66,7 +66,7 @@ class RawPhoenixChannelMessageTest {
     }
 
     private fun testPair(string: String, rawPhoenixChannelMessage: RawPhoenixChannelMessage) {
-        assertEquals(string, Json.encodeToString(rawPhoenixChannelMessage))
-        assertEquals(rawPhoenixChannelMessage, Json.decodeFromString(string))
+        assertEquals(string, json.encodeToString(rawPhoenixChannelMessage))
+        assertEquals(rawPhoenixChannelMessage, json.decodeFromString(string))
     }
 }

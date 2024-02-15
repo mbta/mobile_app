@@ -7,7 +7,6 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.addAll
 import kotlinx.serialization.json.buildJsonObject
@@ -32,7 +31,7 @@ class PredictionsStopsChannel(socket: PhoenixSocket, stopIds: List<String>) :
             "phx_join" -> {}
             "stream_data" -> {
                 val predictions: List<Prediction> =
-                    Json.decodeFromJsonElement(payload["predictions"]!!)
+                    json.decodeFromJsonElement(payload["predictions"]!!)
                 _predictionsChannel.send(predictions)
             }
             "phx_leave",
