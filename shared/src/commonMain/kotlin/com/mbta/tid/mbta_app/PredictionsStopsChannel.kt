@@ -3,8 +3,10 @@ package com.mbta.tid.mbta_app
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.phoenix.PhoenixChannel
 import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.JsonObject
@@ -20,9 +22,12 @@ class PredictionsStopsChannel(socket: PhoenixSocket, stopIds: List<String>) :
         "predictions:stops",
         buildJsonObject { putJsonArray("stop_ids") { addAll(stopIds) } }
     ) {
-    private lateinit var _predictionsChannel: SendChannel<List<Prediction>>
+    private var _earlyPredictionsChannel: Channel<List<Prediction>> =
+        Channel(capacity = Channel.UNLIMITED)
+    private var _predictionsChannel: SendChannel<List<Prediction>>? = null
     var predictions = channelFlow {
         _predictionsChannel = channel
+        _earlyPredictionsChannel.consumeEach { channel.send(it) }
         awaitClose()
     }
 
@@ -32,11 +37,12 @@ class PredictionsStopsChannel(socket: PhoenixSocket, stopIds: List<String>) :
             "stream_data" -> {
                 val predictions: List<Prediction> =
                     json.decodeFromJsonElement(payload["predictions"]!!)
-                _predictionsChannel.send(predictions)
+                (_predictionsChannel ?: _earlyPredictionsChannel).send(predictions.sorted())
             }
             "phx_leave",
             "phx_close" -> {
-                _predictionsChannel.close()
+                _earlyPredictionsChannel.close()
+                _predictionsChannel?.close()
                 removeFromSocket()
             }
             else -> throw IllegalArgumentException("Unhandled predictions channel event $event")

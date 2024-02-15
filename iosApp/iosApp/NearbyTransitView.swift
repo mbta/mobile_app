@@ -18,6 +18,8 @@ struct NearbyTransitView: View {
     let location: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
+    @State var now = Date.now
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
@@ -60,7 +62,7 @@ struct NearbyTransitView: View {
         VStack {
             if let nearby = nearbyFetcher.nearbyByRouteAndStop {
                 List(nearby, id: \.route.id) { nearbyRoute in
-                    NearbyRouteView(nearbyRoute: nearbyRoute, allPredictions: predictionsFetcher.predictions)
+                    NearbyRouteView(nearbyRoute: nearbyRoute, allPredictions: predictionsFetcher.predictions, now: now.toKotlinInstant())
                 }
             } else {
                 Text("Loading...")
@@ -77,6 +79,9 @@ struct NearbyTransitView: View {
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             joinPredictions()
         }
+        .onReceive(timer) { input in
+            now = input
+        }
         .onDisappear {
             leavePredictions()
         }
@@ -86,11 +91,12 @@ struct NearbyTransitView: View {
 struct NearbyRouteView: View {
     let nearbyRoute: NearbyRoute
     let allPredictions: [Prediction]?
+    let now: Instant
 
     var body: some View {
         Section {
             ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsByStopByStop in
-                NearbyStopView(patternsByStopByStop: patternsByStopByStop, allPredictions: allPredictions)
+                NearbyStopView(patternsByStopByStop: patternsByStopByStop, allPredictions: allPredictions, now: now)
             }
         }
         header: {
@@ -102,6 +108,8 @@ struct NearbyRouteView: View {
 struct NearbyStopView: View {
     let patternsByStopByStop: NearbyPatternsByStop
     let allPredictions: [Prediction]?
+    let now: Instant
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(patternsByStopByStop.stop.name).fontWeight(.bold)
@@ -110,7 +118,12 @@ struct NearbyStopView: View {
                 ForEach(patternsByStopByStop.routePatterns, id: \.id) { routePattern in
                     let prediction: NearbyStopRoutePatternView.PredictionState =
                         if let predictions = allPredictions {
-                            if let firstPrediction = predictions.filter({ $0.trip.routePatternId == routePattern.id }).first {
+                            if let firstPrediction = predictions
+                                .filter({ $0.trip.routePatternId == routePattern.id })
+                                .map({ $0.format(now: now) })
+                                .filter({ ($0 as? Prediction.FormatHidden) == nil })
+                                .first
+                            {
                                 .some(firstPrediction)
                             } else { .none }
                         } else { .loading }
@@ -131,7 +144,7 @@ struct NearbyStopRoutePatternView: View {
     enum PredictionState {
         case loading
         case none
-        case some(Prediction)
+        case some(Prediction.Format)
     }
 
     var body: some View {
@@ -141,17 +154,27 @@ struct NearbyStopRoutePatternView: View {
             let predictionText =
                 switch prediction {
                 case let .some(prediction):
-                    if let time = prediction.departureTime ?? prediction.arrivalTime {
-                        DateFormatter.localizedString(from: Date(timeIntervalSince1970: TimeInterval(time.epochSeconds)), dateStyle: .none, timeStyle: .short)
-                    } else {
-                        prediction.description()
+                    switch onEnum(of: prediction) {
+                    case let .overridden(overridden):
+                        Text(verbatim: overridden.text)
+                    case .hidden:
+                        // should have been filtered out already
+                        Text(verbatim: "")
+                    case .arriving:
+                        Text("Arriving")
+                    case .approaching:
+                        Text("Approaching")
+                    case .distantFuture:
+                        Text("20+ minutes")
+                    case let .minutes(format):
+                        Text("\(format.minutes, specifier: "%ld") minutes")
                     }
                 case .none:
-                    "No Predictions"
+                    Text("No Predictions")
                 case .loading:
-                    "Loading..."
+                    Text("Loading...")
                 }
-            Text(verbatim: predictionText)
+            predictionText
                 .lineLimit(1)
                 .layoutPriority(2)
                 .frame(minWidth: 64, alignment: .trailing)
@@ -216,7 +239,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         stopSequence: 30,
                         trip: Trip(id: "", routePatternId: "206-_-1", stops: nil)
                     ),
-                ]
+                ],
+                now: Date.now.toKotlinInstant()
             )
         }.previewDisplayName("NearbyRouteView")
     }

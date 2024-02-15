@@ -1,6 +1,37 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%ld minutes" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ld minute"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ld minutes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "20+ minutes" : {
+
+    },
+    "Approaching" : {
+
+    },
+    "Arriving" : {
+
+    },
     "hello_platform" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -25,6 +56,9 @@
 
     },
     "Location access state unknown" : {
+
+    },
+    "No Predictions" : {
 
     },
     "No results found" : {

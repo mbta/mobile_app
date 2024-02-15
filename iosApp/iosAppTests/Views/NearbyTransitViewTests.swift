@@ -155,8 +155,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 predictions = [
                     Prediction(
                         id: "prediction-60451421-8552-38",
-                        arrivalTime: Instant.companion.parse(isoString: "2024-02-05T15:20:24-05:00"),
-                        departureTime: Instant.companion.parse(isoString: "2024-02-05T15:20:24-05:00"),
+                        arrivalTime: Date.now.addingTimeInterval(10 * 60).toKotlinInstant(),
+                        departureTime: Date.now.addingTimeInterval(12 * 60).toKotlinInstant(),
                         directionId: 0,
                         revenue: true,
                         scheduleRelationship: .scheduled,
@@ -166,8 +166,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     ),
                     Prediction(
                         id: "prediction-60451426-84791-18",
-                        arrivalTime: Instant.companion.parse(isoString: "2024-02-05T16:04:59-05:00"),
-                        departureTime: Instant.companion.parse(isoString: "2024-02-05T16:04:59-05:00"),
+                        arrivalTime: Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant(),
+                        departureTime: Date.now.addingTimeInterval(2 * 60).toKotlinInstant(),
                         directionId: 1,
                         revenue: true,
                         scheduleRelationship: .scheduled,
@@ -188,14 +188,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let stops = try sut.inspect().findAll(NearbyStopView.self)
 
         XCTAssertNotNil(try stops[0].find(text: "Watertown - Dedham Mall via Meadowbrook Rd")
-            .parent().find(text: "3:20\u{202F}PM"))
+            .parent().find(text: "10 minutes"))
         XCTAssertNotNil(try stops[0].find(text: "Watertown - Charles River Loop via Meadowbrook Rd")
             .parent().find(text: "No Predictions"))
 
         XCTAssertNotNil(try stops[1].find(text: "Charles River Loop - Watertown via Meadowbrook Rd")
             .parent().find(text: "No Predictions"))
         XCTAssertNotNil(try stops[1].find(text: "Dedham Mall - Watertown via Meadowbrook Rd")
-            .parent().find(text: "4:04\u{202F}PM"))
+            .parent().find(text: "1 minute"))
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
@@ -255,11 +255,11 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = PredictionsFetcher(backend: IdleBackend())
         let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(), predictionsFetcher: predictionsFetcher)
 
-        func prediction(departureTime: String) -> Prediction {
+        func prediction(minutesAway: Double) -> Prediction {
             Prediction(
                 id: "",
                 arrivalTime: nil,
-                departureTime: Instant.companion.parse(isoString: departureTime),
+                departureTime: Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant(),
                 directionId: 0,
                 revenue: true,
                 scheduleRelationship: .scheduled,
@@ -269,12 +269,12 @@ final class NearbyTransitViewTests: XCTestCase {
             )
         }
 
-        predictionsFetcher.predictions = [prediction(departureTime: "2024-02-06T10:58:06-05:00")]
+        predictionsFetcher.predictions = [prediction(minutesAway: 2)]
 
-        XCTAssertNotNil(try sut.inspect().find(text: "10:58\u{202F}AM"))
+        XCTAssertNotNil(try sut.inspect().find(text: "2 minutes"))
 
-        predictionsFetcher.predictions = [prediction(departureTime: "2024-02-06T11:03:00-05:00")]
+        predictionsFetcher.predictions = [prediction(minutesAway: 3)]
 
-        XCTAssertNotNil(try sut.inspect().find(text: "11:03\u{202F}AM"))
+        XCTAssertNotNil(try sut.inspect().find(text: "3 minutes"))
     }
 }
