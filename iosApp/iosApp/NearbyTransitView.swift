@@ -160,6 +160,8 @@ struct NearbyStopRoutePatternView: View {
                     case .hidden:
                         // should have been filtered out already
                         Text(verbatim: "")
+                    case .boarding:
+                        Text("Boarding")
                     case .arriving:
                         Text("Arriving")
                     case .approaching:
@@ -237,7 +239,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         scheduleRelationship: .scheduled,
                         status: nil,
                         stopSequence: 30,
-                        trip: Trip(id: "", routePatternId: "206-_-1", stops: nil)
+                        stopId: "3276",
+                        trip: Trip(id: "", routePatternId: "206-_-1", stops: nil),
+                        vehicle: nil
                     ),
                 ],
                 now: Date.now.toKotlinInstant()

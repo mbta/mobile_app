@@ -31,7 +31,9 @@ class PhoenixSocketTest {
                 Prediction.ScheduleRelationship.Scheduled,
                 null,
                 17,
-                Trip("trip", "Magenta-30-0", null)
+                null,
+                Trip("trip", "Magenta-30-0", null),
+                null
             )
         val session =
             MockWebSocketSession(this) {

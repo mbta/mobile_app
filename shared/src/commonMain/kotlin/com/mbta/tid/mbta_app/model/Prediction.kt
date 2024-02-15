@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.GetReferenceIdSerializer
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -18,7 +19,9 @@ data class Prediction(
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,
     val status: String?,
     @SerialName("stop_sequence") val stopSequence: Int?,
-    val trip: Trip
+    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("stop") val stopId: String?,
+    val trip: Trip,
+    val vehicle: Vehicle?
 ) : Comparable<Prediction> {
     @Serializable
     enum class ScheduleRelationship {
@@ -44,6 +47,8 @@ data class Prediction(
 
         data object Hidden : Format()
 
+        data object Boarding : Format()
+
         data object Arriving : Format()
 
         data object Approaching : Format()
@@ -62,6 +67,13 @@ data class Prediction(
         }
         val predictionTime = arrivalTime ?: departureTime
         val timeRemaining = predictionTime.minus(now)
+        if (
+            timeRemaining <= 90.seconds &&
+                vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
+                vehicle.stopId == stopId
+        ) {
+            return Format.Boarding
+        }
         if (timeRemaining <= 30.seconds) {
             return Format.Arriving
         }

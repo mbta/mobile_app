@@ -32,6 +32,9 @@
     "Arriving" : {
 
     },
+    "Boarding" : {
+
+    },
     "hello_platform" : {
       "extractionState" : "manual",
       "localizations" : {
