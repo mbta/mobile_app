@@ -162,7 +162,9 @@ final class NearbyTransitViewTests: XCTestCase {
                         scheduleRelationship: .scheduled,
                         status: nil,
                         stopSequence: 38,
-                        trip: Trip(id: "60451421", routePatternId: "52-5-0", stops: nil)
+                        stopId: nil,
+                        trip: Trip(id: "60451421", routePatternId: "52-5-0", stops: nil),
+                        vehicle: nil
                     ),
                     Prediction(
                         id: "prediction-60451426-84791-18",
@@ -173,7 +175,9 @@ final class NearbyTransitViewTests: XCTestCase {
                         scheduleRelationship: .scheduled,
                         status: nil,
                         stopSequence: 18,
-                        trip: Trip(id: "60451426", routePatternId: "52-5-1", stops: nil)
+                        stopId: nil,
+                        trip: Trip(id: "60451426", routePatternId: "52-5-1", stops: nil),
+                        vehicle: nil
                     ),
                 ]
             }
@@ -265,7 +269,9 @@ final class NearbyTransitViewTests: XCTestCase {
                 scheduleRelationship: .scheduled,
                 status: nil,
                 stopSequence: 1,
-                trip: Trip(id: "", routePatternId: "52-5-0", stops: nil)
+                stopId: nil,
+                trip: Trip(id: "", routePatternId: "52-5-0", stops: nil),
+                vehicle: nil
             )
         }
 

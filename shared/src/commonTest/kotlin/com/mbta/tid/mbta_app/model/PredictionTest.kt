@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
@@ -19,7 +20,9 @@ class PredictionTest {
                 Prediction.ScheduleRelationship.Scheduled,
             status: String? = null,
             stopSequence: Int? = null,
-            trip: Trip = Trip("", "", listOf())
+            stopId: String? = null,
+            trip: Trip = trip(),
+            vehicle: Vehicle? = null,
         ) =
             Prediction(
                 id,
@@ -30,8 +33,20 @@ class PredictionTest {
                 scheduleRelationship,
                 status,
                 stopSequence,
-                trip
+                stopId,
+                trip,
+                vehicle
             )
+
+        fun trip(id: String = "", routePatternId: String? = null, stops: List<Stop>? = null) =
+            Trip(id, routePatternId, stops)
+
+        fun vehicle(
+            id: String = "",
+            currentStatus: Vehicle.CurrentStatus,
+            stopId: String? = null,
+            tripId: String? = null
+        ) = Vehicle(id, currentStatus, stopId, tripId)
 
         @Test
         fun `status is non-null`() {
@@ -64,6 +79,79 @@ class PredictionTest {
             assertEquals(
                 Prediction.Format.Arriving,
                 prediction(arrivalTime = now.minus(2.seconds), departureTime = now.plus(10.seconds))
+                    .format(now)
+            )
+        }
+
+        @Test
+        fun boarding() {
+            val now = Clock.System.now()
+            assertEquals(
+                Prediction.Format.Boarding,
+                prediction(
+                        departureTime = now.plus(10.seconds),
+                        stopId = "12345",
+                        trip = trip(id = "trip1"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                                stopId = "12345",
+                                tripId = "trip1"
+                            )
+                    )
+                    .format(now)
+            )
+        }
+
+        @Test
+        fun `not boarding`() {
+            val now = Clock.System.now()
+            // wrong vehicle status
+            assertNotEquals(
+                Prediction.Format.Boarding,
+                prediction(
+                        departureTime = now.plus(10.seconds),
+                        stopId = "12345",
+                        trip = trip(id = "trip1"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.IncomingAt,
+                                stopId = "12345",
+                                tripId = "trip1"
+                            )
+                    )
+                    .format(now)
+            )
+            // wrong stop ID
+            assertNotEquals(
+                Prediction.Format.Boarding,
+                prediction(
+                        departureTime = now.plus(10.seconds),
+                        stopId = "12345",
+                        trip = trip(id = "trip"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                                stopId = "67890",
+                                tripId = "trip1"
+                            )
+                    )
+                    .format(now)
+            )
+            // wrong trip ID
+            assertNotEquals(
+                Prediction.Format.Boarding,
+                prediction(
+                        departureTime = now.plus(10.seconds),
+                        stopId = "12345",
+                        trip = trip(id = "trip1"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                                stopId = "12345",
+                                tripId = "trip2"
+                            )
+                    )
                     .format(now)
             )
         }
