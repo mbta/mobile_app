@@ -60,6 +60,7 @@ final class NearbyTransitViewTests: XCTestCase {
         init() {
             super.init(backend: IdleBackend())
             let route52 = Route(id: "52",
+                                type: .bus,
                                 color: "FFC72C",
                                 directionNames: ["Outbound", "Inbound"],
                                 directionDestinations: ["Dedham Mall", "Watertown Yard"],

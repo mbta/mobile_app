@@ -141,7 +141,7 @@ struct SearchResultView_Previews: PreviewProvider {
                         isStation: true,
                         routes: [
                             StopResultRoute(
-                                type: RouteType.subway,
+                                type: RouteType.heavyRail,
                                 icon: "orange_line"
                             ),
                         ]

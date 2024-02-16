@@ -361,7 +361,7 @@ class BackendTest {
                                         id = "Green-D",
                                         shortName = "Green Line D",
                                         longName = "Green Line D",
-                                        routeType = RouteType.TRAM,
+                                        routeType = RouteType.LIGHT_RAIL,
                                         rank = 2
                                     )
                                 ),
@@ -373,15 +373,15 @@ class BackendTest {
                                         routes =
                                             listOf(
                                                 StopResultRoute(
-                                                    type = RouteType.SUBWAY,
+                                                    type = RouteType.HEAVY_RAIL,
                                                     icon = "orange_line"
                                                 ),
                                                 StopResultRoute(
-                                                    type = RouteType.TRAM,
+                                                    type = RouteType.LIGHT_RAIL,
                                                     icon = "green_line_d"
                                                 ),
                                                 StopResultRoute(
-                                                    type = RouteType.TRAM,
+                                                    type = RouteType.LIGHT_RAIL,
                                                     icon = "green_line_e"
                                                 ),
                                             ),

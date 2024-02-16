@@ -27,10 +27,12 @@
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
 		8CD1F8CD2B7164C100F419D4 /* PredictionsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */; };
 		9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */; };
+		9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8E582B7EC4B90066B936 /* RoutePill.swift */; };
 		9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D562B683103006F5B80 /* SearchResultView.swift */; };
 		9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */; };
 		9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */; };
 		9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F52B6D6EF70086B437 /* NearbyFetcher.swift */; };
+		9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
@@ -90,10 +92,12 @@
 		8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsFetcher.swift; sourceTree = "<group>"; };
 		9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFetcher.swift; sourceTree = "<group>"; };
+		9A4E8E582B7EC4B90066B936 /* RoutePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePill.swift; sourceTree = "<group>"; };
 		9A887D562B683103006F5B80 /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
 		9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewTests.swift; sourceTree = "<group>"; };
 		9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultFetcher.swift; sourceTree = "<group>"; };
 		9A9E05F52B6D6EF70086B437 /* NearbyFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyFetcher.swift; sourceTree = "<group>"; };
+		9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHexExtension.swift; sourceTree = "<group>"; };
 		9AF88E042B48913C00E08C7C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -198,6 +202,8 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				9AC10BD82B80060E00EA4605 /* Utils */,
+				9A4E8E572B7EC49A0066B936 /* ComponentViews */,
 				9A9E05F22B6D6D9F0086B437 /* Fetchers */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				9AF88E042B48913C00E08C7C /* Localizable.xcstrings */,
@@ -220,6 +226,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9A4E8E572B7EC49A0066B936 /* ComponentViews */ = {
+			isa = PBXGroup;
+			children = (
+				9A4E8E582B7EC4B90066B936 /* RoutePill.swift */,
+			);
+			path = ComponentViews;
+			sourceTree = "<group>";
+		};
 		9A9E05F22B6D6D9F0086B437 /* Fetchers */ = {
 			isa = PBXGroup;
 			children = (
@@ -230,6 +244,14 @@
 				8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */,
 			);
 			path = Fetchers;
+			sourceTree = "<group>";
+		};
+		9AC10BD82B80060E00EA4605 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -459,6 +481,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */,
+				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
 				8CD1F8CD2B7164C100F419D4 /* PredictionsFetcher.swift in Sources */,
@@ -469,6 +492,7 @@
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
+				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

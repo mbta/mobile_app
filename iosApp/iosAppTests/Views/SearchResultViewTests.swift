@@ -82,7 +82,7 @@ final class SearchResultViewTests: XCTestCase {
                         isStation: true,
                         routes: [
                             StopResultRoute(
-                                type: RouteType.subway,
+                                type: .heavyRail,
                                 icon: "orange_line"
                             ),
                         ]
@@ -131,7 +131,7 @@ final class SearchResultViewTests: XCTestCase {
                         isStation: true,
                         routes: [
                             StopResultRoute(
-                                type: RouteType.subway,
+                                type: .heavyRail,
                                 icon: "orange_line"
                             ),
                         ]
