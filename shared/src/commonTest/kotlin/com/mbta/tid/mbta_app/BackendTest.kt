@@ -53,19 +53,7 @@ class BackendTest {
                               "name": "Watertown - Charles River Loop via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505200020,
                               "direction_id": 0,
@@ -78,19 +66,7 @@ class BackendTest {
                               "name": "Charles River Loop - Watertown via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505201010,
                               "direction_id": 1,
@@ -103,19 +79,7 @@ class BackendTest {
                               "name": "Watertown - Dedham Mall via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505200000,
                               "direction_id": 0,
@@ -128,19 +92,7 @@ class BackendTest {
                               "name": "Dedham Mall - Watertown via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505201000,
                               "direction_id": 1,
@@ -158,6 +110,24 @@ class BackendTest {
                               "52-5-1",
                               "52-4-1"
                             ]
+                          },
+                          "routes": {
+                            "52": {
+                                "id": "52",
+                                "color": "FFC72C",
+                                "direction_names": [
+                                  "Outbound",
+                                  "Inbound"
+                                ],
+                                "direction_destinations": [
+                                  "Dedham Mall",
+                                  "Watertown Yard"
+                                ],
+                                "long_name": "Dedham Mall - Watertown Yard",
+                                "short_name": "52",
+                                "sort_order": 50520,
+                                "text_color": "000000"
+                            }
                           }
                         }
                     """
@@ -209,7 +179,7 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder = 505200020,
-                                    route = route52
+                                    routeId = "52"
                                 ),
                             "52-4-1" to
                                 RoutePattern(
@@ -217,7 +187,7 @@ class BackendTest {
                                     directionId = 1,
                                     name = "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201010,
-                                    route = route52
+                                    routeId = "52"
                                 ),
                             "52-5-0" to
                                 RoutePattern(
@@ -225,7 +195,7 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder = 505200000,
-                                    route = route52
+                                    routeId = "52"
                                 ),
                             "52-5-1" to
                                 RoutePattern(
@@ -233,14 +203,15 @@ class BackendTest {
                                     directionId = 1,
                                     name = "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201000,
-                                    route = route52
+                                    routeId = "52"
                                 )
                         ),
                     patternIdsByStop =
                         mapOf(
                             "8552" to listOf("52-5-0", "52-4-0"),
                             "84791" to listOf("52-5-1", "52-4-1")
-                        )
+                        ),
+                    routes = mapOf("52" to route52)
                 ),
                 response
             )

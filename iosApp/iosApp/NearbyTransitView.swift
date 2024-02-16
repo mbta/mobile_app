@@ -212,16 +212,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     directionId: 1,
                                     name: "Houghs Neck - Quincy Center Station",
                                     sortOrder: 521_601_000,
-                                    route: Route(
-                                        id: "216",
-                                        color: "FFC72C",
-                                        directionNames: ["Outbound", "Inbound"],
-                                        directionDestinations: ["Houghs Neck", "Quincy Center Station"],
-                                        longName: "Houghs Neck - Quincy Center Station via Germantown",
-                                        shortName: "216",
-                                        sortOrder: 52160,
-                                        textColor: "000000"
-                                    )
+                                    routeId: "216"
                                 ),
                             ]
                         ),

@@ -33,11 +33,12 @@ fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
             newPatternIds
                 .mapNotNull { patternId -> routePatterns[patternId] }
                 .sortedBy { it.sortOrder }
-                .groupBy { it.route }
+                .groupBy { it.routeId }
 
-        newPatternsByRoute.forEach { (route, routePatterns) ->
+        newPatternsByRoute.forEach { (routeId, routePatterns) ->
             val stopKey = stop.parentStation ?: stop
-            val routeStops = patternsByRouteAndStop.getOrPut(route) { mutableMapOf() }
+            val routeStops =
+                patternsByRouteAndStop.getOrPut(routes.getValue(routeId)) { mutableMapOf() }
             val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
             patternsForStop += routePatterns
         }

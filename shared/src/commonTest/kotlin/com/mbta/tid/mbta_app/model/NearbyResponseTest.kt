@@ -14,8 +14,8 @@ class NearbyResponseTest {
 
         val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, route1)
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, route1)
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
 
         val response =
             StopAndRoutePatternResponse(
@@ -25,7 +25,8 @@ class NearbyResponseTest {
                     mapOf(
                         stop1.id to listOf(route1rp1.id),
                         stop2.id to listOf(route1rp1.id, route1rp2.id),
-                    )
+                    ),
+                routes = mapOf("1" to route1)
             )
 
         assertEquals(
@@ -49,8 +50,8 @@ class NearbyResponseTest {
 
         val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 1, route1)
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 2, route1)
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 1, "1")
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 2, "1")
 
         val response =
             StopAndRoutePatternResponse(
@@ -59,7 +60,8 @@ class NearbyResponseTest {
                 patternIdsByStop =
                     mapOf(
                         stop1.id to listOf(route1rp2.id, route1rp1.id),
-                    )
+                    ),
+                routes = mapOf("1" to route1)
             )
 
         assertEquals(
@@ -83,7 +85,7 @@ class NearbyResponseTest {
 
         val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, route1)
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
 
         val response =
             StopAndRoutePatternResponse(
@@ -93,7 +95,8 @@ class NearbyResponseTest {
                     mapOf(
                         stop1.id to listOf(route1rp1.id),
                         stop2.id to listOf(route1rp1.id),
-                    )
+                    ),
+                routes = mapOf("1" to route1)
             )
 
         assertEquals(
@@ -113,11 +116,11 @@ class NearbyResponseTest {
         val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
         val route2 = Route("2", "", emptyList(), emptyList(), "Route Two", "2", 2, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, route1)
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, route1)
-        val route1rp3 = RoutePattern("1-2", 1, "1 Inbound via Back By", 12, route1)
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
+        val route1rp3 = RoutePattern("1-2", 1, "1 Inbound via Back By", 12, "1")
 
-        val route2rp1 = RoutePattern("2-0", 0, "2 Eastbound", 20, route2)
+        val route2rp1 = RoutePattern("2-0", 0, "2 Eastbound", 20, "2")
 
         val response =
             StopAndRoutePatternResponse(
@@ -128,7 +131,8 @@ class NearbyResponseTest {
                     mapOf(
                         stop1.id to listOf(route1rp1.id, route1rp2.id),
                         stop2.id to listOf(route1rp1.id, route1rp3.id, route2rp1.id),
-                    )
+                    ),
+                routes = mapOf("1" to route1, "2" to route2)
             )
 
         assertEquals(
@@ -158,9 +162,9 @@ class NearbyResponseTest {
 
         val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, route1)
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, route1)
-        val route1rp3 = RoutePattern("1-2", 1, "1 Inbound via Back By", 12, route1)
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
+        val route1rp3 = RoutePattern("1-2", 1, "1 Inbound via Back By", 12, "1")
 
         val response =
             StopAndRoutePatternResponse(
@@ -180,7 +184,8 @@ class NearbyResponseTest {
                             listOf(
                                 route1rp3.id,
                             ),
-                    )
+                    ),
+                routes = mapOf("1" to route1)
             )
 
         assertEquals(
