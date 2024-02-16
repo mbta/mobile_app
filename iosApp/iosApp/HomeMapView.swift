@@ -39,7 +39,11 @@ struct HomeMapView: View {
     }
     
     func createStopSourceData(stops : [Stop]) -> GeoJSONSourceData {
-        let stopFeatures = stops.map{ stop in
+        let stopFeatures = stops
+            .filter{ stop in
+                return stop.parentStation == nil
+            }
+            .map{ stop in
             var stopFeature = Feature(
                 geometry: Point(CLLocationCoordinate2D(latitude: stop.latitude, longitude: stop.longitude))
             )
