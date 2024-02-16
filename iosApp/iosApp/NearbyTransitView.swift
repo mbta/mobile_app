@@ -89,7 +89,7 @@ struct NearbyTransitView: View {
 }
 
 struct NearbyRouteView: View {
-    let nearbyRoute: NearbyRoute
+    let nearbyRoute: StopAssociatedRoute
     let allPredictions: [Prediction]?
     let now: Instant
 
@@ -106,7 +106,7 @@ struct NearbyRouteView: View {
 }
 
 struct NearbyStopView: View {
-    let patternsByStopByStop: NearbyPatternsByStop
+    let patternsByStopByStop: PatternsByStop
     let allPredictions: [Prediction]?
     let now: Instant
 
@@ -188,7 +188,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             NearbyRouteView(
-                nearbyRoute: NearbyRoute(
+                nearbyRoute: StopAssociatedRoute(
                     route: Route(
                         id: "216",
                         color: "FFC72C",
@@ -200,7 +200,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         textColor: "000000"
                     ),
                     patternsByStop: [
-                        NearbyPatternsByStop(
+                        PatternsByStop(
                             stop: Stop(
                                 id: "3276",
                                 latitude: 42.265969,
@@ -214,16 +214,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     directionId: 1,
                                     name: "Houghs Neck - Quincy Center Station",
                                     sortOrder: 521_601_000,
-                                    route: Route(
-                                        id: "216",
-                                        color: "FFC72C",
-                                        directionNames: ["Outbound", "Inbound"],
-                                        directionDestinations: ["Houghs Neck", "Quincy Center Station"],
-                                        longName: "Houghs Neck - Quincy Center Station via Germantown",
-                                        shortName: "216",
-                                        sortOrder: 52160,
-                                        textColor: "000000"
-                                    )
+                                    routeId: "216"
                                 ),
                             ]
                         ),

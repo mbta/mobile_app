@@ -46,9 +46,6 @@ final class SearchResultViewTests: XCTestCase {
             query: "hay",
             fetcher: FakeFetcher(getSearchResultsExpectation: getSearchResultsExpectation)
         )
-        sut.environmentObject(FakeFetcher(
-            getSearchResultsExpectation: getSearchResultsExpectation
-        ))
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)

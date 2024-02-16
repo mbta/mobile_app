@@ -6,6 +6,7 @@ struct ContentView: View {
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
+    @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
 
@@ -22,13 +23,13 @@ struct ContentView: View {
                         locationDataManager.locationFetcher.requestWhenInUseAuthorization()
                     })
                 case .authorizedAlways, .authorizedWhenInUse:
-                    Text(locationDataManager.currentLocation.debugDescription)
+                    EmptyView()
                 case .denied, .restricted:
                     Text("Location access denied or restricted")
                 @unknown default:
                     Text("Location access state unknown")
                 }
-                HomeMapView()
+                HomeMapView(globalFetcher: globalFetcher)
                 Spacer()
                 if let location = locationDataManager.currentLocation {
                     NearbyTransitView(
@@ -52,6 +53,7 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .environmentObject(LocationDataManager())
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
+            .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(backend: IdleBackend()))
     }
