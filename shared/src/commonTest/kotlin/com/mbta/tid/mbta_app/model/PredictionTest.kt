@@ -21,9 +21,8 @@ class PredictionTest {
             status: String? = null,
             stopSequence: Int? = null,
             stopId: String? = null,
-            trip: Trip = Trip("", "", listOf()),
-            vehicleStatus: Vehicle.CurrentStatus? = null,
-            vehicleStopId: String? = null
+            trip: Trip = trip(),
+            vehicle: Vehicle? = null,
         ) =
             Prediction(
                 id,
@@ -36,8 +35,18 @@ class PredictionTest {
                 stopSequence,
                 stopId,
                 trip,
-                vehicleStatus?.let { Vehicle(id = "", currentStatus = it, stopId = vehicleStopId) }
+                vehicle
             )
+
+        fun trip(id: String = "", routePatternId: String? = null, stops: List<Stop>? = null) =
+            Trip(id, routePatternId, stops)
+
+        fun vehicle(
+            id: String = "",
+            currentStatus: Vehicle.CurrentStatus,
+            stopId: String? = null,
+            tripId: String? = null
+        ) = Vehicle(id, currentStatus, stopId, tripId)
 
         @Test
         fun `status is non-null`() {
@@ -82,8 +91,13 @@ class PredictionTest {
                 prediction(
                         departureTime = now.plus(10.seconds),
                         stopId = "12345",
-                        vehicleStatus = Vehicle.CurrentStatus.StoppedAt,
-                        vehicleStopId = "12345"
+                        trip = trip(id = "trip1"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                                stopId = "12345",
+                                tripId = "trip1"
+                            )
                     )
                     .format(now)
             )
@@ -92,25 +106,19 @@ class PredictionTest {
         @Test
         fun `not boarding`() {
             val now = Clock.System.now()
-            // too far in the future
-            assertNotEquals(
-                Prediction.Format.Boarding,
-                prediction(
-                        departureTime = now.plus(3.minutes),
-                        stopId = "12345",
-                        vehicleStatus = Vehicle.CurrentStatus.StoppedAt,
-                        vehicleStopId = "12345"
-                    )
-                    .format(now)
-            )
             // wrong vehicle status
             assertNotEquals(
                 Prediction.Format.Boarding,
                 prediction(
                         departureTime = now.plus(10.seconds),
                         stopId = "12345",
-                        vehicleStatus = Vehicle.CurrentStatus.IncomingAt,
-                        vehicleStopId = "12345"
+                        trip = trip(id = "trip1"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.IncomingAt,
+                                stopId = "12345",
+                                tripId = "trip1"
+                            )
                     )
                     .format(now)
             )
@@ -120,8 +128,29 @@ class PredictionTest {
                 prediction(
                         departureTime = now.plus(10.seconds),
                         stopId = "12345",
-                        vehicleStatus = Vehicle.CurrentStatus.StoppedAt,
-                        vehicleStopId = "67890"
+                        trip = trip(id = "trip"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                                stopId = "67890",
+                                tripId = "trip1"
+                            )
+                    )
+                    .format(now)
+            )
+            // wrong trip ID
+            assertNotEquals(
+                Prediction.Format.Boarding,
+                prediction(
+                        departureTime = now.plus(10.seconds),
+                        stopId = "12345",
+                        trip = trip(id = "trip1"),
+                        vehicle =
+                            vehicle(
+                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                                stopId = "12345",
+                                tripId = "trip2"
+                            )
                     )
                     .format(now)
             )

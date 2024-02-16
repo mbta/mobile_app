@@ -68,9 +68,9 @@ data class Prediction(
         val predictionTime = arrivalTime ?: departureTime
         val timeRemaining = predictionTime.minus(now)
         if (
-            timeRemaining <= 90.seconds &&
-                vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
-                vehicle.stopId == stopId
+            vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
+                vehicle.stopId == stopId &&
+                vehicle.tripId == trip.id
         ) {
             return Format.Boarding
         }

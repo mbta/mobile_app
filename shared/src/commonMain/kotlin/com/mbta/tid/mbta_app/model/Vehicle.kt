@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 data class Vehicle(
     val id: String,
     @SerialName("current_status") val currentStatus: CurrentStatus,
-    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("stop") val stopId: String?
+    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("stop") val stopId: String?,
+    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("trip") val tripId: String?,
 ) {
     @Serializable
     enum class CurrentStatus {
