@@ -77,10 +77,10 @@ final class NearbyTransitViewTests: XCTestCase {
                              longitude: -71.191092,
                              name: "Sawmill Brook Pkwy @ Walsh Rd - opposite side",
                              parentStation: nil)
-            nearbyByRouteAndStop = [NearbyRoute(
+            nearbyByRouteAndStop = [StopAssociatedRoute(
                 route: route52,
                 patternsByStop: [
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: stop1,
                         routePatterns: [
                             RoutePattern(
@@ -88,18 +88,18 @@ final class NearbyTransitViewTests: XCTestCase {
                                 directionId: 0,
                                 name: "Watertown - Charles River Loop via Meadowbrook Rd",
                                 sortOrder: 505_200_020,
-                                route: route52
+                                routeId: "52"
                             ),
                             RoutePattern(
                                 id: "52-5-0",
                                 directionId: 0,
                                 name: "Watertown - Dedham Mall via Meadowbrook Rd",
                                 sortOrder: 505_200_000,
-                                route: route52
+                                routeId: "52"
                             ),
                         ]
                     ),
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: stop2,
                         routePatterns: [
                             RoutePattern(
@@ -107,13 +107,13 @@ final class NearbyTransitViewTests: XCTestCase {
                                 directionId: 1,
                                 name: "Charles River Loop - Watertown via Meadowbrook Rd",
                                 sortOrder: 505_201_010,
-                                route: route52
+                                routeId: "52"
                             ),
                             RoutePattern(id: "52-5-1",
                                          directionId: 1,
                                          name: "Dedham Mall - Watertown via Meadowbrook Rd",
                                          sortOrder: 505_201_000,
-                                         route: route52),
+                                         routeId: "52"),
                         ]
                     ),
                 ]
@@ -235,10 +235,10 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
         nearbyFetcher.nearbyByRouteAndStop = [
-            NearbyRoute(
+            StopAssociatedRoute(
                 route: nearbyFetcher.nearbyByRouteAndStop![0].route,
                 patternsByStop: [
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil),
                         routePatterns: []
                     ),
