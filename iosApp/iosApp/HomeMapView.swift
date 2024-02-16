@@ -21,10 +21,10 @@ struct HomeMapView: View {
 
     @State var viewport: Viewport = .camera(center: defaultCenter, zoom: defaultZoom)
     @StateObject private var locationDataManager: LocationDataManager
-    @ObservedObject var stopFetcher: StopFetcher
+    @ObservedObject var globalFetcher: GlobalFetcher
 
-    init(stopFetcher: StopFetcher, locationDataManager: LocationDataManager = .init(distanceFilter: 1)) {
-        self.stopFetcher = stopFetcher
+    init(globalFetcher: GlobalFetcher, locationDataManager: LocationDataManager = .init(distanceFilter: 1)) {
+        self.globalFetcher = globalFetcher
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
     }
 
@@ -78,7 +78,7 @@ struct HomeMapView: View {
                 // print(feature.feature.identifier)
                 return true
             }
-            .onChange(of: stopFetcher.stops) { stops in
+            .onChange(of: globalFetcher.stops) { stops in
                 let map = proxy.map!
                 if (map.sourceExists(withId: stopSourceId)) {
                     // Don't create a new source if one already exists
@@ -106,7 +106,7 @@ struct HomeMapView: View {
                 viewport = .followPuck(zoom: viewport.camera?.zoom ?? HomeMapView.defaultZoom)
                 
                 Task{
-                    try await stopFetcher.getAllStops()
+                    try await globalFetcher.getGlobalData()
                 }
 
                 didAppear?(self)

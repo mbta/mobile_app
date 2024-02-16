@@ -6,7 +6,7 @@ struct ContentView: View {
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
-    @EnvironmentObject var stopFetcher: StopFetcher
+    @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
 
@@ -29,7 +29,7 @@ struct ContentView: View {
                 @unknown default:
                     Text("Location access state unknown")
                 }
-                HomeMapView(stopFetcher: stopFetcher)
+                HomeMapView(globalFetcher: globalFetcher)
                 Spacer()
                 if let location = locationDataManager.currentLocation {
                     NearbyTransitView(
@@ -53,7 +53,7 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .environmentObject(LocationDataManager())
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(StopFetcher(backend: IdleBackend()))
+            .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(backend: IdleBackend()))
     }

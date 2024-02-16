@@ -11,7 +11,7 @@ import shared
 
 protocol BackendProtocol {
     func getNearby(latitude: Double, longitude: Double) async throws -> StopAndRoutePatternResponse
-    func getAllStops() async throws -> StopAndRoutePatternResponse
+    func getGlobalData() async throws -> StopAndRoutePatternResponse
     func getSearchResults(query: String) async throws -> SearchResponse
     func predictionsStopsChannel(stopIds: [String]) async throws -> PredictionsStopsChannel
 }
@@ -29,7 +29,7 @@ struct IdleBackend: BackendProtocol {
         await hang()
     }
     
-    func getAllStops() async throws -> StopAndRoutePatternResponse {
+    func getGlobalData() async throws -> StopAndRoutePatternResponse {
         await hang()
     }
 

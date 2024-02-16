@@ -88,14 +88,14 @@ final class NearbyTransitViewTests: XCTestCase {
                                 directionId: 0,
                                 name: "Watertown - Charles River Loop via Meadowbrook Rd",
                                 sortOrder: 505_200_020,
-                                route: route52
+                                routeId: "52"
                             ),
                             RoutePattern(
                                 id: "52-5-0",
                                 directionId: 0,
                                 name: "Watertown - Dedham Mall via Meadowbrook Rd",
                                 sortOrder: 505_200_000,
-                                route: route52
+                                routeId: "52"
                             ),
                         ]
                     ),
@@ -107,13 +107,13 @@ final class NearbyTransitViewTests: XCTestCase {
                                 directionId: 1,
                                 name: "Charles River Loop - Watertown via Meadowbrook Rd",
                                 sortOrder: 505_201_010,
-                                route: route52
+                                routeId: "52"
                             ),
                             RoutePattern(id: "52-5-1",
                                          directionId: 1,
                                          name: "Dedham Mall - Watertown via Meadowbrook Rd",
                                          sortOrder: 505_201_000,
-                                         route: route52),
+                                         routeId: "52"),
                         ]
                     ),
                 ]
