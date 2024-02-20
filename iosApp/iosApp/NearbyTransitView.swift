@@ -163,6 +163,14 @@ struct NearbyStopRoutePatternView: View {
     }
 }
 
+extension Prediction.FormatOverridden {
+    func textWithLocale() -> AttributedString {
+        var result = AttributedString(text)
+        result.languageIdentifier = "en-US"
+        return result
+    }
+}
+
 struct PredictionView: View {
     let prediction: State
 
@@ -177,7 +185,7 @@ struct PredictionView: View {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
-                Text(verbatim: overridden.text)
+                Text(overridden.textWithLocale())
             case .hidden:
                 // should have been filtered out already
                 Text(verbatim: "")
