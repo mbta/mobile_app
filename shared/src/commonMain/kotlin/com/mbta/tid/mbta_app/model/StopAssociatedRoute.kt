@@ -59,7 +59,7 @@ fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
                         stop = stop,
                         patternsByHeadsign =
                             patterns
-                                .groupBy { it.representativeTrip.headsign }
+                                .groupBy { it.representativeTrip!!.headsign }
                                 .map { PatternsByHeadsign(it.key, it.value) }
                     )
                 }
