@@ -30,7 +30,7 @@ class PredictionsStopsChannelTest {
                 status = null,
                 stopSequence = 40,
                 stopId = null,
-                trip = Trip(id = "one", routePatternId = null, stops = null),
+                trip = Trip(id = "one", headsign = "Headsign"),
                 vehicle = null
             )
 
@@ -45,7 +45,7 @@ class PredictionsStopsChannelTest {
                 status = null,
                 stopSequence = 90,
                 stopId = null,
-                trip = Trip(id = "two", routePatternId = null, stops = null),
+                trip = Trip(id = "two", headsign = "Headsign"),
                 vehicle = null
             )
 

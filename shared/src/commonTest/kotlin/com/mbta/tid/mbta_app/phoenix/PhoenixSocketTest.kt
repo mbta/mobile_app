@@ -32,7 +32,7 @@ class PhoenixSocketTest {
                 null,
                 17,
                 null,
-                Trip("trip", "Magenta-30-0", null),
+                Trip("trip", "Harvard", "Magenta-30-0", null),
                 null
             )
         val session =

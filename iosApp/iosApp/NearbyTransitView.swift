@@ -115,12 +115,16 @@ struct NearbyStopView: View {
             Text(patternsByStopByStop.stop.name).fontWeight(.bold)
 
             VStack(alignment: .leading) {
-                ForEach(patternsByStopByStop.routePatterns, id: \.id) { routePattern in
+                ForEach(patternsByStopByStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
+                    let patternIds = Set(patternsByHeadsign.patterns.map(\.id))
                     let prediction: NearbyStopRoutePatternView.PredictionState =
                         if let predictions = allPredictions {
-                            if let firstPrediction = predictions
-                                .filter({ $0.trip.routePatternId == routePattern.id })
-                                .map({ $0.format(now: now) })
+                            if let firstPrediction = predictions.filter({
+                                if let routePatternId = $0.trip.routePatternId {
+                                    return patternIds.contains(routePatternId)
+                                }
+                                return false
+                            }).map({ $0.format(now: now) })
                                 .filter({ ($0 as? Prediction.FormatHidden) == nil })
                                 .first
                             {
@@ -128,7 +132,7 @@ struct NearbyStopView: View {
                             } else { .none }
                         } else { .loading }
                     NearbyStopRoutePatternView(
-                        routePattern: routePattern,
+                        headsign: patternsByHeadsign.headsign,
                         prediction: prediction
                     )
                 }
@@ -138,7 +142,7 @@ struct NearbyStopView: View {
 }
 
 struct NearbyStopRoutePatternView: View {
-    let routePattern: RoutePattern
+    let headsign: String
     let prediction: PredictionState
 
     enum PredictionState {
@@ -149,7 +153,7 @@ struct NearbyStopRoutePatternView: View {
 
     var body: some View {
         HStack {
-            Text(routePattern.name).layoutPriority(1)
+            Text(headsign).layoutPriority(1)
             Spacer()
             let predictionText =
                 switch prediction {
@@ -208,14 +212,16 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                 name: "Sea St opp Peterson Rd",
                                 parentStation: nil
                             ),
-                            routePatterns: [
-                                RoutePattern(
-                                    id: "206-_-1",
-                                    directionId: 1,
-                                    name: "Houghs Neck - Quincy Center Station",
-                                    sortOrder: 521_601_000,
-                                    routeId: "216"
-                                ),
+                            patternsByHeadsign: [
+                                PatternsByHeadsign(headsign: "Houghs Neck", patterns:
+                                    [RoutePattern(
+                                        id: "206-_-1",
+                                        directionId: 1,
+                                        name: "Houghs Neck - Quincy Center Station",
+                                        sortOrder: 521_601_000,
+                                        representativeTrip: Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
+                                        routeId: "216"
+                                    )]),
                             ]
                         ),
                     ]
@@ -231,7 +237,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         status: nil,
                         stopSequence: 30,
                         stopId: "3276",
-                        trip: Trip(id: "", routePatternId: "206-_-1", stops: nil),
+                        trip: Trip(id: "", headsign: "Harvard", routePatternId: "206-_-1", stops: nil),
                         vehicle: nil
                     ),
                 ],

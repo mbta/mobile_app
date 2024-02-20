@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.StopResultRoute
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import io.ktor.client.engine.mock.MockEngine
@@ -58,7 +59,10 @@ class BackendTest {
                               "sort_order": 505200020,
                               "direction_id": 0,
                               "representative_trip": {
-                                "headsign": "Charles River Loop"
+                                "id": "trip1",
+                                "headsign": "Watertown",
+                                "stops": null,
+                                "route_pattern": null
                               }
                             },
                             "52-4-1": {
@@ -71,6 +75,7 @@ class BackendTest {
                               "sort_order": 505201010,
                               "direction_id": 1,
                               "representative_trip": {
+                                "id": "trip2",
                                 "headsign": "Charles River Loop"
                               }
                             },
@@ -84,7 +89,8 @@ class BackendTest {
                               "sort_order": 505200000,
                               "direction_id": 0,
                               "representative_trip": {
-                                "headsign": "Dedham Mall"
+                                "id": "trip3",
+                                "headsign": "Watertown"
                               }
                             },
                             "52-5-1": {
@@ -97,6 +103,7 @@ class BackendTest {
                               "sort_order": 505201000,
                               "direction_id": 1,
                               "representative_trip": {
+                                "id": "trip4",
                                 "headsign": "Dedham Mall"
                               }
                             }
@@ -179,7 +186,8 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder = 505200020,
-                                    routeId = "52"
+                                    representativeTrip = Trip(id = "trip1", headsign = "Watertown"),
+                                    routeId = route52.id
                                 ),
                             "52-4-1" to
                                 RoutePattern(
@@ -187,7 +195,9 @@ class BackendTest {
                                     directionId = 1,
                                     name = "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201010,
-                                    routeId = "52"
+                                    representativeTrip =
+                                        Trip(id = "trip2", headsign = "Charles River Loop"),
+                                    routeId = route52.id
                                 ),
                             "52-5-0" to
                                 RoutePattern(
@@ -195,7 +205,8 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder = 505200000,
-                                    routeId = "52"
+                                    representativeTrip = Trip(id = "trip3", headsign = "Watertown"),
+                                    routeId = route52.id
                                 ),
                             "52-5-1" to
                                 RoutePattern(
@@ -203,7 +214,9 @@ class BackendTest {
                                     directionId = 1,
                                     name = "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201000,
-                                    routeId = "52"
+                                    representativeTrip =
+                                        Trip(id = "trip4", headsign = "Dedham Mall"),
+                                    routeId = route52.id
                                 )
                         ),
                     patternIdsByStop =

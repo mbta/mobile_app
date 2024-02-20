@@ -38,8 +38,12 @@ class PredictionTest {
                 vehicle
             )
 
-        fun trip(id: String = "", routePatternId: String? = null, stops: List<Stop>? = null) =
-            Trip(id, routePatternId, stops)
+        fun trip(
+            id: String = "",
+            headsign: String = "",
+            routePatternId: String? = null,
+            stops: List<Stop>? = null
+        ) = Trip(id, headsign, routePatternId, stops)
 
         fun vehicle(
             id: String = "",
