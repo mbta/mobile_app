@@ -77,10 +77,10 @@ final class NearbyTransitViewTests: XCTestCase {
                              longitude: -71.191092,
                              name: "Sawmill Brook Pkwy @ Walsh Rd - opposite side",
                              parentStation: nil)
-            nearbyByRouteAndStop = [NearbyRoute(
+            nearbyByRouteAndStop = [StopAssociatedRoute(
                 route: route52,
                 patternsByStop: [
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: stop1,
                         patternsByHeadsign: [
                             PatternsByHeadsign(
@@ -92,7 +92,7 @@ final class NearbyTransitViewTests: XCTestCase {
                                         name: "Watertown - Charles River Loop via Meadowbrook Rd",
                                         sortOrder: 505_200_020,
                                         representativeTrip: Trip(id: "trip1", headsign: "Watertown", routePatternId: "52-4-0", stops: nil),
-                                        route: route52
+                                        routeId: route52.id
                                     ),
                                     RoutePattern(
                                         id: "52-5-0",
@@ -100,13 +100,13 @@ final class NearbyTransitViewTests: XCTestCase {
                                         name: "Watertown - Dedham Mall via Meadowbrook Rd",
                                         sortOrder: 505_200_000,
                                         representativeTrip: Trip(id: "trip2", headsign: "Watertown", routePatternId: "52-5-0", stops: nil),
-                                        route: route52
+                                        routeId: route52.id
                                     ),
                                 ]
                             ),
                         ]
                     ),
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: stop2,
                         patternsByHeadsign: [PatternsByHeadsign(headsign: "Charles River Loop", patterns: [
                             RoutePattern(
@@ -115,7 +115,7 @@ final class NearbyTransitViewTests: XCTestCase {
                                 name: "Charles River Loop - Watertown via Meadowbrook Rd",
                                 sortOrder: 505_201_010,
                                 representativeTrip: Trip(id: "trip3", headsign: "Charles River Loop", routePatternId: "52-4-1", stops: nil),
-                                route: route52
+                                routeId: route52.id
                             ),
 
                         ]),
@@ -125,7 +125,7 @@ final class NearbyTransitViewTests: XCTestCase {
                                          name: "Dedham Mall - Watertown via Meadowbrook Rd",
                                          sortOrder: 505_201_000,
                                          representativeTrip: Trip(id: "trip4", headsign: "Charles River Loop", routePatternId: "52-5-1", stops: nil),
-                                         route: route52),
+                                         routeId: route52.id),
                         ])]
                     ),
                 ]
@@ -172,7 +172,9 @@ final class NearbyTransitViewTests: XCTestCase {
                         scheduleRelationship: .scheduled,
                         status: nil,
                         stopSequence: 38,
-                        trip: Trip(id: "60451421", headsign: "Headsign1", routePatternId: "52-5-0", stops: nil)
+                        stopId: nil,
+                        trip: Trip(id: "60451421", headsign: "Headsign1", routePatternId: "52-5-0", stops: nil),
+                        vehicle: nil
                     ),
                     Prediction(
                         id: "prediction-60451426-84791-18",
@@ -183,7 +185,9 @@ final class NearbyTransitViewTests: XCTestCase {
                         scheduleRelationship: .scheduled,
                         status: nil,
                         stopSequence: 18,
-                        trip: Trip(id: "60451426", headsign: "Headsign2", routePatternId: "52-5-1", stops: nil)
+                        stopId: nil,
+                        trip: Trip(id: "60451426", headsign: "Headsign2", routePatternId: "52-5-1", stops: nil),
+                        vehicle: nil
                     ),
                 ]
             }
@@ -244,10 +248,10 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
         nearbyFetcher.nearbyByRouteAndStop = [
-            NearbyRoute(
+            StopAssociatedRoute(
                 route: nearbyFetcher.nearbyByRouteAndStop![0].route,
                 patternsByStop: [
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop: Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil),
                         patternsByHeadsign: []
                     ),
@@ -274,7 +278,9 @@ final class NearbyTransitViewTests: XCTestCase {
                 scheduleRelationship: .scheduled,
                 status: nil,
                 stopSequence: 1,
-                trip: Trip(id: "", headsign: "Headsign", routePatternId: "52-5-0", stops: nil)
+                stopId: nil,
+                trip: Trip(id: "", headsign: "Headsign", routePatternId: "52-5-0", stops: nil),
+                vehicle: nil
             )
         }
 

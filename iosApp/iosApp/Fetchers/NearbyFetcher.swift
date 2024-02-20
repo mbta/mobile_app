@@ -10,8 +10,8 @@ import Foundation
 import shared
 
 class NearbyFetcher: ObservableObject {
-    @Published var nearby: NearbyResponse?
-    @Published var nearbyByRouteAndStop: [NearbyRoute]?
+    @Published var nearby: StopAndRoutePatternResponse?
+    @Published var nearbyByRouteAndStop: [StopAssociatedRoute]?
     let backend: any BackendProtocol
 
     init(backend: any BackendProtocol) {

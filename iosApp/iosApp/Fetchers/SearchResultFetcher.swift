@@ -18,6 +18,10 @@ class SearchResultFetcher: ObservableObject {
     }
 
     @MainActor func getSearchResults(query: String) async throws {
+        if (query.isEmpty) {
+            results = nil
+            return
+        }
         let response = try await backend.getSearchResults(query: query)
         results = response.data
     }

@@ -1,12 +1,14 @@
 package com.mbta.tid.mbta_app
 
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.SearchResponse
+import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.phoenixSocket
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.expectSuccess
@@ -30,6 +32,7 @@ class Backend(engine: HttpClientEngine) {
         HttpClient(engine) {
             install(ContentNegotiation) { json(json) }
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
+            install(ContentEncoding) { gzip(0.9F) }
             defaultRequest { url("https://$mobileBackendHost") }
         }
 
@@ -64,14 +67,13 @@ class Backend(engine: HttpClientEngine) {
         JsonConvertException::class,
         ResponseException::class
     )
-    suspend fun getNearby(latitude: Double, longitude: Double): NearbyResponse =
+    suspend fun getNearby(latitude: Double, longitude: Double): StopAndRoutePatternResponse =
         httpClient
             .get {
                 url {
                     path("api/nearby/")
                     parameters.append("latitude", latitude.toString())
                     parameters.append("longitude", longitude.toString())
-                    parameters.append("source", "v3")
                 }
                 expectSuccess = true
             }
@@ -90,6 +92,20 @@ class Backend(engine: HttpClientEngine) {
                     path("api/search/query")
                     parameters.append("query", query)
                 }
+            }
+            .body()
+
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class
+    )
+    suspend fun getGlobalData(): StopAndRoutePatternResponse =
+        httpClient
+            .get {
+                url { path("api/global") }
+                expectSuccess = true
             }
             .body()
 

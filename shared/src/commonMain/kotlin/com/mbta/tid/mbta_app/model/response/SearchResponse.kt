@@ -1,5 +1,6 @@
-package com.mbta.tid.mbta_app
+package com.mbta.tid.mbta_app.model.response
 
+import com.mbta.tid.mbta_app.model.SearchResults
 import kotlinx.serialization.Serializable
 
 @Serializable

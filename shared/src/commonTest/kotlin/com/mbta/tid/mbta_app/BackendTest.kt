@@ -2,9 +2,15 @@ package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteResult
+import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopResult
+import com.mbta.tid.mbta_app.model.StopResultRoute
 import com.mbta.tid.mbta_app.model.Trip
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.SearchResponse
+import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -20,7 +26,7 @@ class BackendTest {
     fun testGetNearby() {
         runBlocking {
             val mockEngine = MockEngine { request ->
-                assertEquals("latitude=12.34&longitude=-56.78&source=v3", request.url.encodedQuery)
+                assertEquals("latitude=12.34&longitude=-56.78", request.url.encodedQuery)
                 respond(
                     content =
                         ByteReadChannel(
@@ -48,19 +54,7 @@ class BackendTest {
                               "name": "Watertown - Charles River Loop via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505200020,
                               "direction_id": 0,
@@ -76,27 +70,13 @@ class BackendTest {
                               "name": "Charles River Loop - Watertown via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505201010,
                               "direction_id": 1,
                               "representative_trip": {
                                 "id": "trip2",
-                                "headsign": "Charles River Loop",
-                                "stops": null,
-                                "route_pattern": null
+                                "headsign": "Charles River Loop"
                               }
                             },
                             "52-5-0": {
@@ -104,27 +84,13 @@ class BackendTest {
                               "name": "Watertown - Dedham Mall via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505200000,
                               "direction_id": 0,
                               "representative_trip": {
                                 "id": "trip3",
-                                "headsign": "Watertown",
-                                "stops": null,
-                                "route_pattern": null
+                                "headsign": "Watertown"
                               }
                             },
                             "52-5-1": {
@@ -132,27 +98,13 @@ class BackendTest {
                               "name": "Dedham Mall - Watertown via Meadowbrook Rd",
                               "route": {
                                 "id": "52",
-                                "color": "FFC72C",
-                                "direction_names": [
-                                  "Outbound",
-                                  "Inbound"
-                                ],
-                                "direction_destinations": [
-                                  "Dedham Mall",
-                                  "Watertown Yard"
-                                ],
-                                "long_name": "Dedham Mall - Watertown Yard",
-                                "short_name": "52",
-                                "sort_order": 50520,
-                                "text_color": "000000"
+                                "type": "route"
                               },
                               "sort_order": 505201000,
                               "direction_id": 1,
                               "representative_trip": {
                                 "id": "trip4",
-                                "headsign": "Dedham Mall",
-                                "stops": null,
-                                "route_pattern": null
+                                "headsign": "Dedham Mall"
                               }
                             }
                           },
@@ -165,6 +117,24 @@ class BackendTest {
                               "52-5-1",
                               "52-4-1"
                             ]
+                          },
+                          "routes": {
+                            "52": {
+                                "id": "52",
+                                "color": "FFC72C",
+                                "direction_names": [
+                                  "Outbound",
+                                  "Inbound"
+                                ],
+                                "direction_destinations": [
+                                  "Dedham Mall",
+                                  "Watertown Yard"
+                                ],
+                                "long_name": "Dedham Mall - Watertown Yard",
+                                "short_name": "52",
+                                "sort_order": 50520,
+                                "text_color": "000000"
+                            }
                           }
                         }
                     """
@@ -190,7 +160,7 @@ class BackendTest {
                     textColor = "000000"
                 )
             assertEquals(
-                NearbyResponse(
+                StopAndRoutePatternResponse(
                     stops =
                         listOf(
                             Stop(
@@ -223,7 +193,7 @@ class BackendTest {
                                             routePatternId = null,
                                             stops = null
                                         ),
-                                    route = route52
+                                    routeId = route52.id
                                 ),
                             "52-4-1" to
                                 RoutePattern(
@@ -238,7 +208,7 @@ class BackendTest {
                                             routePatternId = null,
                                             stops = null
                                         ),
-                                    route = route52
+                                    routeId = route52.id
                                 ),
                             "52-5-0" to
                                 RoutePattern(
@@ -253,7 +223,7 @@ class BackendTest {
                                             routePatternId = null,
                                             stops = null
                                         ),
-                                    route = route52
+                                    routeId = route52.id
                                 ),
                             "52-5-1" to
                                 RoutePattern(
@@ -268,14 +238,15 @@ class BackendTest {
                                             routePatternId = null,
                                             stops = null
                                         ),
-                                    route = route52
+                                    routeId = route52.id
                                 )
                         ),
                     patternIdsByStop =
                         mapOf(
                             "8552" to listOf("52-5-0", "52-4-0"),
                             "84791" to listOf("52-5-1", "52-4-1")
-                        )
+                        ),
+                    routes = mapOf("52" to route52)
                 ),
                 response
             )

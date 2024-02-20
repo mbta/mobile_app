@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 
 /** @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder] */
 data class PatternsByHeadsign(val headsign: String, val patterns: List<RoutePattern>)
@@ -9,22 +9,21 @@ data class PatternsByHeadsign(val headsign: String, val patterns: List<RoutePatt
  * @property patternsByHeadsign [RoutePattern]s serving the stop grouped by headsign. The headsigns
  *   are listed in ascending order based on [RoutePattern.sortOrder]
  */
-data class NearbyPatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsByHeadsign>)
+data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsByHeadsign>)
 
 /**
- * @property patternsByStop A list of route patterns grouped by first the nearby station or stop
- *   that they serve.
+ * @property patternsByStop A list of route patterns grouped by the station or stop that they serve.
  */
-data class NearbyRoute(
+data class StopAssociatedRoute(
     val route: Route,
-    val patternsByStop: List<NearbyPatternsByStop>,
+    val patternsByStop: List<PatternsByStop>,
 )
 
 /**
- * Aggregate nearby stops and the patterns that serve them by route. Preserves the sort order of the
- * stops received by the server in [NearbyResponse.stops]
+ * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the stops
+ * received by the server in [StopAndRoutePatternResponse.stops]
  */
-fun NearbyResponse.byRouteAndStop(): List<NearbyRoute> {
+fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
     val routePatternsUsed = mutableSetOf<String>()
 
     val patternsByRouteAndStop = mutableMapOf<Route, MutableMap<Stop, MutableList<RoutePattern>>>()
@@ -40,22 +39,23 @@ fun NearbyResponse.byRouteAndStop(): List<NearbyRoute> {
             newPatternIds
                 .mapNotNull { patternId -> routePatterns[patternId] }
                 .sortedBy { it.sortOrder }
-                .groupBy { it.route }
+                .groupBy { it.routeId }
 
-        newPatternsByRoute.forEach { (route, routePatterns) ->
+        newPatternsByRoute.forEach { (routeId, routePatterns) ->
             val stopKey = stop.parentStation ?: stop
-            val routeStops = patternsByRouteAndStop.getOrPut(route) { mutableMapOf() }
+            val routeStops =
+                patternsByRouteAndStop.getOrPut(routes.getValue(routeId)) { mutableMapOf() }
             val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
             patternsForStop += routePatterns
         }
     }
 
     return patternsByRouteAndStop.map { (route, patternsByStop) ->
-        NearbyRoute(
+        StopAssociatedRoute(
             route = route,
             patternsByStop =
                 patternsByStop.map { (stop, patterns) ->
-                    NearbyPatternsByStop(
+                    PatternsByStop(
                         stop = stop,
                         patternsByHeadsign =
                             patterns

@@ -89,7 +89,7 @@ struct NearbyTransitView: View {
 }
 
 struct NearbyRouteView: View {
-    let nearbyRoute: NearbyRoute
+    let nearbyRoute: StopAssociatedRoute
     let allPredictions: [Prediction]?
     let now: Instant
 
@@ -106,7 +106,7 @@ struct NearbyRouteView: View {
 }
 
 struct NearbyStopView: View {
-    let patternsByStopByStop: NearbyPatternsByStop
+    let patternsByStopByStop: PatternsByStop
     let allPredictions: [Prediction]?
     let now: Instant
 
@@ -124,9 +124,10 @@ struct NearbyStopView: View {
                                     return patternIds.contains(routePatternId)
                                 }
                                 return false
-                            })            .map({ $0.format(now: now) })
+                            }).map({ $0.format(now: now) })
                                 .filter({ ($0 as? Prediction.FormatHidden) == nil })
-                                .first {
+                                .first
+                            {
                                 .some(firstPrediction)
                             } else { .none }
                         } else { .loading }
@@ -163,6 +164,8 @@ struct NearbyStopRoutePatternView: View {
                     case .hidden:
                         // should have been filtered out already
                         Text(verbatim: "")
+                    case .boarding:
+                        Text("Boarding")
                     case .arriving:
                         Text("Arriving")
                     case .approaching:
@@ -189,7 +192,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             NearbyRouteView(
-                nearbyRoute: NearbyRoute(
+                nearbyRoute: StopAssociatedRoute(
                     route: Route(
                         id: "216",
                         color: "FFC72C",
@@ -201,7 +204,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         textColor: "000000"
                     ),
                     patternsByStop: [
-                        NearbyPatternsByStop(
+                        PatternsByStop(
                             stop: Stop(
                                 id: "3276",
                                 latitude: 42.265969,
@@ -217,16 +220,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         name: "Houghs Neck - Quincy Center Station",
                                         sortOrder: 521_601_000,
                                         representativeTrip: Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
-                                        route: Route(
-                                            id: "216",
-                                            color: "FFC72C",
-                                            directionNames: ["Outbound", "Inbound"],
-                                            directionDestinations: ["Houghs Neck", "Quincy Center Station"],
-                                            longName: "Houghs Neck - Quincy Center Station via Germantown",
-                                            shortName: "216",
-                                            sortOrder: 52160,
-                                            textColor: "000000"
-                                        )
+                                        routeId: "216"
                                     )]),
                             ]
                         ),
@@ -242,7 +236,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         scheduleRelationship: .scheduled,
                         status: nil,
                         stopSequence: 30,
-                        trip: Trip(id: "", headsign: "Harvard", routePatternId: "206-_-1", stops: nil)
+                        stopId: "3276",
+                        trip: Trip(id: "", headsign: "Harvard", routePatternId: "206-_-1", stops: nil),
+                        vehicle: nil
                     ),
                 ],
                 now: Date.now.toKotlinInstant()
