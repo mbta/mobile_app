@@ -116,7 +116,7 @@ struct NearbyStopView: View {
                 ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
                     NearbyStopRoutePatternView(
                         headsign: patternsByHeadsign.headsign,
-                        prediction: .from(predictions: patternsByHeadsign.predictions, now: now)
+                        predictions: .from(predictions: patternsByHeadsign.predictions, now: now)
                     )
                 }
             }
@@ -126,34 +126,51 @@ struct NearbyStopView: View {
 
 struct NearbyStopRoutePatternView: View {
     let headsign: String
-    let prediction: PredictionState
+    let predictions: PredictionState
+
+    struct PredictionWithFormat: Identifiable {
+        let prediction: Prediction
+        let format: Prediction.Format
+
+        var id: String { prediction.id }
+
+        init(_ prediction: Prediction, now: Instant) {
+            self.prediction = prediction
+            format = prediction.format(now: now)
+        }
+
+        func isHidden() -> Bool {
+            format is Prediction.FormatHidden
+        }
+    }
 
     enum PredictionState {
         case loading
         case none
-        case some(Prediction.Format)
+        case some([PredictionWithFormat])
 
         static func from(predictions: [Prediction]?, now: Instant) -> Self {
             guard let predictions else { return .loading }
-            if let prediction = predictions
-                .map({ $0.format(now: now) })
-                .filter({ !($0 is Prediction.FormatHidden) })
-                .first
-            {
-                return .some(prediction)
-            } else {
+            let predictionsToShow = predictions
+                .map { PredictionWithFormat($0, now: now) }
+                .filter { !$0.isHidden() }
+                .prefix(2)
+            if predictionsToShow.isEmpty {
                 return .none
             }
+            return .some(Array(predictionsToShow))
         }
     }
 
     var body: some View {
         HStack {
-            Text(headsign).layoutPriority(1)
+            Text(headsign)
             Spacer()
-            switch prediction {
-            case let .some(prediction):
-                PredictionView(prediction: .some(prediction))
+            switch predictions {
+            case let .some(predictions):
+                ForEach(predictions) { prediction in
+                    PredictionView(prediction: .some(prediction.format))
+                }
             case .none:
                 PredictionView(prediction: .none)
             case .loading:
@@ -181,7 +198,7 @@ struct PredictionView: View {
     }
 
     var body: some View {
-        let predictionText = switch prediction {
+        let predictionView: any View = switch prediction {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
@@ -190,25 +207,23 @@ struct PredictionView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
-                Text("Boarding")
+                Text("BRD")
             case .arriving:
-                Text("Arriving")
+                Text("ARR")
             case .approaching:
-                Text("Approaching")
+                Text("1 min")
             case .distantFuture:
-                Text("20+ minutes")
+                Text("20+ min")
             case let .minutes(format):
-                Text("\(format.minutes, specifier: "%ld") minutes")
+                Text("\(format.minutes, specifier: "%ld") min")
             }
         case .none:
             Text("No Predictions")
         case .loading:
-            Text("Loading...")
+            ProgressView()
         }
-        predictionText
-            .lineLimit(1)
-            .layoutPriority(2)
-            .frame(minWidth: 64, alignment: .trailing)
+        AnyView(predictionView)
+            .frame(minWidth: 48, alignment: .trailing)
     }
 }
 
@@ -245,21 +260,31 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         sortOrder: 521_601_000,
                                         representativeTrip: Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
                                         routeId: "216"
-                                    )], predictions: [
-                                        Prediction(
-                                            id: "",
-                                            arrivalTime: nil,
-                                            departureTime: (Date.now + 5 * 60).toKotlinInstant(),
-                                            directionId: 0,
-                                            revenue: true,
-                                            scheduleRelationship: .scheduled,
-                                            status: nil,
-                                            stopSequence: 30,
-                                            stopId: "3276",
-                                            trip: Trip(id: "", headsign: "Harvard", routePatternId: "206-_-1", stops: nil),
-                                            vehicle: nil
-                                        ),
-                                    ]),
+                                    )], predictions: [Prediction(
+                                        id: "1",
+                                        arrivalTime: nil,
+                                        departureTime: (Date.now + 5 * 60).toKotlinInstant(),
+                                        directionId: 0,
+                                        revenue: true,
+                                        scheduleRelationship: .scheduled,
+                                        status: nil,
+                                        stopSequence: 30,
+                                        stopId: "3276",
+                                        trip: Trip(id: "", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
+                                        vehicle: nil
+                                    ), Prediction(
+                                        id: "2",
+                                        arrivalTime: nil,
+                                        departureTime: (Date.now + 12 * 60).toKotlinInstant(),
+                                        directionId: 0,
+                                        revenue: true,
+                                        scheduleRelationship: .scheduled,
+                                        status: nil,
+                                        stopSequence: 90,
+                                        stopId: "3276",
+                                        trip: Trip(id: "", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
+                                        vehicle: nil
+                                    )]),
                             ]
                         ),
                     ]

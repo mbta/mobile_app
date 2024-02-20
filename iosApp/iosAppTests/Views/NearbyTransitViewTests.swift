@@ -154,6 +154,19 @@ final class NearbyTransitViewTests: XCTestCase {
                         vehicle: nil
                     ),
                     Prediction(
+                        id: "prediction-a-8552-1",
+                        arrivalTime: Date.now.addingTimeInterval(11 * 60).toKotlinInstant(),
+                        departureTime: Date.now.addingTimeInterval(15 * 60).toKotlinInstant(),
+                        directionId: 0,
+                        revenue: true,
+                        scheduleRelationship: .scheduled,
+                        status: "Overridden",
+                        stopSequence: 1,
+                        stopId: "8552",
+                        trip: Trip(id: "a", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
+                        vehicle: nil
+                    ),
+                    Prediction(
                         id: "prediction-60451426-84791-18",
                         arrivalTime: Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant(),
                         departureTime: Date.now.addingTimeInterval(2 * 60).toKotlinInstant(),
@@ -164,6 +177,19 @@ final class NearbyTransitViewTests: XCTestCase {
                         stopSequence: 18,
                         stopId: "84791",
                         trip: Trip(id: "60451426", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
+                        vehicle: nil
+                    ),
+                    Prediction(
+                        id: "prediction-a-84791-1",
+                        arrivalTime: nil,
+                        departureTime: Date.now.addingTimeInterval(18 * 60).toKotlinInstant(),
+                        directionId: 1,
+                        revenue: true,
+                        scheduleRelationship: .scheduled,
+                        status: nil,
+                        stopSequence: 1,
+                        stopId: "84791",
+                        trip: Trip(id: "a", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
                         vehicle: nil
                     ),
                 ]
@@ -182,10 +208,14 @@ final class NearbyTransitViewTests: XCTestCase {
             .parent().find(text: "No Predictions"))
 
         XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-            .parent().find(text: "10 minutes"))
+            .parent().find(text: "10 min"))
+        XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
+            .parent().find(text: "Overridden"))
 
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-            .parent().find(text: "1 minute"))
+            .parent().find(text: "1 min"))
+        XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
+            .parent().find(text: "18 min"))
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
@@ -258,10 +288,10 @@ final class NearbyTransitViewTests: XCTestCase {
 
         predictionsFetcher.predictions = [prediction(minutesAway: 2)]
 
-        XCTAssertNotNil(try sut.inspect().find(text: "2 minutes"))
+        XCTAssertNotNil(try sut.inspect().find(text: "2 min"))
 
         predictionsFetcher.predictions = [prediction(minutesAway: 3)]
 
-        XCTAssertNotNil(try sut.inspect().find(text: "3 minutes"))
+        XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
     }
 }
