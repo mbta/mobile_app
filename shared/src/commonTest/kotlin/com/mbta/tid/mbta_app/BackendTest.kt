@@ -186,13 +186,7 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder = 505200020,
-                                    representativeTrip =
-                                        Trip(
-                                            id = "trip1",
-                                            headsign = "Watertown",
-                                            routePatternId = null,
-                                            stops = null
-                                        ),
+                                    representativeTrip = Trip(id = "trip1", headsign = "Watertown"),
                                     routeId = route52.id
                                 ),
                             "52-4-1" to
@@ -202,12 +196,7 @@ class BackendTest {
                                     name = "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201010,
                                     representativeTrip =
-                                        Trip(
-                                            id = "trip2",
-                                            headsign = "Charles River Loop",
-                                            routePatternId = null,
-                                            stops = null
-                                        ),
+                                        Trip(id = "trip2", headsign = "Charles River Loop"),
                                     routeId = route52.id
                                 ),
                             "52-5-0" to
@@ -216,13 +205,7 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder = 505200000,
-                                    representativeTrip =
-                                        Trip(
-                                            id = "trip3",
-                                            headsign = "Watertown",
-                                            routePatternId = null,
-                                            stops = null
-                                        ),
+                                    representativeTrip = Trip(id = "trip3", headsign = "Watertown"),
                                     routeId = route52.id
                                 ),
                             "52-5-1" to
@@ -232,12 +215,7 @@ class BackendTest {
                                     name = "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201000,
                                     representativeTrip =
-                                        Trip(
-                                            id = "trip4",
-                                            headsign = "Dedham Mall",
-                                            routePatternId = null,
-                                            stops = null
-                                        ),
+                                        Trip(id = "trip4", headsign = "Dedham Mall"),
                                     routeId = route52.id
                                 )
                         ),
