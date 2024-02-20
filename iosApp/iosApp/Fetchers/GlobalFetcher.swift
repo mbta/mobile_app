@@ -12,15 +12,13 @@ import shared
 class GlobalFetcher: ObservableObject {
     var response: StopAndRoutePatternResponse?
     @Published var stops: [Stop]
-    @Published var routes: Dictionary<String, Route>
-    @Published var byRouteAndStop: [StopAssociatedRoute]
+    @Published var routes: [String: Route]
     let backend: any BackendProtocol
 
-    init(backend: any BackendProtocol, stops: [Stop] = [], routes: Dictionary<String, Route> = [:], byRouteAndStop: [StopAssociatedRoute] = []) {
+    init(backend: any BackendProtocol, stops: [Stop] = [], routes: [String: Route] = [:]) {
         self.backend = backend
         self.stops = stops
         self.routes = routes
-        self.byRouteAndStop = byRouteAndStop
     }
 
     @MainActor func getGlobalData() async throws {
@@ -29,7 +27,6 @@ class GlobalFetcher: ObservableObject {
             self.response = response
             stops = response.stops
             routes = response.routes
-            byRouteAndStop = response.byRouteAndStop()
         } catch {
             print("Failed to load global data: \(error)")
         }

@@ -7,8 +7,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Trip(
     val id: String,
+    val headsign: String,
     @Serializable(with = GetReferenceIdSerializer::class)
     @SerialName("route_pattern")
-    val routePatternId: String?,
-    val stops: List<Stop>?
+    val routePatternId: String? = null,
+    val stops: List<Stop>? = null
 )

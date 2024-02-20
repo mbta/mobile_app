@@ -15,8 +15,9 @@ class NearbyResponseTest {
         val route1 =
             Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
+        val route1rp1 =
+            RoutePattern("1-0", 0, "1 Outbound", 10, Trip("trip1", "Harvard"), route1.id)
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, Trip("trip2", "Nubian"), route1.id)
 
         val response =
             StopAndRoutePatternResponse(
@@ -35,8 +36,14 @@ class NearbyResponseTest {
                 StopAssociatedRoute(
                     route1,
                     listOf(
-                        PatternsByStop(stop1, listOf(route1rp1)),
-                        PatternsByStop(stop2, listOf(route1rp2))
+                        PatternsByStop(
+                            stop1,
+                            listOf(PatternsByHeadsign("Harvard", listOf(route1rp1)))
+                        ),
+                        PatternsByStop(
+                            stop2,
+                            listOf(PatternsByHeadsign("Nubian", listOf(route1rp2)))
+                        )
                     )
                 ),
             ),
@@ -52,8 +59,8 @@ class NearbyResponseTest {
         val route1 =
             Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 1, "1")
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 2, "1")
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 1, Trip("trip1", "Harvard"), route1.id)
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 2, Trip("trip2", "Nubian"), route1.id)
 
         val response =
             StopAndRoutePatternResponse(
@@ -71,7 +78,57 @@ class NearbyResponseTest {
                 StopAssociatedRoute(
                     route1,
                     listOf(
-                        PatternsByStop(stop1, listOf(route1rp1, route1rp2)),
+                        PatternsByStop(
+                            stop1,
+                            listOf(
+                                PatternsByHeadsign("Harvard", listOf(route1rp1)),
+                                PatternsByHeadsign("Nubian", listOf(route1rp2))
+                            )
+                        ),
+                    )
+                ),
+            ),
+            response.byRouteAndStop()
+        )
+    }
+
+    @Test
+    fun `byRouteAndStop groups patterns by headsign`() {
+
+        val stop1 = Stop("1", 1.2, 3.4, "A", null)
+
+        val route1 =
+            Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
+
+        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 1, Trip("trip1", "Harvard"), route1.id)
+        val route1rp2 =
+            RoutePattern("1-1", 0, "1 Outbound V2", 1, Trip("trip2", "Harvard"), route1.id)
+
+        val route1rp3 = RoutePattern("1-0-1", 1, "1 Inbound", 2, Trip("trip3", "Nubian"), route1.id)
+
+        val response =
+            StopAndRoutePatternResponse(
+                stops = listOf(stop1),
+                routePatterns = listOf(route1rp1, route1rp2, route1rp3).associateBy { it.id },
+                routes = mapOf(route1.id to route1),
+                patternIdsByStop =
+                    mapOf(
+                        stop1.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id),
+                    )
+            )
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            stop1,
+                            listOf(
+                                PatternsByHeadsign("Harvard", listOf(route1rp1, route1rp2)),
+                                PatternsByHeadsign("Nubian", listOf(route1rp3))
+                            )
+                        )
                     )
                 ),
             ),
@@ -88,7 +145,8 @@ class NearbyResponseTest {
         val route1 =
             Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
+        val route1rp1 =
+            RoutePattern("1-0", 0, "1 Outbound", 10, Trip("trip1", "Harvard"), route1.id)
 
         val response =
             StopAndRoutePatternResponse(
@@ -104,14 +162,22 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(route1, listOf(PatternsByStop(stop1, listOf(route1rp1)))),
+                StopAssociatedRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            stop1,
+                            listOf(PatternsByHeadsign("Harvard", listOf(route1rp1)))
+                        )
+                    )
+                ),
             ),
             response.byRouteAndStop()
         )
     }
 
     @Test
-    fun `byRouteAndStop when there is a stop that is served by multiple routes`() {
+    fun `byRouteAndStop when a stop is served by multiple routes it is included for each route`() {
 
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
@@ -121,11 +187,21 @@ class NearbyResponseTest {
         val route2 =
             Route("2", RouteType.BUS, "", emptyList(), emptyList(), "Route Two", "2", 2, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
-        val route1rp3 = RoutePattern("1-2", 1, "1 Inbound via Back By", 12, "1")
+        val route1rp1 =
+            RoutePattern("1-0", 0, "1 Outbound", 10, Trip("trip1", "Harvard"), route1.id)
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, Trip("trip2", "Nubian"), route1.id)
+        val route1rp3 =
+            RoutePattern(
+                "1-2",
+                1,
+                "1 Inbound via Back By",
+                12,
+                Trip("trip3", "Nubian via Allston"),
+                route1.id
+            )
 
-        val route2rp1 = RoutePattern("2-0", 0, "2 Eastbound", 20, "2")
+        val route2rp1 =
+            RoutePattern("2-0", 0, "2 Eastbound", 20, Trip("trip4", "Porter Sq"), route2.id)
 
         val response =
             StopAndRoutePatternResponse(
@@ -145,11 +221,28 @@ class NearbyResponseTest {
                 StopAssociatedRoute(
                     route1,
                     listOf(
-                        PatternsByStop(stop1, listOf(route1rp1, route1rp2)),
-                        PatternsByStop(stop2, listOf(route1rp3))
+                        PatternsByStop(
+                            stop1,
+                            listOf(
+                                PatternsByHeadsign("Harvard", listOf(route1rp1)),
+                                PatternsByHeadsign("Nubian", listOf(route1rp2))
+                            )
+                        ),
+                        PatternsByStop(
+                            stop2,
+                            listOf(PatternsByHeadsign("Nubian via Allston", listOf(route1rp3)))
+                        )
                     )
                 ),
-                StopAssociatedRoute(route2, listOf(PatternsByStop(stop2, listOf(route2rp1))))
+                StopAssociatedRoute(
+                    route2,
+                    listOf(
+                        PatternsByStop(
+                            stop2,
+                            listOf(PatternsByHeadsign("Porter Sq", listOf(route2rp1)))
+                        )
+                    )
+                )
             ),
             response.byRouteAndStop()
         )
@@ -168,9 +261,18 @@ class NearbyResponseTest {
         val route1 =
             Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
-        val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
-        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
-        val route1rp3 = RoutePattern("1-2", 1, "1 Inbound via Back By", 12, "1")
+        val route1rp1 =
+            RoutePattern("1-0", 0, "1 Outbound", 10, Trip("trip1", "Harvard"), route1.id)
+        val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, Trip("trip2", "Nubian"), route1.id)
+        val route1rp3 =
+            RoutePattern(
+                "1-2",
+                1,
+                "1 Inbound via Back By",
+                12,
+                Trip("trip3", "Nubian via Allston"),
+                route1.id
+            )
 
         val response =
             StopAndRoutePatternResponse(
@@ -199,8 +301,17 @@ class NearbyResponseTest {
                 StopAssociatedRoute(
                     route1,
                     listOf(
-                        PatternsByStop(station1, listOf(route1rp1, route1rp2)),
-                        PatternsByStop(stop2, listOf(route1rp3))
+                        PatternsByStop(
+                            station1,
+                            listOf(
+                                PatternsByHeadsign("Harvard", listOf(route1rp1)),
+                                PatternsByHeadsign("Nubian", listOf(route1rp2))
+                            )
+                        ),
+                        PatternsByStop(
+                            stop2,
+                            listOf(PatternsByHeadsign("Nubian via Allston", listOf(route1rp3)))
+                        )
                     )
                 ),
             ),

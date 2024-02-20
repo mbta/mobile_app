@@ -83,39 +83,51 @@ final class NearbyTransitViewTests: XCTestCase {
                 patternsByStop: [
                     PatternsByStop(
                         stop: stop1,
-                        routePatterns: [
-                            RoutePattern(
-                                id: "52-4-0",
-                                directionId: 0,
-                                name: "Watertown - Charles River Loop via Meadowbrook Rd",
-                                sortOrder: 505_200_020,
-                                routeId: "52"
-                            ),
-                            RoutePattern(
-                                id: "52-5-0",
-                                directionId: 0,
-                                name: "Watertown - Dedham Mall via Meadowbrook Rd",
-                                sortOrder: 505_200_000,
-                                routeId: "52"
+                        patternsByHeadsign: [
+                            PatternsByHeadsign(
+                                headsign: "Watertown",
+                                patterns: [
+                                    RoutePattern(
+                                        id: "52-4-0",
+                                        directionId: 0,
+                                        name: "Watertown - Charles River Loop via Meadowbrook Rd",
+                                        sortOrder: 505_200_020,
+                                        representativeTrip: Trip(id: "trip1", headsign: "Watertown", routePatternId: "52-4-0", stops: nil),
+                                        routeId: route52.id
+                                    ),
+                                    RoutePattern(
+                                        id: "52-5-0",
+                                        directionId: 0,
+                                        name: "Watertown - Dedham Mall via Meadowbrook Rd",
+                                        sortOrder: 505_200_000,
+                                        representativeTrip: Trip(id: "trip2", headsign: "Watertown", routePatternId: "52-5-0", stops: nil),
+                                        routeId: route52.id
+                                    ),
+                                ]
                             ),
                         ]
                     ),
                     PatternsByStop(
                         stop: stop2,
-                        routePatterns: [
+                        patternsByHeadsign: [PatternsByHeadsign(headsign: "Charles River Loop", patterns: [
                             RoutePattern(
                                 id: "52-4-1",
                                 directionId: 1,
                                 name: "Charles River Loop - Watertown via Meadowbrook Rd",
                                 sortOrder: 505_201_010,
-                                routeId: "52"
+                                representativeTrip: Trip(id: "trip3", headsign: "Charles River Loop", routePatternId: "52-4-1", stops: nil),
+                                routeId: route52.id
                             ),
+
+                        ]),
+                        PatternsByHeadsign(headsign: "Dedham Mall", patterns: [
                             RoutePattern(id: "52-5-1",
                                          directionId: 1,
                                          name: "Dedham Mall - Watertown via Meadowbrook Rd",
                                          sortOrder: 505_201_000,
-                                         routeId: "52"),
-                        ]
+                                         representativeTrip: Trip(id: "trip4", headsign: "Charles River Loop", routePatternId: "52-5-1", stops: nil),
+                                         routeId: route52.id),
+                        ])]
                     ),
                 ]
             )]
@@ -135,16 +147,14 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let routes = try sut.inspect().findAll(NearbyRouteView.self)
 
-        XCTAssertNotNil(try routes[0].find(text: "52 Dedham Mall - Watertown Yard"))
+        XCTAssertNotNil(try routes[0].find(text: "Dedham Mall"))
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .parent().find(text: "Watertown - Dedham Mall via Meadowbrook Rd"))
-        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .parent().find(text: "Watertown - Charles River Loop via Meadowbrook Rd"))
+            .parent().find(text: "Watertown"))
 
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
-            .parent().find(text: "Charles River Loop - Watertown via Meadowbrook Rd"))
+            .parent().find(text: "Charles River Loop"))
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
-            .parent().find(text: "Dedham Mall - Watertown via Meadowbrook Rd"))
+            .parent().find(text: "Dedham Mall"))
     }
 
     @MainActor func testWithPredictions() throws {
@@ -164,7 +174,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         status: nil,
                         stopSequence: 38,
                         stopId: nil,
-                        trip: Trip(id: "60451421", routePatternId: "52-5-0", stops: nil),
+                        trip: Trip(id: "60451421", headsign: "Headsign1", routePatternId: "52-5-0", stops: nil),
                         vehicle: nil
                     ),
                     Prediction(
@@ -177,7 +187,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         status: nil,
                         stopSequence: 18,
                         stopId: nil,
-                        trip: Trip(id: "60451426", routePatternId: "52-5-1", stops: nil),
+                        trip: Trip(id: "60451426", headsign: "Headsign2", routePatternId: "52-5-1", stops: nil),
                         vehicle: nil
                     ),
                 ]
@@ -192,14 +202,13 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let stops = try sut.inspect().findAll(NearbyStopView.self)
 
-        XCTAssertNotNil(try stops[0].find(text: "Watertown - Dedham Mall via Meadowbrook Rd")
+        XCTAssertNotNil(try stops[0].find(text: "Watertown")
             .parent().find(text: "10 minutes"))
-        XCTAssertNotNil(try stops[0].find(text: "Watertown - Charles River Loop via Meadowbrook Rd")
+
+        XCTAssertNotNil(try stops[1].find(text: "Charles River Loop")
             .parent().find(text: "No Predictions"))
 
-        XCTAssertNotNil(try stops[1].find(text: "Charles River Loop - Watertown via Meadowbrook Rd")
-            .parent().find(text: "No Predictions"))
-        XCTAssertNotNil(try stops[1].find(text: "Dedham Mall - Watertown via Meadowbrook Rd")
+        XCTAssertNotNil(try stops[1].find(text: "Dedham Mall")
             .parent().find(text: "1 minute"))
     }
 
@@ -245,7 +254,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 patternsByStop: [
                     PatternsByStop(
                         stop: Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil),
-                        routePatterns: []
+                        patternsByHeadsign: []
                     ),
                 ]
             ),
@@ -271,7 +280,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 status: nil,
                 stopSequence: 1,
                 stopId: nil,
-                trip: Trip(id: "", routePatternId: "52-5-0", stops: nil),
+                trip: Trip(id: "", headsign: "Headsign", routePatternId: "52-5-0", stops: nil),
                 vehicle: nil
             )
         }

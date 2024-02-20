@@ -2,8 +2,14 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 
-/** @property routePatterns A sorted list of [RoutePattern]s serving the stop */
-data class PatternsByStop(val stop: Stop, val routePatterns: List<RoutePattern>)
+/** @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder] */
+data class PatternsByHeadsign(val headsign: String, val patterns: List<RoutePattern>)
+
+/**
+ * @property patternsByHeadsign [RoutePattern]s serving the stop grouped by headsign. The headsigns
+ *   are listed in ascending order based on [RoutePattern.sortOrder]
+ */
+data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsByHeadsign>)
 
 /**
  * @property patternsByStop A list of route patterns grouped by the station or stop that they serve.
@@ -49,7 +55,13 @@ fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
             route = route,
             patternsByStop =
                 patternsByStop.map { (stop, patterns) ->
-                    PatternsByStop(stop = stop, routePatterns = patterns)
+                    PatternsByStop(
+                        stop = stop,
+                        patternsByHeadsign =
+                            patterns
+                                .groupBy { it.representativeTrip!!.headsign }
+                                .map { PatternsByHeadsign(it.key, it.value) }
+                    )
                 }
         )
     }
