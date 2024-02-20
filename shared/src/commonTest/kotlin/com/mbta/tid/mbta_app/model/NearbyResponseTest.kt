@@ -50,7 +50,7 @@ class NearbyResponseTest {
                     )
                 ),
             ),
-            response.byRouteAndStop()
+            response.byRouteAndStop(predictions = null)
         )
     }
 
@@ -92,7 +92,7 @@ class NearbyResponseTest {
                     )
                 ),
             ),
-            response.byRouteAndStop()
+            response.byRouteAndStop(predictions = null)
         )
     }
 
@@ -137,7 +137,7 @@ class NearbyResponseTest {
                     )
                 ),
             ),
-            response.byRouteAndStop()
+            response.byRouteAndStop(predictions = null)
         )
     }
 
@@ -175,7 +175,7 @@ class NearbyResponseTest {
                     )
                 ),
             ),
-            response.byRouteAndStop()
+            response.byRouteAndStop(predictions = null)
         )
     }
 
@@ -242,7 +242,7 @@ class NearbyResponseTest {
                     )
                 )
             ),
-            response.byRouteAndStop()
+            response.byRouteAndStop(predictions = null)
         )
     }
 
@@ -317,7 +317,7 @@ class NearbyResponseTest {
                     )
                 ),
             ),
-            response.byRouteAndStop()
+            response.byRouteAndStop(predictions = null)
         )
     }
 }

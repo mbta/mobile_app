@@ -2,8 +2,16 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 
-/** @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder] */
-data class PatternsByHeadsign(val headsign: String, val patterns: List<RoutePattern>)
+/**
+ * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
+ * @property predictions Every [Prediction] for the [Stop] in the containing [PatternsByStop] for
+ *   any of these [patterns]
+ */
+data class PatternsByHeadsign(
+    val headsign: String,
+    val patterns: List<RoutePattern>,
+    val predictions: List<Prediction>? = null
+)
 
 /**
  * @property patternsByHeadsign [RoutePattern]s serving the stop grouped by headsign. The headsigns
@@ -23,10 +31,16 @@ data class StopAssociatedRoute(
  * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the stops
  * received by the server in [StopAndRoutePatternResponse.stops]
  */
-fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
+fun StopAndRoutePatternResponse.byRouteAndStop(
+    predictions: List<Prediction>?
+): List<StopAssociatedRoute> {
+    val hasPredictions = predictions != null
+    val predictionsByPatternAndStop = predictions?.groupBy { it.trip.routePatternId to it.stopId }
+
     val routePatternsUsed = mutableSetOf<String>()
 
-    val patternsByRouteAndStop = mutableMapOf<Route, MutableMap<Stop, MutableList<RoutePattern>>>()
+    val patternsByRouteAndStop =
+        mutableMapOf<Route, MutableMap<Stop, MutableList<Pair<RoutePattern, List<Prediction>?>>>>()
 
     stops.forEach { stop ->
         val newPatternIds =
@@ -37,9 +51,18 @@ fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
 
         val newPatternsByRoute =
             newPatternIds
-                .mapNotNull { patternId -> routePatterns[patternId] }
-                .sortedBy { it.sortOrder }
-                .groupBy { it.routeId }
+                .map { patternId ->
+                    val routePattern = routePatterns.getValue(patternId)
+                    routePattern to
+                        if (hasPredictions) {
+                            predictionsByPatternAndStop?.get(routePattern.id to stop.id)
+                                ?: emptyList()
+                        } else {
+                            null
+                        }
+                }
+                .sortedBy { (routePattern, _) -> routePattern.sortOrder }
+                .groupBy { (routePattern, _) -> routePattern.routeId }
 
         newPatternsByRoute.forEach { (routeId, routePatterns) ->
             val stopKey = stop.parentStation ?: stop
@@ -59,8 +82,20 @@ fun StopAndRoutePatternResponse.byRouteAndStop(): List<StopAssociatedRoute> {
                         stop = stop,
                         patternsByHeadsign =
                             patterns
-                                .groupBy { it.representativeTrip!!.headsign }
-                                .map { PatternsByHeadsign(it.key, it.value) }
+                                .groupBy { (routePattern, _) ->
+                                    routePattern.representativeTrip!!.headsign
+                                }
+                                .map { (headsign, routePatternsWithPredictions) ->
+                                    val (routePatterns, eachPredictions) =
+                                        routePatternsWithPredictions.unzip()
+                                    val allPredictionsHere =
+                                        if (hasPredictions) {
+                                            eachPredictions.filterNotNull().flatten().sorted()
+                                        } else {
+                                            null
+                                        }
+                                    PatternsByHeadsign(headsign, routePatterns, allPredictionsHere)
+                                }
                     )
                 }
         )
