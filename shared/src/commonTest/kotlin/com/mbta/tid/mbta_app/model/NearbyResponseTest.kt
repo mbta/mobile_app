@@ -12,7 +12,8 @@ class NearbyResponseTest {
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
 
-        val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
+        val route1 =
+            Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
         val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
         val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
@@ -48,7 +49,8 @@ class NearbyResponseTest {
 
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
 
-        val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
+        val route1 =
+            Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
         val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 1, "1")
         val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 2, "1")
@@ -83,7 +85,8 @@ class NearbyResponseTest {
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
 
-        val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
+        val route1 =
+            Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
         val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
 
@@ -113,8 +116,10 @@ class NearbyResponseTest {
         val stop1 = Stop("1", 1.2, 3.4, "A", null)
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
 
-        val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
-        val route2 = Route("2", "", emptyList(), emptyList(), "Route Two", "2", 2, "")
+        val route1 =
+            Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
+        val route2 =
+            Route("2", RouteType.BUS, "", emptyList(), emptyList(), "Route Two", "2", 2, "")
 
         val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
         val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")
@@ -160,7 +165,8 @@ class NearbyResponseTest {
 
         val stop2 = Stop("2", 5.6, 7.8, "B", null)
 
-        val route1 = Route("1", "", emptyList(), emptyList(), "Route One", "1", 1, "")
+        val route1 =
+            Route("1", RouteType.BUS, "", emptyList(), emptyList(), "Route One", "1", 1, "")
 
         val route1rp1 = RoutePattern("1-0", 0, "1 Outbound", 10, "1")
         val route1rp2 = RoutePattern("1-1", 1, "1 Inbound", 11, "1")

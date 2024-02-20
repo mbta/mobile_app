@@ -114,6 +114,7 @@ class BackendTest {
                           "routes": {
                             "52": {
                                 "id": "52",
+                                "type": "bus",
                                 "color": "FFC72C",
                                 "direction_names": [
                                   "Outbound",
@@ -144,6 +145,7 @@ class BackendTest {
             val route52 =
                 Route(
                     id = "52",
+                    type = RouteType.BUS,
                     color = "FFC72C",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Dedham Mall", "Watertown Yard"),
@@ -235,7 +237,7 @@ class BackendTest {
                                 "name": "428",
                                 "type": "route",
                                 "long_name": "Oaklandvale - Haymarket Station",
-                                "route_type": 3,
+                                "route_type": "bus",
                                 "rank": 5
                               },
                               {
@@ -243,7 +245,7 @@ class BackendTest {
                                 "name": "111",
                                 "type": "route",
                                 "long_name": "Woodlawn - Haymarket Station",
-                                "route_type": 3,
+                                "route_type": "bus",
                                 "rank": 5
                               },
                               {
@@ -251,7 +253,7 @@ class BackendTest {
                                 "name": "426",
                                 "type": "route",
                                 "long_name": "Central Square, Lynn - Haymarket or Wonderland Station",
-                                "route_type": 3,
+                                "route_type": "bus",
                                 "rank": 5
                               },
                               {
@@ -259,7 +261,7 @@ class BackendTest {
                                 "name": "450",
                                 "type": "route",
                                 "long_name": "Salem Depot - Wonderland or Haymarket Station",
-                                "route_type": 3,
+                                "route_type": "bus",
                                 "rank": 5
                               },
                               {
@@ -267,7 +269,7 @@ class BackendTest {
                                 "name": "Green Line D",
                                 "type": "route",
                                 "long_name": "Green Line D",
-                                "route_type": 0,
+                                "route_type": "light_rail",
                                 "rank": 2
                               }
                             ],
@@ -278,15 +280,15 @@ class BackendTest {
                                 "type": "stop",
                                 "routes": [
                                   {
-                                    "type": 1,
+                                    "type": "heavy_rail",
                                     "icon": "orange_line"
                                   },
                                   {
-                                    "type": 0,
+                                    "type": "light_rail",
                                     "icon": "green_line_d"
                                   },
                                   {
-                                    "type": 0,
+                                    "type": "light_rail",
                                     "icon": "green_line_e"
                                   }
                                 ],
@@ -300,7 +302,7 @@ class BackendTest {
                                 "type": "stop",
                                 "routes": [
                                   {
-                                    "type": 3,
+                                    "type": "bus",
                                     "icon": "bus"
                                   }
                                 ],
