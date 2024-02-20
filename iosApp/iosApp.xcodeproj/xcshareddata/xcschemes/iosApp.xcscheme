@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7555FF7A242A565900829871"
-               BuildableName = "iosApp.app"
-               BlueprintName = "iosApp"
+               BuildableName = "MBTA Transit.app"
+               BlueprintName = "MBTA Transit"
                ReferencedContainer = "container:iosApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -95,8 +95,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7555FF7A242A565900829871"
-            BuildableName = "iosApp.app"
-            BlueprintName = "iosApp"
+            BuildableName = "MBTA Transit.app"
+            BlueprintName = "MBTA Transit"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -112,8 +112,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7555FF7A242A565900829871"
-            BuildableName = "iosApp.app"
-            BlueprintName = "iosApp"
+            BuildableName = "MBTA Transit.app"
+            BlueprintName = "MBTA Transit"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
