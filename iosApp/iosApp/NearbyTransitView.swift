@@ -114,19 +114,9 @@ struct NearbyStopView: View {
 
             VStack(alignment: .leading) {
                 ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
-                    let prediction: NearbyStopRoutePatternView.PredictionState =
-                        if let predictions = patternsByHeadsign.predictions {
-                            if let firstPrediction = predictions
-                                .map({ $0.format(now: now) })
-                                .filter({ ($0 as? Prediction.FormatHidden) == nil })
-                                .first
-                            {
-                                .some(firstPrediction)
-                            } else { .none }
-                        } else { .loading }
                     NearbyStopRoutePatternView(
                         headsign: patternsByHeadsign.headsign,
-                        prediction: prediction
+                        prediction: .from(predictions: patternsByHeadsign.predictions, now: now)
                     )
                 }
             }
@@ -142,42 +132,75 @@ struct NearbyStopRoutePatternView: View {
         case loading
         case none
         case some(Prediction.Format)
+
+        static func from(predictions: [Prediction]?, now: Instant) -> Self {
+            guard let predictions else { return .loading }
+            if let prediction = predictions
+                .map({ $0.format(now: now) })
+                .filter({ !($0 is Prediction.FormatHidden) })
+                .first
+            {
+                return .some(prediction)
+            } else {
+                return .none
+            }
+        }
     }
 
     var body: some View {
         HStack {
             Text(headsign).layoutPriority(1)
             Spacer()
-            let predictionText =
-                switch prediction {
-                case let .some(prediction):
-                    switch onEnum(of: prediction) {
-                    case let .overridden(overridden):
-                        Text(verbatim: overridden.text)
-                    case .hidden:
-                        // should have been filtered out already
-                        Text(verbatim: "")
-                    case .boarding:
-                        Text("Boarding")
-                    case .arriving:
-                        Text("Arriving")
-                    case .approaching:
-                        Text("Approaching")
-                    case .distantFuture:
-                        Text("20+ minutes")
-                    case let .minutes(format):
-                        Text("\(format.minutes, specifier: "%ld") minutes")
-                    }
-                case .none:
-                    Text("No Predictions")
-                case .loading:
-                    Text("Loading...")
-                }
-            predictionText
-                .lineLimit(1)
-                .layoutPriority(2)
-                .frame(minWidth: 64, alignment: .trailing)
+            switch prediction {
+            case let .some(prediction):
+                PredictionView(prediction: .some(prediction))
+            case .none:
+                PredictionView(prediction: .none)
+            case .loading:
+                PredictionView(prediction: .loading)
+            }
         }
+    }
+}
+
+struct PredictionView: View {
+    let prediction: State
+
+    enum State {
+        case loading
+        case none
+        case some(Prediction.Format)
+    }
+
+    var body: some View {
+        let predictionText = switch prediction {
+        case let .some(prediction):
+            switch onEnum(of: prediction) {
+            case let .overridden(overridden):
+                Text(verbatim: overridden.text)
+            case .hidden:
+                // should have been filtered out already
+                Text(verbatim: "")
+            case .boarding:
+                Text("Boarding")
+            case .arriving:
+                Text("Arriving")
+            case .approaching:
+                Text("Approaching")
+            case .distantFuture:
+                Text("20+ minutes")
+            case let .minutes(format):
+                Text("\(format.minutes, specifier: "%ld") minutes")
+            }
+        case .none:
+            Text("No Predictions")
+        case .loading:
+            Text("Loading...")
+        }
+        predictionText
+            .lineLimit(1)
+            .layoutPriority(2)
+            .frame(minWidth: 64, alignment: .trailing)
     }
 }
 
