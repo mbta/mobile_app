@@ -1,57 +1,17 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.TestData.prediction
+import com.mbta.tid.mbta_app.TestData.trip
+import com.mbta.tid.mbta_app.TestData.vehicle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 class PredictionTest {
     class FormatTest {
-        fun prediction(
-            id: String = "",
-            arrivalTime: Instant? = null,
-            departureTime: Instant? = null,
-            directionId: Int = 0,
-            revenue: Boolean = true,
-            scheduleRelationship: Prediction.ScheduleRelationship =
-                Prediction.ScheduleRelationship.Scheduled,
-            status: String? = null,
-            stopSequence: Int? = null,
-            stopId: String? = null,
-            trip: Trip = trip(),
-            vehicle: Vehicle? = null,
-        ) =
-            Prediction(
-                id,
-                arrivalTime,
-                departureTime,
-                directionId,
-                revenue,
-                scheduleRelationship,
-                status,
-                stopSequence,
-                stopId,
-                trip,
-                vehicle
-            )
-
-        fun trip(
-            id: String = "",
-            headsign: String = "",
-            routePatternId: String? = null,
-            stops: List<Stop>? = null
-        ) = Trip(id, headsign, routePatternId, stops)
-
-        fun vehicle(
-            id: String = "",
-            currentStatus: Vehicle.CurrentStatus,
-            stopId: String? = null,
-            tripId: String? = null
-        ) = Vehicle(id, currentStatus, stopId, tripId)
-
         @Test
         fun `status is non-null`() {
             assertEquals(
