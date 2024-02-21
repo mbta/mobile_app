@@ -40,8 +40,8 @@ object TestData {
     fun route(
         id: String = uuid(),
         color: String = "",
-        directionNames: List<String> = emptyList(),
-        directionDestinations: List<String> = emptyList(),
+        directionNames: List<String> = listOf("", ""),
+        directionDestinations: List<String> = listOf("", ""),
         longName: String = "",
         shortName: String = "",
         sortOrder: Int = 0,
