@@ -8,6 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  pre-commit:
+    name: Run pre-commit to check formatting and linting
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - uses: pre-commit/action@v3.0.1
   android:
     name: Analyze, test, build, and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
     runs-on: ubuntu-latest
