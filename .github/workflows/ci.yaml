@@ -15,6 +15,22 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Read asdf versions
+        id: asdf
+        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+      - name: Parse java version
+        id: java-spec
+        run: |
+          DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
+          VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
+          echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
+          echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{steps.java-spec.outputs.java-distribution}}
+          java-version: ${{steps.java-spec.outputs.java-version}}
+          cache: gradle
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -24,7 +40,8 @@ jobs:
         with:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      - run: pre-commit run --show-diff-on-failure --color=always --all-files
+      - name: Run pre-commit
+        run: pre-commit run --show-diff-on-failure --color=always --all-files
   android:
     name: Analyze, test, build, and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
     runs-on: ubuntu-latest
