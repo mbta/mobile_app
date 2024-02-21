@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 
 /**
@@ -31,8 +32,9 @@ data class StopAssociatedRoute(
  * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the stops
  * received by the server in [StopAndRoutePatternResponse.stops]
  */
+@DefaultArgumentInterop.Enabled
 fun StopAndRoutePatternResponse.byRouteAndStop(
-    predictions: List<Prediction>?
+    predictions: List<Prediction>? = null
 ): List<StopAssociatedRoute> {
     val hasPredictions = predictions != null
     val predictionsByPatternAndStop = predictions?.groupBy { it.trip.routePatternId to it.stopId }

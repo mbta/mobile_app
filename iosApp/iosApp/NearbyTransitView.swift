@@ -38,7 +38,7 @@ struct NearbyTransitView: View {
 
     func joinPredictions() {
         Task {
-            guard let stopIds = nearbyFetcher.nearby?.byRouteAndStop(predictions: nil).flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
+            guard let stopIds = nearbyFetcher.nearby?.byRouteAndStop().flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
             do {
                 let stopIds = Array(Set(stopIds))
                 try await predictionsFetcher.run(stopIds: stopIds)
