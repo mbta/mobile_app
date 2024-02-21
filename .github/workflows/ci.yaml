@@ -16,7 +16,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-      - uses: pre-commit/action@v3.0.1
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      # pre-commit/action@v3.0.1
+      - run: python -m pip install pre-commit
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+      - run: pre-commit run --show-diff-on-failure --color=always --all-files
   android:
     name: Analyze, test, build, and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
     runs-on: ubuntu-latest
