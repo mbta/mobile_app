@@ -94,8 +94,8 @@ struct NearbyRouteView: View {
 
     var body: some View {
         Section {
-            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsByStopByStop in
-                NearbyStopView(patternsByStopByStop: patternsByStopByStop, now: now)
+            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsAtStop in
+                NearbyStopView(patternsAtStop: patternsAtStop, now: now)
             }
         }
         header: {
@@ -105,15 +105,15 @@ struct NearbyRouteView: View {
 }
 
 struct NearbyStopView: View {
-    let patternsByStopByStop: PatternsByStop
+    let patternsAtStop: PatternsByStop
     let now: Instant
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(patternsByStopByStop.stop.name).fontWeight(.bold)
+            Text(patternsAtStop.stop.name).fontWeight(.bold)
 
             VStack(alignment: .leading) {
-                ForEach(patternsByStopByStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
+                ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
                     let prediction: NearbyStopRoutePatternView.PredictionState =
                         if let predictions = patternsByHeadsign.predictions {
                             if let firstPrediction = predictions
