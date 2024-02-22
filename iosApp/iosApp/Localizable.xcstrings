@@ -1,38 +1,19 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%ld minutes" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld minute"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld minutes"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "20+ minutes" : {
+    "%ld min" : {
 
     },
-    "Approaching" : {
+    "1 min" : {
 
     },
-    "Arriving" : {
+    "20+ min" : {
 
     },
-    "Boarding" : {
+    "ARR" : {
+
+    },
+    "BRD" : {
 
     },
     "Loading..." : {
