@@ -18,7 +18,7 @@ class SearchResultFetcher: ObservableObject {
     }
 
     @MainActor func getSearchResults(query: String) async throws {
-        if (query.isEmpty) {
+        if query.isEmpty {
             results = nil
             return
         }

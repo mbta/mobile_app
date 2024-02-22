@@ -99,7 +99,7 @@ struct NearbyRouteView: View {
             }
         }
         header: {
-            Text(verbatim: "\(nearbyRoute.route.shortName) \(nearbyRoute.route.longName)")
+            RoutePill(route: nearbyRoute.route).padding(.leading, -20)
         }
     }
 }
@@ -188,6 +188,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 nearbyRoute: StopAssociatedRoute(
                     route: Route(
                         id: "216",
+                        type: RouteType.bus,
                         color: "FFC72C",
                         directionNames: ["Outbound", "Inbound"],
                         directionDestinations: ["Houghs Neck", "Quincy Center Station"],

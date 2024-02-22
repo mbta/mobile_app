@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -39,6 +40,7 @@ object TestData {
 
     fun route(
         id: String = uuid(),
+        type: RouteType = RouteType.LIGHT_RAIL,
         color: String = "",
         directionNames: List<String> = listOf("", ""),
         directionDestinations: List<String> = listOf("", ""),
@@ -49,6 +51,7 @@ object TestData {
     ) =
         Route(
             id,
+            type,
             color,
             directionNames,
             directionDestinations,

@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Route(
     val id: String,
+    val type: RouteType,
     val color: String,
     @SerialName("direction_names") val directionNames: List<String?>,
     @SerialName("direction_destinations") val directionDestinations: List<String?>,

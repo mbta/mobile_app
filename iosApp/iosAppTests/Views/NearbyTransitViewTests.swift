@@ -60,6 +60,7 @@ final class NearbyTransitViewTests: XCTestCase {
         init() {
             super.init(backend: IdleBackend())
             let route52 = Route(id: "52",
+                                type: .bus,
                                 color: "FFC72C",
                                 directionNames: ["Outbound", "Inbound"],
                                 directionDestinations: ["Dedham Mall", "Watertown Yard"],
@@ -123,7 +124,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let routes = try sut.inspect().findAll(NearbyRouteView.self)
 
-        XCTAssertNotNil(try routes[0].find(text: "52 Dedham Mall - Watertown Yard"))
+        XCTAssertNotNil(try routes[0].find(text: "Dedham Mall"))
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
             .parent().find(text: "Charles River Loop"))
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")

@@ -6,12 +6,11 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import SwiftUI
 import shared
+import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-
     static let defaultCenter: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
     static let defaultZoom: CGFloat = 12
 
@@ -29,31 +28,31 @@ struct HomeMapView: View {
     }
 
     var didAppear: ((Self) -> Void)?
-    
+
     func updateStopOpacity(map: MapboxMap?, opacity: Double) {
         try? map?.updateLayer(withId: stopLayerId, type: SymbolLayer.self) { layer in
-            if (layer.iconOpacity != .constant(opacity)) {
+            if layer.iconOpacity != .constant(opacity) {
                 layer.iconOpacity = .constant(opacity)
             }
         }
     }
-    
-    func createStopSourceData(stops : [Stop]) -> GeoJSONSourceData {
+
+    func createStopSourceData(stops: [Stop]) -> GeoJSONSourceData {
         let stopFeatures = stops
-            .filter{ stop in
-                return stop.parentStation == nil
+            .filter { stop in
+                stop.parentStation == nil
             }
-            .map{ stop in
-            var stopFeature = Feature(
-                geometry: Point(CLLocationCoordinate2D(latitude: stop.latitude, longitude: stop.longitude))
-            )
-            stopFeature.identifier = FeatureIdentifier(stop.id)
-            return stopFeature
-        }
+            .map { stop in
+                var stopFeature = Feature(
+                    geometry: Point(CLLocationCoordinate2D(latitude: stop.latitude, longitude: stop.longitude))
+                )
+                stopFeature.identifier = FeatureIdentifier(stop.id)
+                return stopFeature
+            }
 
         return .featureCollection(FeatureCollection(features: stopFeatures))
     }
-    
+
     func createStopLayer() -> Layer {
         var stopLayer = SymbolLayer(id: stopLayerId, source: stopSourceId)
         stopLayer.iconImage = .constant(.name(stopIconId))
@@ -76,15 +75,15 @@ struct HomeMapView: View {
                 updateStopOpacity(map: proxy.map, opacity: change.cameraState.zoom > 14.0 ? 1 : 0)
             }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(stopLayerId) { feature, context in
+            .onLayerTapGesture(stopLayerId) { _, _ in
                 // Each stop feature has the stop ID as the identifier
                 // We can also set arbitrary JSON properties if we need to
                 // print(feature.feature.identifier)
-                return true
+                true
             }
             .onChange(of: globalFetcher.stops) { stops in
                 let map = proxy.map!
-                if (map.sourceExists(withId: stopSourceId)) {
+                if map.sourceExists(withId: stopSourceId) {
                     // Don't create a new source if one already exists
                     map.updateGeoJSONSource(
                         withId: stopSourceId,
@@ -108,8 +107,8 @@ struct HomeMapView: View {
                 }.eraseToSignal())
 
                 viewport = .followPuck(zoom: viewport.camera?.zoom ?? HomeMapView.defaultZoom)
-                
-                Task{
+
+                Task {
                     try await globalFetcher.getGlobalData()
                 }
 
