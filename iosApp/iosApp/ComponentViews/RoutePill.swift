@@ -20,12 +20,15 @@ struct RoutePill: View {
         routeColor = route?.color != nil ? Color(hex: route!.color) : nil
     }
 
-    func getPillText(route: Route) -> String {
-        switch route.type {
+    func getPillText() -> String {
+        if route == nil {
+            return ""
+        }
+        return switch route!.type {
         case .bus:
-            route.shortName
+            route!.shortName
         default:
-            route.longName
+            route!.longName
         }
     }
 
@@ -33,7 +36,7 @@ struct RoutePill: View {
         if route == nil {
             EmptyView()
         } else {
-            Text(getPillText(route: route!))
+            Text(getPillText())
                 .textCase(.uppercase)
                 .font(.system(size: 17, weight: .bold))
                 .frame(minWidth: 25)
