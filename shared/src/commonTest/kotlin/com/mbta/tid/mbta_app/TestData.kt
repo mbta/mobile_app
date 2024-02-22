@@ -90,6 +90,12 @@ object TestData {
         stops: List<Stop>? = null
     ) = Trip(id, headsign, routePatternId, stops)
 
+    fun RoutePattern.trip(
+        id: String = uuid(),
+        headsign: String = this.representativeTrip?.headsign ?: "",
+        stops: List<Stop>? = null
+    ) = trip(id, headsign, this.id, stops)
+
     fun vehicle(
         id: String = uuid(),
         currentStatus: Vehicle.CurrentStatus,

@@ -11,7 +11,6 @@ import shared
 
 class NearbyFetcher: ObservableObject {
     @Published var nearby: StopAndRoutePatternResponse?
-    @Published var nearbyByRouteAndStop: [StopAssociatedRoute]?
     let backend: any BackendProtocol
 
     init(backend: any BackendProtocol) {
@@ -24,6 +23,5 @@ class NearbyFetcher: ObservableObject {
             longitude: longitude
         )
         nearby = response
-        nearbyByRouteAndStop = nearby!.byRouteAndStop()
     }
 }
