@@ -38,7 +38,7 @@ struct NearbyTransitView: View {
 
     func joinPredictions() {
         Task {
-            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?.flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
+            guard let stopIds = nearbyFetcher.nearby?.byRouteAndStop().flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
             do {
                 let stopIds = Array(Set(stopIds))
                 try await predictionsFetcher.run(stopIds: stopIds)
@@ -60,9 +60,9 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack {
-            if let nearby = nearbyFetcher.nearbyByRouteAndStop {
+            if let nearby = nearbyFetcher.nearby?.byRouteAndStop(predictions: predictionsFetcher.predictions) {
                 List(nearby, id: \.route.id) { nearbyRoute in
-                    NearbyRouteView(nearbyRoute: nearbyRoute, allPredictions: predictionsFetcher.predictions, now: now.toKotlinInstant())
+                    NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
                 }
             } else {
                 Text("Loading...")
@@ -76,7 +76,7 @@ struct NearbyTransitView: View {
             getNearby(location: location)
             didChange?(self)
         }
-        .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
+        .onChange(of: nearbyFetcher.nearby) { _ in
             joinPredictions()
         }
         .onReceive(timer) { input in
@@ -90,13 +90,12 @@ struct NearbyTransitView: View {
 
 struct NearbyRouteView: View {
     let nearbyRoute: StopAssociatedRoute
-    let allPredictions: [Prediction]?
     let now: Instant
 
     var body: some View {
         Section {
-            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsByStopByStop in
-                NearbyStopView(patternsByStopByStop: patternsByStopByStop, allPredictions: allPredictions, now: now)
+            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsAtStop in
+                NearbyStopView(patternsAtStop: patternsAtStop, now: now)
             }
         }
         header: {
@@ -106,25 +105,19 @@ struct NearbyRouteView: View {
 }
 
 struct NearbyStopView: View {
-    let patternsByStopByStop: PatternsByStop
-    let allPredictions: [Prediction]?
+    let patternsAtStop: PatternsByStop
     let now: Instant
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(patternsByStopByStop.stop.name).fontWeight(.bold)
+            Text(patternsAtStop.stop.name).fontWeight(.bold)
 
             VStack(alignment: .leading) {
-                ForEach(patternsByStopByStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
-                    let patternIds = Set(patternsByHeadsign.patterns.map(\.id))
+                ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
                     let prediction: NearbyStopRoutePatternView.PredictionState =
-                        if let predictions = allPredictions {
-                            if let firstPrediction = predictions.filter({
-                                if let routePatternId = $0.trip.routePatternId {
-                                    return patternIds.contains(routePatternId)
-                                }
-                                return false
-                            }).map({ $0.format(now: now) })
+                        if let predictions = patternsByHeadsign.predictions {
+                            if let firstPrediction = predictions
+                                .map({ $0.format(now: now) })
                                 .filter({ ($0 as? Prediction.FormatHidden) == nil })
                                 .first
                             {
@@ -222,26 +215,25 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         sortOrder: 521_601_000,
                                         representativeTrip: Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
                                         routeId: "216"
-                                    )]),
+                                    )], predictions: [
+                                        Prediction(
+                                            id: "",
+                                            arrivalTime: nil,
+                                            departureTime: (Date.now + 5 * 60).toKotlinInstant(),
+                                            directionId: 0,
+                                            revenue: true,
+                                            scheduleRelationship: .scheduled,
+                                            status: nil,
+                                            stopSequence: 30,
+                                            stopId: "3276",
+                                            trip: Trip(id: "", headsign: "Harvard", routePatternId: "206-_-1", stops: nil),
+                                            vehicle: nil
+                                        ),
+                                    ]),
                             ]
                         ),
                     ]
                 ),
-                allPredictions: [
-                    Prediction(
-                        id: "",
-                        arrivalTime: nil,
-                        departureTime: (Date.now + 5 * 60).toKotlinInstant(),
-                        directionId: 0,
-                        revenue: true,
-                        scheduleRelationship: .scheduled,
-                        status: nil,
-                        stopSequence: 30,
-                        stopId: "3276",
-                        trip: Trip(id: "", headsign: "Harvard", routePatternId: "206-_-1", stops: nil),
-                        vehicle: nil
-                    ),
-                ],
                 now: Date.now.toKotlinInstant()
             )
         }.previewDisplayName("NearbyRouteView")
