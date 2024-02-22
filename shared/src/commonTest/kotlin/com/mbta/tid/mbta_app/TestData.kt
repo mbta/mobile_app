@@ -66,17 +66,28 @@ object TestData {
         directionId: Int = 0,
         name: String = "",
         sortOrder: Int = 0,
+        typicality: RoutePattern.Typicality? = RoutePattern.Typicality.Atypical,
         representativeTrip: Trip? = null,
         routeId: String = ""
-    ) = RoutePattern(id, directionId, name, sortOrder, representativeTrip, routeId)
+    ) = RoutePattern(id, directionId, name, sortOrder, typicality, representativeTrip, routeId)
 
     fun Route.pattern(
         id: String = uuid(),
         directionId: Int = 0,
         name: String = "",
         sortOrder: Int = 0,
+        typicality: RoutePattern.Typicality? = RoutePattern.Typicality.Atypical,
         representativeTrip: Trip? = null
-    ) = routePattern(id, directionId, name, sortOrder, representativeTrip, routeId = this.id)
+    ) =
+        routePattern(
+            id,
+            directionId,
+            name,
+            sortOrder,
+            typicality,
+            representativeTrip,
+            routeId = this.id
+        )
 
     fun stop(
         id: String = uuid(),

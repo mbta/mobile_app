@@ -60,7 +60,7 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack {
-            if let nearby = nearbyFetcher.nearby?.byRouteAndStop(predictions: predictionsFetcher.predictions) {
+            if let nearby = nearbyFetcher.nearby?.byRouteAndStop(predictions: predictionsFetcher.predictions, filterAtTime: now.toKotlinInstant()) {
                 List(nearby, id: \.route.id) { nearbyRoute in
                     NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
                 }
@@ -259,6 +259,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         directionId: 1,
                                         name: "Houghs Neck - Quincy Center Station",
                                         sortOrder: 521_601_000,
+                                        typicality: .typical,
                                         representativeTrip: Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
                                         routeId: "216"
                                     )], predictions: [Prediction(

@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
+import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.Instant
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -34,7 +36,8 @@ data class StopAssociatedRoute(
  */
 @DefaultArgumentInterop.Enabled
 fun StopAndRoutePatternResponse.byRouteAndStop(
-    predictions: List<Prediction>? = null
+    predictions: List<Prediction>? = null,
+    filterAtTime: Instant? = null
 ): List<StopAssociatedRoute> {
     val hasPredictions = predictions != null
     val predictionsByPatternAndStop = predictions?.groupBy { it.trip.routePatternId to it.stopId }
@@ -45,14 +48,10 @@ fun StopAndRoutePatternResponse.byRouteAndStop(
         mutableMapOf<Route, MutableMap<Stop, MutableList<Pair<RoutePattern, List<Prediction>?>>>>()
 
     stops.forEach { stop ->
-        val newPatternIds =
+        val newPatternsByRoute =
             patternIdsByStop
                 .getOrElse(stop.id) { emptyList() }
                 .filter { !routePatternsUsed.contains(it) }
-        routePatternsUsed.addAll(newPatternIds)
-
-        val newPatternsByRoute =
-            newPatternIds
                 .map { patternId ->
                     val routePattern = routePatterns.getValue(patternId)
                     routePattern to
@@ -63,6 +62,22 @@ fun StopAndRoutePatternResponse.byRouteAndStop(
                             null
                         }
                 }
+                .filter { (routePattern, predictions) ->
+                    // if typicality is unknown, default to showing
+                    val typicality = routePattern.typicality ?: RoutePattern.Typicality.Typical
+                    val typical = typicality == RoutePattern.Typicality.Typical
+                    if (typical || filterAtTime == null) {
+                        true
+                    } else {
+                        val cutoffTime = filterAtTime.plus(90.minutes)
+                        (predictions?.any {
+                            val predictionTime = it.predictionTime
+                            predictionTime != null && predictionTime < cutoffTime
+                        })
+                            ?: false
+                    }
+                }
+                .also { routePatternsUsed.addAll(it.map { (routePattern, _) -> routePattern.id }) }
                 .sortedBy { (routePattern, _) -> routePattern.sortOrder }
                 .groupBy { (routePattern, _) -> routePattern.routeId }
 

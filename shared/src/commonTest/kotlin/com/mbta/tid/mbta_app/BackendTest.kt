@@ -63,7 +63,8 @@ class BackendTest {
                                 "headsign": "Watertown",
                                 "stops": null,
                                 "route_pattern": null
-                              }
+                              },
+                              "typicality": "deviation"
                             },
                             "52-4-1": {
                               "id": "52-4-1",
@@ -77,7 +78,8 @@ class BackendTest {
                               "representative_trip": {
                                 "id": "trip2",
                                 "headsign": "Charles River Loop"
-                              }
+                              },
+                              "typicality": "deviation"
                             },
                             "52-5-0": {
                               "id": "52-5-0",
@@ -91,7 +93,8 @@ class BackendTest {
                               "representative_trip": {
                                 "id": "trip3",
                                 "headsign": "Watertown"
-                              }
+                              },
+                              "typicality": "typical"
                             },
                             "52-5-1": {
                               "id": "52-5-1",
@@ -105,7 +108,8 @@ class BackendTest {
                               "representative_trip": {
                                 "id": "trip4",
                                 "headsign": "Dedham Mall"
-                              }
+                              },
+                              "typicality": "typical"
                             }
                           },
                           "pattern_ids_by_stop": {
@@ -188,6 +192,7 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder = 505200020,
+                                    typicality = RoutePattern.Typicality.Deviation,
                                     representativeTrip = Trip(id = "trip1", headsign = "Watertown"),
                                     routeId = route52.id
                                 ),
@@ -197,6 +202,7 @@ class BackendTest {
                                     directionId = 1,
                                     name = "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201010,
+                                    typicality = RoutePattern.Typicality.Deviation,
                                     representativeTrip =
                                         Trip(id = "trip2", headsign = "Charles River Loop"),
                                     routeId = route52.id
@@ -207,6 +213,7 @@ class BackendTest {
                                     directionId = 0,
                                     name = "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder = 505200000,
+                                    typicality = RoutePattern.Typicality.Typical,
                                     representativeTrip = Trip(id = "trip3", headsign = "Watertown"),
                                     routeId = route52.id
                                 ),
@@ -216,6 +223,7 @@ class BackendTest {
                                     directionId = 1,
                                     name = "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201000,
+                                    typicality = RoutePattern.Typicality.Typical,
                                     representativeTrip =
                                         Trip(id = "trip4", headsign = "Dedham Mall"),
                                     routeId = route52.id
