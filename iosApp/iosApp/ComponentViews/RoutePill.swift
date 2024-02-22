@@ -6,8 +6,8 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import SwiftUI
 import shared
+import SwiftUI
 
 struct RoutePill: View {
     let route: Route?
@@ -21,7 +21,7 @@ struct RoutePill: View {
     }
 
     func getPillText(route: Route) -> String {
-        return switch route.type {
+        switch route.type {
         case .bus:
             route.shortName
         default:
@@ -30,7 +30,7 @@ struct RoutePill: View {
     }
 
     var body: some View {
-        if (route == nil) {
+        if route == nil {
             EmptyView()
         } else {
             Text(getPillText(route: route!))
@@ -47,11 +47,10 @@ struct RoutePill: View {
     }
 }
 
-
 struct RoutePill_Previews: PreviewProvider {
     static var previews: some View {
         List {
-            HStack  {
+            HStack {
                 RoutePill(route: Route(
                     id: "216",
                     type: .bus,
@@ -87,7 +86,7 @@ struct RoutePill_Previews: PreviewProvider {
                 ))
             }
 
-            HStack  {
+            HStack {
                 RoutePill(route: Route(
                     id: "Red",
                     type: .heavyRail,

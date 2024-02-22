@@ -9,12 +9,12 @@
 @testable import iosApp
 import ViewInspector
 @_spi(Experimental) import MapboxMaps
-import XCTest
 import shared
+import XCTest
 
 final class HomeMapViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
-    
+
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -49,20 +49,20 @@ final class HomeMapViewTests: XCTestCase {
     func testGlobalCall() throws {
         class FakeGlobalFetcher: GlobalFetcher {
             let getGlobalExpectation: XCTestExpectation
-            
+
             init(getGlobalExpectation: XCTestExpectation) {
                 self.getGlobalExpectation = getGlobalExpectation
                 super.init(backend: IdleBackend())
             }
-            
+
             override func getGlobalData() async throws {
                 getGlobalExpectation.fulfill()
                 throw NotUnderTestError()
             }
         }
-        
+
         let getGlobalExpectation = expectation(description: "getGlobalData")
-        
+
         var sut = HomeMapView(globalFetcher: FakeGlobalFetcher(getGlobalExpectation: getGlobalExpectation))
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)

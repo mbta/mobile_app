@@ -1,5 +1,5 @@
 //
-//  ColorExtension.swift
+//  ColorHexExtension.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 2/16/24.
@@ -10,18 +10,18 @@ import SwiftUI
 
 extension Color {
     init(hex: String) {
-        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 
-        if (cString.hasPrefix("#")) {
+        if cString.hasPrefix("#") {
             cString.remove(at: cString.startIndex)
         }
 
-        if ((cString.count) != 6) {
+        if (cString.count) != 6 {
             self.init(.gray)
             return
         }
 
-        var rgbValue:UInt64 = 0
+        var rgbValue: UInt64 = 0
         Scanner(string: cString).scanHexInt64(&rgbValue)
 
         self.init(

@@ -28,7 +28,7 @@ struct IdleBackend: BackendProtocol {
     func getNearby(latitude _: Double, longitude _: Double) async throws -> StopAndRoutePatternResponse {
         await hang()
     }
-    
+
     func getGlobalData() async throws -> StopAndRoutePatternResponse {
         await hang()
     }

@@ -78,14 +78,14 @@ final class RoutePillTests: XCTestCase {
             id: "Mattapan",
             type: .lightRail,
             color: "DA291C",
-              
+
             directionNames: [
-            "Outbound",
-            "Inbound"
+                "Outbound",
+                "Inbound",
             ],
             directionDestinations: [
-            "Mattapan",
-            "Ashmont"
+                "Mattapan",
+                "Ashmont",
             ],
             longName: "Mattapan Trolley",
             shortName: "",
@@ -95,9 +95,8 @@ final class RoutePillTests: XCTestCase {
 
         XCTAssertEqual(try green.inspect().view(RoutePill.self).text().string(), "Green Line C")
         XCTAssertEqual(try mattapan.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
-
     }
-    
+
     @MainActor func testCommuterRail() throws {
         let middleborough = RoutePill(route: Route(
             id: "CR-Middleborough",
@@ -138,7 +137,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 30002,
             textColor: "FFFFFF"
         ))
-        
+
         XCTAssertEqual(try ferry.inspect().view(RoutePill.self).text().string(), "Hingham/Hull Ferry")
     }
 
@@ -168,5 +167,4 @@ final class RoutePillTests: XCTestCase {
         XCTAssertEqual(try rlShuttle.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
         XCTAssertEqual(try glShuttle.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
     }
-
 }
