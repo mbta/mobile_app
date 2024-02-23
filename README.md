@@ -21,6 +21,8 @@ Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc
 ### Code Generation
 
 ## Running Locally
+### iOS
+Open project from /iosApp/iosApp.xcworkspace in Xcode
 
 ## Running Tests
 
