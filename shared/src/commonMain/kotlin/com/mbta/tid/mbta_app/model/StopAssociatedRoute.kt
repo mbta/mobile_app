@@ -69,8 +69,8 @@ fun StopAndRoutePatternResponse.byRouteAndStop(
                 .filter { (routePattern, predictions) ->
                     // if typicality is unknown, default to showing
                     val typicality = routePattern.typicality ?: RoutePattern.Typicality.Typical
-                    val typical = typicality == RoutePattern.Typicality.Typical
-                    if (typical || filterAtTime == null) {
+                    val isTypical = typicality == RoutePattern.Typicality.Typical
+                    if (isTypical || filterAtTime == null) {
                         true
                     } else {
                         val cutoffTime = filterAtTime.plus(90.minutes)
