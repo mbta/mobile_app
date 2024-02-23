@@ -32,7 +32,10 @@ data class StopAssociatedRoute(
 
 /**
  * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the stops
- * received by the server in [StopAndRoutePatternResponse.stops]
+ * received by the server in [StopAndRoutePatternResponse.stops].
+ *
+ * Attaches [predictions] to the route, stop, and headsign to which they apply. Removes non-typical
+ * route patterns which are not predicted within 90 minutes of [filterAtTime].
  */
 @DefaultArgumentInterop.Enabled
 fun StopAndRoutePatternResponse.byRouteAndStop(
