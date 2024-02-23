@@ -48,10 +48,14 @@ fun StopAndRoutePatternResponse.byRouteAndStop(
         mutableMapOf<Route, MutableMap<Stop, MutableList<Pair<RoutePattern, List<Prediction>?>>>>()
 
     stops.forEach { stop ->
-        val newPatternsByRoute =
+        val newPatternIds =
             patternIdsByStop
                 .getOrElse(stop.id) { emptyList() }
                 .filter { !routePatternsUsed.contains(it) }
+        routePatternsUsed.addAll(newPatternIds)
+
+        val newPatternsByRoute =
+            newPatternIds
                 .map { patternId ->
                     val routePattern = routePatterns.getValue(patternId)
                     routePattern to
@@ -77,7 +81,6 @@ fun StopAndRoutePatternResponse.byRouteAndStop(
                             ?: false
                     }
                 }
-                .also { routePatternsUsed.addAll(it.map { (routePattern, _) -> routePattern.id }) }
                 .sortedBy { (routePattern, _) -> routePattern.sortOrder }
                 .groupBy { (routePattern, _) -> routePattern.routeId }
 
