@@ -23,6 +23,8 @@ data class Prediction(
     val trip: Trip,
     val vehicle: Vehicle?
 ) : Comparable<Prediction> {
+    val predictionTime = arrivalTime ?: departureTime
+
     @Serializable
     enum class ScheduleRelationship {
         @SerialName("added") Added,
@@ -65,8 +67,8 @@ data class Prediction(
         if (departureTime == null || departureTime < now) {
             return Format.Hidden
         }
-        val predictionTime = arrivalTime ?: departureTime
-        val timeRemaining = predictionTime.minus(now)
+        // since we checked departureTime as non-null, we don't have to also check predictionTime
+        val timeRemaining = predictionTime!!.minus(now)
         if (
             vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
                 vehicle.stopId == stopId &&

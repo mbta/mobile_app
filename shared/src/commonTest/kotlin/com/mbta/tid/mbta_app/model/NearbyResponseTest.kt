@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.TestData.trip
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Instant
 
@@ -424,6 +425,153 @@ class NearbyResponseTest {
                         stop2Pattern3Prediction
                     )
             )
+        )
+    }
+
+    @Test
+    fun `byRouteAndStop hides rare patterns with no predictions`() {
+        val stop1 = stop()
+
+        val route1 = route()
+
+        // should be included because typical and has prediction
+        val typicalOutbound =
+            route1.pattern(
+                directionId = 0,
+                sortOrder = 1,
+                typicality = RoutePattern.Typicality.Typical,
+                representativeTrip = trip(headsign = "Typical Out")
+            )
+        // should be included because typical
+        val typicalInbound =
+            route1.pattern(
+                directionId = 1,
+                sortOrder = 2,
+                typicality = RoutePattern.Typicality.Typical,
+                representativeTrip = trip(headsign = "Typical In")
+            )
+        // should be included because prediction within 90 minutes
+        val deviationOutbound =
+            route1.pattern(
+                directionId = 0,
+                sortOrder = 3,
+                typicality = RoutePattern.Typicality.Deviation,
+                representativeTrip = trip(headsign = "Deviation Out")
+            )
+        // should be included because prediction beyond 90 minutes
+        val deviationInbound =
+            route1.pattern(
+                directionId = 1,
+                sortOrder = 4,
+                typicality = RoutePattern.Typicality.Deviation,
+                representativeTrip = trip(headsign = "Deviation In")
+            )
+        // should be included because prediction
+        val atypicalOutbound =
+            route1.pattern(
+                directionId = 0,
+                sortOrder = 5,
+                typicality = RoutePattern.Typicality.Atypical,
+                representativeTrip = trip(headsign = "Atypical Out")
+            )
+        // should be excluded because no prediction
+        val atypicalInbound =
+            route1.pattern(
+                directionId = 1,
+                sortOrder = 6,
+                typicality = RoutePattern.Typicality.Atypical,
+                representativeTrip = trip(headsign = "Atypical In")
+            )
+
+        val response =
+            StopAndRoutePatternResponse(
+                stops = listOf(stop1),
+                routePatterns =
+                    listOf(
+                            typicalOutbound,
+                            typicalInbound,
+                            deviationOutbound,
+                            deviationInbound,
+                            atypicalOutbound,
+                            atypicalInbound
+                        )
+                        .associateBy { it.id },
+                patternIdsByStop =
+                    mapOf(
+                        stop1.id to
+                            listOf(
+                                typicalOutbound.id,
+                                typicalInbound.id,
+                                deviationOutbound.id,
+                                deviationInbound.id,
+                                atypicalOutbound.id,
+                                atypicalInbound.id
+                            )
+                    ),
+                routes = mapOf(route1.id to route1)
+            )
+
+        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+
+        val typicalOutboundPrediction =
+            prediction(departureTime = time, stopId = stop1.id, trip = typicalOutbound.trip())
+        val deviationOutboundPrediction =
+            prediction(
+                departureTime = time + 89.minutes,
+                stopId = stop1.id,
+                trip = deviationOutbound.trip()
+            )
+        val deviationInboundPrediction =
+            prediction(
+                departureTime = time + 91.minutes,
+                stopId = stop1.id,
+                trip = deviationInbound.trip()
+            )
+        val atypicalInboundPrediction =
+            prediction(
+                departureTime = time + 1.minutes,
+                stopId = stop1.id,
+                trip = atypicalInbound.trip()
+            )
+
+        val predictions =
+            listOf(
+                typicalOutboundPrediction,
+                deviationOutboundPrediction,
+                deviationInboundPrediction,
+                atypicalInboundPrediction
+            )
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            stop1,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "Typical Out",
+                                    listOf(typicalOutbound),
+                                    listOf(typicalOutboundPrediction)
+                                ),
+                                PatternsByHeadsign("Typical In", listOf(typicalInbound), listOf()),
+                                PatternsByHeadsign(
+                                    "Deviation Out",
+                                    listOf(deviationOutbound),
+                                    listOf(deviationOutboundPrediction)
+                                ),
+                                PatternsByHeadsign(
+                                    "Atypical In",
+                                    listOf(atypicalInbound),
+                                    listOf(atypicalInboundPrediction)
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            response.byRouteAndStop(predictions, filterAtTime = time)
         )
     }
 }

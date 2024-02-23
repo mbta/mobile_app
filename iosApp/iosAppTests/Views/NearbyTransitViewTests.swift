@@ -78,28 +78,35 @@ final class NearbyTransitViewTests: XCTestCase {
                              longitude: -71.191092,
                              name: "Sawmill Brook Pkwy @ Walsh Rd - opposite side",
                              parentStation: nil)
+            // In reality, 52-4-0 and 52-4-1 have typicality: .deviation,
+            // but these tests are from before we started hiding deviations with no predictions,
+            // and it's easier to just fudge the data than to rewrite the tests.
             let rp40 = RoutePattern(id: "52-4-0",
                                     directionId: 0,
                                     name: "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder: 505_200_020,
+                                    typicality: .typical,
                                     representativeTrip: Trip(id: "60451431", headsign: "Charles River Loop", routePatternId: "52-4-0", stops: nil),
                                     routeId: route52.id)
             let rp50 = RoutePattern(id: "52-5-0",
                                     directionId: 0,
                                     name: "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder: 505_200_000,
+                                    typicality: .typical,
                                     representativeTrip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
                                     routeId: route52.id)
             let rp41 = RoutePattern(id: "52-4-1",
                                     directionId: 1,
                                     name: "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder: 505_201_010,
+                                    typicality: .typical,
                                     representativeTrip: Trip(id: "60451432", headsign: "Watertown Yard", routePatternId: "52-4-1", stops: nil),
                                     routeId: route52.id)
             let rp51 = RoutePattern(id: "52-5-1",
                                     directionId: 1,
                                     name: "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder: 505_201_000,
+                                    typicality: .typical,
                                     representativeTrip: Trip(id: "60451425", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
                                     routeId: route52.id)
             nearby = StopAndRoutePatternResponse(

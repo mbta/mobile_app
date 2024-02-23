@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="https://gpx.studio">
-<wpt lat="42.3513706803105" lon="-71.06649626809957" />
+<wpt lat="42.3513706803105" lon="-71.06649626809957">
+    <!--
+    thanks to XML entities, this href isn't valid directly, so cmd+clicking it in Xcode doesn't work, ruining the entire point.
+    instead, https://www.mbta.com/transit-near-me?location%5Baddress%5D=Massachusetts+Department+of+Transportation&location%5Blatitude%5D=42.3513706803105&location%5Blongitude%5D=-71.06649626809957
+    -->
+    <link href="https://www.mbta.com/transit-near-me?location%5Baddress%5D=Massachusetts+Department+of+Transportation&amp;location%5Blatitude%5D=42.3513706803105&amp;location%5Blongitude%5D=-71.06649626809957">
+        <text>Dotcom nearby transit results</text>
+    </link>
+</wpt>
 </gpx>

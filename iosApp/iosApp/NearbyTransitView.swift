@@ -38,7 +38,8 @@ struct NearbyTransitView: View {
 
     func joinPredictions() {
         Task {
-            guard let stopIds = nearbyFetcher.nearby?.byRouteAndStop().flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
+            guard let stopIds = nearbyFetcher.nearby?.byRouteAndStop()
+                .flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
             do {
                 let stopIds = Array(Set(stopIds))
                 try await predictionsFetcher.run(stopIds: stopIds)
@@ -60,7 +61,10 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack {
-            if let nearby = nearbyFetcher.nearby?.byRouteAndStop(predictions: predictionsFetcher.predictions) {
+            if let nearby = nearbyFetcher.nearby?.byRouteAndStop(
+                predictions: predictionsFetcher.predictions,
+                filterAtTime: now.toKotlinInstant()
+            ) {
                 List(nearby, id: \.route.id) { nearbyRoute in
                     NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
                 }
@@ -229,6 +233,7 @@ struct PredictionView: View {
 
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
+        let trip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil)
         List {
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
@@ -259,7 +264,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         directionId: 1,
                                         name: "Houghs Neck - Quincy Center Station",
                                         sortOrder: 521_601_000,
-                                        representativeTrip: Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
+                                        typicality: .typical,
+                                        representativeTrip: trip,
                                         routeId: "216"
                                     )], predictions: [Prediction(
                                         id: "1",
@@ -271,7 +277,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         status: nil,
                                         stopSequence: 30,
                                         stopId: "3276",
-                                        trip: Trip(id: "", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
+                                        trip: trip,
                                         vehicle: nil
                                     ), Prediction(
                                         id: "2",
@@ -283,7 +289,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         status: nil,
                                         stopSequence: 90,
                                         stopId: "3276",
-                                        trip: Trip(id: "", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil),
+                                        trip: trip,
                                         vehicle: nil
                                     )]),
                             ]

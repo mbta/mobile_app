@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
+import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.Instant
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -30,11 +32,15 @@ data class StopAssociatedRoute(
 
 /**
  * Aggregate stops and the patterns that serve them by route. Preserves the sort order of the stops
- * received by the server in [StopAndRoutePatternResponse.stops]
+ * received by the server in [StopAndRoutePatternResponse.stops].
+ *
+ * Attaches [predictions] to the route, stop, and headsign to which they apply. Removes non-typical
+ * route patterns which are not predicted within 90 minutes of [filterAtTime].
  */
 @DefaultArgumentInterop.Enabled
 fun StopAndRoutePatternResponse.byRouteAndStop(
-    predictions: List<Prediction>? = null
+    predictions: List<Prediction>? = null,
+    filterAtTime: Instant? = null
 ): List<StopAssociatedRoute> {
     val hasPredictions = predictions != null
     val predictionsByPatternAndStop = predictions?.groupBy { it.trip.routePatternId to it.stopId }
@@ -62,6 +68,21 @@ fun StopAndRoutePatternResponse.byRouteAndStop(
                         } else {
                             null
                         }
+                }
+                .filter { (routePattern, predictions) ->
+                    // if typicality is unknown, default to showing
+                    val typicality = routePattern.typicality ?: RoutePattern.Typicality.Typical
+                    val isTypical = typicality == RoutePattern.Typicality.Typical
+                    if (isTypical || filterAtTime == null) {
+                        true
+                    } else {
+                        val cutoffTime = filterAtTime.plus(90.minutes)
+                        (predictions?.any {
+                            val predictionTime = it.predictionTime
+                            predictionTime != null && predictionTime < cutoffTime
+                        })
+                            ?: false
+                    }
                 }
                 .sortedBy { (routePattern, _) -> routePattern.sortOrder }
                 .groupBy { (routePattern, _) -> routePattern.routeId }
