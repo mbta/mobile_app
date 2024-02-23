@@ -1,0 +1,3 @@
+disabled_rules:
+  # SwiftFormat puts trailing commas in collection literals sometimes
+  - trailing_comma
