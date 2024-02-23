@@ -3,9 +3,9 @@
 # Fail this script if any subcommand fails.
 set -e
 
-brew install swiftlint
-cd ../iosApp
-swiftlint
+# Allow running SwiftLint as an Xcode plugin
+defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
+defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
 
 # Install Java
 JDK_PATH="${CI_DERIVED_DATA_PATH}/JDK"

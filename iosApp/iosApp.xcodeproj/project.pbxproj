@@ -316,6 +316,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */,
 			);
 			name = iosApp;
 			packageProductDependencies = (
@@ -361,6 +362,7 @@
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -512,6 +514,10 @@
 			isa = PBXTargetDependency;
 			target = 7555FF7A242A565900829871 /* iosApp */;
 			targetProxy = 6EED5E9F2B3DC6C10052A1B8 /* PBXContainerItemProxy */;
+		};
+		8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -868,6 +874,14 @@
 				minimumVersion = 0.9.9;
 			};
 		};
+		8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.54.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -880,6 +894,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
