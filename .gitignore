@@ -13,3 +13,4 @@ xcuserdata
 fastlane/report.xml
 
 /iosApp/secrets/*
+/iosApp/Pods
