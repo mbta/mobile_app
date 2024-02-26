@@ -325,7 +325,7 @@
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
-				6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */,
+				6E35D4D12B72C8E400A2BF95 /* Configure plist secrets */,
 				5BC52ADACC348B41054723F8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -457,7 +457,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */ = {
+		6E35D4D12B72C8E400A2BF95 /* Configure plist secrets */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -466,7 +466,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Configure Mapbox";
+			name = "Configure plist secrets";
 			outputFileListPaths = (
 			);
 			outputPaths = (
