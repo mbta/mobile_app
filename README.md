@@ -22,7 +22,13 @@ Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc
 
 ## Running Locally
 ### iOS
-Open project from /iosApp/iosApp.xcworkspace in Xcode
+
+The shared library dependency is managed using Cocoapods. To install the dependency and build the
+ios app, you must first Run a gradle sync of the project from Android Studio, or you may run
+`./gradlew :shared:generateDummyFramework` from the root directory, then `pod install` from within
+the `iosApp` directory.
+
+Then, open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
 
 ## Running Tests
 
