@@ -32,6 +32,7 @@ mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
 # Install cocoapods
 brew install cocoapods
+cd "${CI_PRIMARY_REPOSITORY_PATH}"
 ./gradlew :shared:generateDummyFramework
 cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
 pod install
