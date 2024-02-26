@@ -242,7 +242,6 @@
 				AC3D60C6C4DFA3B5059DE760 /* Pods-iosApp.debug.xcconfig */,
 				50063E7894E0561551C66A20 /* Pods-iosApp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -322,7 +321,6 @@
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
 				54925D0D39F8C661E3FB832B /* [CP] Check Pods Manifest.lock */,
-				7555FFB5242A651A00829871 /* ShellScript */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
@@ -378,8 +376,8 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
-				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios.git" */,
-				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint.git" */,
+				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -477,23 +475,6 @@
 			shellPath = /bin/sh;
 			shellScript = "token_file=secrets/mapbox\ntoken_file2=../mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
 		};
-		7555FFB5242A651A00829871 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
-		};
 		8C35B50C2B61850900A3CB77 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -573,7 +554,7 @@
 		};
 		8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 8C42F06D2B87BD1D00F9A77B /* plugin:SwiftLintPlugin */;
+			productRef = 8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -916,7 +897,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios.git" */ = {
+		6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mapbox/mapbox-maps-ios.git";
 			requirement = {
@@ -932,7 +913,7 @@
 				minimumVersion = 0.9.9;
 			};
 		};
-		8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint.git" */ = {
+		8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/SwiftLint.git";
 			requirement = {
@@ -945,7 +926,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		6E35D4CD2B72C74500A2BF95 /* MapboxMaps */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios.git" */;
+			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
 			productName = MapboxMaps;
 		};
 		6EED5EAD2B3E1BA80052A1B8 /* ViewInspector */ = {
@@ -953,9 +934,9 @@
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
 		};
-		8C42F06D2B87BD1D00F9A77B /* plugin:SwiftLintPlugin */ = {
+		8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint.git" */;
+			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */;
 			productName = "plugin:SwiftLintPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
