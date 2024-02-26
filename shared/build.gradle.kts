@@ -31,6 +31,8 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
                 implementation(libs.skie.configuration.annotations)
+                api(libs.spatialk.geojson)
+                implementation(libs.spatialk.turf)
             }
         }
         val commonTest by getting {
