@@ -233,7 +233,13 @@ struct PredictionView: View {
 
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
-        let trip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil)
+        let trip = Trip(
+            id: "trip1",
+            headsign: "Houghs Neck",
+            routePatternId: "206-_-1",
+            shape: nil,
+            stops: nil
+        )
         List {
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
@@ -246,7 +252,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         longName: "Houghs Neck - Quincy Center Station via Germantown",
                         shortName: "216",
                         sortOrder: 52160,
-                        textColor: "000000"
+                        textColor: "000000",
+                        routePatterns: nil
                     ),
                     patternsByStop: [
                         PatternsByStop(

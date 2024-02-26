@@ -19,9 +19,9 @@ class PredictionsFetcher: ObservableObject {
     }
 
     @MainActor func run(stopIds: [String]) async throws {
-        let _ = try await channel?.leave()
+        _ = try await channel?.leave()
         let channel = try await backend.predictionsStopsChannel(stopIds: stopIds)
-        let _ = try await channel.join()
+        _ = try await channel.join()
         self.channel = channel
         for await predictions in channel.predictions {
             self.predictions = predictions
@@ -29,7 +29,7 @@ class PredictionsFetcher: ObservableObject {
     }
 
     func leave() async throws {
-        let _ = try await channel?.leave()
+        _ = try await channel?.leave()
         channel = nil
         predictions = nil
     }

@@ -11,5 +11,6 @@ data class Trip(
     @Serializable(with = GetReferenceIdSerializer::class)
     @SerialName("route_pattern")
     val routePatternId: String? = null,
+    val shape: Shape? = null,
     val stops: List<Stop>? = null
 )

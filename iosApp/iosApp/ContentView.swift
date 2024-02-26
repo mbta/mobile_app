@@ -5,10 +5,11 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var globalFetcher: GlobalFetcher
-    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
+    @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
+    @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
 
     var body: some View {
         NavigationView {
@@ -29,7 +30,10 @@ struct ContentView: View {
                 @unknown default:
                     Text("Location access state unknown")
                 }
-                HomeMapView(globalFetcher: globalFetcher)
+                HomeMapView(
+                    globalFetcher: globalFetcher,
+                    railRouteShapeFetcher: railRouteShapeFetcher
+                )
                 Spacer()
                 if let location = locationDataManager.currentLocation {
                     NearbyTransitView(
