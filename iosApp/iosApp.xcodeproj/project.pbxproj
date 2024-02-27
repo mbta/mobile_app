@@ -187,6 +187,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
 				8C304C652B69C0C300263886 /* .swift-version */,
 				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
 				8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */,
