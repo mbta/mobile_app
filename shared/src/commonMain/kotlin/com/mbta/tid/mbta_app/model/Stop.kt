@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,4 +11,6 @@ data class Stop(
     val longitude: Double,
     val name: String,
     @SerialName("parent_station") val parentStation: Stop? = null
-)
+) {
+    val position = Position(latitude = latitude, longitude = longitude)
+}

@@ -38,9 +38,9 @@ struct NearbyTransitView: View {
 
     func joinPredictions() {
         Task {
-            guard let stopIds = nearbyFetcher.nearby?.byRouteAndStop()
-                .flatMap({ $0.patternsByStop.map(\.stop.id) }) else { return }
-            let stopIdList = Array(Set(stopIds))
+            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+                .stopIds() else { return }
+            let stopIdList = Array(stopIds)
             await predictionsFetcher.run(stopIds: stopIdList)
         }
     }
@@ -53,7 +53,7 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack {
-            if let nearby = nearbyFetcher.nearby?.byRouteAndStop(
+            if let nearby = nearbyFetcher.withRealtimeInfo(
                 predictions: predictionsFetcher.predictions,
                 filterAtTime: now.toKotlinInstant()
             ) {
@@ -75,7 +75,7 @@ struct NearbyTransitView: View {
             getNearby(location: location)
             didChange?(self)
         }
-        .onChange(of: nearbyFetcher.nearby) { _ in
+        .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             joinPredictions()
         }
         .onReceive(timer) { input in

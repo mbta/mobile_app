@@ -109,12 +109,17 @@ final class NearbyTransitViewTests: XCTestCase {
                                     typicality: .typical,
                                     representativeTrip: Trip(id: "60451425", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
                                     routeId: route52.id)
-            nearby = StopAndRoutePatternResponse(
-                stops: [stop1, stop2],
-                routePatterns: [rp40.id: rp40, rp50.id: rp50, rp41.id: rp41, rp51.id: rp51],
-                patternIdsByStop: [stop1.id: [rp40.id, rp50.id], stop2.id: [rp41.id, rp51.id]],
-                routes: [route52.id: route52]
-            )
+            nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
+                builder.route(route: route52) { builder in
+                    builder.stop(stop: stop1) { builder in
+                        builder.headsign(headsign: "Charles River Loop", patterns: [rp40])
+                        builder.headsign(headsign: "Dedham Mall", patterns: [rp50])
+                    }
+                    builder.stop(stop: stop2) { builder in
+                        builder.headsign(headsign: "Watertown Yard", patterns: [rp41, rp51])
+                    }
+                }
+            }
         }
 
         override func getNearby(latitude _: Double, longitude _: Double) async throws {
@@ -131,7 +136,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let routes = try sut.inspect().findAll(NearbyRouteView.self)
 
-        XCTAssertNotNil(try routes[0].find(text: "Dedham Mall"))
+        XCTAssertNotNil(try routes[0].find(text: "52"))
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
             .parent().find(text: "Charles River Loop"))
         XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
@@ -262,12 +267,13 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
-        nearbyFetcher.nearby = StopAndRoutePatternResponse(
-            stops: [Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil)],
-            routePatterns: nearbyFetcher.nearby!.routePatterns,
-            patternIdsByStop: ["place-lech": ["52-4-0"]],
-            routes: nearbyFetcher.nearby!.routes
-        )
+        nearbyFetcher.nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
+            builder.route(route: nearbyFetcher.nearbyByRouteAndStop!.data[0].route) { builder in
+                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil)
+                builder.stop(stop: lechmere) { _ in
+                }
+            }
+        }
 
         wait(for: [lechmereExpectation], timeout: 1)
     }
