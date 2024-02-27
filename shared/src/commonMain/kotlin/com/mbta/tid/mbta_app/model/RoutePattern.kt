@@ -13,7 +13,7 @@ data class RoutePattern(
     val typicality: Typicality?,
     @SerialName("representative_trip") val representativeTrip: Trip? = null,
     @Serializable(with = GetReferenceIdSerializer::class) @SerialName("route") val routeId: String
-) {
+) : Comparable<RoutePattern> {
     @Serializable
     enum class Typicality {
         @SerialName("typical") Typical,
@@ -22,4 +22,6 @@ data class RoutePattern(
         @SerialName("diversion") Diversion,
         @SerialName("canonical_only") CanonicalOnly
     }
+
+    override fun compareTo(other: RoutePattern) = sortOrder.compareTo(other.sortOrder)
 }

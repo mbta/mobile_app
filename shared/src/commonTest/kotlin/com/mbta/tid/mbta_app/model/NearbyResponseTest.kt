@@ -16,7 +16,7 @@ import kotlinx.datetime.Instant
 class NearbyResponseTest {
 
     @Test
-    fun `byRouteAndStop when a route pattern serves multiple stops it is only included for the first one`() {
+    fun `NearbyStaticData when a route pattern serves multiple stops it is only included for the first one`() {
 
         val stop1 = stop()
         val stop2 = stop()
@@ -39,22 +39,13 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            listOf(
-                StopAssociatedRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            stop1,
-                            listOf(PatternsByHeadsign("Harvard", listOf(route1rp1)))
-                        ),
-                        PatternsByStop(
-                            stop2,
-                            listOf(PatternsByHeadsign("Nubian", listOf(route1rp2)))
-                        )
-                    )
-                ),
-            ),
-            response.byRouteAndStop()
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) { headsign("Harvard", listOf(route1rp1)) }
+                    stop(stop2) { headsign("Nubian", listOf(route1rp2)) }
+                }
+            },
+            NearbyStaticData(response)
         )
     }
 
@@ -82,21 +73,15 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            listOf(
-                StopAssociatedRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            stop1,
-                            listOf(
-                                PatternsByHeadsign("Harvard", listOf(route1rp1)),
-                                PatternsByHeadsign("Nubian", listOf(route1rp2))
-                            )
-                        ),
-                    )
-                ),
-            ),
-            response.byRouteAndStop()
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Harvard", listOf(route1rp1))
+                        headsign("Nubian", listOf(route1rp2))
+                    }
+                }
+            },
+            NearbyStaticData(response)
         )
     }
 
@@ -127,21 +112,15 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            listOf(
-                StopAssociatedRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            stop1,
-                            listOf(
-                                PatternsByHeadsign("Harvard", listOf(route1rp1, route1rp2)),
-                                PatternsByHeadsign("Nubian", listOf(route1rp3))
-                            )
-                        )
-                    )
-                ),
-            ),
-            response.byRouteAndStop()
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Harvard", listOf(route1rp1, route1rp2))
+                        headsign("Nubian", listOf(route1rp3))
+                    }
+                }
+            },
+            NearbyStaticData(response)
         )
     }
 
@@ -168,18 +147,10 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            listOf(
-                StopAssociatedRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            stop1,
-                            listOf(PatternsByHeadsign("Harvard", listOf(route1rp1)))
-                        )
-                    )
-                ),
-            ),
-            response.byRouteAndStop()
+            NearbyStaticData.build {
+                route(route1) { stop(stop1) { headsign("Harvard", listOf(route1rp1)) } }
+            },
+            NearbyStaticData(response)
         )
     }
 
@@ -219,34 +190,17 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            listOf(
-                StopAssociatedRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            stop1,
-                            listOf(
-                                PatternsByHeadsign("Harvard", listOf(route1rp1)),
-                                PatternsByHeadsign("Nubian", listOf(route1rp2))
-                            )
-                        ),
-                        PatternsByStop(
-                            stop2,
-                            listOf(PatternsByHeadsign("Nubian via Allston", listOf(route1rp3)))
-                        )
-                    )
-                ),
-                StopAssociatedRoute(
-                    route2,
-                    listOf(
-                        PatternsByStop(
-                            stop2,
-                            listOf(PatternsByHeadsign("Porter Sq", listOf(route2rp1)))
-                        )
-                    )
-                )
-            ),
-            response.byRouteAndStop()
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Harvard", listOf(route1rp1))
+                        headsign("Nubian", listOf(route1rp2))
+                    }
+                    stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3)) }
+                }
+                route(route2) { stop(stop2) { headsign("Porter Sq", listOf(route2rp1)) } }
+            },
+            NearbyStaticData(response)
         )
     }
 
@@ -303,30 +257,21 @@ class NearbyResponseTest {
             )
 
         assertEquals(
-            listOf(
-                StopAssociatedRoute(
-                    route1,
-                    listOf(
-                        PatternsByStop(
-                            station1,
-                            listOf(
-                                PatternsByHeadsign("Harvard", listOf(route1rp1)),
-                                PatternsByHeadsign("Nubian", listOf(route1rp2))
-                            )
-                        ),
-                        PatternsByStop(
-                            stop2,
-                            listOf(PatternsByHeadsign("Nubian via Allston", listOf(route1rp3)))
-                        )
-                    )
-                ),
-            ),
-            response.byRouteAndStop()
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(station1, listOf(station1stop1.id, station1stop2.id)) {
+                        headsign("Harvard", listOf(route1rp1))
+                        headsign("Nubian", listOf(route1rp2))
+                    }
+                    stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3)) }
+                }
+            },
+            NearbyStaticData(response)
         )
     }
 
     @Test
-    fun `byRouteAndStop includes predictions filtered to the correct stop and pattern`() {
+    fun `withRealtimeInfo includes predictions filtered to the correct stop and pattern`() {
         val stop1 = stop()
         val stop2 = stop()
 
@@ -338,17 +283,13 @@ class NearbyResponseTest {
             route1.pattern(sortOrder = 2, representativeTrip = trip(headsign = "Harvard"))
         val pattern3 = route1.pattern(sortOrder = 3, representativeTrip = trip(headsign = "Nubian"))
 
-        val response =
-            StopAndRoutePatternResponse(
-                stops = listOf(stop1, stop2),
-                routePatterns = listOf(pattern1, pattern2, pattern3).associateBy { it.id },
-                patternIdsByStop =
-                    mapOf(
-                        stop1.id to listOf(pattern1.id, pattern2.id),
-                        stop2.id to listOf(pattern1.id, pattern2.id, pattern3.id),
-                    ),
-                routes = mapOf(route1.id to route1)
-            )
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) { headsign("Harvard", listOf(pattern1, pattern2)) }
+                    stop(stop2) { headsign("Nubian", listOf(pattern3)) }
+                }
+            }
 
         val time = Instant.parse("2024-02-21T09:30:08-05:00")
 
@@ -416,20 +357,22 @@ class NearbyResponseTest {
                     )
                 ),
             ),
-            response.byRouteAndStop(
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop1.position,
                 predictions =
                     listOf(
                         stop1Pattern1Prediction,
                         stop1Pattern2Prediction,
                         stop2Pattern1Prediction,
                         stop2Pattern3Prediction
-                    )
+                    ),
+                filterAtTime = time
             )
         )
     }
 
     @Test
-    fun `byRouteAndStop hides rare patterns with no predictions`() {
+    fun `withRealtimeInfo hides rare patterns with no predictions`() {
         val stop1 = stop()
 
         val route1 = route()
@@ -483,33 +426,19 @@ class NearbyResponseTest {
                 representativeTrip = trip(headsign = "Atypical In")
             )
 
-        val response =
-            StopAndRoutePatternResponse(
-                stops = listOf(stop1),
-                routePatterns =
-                    listOf(
-                            typicalOutbound,
-                            typicalInbound,
-                            deviationOutbound,
-                            deviationInbound,
-                            atypicalOutbound,
-                            atypicalInbound
-                        )
-                        .associateBy { it.id },
-                patternIdsByStop =
-                    mapOf(
-                        stop1.id to
-                            listOf(
-                                typicalOutbound.id,
-                                typicalInbound.id,
-                                deviationOutbound.id,
-                                deviationInbound.id,
-                                atypicalOutbound.id,
-                                atypicalInbound.id
-                            )
-                    ),
-                routes = mapOf(route1.id to route1)
-            )
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Typical Out", listOf(typicalOutbound))
+                        headsign("Typical In", listOf(typicalInbound))
+                        headsign("Deviation Out", listOf(deviationOutbound))
+                        headsign("Deviation In", listOf(deviationInbound))
+                        headsign("Atypical Out", listOf(atypicalOutbound))
+                        headsign("Atypical In", listOf(atypicalInbound))
+                    }
+                }
+            }
 
         val time = Instant.parse("2024-02-22T12:08:19-05:00")
 
@@ -571,7 +500,52 @@ class NearbyResponseTest {
                     )
                 )
             ),
-            response.byRouteAndStop(predictions, filterAtTime = time)
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop1.position,
+                predictions = predictions,
+                filterAtTime = time
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo handles parent stops`() {
+        val parentStop = stop()
+        val childStop = stop(parentStation = parentStop)
+        val route1 = route()
+        val pattern1 = route1.pattern()
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(parentStop, listOf(childStop.id)) { headsign("Harvard", listOf(pattern1)) }
+                }
+            }
+
+        val time = Instant.parse("2024-02-26T10:45:38-05:00")
+
+        val prediction1 =
+            prediction(departureTime = time, stopId = childStop.id, trip = pattern1.trip())
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            parentStop,
+                            listOf(
+                                PatternsByHeadsign("Harvard", listOf(pattern1), listOf(prediction1))
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = parentStop.position,
+                predictions = listOf(prediction1),
+                filterAtTime = time
+            )
         )
     }
 }
