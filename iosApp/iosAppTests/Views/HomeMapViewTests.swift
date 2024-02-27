@@ -21,20 +21,22 @@ final class HomeMapViewTests: XCTestCase {
 
     func testNoLocationDefaultCenter() throws {
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        let sut = HomeMapView(globalFetcher: globalFetcher, locationDataManager: locationDataManager)
+        let sut = HomeMapView(globalFetcher: globalFetcher, railRouteShapeFetcher: railRouteShapeFetcher, locationDataManager: locationDataManager)
         XCTAssertEqual(sut.viewport.camera?.center, HomeMapView.defaultCenter)
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationFetcher = MockLocationFetcher()
         locationFetcher.authorizationStatus = .authorizedAlways
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
-        var sut = HomeMapView(globalFetcher: globalFetcher, locationDataManager: locationDataManager)
+        var sut = HomeMapView(globalFetcher: globalFetcher, railRouteShapeFetcher: railRouteShapeFetcher, locationDataManager: locationDataManager)
 
         let hasAppeared = sut.on(\.didAppear) { _ in
             XCTAssertNotNil(sut.viewport.followPuck)
@@ -61,12 +63,31 @@ final class HomeMapViewTests: XCTestCase {
             }
         }
 
-        let getGlobalExpectation = expectation(description: "getGlobalData")
+        class FakeRailRouteShapeFetcher: RailRouteShapeFetcher {
+            let getRailRouteShapeExpectation: XCTestExpectation
 
-        var sut = HomeMapView(globalFetcher: FakeGlobalFetcher(getGlobalExpectation: getGlobalExpectation))
+            init(getRailRouteShapeExpectation: XCTestExpectation) {
+                self.getRailRouteShapeExpectation = getRailRouteShapeExpectation
+                super.init(backend: IdleBackend())
+            }
+
+            override func getRailRouteShapes() async throws {
+                getRailRouteShapeExpectation.fulfill()
+                throw NotUnderTestError()
+            }
+        }
+
+        let getGlobalExpectation = expectation(description: "getGlobalData")
+        let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
+
+        var sut = HomeMapView(
+            globalFetcher: FakeGlobalFetcher(getGlobalExpectation: getGlobalExpectation),
+            railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation)
+        )
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
         wait(for: [getGlobalExpectation], timeout: 1)
+        wait(for: [getRailRouteShapeExpectation], timeout: 1)
     }
 }
