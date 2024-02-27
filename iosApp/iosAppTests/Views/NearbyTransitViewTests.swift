@@ -245,7 +245,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 super.init(backend: IdleBackend())
             }
 
-            override func run(stopIds: [String]) async throws {
+            override func run(stopIds: [String]) async {
                 if stopIds.sorted() == ["84791", "8552"] {
                     sawmillAtWalshExpectation.fulfill()
                 } else if stopIds == ["place-lech"] {

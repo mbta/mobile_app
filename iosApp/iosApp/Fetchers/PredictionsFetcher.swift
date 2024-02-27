@@ -11,6 +11,7 @@ import shared
 
 class PredictionsFetcher: ObservableObject {
     @Published var predictions: [Prediction]?
+    @Published var socketError: Error?
     let backend: any BackendProtocol
     var channel: PredictionsStopsChannel?
 
@@ -18,19 +19,27 @@ class PredictionsFetcher: ObservableObject {
         self.backend = backend
     }
 
-    @MainActor func run(stopIds: [String]) async throws {
-        let _ = try await channel?.leave()
-        let channel = try await backend.predictionsStopsChannel(stopIds: stopIds)
-        let _ = try await channel.join()
-        self.channel = channel
-        for await predictions in channel.predictions {
-            self.predictions = predictions
+    @MainActor func run(stopIds: [String]) async {
+        do {
+            _ = try await channel?.leave()
+            let channel = try await backend.predictionsStopsChannel(stopIds: stopIds)
+            _ = try await channel.join()
+            self.channel = channel
+            for await predictions in channel.predictions {
+                self.predictions = predictions
+            }
+        } catch {
+            socketError = error
         }
     }
 
-    func leave() async throws {
-        let _ = try await channel?.leave()
-        channel = nil
-        predictions = nil
+    func leave() async {
+        do {
+            _ = try await channel?.leave()
+            channel = nil
+            predictions = nil
+        } catch {
+            socketError = error
+        }
     }
 }

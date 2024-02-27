@@ -82,7 +82,15 @@ class PhoenixSocket(private var conn: WebSocketSession) {
         }
         try {
             awaitAll(heartbeatJob, receiveJob, onCancelJob)
-        } catch (_: CancellationException) {}
+        } catch (ex: CancellationException) {
+            val cause = ex.cause
+            if (cause == null || cause is CancellationException) {
+                // if cancelled cleanly, exit cleanly
+            } else {
+                // if cancelled due to HTTP error, propagate error
+                throw cause
+            }
+        }
     }
 }
 
