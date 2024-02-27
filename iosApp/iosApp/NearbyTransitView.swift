@@ -40,22 +40,14 @@ struct NearbyTransitView: View {
         Task {
             guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
                 .stopIds() else { return }
-            do {
-                let stopIds = Array(stopIds)
-                try await predictionsFetcher.run(stopIds: stopIds)
-            } catch {
-                debugPrint("failed to run predictions", error)
-            }
+            let stopIdList = Array(stopIds)
+            await predictionsFetcher.run(stopIds: stopIdList)
         }
     }
 
     func leavePredictions() {
         Task {
-            do {
-                try await predictionsFetcher.leave()
-            } catch {
-                debugPrint(error)
-            }
+            await predictionsFetcher.leave()
         }
     }
 
@@ -65,6 +57,9 @@ struct NearbyTransitView: View {
                 predictions: predictionsFetcher.predictions,
                 filterAtTime: now.toKotlinInstant()
             ) {
+                if let predictionsError = predictionsFetcher.socketError {
+                    Text("Error fetching predictions: \(predictionsError.localizedDescription)")
+                }
                 List(nearby, id: \.route.id) { nearbyRoute in
                     NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
                 }
