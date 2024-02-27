@@ -16,6 +16,9 @@
     "BRD" : {
 
     },
+    "Error fetching predictions: %@" : {
+
+    },
     "Loading..." : {
 
     },

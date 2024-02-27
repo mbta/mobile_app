@@ -36,7 +36,7 @@ struct IOSApp: App {
                     do {
                         try await backend.runSocket()
                     } catch {
-                        debugPrint("failed to run socket", error)
+                        predictionsFetcher.socketError = error
                     }
                 }
         }
