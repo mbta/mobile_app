@@ -8,7 +8,7 @@ if [ $CI_XCODEBUILD_ACTION == "archive" ]; then
   fi
 
   echo "Uploading dSYM to Sentry"
-  sentry-cli --auth-token $SENTRY_UPLOAD_TOKEN \
+  sentry-cli --auth-token $SENTRY_AUTH_TOKEN \
       upload-dif --org 'mbtace' \
       --project 'mobile_app_ios' \
       $CI_ARCHIVE_PATH
