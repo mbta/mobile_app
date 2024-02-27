@@ -1,3 +1,4 @@
+import os
 import Sentry
 import shared
 import SwiftUI
@@ -23,7 +24,7 @@ struct IOSApp: App {
             let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
             AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
         } else {
-            print("skipping sentry initialization - SENTRY_DSN not configured")
+            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
         }
 
         do {
