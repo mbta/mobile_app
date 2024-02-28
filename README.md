@@ -28,9 +28,11 @@ ios app, you must follow these steps:
 
 * Run a gradle sync of the project from Android Studio, or you may run
 `./gradlew :shared:generateDummyFramework` from the root directory
-* `bundle install`
+* `bundle install` to install cocoapods and fastlane
 * `bundle exec pod install` from within the `iosApp` directory.
 * Open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
+* Populate any configuration needed in your the .envrc file. These will be read by a build phase
+script and set as info.plist values so that they can be read by the application.
 
 ## Running Tests
 

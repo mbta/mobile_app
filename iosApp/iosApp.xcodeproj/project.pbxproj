@@ -333,6 +333,7 @@
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */,
+				6E8BF91D2B8DFF250050F6DA /* Configure Build Variables */,
 				5BC52ADACC348B41054723F8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -483,6 +484,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "token_file=secrets/mapbox\ntoken_file2=../mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
+		};
+		6E8BF91D2B8DFF250050F6DA /* Configure Build Variables */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Configure Build Variables";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"Adding info.plist values from .envrc\"\ncat ../.envrc | while IFS=\"=\" read -r key value; do\n    key=$(echo $key | sed 's/export //')\n    echo \"$key\"\n    if [ -n \"$value\" ]; then\n        plutil -replace $key -string $value \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\n        echo \"plist entry for $key added\"\n    else \n        echo \"Skipping plist entry for $key - no value set\"\n    fi\ndone\n\n";
 		};
 		8C35B50C2B61850900A3CB77 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

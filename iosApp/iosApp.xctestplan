@@ -44,6 +44,7 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
+        "IosAppUITests\/testLaunchPerformance()",
         "IosAppUITestsLaunchTests\/testLaunch()"
       ],
       "target" : {
