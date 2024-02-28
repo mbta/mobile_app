@@ -24,11 +24,14 @@ Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc
 ### iOS
 
 The shared library dependency is managed using Cocoapods. To install the dependency and build the
-ios app, you must first Run a gradle sync of the project from Android Studio, or you may run
+ios app, you must first run a gradle sync of the project from Android Studio, or you may run
 `./gradlew :shared:generateDummyFramework` from the root directory, then `pod install` from within
 the `iosApp` directory.
 
 Then, open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
+
+Populate any configuration needed in your the .envrc file. These will be read by a build phase
+script and set as info.plist values so that they can be read by the application.
 
 ## Running Tests
 
