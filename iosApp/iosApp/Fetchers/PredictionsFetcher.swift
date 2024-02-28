@@ -33,20 +33,20 @@ class PredictionsFetcher: ObservableObject {
         print("JOIN PAYLOAD \(joinPayload)")
         // TODO: - static funcs
         channel = socket.channel("predictions:stops", params: joinPayload)
-        /*   channel?.onMessage(callback: { message in
-         do  {
-             print("NEW MESSAGE RECEIVED \(message.event) \(message.payload)")
-         /* let newPredictions = try PredictionsForStops().parseMessage(event: message.event, payload: message.payload)
-         DispatchQueue.main.async {
-         self.predictions = newPredictions
-         }*/
-         } catch {
-         // TODO: Sentry?
-         Logger().error("\(error)")
-         }
-         return message
+        channel?.onMessage(callback: { message in
+            do {
+                print("NEW MESSAGE RECEIVED \(message.event) \(message.payload)")
+                let newPredictions = try PredictionsForStops().parseMessage(event: message.event, payload: message.payload)
+                DispatchQueue.main.async {
+                    self.predictions = newPredictions
+                }
+            } catch {
+                // TODO: Sentry?
+                Logger().error("\(error)")
+            }
+            return message
 
-         } )*/
+        })
 
         channel?.onError { message in
             self.socketError = PhoenixChannelError.channelError(message.payload.debugDescription)

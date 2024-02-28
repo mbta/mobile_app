@@ -5,7 +5,7 @@ import SwiftUI
 @main
 struct IOSApp: App {
     let backend = Backend()
-    let socket = Socket("wss://dev.mbtace.com/socket/websocket")
+    let socket = Socket("wss://mobile-app-backend-staging.mbtace.com/socket/websocket")
     // ignore updates less than 0.1km
     @StateObject var locationDataManager = LocationDataManager(distanceFilter: 100)
     @StateObject var nearbyFetcher: NearbyFetcher
@@ -22,6 +22,7 @@ struct IOSApp: App {
         socket.onClose {
             print("Socket closed")
         }
+
         socket.connect()
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
