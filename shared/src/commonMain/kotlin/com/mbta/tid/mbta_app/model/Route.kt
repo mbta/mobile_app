@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Route(
-    val id: String,
+    override val id: String,
     val type: RouteType,
     val color: String,
     @SerialName("direction_names") val directionNames: List<String?>,
@@ -14,4 +14,4 @@ data class Route(
     @SerialName("short_name") val shortName: String,
     @SerialName("sort_order") val sortOrder: Int,
     @SerialName("text_color") val textColor: String
-)
+) : BackendObject

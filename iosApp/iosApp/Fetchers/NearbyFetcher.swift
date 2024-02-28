@@ -28,10 +28,16 @@ class NearbyFetcher: ObservableObject {
             longitude: longitude
         )
         nearby = response
-        nearbyByRouteAndStop = NearbyStaticData(response: response)
+        nearbyByRouteAndStop = NearbyStaticData(
+            response: response,
+            pickStopsClosestTo: .init(longitude: longitude, latitude: latitude)
+        )
     }
 
-    func withRealtimeInfo(predictions: [Prediction]?, filterAtTime: Instant) -> [StopAssociatedRoute]? {
+    func withRealtimeInfo(
+        predictions: PredictionsStreamDataResponse?,
+        filterAtTime: Instant
+    ) -> [StopAssociatedRoute]? {
         nearbyByRouteAndStop?.withRealtimeInfo(
             sortByDistanceFrom: .init(longitude: longitude, latitude: latitude),
             predictions: predictions,

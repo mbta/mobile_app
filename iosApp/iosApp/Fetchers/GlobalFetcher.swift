@@ -11,11 +11,11 @@ import shared
 
 class GlobalFetcher: ObservableObject {
     var response: StopAndRoutePatternResponse?
-    @Published var stops: [Stop]
+    @Published var stops: [String: Stop]
     @Published var routes: [String: Route]
     let backend: any BackendProtocol
 
-    init(backend: any BackendProtocol, stops: [Stop] = [], routes: [String: Route] = [:]) {
+    init(backend: any BackendProtocol, stops: [String: Stop] = [:], routes: [String: Route] = [:]) {
         self.backend = backend
         self.stops = stops
         self.routes = routes

@@ -59,56 +59,55 @@ final class NearbyTransitViewTests: XCTestCase {
     class Route52NearbyFetcher: NearbyFetcher {
         init() {
             super.init(backend: IdleBackend())
-            let route52 = Route(id: "52",
-                                type: .bus,
-                                color: "FFC72C",
-                                directionNames: ["Outbound", "Inbound"],
-                                directionDestinations: ["Dedham Mall", "Watertown Yard"],
-                                longName: "Dedham Mall - Watertown Yard",
-                                shortName: "52",
-                                sortOrder: 50520,
-                                textColor: "000000")
-            let stop1 = Stop(id: "8552",
-                             latitude: 42.289904,
-                             longitude: -71.191003,
-                             name: "Sawmill Brook Pkwy @ Walsh Rd",
-                             parentStation: nil)
-            let stop2 = Stop(id: "84791",
-                             latitude: 42.289995,
-                             longitude: -71.191092,
-                             name: "Sawmill Brook Pkwy @ Walsh Rd - opposite side",
-                             parentStation: nil)
+            let objects = ObjectCollection()
+            let route52 = objects.route { route in
+                route.id = "52"
+                route.type = .bus
+                route.shortName = "52"
+            }
+            let stop1 = objects.stop { stop in
+                stop.id = "8552"
+                stop.name = "Sawmill Brook Pkwy @ Walsh Rd"
+            }
+            let stop2 = objects.stop { stop in
+                stop.id = "84791"
+                stop.name = "Sawmill Brook Pkwy @ Walsh Rd - opposite side"
+            }
             // In reality, 52-4-0 and 52-4-1 have typicality: .deviation,
             // but these tests are from before we started hiding deviations with no predictions,
             // and it's easier to just fudge the data than to rewrite the tests.
-            let rp40 = RoutePattern(id: "52-4-0",
-                                    directionId: 0,
-                                    name: "Watertown - Charles River Loop via Meadowbrook Rd",
-                                    sortOrder: 505_200_020,
-                                    typicality: .typical,
-                                    representativeTrip: Trip(id: "60451431", headsign: "Charles River Loop", routePatternId: "52-4-0", stops: nil),
-                                    routeId: route52.id)
-            let rp50 = RoutePattern(id: "52-5-0",
-                                    directionId: 0,
-                                    name: "Watertown - Dedham Mall via Meadowbrook Rd",
-                                    sortOrder: 505_200_000,
-                                    typicality: .typical,
-                                    representativeTrip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
-                                    routeId: route52.id)
-            let rp41 = RoutePattern(id: "52-4-1",
-                                    directionId: 1,
-                                    name: "Charles River Loop - Watertown via Meadowbrook Rd",
-                                    sortOrder: 505_201_010,
-                                    typicality: .typical,
-                                    representativeTrip: Trip(id: "60451432", headsign: "Watertown Yard", routePatternId: "52-4-1", stops: nil),
-                                    routeId: route52.id)
-            let rp51 = RoutePattern(id: "52-5-1",
-                                    directionId: 1,
-                                    name: "Dedham Mall - Watertown via Meadowbrook Rd",
-                                    sortOrder: 505_201_000,
-                                    typicality: .typical,
-                                    representativeTrip: Trip(id: "60451425", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
-                                    routeId: route52.id)
+            let rp40 = objects.routePattern(route: route52) { pattern in
+                pattern.id = "52-4-0"
+                pattern.sortOrder = 505_200_020
+                pattern.typicality = .typical
+                pattern.representativeTrip { trip in
+                    trip.headsign = "Charles River Loop"
+                }
+            }
+            let rp50 = objects.routePattern(route: route52) { pattern in
+                pattern.id = "52-5-0"
+                pattern.sortOrder = 505_200_000
+                pattern.typicality = .typical
+                pattern.representativeTrip { trip in
+                    trip.headsign = "Dedham Mall"
+                }
+            }
+            let rp41 = objects.routePattern(route: route52) { pattern in
+                pattern.id = "52-4-1"
+                pattern.sortOrder = 505_201_010
+                pattern.typicality = .typical
+                pattern.representativeTrip { trip in
+                    trip.headsign = "Watertown Yard"
+                }
+            }
+            let rp51 = objects.routePattern(route: route52) { pattern in
+                pattern.id = "52-5-1"
+                pattern.sortOrder = 505_201_000
+                pattern.typicality = .typical
+                pattern.representativeTrip { trip in
+                    trip.headsign = "Watertown Yard"
+                }
+            }
             nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
                 builder.route(route: route52) { builder in
                     builder.stop(stop: stop1) { builder in
@@ -152,60 +151,38 @@ final class NearbyTransitViewTests: XCTestCase {
         @MainActor class FakePredictionsFetcher: PredictionsFetcher {
             init() {
                 super.init(backend: IdleBackend())
-                predictions = [
-                    Prediction(
-                        id: "prediction-60451421-8552-38",
-                        arrivalTime: Date.now.addingTimeInterval(10 * 60).toKotlinInstant(),
-                        departureTime: Date.now.addingTimeInterval(12 * 60).toKotlinInstant(),
-                        directionId: 0,
-                        revenue: true,
-                        scheduleRelationship: .scheduled,
-                        status: nil,
-                        stopSequence: 38,
-                        stopId: "8552",
-                        trip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
-                        vehicle: nil
-                    ),
-                    Prediction(
-                        id: "prediction-a-8552-1",
-                        arrivalTime: Date.now.addingTimeInterval(11 * 60).toKotlinInstant(),
-                        departureTime: Date.now.addingTimeInterval(15 * 60).toKotlinInstant(),
-                        directionId: 0,
-                        revenue: true,
-                        scheduleRelationship: .scheduled,
-                        status: "Overridden",
-                        stopSequence: 1,
-                        stopId: "8552",
-                        trip: Trip(id: "a", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
-                        vehicle: nil
-                    ),
-                    Prediction(
-                        id: "prediction-60451426-84791-18",
-                        arrivalTime: Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant(),
-                        departureTime: Date.now.addingTimeInterval(2 * 60).toKotlinInstant(),
-                        directionId: 1,
-                        revenue: true,
-                        scheduleRelationship: .scheduled,
-                        status: nil,
-                        stopSequence: 18,
-                        stopId: "84791",
-                        trip: Trip(id: "60451426", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
-                        vehicle: nil
-                    ),
-                    Prediction(
-                        id: "prediction-a-84791-1",
-                        arrivalTime: nil,
-                        departureTime: Date.now.addingTimeInterval(18 * 60).toKotlinInstant(),
-                        directionId: 1,
-                        revenue: true,
-                        scheduleRelationship: .scheduled,
-                        status: nil,
-                        stopSequence: 1,
-                        stopId: "84791",
-                        trip: Trip(id: "a", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
-                        vehicle: nil
-                    ),
-                ]
+                let objects = ObjectCollection()
+                let trip1 = objects.trip { trip in
+                    trip.routePatternId = "52-5-0"
+                }
+                let trip2 = objects.trip { trip in
+                    trip.routePatternId = "52-5-1"
+                }
+                objects.prediction { prediction in
+                    prediction.arrivalTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
+                    prediction.departureTime = Date.now.addingTimeInterval(12 * 60).toKotlinInstant()
+                    prediction.stopId = "8552"
+                    prediction.tripId = trip1.id
+                }
+                objects.prediction { prediction in
+                    prediction.arrivalTime = Date.now.addingTimeInterval(11 * 60).toKotlinInstant()
+                    prediction.departureTime = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
+                    prediction.status = "Overridden"
+                    prediction.stopId = "8552"
+                    prediction.tripId = trip1.id
+                }
+                objects.prediction { prediction in
+                    prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
+                    prediction.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
+                    prediction.stopId = "84791"
+                    prediction.tripId = trip2.id
+                }
+                objects.prediction { prediction in
+                    prediction.departureTime = Date.now.addingTimeInterval(18 * 60).toKotlinInstant()
+                    prediction.stopId = "84791"
+                    prediction.tripId = trip2.id
+                }
+                predictions = .init(objects: objects)
             }
         }
 
@@ -269,7 +246,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         nearbyFetcher.nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
             builder.route(route: nearbyFetcher.nearbyByRouteAndStop!.data[0].route) { builder in
-                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStation: nil)
+                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStationId: nil)
                 builder.stop(stop: lechmere) { _ in
                 }
             }
@@ -284,27 +261,24 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = PredictionsFetcher(backend: IdleBackend())
         let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(), predictionsFetcher: predictionsFetcher)
 
-        func prediction(minutesAway: Double) -> Prediction {
-            Prediction(
-                id: "",
-                arrivalTime: nil,
-                departureTime: Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant(),
-                directionId: 0,
-                revenue: true,
-                scheduleRelationship: .scheduled,
-                status: nil,
-                stopSequence: 1,
-                stopId: "8552",
-                trip: Trip(id: "", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
-                vehicle: nil
-            )
+        func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
+            let objects = ObjectCollection()
+            let trip = objects.trip { trip in
+                trip.routePatternId = "52-5-0"
+            }
+            objects.prediction { prediction in
+                prediction.departureTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()
+                prediction.stopId = "8552"
+                prediction.tripId = trip.id
+            }
+            return PredictionsStreamDataResponse(objects: objects)
         }
 
-        predictionsFetcher.predictions = [prediction(minutesAway: 2)]
+        predictionsFetcher.predictions = prediction(minutesAway: 2)
 
         XCTAssertNotNil(try sut.inspect().find(text: "2 min"))
 
-        predictionsFetcher.predictions = [prediction(minutesAway: 3)]
+        predictionsFetcher.predictions = prediction(minutesAway: 3)
 
         XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
     }

@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app
 
-import com.mbta.tid.mbta_app.model.Prediction
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.phoenix.PhoenixChannel
 import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
 import kotlinx.coroutines.channels.Channel
@@ -22,9 +22,9 @@ class PredictionsStopsChannel(socket: PhoenixSocket, stopIds: List<String>) :
         "predictions:stops",
         buildJsonObject { putJsonArray("stop_ids") { addAll(stopIds) } }
     ) {
-    private var _earlyPredictionsChannel: Channel<List<Prediction>> =
+    private var _earlyPredictionsChannel: Channel<PredictionsStreamDataResponse> =
         Channel(capacity = Channel.UNLIMITED)
-    private var _predictionsChannel: SendChannel<List<Prediction>>? = null
+    private var _predictionsChannel: SendChannel<PredictionsStreamDataResponse>? = null
     var predictions = channelFlow {
         _predictionsChannel = channel
         _earlyPredictionsChannel.consumeEach { channel.send(it) }
@@ -35,9 +35,8 @@ class PredictionsStopsChannel(socket: PhoenixSocket, stopIds: List<String>) :
         when (event) {
             "phx_join" -> {}
             "stream_data" -> {
-                val predictions: List<Prediction> =
-                    json.decodeFromJsonElement(payload["predictions"]!!)
-                (_predictionsChannel ?: _earlyPredictionsChannel).send(predictions.sorted())
+                val predictions: PredictionsStreamDataResponse = json.decodeFromJsonElement(payload)
+                (_predictionsChannel ?: _earlyPredictionsChannel).send(predictions)
             }
             "phx_leave",
             "phx_close" -> {

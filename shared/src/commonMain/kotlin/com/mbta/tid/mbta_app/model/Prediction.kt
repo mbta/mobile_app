@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.GetReferenceIdSerializer
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -11,7 +10,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Prediction(
-    val id: String,
+    override val id: String,
     @SerialName("arrival_time") val arrivalTime: Instant?,
     @SerialName("departure_time") val departureTime: Instant?,
     @SerialName("direction_id") val directionId: Int,
@@ -19,10 +18,10 @@ data class Prediction(
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,
     val status: String?,
     @SerialName("stop_sequence") val stopSequence: Int?,
-    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("stop") val stopId: String?,
-    val trip: Trip,
-    val vehicle: Vehicle?
-) : Comparable<Prediction> {
+    @SerialName("stop_id") val stopId: String,
+    @SerialName("trip_id") val tripId: String,
+    @SerialName("vehicle_id") val vehicleId: String?,
+) : Comparable<Prediction>, BackendObject {
     val predictionTime = arrivalTime ?: departureTime
 
     @Serializable
@@ -60,7 +59,7 @@ data class Prediction(
         data class Minutes(val minutes: Int) : Format()
     }
 
-    fun format(now: Instant): Format {
+    fun format(now: Instant, vehicle: Vehicle? = null): Format {
         if (status != null) {
             return Format.Overridden(status)
         }
@@ -72,7 +71,7 @@ data class Prediction(
         if (
             vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
                 vehicle.stopId == stopId &&
-                vehicle.tripId == trip.id
+                vehicle.tripId == tripId
         ) {
             return Format.Boarding
         }

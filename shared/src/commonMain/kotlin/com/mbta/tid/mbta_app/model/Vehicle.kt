@@ -1,16 +1,15 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.GetReferenceIdSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Vehicle(
-    val id: String,
+    override val id: String,
     @SerialName("current_status") val currentStatus: CurrentStatus,
-    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("stop") val stopId: String?,
-    @Serializable(with = GetReferenceIdSerializer::class) @SerialName("trip") val tripId: String?,
-) {
+    @SerialName("stop_id") val stopId: String?,
+    @SerialName("trip_id") val tripId: String?,
+) : BackendObject {
     @Serializable
     enum class CurrentStatus {
         @SerialName("incoming_at") IncomingAt,

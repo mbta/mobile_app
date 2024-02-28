@@ -32,83 +32,57 @@ class BackendTest {
                         ByteReadChannel(
                             """
                         {
-                          "stops": [
-                            {
+                          "stops": {
+                            "8552": {
                               "id": "8552",
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289904,
                               "longitude": -71.191003,
                               "parent_station": null
                             },
-                            {
+                            "84791": {
                               "id": "84791",
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289995,
                               "longitude": -71.191092,
                               "parent_station": null
                             }
-                          ],
+                          },
                           "route_patterns": {
                             "52-4-0": {
                               "id": "52-4-0",
                               "name": "Watertown - Charles River Loop via Meadowbrook Rd",
-                              "route": {
-                                "id": "52",
-                                "type": "route"
-                              },
+                              "route_id": "52"
                               "sort_order": 505200020,
                               "direction_id": 0,
-                              "representative_trip": {
-                                "id": "trip1",
-                                "headsign": "Watertown",
-                                "stops": null,
-                                "route_pattern": null
-                              },
+                              "representative_trip_id": "trip1",
                               "typicality": "deviation"
                             },
                             "52-4-1": {
                               "id": "52-4-1",
                               "name": "Charles River Loop - Watertown via Meadowbrook Rd",
-                              "route": {
-                                "id": "52",
-                                "type": "route"
-                              },
+                              "route_id": "52"
                               "sort_order": 505201010,
                               "direction_id": 1,
-                              "representative_trip": {
-                                "id": "trip2",
-                                "headsign": "Charles River Loop"
-                              },
+                              "representative_trip_id": "trip2",
                               "typicality": "deviation"
                             },
                             "52-5-0": {
                               "id": "52-5-0",
                               "name": "Watertown - Dedham Mall via Meadowbrook Rd",
-                              "route": {
-                                "id": "52",
-                                "type": "route"
-                              },
+                              "route_id": "52"
                               "sort_order": 505200000,
                               "direction_id": 0,
-                              "representative_trip": {
-                                "id": "trip3",
-                                "headsign": "Watertown"
-                              },
+                              "representative_trip_id": "trip3",
                               "typicality": "typical"
                             },
                             "52-5-1": {
                               "id": "52-5-1",
                               "name": "Dedham Mall - Watertown via Meadowbrook Rd",
-                              "route": {
-                                "id": "52",
-                                "type": "route"
-                              },
+                              "route_id": "52"
                               "sort_order": 505201000,
                               "direction_id": 1,
-                              "representative_trip": {
-                                "id": "trip4",
-                                "headsign": "Dedham Mall"
-                              },
+                              "representative_trip_id": "trip4",
                               "typicality": "typical"
                             }
                           },
@@ -140,6 +114,28 @@ class BackendTest {
                                 "sort_order": 50520,
                                 "text_color": "000000"
                             }
+                          },
+                          "trips": {
+                            "trip1": {
+                              "id": "trip1",
+                              "headsign": "Watertown",
+                              "route_pattern_id": "52-4-0"
+                            },
+                            "trip2": {
+                              "id": "trip2",
+                              "headsign": "Charles River Loop",
+                              "route_pattern_id": "52-4-1"
+                            },
+                            "trip3": {
+                              "id": "trip3",
+                              "headsign": "Watertown",
+                              "route_pattern_id": "52-5-0"
+                            },
+                            "trip4": {
+                              "id": "trip4",
+                              "headsign": "Dedham Mall",
+                              "route_pattern_id": "52-5-1"
+                            }
                           }
                         }
                     """
@@ -168,21 +164,21 @@ class BackendTest {
             assertEquals(
                 StopAndRoutePatternResponse(
                     stops =
-                        listOf(
-                            Stop(
-                                id = "8552",
-                                latitude = 42.289904,
-                                longitude = -71.191003,
-                                name = "Sawmill Brook Pkwy @ Walsh Rd",
-                                parentStation = null
-                            ),
-                            Stop(
-                                id = "84791",
-                                latitude = 42.289995,
-                                longitude = -71.191092,
-                                name = "Sawmill Brook Pkwy @ Walsh Rd",
-                                parentStation = null
-                            )
+                        mapOf(
+                            "8552" to
+                                Stop(
+                                    id = "8552",
+                                    latitude = 42.289904,
+                                    longitude = -71.191003,
+                                    name = "Sawmill Brook Pkwy @ Walsh Rd"
+                                ),
+                            "84791" to
+                                Stop(
+                                    id = "84791",
+                                    latitude = 42.289995,
+                                    longitude = -71.191092,
+                                    name = "Sawmill Brook Pkwy @ Walsh Rd"
+                                )
                         ),
                     routePatterns =
                         mapOf(
@@ -193,7 +189,7 @@ class BackendTest {
                                     name = "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder = 505200020,
                                     typicality = RoutePattern.Typicality.Deviation,
-                                    representativeTrip = Trip(id = "trip1", headsign = "Watertown"),
+                                    representativeTripId = "trip1",
                                     routeId = route52.id
                                 ),
                             "52-4-1" to
@@ -203,8 +199,7 @@ class BackendTest {
                                     name = "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201010,
                                     typicality = RoutePattern.Typicality.Deviation,
-                                    representativeTrip =
-                                        Trip(id = "trip2", headsign = "Charles River Loop"),
+                                    representativeTripId = "trip2",
                                     routeId = route52.id
                                 ),
                             "52-5-0" to
@@ -214,7 +209,7 @@ class BackendTest {
                                     name = "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder = 505200000,
                                     typicality = RoutePattern.Typicality.Typical,
-                                    representativeTrip = Trip(id = "trip3", headsign = "Watertown"),
+                                    representativeTripId = "trip3",
                                     routeId = route52.id
                                 ),
                             "52-5-1" to
@@ -224,8 +219,7 @@ class BackendTest {
                                     name = "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder = 505201000,
                                     typicality = RoutePattern.Typicality.Typical,
-                                    representativeTrip =
-                                        Trip(id = "trip4", headsign = "Dedham Mall"),
+                                    representativeTripId = "trip4",
                                     routeId = route52.id
                                 )
                         ),
@@ -234,7 +228,34 @@ class BackendTest {
                             "8552" to listOf("52-5-0", "52-4-0"),
                             "84791" to listOf("52-5-1", "52-4-1")
                         ),
-                    routes = mapOf("52" to route52)
+                    routes = mapOf("52" to route52),
+                    trips =
+                        mapOf(
+                            "trip1" to
+                                Trip(
+                                    id = "trip1",
+                                    headsign = "Watertown",
+                                    routePatternId = "52-4-0"
+                                ),
+                            "trip2" to
+                                Trip(
+                                    id = "trip2",
+                                    headsign = "Charles River Loop",
+                                    routePatternId = "52-4-1"
+                                ),
+                            "trip3" to
+                                Trip(
+                                    id = "trip3",
+                                    headsign = "Watertown",
+                                    routePatternId = "52-5-0"
+                                ),
+                            "trip4" to
+                                Trip(
+                                    id = "trip4",
+                                    headsign = "Dedham Mall",
+                                    routePatternId = "52-5-1"
+                                )
+                        )
                 ),
                 response
             )

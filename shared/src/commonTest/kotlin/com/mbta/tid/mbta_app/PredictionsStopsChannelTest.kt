@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.Prediction
-import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.phoenix.MockWebSocketSession
 import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
 import kotlin.test.Test
@@ -14,7 +14,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 
 class PredictionsStopsChannelTest {
     @Test
@@ -29,9 +29,9 @@ class PredictionsStopsChannelTest {
                 scheduleRelationship = Prediction.ScheduleRelationship.Scheduled,
                 status = null,
                 stopSequence = 40,
-                stopId = null,
-                trip = Trip(id = "one", headsign = "Headsign"),
-                vehicle = null
+                stopId = "1",
+                tripId = "one",
+                vehicleId = null
             )
 
         val latePrediction =
@@ -44,9 +44,9 @@ class PredictionsStopsChannelTest {
                 scheduleRelationship = Prediction.ScheduleRelationship.Scheduled,
                 status = null,
                 stopSequence = 90,
-                stopId = null,
-                trip = Trip(id = "two", headsign = "Headsign"),
-                vehicle = null
+                stopId = "1",
+                tripId = "two",
+                vehicleId = null
             )
 
         val session = MockWebSocketSession(this) {}
@@ -56,13 +56,26 @@ class PredictionsStopsChannelTest {
             channel.handle(
                 "stream_data",
                 buildJsonObject {
-                    putJsonArray("predictions") {
-                        add(Json.encodeToJsonElement(latePrediction))
-                        add(Json.encodeToJsonElement(earlyPrediction))
+                    putJsonObject("predictions") {
+                        put(latePrediction.id, Json.encodeToJsonElement(latePrediction))
+                        put(earlyPrediction.id, Json.encodeToJsonElement(earlyPrediction))
                     }
+                    putJsonObject("trips") {}
+                    putJsonObject("vehicles") {}
                 }
             )
-            assertEquals(listOf(earlyPrediction, latePrediction), channel.predictions.first())
+            assertEquals(
+                PredictionsStreamDataResponse(
+                    predictions =
+                        mapOf(
+                            earlyPrediction.id to earlyPrediction,
+                            latePrediction.id to latePrediction
+                        ),
+                    trips = emptyMap(),
+                    vehicles = emptyMap()
+                ),
+                channel.predictions.first()
+            )
         }
     }
 }

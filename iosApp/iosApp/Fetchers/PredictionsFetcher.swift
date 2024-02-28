@@ -10,7 +10,7 @@ import Foundation
 import shared
 
 class PredictionsFetcher: ObservableObject {
-    @Published var predictions: [Prediction]?
+    @Published var predictions: PredictionsStreamDataResponse?
     @Published var socketError: Error?
     let backend: any BackendProtocol
     var channel: PredictionsStopsChannel?

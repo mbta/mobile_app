@@ -37,10 +37,10 @@ struct HomeMapView: View {
         }
     }
 
-    func createStopSourceData(stops: [Stop]) -> GeoJSONSourceData {
-        let stopFeatures = stops
+    func createStopSourceData(stops: [String: Stop]) -> GeoJSONSourceData {
+        let stopFeatures = stops.values
             .filter { stop in
-                stop.parentStation == nil
+                stop.parentStationId == nil
             }
             .map { stop in
                 var stopFeature = Feature(

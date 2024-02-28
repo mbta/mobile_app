@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Stop(
-    val id: String,
+    override val id: String,
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    @SerialName("parent_station") val parentStation: Stop? = null
-) {
+    @SerialName("parent_station_id") val parentStationId: String? = null
+) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
 }
