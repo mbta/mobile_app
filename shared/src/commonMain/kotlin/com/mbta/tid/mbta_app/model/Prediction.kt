@@ -55,7 +55,7 @@ data class Prediction(
 
         data object Approaching : Format()
 
-        data object DistantFuture : Format()
+        data class DistantFuture(val predictionTime: Instant) : Format()
 
         data class Minutes(val minutes: Int) : Format()
     }
@@ -82,8 +82,8 @@ data class Prediction(
         if (timeRemaining <= 60.seconds) {
             return Format.Approaching
         }
-        if (timeRemaining > 20.minutes) {
-            return Format.DistantFuture
+        if (timeRemaining > 60.minutes) {
+            return Format.DistantFuture(predictionTime)
         }
         val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
         return Format.Minutes(minutes)

@@ -14,6 +14,14 @@ public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Boo
     lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
 }
 
+enum TimeFormatter {
+    static let short: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }()
+}
+
 struct NearbyTransitView: View {
     let location: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
@@ -211,8 +219,8 @@ struct PredictionView: View {
                 Text("ARR")
             case .approaching:
                 Text("1 min")
-            case .distantFuture:
-                Text("20+ min")
+            case let .distantFuture(format):
+                Text(formatTime(time: format.predictionTime))
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }
@@ -224,11 +232,22 @@ struct PredictionView: View {
         AnyView(predictionView)
             .frame(minWidth: 48, alignment: .trailing)
     }
+
+    func formatTime(time: Instant) -> String {
+        let date = Date(timeIntervalSince1970: TimeInterval(time.epochSeconds))
+        return TimeFormatter.short.string(from: date)
+    }
 }
 
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
-        let trip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil)
+        let busTrip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stops: nil)
+        let crTrip = Trip(
+            id: "canonical-CR-Providence-C1-0",
+            headsign: "Wickford Junction",
+            routePatternId: nil,
+            stops: nil
+        )
         List {
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
@@ -260,7 +279,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         name: "Houghs Neck - Quincy Center Station",
                                         sortOrder: 521_601_000,
                                         typicality: .typical,
-                                        representativeTrip: trip,
+                                        representativeTrip: busTrip,
                                         routeId: "216"
                                     )], predictions: [Prediction(
                                         id: "1",
@@ -272,7 +291,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         status: nil,
                                         stopSequence: 30,
                                         stopId: "3276",
-                                        trip: trip,
+                                        trip: busTrip,
                                         vehicle: nil
                                     ), Prediction(
                                         id: "2",
@@ -284,7 +303,70 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         status: nil,
                                         stopSequence: 90,
                                         stopId: "3276",
-                                        trip: trip,
+                                        trip: busTrip,
+                                        vehicle: nil
+                                    )]),
+                            ]
+                        ),
+                    ]
+                ),
+                now: Date.now.toKotlinInstant()
+            )
+            NearbyRouteView(
+                nearbyRoute: StopAssociatedRoute(
+                    route: Route(
+                        id: "CR-Providence",
+                        type: RouteType.commuterRail,
+                        color: "80276C",
+                        directionNames: ["Outbound", "Inbound"],
+                        directionDestinations: ["Stoughton or Wickford Junction", "South Station"],
+                        longName: "Providence/Stoughton Line",
+                        shortName: "",
+                        sortOrder: 20012,
+                        textColor: "FFFFFF"
+                    ),
+                    patternsByStop: [
+                        PatternsByStop(
+                            stop: Stop(
+                                id: "place-sstat",
+                                latitude: 42.265969,
+                                longitude: -70.969853,
+                                name: "South Station",
+                                parentStation: nil
+                            ),
+                            patternsByHeadsign: [
+                                PatternsByHeadsign(headsign: "Houghs Neck", patterns:
+                                    [RoutePattern(
+                                        id: "CR-Providence-C1-0",
+                                        directionId: 0,
+                                        name: "South Station - Wickford Junction via Back Bay",
+                                        sortOrder: 200_120_991,
+                                        typicality: .typical,
+                                        representativeTrip: crTrip,
+                                        routeId: "CR-Providence"
+                                    )], predictions: [Prediction(
+                                        id: "1",
+                                        arrivalTime: nil,
+                                        departureTime: (Date.now + 32 * 60).toKotlinInstant(),
+                                        directionId: 0,
+                                        revenue: true,
+                                        scheduleRelationship: .scheduled,
+                                        status: nil,
+                                        stopSequence: 30,
+                                        stopId: "place-sstat",
+                                        trip: crTrip,
+                                        vehicle: nil
+                                    ), Prediction(
+                                        id: "2",
+                                        arrivalTime: nil,
+                                        departureTime: (Date.now + 72 * 60).toKotlinInstant(),
+                                        directionId: 0,
+                                        revenue: true,
+                                        scheduleRelationship: .scheduled,
+                                        status: nil,
+                                        stopSequence: 90,
+                                        stopId: "place-sstat",
+                                        trip: crTrip,
                                         vehicle: nil
                                     )]),
                             ]

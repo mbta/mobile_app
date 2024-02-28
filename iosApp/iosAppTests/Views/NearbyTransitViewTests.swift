@@ -150,7 +150,7 @@ final class NearbyTransitViewTests: XCTestCase {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
         @MainActor class FakePredictionsFetcher: PredictionsFetcher {
-            init() {
+            init(distantInstant: Instant? = nil) {
                 super.init(backend: IdleBackend())
                 predictions = [
                     Prediction(
@@ -195,7 +195,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     Prediction(
                         id: "prediction-a-84791-1",
                         arrivalTime: nil,
-                        departureTime: Date.now.addingTimeInterval(18 * 60).toKotlinInstant(),
+                        departureTime: distantInstant,
                         directionId: 1,
                         revenue: true,
                         scheduleRelationship: .scheduled,
@@ -209,10 +209,11 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
+        let distantInstant = Date.now.addingTimeInterval(72 * 60).toKotlinInstant()
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: Route52NearbyFetcher(),
-            predictionsFetcher: FakePredictionsFetcher()
+            predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant)
         )
 
         let stops = try sut.inspect().findAll(NearbyStopView.self)
@@ -228,7 +229,9 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-            .parent().find(text: "18 min"))
+            .parent().find(text: TimeFormatter.short.string(
+                from: Date(timeIntervalSince1970: TimeInterval(distantInstant.epochSeconds)))
+            ))
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
