@@ -37,18 +37,14 @@ struct NearbyTransitView: View {
     }
 
     func joinPredictions() {
-        Task {
-            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
-                .stopIds() else { return }
-            let stopIdList = Array(stopIds)
-            await predictionsFetcher.run(stopIds: stopIdList)
-        }
+        guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+            .stopIds() else { return }
+        let stopIdList = Array(stopIds)
+        predictionsFetcher.subscribeToPredictions(stopIds: stopIdList)
     }
 
     func leavePredictions() {
-        Task {
-            await predictionsFetcher.leave()
-        }
+        predictionsFetcher.leave()
     }
 
     var body: some View {

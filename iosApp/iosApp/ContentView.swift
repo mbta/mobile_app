@@ -1,4 +1,5 @@
 import shared
+import SwiftPhoenixClient
 import SwiftUI
 
 struct ContentView: View {
@@ -55,6 +56,7 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(backend: IdleBackend()))
+            // TODO: Dummy socket
+            .environmentObject(PredictionsFetcher(socket: Socket("asdf")))
     }
 }

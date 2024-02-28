@@ -6,40 +6,62 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+enum PhoenixChannelError: Error {
+    case channelError(String)
+}
+
 import Foundation
+import os
 import shared
+import SwiftPhoenixClient
 
 class PredictionsFetcher: ObservableObject {
     @Published var predictions: [Prediction]?
     @Published var socketError: Error?
-    let backend: any BackendProtocol
-    var channel: PredictionsStopsChannel?
+    let socket: Socket
+    var channel: Channel?
 
-    init(backend: any BackendProtocol) {
-        self.backend = backend
+    init(socket: Socket) {
+        self.socket = socket
     }
 
-    @MainActor func run(stopIds: [String]) async {
-        do {
-            _ = try await channel?.leave()
-            let channel = try await backend.predictionsStopsChannel(stopIds: stopIds)
-            _ = try await channel.join()
-            self.channel = channel
-            for await predictions in channel.predictions {
-                self.predictions = predictions
-            }
-        } catch {
-            socketError = error
+    public func subscribeToPredictions(stopIds _: [String]) {
+        print("Starting subscription")
+        let joinPayload = ["stop_ids": [2433,
+                                        2226,
+                                        1402]]
+        print("JOIN PAYLOAD \(joinPayload)")
+        // TODO: - static funcs
+        channel = socket.channel("predictions:stops", params: joinPayload)
+        /*   channel?.onMessage(callback: { message in
+         do  {
+             print("NEW MESSAGE RECEIVED \(message.event) \(message.payload)")
+         /* let newPredictions = try PredictionsForStops().parseMessage(event: message.event, payload: message.payload)
+         DispatchQueue.main.async {
+         self.predictions = newPredictions
+         }*/
+         } catch {
+         // TODO: Sentry?
+         Logger().error("\(error)")
+         }
+         return message
+
+         } )*/
+
+        channel?.onError { message in
+            self.socketError = PhoenixChannelError.channelError(message.payload.debugDescription)
         }
+        print("JOINING NOW")
+        channel?.join().receive("ok", callback: { message in
+            print("JOINED OK \(message)")
+        }).receive("error", callback: { message in
+            print("ERROR JOINING \(message.payload)")
+        })
     }
 
-    func leave() async {
-        do {
-            _ = try await channel?.leave()
-            channel = nil
-            predictions = nil
-        } catch {
-            socketError = error
-        }
+    func leave() {
+        channel?.leave()
+        channel = nil
+        predictions = nil
     }
 }
