@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app
 
+import com.mbta.tid.mbta_app.model.response.RouteResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
@@ -67,6 +68,20 @@ class Backend(engine: HttpClientEngine) {
         JsonConvertException::class,
         ResponseException::class
     )
+    suspend fun getGlobalData(): StopAndRoutePatternResponse =
+        httpClient
+            .get {
+                url { path("api/global") }
+                expectSuccess = true
+            }
+            .body()
+
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class
+    )
     suspend fun getNearby(latitude: Double, longitude: Double): StopAndRoutePatternResponse =
         httpClient
             .get {
@@ -85,13 +100,11 @@ class Backend(engine: HttpClientEngine) {
         JsonConvertException::class,
         ResponseException::class
     )
-    suspend fun getSearchResults(query: String): SearchResponse =
+    suspend fun getRailRouteShapes(): RouteResponse =
         httpClient
             .get {
-                url {
-                    path("api/search/query")
-                    parameters.append("query", query)
-                }
+                url { path("api/shapes/rail") }
+                expectSuccess = true
             }
             .body()
 
@@ -101,11 +114,13 @@ class Backend(engine: HttpClientEngine) {
         JsonConvertException::class,
         ResponseException::class
     )
-    suspend fun getGlobalData(): StopAndRoutePatternResponse =
+    suspend fun getSearchResults(query: String): SearchResponse =
         httpClient
             .get {
-                url { path("api/global") }
-                expectSuccess = true
+                url {
+                    path("api/search/query")
+                    parameters.append("query", query)
+                }
             }
             .body()
 

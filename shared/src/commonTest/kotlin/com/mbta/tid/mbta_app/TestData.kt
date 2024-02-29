@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -47,7 +48,8 @@ object TestData {
         longName: String = "",
         shortName: String = "",
         sortOrder: Int = 0,
-        textColor: String = ""
+        textColor: String = "",
+        routePatterns: List<RoutePattern>? = null,
     ) =
         Route(
             id,
@@ -58,7 +60,8 @@ object TestData {
             longName,
             shortName,
             sortOrder,
-            textColor
+            textColor,
+            routePatterns
         )
 
     fun routePattern(
@@ -89,6 +92,8 @@ object TestData {
             routeId = this.id
         )
 
+    fun shape(id: String = uuid(), polyline: String = "ykoaGt{wpL@FCFCIDE") = Shape(id, polyline)
+
     fun stop(
         id: String = uuid(),
         latitude: Double = 1.2,
@@ -101,14 +106,16 @@ object TestData {
         id: String = uuid(),
         headsign: String = "",
         routePatternId: String? = null,
+        shape: Shape? = null,
         stops: List<Stop>? = null
-    ) = Trip(id, headsign, routePatternId, stops)
+    ) = Trip(id, headsign, routePatternId, shape, stops)
 
     fun RoutePattern.trip(
         id: String = uuid(),
         headsign: String = this.representativeTrip?.headsign ?: "",
+        shape: Shape? = null,
         stops: List<Stop>? = null
-    ) = trip(id, headsign, this.id, stops)
+    ) = trip(id, headsign, this.id, shape, stops)
 
     fun vehicle(
         id: String = uuid(),

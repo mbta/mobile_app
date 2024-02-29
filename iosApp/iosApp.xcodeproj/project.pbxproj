@@ -31,6 +31,8 @@
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D562B683103006F5B80 /* SearchResultView.swift */; };
 		9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */; };
+		9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */; };
+		9A8B34B02B892C810018412C /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 9A8B34AF2B892C810018412C /* Polyline */; };
 		9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */; };
 		9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F52B6D6EF70086B437 /* NearbyFetcher.swift */; };
 		9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */; };
@@ -100,6 +102,7 @@
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A887D562B683103006F5B80 /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
 		9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewTests.swift; sourceTree = "<group>"; };
+		9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailRouteShapeFetcher.swift; sourceTree = "<group>"; };
 		9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultFetcher.swift; sourceTree = "<group>"; };
 		9A9E05F52B6D6EF70086B437 /* NearbyFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyFetcher.swift; sourceTree = "<group>"; };
 		9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHexExtension.swift; sourceTree = "<group>"; };
@@ -128,6 +131,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A8B34B02B892C810018412C /* Polyline in Frameworks */,
 				6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */,
 				D972C3B998F822CA4317CF03 /* Pods_iosApp.framework in Frameworks */,
 			);
@@ -263,6 +267,7 @@
 				9A9E05F52B6D6EF70086B437 /* NearbyFetcher.swift */,
 				9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */,
 				8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */,
+				9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -339,6 +344,7 @@
 			name = iosApp;
 			packageProductDependencies = (
 				6E35D4CD2B72C74500A2BF95 /* MapboxMaps */,
+				9A8B34AF2B892C810018412C /* Polyline */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -381,6 +387,7 @@
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
 				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -544,6 +551,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,
 				9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,
@@ -942,6 +950,14 @@
 				minimumVersion = 0.54.0;
 			};
 		};
+		9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/raphaelmor/Polyline.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -959,6 +975,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */;
 			productName = "plugin:SwiftLintPlugin";
+		};
+		9A8B34AF2B892C810018412C /* Polyline */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */;
+			productName = Polyline;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
