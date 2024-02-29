@@ -1,5 +1,4 @@
 plugins {
-    kotlin("native.cocoapods")
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.serialization)
@@ -12,18 +11,8 @@ kotlin {
 
     androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
-    cocoapods {
-        summary = "Common library for the MBTA mobile app"
-        homepage = "https://github.com/mbta/mobile_app"
-        version = "1.0"
-        ios.deploymentTarget = "15.0"
-        podfile = project.file("../iosApp/Podfile")
-
-        framework {
+    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
+        it.binaries.framework {
             baseName = "shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
             export(libs.kotlinx.datetime)

@@ -23,24 +23,10 @@ Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc
 ## Running Locally
 ### iOS
 
-The shared library dependency is managed using Cocoapods. To install the dependency and build the
-<<<<<<< HEAD
 ios app, you must follow these steps:
 
-* Run a gradle sync of the project from Android Studio, or you may run
-`./gradlew :shared:generateDummyFramework` from the root directory
-* `bundle install` to install cocoapods and fastlane
-* `bundle exec pod install` from within the `iosApp` directory.
-* Open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
-* Populate any configuration needed in your the .envrc file. These will be read by a build phase
-script and set as info.plist values so that they can be read by the application.
-=======
-ios app, you must first Run a gradle sync of the project from Android Studio, or you may run
-`./gradlew :shared:generateDummyFramework` from the root directory, then `pod install` from within
-the `iosApp` directory.
-
-Then, open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
->>>>>>> parent of 7a0c32a (feat(ios): integrate sentry using shared setup function (#56))
+* Run a gradle sync of the project from Android Studio
+* Open the project from `iosApp/iosApp.xcodeproj`
 
 ## Running Tests
 

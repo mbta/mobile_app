@@ -30,13 +30,6 @@ mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
-# Install cocoapods
-brew install cocoapods
-cd "${CI_PRIMARY_REPOSITORY_PATH}"
-./gradlew :shared:generateDummyFramework
-cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-pod install
-cd ..
 
 # Run tests from shared directory
 if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
