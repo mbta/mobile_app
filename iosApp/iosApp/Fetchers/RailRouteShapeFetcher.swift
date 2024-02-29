@@ -10,8 +10,7 @@ import Foundation
 import shared
 
 class RailRouteShapeFetcher: ObservableObject {
-    var response: RouteResponse?
-    @Published var routes: [Route] = []
+    @Published var response: RouteResponse?
     let backend: any BackendProtocol
 
     init(backend: any BackendProtocol) {
@@ -20,6 +19,5 @@ class RailRouteShapeFetcher: ObservableObject {
 
     @MainActor func getRailRouteShapes() async throws {
         response = try await backend.getRailRouteShapes()
-        routes = response!.routes
     }
 }

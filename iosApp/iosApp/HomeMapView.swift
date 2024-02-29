@@ -53,10 +53,11 @@ struct HomeMapView: View {
                 // print(feature.feature.identifier)
                 true
             }
-            .onChange(of: railRouteShapeFetcher.routes) { routes in
+            .onChange(of: railRouteShapeFetcher.response) { response in
+                guard let routesResponse = response else { return }
                 let map = proxy.map!
                 // Reverse sort routes so lowest sorted ones are placed lowest on the map
-                let sortedRoutes = routes.sorted { aRoute, bRoute in
+                let sortedRoutes = routesResponse.routes.values.sorted { aRoute, bRoute in
                     aRoute.sortOrder >= bRoute.sortOrder
                 }
                 for route in sortedRoutes {
@@ -64,12 +65,12 @@ struct HomeMapView: View {
                         // Don't create new sources if they already exist
                         map.updateGeoJSONSource(
                             withId: getRouteSourceId(route.id),
-                            data: createRouteSourceData(route: route)
+                            data: createRouteSourceData(route: route, routesResponse: routesResponse)
                         )
                     } else {
                         // Create a GeoJSON data source for each typical route pattern shape in this route
                         var routeSource = GeoJSONSource(id: getRouteSourceId(route.id))
-                        routeSource.data = createRouteSourceData(route: route)
+                        routeSource.data = createRouteSourceData(route: route, routesResponse: routesResponse)
                         try? map.addSource(routeSource)
                         // Create a line layer for each route
                         try? map.addLayer(createRouteLayer(route: route), layerPosition: .below("puck"))
@@ -128,13 +129,21 @@ struct HomeMapView: View {
         return routeLayer
     }
 
-    func createRouteSourceData(route: Route) -> GeoJSONSourceData {
-        let routeFeatures = route.routePatterns!.filter { pattern in
-            pattern.typicality == .typical
-        }.map { pattern in
-            let polyline = Polyline(encodedPolyline: pattern.representativeTrip!.shape!.polyline!)
-            return Feature(geometry: LineString(polyline.coordinates!))
-        }
+    func createRouteSourceData(route: Route, routesResponse: RouteResponse) -> GeoJSONSourceData {
+        let routeFeatures: [Feature] = route.routePatternIds!
+            .map { patternId -> RoutePattern? in
+                routesResponse.routePatterns[patternId]
+            }
+            .filter { pattern in
+                pattern?.typicality == .typical
+            }
+            .compactMap { pattern in
+                guard let pattern,
+                      let representativeTrip = routesResponse.trips[pattern.representativeTripId],
+                      let shape = routesResponse.shapes[representativeTrip.shapeId] else { return nil }
+                let polyline = Polyline(encodedPolyline: shape.polyline!)
+                return Feature(geometry: LineString(polyline.coordinates!))
+            }
         return .featureCollection(FeatureCollection(features: routeFeatures))
     }
 
@@ -149,10 +158,10 @@ struct HomeMapView: View {
         return stopLayer
     }
 
-    func createStopSourceData(stops: [Stop]) -> GeoJSONSourceData {
-        let stopFeatures = stops
+    func createStopSourceData(stops: [String: Stop]) -> GeoJSONSourceData {
+        let stopFeatures = stops.values
             .filter { stop in
-                stop.parentStation == nil
+                stop.parentStationId == nil
             }
             .map { stop in
                 var stopFeature = Feature(

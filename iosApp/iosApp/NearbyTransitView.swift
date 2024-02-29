@@ -237,7 +237,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longName: "Houghs Neck - Quincy Center Station via Germantown",
             shortName: "216",
             sortOrder: 52160,
-            textColor: "000000"
+            textColor: "000000",
+            routePatternIds: ["216-_-1"]
         )
         let stop = Stop(
             id: "3276",
@@ -246,9 +247,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
             name: "Sea St opp Peterson Rd",
             parentStationId: nil
         )
-        let trip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "206-_-1", stopIds: nil)
+        let trip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "216-_-1", shapeId: "2160144", stopIds: nil)
         let pattern = RoutePattern(
-            id: "206-_-1",
+            id: "216-_-1",
             directionId: 1,
             name: "Houghs Neck - Quincy Center Station",
             sortOrder: 521_601_000,

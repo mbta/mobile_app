@@ -23,7 +23,7 @@ import kotlinx.serialization.json.putJsonObject
 class PhoenixSocketTest {
     @Test
     fun testInteractsWithSession() = runBlocking {
-        val trip = Trip("trip", "Harvard", "Magenta-30-0", null)
+        val trip = Trip("trip", "Harvard", "Magenta-30-0", "", null)
         val prediction =
             Prediction(
                 "prediction",

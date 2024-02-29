@@ -109,9 +109,10 @@ class ObjectCollection {
         var id = uuid()
         var headsign = ""
         var routePatternId = ""
+        var shapeId = ""
         var stopIds: List<String>? = null
 
-        override fun built() = Trip(id, headsign, routePatternId, stopIds)
+        override fun built() = Trip(id, headsign, routePatternId, shapeId, stopIds)
     }
 
     fun trip(block: TripBuilder.() -> Unit = {}) = build(trips, TripBuilder(), block)
