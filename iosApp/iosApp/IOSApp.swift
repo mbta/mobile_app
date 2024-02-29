@@ -1,11 +1,5 @@
-import os
-import Sentry
 import shared
 import SwiftUI
-
-enum TestFakeError: Error {
-    case thisIsATest
-}
 
 @main
 struct IOSApp: App {
@@ -22,19 +16,6 @@ struct IOSApp: App {
 
     init() {
         let backend = backend
-
-        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
-            let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
-            AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
-        } else {
-            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
-        }
-
-        do {
-            throw TestFakeError.thisIsATest
-        } catch {
-            SentrySDK.capture(error: error)
-        }
 
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
