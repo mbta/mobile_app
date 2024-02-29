@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.TestData.prediction
 import com.mbta.tid.mbta_app.TestData.trip
 import com.mbta.tid.mbta_app.TestData.vehicle
-import com.mbta.tid.mbta_app.util.formatShortTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -156,11 +155,11 @@ class PredictionTest {
             val moreFuture = future.plus(38.minutes)
 
             assertEquals(
-                Prediction.Format.DistantFuture(formatShortTime(future)),
+                Prediction.Format.DistantFuture(future),
                 prediction(arrivalTime = future, departureTime = future.plus(1.minutes)).format(now)
             )
             assertEquals(
-                Prediction.Format.DistantFuture(formatShortTime(moreFuture)),
+                Prediction.Format.DistantFuture(moreFuture),
                 prediction(departureTime = moreFuture).format(now),
             )
         }
