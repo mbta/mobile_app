@@ -14,14 +14,6 @@ public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Boo
     lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
 }
 
-enum TimeFormatter {
-    static let short: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter
-    }()
-}
-
 struct NearbyTransitView: View {
     let location: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
@@ -220,7 +212,7 @@ struct PredictionView: View {
             case .approaching:
                 Text("1 min")
             case let .distantFuture(format):
-                Text(formatTime(time: format.predictionTime))
+                Text(format.timeString)
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }
@@ -231,11 +223,6 @@ struct PredictionView: View {
         }
         AnyView(predictionView)
             .frame(minWidth: 48, alignment: .trailing)
-    }
-
-    func formatTime(time: Instant) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(time.epochSeconds))
-        return TimeFormatter.short.string(from: date)
     }
 }
 
