@@ -13,7 +13,8 @@ data class Route(
     @SerialName("long_name") val longName: String,
     @SerialName("short_name") val shortName: String,
     @SerialName("sort_order") val sortOrder: Int,
-    @SerialName("text_color") val textColor: String
+    @SerialName("text_color") val textColor: String,
+    @SerialName("route_patterns") val routePatterns: List<RoutePattern>? = null
 ) : Comparable<Route>, BackendObject {
     override fun compareTo(other: Route) = sortOrder.compareTo(other.sortOrder)
 }

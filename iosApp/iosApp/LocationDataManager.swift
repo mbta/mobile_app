@@ -15,7 +15,10 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus = CLAuthorizationStatus.notDetermined
 
-    public init(locationFetcher: LocationFetcher = CLLocationManager(), distanceFilter: Double = kCLDistanceFilterNone) {
+    public init(
+        locationFetcher: LocationFetcher = CLLocationManager(),
+        distanceFilter: Double = kCLDistanceFilterNone
+    ) {
         self.locationFetcher = locationFetcher
         self.locationFetcher.distanceFilter = distanceFilter
         super.init()

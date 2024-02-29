@@ -63,7 +63,8 @@ struct RoutePill_Previews: PreviewProvider {
                     longName: "Houghs Neck - Quincy Center Station via Germantown",
                     shortName: "216",
                     sortOrder: 52160,
-                    textColor: "000000"
+                    textColor: "000000",
+                    routePatterns: nil
                 ))
                 RoutePill(route: Route(
                     id: "1",
@@ -74,7 +75,8 @@ struct RoutePill_Previews: PreviewProvider {
                     longName: "Harvard Square - Nubian Station",
                     shortName: "1",
                     sortOrder: 50010,
-                    textColor: "000000"
+                    textColor: "000000",
+                    routePatterns: nil
                 ))
                 RoutePill(route: Route(
                     id: "627",
@@ -85,7 +87,8 @@ struct RoutePill_Previews: PreviewProvider {
                     longName: "Bedford VA Hospital - Alewife Station via Hanscom Airport",
                     shortName: "62/76",
                     sortOrder: 50621,
-                    textColor: "000000"
+                    textColor: "000000",
+                    routePatterns: nil
                 ))
             }
 
@@ -99,7 +102,8 @@ struct RoutePill_Previews: PreviewProvider {
                     longName: "Red Line",
                     shortName: "",
                     sortOrder: 10010,
-                    textColor: "FFFFFF"
+                    textColor: "FFFFFF",
+                    routePatterns: nil
                 ))
                 RoutePill(route: Route(
                     id: "Blue",
@@ -110,7 +114,8 @@ struct RoutePill_Previews: PreviewProvider {
                     longName: "Blue Line",
                     shortName: "",
                     sortOrder: 10040,
-                    textColor: "FFFFFF"
+                    textColor: "FFFFFF",
+                    routePatterns: nil
                 ))
             }
             RoutePill(route: Route(
@@ -122,7 +127,8 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Green Line C",
                 shortName: "C",
                 sortOrder: 10033,
-                textColor: "FFFFFF"
+                textColor: "FFFFFF",
+                routePatterns: nil
             ))
             RoutePill(route: Route(
                 id: "CR-Middleborough",
@@ -133,7 +139,8 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Middleborough/Lakeville Line",
                 shortName: "",
                 sortOrder: 20009,
-                textColor: "FFFFFF"
+                textColor: "FFFFFF",
+                routePatterns: nil
             ))
             RoutePill(route: Route(
                 id: "CR-Providence",
@@ -144,7 +151,8 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Providence/Stoughton Line",
                 shortName: "",
                 sortOrder: 20012,
-                textColor: "FFFFFF"
+                textColor: "FFFFFF",
+                routePatterns: nil
             ))
             RoutePill(route: Route(
                 id: "Boat-F1",
@@ -155,7 +163,8 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Hingham/Hull Ferry",
                 shortName: "",
                 sortOrder: 30002,
-                textColor: "FFFFFF"
+                textColor: "FFFFFF",
+                routePatterns: nil
             ))
             RoutePill(route: Route(
                 id: "Shuttle-BroadwayKendall",
@@ -166,7 +175,8 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Kendall/MIT - Broadway via Downtown Crossing",
                 shortName: "Red Line Shuttle",
                 sortOrder: 61050,
-                textColor: "000000"
+                textColor: "000000",
+                routePatterns: nil
             ))
             RoutePill(route: Route(
                 id: "Shuttle-BrooklineHillsKenmore",
@@ -177,7 +187,8 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Brookline Hills - Kenmore",
                 shortName: "Green Line D Shuttle",
                 sortOrder: 61100,
-                textColor: "000000"
+                textColor: "000000",
+                routePatterns: nil
             ))
         }.previewDisplayName("RoutePill")
     }
