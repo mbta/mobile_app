@@ -67,7 +67,8 @@ final class NearbyTransitViewTests: XCTestCase {
                                 longName: "Dedham Mall - Watertown Yard",
                                 shortName: "52",
                                 sortOrder: 50520,
-                                textColor: "000000")
+                                textColor: "000000",
+                                routePatterns: nil)
             let stop1 = Stop(id: "8552",
                              latitude: 42.289904,
                              longitude: -71.191003,
@@ -86,28 +87,28 @@ final class NearbyTransitViewTests: XCTestCase {
                                     name: "Watertown - Charles River Loop via Meadowbrook Rd",
                                     sortOrder: 505_200_020,
                                     typicality: .typical,
-                                    representativeTrip: Trip(id: "60451431", headsign: "Charles River Loop", routePatternId: "52-4-0", stops: nil),
+                                    representativeTrip: Trip(id: "60451431", headsign: "Charles River Loop", routePatternId: "52-4-0", shape: nil, stops: nil),
                                     routeId: route52.id)
             let rp50 = RoutePattern(id: "52-5-0",
                                     directionId: 0,
                                     name: "Watertown - Dedham Mall via Meadowbrook Rd",
                                     sortOrder: 505_200_000,
                                     typicality: .typical,
-                                    representativeTrip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
+                                    representativeTrip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", shape: nil, stops: nil),
                                     routeId: route52.id)
             let rp41 = RoutePattern(id: "52-4-1",
                                     directionId: 1,
                                     name: "Charles River Loop - Watertown via Meadowbrook Rd",
                                     sortOrder: 505_201_010,
                                     typicality: .typical,
-                                    representativeTrip: Trip(id: "60451432", headsign: "Watertown Yard", routePatternId: "52-4-1", stops: nil),
+                                    representativeTrip: Trip(id: "60451432", headsign: "Watertown Yard", routePatternId: "52-4-1", shape: nil, stops: nil),
                                     routeId: route52.id)
             let rp51 = RoutePattern(id: "52-5-1",
                                     directionId: 1,
                                     name: "Dedham Mall - Watertown via Meadowbrook Rd",
                                     sortOrder: 505_201_000,
                                     typicality: .typical,
-                                    representativeTrip: Trip(id: "60451425", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
+                                    representativeTrip: Trip(id: "60451425", headsign: "Watertown Yard", routePatternId: "52-5-1", shape: nil, stops: nil),
                                     routeId: route52.id)
             nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
                 builder.route(route: route52) { builder in
@@ -163,7 +164,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         status: nil,
                         stopSequence: 38,
                         stopId: "8552",
-                        trip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
+                        trip: Trip(id: "60451421", headsign: "Dedham Mall", routePatternId: "52-5-0", shape: nil, stops: nil),
                         vehicle: nil
                     ),
                     Prediction(
@@ -176,7 +177,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         status: "Overridden",
                         stopSequence: 1,
                         stopId: "8552",
-                        trip: Trip(id: "a", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
+                        trip: Trip(id: "a", headsign: "Dedham Mall", routePatternId: "52-5-0", shape: nil, stops: nil),
                         vehicle: nil
                     ),
                     Prediction(
@@ -189,7 +190,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         status: nil,
                         stopSequence: 18,
                         stopId: "84791",
-                        trip: Trip(id: "60451426", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
+                        trip: Trip(id: "60451426", headsign: "Watertown Yard", routePatternId: "52-5-1", shape: nil, stops: nil),
                         vehicle: nil
                     ),
                     Prediction(
@@ -202,7 +203,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         status: nil,
                         stopSequence: 1,
                         stopId: "84791",
-                        trip: Trip(id: "a", headsign: "Watertown Yard", routePatternId: "52-5-1", stops: nil),
+                        trip: Trip(id: "a", headsign: "Watertown Yard", routePatternId: "52-5-1", shape: nil, stops: nil),
                         vehicle: nil
                     ),
                 ]
@@ -298,7 +299,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 status: nil,
                 stopSequence: 1,
                 stopId: "8552",
-                trip: Trip(id: "", headsign: "Dedham Mall", routePatternId: "52-5-0", stops: nil),
+                trip: Trip(id: "", headsign: "Dedham Mall", routePatternId: "52-5-0", shape: nil, stops: nil),
                 vehicle: nil
             )
         }
