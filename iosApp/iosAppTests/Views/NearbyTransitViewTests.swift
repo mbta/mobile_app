@@ -210,7 +210,9 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        let distantInstant = Date.now.addingTimeInterval(72 * 60).toKotlinInstant()
+        let distantInstant = Date.now.addingTimeInterval(TimeInterval(DISTANT_FUTURE_CUTOFF)).addingTimeInterval(5 * 60).toKotlinInstant()
+        let testFormatter = DateFormatter()
+        testFormatter.timeStyle = .short
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: Route52NearbyFetcher(),
@@ -229,10 +231,10 @@ final class NearbyTransitViewTests: XCTestCase {
 
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
+
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-            .parent().find(text: TimeFormatter.short.string(
-                from: Date(timeIntervalSince1970: TimeInterval(distantInstant.epochSeconds)))
-            ))
+            .parent().find(text: testFormatter.string(
+                from: Date(instant: distantInstant))))
     }
 
     func testRefetchesPredictionsOnNewStops() throws {

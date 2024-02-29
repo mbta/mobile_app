@@ -212,7 +212,7 @@ struct PredictionView: View {
             case .approaching:
                 Text("1 min")
             case let .distantFuture(format):
-                Text(format.timeString)
+                Text(Date(instant: format.predictionTime), style: .time)
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }

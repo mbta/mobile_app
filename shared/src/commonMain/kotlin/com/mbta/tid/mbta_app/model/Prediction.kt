@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.GetReferenceIdSerializer
-import com.mbta.tid.mbta_app.util.formatShortTime
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -60,7 +59,7 @@ data class Prediction(
 
         data object Approaching : Format()
 
-        data class DistantFuture(val timeString: String) : Format()
+        data class DistantFuture(val predictionTime: Instant) : Format()
 
         data class Minutes(val minutes: Int) : Format()
     }
@@ -88,7 +87,7 @@ data class Prediction(
             return Format.Approaching
         }
         if (timeRemaining > DISTANT_FUTURE_CUTOFF) {
-            return Format.DistantFuture(formatShortTime(predictionTime))
+            return Format.DistantFuture(predictionTime)
         }
         val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
         return Format.Minutes(minutes)
