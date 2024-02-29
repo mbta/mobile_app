@@ -33,7 +33,7 @@ class PredictionsFetcher: ObservableObject {
         }
     }
 
-    func leave() async {
+    @MainActor func leave() async {
         do {
             _ = try await channel?.leave()
             channel = nil
