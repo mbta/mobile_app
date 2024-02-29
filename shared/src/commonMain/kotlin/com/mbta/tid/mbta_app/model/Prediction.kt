@@ -9,6 +9,10 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+val ARRIVAL_CUTOFF = 30.seconds
+val APPROACH_CUTOFF = 60.seconds
+val DISTANT_FUTURE_CUTOFF = 60.minutes
+
 @Serializable
 data class Prediction(
     val id: String,
@@ -76,13 +80,13 @@ data class Prediction(
         ) {
             return Format.Boarding
         }
-        if (timeRemaining <= 30.seconds) {
+        if (timeRemaining <= ARRIVAL_CUTOFF) {
             return Format.Arriving
         }
-        if (timeRemaining <= 60.seconds) {
+        if (timeRemaining <= APPROACH_CUTOFF) {
             return Format.Approaching
         }
-        if (timeRemaining > 60.minutes) {
+        if (timeRemaining > DISTANT_FUTURE_CUTOFF) {
             return Format.DistantFuture(predictionTime)
         }
         val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()

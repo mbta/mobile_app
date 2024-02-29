@@ -149,9 +149,9 @@ class PredictionTest {
         }
 
         @Test
-        fun `minutes greater than 20`() {
+        fun `minutes in the distant future`() {
             val now = Clock.System.now()
-            val future = now.plus(61.minutes)
+            val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
             val moreFuture = future.plus(38.minutes)
             assertEquals(
                 Prediction.Format.DistantFuture(future),
