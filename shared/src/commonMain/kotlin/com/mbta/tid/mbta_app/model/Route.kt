@@ -14,4 +14,6 @@ data class Route(
     @SerialName("short_name") val shortName: String,
     @SerialName("sort_order") val sortOrder: Int,
     @SerialName("text_color") val textColor: String
-) : BackendObject
+) : Comparable<Route>, BackendObject {
+    override fun compareTo(other: Route) = sortOrder.compareTo(other.sortOrder)
+}

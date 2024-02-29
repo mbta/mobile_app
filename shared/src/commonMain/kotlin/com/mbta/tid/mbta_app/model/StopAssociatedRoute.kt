@@ -75,7 +75,7 @@ data class PatternsByHeadsign(
             ?: true
 
     override fun compareTo(other: PatternsByHeadsign): Int =
-        patterns.first().sortOrder.compareTo(other.patterns.first().sortOrder)
+        patterns.first().compareTo(other.patterns.first())
 }
 
 /**
@@ -120,7 +120,12 @@ data class StopAssociatedRoute(
         staticData.patternsByStop
             .map { PatternsByStop(it, predictionsByPatternAndStop, cutoffTime) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
-            .sortedBy { it.distanceFrom(sortByDistanceFrom) }
+            .sortedWith(
+                compareBy(
+                    { it.distanceFrom(sortByDistanceFrom) },
+                    { it.patternsByHeadsign.first() }
+                )
+            )
     )
 
     @OptIn(ExperimentalTurfApi::class)
@@ -157,5 +162,5 @@ fun NearbyStaticData.withRealtimeInfo(
             StopAssociatedRoute(it, predictionsByPatternAndStop, cutoffTime, sortByDistanceFrom)
         }
         .filterNot { it.patternsByStop.isEmpty() }
-        .sortedBy { it.distanceFrom(sortByDistanceFrom) }
+        .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
 }
