@@ -62,9 +62,3 @@ if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
   touch mapbox
   echo "${MAPBOX_PUBLIC_TOKEN}" >> mapbox
 fi
-
-echo "Adding build environment variables"
-cd ${CI_PRIMARY_REPOSITORY_PATH}
-touch .envrc
-echo "export SENTRY_DSN=${SENTRY_DSN}" >> .envrc
-echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}" >> .envrc
