@@ -29,7 +29,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "62/76",
             sortOrder: 50621,
             textColor: "000000",
-            routePatterns: nil
+            routePatternIds: nil
         ))
         XCTAssertEqual(try bus.inspect().view(RoutePill.self).text().string(), "62/76")
     }
@@ -45,7 +45,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10010,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
         let blue = RoutePill(route: Route(
             id: "Blue",
@@ -57,7 +57,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10040,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
 
         XCTAssertEqual(try red.inspect().view(RoutePill.self).text().string(), "Red Line")
@@ -75,7 +75,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "C",
             sortOrder: 10033,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
 
         let mattapan = RoutePill(route: Route(
@@ -95,7 +95,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10011,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
 
         XCTAssertEqual(try green.inspect().view(RoutePill.self).text().string(), "Green Line C")
@@ -113,7 +113,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 20009,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
         let providence = RoutePill(route: Route(
             id: "CR-Providence",
@@ -125,7 +125,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 20012,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
 
         XCTAssertEqual(try middleborough.inspect().view(RoutePill.self).text().string(), "Middleborough/Lakeville Line")
@@ -143,7 +143,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 30002,
             textColor: "FFFFFF",
-            routePatterns: nil
+            routePatternIds: nil
         ))
 
         XCTAssertEqual(try ferry.inspect().view(RoutePill.self).text().string(), "Hingham/Hull Ferry")
@@ -160,7 +160,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "Red Line Shuttle",
             sortOrder: 61050,
             textColor: "000000",
-            routePatterns: nil
+            routePatternIds: nil
         ))
         let glShuttle = RoutePill(route: Route(
             id: "Shuttle-BrooklineHillsKenmore",
@@ -172,7 +172,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "Green Line D Shuttle",
             sortOrder: 61100,
             textColor: "000000",
-            routePatterns: nil
+            routePatternIds: nil
         ))
         XCTAssertEqual(try rlShuttle.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
         XCTAssertEqual(try glShuttle.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
