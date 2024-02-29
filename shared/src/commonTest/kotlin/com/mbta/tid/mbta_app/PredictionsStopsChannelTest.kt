@@ -18,7 +18,7 @@ import kotlinx.serialization.json.putJsonObject
 
 class PredictionsStopsChannelTest {
     @Test
-    fun `sorts incoming predictions`() = runBlocking {
+    fun `parses incoming predictions`() = runBlocking {
         val earlyPrediction =
             Prediction(
                 id = "early",
