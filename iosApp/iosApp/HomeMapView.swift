@@ -58,7 +58,7 @@ struct HomeMapView: View {
                 guard let routesResponse = response else { return }
                 let map = proxy.map!
                 // Reverse sort routes so lowest sorted ones are placed lowest on the map
-                let sortedRoutes = routesResponse.routes.values.sorted { aRoute, bRoute in
+                let sortedRoutes = routesResponse.routes.sorted { aRoute, bRoute in
                     aRoute.sortOrder >= bRoute.sortOrder
                 }
                 for route in sortedRoutes {
@@ -174,8 +174,8 @@ struct HomeMapView: View {
         return stopLayer
     }
 
-    func createStopSourceData(stops: [String: Stop]) -> GeoJSONSourceData {
-        let stopFeatures = stops.values
+    func createStopSourceData(stops: [Stop]) -> GeoJSONSourceData {
+        let stopFeatures = stops
             .filter { stop in
                 stop.parentStationId == nil
             }

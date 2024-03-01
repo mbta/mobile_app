@@ -2,9 +2,6 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.distance
 
 /** Aggregates stops and the patterns that serve them by route. */
 data class NearbyStaticData(val data: List<RouteWithStops>) {
@@ -26,10 +23,8 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
     fun stopIds(): Set<String> =
         data.flatMapTo(mutableSetOf()) { (_, patternsByStop) -> patternsByStop.map { it.stop.id } }
 
-    @OptIn(ExperimentalTurfApi::class)
     constructor(
-        response: StopAndRoutePatternResponse,
-        pickStopsClosestTo: Position
+        response: StopAndRoutePatternResponse
     ) : this(
         response.run {
             val routePatternsUsed = mutableSetOf<String>()
@@ -39,45 +34,42 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
 
             val fullStopIds = mutableMapOf<String, MutableSet<String>>()
 
-            response.stops.values
-                .sortedBy { distance(pickStopsClosestTo, it.position) }
-                .forEach { stop ->
-                    val newPatternIds =
-                        response.patternIdsByStop
-                            .getOrElse(stop.id) { emptyList() }
-                            .filter { !routePatternsUsed.contains(it) }
-                    routePatternsUsed.addAll(newPatternIds)
+            response.stops.forEach { stop ->
+                val newPatternIds =
+                    response.patternIdsByStop
+                        .getOrElse(stop.id) { emptyList() }
+                        .filter { !routePatternsUsed.contains(it) }
+                routePatternsUsed.addAll(newPatternIds)
 
-                    val newPatternsByRoute =
-                        newPatternIds
-                            .map { patternId -> response.routePatterns.getValue(patternId) }
-                            .groupBy { it.routeId }
+                val newPatternsByRoute =
+                    newPatternIds
+                        .map { patternId -> response.routePatterns.getValue(patternId) }
+                        .groupBy { it.routeId }
 
-                    if (newPatternsByRoute.isEmpty()) {
-                        return@forEach
-                    }
-
-                    val stopKey =
-                        if (stop.parentStationId != null) {
-                            fullStopIds
-                                .getOrPut(stop.parentStationId) {
-                                    mutableSetOf(stop.parentStationId)
-                                }
-                                .add(stop.id)
-                            stops.getValue(stop.parentStationId)
-                        } else {
-                            stop
-                        }
-
-                    newPatternsByRoute.forEach { (routeId, routePatterns) ->
-                        val routeStops =
-                            patternsByRouteAndStop.getOrPut(response.routes.getValue(routeId)) {
-                                mutableMapOf()
-                            }
-                        val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
-                        patternsForStop += routePatterns
-                    }
+                if (newPatternsByRoute.isEmpty()) {
+                    return@forEach
                 }
+
+                val stopKey =
+                    stop.parentStationId?.let { parentStationId ->
+                        fullStopIds
+                            .getOrPut(parentStationId) { mutableSetOf(parentStationId) }
+                            .add(stop.id)
+                        // Parents should be disjoint, but if somehow a parent has its own patterns,
+                        // find it in the regular stops list
+                        parentStops?.get(parentStationId) ?: stops.find { it.id == parentStationId }
+                    }
+                        ?: stop
+
+                newPatternsByRoute.forEach { (routeId, routePatterns) ->
+                    val routeStops =
+                        patternsByRouteAndStop.getOrPut(response.routes.getValue(routeId)) {
+                            mutableMapOf()
+                        }
+                    val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
+                    patternsForStop += routePatterns
+                }
+            }
 
             patternsByRouteAndStop.map { (route, patternsByStop) ->
                 RouteWithStops(

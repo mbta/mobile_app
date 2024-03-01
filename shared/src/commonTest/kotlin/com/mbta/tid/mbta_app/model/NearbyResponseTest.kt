@@ -39,7 +39,7 @@ class NearbyResponseTest {
                     stop(stop2) { headsign("Nubian", listOf(route1rp2)) }
                 }
             },
-            NearbyStaticData(response, stop1.position)
+            NearbyStaticData(response)
         )
     }
 
@@ -80,7 +80,7 @@ class NearbyResponseTest {
                     }
                 }
             },
-            NearbyStaticData(response, stop1.position)
+            NearbyStaticData(response)
         )
     }
 
@@ -127,7 +127,7 @@ class NearbyResponseTest {
                     }
                 }
             },
-            NearbyStaticData(response, stop1.position)
+            NearbyStaticData(response)
         )
     }
 
@@ -156,7 +156,7 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route1) { stop(stop1) { headsign("Harvard", listOf(route1rp1)) } }
             },
-            NearbyStaticData(response, stop1.position)
+            NearbyStaticData(response)
         )
     }
 
@@ -213,7 +213,7 @@ class NearbyResponseTest {
                 }
                 route(route2) { stop(stop2) { headsign("Porter Sq", listOf(route2rp1)) } }
             },
-            NearbyStaticData(response, stop1.position)
+            NearbyStaticData(response)
         )
     }
 
@@ -276,7 +276,7 @@ class NearbyResponseTest {
                     stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3)) }
                 }
             },
-            NearbyStaticData(response, station1.position)
+            NearbyStaticData(response)
         )
     }
 

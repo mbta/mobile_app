@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RouteResponse(
-    val routes: Map<String, Route>,
+    val routes: List<Route>,
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
     val shapes: Map<String, Shape>,
     val trips: Map<String, Trip>

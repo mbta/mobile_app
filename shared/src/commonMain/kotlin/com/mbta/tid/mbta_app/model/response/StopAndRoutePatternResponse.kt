@@ -10,14 +10,24 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StopAndRoutePatternResponse(
+    @SerialName("parent_stops") val parentStops: Map<String, Stop>? = null,
     @SerialName("pattern_ids_by_stop") val patternIdsByStop: Map<String, List<String>>,
     val routes: Map<String, Route>,
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
-    val stops: Map<String, Stop>,
+    val stops: List<Stop>,
     val trips: Map<String, Trip>,
 ) {
     constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>
-    ) : this(patternIdsByStop, objects.routes, objects.routePatterns, objects.stops, objects.trips)
+    ) : this(
+        // assume all existing stops with no patterns are parents
+        objects.stops.filter { (stopId, _) -> !patternIdsByStop.containsKey(stopId) },
+        patternIdsByStop,
+        objects.routes,
+        objects.routePatterns,
+        // stops with patterns would've been included directly by the backend
+        objects.stops.values.filter { patternIdsByStop.containsKey(it.id) },
+        objects.trips
+    )
 }

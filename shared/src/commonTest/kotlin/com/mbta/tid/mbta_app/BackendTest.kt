@@ -34,22 +34,22 @@ class BackendTest {
                         ByteReadChannel(
                             """
                         {
-                          "stops": {
-                            "8552": {
+                          "stops": [
+                            {
                               "id": "8552",
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289904,
                               "longitude": -71.191003,
                               "parent_station": null
                             },
-                            "84791": {
+                            {
                               "id": "84791",
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289995,
                               "longitude": -71.191092,
                               "parent_station": null
                             }
-                          },
+                          ],
                           "route_patterns": {
                             "52-4-0": {
                               "id": "52-4-0",
@@ -170,21 +170,19 @@ class BackendTest {
             assertEquals(
                 StopAndRoutePatternResponse(
                     stops =
-                        mapOf(
-                            "8552" to
-                                Stop(
-                                    id = "8552",
-                                    latitude = 42.289904,
-                                    longitude = -71.191003,
-                                    name = "Sawmill Brook Pkwy @ Walsh Rd"
-                                ),
-                            "84791" to
-                                Stop(
-                                    id = "84791",
-                                    latitude = 42.289995,
-                                    longitude = -71.191092,
-                                    name = "Sawmill Brook Pkwy @ Walsh Rd"
-                                )
+                        listOf(
+                            Stop(
+                                id = "8552",
+                                latitude = 42.289904,
+                                longitude = -71.191003,
+                                name = "Sawmill Brook Pkwy @ Walsh Rd"
+                            ),
+                            Stop(
+                                id = "84791",
+                                latitude = 42.289995,
+                                longitude = -71.191092,
+                                name = "Sawmill Brook Pkwy @ Walsh Rd"
+                            )
                         ),
                     routePatterns =
                         mapOf(
@@ -472,8 +470,8 @@ class BackendTest {
                         ByteReadChannel(
                             """
                     {
-                      "routes": {
-                        "Red": {
+                      "routes": [
+                        {
                           "id": "Red",
                           "type": "heavy_rail",
                           "color": "DA291C",
@@ -491,7 +489,7 @@ class BackendTest {
                           "text_color": "FFFFFF",
                           "route_pattern_ids": ["Red-1-0", "Red-1-1", "Red-3-1", "Red-Z-1"]
                         }
-                      },
+                      ],
                       "route_patterns": {
                         "Red-1-0": {
                           "id": "Red-1-0",
@@ -592,21 +590,19 @@ class BackendTest {
             assertEquals(
                 RouteResponse(
                     routes =
-                        mapOf(
-                            "Red" to
-                                Route(
-                                    id = "Red",
-                                    type = RouteType.HEAVY_RAIL,
-                                    color = "DA291C",
-                                    directionNames = listOf("South", "North"),
-                                    directionDestinations = listOf("Ashmont/Braintree", "Alewife"),
-                                    longName = "Red Line",
-                                    shortName = "",
-                                    sortOrder = 10010,
-                                    textColor = "FFFFFF",
-                                    routePatternIds =
-                                        listOf("Red-1-0", "Red-1-1", "Red-3-1", "Red-Z-1")
-                                )
+                        listOf(
+                            Route(
+                                id = "Red",
+                                type = RouteType.HEAVY_RAIL,
+                                color = "DA291C",
+                                directionNames = listOf("South", "North"),
+                                directionDestinations = listOf("Ashmont/Braintree", "Alewife"),
+                                longName = "Red Line",
+                                shortName = "",
+                                sortOrder = 10010,
+                                textColor = "FFFFFF",
+                                routePatternIds = listOf("Red-1-0", "Red-1-1", "Red-3-1", "Red-Z-1")
+                            )
                         ),
                     routePatterns =
                         mapOf(

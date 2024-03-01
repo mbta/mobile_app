@@ -28,10 +28,7 @@ class NearbyFetcher: ObservableObject {
             longitude: longitude
         )
         nearby = response
-        nearbyByRouteAndStop = NearbyStaticData(
-            response: response,
-            pickStopsClosestTo: .init(longitude: longitude, latitude: latitude)
-        )
+        nearbyByRouteAndStop = NearbyStaticData(response: response)
     }
 
     func withRealtimeInfo(
