@@ -15,6 +15,7 @@ public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Boo
 }
 
 struct NearbyTransitView: View {
+    @Environment(\.scenePhase) private var scenePhase
     let location: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
@@ -77,6 +78,15 @@ struct NearbyTransitView: View {
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             joinPredictions()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .inactive {
+                leavePredictions()
+            } else if newPhase == .active {
+                joinPredictions()
+            } else if newPhase == .background {
+                leavePredictions()
+            }
         }
         .onReceive(timer) { input in
             now = input
