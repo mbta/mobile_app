@@ -59,7 +59,7 @@ final class NearbyTransitViewTests: XCTestCase {
     class Route52NearbyFetcher: NearbyFetcher {
         init() {
             super.init(backend: IdleBackend())
-            let objects = ObjectCollection()
+            let objects = ObjectCollectionBuilder()
             let route52 = objects.route { route in
                 route.id = "52"
                 route.type = .bus
@@ -151,7 +151,7 @@ final class NearbyTransitViewTests: XCTestCase {
         @MainActor class FakePredictionsFetcher: PredictionsFetcher {
             init() {
                 super.init(backend: IdleBackend())
-                let objects = ObjectCollection()
+                let objects = ObjectCollectionBuilder()
                 let trip1 = objects.trip { trip in
                     trip.routePatternId = "52-5-0"
                 }
@@ -262,7 +262,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(), predictionsFetcher: predictionsFetcher)
 
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
-            let objects = ObjectCollection()
+            let objects = ObjectCollectionBuilder()
             let trip = objects.trip { trip in
                 trip.routePatternId = "52-5-0"
             }

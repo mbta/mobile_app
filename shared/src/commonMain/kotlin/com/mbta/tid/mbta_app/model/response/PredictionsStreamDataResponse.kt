@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
-import com.mbta.tid.mbta_app.model.ObjectCollection
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -13,6 +13,6 @@ data class PredictionsStreamDataResponse(
     val vehicles: Map<String, Vehicle>
 ) {
     constructor(
-        objects: ObjectCollection
+        objects: ObjectCollectionBuilder
     ) : this(objects.predictions, objects.trips, objects.vehicles)
 }

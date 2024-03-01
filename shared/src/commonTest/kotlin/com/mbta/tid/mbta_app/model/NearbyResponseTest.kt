@@ -12,7 +12,7 @@ class NearbyResponseTest {
 
     @Test
     fun `NearbyStaticData when a route pattern serves multiple stops it is only included for the first one`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
         val stop2 = objects.stop()
@@ -45,7 +45,7 @@ class NearbyResponseTest {
 
     @Test
     fun `byRouteAndStop route patterns are sorted by their sort order`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
 
@@ -86,7 +86,7 @@ class NearbyResponseTest {
 
     @Test
     fun `byRouteAndStop groups patterns by headsign`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
 
@@ -133,7 +133,7 @@ class NearbyResponseTest {
 
     @Test
     fun `byRouteAndStop when there are no new route patterns for a stop then it is omitted`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
         val stop2 = objects.stop()
@@ -162,7 +162,7 @@ class NearbyResponseTest {
 
     @Test
     fun `byRouteAndStop when a stop is served by multiple routes it is included for each route`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
         val stop2 = objects.stop()
@@ -219,7 +219,7 @@ class NearbyResponseTest {
 
     @Test
     fun `byRouteAndStop groups by parent station`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val station1 = objects.stop()
 
@@ -282,7 +282,7 @@ class NearbyResponseTest {
 
     @Test
     fun `withRealtimeInfo includes predictions filtered to the correct stop and pattern`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
         val stop2 = objects.stop()
@@ -392,7 +392,7 @@ class NearbyResponseTest {
 
     @Test
     fun `withRealtimeInfo hides rare patterns with no predictions`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
 
         val stop1 = objects.stop()
 
@@ -531,7 +531,7 @@ class NearbyResponseTest {
 
     @Test
     fun `withRealtimeInfo handles parent stops`() {
-        val objects = ObjectCollection()
+        val objects = ObjectCollectionBuilder()
         val parentStop = objects.stop()
         val childStop = objects.stop { parentStationId = parentStop.id }
         val route1 = objects.route()

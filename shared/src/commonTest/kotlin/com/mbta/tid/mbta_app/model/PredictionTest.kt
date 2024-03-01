@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.ObjectCollection.Single.prediction
-import com.mbta.tid.mbta_app.model.ObjectCollection.Single.vehicle
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

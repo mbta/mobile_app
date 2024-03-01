@@ -3,7 +3,20 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.uuid
 import kotlinx.datetime.Instant
 
-class ObjectCollection {
+/**
+ * Allows related objects to be built and tracked more conveniently. Provides default values where
+ * reasonable.
+ *
+ * Included in `commonMain` so that it can be used from the Android and iOS apps in previews and
+ * tests.
+ *
+ * Design philosophy:
+ * - Objects which don't need to be referenced directly (e.g. representative trips in route
+ *   patterns) are built in a nested builder
+ * - Objects which need to be referenced directly but descend inherently from a parent (e.g. route
+ *   patterns from routes) are built with a required parent argument
+ */
+class ObjectCollectionBuilder {
     val predictions = mutableMapOf<String, Prediction>()
     val routes = mutableMapOf<String, Route>()
     val routePatterns = mutableMapOf<String, RoutePattern>()
@@ -40,7 +53,7 @@ class ObjectCollection {
                 stopSequence,
                 stopId,
                 tripId,
-                vehicleId
+                vehicleId,
             )
     }
 
@@ -57,6 +70,7 @@ class ObjectCollection {
         var shortName = ""
         var sortOrder = 0
         var textColor = ""
+        var routePatternIds = mutableListOf<String>()
 
         override fun built() =
             Route(
@@ -68,7 +82,8 @@ class ObjectCollection {
                 longName,
                 shortName,
                 sortOrder,
-                textColor
+                textColor,
+                routePatternIds,
             )
     }
 
@@ -84,7 +99,7 @@ class ObjectCollection {
         var routeId: String = ""
 
         fun representativeTrip(block: TripBuilder.() -> Unit = {}) =
-            this@ObjectCollection.trip {
+            this@ObjectCollectionBuilder.trip {
                     routePatternId = this@RoutePatternBuilder.id
                     block()
                 }
@@ -98,7 +113,7 @@ class ObjectCollection {
                 sortOrder,
                 typicality,
                 representativeTripId,
-                routeId
+                routeId,
             )
     }
 
@@ -153,17 +168,18 @@ class ObjectCollection {
 
     object Single {
         fun prediction(block: PredictionBuilder.() -> Unit = {}) =
-            ObjectCollection().prediction(block)
+            ObjectCollectionBuilder().prediction(block)
 
-        fun route(block: RouteBuilder.() -> Unit = {}) = ObjectCollection().route(block)
+        fun route(block: RouteBuilder.() -> Unit = {}) = ObjectCollectionBuilder().route(block)
 
         fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
-            ObjectCollection().routePattern(route, block)
+            ObjectCollectionBuilder().routePattern(route, block)
 
-        fun trip(block: TripBuilder.() -> Unit = {}) = ObjectCollection().trip(block)
+        fun trip(block: TripBuilder.() -> Unit = {}) = ObjectCollectionBuilder().trip(block)
 
-        fun stop(block: StopBuilder.() -> Unit = {}) = ObjectCollection().stop(block)
+        fun stop(block: StopBuilder.() -> Unit = {}) = ObjectCollectionBuilder().stop(block)
 
-        fun vehicle(block: VehicleBuilder.() -> Unit = {}) = ObjectCollection().vehicle(block)
+        fun vehicle(block: VehicleBuilder.() -> Unit = {}) =
+            ObjectCollectionBuilder().vehicle(block)
     }
 }
