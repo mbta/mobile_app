@@ -19,15 +19,20 @@ data class StopAndRoutePatternResponse(
 ) {
     constructor(
         objects: ObjectCollectionBuilder,
-        patternIdsByStop: Map<String, List<String>>
+        patternIdsByStop: Map<String, List<String>>,
+        parentStops: Map<String, Stop>? = null,
     ) : this(
-        // assume all existing stops with no patterns are parents
-        objects.stops.filter { (stopId, _) -> !patternIdsByStop.containsKey(stopId) },
+        parentStops,
         patternIdsByStop,
         objects.routes,
         objects.routePatterns,
-        // stops with patterns would've been included directly by the backend
-        objects.stops.values.filter { patternIdsByStop.containsKey(it.id) },
+        objects.stops.values.filter {
+            if (parentStops != null) {
+                !parentStops.containsKey(it.id)
+            } else {
+                true
+            }
+        },
         objects.trips
     )
 }

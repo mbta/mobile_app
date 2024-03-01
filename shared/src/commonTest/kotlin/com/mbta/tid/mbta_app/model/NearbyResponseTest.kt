@@ -264,6 +264,7 @@ class NearbyResponseTest {
                                 route1rp3.id,
                             ),
                     ),
+                parentStops = mapOf(station1.id to station1),
             )
 
         assertEquals(
