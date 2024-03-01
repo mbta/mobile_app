@@ -200,7 +200,7 @@ extension Prediction.FormatOverridden {
 struct PredictionView: View {
     let prediction: State
 
-    enum State {
+    enum State: Equatable {
         case loading
         case none
         case some(Prediction.Format)

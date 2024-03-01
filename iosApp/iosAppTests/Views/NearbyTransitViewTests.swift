@@ -232,9 +232,11 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
 
-        XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-            .parent().find(text: testFormatter.string(
-                from: Date(instant: distantInstant))))
+        let expectedState = PredictionView.State.some(Prediction.FormatDistantFuture(predictionTime: distantInstant))
+        XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
+            .findAll(PredictionView.self, where: { sut in
+                try sut.actualView().prediction == expectedState
+            }).isEmpty)
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
