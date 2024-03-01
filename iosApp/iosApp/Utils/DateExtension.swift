@@ -1,0 +1,16 @@
+//
+//  DateExtension.swift
+//  iosApp
+//
+//  Created by Simon, Emma on 2/29/24.
+//  Copyright © 2024 MBTA. All rights reserved.
+//
+
+import Foundation
+import shared
+
+extension Date {
+    init(instant: Instant) {
+        self.init(timeIntervalSince1970: TimeInterval(instant.epochSeconds))
+    }
+}
