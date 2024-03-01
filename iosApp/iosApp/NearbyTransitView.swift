@@ -200,7 +200,7 @@ extension Prediction.FormatOverridden {
 struct PredictionView: View {
     let prediction: State
 
-    enum State {
+    enum State: Equatable {
         case loading
         case none
         case some(Prediction.Format)
@@ -221,8 +221,8 @@ struct PredictionView: View {
                 Text("ARR")
             case .approaching:
                 Text("1 min")
-            case .distantFuture:
-                Text("20+ min")
+            case let .distantFuture(format):
+                Text(Date(instant: format.predictionTime), style: .time)
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }
@@ -238,7 +238,7 @@ struct PredictionView: View {
 
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
-        let route = Route(
+        let busRoute = Route(
             id: "216",
             type: RouteType.bus,
             color: "FFC72C",
@@ -250,30 +250,30 @@ struct NearbyTransitView_Previews: PreviewProvider {
             textColor: "000000",
             routePatternIds: ["216-_-1"]
         )
-        let stop = Stop(
+        let busStop = Stop(
             id: "3276",
             latitude: 42.265969,
             longitude: -70.969853,
             name: "Sea St opp Peterson Rd",
             parentStationId: nil
         )
-        let trip = Trip(
+        let busTrip = Trip(
             id: "trip1",
             headsign: "Houghs Neck",
             routePatternId: "216-_-1",
             shapeId: "2160144",
             stopIds: nil
         )
-        let pattern = RoutePattern(
+        let busPattern = RoutePattern(
             id: "216-_-1",
             directionId: 1,
             name: "Houghs Neck - Quincy Center Station",
             sortOrder: 521_601_000,
             typicality: .typical,
-            representativeTripId: trip.id,
-            routeId: "216"
+            representativeTripId: busTrip.id,
+            routeId: busRoute.id
         )
-        let prediction1 = Prediction(
+        let busPrediction1 = Prediction(
             id: "1",
             arrivalTime: nil,
             departureTime: (Date.now + 5 * 60).toKotlinInstant(),
@@ -282,11 +282,11 @@ struct NearbyTransitView_Previews: PreviewProvider {
             scheduleRelationship: .scheduled,
             status: nil,
             stopSequence: 30,
-            stopId: "3276",
-            tripId: trip.id,
+            stopId: busStop.id,
+            tripId: busTrip.id,
             vehicleId: nil
         )
-        let prediction2 = Prediction(
+        let busPrediction2 = Prediction(
             id: "2",
             arrivalTime: nil,
             departureTime: (Date.now + 12 * 60).toKotlinInstant(),
@@ -295,22 +295,101 @@ struct NearbyTransitView_Previews: PreviewProvider {
             scheduleRelationship: .scheduled,
             status: nil,
             stopSequence: 90,
-            stopId: "3276",
-            tripId: trip.id,
+            stopId: busStop.id,
+            tripId: busTrip.id,
+            vehicleId: nil
+        )
+        let crRoute = Route(
+            id: "CR-Providence",
+            type: RouteType.commuterRail,
+            color: "80276C",
+            directionNames: ["Outbound", "Inbound"],
+            directionDestinations: ["Stoughton or Wickford Junction", "South Station"],
+            longName: "Providence/Stoughton Line",
+            shortName: "",
+            sortOrder: 20012,
+            textColor: "FFFFFF",
+            routePatternIds: nil
+        )
+        let crStop = Stop(
+            id: "place-sstat",
+            latitude: 42.265969,
+            longitude: -70.969853,
+            name: "South Station",
+            parentStationId: nil
+        )
+        let crTrip = Trip(
+            id: "canonical-CR-Providence-C1-0",
+            headsign: "Wickford Junction",
+            routePatternId: "CR-Providence-C1-0",
+            shapeId: "canonical-9890009",
+            stopIds: nil
+        )
+        let crPattern = RoutePattern(
+            id: "CR-Providence-C1-0",
+            directionId: 0,
+            name: "South Station - Wickford Junction via Back Bay",
+            sortOrder: 200_120_991,
+            typicality: .typical,
+            representativeTripId: crTrip.id,
+            routeId: crRoute.id
+        )
+        let crPrediction1 = Prediction(
+            id: "1",
+            arrivalTime: nil,
+            departureTime: (Date.now + 32 * 60).toKotlinInstant(),
+            directionId: 0,
+            revenue: true,
+            scheduleRelationship: .scheduled,
+            status: nil,
+            stopSequence: 30,
+            stopId: "place-sstat",
+            tripId: crTrip.id,
+            vehicleId: nil
+        )
+        let crPrediction2 = Prediction(
+            id: "2",
+            arrivalTime: nil,
+            departureTime: (Date.now + 72 * 60).toKotlinInstant(),
+            directionId: 0,
+            revenue: true,
+            scheduleRelationship: .scheduled,
+            status: nil,
+            stopSequence: 90,
+            stopId: "place-sstat",
+            tripId: crTrip.id,
             vehicleId: nil
         )
         List {
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
-                    route: route,
+                    route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
-                            stop: stop,
+                            stop: busStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(
                                     headsign: "Houghs Neck",
-                                    patterns: [pattern],
-                                    predictions: [.init(prediction: prediction1), .init(prediction: prediction2)]
+                                    patterns: [busPattern],
+                                    predictions: [.init(prediction: busPrediction1), .init(prediction: busPrediction2)]
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                now: Date.now.toKotlinInstant()
+            )
+            NearbyRouteView(
+                nearbyRoute: StopAssociatedRoute(
+                    route: crRoute,
+                    patternsByStop: [
+                        PatternsByStop(
+                            stop: crStop,
+                            patternsByHeadsign: [
+                                PatternsByHeadsign(
+                                    headsign: "Houghs Neck",
+                                    patterns: [crPattern],
+                                    predictions: [.init(prediction: crPrediction1), .init(prediction: crPrediction2)]
                                 ),
                             ]
                         ),

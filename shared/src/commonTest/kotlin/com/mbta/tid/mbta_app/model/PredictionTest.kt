@@ -161,19 +161,22 @@ class PredictionTest {
         }
 
         @Test
-        fun `minutes greater than 20`() {
+        fun `minutes in the distant future`() {
             val now = Clock.System.now()
+            val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
+            val moreFuture = future.plus(38.minutes)
+
             assertEquals(
-                Prediction.Format.DistantFuture,
+                Prediction.Format.DistantFuture(future),
                 prediction {
-                        arrivalTime = now.plus(25.minutes)
-                        departureTime = now.plus(26.minutes)
+                        arrivalTime = future
+                        departureTime = future.plus(1.minutes)
                     }
                     .format(now)
             )
             assertEquals(
-                Prediction.Format.DistantFuture,
-                prediction { departureTime = now.plus(21.minutes) }.format(now),
+                Prediction.Format.DistantFuture(moreFuture),
+                prediction { departureTime = moreFuture }.format(now)
             )
         }
 
@@ -201,8 +204,8 @@ class PredictionTest {
                 prediction { departureTime = now.plus(209.seconds) }.format(now)
             )
             assertEquals(
-                Prediction.Format.Minutes(10),
-                prediction { departureTime = now.plus(10.minutes) }.format(now)
+                Prediction.Format.Minutes(45),
+                prediction { departureTime = now.plus(45.minutes) }.format(now)
             )
         }
     }
