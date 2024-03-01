@@ -247,7 +247,13 @@ struct NearbyTransitView_Previews: PreviewProvider {
             name: "Sea St opp Peterson Rd",
             parentStationId: nil
         )
-        let trip = Trip(id: "trip1", headsign: "Houghs Neck", routePatternId: "216-_-1", shapeId: "2160144", stopIds: nil)
+        let trip = Trip(
+            id: "trip1",
+            headsign: "Houghs Neck",
+            routePatternId: "216-_-1",
+            shapeId: "2160144",
+            stopIds: nil
+        )
         let pattern = RoutePattern(
             id: "216-_-1",
             directionId: 1,
