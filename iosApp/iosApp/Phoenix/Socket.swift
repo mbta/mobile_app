@@ -10,9 +10,57 @@ import Foundation
 import os
 import SwiftPhoenixClient
 
+public protocol PhoenixSocket: AnyObject {
+    var channels: [Channel] { get }
+
+    func onOpen(callback: @escaping () -> Void) -> String
+    func onError(error: Error, response: URLResponse?)
+    func onMessage(message: String)
+    func onClose(callback: @escaping () -> Void) -> String
+    func connect()
+    func channel(_ topic: String,
+                 params: [String: Any]) -> Channel
+    func disconnect(code: Socket.CloseCode,
+                    reason: String?,
+                    callback: (() -> Void)?)
+}
+
+extension Socket: PhoenixSocket {}
+
+class PhoenixTransportMock: PhoenixTransport {
+    var readyState: PhoenixTransportReadyState {
+        get { underlyingReadyState }
+        set(value) { underlyingReadyState = value }
+    }
+
+    var underlyingReadyState: PhoenixTransportReadyState!
+    var delegate: PhoenixTransportDelegate?
+
+    var connectClosure: (() -> Void)?
+
+    func connect() {
+        connectClosure?()
+    }
+
+    func connect(with _: [String: Any]) {
+        connectClosure?()
+    }
+
+    func disconnect(code _: Int, reason _: String?) {}
+
+    func send(data _: Data) {}
+}
+
+extension Socket {
+    func withRawMessages() {
+        decode = decodeWithRawMessage
+    }
+}
+
 /*
  Return the decoded message in the expected [Any?] format:
  [joinReference, messageReference, topic, eventName, eventPayload]
+
  where eventPayload has type
  ["jsonPayload": String, "payload": Any?] or
  ["response": ["jsonPayload": String, "payload": Any?], "status": String]

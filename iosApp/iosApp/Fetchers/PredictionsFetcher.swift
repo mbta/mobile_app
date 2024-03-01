@@ -7,39 +7,93 @@
 //
 
 import Foundation
+import os
 import shared
+import SwiftPhoenixClient
+
+enum PhoenixChannelError: Error {
+    case channelError(String)
+}
 
 class PredictionsFetcher: ObservableObject {
     @Published var predictions: PredictionsStreamDataResponse?
     @Published var socketError: Error?
-    let backend: any BackendProtocol
-    var channel: PredictionsStopsChannel?
+    let socket: PhoenixSocket
+    var channel: Channel?
+    var onMessageSuccessCallback: (() -> Void)?
+    var onErrorCallback: (() -> Void)?
 
-    init(backend: any BackendProtocol) {
-        self.backend = backend
+    init(socket: PhoenixSocket, onMessageSuccessCallback: (() -> Void)? = nil, onErrorCallback: (() -> Void)? = nil) {
+        self.socket = socket
+        self.onMessageSuccessCallback = onMessageSuccessCallback
+        self.onErrorCallback = onErrorCallback
     }
 
-    @MainActor func run(stopIds: [String]) async {
-        do {
-            _ = try await channel?.leave()
-            let channel = try await backend.predictionsStopsChannel(stopIds: stopIds)
-            _ = try await channel.join()
-            self.channel = channel
-            for await predictions in channel.predictions {
-                self.predictions = predictions
+    func run(stopIds: [String]) {
+        let joinPayload = PredictionsForStopsChannel.companion.joinPayload(stopIds: stopIds)
+        channel = socket.channel(PredictionsForStopsChannel.companion.topic, params: joinPayload)
+
+        channel?.on(PredictionsForStopsChannel.companion.newDataEvent, callback: { message in
+            self.handleNewDataMessage(message: message)
+
+        })
+        channel?.onError { message in
+            DispatchQueue.main.async {
+                self.socketError = PhoenixChannelError.channelError("A: \(message.payload)")
+                if let callback = self.onErrorCallback {
+                    callback()
+                }
             }
+        }
+
+        channel?.onClose { message in
+            Logger().debug("leaving channel \(message.topic)")
+        }
+        channel?.join().receive("ok") { message in
+            Logger().debug("joined channel \(message.topic)")
+        }.receive("error", callback: { message in
+            DispatchQueue.main.async {
+                self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
+                if let callback = self.onErrorCallback {
+                    callback()
+                }
+            }
+        })
+    }
+
+    private func handleNewDataMessage(message: Message) {
+        do {
+            let rawPayload: String? = message.jsonPayload()
+
+            if let stringPayload = rawPayload {
+                let newPredictions = try PredictionsForStopsChannel.companion
+                    .parseMessage(payload: stringPayload)
+                Logger().debug("Received \(newPredictions.predictions.count) predictions")
+                DispatchQueue.main.async {
+                    self.predictions = newPredictions
+                    self.socketError = nil
+                    if let callback = self.onMessageSuccessCallback {
+                        callback()
+                    }
+                }
+            } else {
+                Logger().error("No jsonPayload found for message \(message.payload)")
+                if let callback = onErrorCallback {
+                    callback()
+                }
+            }
+
         } catch {
-            socketError = error
+            DispatchQueue.main.async {
+                self.socketError = PhoenixChannelError.channelError("C: \(message.payload)")
+            }
+            Logger().error("\(error)")
         }
     }
 
-    @MainActor func leave() async {
-        do {
-            _ = try await channel?.leave()
-            channel = nil
-            predictions = nil
-        } catch {
-            socketError = error
-        }
+    func leave() {
+        channel?.leave()
+        channel = nil
+        predictions = nil
     }
 }
