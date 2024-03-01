@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import os
 import Polyline
 import shared
 import SwiftUI
@@ -71,9 +72,24 @@ struct HomeMapView: View {
                         // Create a GeoJSON data source for each typical route pattern shape in this route
                         var routeSource = GeoJSONSource(id: getRouteSourceId(route.id))
                         routeSource.data = createRouteSourceData(route: route, routesResponse: routesResponse)
-                        try? map.addSource(routeSource)
-                        // Create a line layer for each route
-                        try? map.addLayer(createRouteLayer(route: route), layerPosition: .below("puck"))
+                        do {
+                            try map.addSource(routeSource)
+                        } catch {
+                            let id = getRouteSourceId(route.id)
+                            Logger().error("Failed to add route source \(id)\n\(error)")
+                        }
+
+                        do {
+                            // Create a line layer for each route
+                            if map.layerExists(withId: "puck") {
+                                try map.addLayer(createRouteLayer(route: route), layerPosition: .below("puck"))
+                            } else {
+                                try map.addLayer(createRouteLayer(route: route))
+                            }
+                        } catch {
+                            let id = getRouteLayerId(route.id)
+                            Logger().error("Failed to add route layer \(id)\n\(error)")
+                        }
                     }
                 }
             }

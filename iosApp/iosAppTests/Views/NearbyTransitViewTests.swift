@@ -282,4 +282,124 @@ final class NearbyTransitViewTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
     }
+
+    func testLeavesChannelWhenBackgrounded() throws {
+        let joinExpectation = expectation(description: "joins predictions")
+        let leaveExpectation = expectation(description: "leaves predictions")
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            let joinExpectation: XCTestExpectation
+            let leaveExpectation: XCTestExpectation
+
+            init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
+                self.joinExpectation = joinExpectation
+                self.leaveExpectation = leaveExpectation
+                super.init(backend: IdleBackend())
+            }
+
+            override func run(stopIds _: [String]) async {
+                joinExpectation.fulfill()
+            }
+
+            override func leave() async {
+                leaveExpectation.fulfill()
+            }
+        }
+
+        let nearbyFetcher = Route52NearbyFetcher()
+        let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let sut = NearbyTransitView(
+            location: .init(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+        )
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [joinExpectation], timeout: 1)
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+
+        wait(for: [leaveExpectation], timeout: 1)
+    }
+
+    func testLeavesChannelWhenInactive() throws {
+        let joinExpectation = expectation(description: "joins predictions")
+        let leaveExpectation = expectation(description: "leaves predictions")
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            let joinExpectation: XCTestExpectation
+            let leaveExpectation: XCTestExpectation
+
+            init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
+                self.joinExpectation = joinExpectation
+                self.leaveExpectation = leaveExpectation
+                super.init(backend: IdleBackend())
+            }
+
+            override func run(stopIds _: [String]) async {
+                joinExpectation.fulfill()
+            }
+
+            override func leave() async {
+                leaveExpectation.fulfill()
+            }
+        }
+
+        let nearbyFetcher = Route52NearbyFetcher()
+        let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let sut = NearbyTransitView(
+            location: .init(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+        )
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [joinExpectation], timeout: 1)
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+
+        wait(for: [leaveExpectation], timeout: 1)
+    }
+
+    func testRejoinsChannelWhenReactivated() throws {
+        let joinExpectation = expectation(description: "joins predictions")
+        joinExpectation.expectedFulfillmentCount = 2
+        joinExpectation.assertForOverFulfill = true
+
+        let leaveExpectation = expectation(description: "leaves predictions")
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            let joinExpectation: XCTestExpectation
+            let leaveExpectation: XCTestExpectation
+
+            init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
+                self.joinExpectation = joinExpectation
+                self.leaveExpectation = leaveExpectation
+                super.init(backend: IdleBackend())
+            }
+
+            override func run(stopIds _: [String]) async {
+                joinExpectation.fulfill()
+            }
+
+            override func leave() async {
+                leaveExpectation.fulfill()
+            }
+        }
+
+        let nearbyFetcher = Route52NearbyFetcher()
+        let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let sut = NearbyTransitView(
+            location: .init(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+        )
+
+        ViewHosting.host(view: sut)
+
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+
+        wait(for: [leaveExpectation], timeout: 1)
+
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+
+        wait(for: [joinExpectation], timeout: 1)
+    }
 }
