@@ -91,6 +91,15 @@
       }
     },
     {
+      "identity" : "swiftphoenixclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/davidstump/SwiftPhoenixClient",
+      "state" : {
+        "revision" : "588bf6baab5d049752748e19a4bff32421ea40ec",
+        "version" : "5.3.2"
+      }
+    },
+    {
       "identity" : "swiftytexttable",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scottrhoyt/SwiftyTextTable.git",
