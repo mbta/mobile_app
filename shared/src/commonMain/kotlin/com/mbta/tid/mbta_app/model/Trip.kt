@@ -1,16 +1,13 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.GetReferenceIdSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Trip(
-    val id: String,
+    override val id: String,
     val headsign: String,
-    @Serializable(with = GetReferenceIdSerializer::class)
-    @SerialName("route_pattern")
-    val routePatternId: String? = null,
-    val shape: Shape? = null,
-    val stops: List<Stop>? = null
-)
+    @SerialName("route_pattern_id") val routePatternId: String,
+    @SerialName("shape_id") val shapeId: String,
+    @SerialName("stop_ids") val stopIds: List<String>? = null
+) : BackendObject

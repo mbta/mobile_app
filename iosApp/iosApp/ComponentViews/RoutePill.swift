@@ -64,7 +64,7 @@ struct RoutePill_Previews: PreviewProvider {
                     shortName: "216",
                     sortOrder: 52160,
                     textColor: "000000",
-                    routePatterns: nil
+                    routePatternIds: nil
                 ))
                 RoutePill(route: Route(
                     id: "1",
@@ -76,7 +76,7 @@ struct RoutePill_Previews: PreviewProvider {
                     shortName: "1",
                     sortOrder: 50010,
                     textColor: "000000",
-                    routePatterns: nil
+                    routePatternIds: nil
                 ))
                 RoutePill(route: Route(
                     id: "627",
@@ -88,7 +88,7 @@ struct RoutePill_Previews: PreviewProvider {
                     shortName: "62/76",
                     sortOrder: 50621,
                     textColor: "000000",
-                    routePatterns: nil
+                    routePatternIds: nil
                 ))
             }
 
@@ -103,7 +103,7 @@ struct RoutePill_Previews: PreviewProvider {
                     shortName: "",
                     sortOrder: 10010,
                     textColor: "FFFFFF",
-                    routePatterns: nil
+                    routePatternIds: nil
                 ))
                 RoutePill(route: Route(
                     id: "Blue",
@@ -115,7 +115,7 @@ struct RoutePill_Previews: PreviewProvider {
                     shortName: "",
                     sortOrder: 10040,
                     textColor: "FFFFFF",
-                    routePatterns: nil
+                    routePatternIds: nil
                 ))
             }
             RoutePill(route: Route(
@@ -128,7 +128,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "C",
                 sortOrder: 10033,
                 textColor: "FFFFFF",
-                routePatterns: nil
+                routePatternIds: nil
             ))
             RoutePill(route: Route(
                 id: "CR-Middleborough",
@@ -140,7 +140,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 20009,
                 textColor: "FFFFFF",
-                routePatterns: nil
+                routePatternIds: nil
             ))
             RoutePill(route: Route(
                 id: "CR-Providence",
@@ -152,7 +152,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 20012,
                 textColor: "FFFFFF",
-                routePatterns: nil
+                routePatternIds: nil
             ))
             RoutePill(route: Route(
                 id: "Boat-F1",
@@ -164,7 +164,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 30002,
                 textColor: "FFFFFF",
-                routePatterns: nil
+                routePatternIds: nil
             ))
             RoutePill(route: Route(
                 id: "Shuttle-BroadwayKendall",
@@ -176,7 +176,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "Red Line Shuttle",
                 sortOrder: 61050,
                 textColor: "000000",
-                routePatterns: nil
+                routePatternIds: nil
             ))
             RoutePill(route: Route(
                 id: "Shuttle-BrooklineHillsKenmore",
@@ -188,7 +188,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "Green Line D Shuttle",
                 sortOrder: 61100,
                 textColor: "000000",
-                routePatterns: nil
+                routePatternIds: nil
             ))
         }.previewDisplayName("RoutePill")
     }

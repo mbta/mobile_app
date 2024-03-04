@@ -143,8 +143,8 @@ struct NearbyStopRoutePatternView: View {
 
         var id: String { prediction.id }
 
-        init(_ prediction: Prediction, now: Instant) {
-            self.prediction = prediction
+        init(_ prediction: PredictionWithVehicle, now: Instant) {
+            self.prediction = prediction.prediction
             format = prediction.format(now: now)
         }
 
@@ -158,7 +158,7 @@ struct NearbyStopRoutePatternView: View {
         case none
         case some([PredictionWithFormat])
 
-        static func from(predictions: [Prediction]?, now: Instant) -> Self {
+        static func from(predictions: [PredictionWithVehicle]?, now: Instant) -> Self {
             guard let predictions else { return .loading }
             let predictionsToShow = predictions
                 .map { PredictionWithFormat($0, now: now) }
@@ -238,79 +238,141 @@ struct PredictionView: View {
 
 struct NearbyTransitView_Previews: PreviewProvider {
     static var previews: some View {
+        let busRoute = Route(
+            id: "216",
+            type: RouteType.bus,
+            color: "FFC72C",
+            directionNames: ["Outbound", "Inbound"],
+            directionDestinations: ["Houghs Neck", "Quincy Center Station"],
+            longName: "Houghs Neck - Quincy Center Station via Germantown",
+            shortName: "216",
+            sortOrder: 52160,
+            textColor: "000000",
+            routePatternIds: ["216-_-1"]
+        )
+        let busStop = Stop(
+            id: "3276",
+            latitude: 42.265969,
+            longitude: -70.969853,
+            name: "Sea St opp Peterson Rd",
+            parentStationId: nil
+        )
         let busTrip = Trip(
             id: "trip1",
             headsign: "Houghs Neck",
-            routePatternId: "206-_-1",
-            shape: nil,
-            stops: nil
+            routePatternId: "216-_-1",
+            shapeId: "2160144",
+            stopIds: nil
+        )
+        let busPattern = RoutePattern(
+            id: "216-_-1",
+            directionId: 1,
+            name: "Houghs Neck - Quincy Center Station",
+            sortOrder: 521_601_000,
+            typicality: .typical,
+            representativeTripId: busTrip.id,
+            routeId: busRoute.id
+        )
+        let busPrediction1 = Prediction(
+            id: "1",
+            arrivalTime: nil,
+            departureTime: (Date.now + 5 * 60).toKotlinInstant(),
+            directionId: 0,
+            revenue: true,
+            scheduleRelationship: .scheduled,
+            status: nil,
+            stopSequence: 30,
+            stopId: busStop.id,
+            tripId: busTrip.id,
+            vehicleId: nil
+        )
+        let busPrediction2 = Prediction(
+            id: "2",
+            arrivalTime: nil,
+            departureTime: (Date.now + 12 * 60).toKotlinInstant(),
+            directionId: 0,
+            revenue: true,
+            scheduleRelationship: .scheduled,
+            status: nil,
+            stopSequence: 90,
+            stopId: busStop.id,
+            tripId: busTrip.id,
+            vehicleId: nil
+        )
+        let crRoute = Route(
+            id: "CR-Providence",
+            type: RouteType.commuterRail,
+            color: "80276C",
+            directionNames: ["Outbound", "Inbound"],
+            directionDestinations: ["Stoughton or Wickford Junction", "South Station"],
+            longName: "Providence/Stoughton Line",
+            shortName: "",
+            sortOrder: 20012,
+            textColor: "FFFFFF",
+            routePatternIds: nil
+        )
+        let crStop = Stop(
+            id: "place-sstat",
+            latitude: 42.265969,
+            longitude: -70.969853,
+            name: "South Station",
+            parentStationId: nil
         )
         let crTrip = Trip(
             id: "canonical-CR-Providence-C1-0",
             headsign: "Wickford Junction",
-            routePatternId: nil,
-            shape: nil,
-            stops: nil
+            routePatternId: "CR-Providence-C1-0",
+            shapeId: "canonical-9890009",
+            stopIds: nil
+        )
+        let crPattern = RoutePattern(
+            id: "CR-Providence-C1-0",
+            directionId: 0,
+            name: "South Station - Wickford Junction via Back Bay",
+            sortOrder: 200_120_991,
+            typicality: .typical,
+            representativeTripId: crTrip.id,
+            routeId: crRoute.id
+        )
+        let crPrediction1 = Prediction(
+            id: "1",
+            arrivalTime: nil,
+            departureTime: (Date.now + 32 * 60).toKotlinInstant(),
+            directionId: 0,
+            revenue: true,
+            scheduleRelationship: .scheduled,
+            status: nil,
+            stopSequence: 30,
+            stopId: "place-sstat",
+            tripId: crTrip.id,
+            vehicleId: nil
+        )
+        let crPrediction2 = Prediction(
+            id: "2",
+            arrivalTime: nil,
+            departureTime: (Date.now + 72 * 60).toKotlinInstant(),
+            directionId: 0,
+            revenue: true,
+            scheduleRelationship: .scheduled,
+            status: nil,
+            stopSequence: 90,
+            stopId: "place-sstat",
+            tripId: crTrip.id,
+            vehicleId: nil
         )
         List {
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
-                    route: Route(
-                        id: "216",
-                        type: RouteType.bus,
-                        color: "FFC72C",
-                        directionNames: ["Outbound", "Inbound"],
-                        directionDestinations: ["Houghs Neck", "Quincy Center Station"],
-                        longName: "Houghs Neck - Quincy Center Station via Germantown",
-                        shortName: "216",
-                        sortOrder: 52160,
-                        textColor: "000000",
-                        routePatterns: nil
-                    ),
+                    route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
-                            stop: Stop(
-                                id: "3276",
-                                latitude: 42.265969,
-                                longitude: -70.969853,
-                                name: "Sea St opp Peterson Rd",
-                                parentStation: nil
-                            ),
+                            stop: busStop,
                             patternsByHeadsign: [
-                                PatternsByHeadsign(headsign: "Houghs Neck", patterns:
-                                    [RoutePattern(
-                                        id: "206-_-1",
-                                        directionId: 1,
-                                        name: "Houghs Neck - Quincy Center Station",
-                                        sortOrder: 521_601_000,
-                                        typicality: .typical,
-                                        representativeTrip: busTrip,
-                                        routeId: "216"
-                                    )], predictions: [Prediction(
-                                        id: "1",
-                                        arrivalTime: nil,
-                                        departureTime: (Date.now + 5 * 60).toKotlinInstant(),
-                                        directionId: 0,
-                                        revenue: true,
-                                        scheduleRelationship: .scheduled,
-                                        status: nil,
-                                        stopSequence: 30,
-                                        stopId: "3276",
-                                        trip: busTrip,
-                                        vehicle: nil
-                                    ), Prediction(
-                                        id: "2",
-                                        arrivalTime: nil,
-                                        departureTime: (Date.now + 12 * 60).toKotlinInstant(),
-                                        directionId: 0,
-                                        revenue: true,
-                                        scheduleRelationship: .scheduled,
-                                        status: nil,
-                                        stopSequence: 90,
-                                        stopId: "3276",
-                                        trip: busTrip,
-                                        vehicle: nil
-                                    )]),
+                                PatternsByHeadsign(
+                                    headsign: "Houghs Neck",
+                                    patterns: [busPattern],
+                                    predictions: [.init(prediction: busPrediction1), .init(prediction: busPrediction2)]
+                                ),
                             ]
                         ),
                     ]
@@ -319,62 +381,16 @@ struct NearbyTransitView_Previews: PreviewProvider {
             )
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
-                    route: Route(
-                        id: "CR-Providence",
-                        type: RouteType.commuterRail,
-                        color: "80276C",
-                        directionNames: ["Outbound", "Inbound"],
-                        directionDestinations: ["Stoughton or Wickford Junction", "South Station"],
-                        longName: "Providence/Stoughton Line",
-                        shortName: "",
-                        sortOrder: 20012,
-                        textColor: "FFFFFF",
-                        routePatterns: nil
-                    ),
+                    route: crRoute,
                     patternsByStop: [
                         PatternsByStop(
-                            stop: Stop(
-                                id: "place-sstat",
-                                latitude: 42.265969,
-                                longitude: -70.969853,
-                                name: "South Station",
-                                parentStation: nil
-                            ),
+                            stop: crStop,
                             patternsByHeadsign: [
-                                PatternsByHeadsign(headsign: "Houghs Neck", patterns:
-                                    [RoutePattern(
-                                        id: "CR-Providence-C1-0",
-                                        directionId: 0,
-                                        name: "South Station - Wickford Junction via Back Bay",
-                                        sortOrder: 200_120_991,
-                                        typicality: .typical,
-                                        representativeTrip: crTrip,
-                                        routeId: "CR-Providence"
-                                    )], predictions: [Prediction(
-                                        id: "1",
-                                        arrivalTime: nil,
-                                        departureTime: (Date.now + 32 * 60).toKotlinInstant(),
-                                        directionId: 0,
-                                        revenue: true,
-                                        scheduleRelationship: .scheduled,
-                                        status: nil,
-                                        stopSequence: 30,
-                                        stopId: "place-sstat",
-                                        trip: crTrip,
-                                        vehicle: nil
-                                    ), Prediction(
-                                        id: "2",
-                                        arrivalTime: nil,
-                                        departureTime: (Date.now + 72 * 60).toKotlinInstant(),
-                                        directionId: 0,
-                                        revenue: true,
-                                        scheduleRelationship: .scheduled,
-                                        status: nil,
-                                        stopSequence: 90,
-                                        stopId: "place-sstat",
-                                        trip: crTrip,
-                                        vehicle: nil
-                                    )]),
+                                PatternsByHeadsign(
+                                    headsign: "Houghs Neck",
+                                    patterns: [crPattern],
+                                    predictions: [.init(prediction: crPrediction1), .init(prediction: crPrediction2)]
+                                ),
                             ]
                         ),
                     ]

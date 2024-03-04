@@ -51,14 +51,15 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                 }
 
                 val stopKey =
-                    if (stop.parentStation != null) {
+                    stop.parentStationId?.let { parentStationId ->
                         fullStopIds
-                            .getOrPut(stop.parentStation.id) { mutableSetOf(stop.parentStation.id) }
+                            .getOrPut(parentStationId) { mutableSetOf(parentStationId) }
                             .add(stop.id)
-                        stop.parentStation
-                    } else {
-                        stop
+                        // Parents should be disjoint, but if somehow a parent has its own patterns,
+                        // find it in the regular stops list
+                        parentStops?.get(parentStationId) ?: stops.find { it.id == parentStationId }
                     }
+                        ?: stop
 
                 newPatternsByRoute.forEach { (routeId, routePatterns) ->
                     val routeStops =
@@ -80,7 +81,11 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                                 allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) },
                                 patternsByHeadsign =
                                     patterns
-                                        .groupBy { it.representativeTrip!!.headsign }
+                                        .groupBy {
+                                            val representativeTrip =
+                                                response.trips.getValue(it.representativeTripId)
+                                            representativeTrip.headsign
+                                        }
                                         .map { (headsign, routePatterns) ->
                                             HeadsignWithPatterns(headsign, routePatterns.sorted())
                                         }

@@ -10,7 +10,7 @@ import Foundation
 import shared
 
 class PredictionsFetcher: ObservableObject {
-    @Published var predictions: [Prediction]?
+    @Published var predictions: PredictionsStreamDataResponse?
     @Published var socketError: Error?
     let backend: any BackendProtocol
     var channel: PredictionsStopsChannel?
@@ -33,7 +33,7 @@ class PredictionsFetcher: ObservableObject {
         }
     }
 
-    func leave() async {
+    @MainActor func leave() async {
         do {
             _ = try await channel?.leave()
             channel = nil

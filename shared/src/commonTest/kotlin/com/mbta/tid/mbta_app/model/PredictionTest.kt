@@ -1,8 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.TestData.prediction
-import com.mbta.tid.mbta_app.TestData.trip
-import com.mbta.tid.mbta_app.TestData.vehicle
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -16,7 +15,7 @@ class PredictionTest {
         fun `status is non-null`() {
             assertEquals(
                 Prediction.Format.Overridden("Custom Text"),
-                prediction(status = "Custom Text").format(Clock.System.now())
+                prediction { status = "Custom Text" }.format(Clock.System.now())
             )
         }
 
@@ -24,7 +23,7 @@ class PredictionTest {
         fun `departure_time is null`() {
             assertEquals(
                 Prediction.Format.Hidden,
-                prediction(departureTime = null).format(Clock.System.now())
+                prediction { departureTime = null }.format(Clock.System.now())
             )
         }
 
@@ -33,7 +32,11 @@ class PredictionTest {
             val now = Clock.System.now()
             assertEquals(
                 Prediction.Format.Hidden,
-                prediction(arrivalTime = null, departureTime = now.minus(2.seconds)).format(now)
+                prediction {
+                        arrivalTime = null
+                        departureTime = now.minus(2.seconds)
+                    }
+                    .format(now)
             )
         }
 
@@ -42,7 +45,10 @@ class PredictionTest {
             val now = Clock.System.now()
             assertEquals(
                 Prediction.Format.Arriving,
-                prediction(arrivalTime = now.minus(2.seconds), departureTime = now.plus(10.seconds))
+                prediction {
+                        arrivalTime = now.minus(2.seconds)
+                        departureTime = now.plus(10.seconds)
+                    }
                     .format(now)
             )
         }
@@ -50,20 +56,20 @@ class PredictionTest {
         @Test
         fun boarding() {
             val now = Clock.System.now()
+            val vehicle = vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                stopId = "12345"
+                tripId = "trip1"
+            }
             assertEquals(
                 Prediction.Format.Boarding,
-                prediction(
-                        departureTime = now.plus(10.seconds),
-                        stopId = "12345",
-                        trip = trip(id = "trip1"),
-                        vehicle =
-                            vehicle(
-                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
-                                stopId = "12345",
-                                tripId = "trip1"
-                            )
-                    )
-                    .format(now)
+                prediction {
+                        departureTime = now.plus(10.seconds)
+                        stopId = "12345"
+                        tripId = "trip1"
+                        vehicleId = vehicle.id
+                    }
+                    .format(now, vehicle)
             )
         }
 
@@ -71,52 +77,52 @@ class PredictionTest {
         fun `not boarding`() {
             val now = Clock.System.now()
             // wrong vehicle status
+            var vehicle = vehicle {
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                stopId = "12345"
+                tripId = "trip1"
+            }
             assertNotEquals(
                 Prediction.Format.Boarding,
-                prediction(
-                        departureTime = now.plus(10.seconds),
-                        stopId = "12345",
-                        trip = trip(id = "trip1"),
-                        vehicle =
-                            vehicle(
-                                currentStatus = Vehicle.CurrentStatus.IncomingAt,
-                                stopId = "12345",
-                                tripId = "trip1"
-                            )
-                    )
-                    .format(now)
+                prediction {
+                        departureTime = now.plus(10.seconds)
+                        stopId = "12345"
+                        tripId = "trip1"
+                        vehicleId = vehicle.id
+                    }
+                    .format(now, vehicle)
             )
             // wrong stop ID
+            vehicle = vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                stopId = "67890"
+                tripId = "trip1"
+            }
             assertNotEquals(
                 Prediction.Format.Boarding,
-                prediction(
-                        departureTime = now.plus(10.seconds),
-                        stopId = "12345",
-                        trip = trip(id = "trip"),
-                        vehicle =
-                            vehicle(
-                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
-                                stopId = "67890",
-                                tripId = "trip1"
-                            )
-                    )
-                    .format(now)
+                prediction {
+                        departureTime = now.plus(10.seconds)
+                        stopId = "12345"
+                        tripId = "trip1"
+                        vehicleId = vehicle.id
+                    }
+                    .format(now, vehicle)
             )
             // wrong trip ID
+            vehicle = vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                stopId = "12345"
+                tripId = "trip2"
+            }
             assertNotEquals(
                 Prediction.Format.Boarding,
-                prediction(
-                        departureTime = now.plus(10.seconds),
-                        stopId = "12345",
-                        trip = trip(id = "trip1"),
-                        vehicle =
-                            vehicle(
-                                currentStatus = Vehicle.CurrentStatus.StoppedAt,
-                                stopId = "12345",
-                                tripId = "trip2"
-                            )
-                    )
-                    .format(now)
+                prediction {
+                        departureTime = now.plus(10.seconds)
+                        stopId = "12345"
+                        tripId = "trip1"
+                        vehicleId = vehicle.id
+                    }
+                    .format(now, vehicle)
             )
         }
 
@@ -125,12 +131,15 @@ class PredictionTest {
             val now = Clock.System.now()
             assertEquals(
                 Prediction.Format.Arriving,
-                prediction(arrivalTime = now.plus(10.seconds), departureTime = now.plus(20.seconds))
+                prediction {
+                        arrivalTime = now.plus(10.seconds)
+                        departureTime = now.plus(20.seconds)
+                    }
                     .format(now)
             )
             assertEquals(
                 Prediction.Format.Arriving,
-                prediction(departureTime = now.plus(15.seconds)).format(now)
+                prediction { departureTime = now.plus(15.seconds) }.format(now)
             )
         }
 
@@ -139,12 +148,15 @@ class PredictionTest {
             val now = Clock.System.now()
             assertEquals(
                 Prediction.Format.Approaching,
-                prediction(arrivalTime = now.plus(45.seconds), departureTime = now.plus(50.seconds))
+                prediction {
+                        arrivalTime = now.plus(45.seconds)
+                        departureTime = now.plus(50.seconds)
+                    }
                     .format(now)
             )
             assertEquals(
                 Prediction.Format.Approaching,
-                prediction(departureTime = now.plus(40.seconds)).format(now)
+                prediction { departureTime = now.plus(40.seconds) }.format(now)
             )
         }
 
@@ -156,11 +168,15 @@ class PredictionTest {
 
             assertEquals(
                 Prediction.Format.DistantFuture(future),
-                prediction(arrivalTime = future, departureTime = future.plus(1.minutes)).format(now)
+                prediction {
+                        arrivalTime = future
+                        departureTime = future.plus(1.minutes)
+                    }
+                    .format(now)
             )
             assertEquals(
                 Prediction.Format.DistantFuture(moreFuture),
-                prediction(departureTime = moreFuture).format(now),
+                prediction { departureTime = moreFuture }.format(now)
             )
         }
 
@@ -169,27 +185,27 @@ class PredictionTest {
             val now = Clock.System.now()
             assertEquals(
                 Prediction.Format.Minutes(1),
-                prediction(departureTime = now.plus(89.seconds)).format(now)
+                prediction { departureTime = now.plus(89.seconds) }.format(now)
             )
             assertEquals(
                 Prediction.Format.Minutes(2),
-                prediction(departureTime = now.plus(90.seconds)).format(now)
+                prediction { departureTime = now.plus(90.seconds) }.format(now)
             )
             assertEquals(
                 Prediction.Format.Minutes(2),
-                prediction(departureTime = now.plus(149.seconds)).format(now)
+                prediction { departureTime = now.plus(149.seconds) }.format(now)
             )
             assertEquals(
                 Prediction.Format.Minutes(3),
-                prediction(departureTime = now.plus(150.seconds)).format(now)
+                prediction { departureTime = now.plus(150.seconds) }.format(now)
             )
             assertEquals(
                 Prediction.Format.Minutes(3),
-                prediction(departureTime = now.plus(209.seconds)).format(now)
+                prediction { departureTime = now.plus(209.seconds) }.format(now)
             )
             assertEquals(
                 Prediction.Format.Minutes(45),
-                prediction(departureTime = now.plus(45.minutes)).format(now)
+                prediction { departureTime = now.plus(45.minutes) }.format(now)
             )
         }
     }

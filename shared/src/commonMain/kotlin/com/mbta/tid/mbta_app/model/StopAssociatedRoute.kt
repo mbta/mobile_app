@@ -1,10 +1,25 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
+
+data class PredictionWithVehicle
+@DefaultArgumentInterop.Enabled
+constructor(val prediction: Prediction, val vehicle: Vehicle? = null) :
+    Comparable<PredictionWithVehicle> {
+    override fun compareTo(other: PredictionWithVehicle) = prediction.compareTo(other.prediction)
+
+    fun format(now: Instant) = prediction.format(now, vehicle)
+}
+
+data class PatternAndStop(val patternId: String, val stopId: String)
+
+typealias PredictionsByPatternAndStop = Map<PatternAndStop, List<PredictionWithVehicle>>
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -14,11 +29,11 @@ import kotlinx.datetime.Instant
 data class PatternsByHeadsign(
     val headsign: String,
     val patterns: List<RoutePattern>,
-    val predictions: List<Prediction>? = null
+    val predictions: List<PredictionWithVehicle>? = null
 ) : Comparable<PatternsByHeadsign> {
     constructor(
         staticData: NearbyStaticData.HeadsignWithPatterns,
-        predictionsByPatternAndStop: Map<Pair<String?, String?>, List<Prediction>>?,
+        predictionsByPatternAndStop: PredictionsByPatternAndStop?,
         stopIds: Set<String>
     ) : this(
         staticData.headsign,
@@ -28,7 +43,7 @@ data class PatternsByHeadsign(
                 .flatMap { routePattern ->
                     stopIds
                         .mapNotNull { stopId ->
-                            predictionsByPatternAndStop[routePattern.id to stopId]
+                            predictionsByPatternAndStop[PatternAndStop(routePattern.id, stopId)]
                         }
                         .flatten()
                 }
@@ -54,13 +69,13 @@ data class PatternsByHeadsign(
      */
     fun isPredictedBefore(cutoffTime: Instant) =
         predictions?.any {
-            val predictionTime = it.predictionTime
+            val predictionTime = it.prediction.predictionTime
             predictionTime != null && predictionTime < cutoffTime
         }
             ?: true
 
     override fun compareTo(other: PatternsByHeadsign): Int =
-        patterns.first().sortOrder.compareTo(other.patterns.first().sortOrder)
+        patterns.first().compareTo(other.patterns.first())
 }
 
 /**
@@ -72,7 +87,7 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
 
     constructor(
         staticData: NearbyStaticData.StopWithPatterns,
-        predictionsByPatternAndStop: Map<Pair<String?, String?>, List<Prediction>>?,
+        predictionsByPatternAndStop: PredictionsByPatternAndStop?,
         cutoffTime: Instant
     ) : this(
         staticData.stop,
@@ -97,7 +112,7 @@ data class StopAssociatedRoute(
 ) {
     constructor(
         staticData: NearbyStaticData.RouteWithStops,
-        predictionsByPatternAndStop: Map<Pair<String?, String?>, List<Prediction>>?,
+        predictionsByPatternAndStop: PredictionsByPatternAndStop?,
         cutoffTime: Instant,
         sortByDistanceFrom: Position
     ) : this(
@@ -105,7 +120,12 @@ data class StopAssociatedRoute(
         staticData.patternsByStop
             .map { PatternsByStop(it, predictionsByPatternAndStop, cutoffTime) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
-            .sortedBy { it.distanceFrom(sortByDistanceFrom) }
+            .sortedWith(
+                compareBy(
+                    { it.distanceFrom(sortByDistanceFrom) },
+                    { it.patternsByHeadsign.first() }
+                )
+            )
     )
 
     @OptIn(ExperimentalTurfApi::class)
@@ -119,11 +139,22 @@ data class StopAssociatedRoute(
  */
 fun NearbyStaticData.withRealtimeInfo(
     sortByDistanceFrom: Position,
-    predictions: List<Prediction>?,
+    predictions: PredictionsStreamDataResponse?,
     filterAtTime: Instant
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
-    val predictionsByPatternAndStop = predictions?.groupBy { it.trip.routePatternId to it.stopId }
+    val predictionsByPatternAndStop =
+        predictions?.let { streamData ->
+            streamData.predictions.values.groupBy(
+                { prediction ->
+                    val trip = streamData.trips.getValue(prediction.tripId)
+                    PatternAndStop(trip.routePatternId, prediction.stopId)
+                },
+                { prediction ->
+                    PredictionWithVehicle(prediction, streamData.vehicles[prediction.vehicleId])
+                }
+            )
+        }
     val cutoffTime = filterAtTime.plus(90.minutes)
 
     return data
@@ -131,5 +162,5 @@ fun NearbyStaticData.withRealtimeInfo(
             StopAssociatedRoute(it, predictionsByPatternAndStop, cutoffTime, sortByDistanceFrom)
         }
         .filterNot { it.patternsByStop.isEmpty() }
-        .sortedBy { it.distanceFrom(sortByDistanceFrom) }
+        .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
 }

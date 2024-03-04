@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.PredictionsStopsChannel
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
@@ -17,10 +18,12 @@ import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 
 class PhoenixSocketTest {
     @Test
     fun testInteractsWithSession() = runBlocking {
+        val trip = Trip("trip", "Harvard", "Magenta-30-0", "", null)
         val prediction =
             Prediction(
                 "prediction",
@@ -31,8 +34,8 @@ class PhoenixSocketTest {
                 Prediction.ScheduleRelationship.Scheduled,
                 null,
                 17,
-                null,
-                Trip("trip", "Harvard", "Magenta-30-0", null),
+                "8",
+                "trip",
                 null
             )
         val session =
@@ -51,7 +54,11 @@ class PhoenixSocketTest {
                     event = "stream_data",
                     payload =
                         buildJsonObject {
-                            put("predictions", json.encodeToJsonElement(listOf(prediction)))
+                            putJsonObject("predictions") {
+                                put(prediction.id, json.encodeToJsonElement(prediction))
+                            }
+                            putJsonObject("trips") { put(trip.id, json.encodeToJsonElement(trip)) }
+                            putJsonObject("vehicles") {}
                         }
                 )
                 expectSend(
@@ -69,7 +76,14 @@ class PhoenixSocketTest {
             val channel = PredictionsStopsChannel(socket, listOf("place-boyls"))
             channel.join()
             val actualPredictions = channel.predictions.take(1).toList(mutableListOf()).first()
-            assertEquals(listOf(prediction), actualPredictions)
+            assertEquals(
+                PredictionsStreamDataResponse(
+                    predictions = mapOf(prediction.id to prediction),
+                    trips = mapOf(trip.id to trip),
+                    vehicles = emptyMap()
+                ),
+                actualPredictions
+            )
             channel.leave()
             socket.disconnect()
         }
