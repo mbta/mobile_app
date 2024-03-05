@@ -13,7 +13,34 @@
     "BRD" : {
 
     },
-    "Error fetching predictions: %@" : {
+    "Couldn't load nearby transit, connection was interrupted" : {
+
+    },
+    "Couldn't load nearby transit, invalid response" : {
+
+    },
+    "Couldn't load nearby transit, no response from the server" : {
+
+    },
+    "Couldn't load nearby transit, something went wrong" : {
+
+    },
+    "Couldn't load nearby transit, unable to parse response" : {
+
+    },
+    "Couldn't load real time predictions, connection was interrupted" : {
+
+    },
+    "Couldn't load real time predictions, invalid response" : {
+
+    },
+    "Couldn't load real time predictions, no response from the server" : {
+
+    },
+    "Couldn't load real time predictions, something went wrong" : {
+
+    },
+    "Couldn't load real time predictions, unable to parse response" : {
 
     },
     "Loading..." : {

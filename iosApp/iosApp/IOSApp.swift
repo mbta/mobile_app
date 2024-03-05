@@ -36,8 +36,9 @@ struct IOSApp: App {
                 .task {
                     do {
                         try await backend.runSocket()
-                    } catch {
-                        predictionsFetcher.socketError = error
+                    } catch let error as NSError {
+                        predictionsFetcher.error = error
+                        predictionsFetcher.errorText = predictionsFetcher.getErrorText(error: error)
                     }
                 }
         }

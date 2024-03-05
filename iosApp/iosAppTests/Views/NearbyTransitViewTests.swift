@@ -34,9 +34,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 super.init(backend: IdleBackend())
             }
 
-            override func getNearby(latitude _: Double, longitude _: Double) async throws {
+            override func getNearby(latitude _: Double, longitude _: Double) async {
                 getNearbyExpectation.fulfill()
-                throw NotUnderTestError()
             }
         }
 
@@ -121,9 +120,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        override func getNearby(latitude _: Double, longitude _: Double) async throws {
-            throw NotUnderTestError()
-        }
+        override func getNearby(latitude _: Double, longitude _: Double) async {}
     }
 
     @MainActor func testRoutePatternsGroupedByRouteAndStop() throws {

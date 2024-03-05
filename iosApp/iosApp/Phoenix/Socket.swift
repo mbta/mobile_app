@@ -40,7 +40,13 @@ func decodeWithRawMessage(data: Data) -> Any? {
         event = ["jsonPayload": messageParts.rawEventString, "payload": eventPayload]
     }
 
-    return [messageParts.joinRef as Any, messageParts.messageRef as Any, messageParts.topic, messageParts.eventName, event]
+    return [
+        messageParts.joinRef as Any,
+        messageParts.messageRef as Any,
+        messageParts.topic,
+        messageParts.eventName,
+        event,
+    ]
 }
 
 struct DecodedMessageParts {
@@ -76,7 +82,12 @@ private func decodeMessageParts(data: Data) -> DecodedMessageParts {
 
     let rawEventString = String(rawStringMessage.dropLast()) // remove ]
 
-    return .init(joinRef: parseValue(str: joinRef), messageRef: parseValue(str: messageRef), topic: topic, eventName: eventName, rawEventString: rawEventString)
+    return .init(
+        joinRef: parseValue(str: joinRef),
+        messageRef: parseValue(str: messageRef),
+        topic: topic, eventName: eventName,
+        rawEventString: rawEventString
+    )
 }
 
 private func parseValue(str: String) -> String? {
