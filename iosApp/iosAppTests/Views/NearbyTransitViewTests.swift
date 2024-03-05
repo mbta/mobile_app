@@ -407,4 +407,44 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [joinExpectation], timeout: 1)
     }
+
+    func testNearbyErrorMessage() throws {
+        class FakeNearbyFetcher: NearbyFetcher {
+            init() {
+                super.init(backend: IdleBackend())
+                errorText = Text("Failed to load nearby transit, test error")
+            }
+        }
+
+        var sut = NearbyTransitView(
+            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: FakeNearbyFetcher(),
+            predictionsFetcher: .init(backend: IdleBackend())
+        )
+
+        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load nearby transit, test error"))
+    }
+
+    func testPredictionErrorMessage() throws {
+        class FakeNearbyFetcher: NearbyFetcher {
+            init() {
+                super.init(backend: IdleBackend())
+                nearbyByRouteAndStop = NearbyStaticData(data: [])
+            }
+        }
+        class FakePredictionsFetcher: PredictionsFetcher {
+            init() {
+                super.init(backend: IdleBackend())
+                errorText = Text("Failed to load predictions, test error")
+            }
+        }
+
+        var sut = NearbyTransitView(
+            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: FakeNearbyFetcher(),
+            predictionsFetcher: FakePredictionsFetcher()
+        )
+
+        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load predictions, test error"))
+    }
 }
