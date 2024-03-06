@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class Trip(
     override val id: String,
     val headsign: String,
-    @SerialName("route_pattern_id") val routePatternId: String,
-    @SerialName("shape_id") val shapeId: String,
+    @SerialName("route_pattern_id") val routePatternId: String? = null,
+    @SerialName("shape_id") val shapeId: String? = null,
     @SerialName("stop_ids") val stopIds: List<String>? = null
 ) : BackendObject
