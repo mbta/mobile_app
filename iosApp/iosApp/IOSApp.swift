@@ -1,4 +1,6 @@
+import os
 import shared
+import SwiftPhoenixClient
 import SwiftUI
 
 @main
@@ -13,15 +15,29 @@ struct IOSApp: App {
     @StateObject var predictionsFetcher: PredictionsFetcher
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
+    @StateObject var socketProvider: SocketProvider
 
     init() {
+        let socket = Socket(SocketUtils.companion.url)
+        socket.withRawMessages()
+        socket.onOpen {
+            Logger().debug("Socket opened")
+        }
+        socket.onClose {
+            Logger().debug("Socket closed")
+        }
+        self.init(socket: socket)
+    }
+
+    init(socket: PhoenixSocket) {
         let backend = backend
 
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
-        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(backend: backend))
+        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
+        _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
     }
 
     var body: some Scene {
@@ -33,13 +49,7 @@ struct IOSApp: App {
                 .environmentObject(predictionsFetcher)
                 .environmentObject(railRouteShapeFetcher)
                 .environmentObject(searchResultFetcher)
-                .task {
-                    do {
-                        try await backend.runSocket()
-                    } catch {
-                        predictionsFetcher.socketError = error
-                    }
-                }
+                .environmentObject(socketProvider)
         }
     }
 }
