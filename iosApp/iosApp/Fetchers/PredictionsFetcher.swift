@@ -6,66 +6,113 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Foundation
+import os
 import shared
+import SwiftPhoenixClient
 import SwiftUI
+
+enum PhoenixChannelError: Error {
+    case channelError(String)
+}
 
 class PredictionsFetcher: ObservableObject {
     @Published var connecting: Bool = false
     @Published var predictions: PredictionsStreamDataResponse?
-    @Published var error: NSError?
+    @Published var socketError: Error?
     @Published var errorText: Text?
 
-    let backend: any BackendProtocol
-    var channel: PredictionsStopsChannel?
+    let socket: PhoenixSocket
+    var channel: Channel?
+    var onMessageSuccessCallback: (() -> Void)?
+    var onErrorCallback: (() -> Void)?
 
-    init(backend: any BackendProtocol) {
-        self.backend = backend
+    init(socket: PhoenixSocket, onMessageSuccessCallback: (() -> Void)? = nil, onErrorCallback: (() -> Void)? = nil) {
+        self.socket = socket
+        self.onMessageSuccessCallback = onMessageSuccessCallback
+        self.onErrorCallback = onErrorCallback
     }
 
-    @MainActor func run(stopIds: [String]) async {
+    func run(stopIds: [String]) {
         connecting = true
-        do {
-            _ = try await channel?.leave()
-            let channel = try await backend.predictionsStopsChannel(stopIds: stopIds)
-            _ = try await channel.join()
-            self.channel = channel
-            error = nil
-            errorText = nil
-            for await predictions in channel.predictions {
-                self.predictions = predictions
+        socket.connect()
+        let joinPayload = PredictionsForStopsChannel.companion.joinPayload(stopIds: stopIds)
+        channel = socket.channel(PredictionsForStopsChannel.companion.topic, params: joinPayload)
+
+        channel?.on(PredictionsForStopsChannel.companion.newDataEvent, callback: { message in
+            self.handleNewDataMessage(message: message)
+        })
+        channel?.onError { message in
+            DispatchQueue.main.async {
+                self.socketError = PhoenixChannelError.channelError("A: \(message.payload)")
+                self.errorText = Text("Failed to load new predictions, something went wrong")
+                if let callback = self.onErrorCallback {
+                    callback()
+                }
             }
-        } catch let error as NSError {
-            self.error = error
-            errorText = getErrorText(error: error)
         }
-        connecting = false
+
+        channel?.onClose { message in
+            Logger().debug("leaving channel \(message.topic)")
+            DispatchQueue.main.async {
+                self.connecting = false
+            }
+        }
+        channel?.join().receive("ok") { message in
+            Logger().debug("joined channel \(message.topic)")
+            DispatchQueue.main.async {
+                self.connecting = false
+            }
+        }.receive("error", callback: { message in
+            DispatchQueue.main.async {
+                self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
+                self.errorText = Text("Failed to load predictions, could not connect to the server")
+                if let callback = self.onErrorCallback {
+                    callback()
+                }
+                self.connecting = false
+            }
+        })
     }
 
-    @MainActor func leave() async {
+    private func handleNewDataMessage(message: Message) {
         do {
-            _ = try await channel?.leave()
-            channel = nil
-            predictions = nil
-            error = nil
-            errorText = nil
-        } catch let error as NSError {
-            self.error = error
-            self.errorText = getErrorText(error: error)
+            let rawPayload: String? = message.jsonPayload()
+
+            if let stringPayload = rawPayload {
+                let newPredictions = try PredictionsForStopsChannel.companion
+                    .parseMessage(payload: stringPayload)
+                Logger().debug("Received \(newPredictions.predictions.count) predictions")
+                DispatchQueue.main.async {
+                    self.predictions = newPredictions
+                    self.socketError = nil
+                    self.errorText = nil
+                    if let callback = self.onMessageSuccessCallback {
+                        callback()
+                    }
+                }
+            } else {
+                Logger().error("No jsonPayload found for message \(message.payload)")
+                if let callback = onErrorCallback {
+                    callback()
+                }
+            }
+
+        } catch {
+            DispatchQueue.main.async {
+                self.socketError = PhoenixChannelError.channelError("C: \(message.payload)")
+                self.errorText = Text("Failed to load new predictions, something went wrong")
+            }
+            Logger().error("\(error)")
         }
     }
 
-    func getErrorText(error: NSError) -> Text {
-        switch error.kotlinException {
-        case is Ktor_client_coreHttpRequestTimeoutException:
-            Text("Couldn't load real time predictions, no response from the server")
-        case is Ktor_ioIOException:
-            Text("Couldn't load real time predictions, connection was interrupted")
-        case is Ktor_serializationJsonConvertException:
-            Text("Couldn't load real time predictions, unable to parse response")
-        case is Ktor_client_coreResponseException:
-            Text("Couldn't load real time predictions, invalid response")
-        default:
-            Text("Couldn't load real time predictions, something went wrong")
-        }
+    func leave() {
+        channel?.leave()
+        channel = nil
+        predictions = nil
+        errorText = nil
+        socketError = nil
+        connecting = false
     }
 }

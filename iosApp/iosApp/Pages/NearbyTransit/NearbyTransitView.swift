@@ -40,13 +40,13 @@ struct NearbyTransitView: View {
             guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
-            await predictionsFetcher.run(stopIds: stopIdList)
+            predictionsFetcher.run(stopIds: stopIdList)
         }
     }
 
     func leavePredictions() {
         Task {
-            await predictionsFetcher.leave()
+            predictionsFetcher.leave()
         }
     }
 

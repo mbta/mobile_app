@@ -33,7 +33,10 @@ import kotlinx.coroutines.sync.withLock
 class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
 
-    private val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
+    companion object {
+        const val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
+    }
+
     private val httpClient =
         HttpClient(engine) {
             install(ContentNegotiation) { json(json) }

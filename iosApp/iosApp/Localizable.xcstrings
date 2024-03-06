@@ -28,19 +28,10 @@
     "Couldn't load nearby transit, unable to parse response" : {
 
     },
-    "Couldn't load real time predictions, connection was interrupted" : {
+    "Failed to load new predictions, something went wrong" : {
 
     },
-    "Couldn't load real time predictions, invalid response" : {
-
-    },
-    "Couldn't load real time predictions, no response from the server" : {
-
-    },
-    "Couldn't load real time predictions, something went wrong" : {
-
-    },
-    "Couldn't load real time predictions, unable to parse response" : {
+    "Failed to load predictions, could not connect to the server" : {
 
     },
     "Loading..." : {
