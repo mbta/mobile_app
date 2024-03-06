@@ -17,6 +17,28 @@ final class PredictionsFetcherTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    func testSocketConnectCalledOnRun() {
+        class FakeSocket: MockSocket {
+            let connectionExpectation: XCTestExpectation
+
+            init(connectionExpectation: XCTestExpectation) {
+                self.connectionExpectation = connectionExpectation
+            }
+
+            override func connect() {
+                connectionExpectation.fulfill()
+            }
+        }
+
+        let connectionExpectation = XCTestExpectation(description: "Socket connected")
+
+        let mockSocket = FakeSocket(connectionExpectation: connectionExpectation)
+        let predictionsFetcher = PredictionsFetcher(socket: mockSocket)
+
+        predictionsFetcher.run(stopIds: ["1"])
+        wait(for: [connectionExpectation])
+    }
+
     func testChannelSetOnRun() {
         let mockSocket = MockSocket()
         let predictionsFetcher = PredictionsFetcher(socket: mockSocket)

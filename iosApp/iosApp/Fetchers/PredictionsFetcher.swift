@@ -30,6 +30,7 @@ class PredictionsFetcher: ObservableObject {
     }
 
     func run(stopIds: [String]) {
+        socket.connect()
         let joinPayload = PredictionsForStopsChannel.companion.joinPayload(stopIds: stopIds)
         channel = socket.channel(PredictionsForStopsChannel.companion.topic, params: joinPayload)
 
