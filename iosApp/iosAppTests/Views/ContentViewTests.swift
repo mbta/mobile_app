@@ -20,8 +20,11 @@ final class ContentViewTests: XCTestCase {
     }
 
     func testDisconnectsSocketAfterBackgrounding() throws {
-        var connectedExpectation = expectation(description: "Socket has connected")
-        var disconnectedExpectation = expectation(description: "Socket has disconnected")
+        let connectedExpectation = expectation(description: "Socket has connected")
+        let disconnectedExpectation = expectation(description: "Socket has disconnected")
+
+        let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
+                                                    disconnectedExpectation: disconnectedExpectation)
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
@@ -30,7 +33,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket(connectedExpectation: connectedExpectation, disconnectedExpectation: disconnectedExpectation)))
+            .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
 
@@ -41,10 +44,13 @@ final class ContentViewTests: XCTestCase {
     }
 
     func testReconnectsSocketAfterBackgroundingAndReactivating() throws {
-        var disconnectedExpectation = expectation(description: "Socket has disconnected")
-        var connectedExpectation = expectation(description: "Socket has connected")
+        let disconnectedExpectation = expectation(description: "Socket has disconnected")
+        let connectedExpectation = expectation(description: "Socket has connected")
         connectedExpectation.expectedFulfillmentCount = 2
         connectedExpectation.assertForOverFulfill = true
+
+        let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
+                                                    disconnectedExpectation: disconnectedExpectation)
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
@@ -53,7 +59,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket(connectedExpectation: connectedExpectation, disconnectedExpectation: disconnectedExpectation)))
+            .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
 

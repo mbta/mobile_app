@@ -69,7 +69,12 @@ final class PredictionsFetcherTests: XCTestCase {
         XCTAssertEqual(predictionsFetcher.predictions, nil)
         predictionsFetcher.run(stopIds: ["1"])
 
-        predictionsFetcher.channel!.trigger(Message(ref: "1", topic: PredictionsForStopsChannel.companion.topic, event: PredictionsForStopsChannel.companion.newDataEvent, payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"], joinRef: "2"))
+        predictionsFetcher.channel!
+            .trigger(Message(ref: "1",
+                             topic: PredictionsForStopsChannel.companion.topic,
+                             event: PredictionsForStopsChannel.companion.newDataEvent,
+                             payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"],
+                             joinRef: "2"))
 
         wait(for: [messageSuccessExpectation], timeout: 1)
 
@@ -105,7 +110,12 @@ final class PredictionsFetcherTests: XCTestCase {
         XCTAssertEqual(predictionsFetcher.predictions, nil)
         predictionsFetcher.run(stopIds: ["1"])
 
-        predictionsFetcher.channel!.trigger(Message(ref: "1", topic: PredictionsForStopsChannel.companion.topic, event: PredictionsForStopsChannel.companion.newDataEvent, payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"], joinRef: "2"))
+        predictionsFetcher.channel!
+            .trigger(Message(ref: "1",
+                             topic: PredictionsForStopsChannel.companion.topic,
+                             event: PredictionsForStopsChannel.companion.newDataEvent,
+                             payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"],
+                             joinRef: "2"))
 
         wait(for: [messageSuccessExpectation], timeout: 1)
 
