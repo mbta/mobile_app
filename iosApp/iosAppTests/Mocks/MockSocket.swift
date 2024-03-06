@@ -1,0 +1,37 @@
+//
+//  MockSocket.swift
+//  iosAppTests
+//
+//  Created by Brady, Kayla on 3/4/24.
+//  Copyright © 2024 MBTA. All rights reserved.
+//
+
+import Foundation
+@testable import iosApp
+@testable import SwiftPhoenixClient
+
+open class MockSocket: PhoenixSocket {
+    public var channels: [SwiftPhoenixClient.Channel] = []
+
+    public func channel(_ topic: String, params _: [String: Any]) -> Channel {
+        let channel = Channel(topic: topic, socket: Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() }))
+        channels.append(channel)
+        return channel
+    }
+
+    public func onOpen(callback _: @escaping () -> Void) -> String {
+        "Opened"
+    }
+
+    public func onError(error _: Error, response _: URLResponse?) {}
+
+    public func onMessage(message _: String) {}
+
+    public func onClose(callback _: @escaping () -> Void) -> String {
+        "Closed"
+    }
+
+    public func connect() {}
+
+    public func disconnect(code _: SwiftPhoenixClient.Socket.CloseCode, reason _: String?, callback _: (() -> Void)?) {}
+}

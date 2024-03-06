@@ -9,6 +9,7 @@
 import CoreLocation
 @testable import iosApp
 import shared
+import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
@@ -21,7 +22,8 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testPending() throws {
-        let sut = NearbyTransitView(location: nil, nearbyFetcher: NearbyFetcher(backend: IdleBackend()), predictionsFetcher: .init(backend: IdleBackend()))
+        let sut = NearbyTransitView(location: nil, nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
+                                    predictionsFetcher: .init(socket: MockSocket()))
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
 
@@ -45,7 +47,7 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
-            predictionsFetcher: .init(backend: IdleBackend())
+            predictionsFetcher: .init(socket: MockSocket())
         )
 
         let hasAppeared = sut.on(\NearbyTransitView.didAppear) { _ in }
@@ -130,7 +132,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: Route52NearbyFetcher(),
-            predictionsFetcher: .init(backend: IdleBackend())
+            predictionsFetcher: .init(socket: MockSocket())
         )
 
         let routes = try sut.inspect().findAll(NearbyRouteView.self)
@@ -150,7 +152,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         @MainActor class FakePredictionsFetcher: PredictionsFetcher {
             init(distantInstant: Instant? = nil) {
-                super.init(backend: IdleBackend())
+                super.init(socket: MockSocket())
                 let objects = ObjectCollectionBuilder()
                 let trip1 = objects.trip { trip in
                     trip.routePatternId = "52-5-0"
@@ -227,10 +229,10 @@ final class NearbyTransitViewTests: XCTestCase {
             init(sawmillAtWalshExpectation: XCTestExpectation, lechmereExpectation: XCTestExpectation) {
                 self.sawmillAtWalshExpectation = sawmillAtWalshExpectation
                 self.lechmereExpectation = lechmereExpectation
-                super.init(backend: IdleBackend())
+                super.init(socket: MockSocket())
             }
 
-            override func run(stopIds: [String]) async {
+            override func run(stopIds: [String]) {
                 if stopIds.sorted() == ["84791", "8552"] {
                     sawmillAtWalshExpectation.fulfill()
                 } else if stopIds == ["place-lech"] {
@@ -266,7 +268,7 @@ final class NearbyTransitViewTests: XCTestCase {
     func testRendersUpdatedPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let predictionsFetcher = PredictionsFetcher(backend: IdleBackend())
+        let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
         let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(), predictionsFetcher: predictionsFetcher)
 
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
@@ -302,14 +304,14 @@ final class NearbyTransitViewTests: XCTestCase {
             init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
                 self.joinExpectation = joinExpectation
                 self.leaveExpectation = leaveExpectation
-                super.init(backend: IdleBackend())
+                super.init(socket: MockSocket())
             }
 
-            override func run(stopIds _: [String]) async {
+            override func run(stopIds _: [String]) {
                 joinExpectation.fulfill()
             }
 
-            override func leave() async {
+            override func leave() {
                 leaveExpectation.fulfill()
             }
         }
@@ -340,14 +342,14 @@ final class NearbyTransitViewTests: XCTestCase {
             init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
                 self.joinExpectation = joinExpectation
                 self.leaveExpectation = leaveExpectation
-                super.init(backend: IdleBackend())
+                super.init(socket: MockSocket())
             }
 
-            override func run(stopIds _: [String]) async {
+            override func run(stopIds _: [String]) {
                 joinExpectation.fulfill()
             }
 
-            override func leave() async {
+            override func leave() {
                 leaveExpectation.fulfill()
             }
         }
@@ -381,14 +383,14 @@ final class NearbyTransitViewTests: XCTestCase {
             init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
                 self.joinExpectation = joinExpectation
                 self.leaveExpectation = leaveExpectation
-                super.init(backend: IdleBackend())
+                super.init(socket: MockSocket())
             }
 
-            override func run(stopIds _: [String]) async {
+            override func run(stopIds _: [String]) {
                 joinExpectation.fulfill()
             }
 
-            override func leave() async {
+            override func leave() {
                 leaveExpectation.fulfill()
             }
         }

@@ -1,7 +1,10 @@
 import shared
+import SwiftPhoenixClient
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
+
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
@@ -10,6 +13,7 @@ struct ContentView: View {
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
+    @EnvironmentObject var socketProvider: SocketProvider
 
     var body: some View {
         NavigationView {
@@ -48,17 +52,29 @@ struct ContentView: View {
             text: $searchObserver.searchText,
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Find nearby transit"
-        )
+        ).onAppear {
+            socketProvider.socket.connect()
+        }.onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                socketProvider.socket.connect()
+            } else if newPhase == .background {
+                socketProvider.socket.disconnect(code: .normal, reason: "backgrounded", callback: nil)
+            }
+        }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        let mockSocket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
+
         ContentView()
             .environmentObject(LocationDataManager())
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(backend: IdleBackend()))
+            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
+            .environmentObject(PredictionsFetcher(socket: mockSocket))
+            .environmentObject(SocketProvider(socket: mockSocket))
     }
 }
