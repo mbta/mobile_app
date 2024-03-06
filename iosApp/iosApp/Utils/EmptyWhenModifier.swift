@@ -1,5 +1,5 @@
 //
-//  EmptyModifier.swift
+//  EmptyWhenModifier.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 3/5/24.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct EmptyModifier: ViewModifier {
+struct EmptyWhenModifier: ViewModifier {
     var isEmpty: Bool
 
     func body(content: Content) -> some View {
@@ -20,8 +20,8 @@ struct EmptyModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func emptyWhen(_ isEmpty: Bool) -> some View {
-        modifier(EmptyModifier(isEmpty: isEmpty))
+        modifier(EmptyWhenModifier(isEmpty: isEmpty))
     }
 }

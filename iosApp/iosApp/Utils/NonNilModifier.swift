@@ -49,7 +49,7 @@ struct NonNilBelowModifier<Value, NonNilContent>: ViewModifier where NonNilConte
     }
 }
 
-extension View {
+public extension View {
     func replaceWhen<Value>(
         _ value: Value?,
         _ nonNilContentBuilder: @escaping (_ value: Value) -> some View

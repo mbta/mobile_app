@@ -416,7 +416,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        var sut = NearbyTransitView(
+        let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: FakeNearbyFetcher(),
             predictionsFetcher: .init(backend: IdleBackend())
@@ -439,7 +439,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        var sut = NearbyTransitView(
+        let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: FakeNearbyFetcher(),
             predictionsFetcher: FakePredictionsFetcher()
