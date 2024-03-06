@@ -59,7 +59,7 @@ struct NearbyTransitView: View {
                 List(nearby, id: \.route.id) { nearbyRoute in
                     NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
                 }.putAboveWhen(predictionsFetcher.errorText) { errorText in
-                    IconCard(details: errorText).symbol("network.slash")
+                    IconCard(iconName: "network.slash", details: errorText)
                 }
             } else {
                 Text("Loading...")
@@ -94,11 +94,8 @@ struct NearbyTransitView: View {
         }
         .emptyWhen(location == nil)
         .replaceWhen(nearbyFetcher.errorText) { errorText in
-            IconCard(
-                details: errorText
-            )
-            .symbol("network.slash")
-            .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
+            IconCard(iconName: "network.slash", details: errorText)
+                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
         }
     }
 }

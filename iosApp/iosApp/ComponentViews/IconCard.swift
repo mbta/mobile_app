@@ -9,9 +9,31 @@
 import SwiftUI
 
 struct IconCard: View {
-    var icon: Image = .init(systemName: "exclamationmark.triangle")
+    var icon: Image
     var details: Text
     var button: (() -> AnyView)?
+
+    init(icon: Image, details: Text, button: (() -> AnyView)? = nil) {
+        self.icon = icon
+        self.details = details
+        self.button = button
+    }
+
+    init(iconName: String, details: Text, button: (() -> AnyView)? = nil) {
+        self.init(
+            icon: .init(systemName: iconName),
+            details: details,
+            button: button
+        )
+    }
+
+    init(details: Text, button: (() -> AnyView)? = nil) {
+        self.init(
+            iconName: "exclamationmark.triangle",
+            details: details,
+            button: button
+        )
+    }
 
     var body: some View {
         HStack {
@@ -44,12 +66,6 @@ extension IconCard {
                 }.frame(width: 20)
             }
         )) }
-        return card
-    }
-
-    func symbol(_ systemName: String) -> IconCard {
-        var card = self
-        card.icon = .init(systemName: systemName)
         return card
     }
 }
