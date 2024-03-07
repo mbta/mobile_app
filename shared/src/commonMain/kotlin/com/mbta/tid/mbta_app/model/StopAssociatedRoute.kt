@@ -17,9 +17,9 @@ constructor(val prediction: Prediction, val vehicle: Vehicle? = null) :
     fun format(now: Instant) = prediction.format(now, vehicle)
 }
 
-data class PatternAndStop(val patternId: String, val stopId: String)
+data class HeadsignAndStop(val headsign: String, val stopId: String)
 
-typealias PredictionsByPatternAndStop = Map<PatternAndStop, List<PredictionWithVehicle>>
+typealias PredictionsByHeadsignAndStop = Map<HeadsignAndStop, List<PredictionWithVehicle>>
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -33,20 +33,17 @@ data class PatternsByHeadsign(
 ) : Comparable<PatternsByHeadsign> {
     constructor(
         staticData: NearbyStaticData.HeadsignWithPatterns,
-        predictionsByPatternAndStop: PredictionsByPatternAndStop?,
+        predictionsByHeadsignAndStop: PredictionsByHeadsignAndStop?,
         stopIds: Set<String>
     ) : this(
         staticData.headsign,
         staticData.patterns,
-        if (predictionsByPatternAndStop != null) {
-            staticData.patterns
-                .flatMap { routePattern ->
-                    stopIds
-                        .mapNotNull { stopId ->
-                            predictionsByPatternAndStop[PatternAndStop(routePattern.id, stopId)]
-                        }
-                        .flatten()
+        if (predictionsByHeadsignAndStop != null) {
+            stopIds
+                .mapNotNull { stopId ->
+                    predictionsByHeadsignAndStop[HeadsignAndStop(staticData.headsign, stopId)]
                 }
+                .flatten()
                 .sorted()
         } else {
             null
@@ -87,13 +84,17 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
 
     constructor(
         staticData: NearbyStaticData.StopWithPatterns,
-        predictionsByPatternAndStop: PredictionsByPatternAndStop?,
+        predictionsByHeadsignAndStop: PredictionsByHeadsignAndStop?,
         cutoffTime: Instant
     ) : this(
         staticData.stop,
         staticData.patternsByHeadsign
             .map {
-                PatternsByHeadsign(it, predictionsByPatternAndStop, stopIds = staticData.allStopIds)
+                PatternsByHeadsign(
+                    it,
+                    predictionsByHeadsignAndStop,
+                    stopIds = staticData.allStopIds
+                )
             }
             .filter { it.isTypical() || it.isPredictedBefore(cutoffTime) }
             .sorted()
@@ -112,13 +113,13 @@ data class StopAssociatedRoute(
 ) {
     constructor(
         staticData: NearbyStaticData.RouteWithStops,
-        predictionsByPatternAndStop: PredictionsByPatternAndStop?,
+        predictionsByHeadsignAndStop: PredictionsByHeadsignAndStop?,
         cutoffTime: Instant,
         sortByDistanceFrom: Position
     ) : this(
         staticData.route,
         staticData.patternsByStop
-            .map { PatternsByStop(it, predictionsByPatternAndStop, cutoffTime) }
+            .map { PatternsByStop(it, predictionsByHeadsignAndStop, cutoffTime) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
             .sortedWith(
                 compareBy(
@@ -143,12 +144,12 @@ fun NearbyStaticData.withRealtimeInfo(
     filterAtTime: Instant
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
-    val predictionsByPatternAndStop =
+    val predictionsByHeadsignAndStop =
         predictions?.let { streamData ->
             streamData.predictions.values.groupBy(
                 { prediction ->
                     val trip = streamData.trips.getValue(prediction.tripId)
-                    PatternAndStop(trip.routePatternId, prediction.stopId)
+                    HeadsignAndStop(trip.headsign, prediction.stopId)
                 },
                 { prediction ->
                     PredictionWithVehicle(prediction, streamData.vehicles[prediction.vehicleId])
@@ -159,7 +160,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     return data
         .map {
-            StopAssociatedRoute(it, predictionsByPatternAndStop, cutoffTime, sortByDistanceFrom)
+            StopAssociatedRoute(it, predictionsByHeadsignAndStop, cutoffTime, sortByDistanceFrom)
         }
         .filterNot { it.patternsByStop.isEmpty() }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))

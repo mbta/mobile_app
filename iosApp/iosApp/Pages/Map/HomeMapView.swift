@@ -156,7 +156,8 @@ struct HomeMapView: View {
             .compactMap { pattern in
                 guard let pattern,
                       let representativeTrip = routesResponse.trips[pattern.representativeTripId],
-                      let shape = routesResponse.shapes[representativeTrip.shapeId] else { return nil }
+                      let shapeId = representativeTrip.shapeId,
+                      let shape = routesResponse.shapes[shapeId] else { return nil }
                 let polyline = Polyline(encodedPolyline: shape.polyline!)
                 return Feature(geometry: LineString(polyline.coordinates!))
             }

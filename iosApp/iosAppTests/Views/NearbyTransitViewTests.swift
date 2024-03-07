@@ -152,10 +152,10 @@ final class NearbyTransitViewTests: XCTestCase {
                 super.init(socket: MockSocket())
                 let objects = ObjectCollectionBuilder()
                 let trip1 = objects.trip { trip in
-                    trip.routePatternId = "52-5-0"
+                    trip.headsign = "Dedham Mall"
                 }
                 let trip2 = objects.trip { trip in
-                    trip.routePatternId = "52-5-1"
+                    trip.headsign = "Watertown Yard"
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
@@ -271,7 +271,7 @@ final class NearbyTransitViewTests: XCTestCase {
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
             let objects = ObjectCollectionBuilder()
             let trip = objects.trip { trip in
-                trip.routePatternId = "52-5-0"
+                trip.headsign = "Dedham Mall"
             }
             objects.prediction { prediction in
                 prediction.departureTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()

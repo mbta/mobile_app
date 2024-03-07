@@ -123,8 +123,8 @@ class ObjectCollectionBuilder {
     class TripBuilder : ObjectBuilder<Trip> {
         var id = uuid()
         var headsign = ""
-        var routePatternId = ""
-        var shapeId = ""
+        var routePatternId: String? = null
+        var shapeId = null
         var stopIds: List<String>? = null
 
         override fun built() = Trip(id, headsign, routePatternId, shapeId, stopIds)

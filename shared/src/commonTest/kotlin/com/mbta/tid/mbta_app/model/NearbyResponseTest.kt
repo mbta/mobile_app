@@ -536,7 +536,7 @@ class NearbyResponseTest {
         val parentStop = objects.stop()
         val childStop = objects.stop { parentStationId = parentStop.id }
         val route1 = objects.route()
-        val pattern1 = objects.routePattern(route1) { representativeTrip {} }
+        val pattern1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
 
         val staticData =
             NearbyStaticData.build {
