@@ -65,7 +65,7 @@ extension IconCard {
                     }
                 }.frame(width: 20)
             }
-        )) }
+        ).disabled(loading)) }
         return card
     }
 }

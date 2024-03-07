@@ -17,7 +17,6 @@ enum PhoenixChannelError: Error {
 }
 
 class PredictionsFetcher: ObservableObject {
-    @Published var connecting: Bool = false
     @Published var predictions: PredictionsStreamDataResponse?
     @Published var socketError: Error?
     @Published var errorText: Text?
@@ -34,7 +33,6 @@ class PredictionsFetcher: ObservableObject {
     }
 
     func run(stopIds: [String]) {
-        connecting = true
         socket.connect()
         let joinPayload = PredictionsForStopsChannel.companion.joinPayload(stopIds: stopIds)
         channel = socket.channel(PredictionsForStopsChannel.companion.topic, params: joinPayload)
@@ -54,15 +52,9 @@ class PredictionsFetcher: ObservableObject {
 
         channel?.onClose { message in
             Logger().debug("leaving channel \(message.topic)")
-            DispatchQueue.main.async {
-                self.connecting = false
-            }
         }
         channel?.join().receive("ok") { message in
             Logger().debug("joined channel \(message.topic)")
-            DispatchQueue.main.async {
-                self.connecting = false
-            }
         }.receive("error", callback: { message in
             DispatchQueue.main.async {
                 self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
@@ -70,7 +62,6 @@ class PredictionsFetcher: ObservableObject {
                 if let callback = self.onErrorCallback {
                     callback()
                 }
-                self.connecting = false
             }
         })
     }
@@ -85,8 +76,6 @@ class PredictionsFetcher: ObservableObject {
                 Logger().debug("Received \(newPredictions.predictions.count) predictions")
                 DispatchQueue.main.async {
                     self.predictions = newPredictions
-                    self.socketError = nil
-                    self.errorText = nil
                     if let callback = self.onMessageSuccessCallback {
                         callback()
                     }
@@ -113,6 +102,5 @@ class PredictionsFetcher: ObservableObject {
         predictions = nil
         errorText = nil
         socketError = nil
-        connecting = false
     }
 }

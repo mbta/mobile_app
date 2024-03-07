@@ -60,7 +60,6 @@ struct NearbyTransitView: View {
                     NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
                 }.putAboveWhen(predictionsFetcher.errorText) { errorText in
                     IconCard(iconName: "network.slash", details: errorText)
-                        .refreshable(predictionsFetcher.connecting, action: joinPredictions)
                 }
             } else {
                 Text("Loading...")
