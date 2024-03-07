@@ -76,6 +76,8 @@ class PredictionsFetcher: ObservableObject {
                 Logger().debug("Received \(newPredictions.predictions.count) predictions")
                 DispatchQueue.main.async {
                     self.predictions = newPredictions
+                    self.socketError = nil
+                    self.errorText = nil
                     if let callback = self.onMessageSuccessCallback {
                         callback()
                     }
