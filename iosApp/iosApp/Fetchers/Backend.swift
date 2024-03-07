@@ -15,7 +15,6 @@ protocol BackendProtocol {
     func getNearby(latitude: Double, longitude: Double) async throws -> StopAndRoutePatternResponse
     func getSearchResults(query: String) async throws -> SearchResponse
     func getRailRouteShapes() async throws -> RouteResponse
-    func predictionsStopsChannel(stopIds: [String]) async throws -> PredictionsStopsChannel
 }
 
 extension Backend: BackendProtocol {}
@@ -44,10 +43,6 @@ struct IdleBackend: BackendProtocol {
     }
 
     func getSearchResults(query _: String) async throws -> SearchResponse {
-        await hang()
-    }
-
-    func predictionsStopsChannel(stopIds _: [String]) async throws -> PredictionsStopsChannel {
         await hang()
     }
 }
