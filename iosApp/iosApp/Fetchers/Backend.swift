@@ -10,6 +10,7 @@ import Foundation
 import shared
 
 protocol BackendProtocol {
+    func runSocket() async throws
     func getGlobalData() async throws -> StopAndRoutePatternResponse
     func getNearby(latitude: Double, longitude: Double) async throws -> StopAndRoutePatternResponse
     func getSearchResults(query: String) async throws -> SearchResponse
@@ -24,6 +25,10 @@ struct IdleBackend: BackendProtocol {
         while true {
             try? await Task.sleep(nanoseconds: .max)
         }
+    }
+
+    func runSocket() async throws {
+        await hang()
     }
 
     func getGlobalData() async throws -> StopAndRoutePatternResponse {

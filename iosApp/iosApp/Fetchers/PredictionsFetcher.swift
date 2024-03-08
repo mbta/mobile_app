@@ -10,6 +10,7 @@ import Foundation
 import os
 import shared
 import SwiftPhoenixClient
+import SwiftUI
 
 enum PhoenixChannelError: Error {
     case channelError(String)
@@ -18,6 +19,8 @@ enum PhoenixChannelError: Error {
 class PredictionsFetcher: ObservableObject {
     @Published var predictions: PredictionsStreamDataResponse?
     @Published var socketError: Error?
+    @Published var errorText: Text?
+
     let socket: PhoenixSocket
     var channel: Channel?
     var onMessageSuccessCallback: (() -> Void)?
@@ -36,11 +39,11 @@ class PredictionsFetcher: ObservableObject {
 
         channel?.on(PredictionsForStopsChannel.companion.newDataEvent, callback: { message in
             self.handleNewDataMessage(message: message)
-
         })
         channel?.onError { message in
             DispatchQueue.main.async {
                 self.socketError = PhoenixChannelError.channelError("A: \(message.payload)")
+                self.errorText = Text("Failed to load new predictions, something went wrong")
                 if let callback = self.onErrorCallback {
                     callback()
                 }
@@ -55,6 +58,7 @@ class PredictionsFetcher: ObservableObject {
         }.receive("error", callback: { message in
             DispatchQueue.main.async {
                 self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
+                self.errorText = Text("Failed to load predictions, could not connect to the server")
                 if let callback = self.onErrorCallback {
                     callback()
                 }
@@ -73,6 +77,7 @@ class PredictionsFetcher: ObservableObject {
                 DispatchQueue.main.async {
                     self.predictions = newPredictions
                     self.socketError = nil
+                    self.errorText = nil
                     if let callback = self.onMessageSuccessCallback {
                         callback()
                     }
@@ -87,6 +92,7 @@ class PredictionsFetcher: ObservableObject {
         } catch {
             DispatchQueue.main.async {
                 self.socketError = PhoenixChannelError.channelError("C: \(message.payload)")
+                self.errorText = Text("Failed to load new predictions, something went wrong")
             }
             Logger().error("\(error)")
         }
@@ -96,5 +102,7 @@ class PredictionsFetcher: ObservableObject {
         channel?.leave()
         channel = nil
         predictions = nil
+        errorText = nil
+        socketError = nil
     }
 }

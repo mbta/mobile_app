@@ -28,12 +28,10 @@ struct NearbyTransitView: View {
     func getNearby(location: CLLocationCoordinate2D?) {
         Task {
             if location == nil { return }
-            do {
-                try await nearbyFetcher
-                    .getNearby(latitude: location!.latitude, longitude: location!.longitude)
-            } catch {
-                debugPrint(error)
-            }
+            await nearbyFetcher.getNearby(
+                latitude: location!.latitude,
+                longitude: location!.longitude
+            )
         }
     }
 
@@ -42,13 +40,13 @@ struct NearbyTransitView: View {
             guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
-            await predictionsFetcher.run(stopIds: stopIdList)
+            predictionsFetcher.run(stopIds: stopIdList)
         }
     }
 
     func leavePredictions() {
         Task {
-            await predictionsFetcher.leave()
+            predictionsFetcher.leave()
         }
     }
 
@@ -58,16 +56,16 @@ struct NearbyTransitView: View {
                 predictions: predictionsFetcher.predictions,
                 filterAtTime: now.toKotlinInstant()
             ) {
-                if let predictionsError = predictionsFetcher.socketError {
-                    Text("Error fetching predictions: \(predictionsError.localizedDescription)")
-                }
                 List(nearby, id: \.route.id) { nearbyRoute in
                     NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
+                }.putAboveWhen(predictionsFetcher.errorText) { errorText in
+                    IconCard(iconName: "network.slash", details: errorText)
                 }
             } else {
                 Text("Loading...")
             }
-        }.onAppear {
+        }
+        .onAppear {
             getNearby(location: location)
             didAppear?(self)
             joinPredictions()
@@ -94,145 +92,11 @@ struct NearbyTransitView: View {
         .onDisappear {
             leavePredictions()
         }
-    }
-}
-
-struct NearbyRouteView: View {
-    let nearbyRoute: StopAssociatedRoute
-    let now: Instant
-
-    var body: some View {
-        Section {
-            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsAtStop in
-                NearbyStopView(patternsAtStop: patternsAtStop, now: now)
-            }
+        .emptyWhen(location == nil)
+        .replaceWhen(nearbyFetcher.errorText) { errorText in
+            IconCard(iconName: "network.slash", details: errorText)
+                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
         }
-        header: {
-            RoutePill(route: nearbyRoute.route).padding(.leading, -20)
-        }
-    }
-}
-
-struct NearbyStopView: View {
-    let patternsAtStop: PatternsByStop
-    let now: Instant
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(patternsAtStop.stop.name).fontWeight(.bold)
-
-            VStack(alignment: .leading) {
-                ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
-                    NearbyStopRoutePatternView(
-                        headsign: patternsByHeadsign.headsign,
-                        predictions: .from(predictions: patternsByHeadsign.predictions, now: now)
-                    )
-                }
-            }
-        }
-    }
-}
-
-struct NearbyStopRoutePatternView: View {
-    let headsign: String
-    let predictions: PredictionState
-
-    struct PredictionWithFormat: Identifiable {
-        let prediction: Prediction
-        let format: Prediction.Format
-
-        var id: String { prediction.id }
-
-        init(_ prediction: PredictionWithVehicle, now: Instant) {
-            self.prediction = prediction.prediction
-            format = prediction.format(now: now)
-        }
-
-        func isHidden() -> Bool {
-            format is Prediction.FormatHidden
-        }
-    }
-
-    enum PredictionState {
-        case loading
-        case none
-        case some([PredictionWithFormat])
-
-        static func from(predictions: [PredictionWithVehicle]?, now: Instant) -> Self {
-            guard let predictions else { return .loading }
-            let predictionsToShow = predictions
-                .map { PredictionWithFormat($0, now: now) }
-                .filter { !$0.isHidden() }
-                .prefix(2)
-            if predictionsToShow.isEmpty {
-                return .none
-            }
-            return .some(Array(predictionsToShow))
-        }
-    }
-
-    var body: some View {
-        HStack {
-            Text(headsign)
-            Spacer()
-            switch predictions {
-            case let .some(predictions):
-                ForEach(predictions) { prediction in
-                    PredictionView(prediction: .some(prediction.format))
-                }
-            case .none:
-                PredictionView(prediction: .none)
-            case .loading:
-                PredictionView(prediction: .loading)
-            }
-        }
-    }
-}
-
-extension Prediction.FormatOverridden {
-    func textWithLocale() -> AttributedString {
-        var result = AttributedString(text)
-        result.languageIdentifier = "en-US"
-        return result
-    }
-}
-
-struct PredictionView: View {
-    let prediction: State
-
-    enum State: Equatable {
-        case loading
-        case none
-        case some(Prediction.Format)
-    }
-
-    var body: some View {
-        let predictionView: any View = switch prediction {
-        case let .some(prediction):
-            switch onEnum(of: prediction) {
-            case let .overridden(overridden):
-                Text(overridden.textWithLocale())
-            case .hidden:
-                // should have been filtered out already
-                Text(verbatim: "")
-            case .boarding:
-                Text("BRD")
-            case .arriving:
-                Text("ARR")
-            case .approaching:
-                Text("1 min")
-            case let .distantFuture(format):
-                Text(Date(instant: format.predictionTime), style: .time)
-            case let .minutes(format):
-                Text("\(format.minutes, specifier: "%ld") min")
-            }
-        case .none:
-            Text("No Predictions")
-        case .loading:
-            ProgressView()
-        }
-        AnyView(predictionView)
-            .frame(minWidth: 48, alignment: .trailing)
     }
 }
 

@@ -8,11 +8,16 @@ import com.mbta.tid.mbta_app.phoenix.phoenixSocket
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.HttpRequestTimeoutException
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.expectSuccess
+import io.ktor.client.plugins.timeout
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.get
 import io.ktor.client.request.url
@@ -37,6 +42,7 @@ class Backend(engine: HttpClientEngine) {
             install(ContentNegotiation) { json(json) }
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
+            install(HttpTimeout) { requestTimeoutMillis = 5000 }
             defaultRequest { url("https://$mobileBackendHost") }
         }
 
@@ -61,7 +67,9 @@ class Backend(engine: HttpClientEngine) {
         IOException::class,
         CancellationException::class,
         JsonConvertException::class,
-        ResponseException::class
+        ResponseException::class,
+        SocketTimeoutException::class,
+        ConnectTimeoutException::class
     )
     suspend fun runSocket() = socket().run()
 
@@ -69,11 +77,13 @@ class Backend(engine: HttpClientEngine) {
         IOException::class,
         CancellationException::class,
         JsonConvertException::class,
-        ResponseException::class
+        ResponseException::class,
+        HttpRequestTimeoutException::class
     )
     suspend fun getGlobalData(): StopAndRoutePatternResponse =
         httpClient
             .get {
+                timeout { requestTimeoutMillis = 10000 }
                 url { path("api/global") }
                 expectSuccess = true
             }
@@ -83,7 +93,8 @@ class Backend(engine: HttpClientEngine) {
         IOException::class,
         CancellationException::class,
         JsonConvertException::class,
-        ResponseException::class
+        ResponseException::class,
+        HttpRequestTimeoutException::class
     )
     suspend fun getNearby(latitude: Double, longitude: Double): StopAndRoutePatternResponse =
         httpClient
@@ -101,7 +112,8 @@ class Backend(engine: HttpClientEngine) {
         IOException::class,
         CancellationException::class,
         JsonConvertException::class,
-        ResponseException::class
+        ResponseException::class,
+        HttpRequestTimeoutException::class
     )
     suspend fun getRailRouteShapes(): RouteResponse =
         httpClient
@@ -115,7 +127,8 @@ class Backend(engine: HttpClientEngine) {
         IOException::class,
         CancellationException::class,
         JsonConvertException::class,
-        ResponseException::class
+        ResponseException::class,
+        HttpRequestTimeoutException::class
     )
     suspend fun getSearchResults(query: String): SearchResponse =
         httpClient
@@ -131,7 +144,9 @@ class Backend(engine: HttpClientEngine) {
         IOException::class,
         CancellationException::class,
         JsonConvertException::class,
-        ResponseException::class
+        ResponseException::class,
+        SocketTimeoutException::class,
+        ConnectTimeoutException::class
     )
     suspend fun predictionsStopsChannel(stopIds: List<String>) =
         PredictionsStopsChannel(socket(), stopIds)

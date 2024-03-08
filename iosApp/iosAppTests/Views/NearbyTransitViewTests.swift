@@ -36,9 +36,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 super.init(backend: IdleBackend())
             }
 
-            override func getNearby(latitude _: Double, longitude _: Double) async throws {
+            override func getNearby(latitude _: Double, longitude _: Double) async {
                 getNearbyExpectation.fulfill()
-                throw NotUnderTestError()
             }
         }
 
@@ -123,9 +122,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        override func getNearby(latitude _: Double, longitude _: Double) async throws {
-            throw NotUnderTestError()
-        }
+        override func getNearby(latitude _: Double, longitude _: Double) async {}
     }
 
     @MainActor func testRoutePatternsGroupedByRouteAndStop() throws {
@@ -411,5 +408,45 @@ final class NearbyTransitViewTests: XCTestCase {
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
+    }
+
+    func testNearbyErrorMessage() throws {
+        class FakeNearbyFetcher: NearbyFetcher {
+            init() {
+                super.init(backend: IdleBackend())
+                errorText = Text("Failed to load nearby transit, test error")
+            }
+        }
+
+        let sut = NearbyTransitView(
+            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: FakeNearbyFetcher(),
+            predictionsFetcher: .init(socket: MockSocket())
+        )
+
+        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load nearby transit, test error"))
+    }
+
+    func testPredictionErrorMessage() throws {
+        class FakeNearbyFetcher: NearbyFetcher {
+            init() {
+                super.init(backend: IdleBackend())
+                nearbyByRouteAndStop = NearbyStaticData(data: [])
+            }
+        }
+        class FakePredictionsFetcher: PredictionsFetcher {
+            init() {
+                super.init(socket: MockSocket())
+                errorText = Text("Failed to load predictions, test error")
+            }
+        }
+
+        let sut = NearbyTransitView(
+            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: FakeNearbyFetcher(),
+            predictionsFetcher: FakePredictionsFetcher()
+        )
+
+        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load predictions, test error"))
     }
 }
