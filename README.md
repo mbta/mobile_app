@@ -14,8 +14,7 @@ Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc
 
 #### Mapbox
 
-We use mapbox as our mapping SDK. To be able to install the mapbox dependency, configure your secret mapbox key following [this guide](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token). 
-To be able to use the use the mapbox SDK and render map tiles, add the mapbox public key to `/iosApp/secrets/mapbox`.
+We use mapbox as our mapping SDK. To be able to install the mapbox dependency, configure your secret mapbox key following [this guide](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token). To be able to use the use the mapbox SDK and render map tiles, add the mapbox public key to `/iosApp/secrets/mapbox`.
 
 * [Mapbox iOS SDK Docs and Examples](https://docs.mapbox.com/ios/maps/guides/)
 * [Mapbox Swift Docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/)
