@@ -4,33 +4,46 @@ The MBTA mobile app.
 
 ## Project Setup
 
+This project uses [Kotlin Multiplatform Mobile (KMM)](https://kotlinlang.org/docs/multiplatform.html). Native application code can be found in the `iosApp` and `androidApp` directories. Common code is within the `shared` directory.
+
 ### Prerequisites
 
-Development for this project requires Ruby and Flutter, as described in .tool-versions. You can use [asdf](https://asdf-vm.com/) to help manage the required versions.
+Install the tools specified in `.tool-versions`. You can use [asdf](https://asdf-vm.com/) to help manage the required versions.
 
 Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
 
+#### Mapbox
+
+We use mapbox as our mapping SDK. To be able to install the mapbox dependency, configure your secret mapbox key following [this guide](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token). To be able to use the use the mapbox SDK and render map tiles, add the mapbox public key to `/iosApp/secrets/mapbox`.
+
 ### Editor
+
+The recommendation for KMM projects is to use Android Studio for editing & running the android app or shared code and XCode for only editing & running the ios app. See this [KMM guide](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-setup.html#install-the-necessary-tools) for installation instructions.
 
 #### Gotchas
 
 - Be sure to install the Android SDK Command-line Tools via Android Studio > Settings Android SDK > SDK Tool Tabs > Android SDK Command Line Tools.
 
-### Project Dependencies
-
-### Code Generation
-
 ## Running Locally
+
 ### iOS
 
 ios app, you must follow these steps:
 
-* Run a gradle sync of the project from Android Studio
-* Open the project from `iosApp/iosApp.xcodeproj`
+- Run a gradle sync of the project from Android Studio
+- Open the project from `iosApp/iosApp.xcodeproj`
 
 ## Running Tests
 
 ### Unit Tests
+
+#### ios
+
+Run from XCode by navigating to `Product > Test` or using the test navigator. We use [ViewInspector](https://github.com/nalexn/ViewInspector) to write unit tests for SwiftUI views.
+
+#### android & shared
+
+Run within Android Studio, or by running the commands `./gradlew androidApp:check` `./gradlew shared:check`
 
 ### Integration Tests
 
