@@ -64,11 +64,12 @@ struct HomeMapView: View {
                     // print(feature.feature.identifier)
                     true
                 }
+                .accessibilityIdentifier("transitMap")
                 .onAppear(perform: handleAppear(location: proxy.location))
                 .onChange(of: globalFetcher.stops, perform: handleGlobalStops(proxy.map))
                 .onChange(of: railRouteShapeFetcher.response, perform: handleRouteResponse(proxy.map))
                 .overlay(alignment: .topTrailing) {
-                    if !isFollowingUser {
+                    if !isFollowingUser, locationDataManager.currentLocation != nil {
                         RecenterButton(perform: handleRecenter)
                     }
                 }
@@ -253,5 +254,6 @@ struct RecenterButton: View {
             .padding(20)
             .onTapGesture(perform: perform)
             .transition(AnyTransition.opacity.animation(.linear(duration: 0.25)))
+            .accessibilityIdentifier("mapRecenterButton")
     }
 }
