@@ -151,41 +151,35 @@ final class NearbyTransitViewTests: XCTestCase {
             init(distantInstant: Instant? = nil) {
                 super.init(socket: MockSocket())
                 let objects = ObjectCollectionBuilder()
-                let trip1a = objects.trip { trip in
+                let trip1 = objects.trip { trip in
                     trip.headsign = "Dedham Mall"
                 }
-                let trip1b = objects.trip { trip in
-                    trip.headsign = "Dedham Mall"
-                }
-                let trip2a = objects.trip { trip in
-                    trip.headsign = "Watertown Yard"
-                }
-                let trip2b = objects.trip { trip in
+                let trip2 = objects.trip { trip in
                     trip.headsign = "Watertown Yard"
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(12 * 60).toKotlinInstant()
                     prediction.stopId = "8552"
-                    prediction.tripId = trip1a.id
+                    prediction.tripId = trip1.id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(11 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
                     prediction.status = "Overridden"
                     prediction.stopId = "8552"
-                    prediction.tripId = trip1b.id
+                    prediction.tripId = trip1.id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
                     prediction.stopId = "84791"
-                    prediction.tripId = trip2a.id
+                    prediction.tripId = trip2.id
                 }
                 objects.prediction { prediction in
                     prediction.departureTime = distantInstant
                     prediction.stopId = "84791"
-                    prediction.tripId = trip2b.id
+                    prediction.tripId = trip2.id
                 }
                 predictions = .init(objects: objects)
             }
