@@ -30,9 +30,13 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 ## Running Locally
 
 ### iOS
+The shared library dependency is managed using Cocoapods. To install the dependency and build the
+ios app, you must first Run a gradle sync of the project from Android Studio, or you may run
+`./gradlew :shared:generateDummyFramework` from the root directory, then `pod install` from within
+the `iosApp` directory.
 
-- Run a gradle sync of the project from Android Studio
-- Open the project from `iosApp/iosApp.xcodeproj`
+Then, open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
+>>>>>>> 3df2056 (WIP)
 
 ## Running Tests
 

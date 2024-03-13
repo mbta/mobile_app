@@ -1,0 +1,10 @@
+platform :ios, '15.0'
+
+target 'iosApp' do
+  use_frameworks!
+  pod 'shared', :path => '../shared/'
+
+  target 'iosAppTests' do
+    inherit! :search_paths
+  end
+end

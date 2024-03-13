@@ -56,6 +56,7 @@
 		9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB44A122B911E6400E8FFB3 /* DateExtension.swift */; };
 		9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
+		A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,7 +92,10 @@
 /* Begin PBXFileReference section */
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2152FB032600AC8F00CF470E /* IOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSApp.swift; sourceTree = "<group>"; };
+		3091F80084042A822F2C6F31 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
+		4F295A964D91843215C2E352 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
@@ -167,6 +171,7 @@
 				9A8B34B02B892C810018412C /* Polyline in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
 				6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */,
+				A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +270,7 @@
 				6EED5E9A2B3DC6C10052A1B8 /* iosAppUITests */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
+				7A3CBAAEF3F420C6E00CC576 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -300,8 +306,18 @@
 		7555FFB0242A642200829871 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7A3CBAAEF3F420C6E00CC576 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3091F80084042A822F2C6F31 /* Pods-iosApp.debug.xcconfig */,
+				4F295A964D91843215C2E352 /* Pods-iosApp.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		9A2005C02B97B56100F562E1 /* Pages */ = {
@@ -415,8 +431,6 @@
 				6EED5EA02B3DC6C10052A1B8 /* PBXTargetDependency */,
 			);
 			name = iosAppUITests;
-			packageProductDependencies = (
-			);
 			productName = iosAppUITests;
 			productReference = 6EED5E992B3DC6C10052A1B8 /* iosAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -425,12 +439,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				7555FFB5242A651A00829871 /* ShellScript */,
+				7E1E3E807BCE8F2D4B7E5C7B /* [CP] Check Pods Manifest.lock */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */,
+				8E51C9A5DAABE639C0FD100E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -482,9 +497,9 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
-				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
-				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */,
-				9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */,
+				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios.git" */,
+				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint.git" */,
+				9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline.git" */,
 				6EE7457F2B965AEA0052227E /* XCRemoteSwiftPackageReference "SwiftPhoenixClient" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
@@ -544,7 +559,7 @@
 			shellPath = /bin/sh;
 			shellScript = "token_file=secrets/mapbox\ntoken_file2=../mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
 		};
-		7555FFB5242A651A00829871 /* ShellScript */ = {
+		7E1E3E807BCE8F2D4B7E5C7B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -552,14 +567,19 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iosApp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		8C35B50C2B61850900A3CB77 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -577,6 +597,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		8E51C9A5DAABE639C0FD100E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -659,7 +696,7 @@
 		};
 		8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */;
+			productRef = 8C42F06D2B87BD1D00F9A77B /* plugin:SwiftLintPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -675,7 +712,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = RP77QY87AD;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -704,7 +740,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RP77QY87AD;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -894,16 +929,13 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3091F80084042A822F2C6F31 /* Pods-iosApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = RP77QY87AD;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
-				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -927,16 +959,13 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4F295A964D91843215C2E352 /* Pods-iosApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = RP77QY87AD;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
-				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1000,7 +1029,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */ = {
+		6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mapbox/mapbox-maps-ios.git";
 			requirement = {
@@ -1024,7 +1053,7 @@
 				minimumVersion = 0.9.9;
 			};
 		};
-		8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+		8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/SwiftLint.git";
 			requirement = {
@@ -1032,7 +1061,7 @@
 				minimumVersion = 0.54.0;
 			};
 		};
-		9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */ = {
+		9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/raphaelmor/Polyline.git";
 			requirement = {
@@ -1045,7 +1074,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		6E35D4CD2B72C74500A2BF95 /* MapboxMaps */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
+			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios.git" */;
 			productName = MapboxMaps;
 		};
 		6EE745802B965AEA0052227E /* SwiftPhoenixClient */ = {
@@ -1058,14 +1087,14 @@
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
 		};
-		8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */ = {
+		8C42F06D2B87BD1D00F9A77B /* plugin:SwiftLintPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint.git" */;
 			productName = "plugin:SwiftLintPlugin";
 		};
 		9A8B34AF2B892C810018412C /* Polyline */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */;
+			package = 9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline.git" */;
 			productName = Polyline;
 		};
 /* End XCSwiftPackageProductDependency section */
