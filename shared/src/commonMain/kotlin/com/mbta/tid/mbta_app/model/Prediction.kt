@@ -1,9 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -39,56 +37,5 @@ data class Prediction(
     }
 
     override fun compareTo(other: Prediction): Int =
-        nullsLast<Instant>()
-            .compare(arrivalTime ?: departureTime, other.arrivalTime ?: other.departureTime)
-
-    /**
-     * The state in which a prediction should be shown.
-     *
-     * Can be localized in the frontend layer, except for `Overridden` which is always English.
-     */
-    sealed class Format {
-        data class Overridden(val text: String) : Format()
-
-        data object Hidden : Format()
-
-        data object Boarding : Format()
-
-        data object Arriving : Format()
-
-        data object Approaching : Format()
-
-        data class DistantFuture(val predictionTime: Instant) : Format()
-
-        data class Minutes(val minutes: Int) : Format()
-    }
-
-    fun format(now: Instant, vehicle: Vehicle? = null): Format {
-        if (status != null) {
-            return Format.Overridden(status)
-        }
-        if (departureTime == null || departureTime < now) {
-            return Format.Hidden
-        }
-        // since we checked departureTime as non-null, we don't have to also check predictionTime
-        val timeRemaining = predictionTime!!.minus(now)
-        if (
-            vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
-                vehicle.stopId == stopId &&
-                vehicle.tripId == tripId
-        ) {
-            return Format.Boarding
-        }
-        if (timeRemaining <= ARRIVAL_CUTOFF) {
-            return Format.Arriving
-        }
-        if (timeRemaining <= APPROACH_CUTOFF) {
-            return Format.Approaching
-        }
-        if (timeRemaining > DISTANT_FUTURE_CUTOFF) {
-            return Format.DistantFuture(predictionTime)
-        }
-        val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
-        return Format.Minutes(minutes)
-    }
+        nullsLast<Instant>().compare(predictionTime, other.predictionTime)
 }

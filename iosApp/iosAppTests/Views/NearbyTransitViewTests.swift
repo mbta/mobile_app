@@ -151,35 +151,41 @@ final class NearbyTransitViewTests: XCTestCase {
             init(distantInstant: Instant? = nil) {
                 super.init(socket: MockSocket())
                 let objects = ObjectCollectionBuilder()
-                let trip1 = objects.trip { trip in
+                let trip1a = objects.trip { trip in
                     trip.headsign = "Dedham Mall"
                 }
-                let trip2 = objects.trip { trip in
+                let trip1b = objects.trip { trip in
+                    trip.headsign = "Dedham Mall"
+                }
+                let trip2a = objects.trip { trip in
+                    trip.headsign = "Watertown Yard"
+                }
+                let trip2b = objects.trip { trip in
                     trip.headsign = "Watertown Yard"
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(12 * 60).toKotlinInstant()
                     prediction.stopId = "8552"
-                    prediction.tripId = trip1.id
+                    prediction.tripId = trip1a.id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(11 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
                     prediction.status = "Overridden"
                     prediction.stopId = "8552"
-                    prediction.tripId = trip1.id
+                    prediction.tripId = trip1b.id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
                     prediction.stopId = "84791"
-                    prediction.tripId = trip2.id
+                    prediction.tripId = trip2a.id
                 }
                 objects.prediction { prediction in
                     prediction.departureTime = distantInstant
                     prediction.stopId = "84791"
-                    prediction.tripId = trip2.id
+                    prediction.tripId = trip2b.id
                 }
                 predictions = .init(objects: objects)
             }
@@ -207,7 +213,7 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
 
-        let expectedState = PredictionView.State.some(Prediction.FormatDistantFuture(predictionTime: distantInstant))
+        let expectedState = PredictionView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
         XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
             .findAll(PredictionView.self, where: { sut in
                 try debugPrint(sut.actualView())

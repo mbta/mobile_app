@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-extension Prediction.FormatOverridden {
+extension UpcomingTrip.FormatOverridden {
     func textWithLocale() -> AttributedString {
         var result = AttributedString(text)
         result.languageIdentifier = "en-US"
@@ -23,7 +23,7 @@ struct PredictionView: View {
     enum State: Equatable {
         case loading
         case none
-        case some(Prediction.Format)
+        case some(UpcomingTrip.Format)
     }
 
     var body: some View {
