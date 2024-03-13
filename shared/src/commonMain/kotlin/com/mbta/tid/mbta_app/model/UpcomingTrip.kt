@@ -65,32 +65,14 @@ constructor(val prediction: Prediction, val vehicle: Vehicle? = null) : Comparab
     }
 
     companion object {
-        fun alignLists(
+        /** Gets the list of [UpcomingTrip]s from the given [predictions] and [vehicles]. */
+        fun tripsFromData(
             predictions: List<Prediction>,
             vehicles: Map<String, Vehicle>
         ): List<UpcomingTrip> {
-            data class UpcomingTripKey(
-                val tripId: String?,
-                val stopId: String?,
-                val stopSequence: Int?
-            ) {
-                constructor(
-                    prediction: Prediction
-                ) : this(prediction.tripId, prediction.stopId, prediction.stopSequence)
+            return predictions.map { prediction ->
+                UpcomingTrip(prediction, vehicles[prediction.vehicleId])
             }
-
-            val predictionsMap = predictions.associateBy { UpcomingTripKey(it) }
-
-            val keys = predictionsMap.keys
-
-            return keys
-                .map { key ->
-                    UpcomingTrip(
-                        predictionsMap.getValue(key),
-                        predictionsMap[key]?.let { vehicles[it.vehicleId] }
-                    )
-                }
-                .sorted()
         }
     }
 }

@@ -145,7 +145,7 @@ fun NearbyStaticData.withRealtimeInfo(
         if (predictionsByHeadsignAndStop != null) {
             predictionsByHeadsignAndStop.keys.associateWith { headsignAndStop ->
                 val predictionsHere = predictionsByHeadsignAndStop[headsignAndStop]
-                UpcomingTrip.alignLists(predictionsHere ?: emptyList(), predictions.vehicles)
+                UpcomingTrip.tripsFromData(predictionsHere ?: emptyList(), predictions.vehicles)
             }
         } else {
             null
