@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -385,6 +386,7 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
+                schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
@@ -524,6 +526,7 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
+                schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
@@ -574,6 +577,7 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = parentStop.position,
+                schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )

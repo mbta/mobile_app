@@ -13,6 +13,7 @@ protocol BackendProtocol {
     func runSocket() async throws
     func getGlobalData() async throws -> StopAndRoutePatternResponse
     func getNearby(latitude: Double, longitude: Double) async throws -> StopAndRoutePatternResponse
+    func getSchedule(stopIds: [String]) async throws -> ScheduleResponse
     func getSearchResults(query: String) async throws -> SearchResponse
     func getRailRouteShapes() async throws -> RouteResponse
     func predictionsStopsChannel(stopIds: [String]) async throws -> PredictionsStopsChannel
@@ -40,6 +41,10 @@ struct IdleBackend: BackendProtocol {
     }
 
     func getRailRouteShapes() async throws -> RouteResponse {
+        await hang()
+    }
+
+    func getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
         await hang()
     }
 

@@ -20,6 +20,7 @@ class ObjectCollectionBuilder {
     val predictions = mutableMapOf<String, Prediction>()
     val routes = mutableMapOf<String, Route>()
     val routePatterns = mutableMapOf<String, RoutePattern>()
+    val schedules = mutableMapOf<String, Schedule>()
     val stops = mutableMapOf<String, Stop>()
     val trips = mutableMapOf<String, Trip>()
     val vehicles = mutableMapOf<String, Vehicle>()
@@ -119,6 +120,32 @@ class ObjectCollectionBuilder {
 
     fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
         build(routePatterns, RoutePatternBuilder().apply { routeId = route.id }, block)
+
+    class ScheduleBuilder : ObjectBuilder<Schedule> {
+        var id = uuid()
+        var arrivalTime: Instant? = null
+        var departureTime: Instant? = null
+        var dropOffType = Schedule.StopEdgeType.Regular
+        var pickUpType = Schedule.StopEdgeType.Regular
+        var stopSequence = 0
+        var stopId = ""
+        var tripId = ""
+
+        override fun built() =
+            Schedule(
+                id,
+                arrivalTime,
+                departureTime,
+                dropOffType,
+                pickUpType,
+                stopSequence,
+                stopId,
+                tripId
+            )
+    }
+
+    fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
+        build(schedules, ScheduleBuilder(), block)
 
     class TripBuilder : ObjectBuilder<Trip> {
         var id = uuid()
