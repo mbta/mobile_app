@@ -13,37 +13,37 @@ struct NearbyStopRoutePatternView: View {
     let headsign: String
     let predictions: PredictionState
 
-    struct PredictionWithFormat: Identifiable {
-        let prediction: Prediction
-        let format: Prediction.Format
+    struct TripWithFormat: Identifiable {
+        let trip: UpcomingTrip
+        let format: UpcomingTrip.Format
 
-        var id: String { prediction.id }
+        var id: String { trip.id }
 
-        init(_ prediction: PredictionWithVehicle, now: Instant) {
-            self.prediction = prediction.prediction
-            format = prediction.format(now: now)
+        init(_ trip: UpcomingTrip, now: Instant) {
+            self.trip = trip
+            format = trip.format(now: now)
         }
 
         func isHidden() -> Bool {
-            format is Prediction.FormatHidden
+            format is UpcomingTrip.FormatHidden
         }
     }
 
     enum PredictionState {
         case loading
         case none
-        case some([PredictionWithFormat])
+        case some([TripWithFormat])
 
-        static func from(predictions: [PredictionWithVehicle]?, now: Instant) -> Self {
-            guard let predictions else { return .loading }
-            let predictionsToShow = predictions
-                .map { PredictionWithFormat($0, now: now) }
+        static func from(upcomingTrips: [UpcomingTrip]?, now: Instant) -> Self {
+            guard let upcomingTrips else { return .loading }
+            let tripsToShow = upcomingTrips
+                .map { TripWithFormat($0, now: now) }
                 .filter { !$0.isHidden() }
                 .prefix(2)
-            if predictionsToShow.isEmpty {
+            if tripsToShow.isEmpty {
                 return .none
             }
-            return .some(Array(predictionsToShow))
+            return .some(Array(tripsToShow))
         }
     }
 

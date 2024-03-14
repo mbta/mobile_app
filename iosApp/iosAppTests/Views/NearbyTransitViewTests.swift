@@ -207,7 +207,7 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
 
-        let expectedState = PredictionView.State.some(Prediction.FormatDistantFuture(predictionTime: distantInstant))
+        let expectedState = PredictionView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
         XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
             .findAll(PredictionView.self, where: { sut in
                 try debugPrint(sut.actualView())

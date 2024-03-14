@@ -364,8 +364,8 @@ class NearbyResponseTest {
                                     "Harvard",
                                     listOf(pattern1, pattern2),
                                     listOf(
-                                        PredictionWithVehicle(stop1Pattern2Prediction),
-                                        PredictionWithVehicle(stop1Pattern1Prediction)
+                                        UpcomingTrip(stop1Pattern2Prediction),
+                                        UpcomingTrip(stop1Pattern1Prediction)
                                     )
                                 )
                             )
@@ -376,7 +376,7 @@ class NearbyResponseTest {
                                 PatternsByHeadsign(
                                     "Nubian",
                                     listOf(pattern3),
-                                    listOf(PredictionWithVehicle(stop2Pattern3Prediction))
+                                    listOf(UpcomingTrip(stop2Pattern3Prediction))
                                 )
                             )
                         )
@@ -500,7 +500,7 @@ class NearbyResponseTest {
                                 PatternsByHeadsign(
                                     "Typical Out",
                                     listOf(typicalOutbound),
-                                    listOf(PredictionWithVehicle(typicalOutboundPrediction))
+                                    listOf(UpcomingTrip(typicalOutboundPrediction))
                                 ),
                                 PatternsByHeadsign(
                                     "Typical In",
@@ -510,12 +510,12 @@ class NearbyResponseTest {
                                 PatternsByHeadsign(
                                     "Deviation Out",
                                     listOf(deviationOutbound),
-                                    listOf(PredictionWithVehicle(deviationOutboundPrediction))
+                                    listOf(UpcomingTrip(deviationOutboundPrediction))
                                 ),
                                 PatternsByHeadsign(
                                     "Atypical In",
                                     listOf(atypicalInbound),
-                                    listOf(PredictionWithVehicle(atypicalInboundPrediction))
+                                    listOf(UpcomingTrip(atypicalInboundPrediction))
                                 )
                             )
                         )
@@ -565,7 +565,7 @@ class NearbyResponseTest {
                                 PatternsByHeadsign(
                                     "Harvard",
                                     listOf(pattern1),
-                                    listOf(PredictionWithVehicle(prediction1))
+                                    listOf(UpcomingTrip(prediction1))
                                 )
                             )
                         )
