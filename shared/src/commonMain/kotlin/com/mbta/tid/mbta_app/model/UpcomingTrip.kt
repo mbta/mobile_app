@@ -23,7 +23,12 @@ constructor(val schedule: Schedule?, val prediction: Prediction?, val vehicle: V
 
     constructor(prediction: Prediction, vehicle: Vehicle) : this(null, prediction, vehicle)
 
-    val time = prediction?.predictionTime ?: schedule?.scheduleTime
+    val time =
+        if (prediction != null) {
+            prediction.predictionTime
+        } else {
+            schedule?.scheduleTime
+        }
     /** The [Prediction.tripId] of the [prediction], or the [Schedule.tripId] of the [schedule]. */
     val id = checkNotNull(prediction?.tripId ?: schedule?.tripId)
 
