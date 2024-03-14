@@ -36,7 +36,9 @@ ios app, you must first Run a gradle sync of the project from Android Studio, or
 the `iosApp` directory.
 
 Then, open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
->>>>>>> 3df2056 (WIP)
+
+Populate any configuration needed in your the .envrc file. These will be read by a build phase
+script and set as info.plist values so that they can be read by the application.
 
 ## Running Tests
 

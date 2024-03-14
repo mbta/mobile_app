@@ -22,11 +22,13 @@ kotlin {
         version = "1.0"
         ios.deploymentTarget = "15.0"
         podfile = project.file("../iosApp/Podfile")
+        pod("Sentry", "~> 8.20.0")
 
         framework {
             baseName = "shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
             export(libs.kotlinx.datetime)
+            export(libs.sentry)
         }
     }
 
@@ -41,6 +43,7 @@ kotlin {
 
                 implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
+                api(libs.sentry)
                 implementation(libs.skie.configuration.annotations)
                 api(libs.spatialk.geojson)
                 implementation(libs.spatialk.turf)

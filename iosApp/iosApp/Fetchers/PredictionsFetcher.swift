@@ -66,7 +66,7 @@ class PredictionsFetcher: ObservableObject {
         })
     }
 
-    private func handleNewDataMessage(message: Message) {
+    private func handleNewDataMessage(message: SwiftPhoenixClient.Message) {
         do {
             let rawPayload: String? = message.jsonPayload()
 
