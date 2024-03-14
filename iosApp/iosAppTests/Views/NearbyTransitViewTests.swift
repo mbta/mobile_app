@@ -187,6 +187,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try matchingPrediction.actualView().prediction,
             PredictionView.State.some(UpcomingTrip.FormatSchedule(scheduleTime: soon))
         )
+        XCTAssertEqual(try matchingPrediction.find(ViewType.Image.self).actualImage().name(), "clock")
     }
 
     @MainActor func testWithPredictions() throws {
