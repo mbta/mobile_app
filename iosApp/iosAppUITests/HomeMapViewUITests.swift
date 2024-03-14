@@ -13,7 +13,7 @@ final class HomeMapViewUITests: XCTestCase {
     var app: XCUIApplication? = nil
 
     override func setUp() {
-        executionTimeAllowance = 60
+        executionTimeAllowance = 300
     }
 
     override func setUpWithError() throws {
@@ -51,6 +51,8 @@ final class HomeMapViewUITests: XCTestCase {
         denyLocationPermissionAlert(timeout: 5)
 
         let map = app!.otherElements.matching(identifier: "transitMap").element
+        map.isAccessibilityElement = true
+        app!.tap()
         XCTAssert(map.waitForExistence(timeout: 5))
 
         let recenterButton = app!.images.matching(identifier: "mapRecenterButton").element

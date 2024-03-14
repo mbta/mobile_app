@@ -47,11 +47,11 @@ echo "login mapbox" >> ~/.netrc
 echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 
 # Skip adding mapbox API key when testing
-if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
-  echo "configuring mapbox public key"
-  cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-  mkdir -p secrets
-  cd secrets
-  touch mapbox
-  echo "${MAPBOX_PUBLIC_TOKEN}" >> mapbox
-fi
+#if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
+echo "configuring mapbox public key"
+cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
+mkdir -p secrets
+cd secrets
+touch mapbox
+echo "${MAPBOX_PUBLIC_TOKEN}" >> mapbox
+#fi
