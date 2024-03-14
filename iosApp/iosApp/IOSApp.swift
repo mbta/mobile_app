@@ -5,7 +5,7 @@ import SwiftUI
 
 @main
 struct IOSApp: App {
-    let backend: BackendProtocol = CommandLine.arguments.contains("-testing") ? IdleBackend() : Backend()
+    let backend = Backend()
 
     // ignore updates less than 0.1km
     @StateObject var locationDataManager = LocationDataManager(distanceFilter: 100)
