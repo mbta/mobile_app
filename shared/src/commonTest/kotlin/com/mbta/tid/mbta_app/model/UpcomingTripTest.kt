@@ -298,7 +298,7 @@ class UpcomingTripTest {
     }
 
     @Test
-    fun `time falls back to schedule properly`() {
+    fun `time uses schedule time if there's no prediction`() {
         val now = Clock.System.now()
 
         val scheduleNormal = schedule {
@@ -313,6 +313,20 @@ class UpcomingTripTest {
             arrivalTime = null
             departureTime = now + 4.minutes
         }
+
+        assertEquals(scheduleNormal.arrivalTime, UpcomingTrip(scheduleNormal).time)
+        assertEquals(scheduleArrivalOnly.arrivalTime, UpcomingTrip(scheduleArrivalOnly).time)
+        assertEquals(scheduleDepartureOnly.departureTime, UpcomingTrip(scheduleDepartureOnly).time)
+    }
+
+    @Test
+    fun `time uses prediction time whether there's a schedule or not`() {
+        val now = Clock.System.now()
+
+        val schedule = schedule {
+            arrivalTime = now + 2.minutes
+            departureTime = now + 5.minutes
+        }
         val predictionNormal = prediction {
             arrivalTime = now + 2.5.minutes
             departureTime = now + 4.5.minutes
@@ -325,27 +339,40 @@ class UpcomingTripTest {
             arrivalTime = null
             departureTime = now + 4.2.minutes
         }
+
+        assertEquals(predictionNormal.arrivalTime, UpcomingTrip(predictionNormal).time)
+        assertEquals(predictionNormal.arrivalTime, UpcomingTrip(schedule, predictionNormal).time)
+
+        assertEquals(predictionArrivalOnly.arrivalTime, UpcomingTrip(predictionArrivalOnly).time)
+        assertEquals(
+            predictionArrivalOnly.arrivalTime,
+            UpcomingTrip(schedule, predictionArrivalOnly).time
+        )
+
+        assertEquals(
+            predictionDepartureOnly.departureTime,
+            UpcomingTrip(predictionDepartureOnly).time
+        )
+        assertEquals(
+            predictionDepartureOnly.departureTime,
+            UpcomingTrip(schedule, predictionDepartureOnly).time
+        )
+    }
+
+    @Test
+    fun `time is null if prediction overrides schedule`() {
+        val now = Clock.System.now()
+
+        val schedule = schedule {
+            arrivalTime = now + 2.minutes
+            departureTime = now + 5.minutes
+        }
         val predictionDropped = prediction {
             arrivalTime = null
             departureTime = null
             scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
         }
 
-        assertEquals(scheduleNormal.arrivalTime, UpcomingTrip(scheduleNormal).time)
-        assertEquals(scheduleArrivalOnly.arrivalTime, UpcomingTrip(scheduleArrivalOnly).time)
-        assertEquals(scheduleDepartureOnly.departureTime, UpcomingTrip(scheduleDepartureOnly).time)
-        assertEquals(
-            predictionNormal.arrivalTime,
-            UpcomingTrip(scheduleNormal, predictionNormal).time
-        )
-        assertEquals(
-            predictionArrivalOnly.arrivalTime,
-            UpcomingTrip(scheduleNormal, predictionArrivalOnly).time
-        )
-        assertEquals(
-            predictionDepartureOnly.departureTime,
-            UpcomingTrip(scheduleNormal, predictionDepartureOnly).time
-        )
-        assertEquals(null, UpcomingTrip(scheduleNormal, predictionDropped).time)
+        assertEquals(null, UpcomingTrip(schedule, predictionDropped).time)
     }
 }
