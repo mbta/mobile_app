@@ -62,6 +62,17 @@ class ObjectCollectionBuilder {
     fun prediction(block: PredictionBuilder.() -> Unit = {}) =
         build(predictions, PredictionBuilder(), block)
 
+    fun prediction(schedule: Schedule, block: PredictionBuilder.() -> Unit = {}) =
+        build(
+            predictions,
+            PredictionBuilder().apply {
+                tripId = schedule.tripId
+                stopId = schedule.stopId
+                stopSequence = schedule.stopSequence
+            },
+            block
+        )
+
     class RouteBuilder : ObjectBuilder<Route> {
         var id = uuid()
         var type = RouteType.LIGHT_RAIL

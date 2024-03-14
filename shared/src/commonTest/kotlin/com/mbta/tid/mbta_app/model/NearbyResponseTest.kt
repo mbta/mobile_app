@@ -599,14 +599,19 @@ class NearbyResponseTest {
             objects.schedule {
                 tripId = trip1.id
                 stopId = stop.id
+                stopSequence = 90
                 departureTime = time + 1.minutes
             }
         val sched2 =
             objects.schedule {
                 tripId = trip2.id
                 stopId = stop.id
+                stopSequence = 90
                 departureTime = time + 2.minutes
             }
+
+        val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
+        val pred2 = objects.prediction(sched2) { departureTime = null }
 
         val staticData =
             NearbyStaticData.build {
@@ -624,7 +629,7 @@ class NearbyResponseTest {
                                 PatternsByHeadsign(
                                     "A",
                                     listOf(routePattern),
-                                    listOf(UpcomingTrip(sched1), UpcomingTrip(sched2))
+                                    listOf(UpcomingTrip(sched1, pred1), UpcomingTrip(sched2, pred2))
                                 )
                             )
                         )
@@ -634,7 +639,7 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
-                predictions = null,
+                predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
         )
