@@ -150,20 +150,61 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testWithSchedules() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let soon = Date.now.addingTimeInterval(45 * 60).toKotlinInstant()
+        let objects = ObjectCollectionBuilder()
+
+        // schedule, no prediction
+        let time1 = Date.now.addingTimeInterval(45 * 60).toKotlinInstant()
+        let trip1 = objects.trip { $0.headsign = "Dedham Mall" }
+        objects.schedule { schedule in
+            schedule.departureTime = time1
+            schedule.stopId = "8552"
+            schedule.tripId = trip1.id
+        }
+
+        // schedule & prediction
+        let notTime2 = Date.now.addingTimeInterval(9 * 60).toKotlinInstant()
+        let time2 = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
+        let trip2 = objects.trip { $0.headsign = "Charles River Loop" }
+        objects.schedule { schedule in
+            schedule.departureTime = notTime2
+            schedule.stopId = "8552"
+            schedule.tripId = trip2.id
+            schedule.stopSequence = 13
+        }
+        objects.prediction { prediction in
+            prediction.departureTime = time2
+            prediction.stopId = "8552"
+            prediction.tripId = trip2.id
+            prediction.stopSequence = 13
+        }
+
+        // schedule & cancellation
+        let notTime3 = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
+        let trip3 = objects.trip { $0.headsign = "Watertown Yard" }
+        objects.schedule { schedule in
+            schedule.departureTime = notTime3
+            schedule.stopId = "84791"
+            schedule.tripId = trip3.id
+            schedule.stopSequence = 13
+        }
+        objects.prediction { prediction in
+            prediction.departureTime = nil
+            prediction.scheduleRelationship = .cancelled
+            prediction.stopId = "84791"
+            prediction.tripId = trip3.id
+            prediction.stopSequence = 13
+        }
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            init(_ objects: ObjectCollectionBuilder) {
+                super.init(socket: MockSocket())
+                predictions = .init(objects: objects)
+            }
+        }
 
         class FakeScheduleFetcher: ScheduleFetcher {
-            init(_ soon: Instant) {
+            init(_ objects: ObjectCollectionBuilder) {
                 super.init(backend: IdleBackend())
-                let objects = ObjectCollectionBuilder()
-                let trip = objects.trip { trip in
-                    trip.headsign = "Dedham Mall"
-                }
-                objects.schedule { schedule in
-                    schedule.departureTime = soon
-                    schedule.stopId = "8552"
-                    schedule.tripId = trip.id
-                }
                 schedules = .init(objects: objects)
             }
         }
@@ -171,23 +212,21 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: FakeScheduleFetcher(soon),
-            predictionsFetcher: .init(socket: MockSocket())
+            scheduleFetcher: FakeScheduleFetcher(objects),
+            predictionsFetcher: FakePredictionsFetcher(objects)
         )
 
-        let stops = try sut.inspect().findAll(NearbyStopView.self)
+        let patterns = try sut.inspect().findAll(NearbyStopRoutePatternView.self)
 
-        let matchingUpcomingTrip = try stops[0].find(UpcomingTripView.self, where: {
-            switch try $0.actualView().prediction {
-            case UpcomingTripView.State.some: true
-            default: false
-            }
-        })
-        XCTAssertEqual(
-            try matchingUpcomingTrip.actualView().prediction,
-            UpcomingTripView.State.some(UpcomingTrip.FormatSchedule(scheduleTime: soon))
-        )
-        XCTAssertEqual(try matchingUpcomingTrip.find(ViewType.Image.self).actualImage().name(), "clock")
+        XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
+        XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
+        XCTAssertEqual(try patterns[0].find(ViewType.Image.self).actualImage().name(), "clock")
+
+        XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
+        XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
+
+        XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
+        XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
     }
 
     @MainActor func testWithPredictions() throws {
