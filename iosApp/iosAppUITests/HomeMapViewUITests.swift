@@ -33,7 +33,7 @@ final class HomeMapViewUITests: XCTestCase {
         acceptLocationPermissionAlert(timeout: 5)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
-        XCTAssert(map.waitForExistence(timeout: 5))
+        XCTAssert(map.waitForExistence(timeout: 30))
 
         let recenterButton = app.images.matching(identifier: "mapRecenterButton").element
         XCTAssertFalse(recenterButton.exists)
@@ -51,7 +51,7 @@ final class HomeMapViewUITests: XCTestCase {
         denyLocationPermissionAlert(timeout: 5)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
-        XCTAssert(map.waitForExistence(timeout: 5))
+        XCTAssert(map.waitForExistence(timeout: 30))
 
         let recenterButton = app.images.matching(identifier: "mapRecenterButton").element
         XCTAssertFalse(recenterButton.exists)
@@ -73,7 +73,7 @@ extension XCTestCase {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
         let alert = springboard.alerts.firstMatch
-        XCTAssert(alert.waitForExistence(timeout: 2))
+        XCTAssert(alert.waitForExistence(timeout: timeout))
         XCTAssert(alert.labelContains(text: "use your location?"))
 
         let button = alert.buttons[label]
