@@ -177,17 +177,17 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let stops = try sut.inspect().findAll(NearbyStopView.self)
 
-        let matchingPrediction = try stops[0].find(PredictionView.self, where: {
+        let matchingUpcomingTrip = try stops[0].find(UpcomingTripView.self, where: {
             switch try $0.actualView().prediction {
-            case PredictionView.State.some: true
+            case UpcomingTripView.State.some: true
             default: false
             }
         })
         XCTAssertEqual(
-            try matchingPrediction.actualView().prediction,
-            PredictionView.State.some(UpcomingTrip.FormatSchedule(scheduleTime: soon))
+            try matchingUpcomingTrip.actualView().prediction,
+            UpcomingTripView.State.some(UpcomingTrip.FormatSchedule(scheduleTime: soon))
         )
-        XCTAssertEqual(try matchingPrediction.find(ViewType.Image.self).actualImage().name(), "clock")
+        XCTAssertEqual(try matchingUpcomingTrip.find(ViewType.Image.self).actualImage().name(), "clock")
     }
 
     @MainActor func testWithPredictions() throws {
@@ -259,9 +259,9 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
 
-        let expectedState = PredictionView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
+        let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
         XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
-            .findAll(PredictionView.self, where: { sut in
+            .findAll(UpcomingTripView.self, where: { sut in
                 try debugPrint(sut.actualView())
                 return try sut.actualView().prediction == expectedState
             }).isEmpty)

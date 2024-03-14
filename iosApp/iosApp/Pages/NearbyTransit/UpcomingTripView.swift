@@ -1,5 +1,5 @@
 //
-//  PredictionView.swift
+//  UpcomingTripView.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 3/5/24.
@@ -17,7 +17,7 @@ extension UpcomingTrip.FormatOverridden {
     }
 }
 
-struct PredictionView: View {
+struct UpcomingTripView: View {
     let prediction: State
 
     enum State: Equatable {
