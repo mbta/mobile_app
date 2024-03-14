@@ -33,6 +33,7 @@ final class HomeMapViewUITests: XCTestCase {
         acceptLocationPermissionAlert(timeout: 5)
 
         let map = app!.otherElements.matching(identifier: "transitMap").element
+        map.isAccessibilityElement = true
         app!.forceTap()
         XCTAssert(map.waitForExistence(timeout: 30))
 
@@ -50,6 +51,7 @@ final class HomeMapViewUITests: XCTestCase {
         denyLocationPermissionAlert(timeout: 5)
 
         let map = app!.otherElements.matching(identifier: "transitMap").element
+        map.isAccessibilityElement = true
         app!.tap()
         XCTAssert(map.waitForExistence(timeout: 5))
 
