@@ -33,6 +33,7 @@ final class HomeMapViewUITests: XCTestCase {
         acceptLocationPermissionAlert(timeout: 5)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
+        app.tap()
         XCTAssert(map.waitForExistence(timeout: 30))
 
         let recenterButton = app.images.matching(identifier: "mapRecenterButton").element
@@ -51,6 +52,7 @@ final class HomeMapViewUITests: XCTestCase {
         denyLocationPermissionAlert(timeout: 5)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
+        app.tap()
         XCTAssert(map.waitForExistence(timeout: 30))
 
         let recenterButton = app.images.matching(identifier: "mapRecenterButton").element
