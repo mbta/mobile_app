@@ -165,34 +165,28 @@ final class NearbyTransitViewTests: XCTestCase {
         let notTime2 = Date.now.addingTimeInterval(9 * 60).toKotlinInstant()
         let time2 = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
         let trip2 = objects.trip { $0.headsign = "Charles River Loop" }
-        objects.schedule { schedule in
+        let sched2 = objects.schedule { schedule in
             schedule.departureTime = notTime2
             schedule.stopId = "8552"
             schedule.tripId = trip2.id
             schedule.stopSequence = 13
         }
-        objects.prediction { prediction in
+        objects.prediction(schedule: sched2) { prediction in
             prediction.departureTime = time2
-            prediction.stopId = "8552"
-            prediction.tripId = trip2.id
-            prediction.stopSequence = 13
         }
 
         // schedule & cancellation
         let notTime3 = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
         let trip3 = objects.trip { $0.headsign = "Watertown Yard" }
-        objects.schedule { schedule in
+        let sched3 = objects.schedule { schedule in
             schedule.departureTime = notTime3
             schedule.stopId = "84791"
             schedule.tripId = trip3.id
             schedule.stopSequence = 13
         }
-        objects.prediction { prediction in
+        objects.prediction(schedule: sched3) { prediction in
             prediction.departureTime = nil
             prediction.scheduleRelationship = .cancelled
-            prediction.stopId = "84791"
-            prediction.tripId = trip3.id
-            prediction.stopSequence = 13
         }
 
         class FakePredictionsFetcher: PredictionsFetcher {
