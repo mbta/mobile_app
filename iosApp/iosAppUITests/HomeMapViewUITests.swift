@@ -10,33 +10,33 @@ import CoreLocation
 import XCTest
 
 final class HomeMapViewUITests: XCTestCase {
-    let app = XCUIApplication()
+    var app: XCUIApplication? = nil
 
     override func setUp() {
         executionTimeAllowance = 300
     }
 
     override func setUpWithError() throws {
-        app.resetAuthorizationStatus(for: .location)
-        app.launchArguments = ["-testing"]
+        app = XCUIApplication()
+        app!.resetAuthorizationStatus(for: .location)
+        app!.launchArguments = ["-testing"]
         XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 42.356395, longitude: -71.062424))
         continueAfterFailure = false
+        app!.launch()
     }
 
     override func tearDownWithError() throws {
-        app.terminate()
+        app!.terminate()
     }
 
     func testRecentersToUserLocation() throws {
-        app.launch()
-
         acceptLocationPermissionAlert(timeout: 5)
 
-        let map = app.otherElements.matching(identifier: "transitMap").element
-        app.tap()
+        let map = app!.otherElements.matching(identifier: "transitMap").element
+        app!.forceTap()
         XCTAssert(map.waitForExistence(timeout: 30))
 
-        let recenterButton = app.images.matching(identifier: "mapRecenterButton").element
+        let recenterButton = app!.images.matching(identifier: "mapRecenterButton").element
         XCTAssertFalse(recenterButton.exists)
 
         map.swipeDown()
@@ -47,15 +47,13 @@ final class HomeMapViewUITests: XCTestCase {
     }
 
     func testNoRecenterWithNoLocation() throws {
-        app.launch()
-
         denyLocationPermissionAlert(timeout: 5)
 
-        let map = app.otherElements.matching(identifier: "transitMap").element
-        app.tap()
-        XCTAssert(map.waitForExistence(timeout: 30))
+        let map = app!.otherElements.matching(identifier: "transitMap").element
+        app!.tap()
+        XCTAssert(map.waitForExistence(timeout: 5))
 
-        let recenterButton = app.images.matching(identifier: "mapRecenterButton").element
+        let recenterButton = app!.images.matching(identifier: "mapRecenterButton").element
         XCTAssertFalse(recenterButton.exists)
 
         map.swipeDown()
@@ -67,6 +65,14 @@ extension XCUIElement {
     func labelContains(text: String) -> Bool {
         let predicate = NSPredicate(format: "label CONTAINS %@", text)
         return staticTexts.matching(predicate).firstMatch.exists
+    }
+
+    func forceTap() {
+        if isHittable {
+            tap()
+        } else {
+            coordinate(withNormalizedOffset: CGVectorMake(0.0, 0.0)).tap()
+        }
     }
 }
 
