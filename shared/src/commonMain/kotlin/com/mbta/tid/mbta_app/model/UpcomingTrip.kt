@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
@@ -15,10 +14,15 @@ import kotlinx.datetime.Instant
  * The trip might also neither arrive nor depart if the stop is skipped or the trip is dropped. For
  * this reason, a prediction that exists but has null times should overwrite scheduled times.
  */
-data class UpcomingTrip
-@DefaultArgumentInterop.Enabled
-constructor(val schedule: Schedule?, val prediction: Prediction?, val vehicle: Vehicle?) :
-    Comparable<UpcomingTrip> {
+data class UpcomingTrip(
+    val schedule: Schedule?,
+    val prediction: Prediction?,
+    val vehicle: Vehicle?
+) : Comparable<UpcomingTrip> {
+    constructor(schedule: Schedule) : this(schedule, null, null)
+
+    constructor(schedule: Schedule, prediction: Prediction) : this(schedule, prediction, null)
+
     constructor(prediction: Prediction) : this(null, prediction, null)
 
     constructor(prediction: Prediction, vehicle: Vehicle) : this(null, prediction, vehicle)

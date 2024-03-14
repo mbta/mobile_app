@@ -526,7 +526,7 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
-                schedules = ScheduleResponse(objects),
+                schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
@@ -579,6 +579,62 @@ class NearbyResponseTest {
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo incorporates schedules`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route()
+        val routePattern = objects.routePattern(route) { representativeTrip { headsign = "A" } }
+        val trip1 = objects.trip(routePattern)
+        val trip2 = objects.trip(routePattern)
+
+        val time = Instant.parse("2024-03-14T12:23:44-04:00")
+
+        val sched1 =
+            objects.schedule {
+                tripId = trip1.id
+                stopId = stop.id
+                departureTime = time + 1.minutes
+            }
+        val sched2 =
+            objects.schedule {
+                tripId = trip2.id
+                stopId = stop.id
+                departureTime = time + 2.minutes
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
+            }
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            stop,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "A",
+                                    listOf(routePattern),
+                                    listOf(UpcomingTrip(sched1), UpcomingTrip(sched2))
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = null,
                 filterAtTime = time
             )
         )

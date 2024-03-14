@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.uuid
 import kotlinx.datetime.Instant
 
@@ -88,6 +89,7 @@ class ObjectCollectionBuilder {
             )
     }
 
+    @DefaultArgumentInterop.Enabled
     fun route(block: RouteBuilder.() -> Unit = {}) = build(routes, RouteBuilder(), block)
 
     inner class RoutePatternBuilder : ObjectBuilder<RoutePattern> {
@@ -151,13 +153,28 @@ class ObjectCollectionBuilder {
         var id = uuid()
         var headsign = ""
         var routePatternId: String? = null
-        var shapeId = null
+        var shapeId: String? = null
         var stopIds: List<String>? = null
 
         override fun built() = Trip(id, headsign, routePatternId, shapeId, stopIds)
     }
 
     fun trip(block: TripBuilder.() -> Unit = {}) = build(trips, TripBuilder(), block)
+
+    @DefaultArgumentInterop.Enabled
+    fun trip(routePattern: RoutePattern, block: TripBuilder.() -> Unit = {}) =
+        build(
+            trips,
+            TripBuilder().apply {
+                routePatternId = routePattern.id
+                val representativeTrip = trips[routePattern.representativeTripId]
+                if (representativeTrip != null) {
+                    headsign = representativeTrip.headsign
+                    shapeId = representativeTrip.shapeId
+                }
+            },
+            block
+        )
 
     class StopBuilder : ObjectBuilder<Stop> {
         var id = uuid()
@@ -203,6 +220,9 @@ class ObjectCollectionBuilder {
             ObjectCollectionBuilder().routePattern(route, block)
 
         fun trip(block: TripBuilder.() -> Unit = {}) = ObjectCollectionBuilder().trip(block)
+
+        fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
+            ObjectCollectionBuilder().schedule(block)
 
         fun stop(block: StopBuilder.() -> Unit = {}) = ObjectCollectionBuilder().stop(block)
 
