@@ -44,34 +44,32 @@ struct HomeMapView: View {
 
     var body: some View {
         MapReader { proxy in
-            ZStack(alignment: .topTrailing) {
-                Map(viewport: $viewport) {
-                    Puck2D().pulsing(.none)
-                }
-                .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-                .mapStyle(.light)
-                .onCameraChanged { change in
-                    updateStopOpacity(
-                        map: proxy.map,
-                        opacity: change.cameraState.zoom > HomeMapView.stopZoomThreshold ? 1 : 0
-                    )
-                    DispatchQueue.main.async { isFollowingUser = viewport.followPuck?.bearing == .constant(0) }
-                }
-                .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-                .onLayerTapGesture(stopLayerId) { _, _ in
-                    // Each stop feature has the stop ID as the identifier
-                    // We can also set arbitrary JSON properties if we need to
-                    // print(feature.feature.identifier)
-                    true
-                }
-                .accessibilityIdentifier("transitMap")
-                .onAppear(perform: handleAppear(location: proxy.location))
-                .onChange(of: globalFetcher.stops, perform: handleGlobalStops(proxy.map))
-                .onChange(of: railRouteShapeFetcher.response, perform: handleRouteResponse(proxy.map))
-                .overlay(alignment: .topTrailing) {
-                    if !isFollowingUser, locationDataManager.currentLocation != nil {
-                        RecenterButton(perform: handleRecenter)
-                    }
+            Map(viewport: $viewport) {
+                Puck2D().pulsing(.none)
+            }
+            .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
+            .mapStyle(.light)
+            .onCameraChanged { change in
+                updateStopOpacity(
+                    map: proxy.map,
+                    opacity: change.cameraState.zoom > HomeMapView.stopZoomThreshold ? 1 : 0
+                )
+                DispatchQueue.main.async { isFollowingUser = viewport.followPuck?.bearing == .constant(0) }
+            }
+            .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
+            .onLayerTapGesture(stopLayerId) { _, _ in
+                // Each stop feature has the stop ID as the identifier
+                // We can also set arbitrary JSON properties if we need to
+                // print(feature.feature.identifier)
+                true
+            }
+            .accessibilityIdentifier("transitMap")
+            .onAppear { handleAppear(location: proxy.location) }
+            .onChange(of: globalFetcher.stops) { stops in handleGlobalStops(proxy.map, stops) }
+            .onChange(of: railRouteShapeFetcher.response) { response in handleRouteResponse(proxy.map, response) }
+            .overlay(alignment: .topTrailing) {
+                if !isFollowingUser, locationDataManager.currentLocation != nil {
+                    RecenterButton(perform: handleRecenter)
                 }
             }
         }
@@ -139,48 +137,44 @@ struct HomeMapView: View {
     func getRouteSourceId(_ routeId: String) -> String { "\(routeSourceId)-\(routeId)" }
     func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
 
-    func handleAppear(location: LocationManager?) -> () -> Void {
-        {
-            location?.override(locationProvider: locationDataManager.$currentLocation.map {
-                if let location = $0 {
-                    [Location(clLocation: location)]
-                } else { [] }
-            }.eraseToSignal())
+    func handleAppear(location: LocationManager?) {
+        location?.override(locationProvider: locationDataManager.$currentLocation.map {
+            if let location = $0 {
+                [Location(clLocation: location)]
+            } else { [] }
+        }.eraseToSignal())
 
-            viewport = .followPuck(zoom: viewport.camera?.zoom ?? HomeMapView.defaultZoom)
+        viewport = .followPuck(zoom: viewport.camera?.zoom ?? HomeMapView.defaultZoom)
 
-            Task {
-                try await globalFetcher.getGlobalData()
-            }
-            Task {
-                try await railRouteShapeFetcher.getRailRouteShapes()
-            }
-
-            didAppear?(self)
+        Task {
+            try await globalFetcher.getGlobalData()
         }
+        Task {
+            try await railRouteShapeFetcher.getRailRouteShapes()
+        }
+
+        didAppear?(self)
     }
 
-    func handleGlobalStops(_ possibleMap: MapboxMap?) -> (_ response: [Stop]) -> Void {
+    func handleGlobalStops(_ possibleMap: MapboxMap?, _ stops: [Stop]) {
         guard let map = possibleMap else {
-            return { _ in }
+            return
         }
-        return { stops in
-            if map.sourceExists(withId: stopSourceId) {
-                // Don't create a new source if one already exists
-                map.updateGeoJSONSource(
-                    withId: stopSourceId,
-                    data: createStopSourceData(stops: stops)
-                )
-            } else {
-                // Create a GeoJSON data source for markers
-                var stopSource = GeoJSONSource(id: stopSourceId)
-                stopSource.data = createStopSourceData(stops: stops)
-                try? map.addSource(stopSource)
-                // Add marker image to the map
-                try? map.addImage(UIImage(named: "t-logo")!, id: stopIconId)
-                // Create a symbol layer for markers
-                try? map.addLayer(createStopLayer())
-            }
+        if map.sourceExists(withId: stopSourceId) {
+            // Don't create a new source if one already exists
+            map.updateGeoJSONSource(
+                withId: stopSourceId,
+                data: createStopSourceData(stops: stops)
+            )
+        } else {
+            // Create a GeoJSON data source for markers
+            var stopSource = GeoJSONSource(id: stopSourceId)
+            stopSource.data = createStopSourceData(stops: stops)
+            try? map.addSource(stopSource)
+            // Add marker image to the map
+            try? map.addImage(UIImage(named: "t-logo")!, id: stopIconId)
+            // Create a symbol layer for markers
+            try? map.addLayer(createStopLayer())
         }
     }
 
@@ -190,45 +184,43 @@ struct HomeMapView: View {
         }
     }
 
-    func handleRouteResponse(_ possibleMap: MapboxMap?) -> (_ response: RouteResponse?) -> Void {
+    func handleRouteResponse(_ possibleMap: MapboxMap?, _ response: RouteResponse?) {
         guard let map = possibleMap else {
-            return { _ in }
+            return
         }
-        return { response in
-            guard let routesResponse = response else { return }
-            // Reverse sort routes so lowest sorted ones are placed lowest on the map
-            let sortedRoutes = routesResponse.routes.sorted { aRoute, bRoute in
-                aRoute.sortOrder >= bRoute.sortOrder
-            }
-            for route in sortedRoutes {
-                if map.sourceExists(withId: getRouteSourceId(route.id)) {
-                    // Don't create new sources if they already exist
-                    map.updateGeoJSONSource(
-                        withId: getRouteSourceId(route.id),
-                        data: createRouteSourceData(route: route, routesResponse: routesResponse)
-                    )
-                } else {
-                    // Create a GeoJSON data source for each typical route pattern shape in this route
-                    var routeSource = GeoJSONSource(id: getRouteSourceId(route.id))
-                    routeSource.data = createRouteSourceData(route: route, routesResponse: routesResponse)
-                    do {
-                        try map.addSource(routeSource)
-                    } catch {
-                        let id = getRouteSourceId(route.id)
-                        Logger().error("Failed to add route source \(id)\n\(error)")
-                    }
+        guard let routesResponse = response else { return }
+        // Reverse sort routes so lowest sorted ones are placed lowest on the map
+        let sortedRoutes = routesResponse.routes.sorted { aRoute, bRoute in
+            aRoute.sortOrder >= bRoute.sortOrder
+        }
+        for route in sortedRoutes {
+            if map.sourceExists(withId: getRouteSourceId(route.id)) {
+                // Don't create new sources if they already exist
+                map.updateGeoJSONSource(
+                    withId: getRouteSourceId(route.id),
+                    data: createRouteSourceData(route: route, routesResponse: routesResponse)
+                )
+            } else {
+                // Create a GeoJSON data source for each typical route pattern shape in this route
+                var routeSource = GeoJSONSource(id: getRouteSourceId(route.id))
+                routeSource.data = createRouteSourceData(route: route, routesResponse: routesResponse)
+                do {
+                    try map.addSource(routeSource)
+                } catch {
+                    let id = getRouteSourceId(route.id)
+                    Logger().error("Failed to add route source \(id)\n\(error)")
+                }
 
-                    do {
-                        // Create a line layer for each route
-                        if map.layerExists(withId: "puck") {
-                            try map.addLayer(createRouteLayer(route: route), layerPosition: .below("puck"))
-                        } else {
-                            try map.addLayer(createRouteLayer(route: route))
-                        }
-                    } catch {
-                        let id = getRouteLayerId(route.id)
-                        Logger().error("Failed to add route layer \(id)\n\(error)")
+                do {
+                    // Create a line layer for each route
+                    if map.layerExists(withId: "puck") {
+                        try map.addLayer(createRouteLayer(route: route), layerPosition: .below("puck"))
+                    } else {
+                        try map.addLayer(createRouteLayer(route: route))
                     }
+                } catch {
+                    let id = getRouteLayerId(route.id)
+                    Logger().error("Failed to add route layer \(id)\n\(error)")
                 }
             }
         }
