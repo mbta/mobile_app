@@ -27,6 +27,7 @@ final class HomeMapViewUITests: XCTestCase {
         app.terminate()
     }
 
+    // Test is skipped for now due to issues running in XCode Cloud
     func testRecentersToUserLocation() throws {
         app.launch()
 
