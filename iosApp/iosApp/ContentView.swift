@@ -15,6 +15,7 @@ struct ContentView: View {
     @EnvironmentObject var scheduleFetcher: ScheduleFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
+    @EnvironmentObject var alertsFetcher: AlertsFetcher
 
     var body: some View {
         NavigationView {
@@ -62,7 +63,7 @@ struct ContentView: View {
             } else if newPhase == .background {
                 socketProvider.socket.disconnect(code: .normal, reason: "backgrounded", callback: nil)
             }
-        }
+        }.task { alertsFetcher.run() }
     }
 }
 
@@ -78,5 +79,6 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: mockSocket))
             .environmentObject(SocketProvider(socket: mockSocket))
+            .environmentObject(AlertsFetcher(socket: mockSocket))
     }
 }

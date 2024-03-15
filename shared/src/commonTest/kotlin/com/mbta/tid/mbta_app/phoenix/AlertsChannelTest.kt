@@ -1,0 +1,91 @@
+package com.mbta.tid.mbta_app.phoenix
+
+import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlinx.datetime.Instant
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.addJsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
+
+class AlertsChannelTest {
+
+    @Test
+    fun testParseNewDataMessage() {
+        val payload =
+            json.encodeToString(
+                buildJsonObject {
+                    putJsonObject("alerts") {
+                        putJsonObject("501047") {
+                            put("id", "501047")
+                            putJsonArray("active_period") {
+                                addJsonObject {
+                                    put("start", "2023-05-26T16:46:13-04:00")
+                                    put("end", JsonNull)
+                                }
+                            }
+                            put("effect", "station_issue")
+                            put("effect_name", JsonNull)
+                            putJsonArray("informed_entity") {
+                                addJsonObject {
+                                    putJsonArray("activities") { add("board") }
+                                    put("route", "Green-D")
+                                    put("route_type", "light_rail")
+                                    put("stop", "70511")
+                                }
+                                addJsonObject {
+                                    putJsonArray("activities") { add("board") }
+                                    put("route", "88")
+                                    put("route_type", "bus")
+                                    put("stop", "place-lech")
+                                }
+                            }
+                            put("lifecycle", "ongoing")
+                        }
+                    }
+                }
+            )
+
+        val parsed = AlertsChannel.parseMessage(payload)
+
+        assertEquals(
+            AlertsStreamDataResponse(
+                mapOf(
+                    "501047" to
+                        Alert(
+                            "501047",
+                            listOf(
+                                Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
+                            ),
+                            Alert.Effect.StationIssue,
+                            null,
+                            listOf(
+                                Alert.InformedEntity(
+                                    listOf(Alert.InformedEntity.Activity.Board),
+                                    route = "Green-D",
+                                    routeType = RouteType.LIGHT_RAIL,
+                                    stop = "70511"
+                                ),
+                                Alert.InformedEntity(
+                                    listOf(Alert.InformedEntity.Activity.Board),
+                                    route = "88",
+                                    routeType = RouteType.BUS,
+                                    stop = "place-lech"
+                                )
+                            ),
+                            Alert.Lifecycle.Ongoing
+                        )
+                )
+            ),
+            parsed
+        )
+    }
+}

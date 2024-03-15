@@ -35,6 +35,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
+            .environmentObject(AlertsFetcher(socket: FakeSocket()))
 
         ViewHosting.host(view: sut)
 
@@ -62,6 +63,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
+            .environmentObject(AlertsFetcher(socket: FakeSocket()))
 
         ViewHosting.host(view: sut)
 
