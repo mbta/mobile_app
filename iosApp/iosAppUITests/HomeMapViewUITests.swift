@@ -13,7 +13,7 @@ final class HomeMapViewUITests: XCTestCase {
     let app = XCUIApplication()
 
     override func setUp() {
-        executionTimeAllowance = 300
+        executionTimeAllowance = 180
     }
 
     override func setUpWithError() throws {

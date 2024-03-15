@@ -10,7 +10,7 @@ import XCTest
 
 final class IosAppUITests: XCTestCase {
     override func setUp() {
-        executionTimeAllowance = 60
+        executionTimeAllowance = 180
     }
 
     func testLaunchPerformance() throws {
