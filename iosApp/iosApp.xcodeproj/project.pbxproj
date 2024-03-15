@@ -58,6 +58,7 @@
 		9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB44A122B911E6400E8FFB3 /* DateExtension.swift */; };
 		9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */; };
 		9ACA9DF32BA1EC8B003F0E9E /* HomeMapViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */; };
+		9AD1D1FE2BA4D5C600182060 /* ViewportProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
@@ -147,6 +148,7 @@
 		9AB44A122B911E6400E8FFB3 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHexExtension.swift; sourceTree = "<group>"; };
 		9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewUITests.swift; sourceTree = "<group>"; };
+		9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportProviderTest.swift; sourceTree = "<group>"; };
 		9AF88E042B48913C00E08C7C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -256,6 +258,7 @@
 			children = (
 				6EF50F502B988BF600833070 /* PredictionsFetcherTests.swift */,
 				9A69D48F2B99212300235125 /* NearbyFetcherTests.swift */,
+				9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -594,6 +597,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AD1D1FE2BA4D5C600182060 /* ViewportProviderTest.swift in Sources */,
 				9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */,
 				6EE745842B965B9C0052227E /* SocketTests.swift in Sources */,
 				6EF50F482B9889D600833070 /* MockSocket.swift in Sources */,
