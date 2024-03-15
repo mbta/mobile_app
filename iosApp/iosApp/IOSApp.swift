@@ -16,6 +16,7 @@ struct IOSApp: App {
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
+    @StateObject var viewportProvider: ViewportProvider
 
     init() {
         let socket = Socket(SocketUtils.companion.url)
@@ -38,6 +39,7 @@ struct IOSApp: App {
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
+        _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }
 
     var body: some Scene {
@@ -50,6 +52,7 @@ struct IOSApp: App {
                 .environmentObject(railRouteShapeFetcher)
                 .environmentObject(searchResultFetcher)
                 .environmentObject(socketProvider)
+                .environmentObject(viewportProvider)
         }
     }
 }

@@ -13,10 +13,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-    static var defaultCenter: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
-
-    static let stopZoomThreshold: CGFloat = 14
-    static let defaultZoom: CGFloat = stopZoomThreshold + 0.25
+    static let stopZoomThreshold: CGFloat = ViewportProvider.defaultZoom - 0.25
 
     private let routeLayerId = "route-layer"
     private let routeSourceId = "route-source"
@@ -26,25 +23,26 @@ struct HomeMapView: View {
 
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @ObservedObject var viewportProvider: ViewportProvider
+
     @StateObject private var locationDataManager: LocationDataManager
-    @State var viewport: Viewport = .camera(center: defaultCenter, zoom: defaultZoom)
     @State var recenterButton: ViewAnnotation?
-    @State var isFollowingUser: Bool
 
     init(
         globalFetcher: GlobalFetcher,
         railRouteShapeFetcher: RailRouteShapeFetcher,
-        locationDataManager: LocationDataManager = .init(distanceFilter: 1)
+        locationDataManager: LocationDataManager = .init(distanceFilter: 1),
+        viewportProvider: ViewportProvider
     ) {
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.globalFetcher = globalFetcher
+        self.viewportProvider = viewportProvider
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
-        isFollowingUser = true
     }
 
     var body: some View {
         MapReader { proxy in
-            Map(viewport: $viewport) {
+            Map(viewport: $viewportProvider.viewport) {
                 Puck2D().pulsing(.none)
             }
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
@@ -54,7 +52,6 @@ struct HomeMapView: View {
                     map: proxy.map,
                     opacity: change.cameraState.zoom > HomeMapView.stopZoomThreshold ? 1 : 0
                 )
-                DispatchQueue.main.async { isFollowingUser = viewport.followPuck?.bearing == .constant(0) }
             }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(stopLayerId) { _, _ in
@@ -68,8 +65,8 @@ struct HomeMapView: View {
             .onChange(of: globalFetcher.stops) { stops in handleGlobalStops(proxy.map, stops) }
             .onChange(of: railRouteShapeFetcher.response) { response in handleRouteResponse(proxy.map, response) }
             .overlay(alignment: .topTrailing) {
-                if !isFollowingUser, locationDataManager.currentLocation != nil {
-                    RecenterButton(perform: handleRecenter)
+                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                    RecenterButton { viewportProvider.follow() }
                 }
             }
         }
@@ -144,7 +141,7 @@ struct HomeMapView: View {
             } else { [] }
         }.eraseToSignal())
 
-        viewport = .followPuck(zoom: viewport.camera?.zoom ?? HomeMapView.defaultZoom)
+        viewportProvider.follow(animation: .default(maxDuration: 0))
 
         Task {
             try await globalFetcher.getGlobalData()
@@ -175,12 +172,6 @@ struct HomeMapView: View {
             try? map.addImage(UIImage(named: "t-logo")!, id: stopIconId)
             // Create a symbol layer for markers
             try? map.addLayer(createStopLayer())
-        }
-    }
-
-    func handleRecenter() {
-        withViewportAnimation(.easeInOut(duration: 1)) {
-            viewport = .followPuck(zoom: viewport.camera?.zoom ?? HomeMapView.defaultZoom)
         }
     }
 

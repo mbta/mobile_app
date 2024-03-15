@@ -41,6 +41,8 @@
 		9A2005CB2B97B68700F562E1 /* PredictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005CA2B97B68700F562E1 /* PredictionView.swift */; };
 		9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3B09352B967CEC00691427 /* NonNilModifier.swift */; };
 		9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8E582B7EC4B90066B936 /* RoutePill.swift */; };
+		9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830552BA3A2CE0039876E /* ViewportExtension.swift */; };
+		9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830572BA4A1A30039876E /* ViewportProvider.swift */; };
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */; };
 		9A69D4902B99212400235125 /* NearbyFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A69D48F2B99212300235125 /* NearbyFetcherTests.swift */; };
@@ -129,6 +131,8 @@
 		9A2005CA2B97B68700F562E1 /* PredictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionView.swift; sourceTree = "<group>"; };
 		9A3B09352B967CEC00691427 /* NonNilModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonNilModifier.swift; sourceTree = "<group>"; };
 		9A4E8E582B7EC4B90066B936 /* RoutePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePill.swift; sourceTree = "<group>"; };
+		9A5830552BA3A2CE0039876E /* ViewportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportExtension.swift; sourceTree = "<group>"; };
+		9A5830572BA4A1A30039876E /* ViewportProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewportProvider.swift; path = iosApp/ViewportProvider.swift; sourceTree = SOURCE_ROOT; };
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
 		9A69D48F2B99212300235125 /* NearbyFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyFetcherTests.swift; sourceTree = "<group>"; };
@@ -364,6 +368,7 @@
 				8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */,
 				9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */,
 				6E99CBB62B9892C80047E78D /* SocketProvider.swift */,
+				9A5830572BA4A1A30039876E /* ViewportProvider.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -375,6 +380,7 @@
 				9AB44A122B911E6400E8FFB3 /* DateExtension.swift */,
 				9A3B09352B967CEC00691427 /* NonNilModifier.swift */,
 				9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */,
+				9A5830552BA3A2CE0039876E /* ViewportExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -645,6 +651,8 @@
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
 				9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */,
+				9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */,
+				9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

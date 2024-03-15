@@ -14,6 +14,7 @@ struct ContentView: View {
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
+    @EnvironmentObject var viewportProvider: ViewportProvider
 
     var body: some View {
         NavigationView {
@@ -36,7 +37,8 @@ struct ContentView: View {
                 }
                 HomeMapView(
                     globalFetcher: globalFetcher,
-                    railRouteShapeFetcher: railRouteShapeFetcher
+                    railRouteShapeFetcher: railRouteShapeFetcher,
+                    viewportProvider: viewportProvider
                 )
                 Spacer()
                 if let location = locationDataManager.currentLocation {
