@@ -3,19 +3,16 @@ package com.mbta.tid.mbta_app.phoenix
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 
-class PredictionsForStopsChannel {
-    companion object {
-        val topic = "predictions:stops"
+class PredictionsForStopsChannel(stopIds: List<String>) :
+    ChannelSpec<PredictionsStreamDataResponse>() {
+    override val topic = "predictions:stops"
 
-        val newDataEvent = "stream_data"
+    override val newDataEvent = "stream_data"
 
-        fun joinPayload(stopIds: List<String>): Map<String, Any> {
-            return mapOf("stop_ids" to stopIds)
-        }
+    override val joinPayload = mapOf("stop_ids" to stopIds)
 
-        @Throws(IllegalArgumentException::class)
-        fun parseMessage(payload: String): PredictionsStreamDataResponse {
-            return json.decodeFromString(payload)
-        }
+    @Throws(IllegalArgumentException::class)
+    override fun parseMessage(payload: String): PredictionsStreamDataResponse {
+        return json.decodeFromString(payload)
     }
 }

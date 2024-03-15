@@ -3,15 +3,13 @@ package com.mbta.tid.mbta_app.phoenix
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 
-class AlertsChannel {
-    companion object {
-        val topic = "alerts"
+object AlertsChannel : ChannelSpec<AlertsStreamDataResponse>() {
+    override val topic = "alerts"
 
-        val newDataEvent = "stream_data"
+    override val newDataEvent = "stream_data"
 
-        @Throws(IllegalArgumentException::class)
-        fun parseMessage(payload: String): AlertsStreamDataResponse {
-            return json.decodeFromString(payload)
-        }
+    @Throws(IllegalArgumentException::class)
+    override fun parseMessage(payload: String): AlertsStreamDataResponse {
+        return json.decodeFromString(payload)
     }
 }

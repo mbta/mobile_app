@@ -51,7 +51,7 @@ final class AlertsFetcherTests: XCTestCase {
     func testChannelClearedOnLeave() {
         let mockSocket = MockSocket()
         let alertsFetcher = AlertsFetcher(socket: mockSocket)
-        alertsFetcher.channel = mockSocket.channel(AlertsChannel.companion.topic, params: [:])
+        alertsFetcher.channel = mockSocket.channel(AlertsChannel.shared.topic, params: [:])
         XCTAssertNotNil(alertsFetcher.channel)
 
         alertsFetcher.leave()
@@ -66,19 +66,19 @@ final class AlertsFetcherTests: XCTestCase {
             messageSuccessExpectation.fulfill()
         })
 
-        XCTAssertEqual(alertsFetcher.alerts, nil)
+        XCTAssertEqual(alertsFetcher.data, nil)
         alertsFetcher.run()
 
         alertsFetcher.channel!
             .trigger(Message(ref: "1",
-                             topic: AlertsChannel.companion.topic,
-                             event: AlertsChannel.companion.newDataEvent,
+                             topic: AlertsChannel.shared.topic,
+                             event: AlertsChannel.shared.newDataEvent,
                              payload: ["jsonPayload": "{\"alerts\": {}}"],
                              joinRef: "2"))
 
         wait(for: [messageSuccessExpectation], timeout: 1)
 
-        XCTAssertEqual(alertsFetcher.alerts, AlertsStreamDataResponse(alerts: [:]))
+        XCTAssertEqual(alertsFetcher.data, AlertsStreamDataResponse(alerts: [:]))
     }
 
     func testSetsErrorWhenErrorReceived() {
@@ -107,13 +107,13 @@ final class AlertsFetcherTests: XCTestCase {
 
         alertsFetcher.socketError = PhoenixChannelError.channelError("Old Error")
 
-        XCTAssertEqual(alertsFetcher.alerts, nil)
+        XCTAssertEqual(alertsFetcher.data, nil)
         alertsFetcher.run()
 
         alertsFetcher.channel!
             .trigger(Message(ref: "1",
-                             topic: AlertsChannel.companion.topic,
-                             event: AlertsChannel.companion.newDataEvent,
+                             topic: AlertsChannel.shared.topic,
+                             event: AlertsChannel.shared.newDataEvent,
                              payload: ["jsonPayload": "{\"alerts\": {}, \"trips\": {}, \"vehicles\": {}}"],
                              joinRef: "2"))
 

@@ -51,7 +51,7 @@ final class PredictionsFetcherTests: XCTestCase {
     func testChannelClearedOnLeave() {
         let mockSocket = MockSocket()
         let predictionsFetcher = PredictionsFetcher(socket: mockSocket)
-        predictionsFetcher.channel = mockSocket.channel(PredictionsForStopsChannel.companion.topic, params: [:])
+        predictionsFetcher.channel = mockSocket.channel(predictionsFetcher.spec.topic, params: [:])
         XCTAssertNotNil(predictionsFetcher.channel)
 
         predictionsFetcher.leave()
@@ -66,19 +66,19 @@ final class PredictionsFetcherTests: XCTestCase {
             messageSuccessExpectation.fulfill()
         })
 
-        XCTAssertEqual(predictionsFetcher.predictions, nil)
+        XCTAssertEqual(predictionsFetcher.data, nil)
         predictionsFetcher.run(stopIds: ["1"])
 
         predictionsFetcher.channel!
             .trigger(Message(ref: "1",
-                             topic: PredictionsForStopsChannel.companion.topic,
-                             event: PredictionsForStopsChannel.companion.newDataEvent,
+                             topic: predictionsFetcher.spec.topic,
+                             event: predictionsFetcher.spec.newDataEvent,
                              payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"],
                              joinRef: "2"))
 
         wait(for: [messageSuccessExpectation], timeout: 1)
 
-        XCTAssertEqual(predictionsFetcher.predictions, PredictionsStreamDataResponse(predictions: [:], trips: [:], vehicles: [:]))
+        XCTAssertEqual(predictionsFetcher.data, PredictionsStreamDataResponse(predictions: [:], trips: [:], vehicles: [:]))
     }
 
     func testSetsErrorWhenErrorReceived() {
@@ -107,13 +107,13 @@ final class PredictionsFetcherTests: XCTestCase {
 
         predictionsFetcher.socketError = PhoenixChannelError.channelError("Old Error")
 
-        XCTAssertEqual(predictionsFetcher.predictions, nil)
+        XCTAssertEqual(predictionsFetcher.data, nil)
         predictionsFetcher.run(stopIds: ["1"])
 
         predictionsFetcher.channel!
             .trigger(Message(ref: "1",
-                             topic: PredictionsForStopsChannel.companion.topic,
-                             event: PredictionsForStopsChannel.companion.newDataEvent,
+                             topic: predictionsFetcher.spec.topic,
+                             event: predictionsFetcher.spec.newDataEvent,
                              payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"],
                              joinRef: "2"))
 

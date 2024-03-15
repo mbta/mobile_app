@@ -192,7 +192,7 @@ final class NearbyTransitViewTests: XCTestCase {
         class FakePredictionsFetcher: PredictionsFetcher {
             init(_ objects: ObjectCollectionBuilder) {
                 super.init(socket: MockSocket())
-                predictions = .init(objects: objects)
+                data = .init(objects: objects)
             }
         }
 
@@ -265,7 +265,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     prediction.stopId = "84791"
                     prediction.tripId = objects.trip(routePattern: rp2).id
                 }
-                predictions = .init(objects: objects)
+                data = .init(objects: objects)
             }
         }
 
@@ -368,11 +368,11 @@ final class NearbyTransitViewTests: XCTestCase {
             return PredictionsStreamDataResponse(objects: objects)
         }
 
-        predictionsFetcher.predictions = prediction(minutesAway: 2)
+        predictionsFetcher.data = prediction(minutesAway: 2)
 
         XCTAssertNotNil(try sut.inspect().find(text: "2 min"))
 
-        predictionsFetcher.predictions = prediction(minutesAway: 3)
+        predictionsFetcher.data = prediction(minutesAway: 3)
 
         XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
     }

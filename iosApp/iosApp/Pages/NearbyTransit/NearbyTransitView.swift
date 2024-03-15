@@ -64,7 +64,7 @@ struct NearbyTransitView: View {
         VStack {
             if let nearby = nearbyFetcher.withRealtimeInfo(
                 schedules: scheduleFetcher.schedules,
-                predictions: predictionsFetcher.predictions,
+                predictions: predictionsFetcher.data,
                 filterAtTime: now.toKotlinInstant()
             ) {
                 List(nearby, id: \.route.id) { nearbyRoute in
