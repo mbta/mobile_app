@@ -23,6 +23,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
     @MainActor func testPending() throws {
         let sut = NearbyTransitView(location: nil, nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
+                                    scheduleFetcher: .init(backend: IdleBackend()),
                                     predictionsFetcher: .init(socket: MockSocket()))
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
@@ -46,6 +47,7 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
+            scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket())
         )
 
@@ -129,6 +131,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: Route52NearbyFetcher(),
+            scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket())
         )
 
@@ -144,6 +147,82 @@ final class NearbyTransitViewTests: XCTestCase {
             .parent().find(text: "Watertown Yard"))
     }
 
+    @MainActor func testWithSchedules() throws {
+        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+
+        let objects = ObjectCollectionBuilder()
+
+        // schedule, no prediction
+        let time1 = Date.now.addingTimeInterval(45 * 60).toKotlinInstant()
+        let trip1 = objects.trip { $0.headsign = "Dedham Mall" }
+        objects.schedule { schedule in
+            schedule.departureTime = time1
+            schedule.stopId = "8552"
+            schedule.tripId = trip1.id
+        }
+
+        // schedule & prediction
+        let notTime2 = Date.now.addingTimeInterval(9 * 60).toKotlinInstant()
+        let time2 = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
+        let trip2 = objects.trip { $0.headsign = "Charles River Loop" }
+        let sched2 = objects.schedule { schedule in
+            schedule.departureTime = notTime2
+            schedule.stopId = "8552"
+            schedule.tripId = trip2.id
+            schedule.stopSequence = 13
+        }
+        objects.prediction(schedule: sched2) { prediction in
+            prediction.departureTime = time2
+        }
+
+        // schedule & cancellation
+        let notTime3 = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
+        let trip3 = objects.trip { $0.headsign = "Watertown Yard" }
+        let sched3 = objects.schedule { schedule in
+            schedule.departureTime = notTime3
+            schedule.stopId = "84791"
+            schedule.tripId = trip3.id
+            schedule.stopSequence = 13
+        }
+        objects.prediction(schedule: sched3) { prediction in
+            prediction.departureTime = nil
+            prediction.scheduleRelationship = .cancelled
+        }
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            init(_ objects: ObjectCollectionBuilder) {
+                super.init(socket: MockSocket())
+                predictions = .init(objects: objects)
+            }
+        }
+
+        class FakeScheduleFetcher: ScheduleFetcher {
+            init(_ objects: ObjectCollectionBuilder) {
+                super.init(backend: IdleBackend())
+                schedules = .init(objects: objects)
+            }
+        }
+
+        let sut = NearbyTransitView(
+            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            nearbyFetcher: Route52NearbyFetcher(),
+            scheduleFetcher: FakeScheduleFetcher(objects),
+            predictionsFetcher: FakePredictionsFetcher(objects)
+        )
+
+        let patterns = try sut.inspect().findAll(NearbyStopRoutePatternView.self)
+
+        XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
+        XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
+        XCTAssertEqual(try patterns[0].find(ViewType.Image.self).actualImage().name(), "clock")
+
+        XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
+        XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
+
+        XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
+        XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
+    }
+
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
@@ -151,35 +230,40 @@ final class NearbyTransitViewTests: XCTestCase {
             init(distantInstant: Instant? = nil) {
                 super.init(socket: MockSocket())
                 let objects = ObjectCollectionBuilder()
-                let trip1 = objects.trip { trip in
-                    trip.headsign = "Dedham Mall"
+                let route = objects.route()
+                let rp1 = objects.routePattern(route: route) { routePattern in
+                    routePattern.representativeTrip { representativeTrip in
+                        representativeTrip.headsign = "Dedham Mall"
+                    }
                 }
-                let trip2 = objects.trip { trip in
-                    trip.headsign = "Watertown Yard"
+                let rp2 = objects.routePattern(route: route) { routePattern in
+                    routePattern.representativeTrip { representativeTrip in
+                        representativeTrip.headsign = "Watertown Yard"
+                    }
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(12 * 60).toKotlinInstant()
                     prediction.stopId = "8552"
-                    prediction.tripId = trip1.id
+                    prediction.tripId = objects.trip(routePattern: rp1).id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(11 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
                     prediction.status = "Overridden"
                     prediction.stopId = "8552"
-                    prediction.tripId = trip1.id
+                    prediction.tripId = objects.trip(routePattern: rp1).id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
                     prediction.stopId = "84791"
-                    prediction.tripId = trip2.id
+                    prediction.tripId = objects.trip(routePattern: rp2).id
                 }
                 objects.prediction { prediction in
                     prediction.departureTime = distantInstant
                     prediction.stopId = "84791"
-                    prediction.tripId = trip2.id
+                    prediction.tripId = objects.trip(routePattern: rp2).id
                 }
                 predictions = .init(objects: objects)
             }
@@ -191,6 +275,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: Route52NearbyFetcher(),
+            scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant)
         )
 
@@ -207,9 +292,9 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
             .parent().find(text: "1 min"))
 
-        let expectedState = PredictionView.State.some(Prediction.FormatDistantFuture(predictionTime: distantInstant))
+        let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
         XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
-            .findAll(PredictionView.self, where: { sut in
+            .findAll(UpcomingTripView.self, where: { sut in
                 try debugPrint(sut.actualView())
                 return try sut.actualView().prediction == expectedState
             }).isEmpty)
@@ -244,7 +329,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(sawmillAtWalshExpectation: sawmillAtWalshExpectation, lechmereExpectation: lechmereExpectation)
         let sut = NearbyTransitView(
             location: .init(latitude: 12.34, longitude: -56.78),
-            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+            nearbyFetcher: nearbyFetcher,
+            scheduleFetcher: .init(backend: IdleBackend()), predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -266,7 +352,8 @@ final class NearbyTransitViewTests: XCTestCase {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
         let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
-        let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(), predictionsFetcher: predictionsFetcher)
+        let sut = NearbyTransitView(location: .init(), nearbyFetcher: Route52NearbyFetcher(),
+                                    scheduleFetcher: .init(backend: IdleBackend()), predictionsFetcher: predictionsFetcher)
 
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
             let objects = ObjectCollectionBuilder()
@@ -317,7 +404,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
             location: .init(latitude: 12.34, longitude: -56.78),
-            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+            nearbyFetcher: nearbyFetcher,
+            scheduleFetcher: .init(backend: IdleBackend()), predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -355,7 +443,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
             location: .init(latitude: 12.34, longitude: -56.78),
-            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+            nearbyFetcher: nearbyFetcher,
+            scheduleFetcher: .init(backend: IdleBackend()), predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -396,7 +485,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
             location: .init(latitude: 12.34, longitude: -56.78),
-            nearbyFetcher: nearbyFetcher, predictionsFetcher: predictionsFetcher
+            nearbyFetcher: nearbyFetcher,
+            scheduleFetcher: .init(backend: IdleBackend()), predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -421,6 +511,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: FakeNearbyFetcher(),
+            scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket())
         )
 
@@ -444,6 +535,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             nearbyFetcher: FakeNearbyFetcher(),
+            scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: FakePredictionsFetcher()
         )
 

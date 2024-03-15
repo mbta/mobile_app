@@ -14,6 +14,7 @@ struct IOSApp: App {
     @StateObject var nearbyFetcher: NearbyFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
     @StateObject var viewportProvider: ViewportProvider
@@ -37,6 +38,7 @@ struct IOSApp: App {
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
+        _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
@@ -50,6 +52,7 @@ struct IOSApp: App {
                 .environmentObject(nearbyFetcher)
                 .environmentObject(predictionsFetcher)
                 .environmentObject(railRouteShapeFetcher)
+                .environmentObject(scheduleFetcher)
                 .environmentObject(searchResultFetcher)
                 .environmentObject(socketProvider)
                 .environmentObject(viewportProvider)

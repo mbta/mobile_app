@@ -32,6 +32,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
+            .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
 
@@ -58,6 +59,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
+            .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
 

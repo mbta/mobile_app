@@ -34,11 +34,12 @@
 		8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */; };
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
 		8CD1F8CD2B7164C100F419D4 /* PredictionsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */; };
+		8CEA10232BA0F3C6001C6EB9 /* ScheduleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */; };
 		9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */; };
 		9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */; };
 		9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C62B97B63300F562E1 /* NearbyStopView.swift */; };
 		9A2005C92B97B65900F562E1 /* NearbyStopRoutePatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C82B97B65900F562E1 /* NearbyStopRoutePatternView.swift */; };
-		9A2005CB2B97B68700F562E1 /* PredictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005CA2B97B68700F562E1 /* PredictionView.swift */; };
+		9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */; };
 		9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3B09352B967CEC00691427 /* NonNilModifier.swift */; };
 		9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8E582B7EC4B90066B936 /* RoutePill.swift */; };
 		9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830552BA3A2CE0039876E /* ViewportExtension.swift */; };
@@ -125,11 +126,12 @@
 		8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitView.swift; sourceTree = "<group>"; };
 		8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsFetcher.swift; sourceTree = "<group>"; };
+		8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFetcher.swift; sourceTree = "<group>"; };
 		9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFetcher.swift; sourceTree = "<group>"; };
 		9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyRouteView.swift; sourceTree = "<group>"; };
 		9A2005C62B97B63300F562E1 /* NearbyStopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyStopView.swift; sourceTree = "<group>"; };
 		9A2005C82B97B65900F562E1 /* NearbyStopRoutePatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyStopRoutePatternView.swift; sourceTree = "<group>"; };
-		9A2005CA2B97B68700F562E1 /* PredictionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionView.swift; sourceTree = "<group>"; };
+		9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTripView.swift; sourceTree = "<group>"; };
 		9A3B09352B967CEC00691427 /* NonNilModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonNilModifier.swift; sourceTree = "<group>"; };
 		9A4E8E582B7EC4B90066B936 /* RoutePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePill.swift; sourceTree = "<group>"; };
 		9A5830552BA3A2CE0039876E /* ViewportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportExtension.swift; sourceTree = "<group>"; };
@@ -331,7 +333,7 @@
 				9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */,
 				9A2005C62B97B63300F562E1 /* NearbyStopView.swift */,
 				9A2005C82B97B65900F562E1 /* NearbyStopRoutePatternView.swift */,
-				9A2005CA2B97B68700F562E1 /* PredictionView.swift */,
+				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 			);
 			path = NearbyTransit;
 			sourceTree = "<group>";
@@ -371,6 +373,7 @@
 				8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */,
 				9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */,
 				6E99CBB62B9892C80047E78D /* SocketProvider.swift */,
+				8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */,
 				9A5830572BA4A1A30039876E /* ViewportProvider.swift */,
 			);
 			path = Fetchers;
@@ -630,11 +633,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CEA10232BA0F3C6001C6EB9 /* ScheduleFetcher.swift in Sources */,
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
 				9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */,
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,
 				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,
-				9A2005CB2B97B68700F562E1 /* PredictionView.swift in Sources */,
+				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
 				9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */,
 				6EE745862B965C130052227E /* Message.swift in Sources */,
 				9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */,

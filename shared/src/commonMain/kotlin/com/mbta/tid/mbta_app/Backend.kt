@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.RouteResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
@@ -29,6 +31,8 @@ import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
@@ -120,6 +124,28 @@ class Backend(engine: HttpClientEngine) {
             .get {
                 url { path("api/shapes/rail") }
                 expectSuccess = true
+            }
+            .body()
+
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class,
+        HttpRequestTimeoutException::class
+    )
+    @DefaultArgumentInterop.Enabled
+    suspend fun getSchedule(
+        stopIds: List<String>,
+        now: Instant = Clock.System.now()
+    ): ScheduleResponse =
+        httpClient
+            .get {
+                url {
+                    path("api/schedules")
+                    parameters.append("stop_ids", stopIds.joinToString(separator = ","))
+                    parameters.append("date_time", now.toString())
+                }
             }
             .body()
 

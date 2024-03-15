@@ -1,5 +1,5 @@
 //
-//  PredictionView.swift
+//  UpcomingTripView.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 3/5/24.
@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-extension Prediction.FormatOverridden {
+extension UpcomingTrip.FormatOverridden {
     func textWithLocale() -> AttributedString {
         var result = AttributedString(text)
         result.languageIdentifier = "en-US"
@@ -17,13 +17,13 @@ extension Prediction.FormatOverridden {
     }
 }
 
-struct PredictionView: View {
+struct UpcomingTripView: View {
     let prediction: State
 
     enum State: Equatable {
         case loading
         case none
-        case some(Prediction.Format)
+        case some(UpcomingTrip.Format)
     }
 
     var body: some View {
@@ -43,6 +43,11 @@ struct PredictionView: View {
                 Text("1 min")
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+            case let .schedule(schedule):
+                HStack {
+                    Text(schedule.scheduleTime.toNSDate(), style: .time)
+                    Image(systemName: "clock")
+                }
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }
