@@ -86,6 +86,90 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `byRouteAndStop sorts subway routes first`() {
+        val objects = ObjectCollectionBuilder()
+
+        val busStop = objects.stop()
+        val subwayStop = objects.stop()
+
+        val subwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+        val busRoute = objects.route { type = RouteType.BUS }
+
+        val subwayRp =
+            objects.routePattern(subwayRoute) {
+                sortOrder = 2
+                representativeTrip { headsign = "Alewife" }
+            }
+        val busRp =
+            objects.routePattern(busRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+            }
+
+        val response =
+            StopAndRoutePatternResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        subwayStop.id to listOf(subwayRp.id, busRp.id),
+                        busStop.id to listOf(busRp.id),
+                    ),
+            )
+
+        assertEquals(
+            NearbyStaticData.build {
+                route(subwayRoute) { stop(subwayStop) { headsign("Alewife", listOf(subwayRp)) } }
+                route(busRoute) { stop(busStop) { headsign("Nubian", listOf(busRp)) } }
+            },
+            NearbyStaticData(response)
+        )
+    }
+
+    @Test
+    fun `byRouteAndStop preserves original stop ordering among subway routes`() {
+        val objects = ObjectCollectionBuilder()
+
+        val closerStop = objects.stop()
+        val furtherStop = objects.stop()
+
+        val subwayRoute1 = objects.route { type = RouteType.LIGHT_RAIL }
+        val subwayRoute2 = objects.route { type = RouteType.LIGHT_RAIL }
+
+        val subway1Rp1 =
+            objects.routePattern(subwayRoute1) {
+                sortOrder = 2
+                representativeTrip { headsign = "Alewife" }
+            }
+        val subway2Rp1 =
+            objects.routePattern(subwayRoute2) {
+                sortOrder = 1
+                representativeTrip { headsign = "Braintree" }
+            }
+
+        val response =
+            StopAndRoutePatternResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        closerStop.id to listOf(subway2Rp1.id),
+                        furtherStop.id to listOf(subway1Rp1.id),
+                    ),
+            )
+
+        assertEquals(
+            NearbyStaticData.build {
+                route(subwayRoute2) {
+                    stop(closerStop) { headsign("Braintree", listOf(subway2Rp1)) }
+                }
+                route(subwayRoute1) {
+                    stop(furtherStop) { headsign("Alewife", listOf(subway1Rp1)) }
+                }
+            },
+            NearbyStaticData(response)
+        )
+    }
+
+    @Test
     fun `byRouteAndStop groups patterns by headsign`() {
         val objects = ObjectCollectionBuilder()
 
@@ -530,6 +614,115 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo sorts subway first, then by distance`() {
+        val objects = ObjectCollectionBuilder()
+
+        val closeBusStop = objects.stop()
+        val farBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.1
+                longitude = closeBusStop.longitude + 0.1
+            }
+        val closeSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.2
+                longitude = closeBusStop.longitude + 0.2
+            }
+        val farSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.3
+                longitude = closeBusStop.longitude + 0.3
+            }
+
+        val closeBusRoute = objects.route { type = RouteType.BUS }
+        val farBusRoute = objects.route { type = RouteType.BUS }
+        val closeSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+        val farSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Oak Grove" }
+            }
+        val closeBusPattern =
+            objects.routePattern(closeBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+            }
+        val farBusPattern =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(farBusRoute) {
+                    stop(farBusStop) { headsign("Malden Center", listOf(farBusPattern)) }
+                }
+                route(closeBusRoute) {
+                    stop(closeBusStop) { headsign("Nubian", listOf(closeBusPattern)) }
+                }
+                route(farSubwayRoute) {
+                    stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
+                }
+                route(closeSubwayRoute) {
+                    stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
+                }
+            }
+
+        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+
+        // close subway prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            stopId = closeSubwayStop.id
+            tripId = closeSubwayPattern.representativeTripId
+        }
+
+        // far subway prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            stopId = farSubwayStop.id
+            tripId = farSubwayPattern.representativeTripId
+        }
+
+        // close bus prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            stopId = closeBusStop.id
+            tripId = closeBusPattern.representativeTripId
+        }
+
+        // far bus prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            stopId = farBusStop.id
+            tripId = farBusPattern.representativeTripId
+        }
+
+        val realtimeRoutesSorted =
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = closeBusStop.position,
+                predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time
+            )
+        assertEquals(
+            listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
+            realtimeRoutesSorted.map { it.route }
         )
     }
 

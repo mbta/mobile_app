@@ -17,4 +17,17 @@ data class Route(
     @SerialName("route_pattern_ids") val routePatternIds: List<String>? = null
 ) : Comparable<Route>, BackendObject {
     override fun compareTo(other: Route) = sortOrder.compareTo(other.sortOrder)
+
+    companion object {
+        val subwayFirstComparator =
+            Comparator<Route> { route1, route2 ->
+                if (RouteType.isSubway(route1.type) && !RouteType.isSubway(route2.type)) {
+                    -1
+                } else if (RouteType.isSubway(route2.type) && !RouteType.isSubway(route1.type)) {
+                    1
+                } else {
+                    0
+                }
+            }
+    }
 }

@@ -3,7 +3,11 @@ package com.mbta.tid.mbta_app.model
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 
-/** Aggregates stops and the patterns that serve them by route. */
+/**
+ * Aggregates stops and the patterns that serve them by route. The list of routes is ordered with
+ * subway routes first, then sorted by distance. Ties are broken by the sort order of the first
+ * route pattern.
+ */
 data class NearbyStaticData(val data: List<RouteWithStops>) {
     data class HeadsignWithPatterns(val headsign: String, val patterns: List<RoutePattern>) :
         Comparable<HeadsignWithPatterns> {
@@ -71,29 +75,34 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                 }
             }
 
-            patternsByRouteAndStop.map { (route, patternsByStop) ->
-                RouteWithStops(
-                    route = route,
-                    patternsByStop =
-                        patternsByStop.map { (stop, patterns) ->
-                            StopWithPatterns(
-                                stop = stop,
-                                allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) },
-                                patternsByHeadsign =
-                                    patterns
-                                        .groupBy {
-                                            val representativeTrip =
-                                                response.trips.getValue(it.representativeTripId)
-                                            representativeTrip.headsign
-                                        }
-                                        .map { (headsign, routePatterns) ->
-                                            HeadsignWithPatterns(headsign, routePatterns.sorted())
-                                        }
-                                        .sorted()
-                            )
-                        }
-                )
-            }
+            patternsByRouteAndStop
+                .map { (route, patternsByStop) ->
+                    RouteWithStops(
+                        route = route,
+                        patternsByStop =
+                            patternsByStop.map { (stop, patterns) ->
+                                StopWithPatterns(
+                                    stop = stop,
+                                    allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) },
+                                    patternsByHeadsign =
+                                        patterns
+                                            .groupBy {
+                                                val representativeTrip =
+                                                    response.trips.getValue(it.representativeTripId)
+                                                representativeTrip.headsign
+                                            }
+                                            .map { (headsign, routePatterns) ->
+                                                HeadsignWithPatterns(
+                                                    headsign,
+                                                    routePatterns.sorted()
+                                                )
+                                            }
+                                            .sorted()
+                                )
+                            }
+                    )
+                }
+                .sortedWith { a, b -> Route.subwayFirstComparator.compare(a.route, b.route) }
         }
     )
 
