@@ -30,6 +30,7 @@ class AlertsFetcher: ObservableObject {
 
     func run() {
         socket.connect()
+        channel?.leave()
         channel = socket.channel(AlertsChannel.companion.topic, params: [:])
 
         channel?.on(AlertsChannel.companion.newDataEvent, callback: { message in
