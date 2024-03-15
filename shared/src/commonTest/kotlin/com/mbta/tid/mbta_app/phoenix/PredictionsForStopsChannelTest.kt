@@ -26,19 +26,22 @@ class PredictionsForStopsChannelTest {
         val vehicle1 = vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
 
         val parsed =
-            PredictionsForStopsChannel.parseMessage(
-                json.encodeToString(
-                    (buildJsonObject {
-                        putJsonObject("predictions") {
-                            put(prediction1.id, Json.encodeToJsonElement(prediction1))
-                        }
-                        putJsonObject("trips") { put(trip1.id, Json.encodeToJsonElement(trip1)) }
-                        putJsonObject("vehicles") {
-                            put(vehicle1.id, Json.encodeToJsonElement(vehicle1))
-                        }
-                    })
+            PredictionsForStopsChannel(emptyList())
+                .parseMessage(
+                    json.encodeToString(
+                        (buildJsonObject {
+                            putJsonObject("predictions") {
+                                put(prediction1.id, Json.encodeToJsonElement(prediction1))
+                            }
+                            putJsonObject("trips") {
+                                put(trip1.id, Json.encodeToJsonElement(trip1))
+                            }
+                            putJsonObject("vehicles") {
+                                put(vehicle1.id, Json.encodeToJsonElement(vehicle1))
+                            }
+                        })
+                    )
                 )
-            )
         assertEquals(
             parsed,
             PredictionsStreamDataResponse(
