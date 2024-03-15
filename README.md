@@ -12,12 +12,19 @@ Install the tools specified in `.tool-versions`. You can use [asdf](https://asdf
 
 Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
 
-#### Mapbox
+### External Dependencies
 
-We use mapbox as our mapping SDK. To be able to install the mapbox dependency, configure your secret mapbox key following [this guide](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token). To be able to use the use the mapbox SDK and render map tiles, add the mapbox public key to `/iosApp/secrets/mapbox`.
+#### Mapbox - [docs](https://docs.mapbox.com/#maps)
 
-* [Mapbox iOS SDK Docs and Examples](https://docs.mapbox.com/ios/maps/guides/)
-* [Mapbox Swift Docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/)
+We use mapbox for custom interactive maps.
+
+##### ios - [guide](https://docs.mapbox.com/ios/maps/guides/) - [docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/) - [keys](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token)
+
+Mapbox requires 2 keys - a private key for installing the library and a public key for rendering map tiles. Follow the above keys link for instructions on how to configure the secret key. Add the public key to `/iosApp/secrets/mapbox`.
+
+#### Sentry - [docs](https://docs.sentry.io/platforms/kotlin-multiplatform/) - [keys](https://mbtace.sentry.io/settings/projects/mobile_app_ios/keys/)
+
+Sentry is used for error logging and aggregation.
 
 ### Editor
 
@@ -30,15 +37,17 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 ## Running Locally
 
 ### iOS
+
 The shared library dependency is managed using Cocoapods. To install the dependency and build the
-ios app, you must first Run a gradle sync of the project from Android Studio, or you may run
-`./gradlew :shared:generateDummyFramework` from the root directory, then `pod install` from within
-the `iosApp` directory.
+ios app:
 
-Then, open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
-
-Populate any configuration needed in your the .envrc file. These will be read by a build phase
-script and set as info.plist values so that they can be read by the application.
+- Run a gradle sync of the project from Android Studio, or you may run
+  `./gradlew :shared:generateDummyFramework` from the root directory
+- `bundle install` to install cocoapods and fastlane
+- `bundle exec pod install` from within the `iosApp` directory.
+- Open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
+- Populate any configuration needed in your the .envrc file. These will be read by a build phase
+  script and set as info.plist values so that they can be read by the application.
 
 ## Running Tests
 
