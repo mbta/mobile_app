@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -385,6 +386,7 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
+                schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
@@ -524,6 +526,7 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
+                schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )
@@ -574,6 +577,68 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = parentStop.position,
+                schedules = null,
+                predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo incorporates schedules`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route()
+        val routePattern = objects.routePattern(route) { representativeTrip { headsign = "A" } }
+        val trip1 = objects.trip(routePattern)
+        val trip2 = objects.trip(routePattern)
+
+        val time = Instant.parse("2024-03-14T12:23:44-04:00")
+
+        val sched1 =
+            objects.schedule {
+                tripId = trip1.id
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+        val sched2 =
+            objects.schedule {
+                tripId = trip2.id
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+            }
+
+        val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
+        val pred2 = objects.prediction(sched2) { departureTime = null }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
+            }
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            stop,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "A",
+                                    listOf(routePattern),
+                                    listOf(UpcomingTrip(sched1, pred1), UpcomingTrip(sched2, pred2))
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time
             )

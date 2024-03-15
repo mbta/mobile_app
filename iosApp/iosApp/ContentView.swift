@@ -12,6 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @EnvironmentObject var scheduleFetcher: ScheduleFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
 
@@ -43,6 +44,7 @@ struct ContentView: View {
                     NearbyTransitView(
                         location: location.coordinate,
                         nearbyFetcher: nearbyFetcher,
+                        scheduleFetcher: scheduleFetcher,
                         predictionsFetcher: predictionsFetcher
                     )
                 }
