@@ -18,6 +18,7 @@ struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
     let location: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
+    @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @State var now = Date.now
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -32,6 +33,15 @@ struct NearbyTransitView: View {
                 latitude: location!.latitude,
                 longitude: location!.longitude
             )
+        }
+    }
+
+    func getSchedule() {
+        Task {
+            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+                .stopIds() else { return }
+            let stopIdList = Array(stopIds)
+            await scheduleFetcher.getSchedule(stopIds: stopIdList)
         }
     }
 
@@ -53,6 +63,7 @@ struct NearbyTransitView: View {
     var body: some View {
         VStack {
             if let nearby = nearbyFetcher.withRealtimeInfo(
+                schedules: scheduleFetcher.schedules,
                 predictions: predictionsFetcher.predictions,
                 filterAtTime: now.toKotlinInstant()
             ) {
@@ -75,6 +86,7 @@ struct NearbyTransitView: View {
             didChange?(self)
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
+            getSchedule()
             joinPredictions()
         }
         .onChange(of: scenePhase) { newPhase in
@@ -235,7 +247,10 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                 PatternsByHeadsign(
                                     headsign: "Houghs Neck",
                                     patterns: [busPattern],
-                                    predictions: [.init(prediction: busPrediction1), .init(prediction: busPrediction2)]
+                                    upcomingTrips: [
+                                        UpcomingTrip(prediction: busPrediction1),
+                                        UpcomingTrip(prediction: busPrediction2),
+                                    ]
                                 ),
                             ]
                         ),
@@ -253,7 +268,10 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                 PatternsByHeadsign(
                                     headsign: "Houghs Neck",
                                     patterns: [crPattern],
-                                    predictions: [.init(prediction: crPrediction1), .init(prediction: crPrediction2)]
+                                    upcomingTrips: [
+                                        UpcomingTrip(prediction: crPrediction1),
+                                        UpcomingTrip(prediction: crPrediction2),
+                                    ]
                                 ),
                             ]
                         ),
