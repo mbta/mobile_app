@@ -17,6 +17,7 @@ struct IOSApp: App {
     @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
+    @StateObject var alertsFetcher: AlertsFetcher
 
     init() {
         let socket = Socket(SocketUtils.companion.url)
@@ -40,6 +41,7 @@ struct IOSApp: App {
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
+        _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
     }
 
     var body: some Scene {
@@ -53,6 +55,7 @@ struct IOSApp: App {
                 .environmentObject(scheduleFetcher)
                 .environmentObject(searchResultFetcher)
                 .environmentObject(socketProvider)
+                .environmentObject(alertsFetcher)
         }
     }
 }
