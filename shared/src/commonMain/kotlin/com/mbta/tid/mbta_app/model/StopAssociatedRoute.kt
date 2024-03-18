@@ -2,18 +2,15 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.util.deepenTripleKey
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
-typealias UpcomingTripsByHeadsign = Map<String, List<UpcomingTrip>>
+data class UpcomingTripKey(val routeId: String, val headsign: String, val stopId: String)
 
-typealias UpcomingTripsByStop = Map<String, UpcomingTripsByHeadsign>
-
-typealias UpcomingTripsByRoute = Map<String, UpcomingTripsByStop>
+typealias UpcomingTripsMap = Map<UpcomingTripKey, List<UpcomingTrip>>
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -27,8 +24,23 @@ data class PatternsByHeadsign(
 ) : Comparable<PatternsByHeadsign> {
     constructor(
         staticData: NearbyStaticData.HeadsignWithPatterns,
-        upcomingTrips: List<UpcomingTrip>?,
-    ) : this(staticData.headsign, staticData.patterns, upcomingTrips?.sorted())
+        routeId: String,
+        upcomingTripsMap: UpcomingTripsMap?,
+        stopIds: Set<String>
+    ) : this(
+        staticData.headsign,
+        staticData.patterns,
+        if (upcomingTripsMap != null) {
+            stopIds
+                .mapNotNull { stopId ->
+                    upcomingTripsMap[UpcomingTripKey(routeId, staticData.headsign, stopId)]
+                }
+                .flatten()
+                .sorted()
+        } else {
+            null
+        }
+    )
 
     /**
      * Checks if any pattern under this headsign is [RoutePattern.Typicality.Typical].
@@ -64,13 +76,14 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
 
     constructor(
         staticData: NearbyStaticData.StopWithPatterns,
-        upcomingTripsAtStop: UpcomingTripsByHeadsign?,
+        routeId: String,
+        upcomingTripsMap: UpcomingTripsMap?,
         cutoffTime: Instant
     ) : this(
         staticData.stop,
         staticData.patternsByHeadsign
             .map {
-                PatternsByHeadsign(it, upcomingTripsAtStop?.getOrElse(it.headsign) { emptyList() })
+                PatternsByHeadsign(it, routeId, upcomingTripsMap, stopIds = staticData.allStopIds)
             }
             .filter { it.isTypical() || it.isUpcomingBefore(cutoffTime) }
             .sorted()
@@ -89,29 +102,13 @@ data class StopAssociatedRoute(
 ) {
     constructor(
         staticData: NearbyStaticData.RouteWithStops,
-        upcomingTripsOnRoute: UpcomingTripsByStop?,
+        upcomingTripsMap: UpcomingTripsMap?,
         cutoffTime: Instant,
         sortByDistanceFrom: Position
     ) : this(
         staticData.route,
         staticData.patternsByStop
-            .map { stopWithPatterns ->
-                PatternsByStop(
-                    stopWithPatterns,
-                    if (upcomingTripsOnRoute != null) {
-                        stopWithPatterns.allStopIds
-                            .mapNotNull { upcomingTripsOnRoute[it] }
-                            .reduce { a, b ->
-                                (a.keys + b.keys).associateWith { headsign ->
-                                    (a[headsign] ?: emptyList()) + (b[headsign] ?: emptyList())
-                                }
-                            }
-                    } else {
-                        null
-                    },
-                    cutoffTime
-                )
-            }
+            .map { PatternsByStop(it, staticData.route.id, upcomingTripsMap, cutoffTime) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
             .sortedWith(
                 compareBy(
@@ -141,17 +138,17 @@ fun NearbyStaticData.withRealtimeInfo(
         schedules?.let { scheduleData ->
             scheduleData.schedules.groupBy { schedule ->
                 val trip = scheduleData.trips.getValue(schedule.tripId)
-                Triple(schedule.routeId, schedule.stopId, trip.headsign)
+                UpcomingTripKey(schedule.routeId, trip.headsign, schedule.stopId)
             }
         }
     val predictionsMap =
         predictions?.let { streamData ->
             streamData.predictions.values.groupBy { prediction ->
                 val trip = streamData.trips.getValue(prediction.tripId)
-                Triple(prediction.routeId, prediction.stopId, trip.headsign)
+                UpcomingTripKey(prediction.routeId, trip.headsign, prediction.stopId)
             }
         }
-    val upcomingTripsMap: UpcomingTripsByRoute? =
+    val upcomingTripsByHeadsignAndStop =
         if (schedulesMap != null || predictionsMap != null) {
             ((schedulesMap?.keys ?: emptySet()) + (predictionsMap?.keys ?: emptySet()))
                 .associateWith { upcomingTripKey ->
@@ -163,7 +160,6 @@ fun NearbyStaticData.withRealtimeInfo(
                         predictions?.vehicles ?: emptyMap()
                     )
                 }
-                .deepenTripleKey()
         } else {
             null
         }
@@ -171,12 +167,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     return data
         .map {
-            StopAssociatedRoute(
-                it,
-                upcomingTripsMap?.get(it.route.id),
-                cutoffTime,
-                sortByDistanceFrom
-            )
+            StopAssociatedRoute(it, upcomingTripsByHeadsignAndStop, cutoffTime, sortByDistanceFrom)
         }
         .filterNot { it.patternsByStop.isEmpty() }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
