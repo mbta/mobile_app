@@ -1,5 +1,5 @@
 //
-//  PredictionView.swift
+//  UpcomingTripView.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 3/5/24.
@@ -17,7 +17,7 @@ extension UpcomingTrip.FormatOverridden {
     }
 }
 
-struct PredictionView: View {
+struct UpcomingTripView: View {
     let prediction: State
 
     enum State: Equatable {
@@ -43,6 +43,11 @@ struct PredictionView: View {
                 Text("1 min")
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+            case let .schedule(schedule):
+                HStack {
+                    Text(schedule.scheduleTime.toNSDate(), style: .time)
+                    Image(systemName: "clock")
+                }
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }

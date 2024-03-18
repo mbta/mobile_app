@@ -1,15 +1,13 @@
 package com.mbta.tid.mbta_app
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.RouteResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
-import com.mbta.tid.mbta_app.phoenix.PhoenixSocket
-import com.mbta.tid.mbta_app.phoenix.phoenixSocket
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.network.sockets.ConnectTimeoutException
-import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.ResponseException
@@ -20,15 +18,14 @@ import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.plugins.timeout
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.get
-import io.ktor.client.request.url
 import io.ktor.http.path
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
@@ -45,33 +42,6 @@ class Backend(engine: HttpClientEngine) {
             install(HttpTimeout) { requestTimeoutMillis = 5000 }
             defaultRequest { url("https://$mobileBackendHost") }
         }
-
-    // mutex to avoid creating a second socket while the first one is still connecting
-    private var socketMutex = Mutex()
-    private var _socket: PhoenixSocket? = null
-
-    private suspend fun socket(): PhoenixSocket =
-        socketMutex.withLock {
-            when (val socket = _socket) {
-                null -> {
-                    val newSocket =
-                        httpClient.phoenixSocket { url("wss://$mobileBackendHost/socket") }
-                    _socket = newSocket
-                    newSocket
-                }
-                else -> socket
-            }
-        }
-
-    @Throws(
-        IOException::class,
-        CancellationException::class,
-        JsonConvertException::class,
-        ResponseException::class,
-        SocketTimeoutException::class,
-        ConnectTimeoutException::class
-    )
-    suspend fun runSocket() = socket().run()
 
     @Throws(
         IOException::class,
@@ -130,12 +100,17 @@ class Backend(engine: HttpClientEngine) {
         ResponseException::class,
         HttpRequestTimeoutException::class
     )
-    suspend fun getSearchResults(query: String): SearchResponse =
+    @DefaultArgumentInterop.Enabled
+    suspend fun getSchedule(
+        stopIds: List<String>,
+        now: Instant = Clock.System.now()
+    ): ScheduleResponse =
         httpClient
             .get {
                 url {
-                    path("api/search/query")
-                    parameters.append("query", query)
+                    path("api/schedules")
+                    parameters.append("stop_ids", stopIds.joinToString(separator = ","))
+                    parameters.append("date_time", now.toString())
                 }
             }
             .body()
@@ -145,9 +120,15 @@ class Backend(engine: HttpClientEngine) {
         CancellationException::class,
         JsonConvertException::class,
         ResponseException::class,
-        SocketTimeoutException::class,
-        ConnectTimeoutException::class
+        HttpRequestTimeoutException::class
     )
-    suspend fun predictionsStopsChannel(stopIds: List<String>) =
-        PredictionsStopsChannel(socket(), stopIds)
+    suspend fun getSearchResults(query: String): SearchResponse =
+        httpClient
+            .get {
+                url {
+                    path("api/search/query")
+                    parameters.append("query", query)
+                }
+            }
+            .body()
 }

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
@@ -124,16 +125,25 @@ data class StopAssociatedRoute(
 }
 
 /**
- * Attaches [predictions] to the route, stop, and headsign to which they apply. Removes non-typical
- * route patterns which are not predicted within 90 minutes of [filterAtTime]. Sorts routes by
- * nearest stop, stops by distance, and headsigns by route pattern sort order.
+ * Attaches [schedules] and [predictions] to the route, stop, and headsign to which they apply.
+ * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
+ * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
+ * sort order.
  */
 fun NearbyStaticData.withRealtimeInfo(
     sortByDistanceFrom: Position,
+    schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
     filterAtTime: Instant
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
+    val schedulesByHeadsignAndStop =
+        schedules?.let { scheduleData ->
+            scheduleData.schedules.groupBy { schedule ->
+                val trip = scheduleData.trips.getValue(schedule.tripId)
+                HeadsignAndStop(trip.headsign, schedule.stopId)
+            }
+        }
     val predictionsByHeadsignAndStop =
         predictions?.let { streamData ->
             streamData.predictions.values.groupBy { prediction ->
@@ -142,10 +152,17 @@ fun NearbyStaticData.withRealtimeInfo(
             }
         }
     val upcomingTripsByHeadsignAndStop =
-        if (predictionsByHeadsignAndStop != null) {
-            predictionsByHeadsignAndStop.keys.associateWith { headsignAndStop ->
-                val predictionsHere = predictionsByHeadsignAndStop[headsignAndStop]
-                UpcomingTrip.tripsFromData(predictionsHere ?: emptyList(), predictions.vehicles)
+        if (schedulesByHeadsignAndStop != null || predictionsByHeadsignAndStop != null) {
+            val schedulesMap = schedulesByHeadsignAndStop ?: emptyMap()
+            val predictionsMap = predictionsByHeadsignAndStop ?: emptyMap()
+            (schedulesMap.keys + predictionsMap.keys).associateWith { headsignAndStop ->
+                val schedulesHere = schedulesMap[headsignAndStop]
+                val predictionsHere = predictionsMap[headsignAndStop]
+                UpcomingTrip.tripsFromData(
+                    schedulesHere ?: emptyList(),
+                    predictionsHere ?: emptyList(),
+                    predictions?.vehicles ?: emptyMap()
+                )
             }
         } else {
             null
@@ -158,4 +175,5 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.patternsByStop.isEmpty() }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
+        .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
 }

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.uuid
 import kotlinx.datetime.Instant
 
@@ -20,6 +21,7 @@ class ObjectCollectionBuilder {
     val predictions = mutableMapOf<String, Prediction>()
     val routes = mutableMapOf<String, Route>()
     val routePatterns = mutableMapOf<String, RoutePattern>()
+    val schedules = mutableMapOf<String, Schedule>()
     val stops = mutableMapOf<String, Stop>()
     val trips = mutableMapOf<String, Trip>()
     val vehicles = mutableMapOf<String, Vehicle>()
@@ -60,6 +62,17 @@ class ObjectCollectionBuilder {
     fun prediction(block: PredictionBuilder.() -> Unit = {}) =
         build(predictions, PredictionBuilder(), block)
 
+    fun prediction(schedule: Schedule, block: PredictionBuilder.() -> Unit = {}) =
+        build(
+            predictions,
+            PredictionBuilder().apply {
+                tripId = schedule.tripId
+                stopId = schedule.stopId
+                stopSequence = schedule.stopSequence
+            },
+            block
+        )
+
     class RouteBuilder : ObjectBuilder<Route> {
         var id = uuid()
         var type = RouteType.LIGHT_RAIL
@@ -87,6 +100,7 @@ class ObjectCollectionBuilder {
             )
     }
 
+    @DefaultArgumentInterop.Enabled
     fun route(block: RouteBuilder.() -> Unit = {}) = build(routes, RouteBuilder(), block)
 
     inner class RoutePatternBuilder : ObjectBuilder<RoutePattern> {
@@ -120,17 +134,58 @@ class ObjectCollectionBuilder {
     fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
         build(routePatterns, RoutePatternBuilder().apply { routeId = route.id }, block)
 
+    class ScheduleBuilder : ObjectBuilder<Schedule> {
+        var id = uuid()
+        var arrivalTime: Instant? = null
+        var departureTime: Instant? = null
+        var dropOffType = Schedule.StopEdgeType.Regular
+        var pickUpType = Schedule.StopEdgeType.Regular
+        var stopSequence = 0
+        var stopId = ""
+        var tripId = ""
+
+        override fun built() =
+            Schedule(
+                id,
+                arrivalTime,
+                departureTime,
+                dropOffType,
+                pickUpType,
+                stopSequence,
+                stopId,
+                tripId
+            )
+    }
+
+    fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
+        build(schedules, ScheduleBuilder(), block)
+
     class TripBuilder : ObjectBuilder<Trip> {
         var id = uuid()
         var headsign = ""
         var routePatternId: String? = null
-        var shapeId = null
+        var shapeId: String? = null
         var stopIds: List<String>? = null
 
         override fun built() = Trip(id, headsign, routePatternId, shapeId, stopIds)
     }
 
     fun trip(block: TripBuilder.() -> Unit = {}) = build(trips, TripBuilder(), block)
+
+    @DefaultArgumentInterop.Enabled
+    fun trip(routePattern: RoutePattern, block: TripBuilder.() -> Unit = {}) =
+        build(
+            trips,
+            TripBuilder().apply {
+                routePatternId = routePattern.id
+                val representativeTrip = trips[routePattern.representativeTripId]
+                if (representativeTrip != null) {
+                    headsign = representativeTrip.headsign
+                    shapeId = representativeTrip.shapeId
+                }
+            },
+            block
+        )
 
     class StopBuilder : ObjectBuilder<Stop> {
         var id = uuid()
@@ -176,6 +231,9 @@ class ObjectCollectionBuilder {
             ObjectCollectionBuilder().routePattern(route, block)
 
         fun trip(block: TripBuilder.() -> Unit = {}) = ObjectCollectionBuilder().trip(block)
+
+        fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
+            ObjectCollectionBuilder().schedule(block)
 
         fun stop(block: StopBuilder.() -> Unit = {}) = ObjectCollectionBuilder().stop(block)
 

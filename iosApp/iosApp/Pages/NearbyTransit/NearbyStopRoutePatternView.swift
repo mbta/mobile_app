@@ -54,12 +54,12 @@ struct NearbyStopRoutePatternView: View {
             switch predictions {
             case let .some(predictions):
                 ForEach(predictions) { prediction in
-                    PredictionView(prediction: .some(prediction.format))
+                    UpcomingTripView(prediction: .some(prediction.format))
                 }
             case .none:
-                PredictionView(prediction: .none)
+                UpcomingTripView(prediction: .none)
             case .loading:
-                PredictionView(prediction: .loading)
+                UpcomingTripView(prediction: .loading)
             }
         }
     }

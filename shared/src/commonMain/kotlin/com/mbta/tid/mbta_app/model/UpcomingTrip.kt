@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
@@ -15,12 +14,27 @@ import kotlinx.datetime.Instant
  * The trip might also neither arrive nor depart if the stop is skipped or the trip is dropped. For
  * this reason, a prediction that exists but has null times should overwrite scheduled times.
  */
-data class UpcomingTrip
-@DefaultArgumentInterop.Enabled
-constructor(val prediction: Prediction, val vehicle: Vehicle? = null) : Comparable<UpcomingTrip> {
-    val time = prediction.predictionTime
-    /** The [Prediction.tripId] of the [prediction]. */
-    val id = checkNotNull(prediction.tripId)
+data class UpcomingTrip(
+    val schedule: Schedule?,
+    val prediction: Prediction?,
+    val vehicle: Vehicle?
+) : Comparable<UpcomingTrip> {
+    constructor(schedule: Schedule) : this(schedule, null, null)
+
+    constructor(schedule: Schedule, prediction: Prediction) : this(schedule, prediction, null)
+
+    constructor(prediction: Prediction) : this(null, prediction, null)
+
+    constructor(prediction: Prediction, vehicle: Vehicle) : this(null, prediction, vehicle)
+
+    val time =
+        if (prediction != null) {
+            prediction.predictionTime
+        } else {
+            schedule?.scheduleTime
+        }
+    /** The [Prediction.tripId] of the [prediction], or the [Schedule.tripId] of the [schedule]. */
+    val id = checkNotNull(prediction?.tripId ?: schedule?.tripId)
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
@@ -42,16 +56,31 @@ constructor(val prediction: Prediction, val vehicle: Vehicle? = null) : Comparab
 
         data class DistantFuture(val predictionTime: Instant) : Format()
 
+        data class Schedule(val scheduleTime: Instant) : Format()
+
         data class Minutes(val minutes: Int) : Format()
     }
 
     fun format(now: Instant): Format {
-        prediction.status?.let {
+        prediction?.status?.let {
             return Format.Overridden(it)
         }
-        val departureTime = prediction.departureTime
+        val departureTime =
+            if (prediction != null) {
+                prediction.departureTime
+            } else {
+                schedule?.departureTime
+            }
         if (departureTime == null || departureTime < now) {
             return Format.Hidden
+        }
+        if (prediction == null) {
+            val scheduleTime = schedule?.scheduleTime
+            return if (scheduleTime == null) {
+                Format.Hidden
+            } else {
+                Format.Schedule(scheduleTime)
+            }
         }
         // since we checked departureTime as non-null, we don't have to also check predictionTime
         val timeRemaining = prediction.predictionTime!!.minus(now)
@@ -76,14 +105,43 @@ constructor(val prediction: Prediction, val vehicle: Vehicle? = null) : Comparab
     }
 
     companion object {
-        /** Gets the list of [UpcomingTrip]s from the given [predictions] and [vehicles]. */
+        /**
+         * Gets the list of [UpcomingTrip]s from the given [schedules], [predictions] and
+         * [vehicles]. Matches by trip ID, stop ID, and stop sequence.
+         */
         fun tripsFromData(
+            schedules: List<Schedule>,
             predictions: List<Prediction>,
             vehicles: Map<String, Vehicle>
         ): List<UpcomingTrip> {
-            return predictions.map { prediction ->
-                UpcomingTrip(prediction, vehicles[prediction.vehicleId])
+            data class UpcomingTripKey(
+                val tripId: String?,
+                val stopId: String?,
+                val stopSequence: Int?
+            ) {
+                constructor(
+                    schedule: Schedule
+                ) : this(schedule.tripId, schedule.stopId, schedule.stopSequence)
+
+                constructor(
+                    prediction: Prediction
+                ) : this(prediction.tripId, prediction.stopId, prediction.stopSequence)
             }
+
+            val schedulesMap = schedules.associateBy { UpcomingTripKey(it) }
+            val predictionsMap = predictions.associateBy { UpcomingTripKey(it) }
+
+            val keys = schedulesMap.keys + predictionsMap.keys
+
+            return keys
+                .map { key ->
+                    UpcomingTrip(
+                        schedulesMap[key],
+                        predictionsMap[key],
+                        predictionsMap[key]?.let { vehicles[it.vehicleId] }
+                    )
+                }
+                .sorted()
         }
     }
 }
