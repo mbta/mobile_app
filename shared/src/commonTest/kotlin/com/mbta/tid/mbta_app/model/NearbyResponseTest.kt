@@ -380,16 +380,19 @@ class NearbyResponseTest {
                 sortOrder = 1
                 representativeTrip { headsign = "Harvard" }
             }
+        val trip1 = objects.trip(pattern1)
         val pattern2 =
             objects.routePattern(route1) {
                 sortOrder = 2
                 representativeTrip { headsign = "Harvard" }
             }
+        val trip2 = objects.trip(pattern2)
         val pattern3 =
             objects.routePattern(route1) {
                 sortOrder = 3
                 representativeTrip { headsign = "Nubian" }
             }
+        val trip3 = objects.trip(pattern3)
 
         val staticData =
             NearbyStaticData.build {
@@ -407,7 +410,7 @@ class NearbyResponseTest {
                 arrivalTime = time
                 departureTime = time + 10.seconds
                 stopId = stop1.id
-                tripId = pattern2.representativeTripId
+                trip = trip2
             }
 
         // should be sorted after the pattern 2 prediction under Harvard
@@ -416,7 +419,7 @@ class NearbyResponseTest {
                 arrivalTime = time + 5.seconds
                 departureTime = time + 15.seconds
                 stopId = stop1.id
-                tripId = pattern1.representativeTripId
+                trip = trip1
             }
 
         // should be ignored since pattern 1 shows at stop 1 instead
@@ -425,7 +428,7 @@ class NearbyResponseTest {
                 arrivalTime = time + 10.seconds
                 departureTime = time + 20.seconds
                 stopId = stop2.id
-                tripId = pattern1.representativeTripId
+                trip = trip1
             }
 
         // should be shown under Nubian
@@ -434,7 +437,7 @@ class NearbyResponseTest {
                 arrivalTime = time + 20.seconds
                 departureTime = time + 30.seconds
                 stopId = stop2.id
-                tripId = pattern3.representativeTripId
+                trip = trip3
             }
 
         assertEquals(
@@ -553,24 +556,28 @@ class NearbyResponseTest {
         val typicalOutboundPrediction =
             objects.prediction {
                 departureTime = time
+                routeId = route1.id
                 stopId = stop1.id
                 tripId = typicalOutbound.representativeTripId
             }
         val deviationOutboundPrediction =
             objects.prediction {
                 departureTime = time + 89.minutes
+                routeId = route1.id
                 stopId = stop1.id
                 tripId = deviationOutbound.representativeTripId
             }
         val deviationInboundPrediction =
             objects.prediction {
                 departureTime = time + 91.minutes
+                routeId = route1.id
                 stopId = stop1.id
                 tripId = deviationInbound.representativeTripId
             }
         val atypicalInboundPrediction =
             objects.prediction {
                 departureTime = time + 1.minutes
+                routeId = route1.id
                 stopId = stop1.id
                 tripId = atypicalInbound.representativeTripId
             }
@@ -686,6 +693,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = closeSubwayRoute.id
             stopId = closeSubwayStop.id
             tripId = closeSubwayPattern.representativeTripId
         }
@@ -694,6 +702,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = farSubwayRoute.id
             stopId = farSubwayStop.id
             tripId = farSubwayPattern.representativeTripId
         }
@@ -702,6 +711,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = closeBusRoute.id
             stopId = closeBusStop.id
             tripId = closeBusPattern.representativeTripId
         }
@@ -710,6 +720,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = farBusRoute.id
             stopId = farBusStop.id
             tripId = farBusPattern.representativeTripId
         }
@@ -747,6 +758,7 @@ class NearbyResponseTest {
         val prediction1 =
             objects.prediction {
                 departureTime = time
+                routeId = route1.id
                 stopId = childStop.id
                 tripId = pattern1.representativeTripId
             }
@@ -791,14 +803,14 @@ class NearbyResponseTest {
 
         val sched1 =
             objects.schedule {
-                tripId = trip1.id
+                trip = trip1
                 stopId = stop.id
                 stopSequence = 90
                 departureTime = time + 1.minutes
             }
         val sched2 =
             objects.schedule {
-                tripId = trip2.id
+                trip = trip2
                 stopId = stop.id
                 stopSequence = 90
                 departureTime = time + 2.minutes
@@ -824,6 +836,86 @@ class NearbyResponseTest {
                                     "A",
                                     listOf(routePattern),
                                     listOf(UpcomingTrip(sched1, pred1), UpcomingTrip(sched2, pred2))
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo checks route along with headsign and stop`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route1 = objects.route { sortOrder = 1 }
+        val routePattern1 = objects.routePattern(route1) { representativeTrip { headsign = "A" } }
+        val trip1 = objects.trip(routePattern1)
+
+        val route2 = objects.route { sortOrder = 2 }
+        val routePattern2 = objects.routePattern(route2) { representativeTrip { headsign = "A" } }
+        val trip2 = objects.trip(routePattern2)
+
+        val time = Instant.parse("2024-03-18T10:41:13-04:00")
+
+        val sched1 =
+            objects.schedule {
+                trip = trip1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+        val sched2 =
+            objects.schedule {
+                trip = trip2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+            }
+
+        val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
+        val pred2 = objects.prediction(sched2) { departureTime = time + 2.3.minutes }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) { stop(stop) { headsign("A", listOf(routePattern1)) } }
+                route(route2) { stop(stop) { headsign("A", listOf(routePattern2)) } }
+            }
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            stop,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "A",
+                                    listOf(routePattern1),
+                                    listOf(UpcomingTrip(sched1, pred1))
+                                )
+                            )
+                        )
+                    )
+                ),
+                StopAssociatedRoute(
+                    route2,
+                    listOf(
+                        PatternsByStop(
+                            stop,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "A",
+                                    listOf(routePattern2),
+                                    listOf(UpcomingTrip(sched2, pred2))
                                 )
                             )
                         )

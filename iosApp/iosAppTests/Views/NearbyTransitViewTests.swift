@@ -157,6 +157,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let trip1 = objects.trip { $0.headsign = "Dedham Mall" }
         objects.schedule { schedule in
             schedule.departureTime = time1
+            schedule.routeId = "52"
             schedule.stopId = "8552"
             schedule.tripId = trip1.id
         }
@@ -167,6 +168,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let trip2 = objects.trip { $0.headsign = "Charles River Loop" }
         let sched2 = objects.schedule { schedule in
             schedule.departureTime = notTime2
+            schedule.routeId = "52"
             schedule.stopId = "8552"
             schedule.tripId = trip2.id
             schedule.stopSequence = 13
@@ -180,6 +182,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let trip3 = objects.trip { $0.headsign = "Watertown Yard" }
         let sched3 = objects.schedule { schedule in
             schedule.departureTime = notTime3
+            schedule.routeId = "52"
             schedule.stopId = "84791"
             schedule.tripId = trip3.id
             schedule.stopSequence = 13
@@ -244,6 +247,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(12 * 60).toKotlinInstant()
+                    prediction.routeId = "52"
                     prediction.stopId = "8552"
                     prediction.tripId = objects.trip(routePattern: rp1).id
                 }
@@ -251,17 +255,20 @@ final class NearbyTransitViewTests: XCTestCase {
                     prediction.arrivalTime = Date.now.addingTimeInterval(11 * 60).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
                     prediction.status = "Overridden"
+                    prediction.routeId = "52"
                     prediction.stopId = "8552"
                     prediction.tripId = objects.trip(routePattern: rp1).id
                 }
                 objects.prediction { prediction in
                     prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
                     prediction.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
+                    prediction.routeId = "52"
                     prediction.stopId = "84791"
                     prediction.tripId = objects.trip(routePattern: rp2).id
                 }
                 objects.prediction { prediction in
                     prediction.departureTime = distantInstant
+                    prediction.routeId = "52"
                     prediction.stopId = "84791"
                     prediction.tripId = objects.trip(routePattern: rp2).id
                 }
@@ -362,6 +369,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
             objects.prediction { prediction in
                 prediction.departureTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()
+                prediction.routeId = "52"
                 prediction.stopId = "8552"
                 prediction.tripId = trip.id
             }

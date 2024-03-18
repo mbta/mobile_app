@@ -30,7 +30,7 @@ class ObjectCollectionBuilder {
         fun built(): Built
     }
 
-    class PredictionBuilder : ObjectBuilder<Prediction> {
+    inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
         var arrivalTime: Instant? = null
         var departureTime: Instant? = null
@@ -39,9 +39,17 @@ class ObjectCollectionBuilder {
         var scheduleRelationship = Prediction.ScheduleRelationship.Scheduled
         var status: String? = null
         var stopSequence: Int? = null
+        var routeId = ""
         var stopId = ""
         var tripId = ""
         var vehicleId: String? = null
+
+        var trip: Trip
+            get() = trips.getValue(tripId)
+            set(trip) {
+                routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
+                tripId = trip.id
+            }
 
         override fun built() =
             Prediction(
@@ -53,6 +61,7 @@ class ObjectCollectionBuilder {
                 scheduleRelationship,
                 status,
                 stopSequence,
+                routeId,
                 stopId,
                 tripId,
                 vehicleId,
@@ -66,6 +75,7 @@ class ObjectCollectionBuilder {
         build(
             predictions,
             PredictionBuilder().apply {
+                routeId = schedule.routeId
                 tripId = schedule.tripId
                 stopId = schedule.stopId
                 stopSequence = schedule.stopSequence
@@ -134,15 +144,23 @@ class ObjectCollectionBuilder {
     fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
         build(routePatterns, RoutePatternBuilder().apply { routeId = route.id }, block)
 
-    class ScheduleBuilder : ObjectBuilder<Schedule> {
+    inner class ScheduleBuilder : ObjectBuilder<Schedule> {
         var id = uuid()
         var arrivalTime: Instant? = null
         var departureTime: Instant? = null
         var dropOffType = Schedule.StopEdgeType.Regular
         var pickUpType = Schedule.StopEdgeType.Regular
         var stopSequence = 0
+        var routeId = ""
         var stopId = ""
         var tripId = ""
+
+        var trip: Trip
+            get() = trips.getValue(tripId)
+            set(trip) {
+                routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
+                tripId = trip.id
+            }
 
         override fun built() =
             Schedule(
@@ -152,6 +170,7 @@ class ObjectCollectionBuilder {
                 dropOffType,
                 pickUpType,
                 stopSequence,
+                routeId,
                 stopId,
                 tripId
             )
