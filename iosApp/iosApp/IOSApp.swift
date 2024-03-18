@@ -3,6 +3,10 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+enum TestFakeError: Error {
+    case thisIsATest
+}
+
 @main
 struct IOSApp: App {
     let backend: BackendProtocol = CommandLine.arguments.contains("-testing") ? IdleBackend() : Backend()
@@ -21,6 +25,19 @@ struct IOSApp: App {
     @StateObject var viewportProvider: ViewportProvider
 
     init() {
+        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
+            let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
+            AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
+        } else {
+            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
+        }
+
+        do {
+            throw TestFakeError.thisIsATest
+        } catch {
+            Sentry.shared.captureError(error: error)
+        }
+
         let socket = Socket(SocketUtils.companion.url)
         socket.withRawMessages()
         socket.onOpen {

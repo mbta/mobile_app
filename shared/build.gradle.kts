@@ -1,4 +1,5 @@
 plugins {
+    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.serialization)
@@ -11,11 +12,23 @@ kotlin {
 
     androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
 
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach {
-        it.binaries.framework {
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        summary = "Common library for the MBTA mobile app"
+        homepage = "https://github.com/mbta/mobile_app"
+        version = "1.0"
+        ios.deploymentTarget = "15.0"
+        podfile = project.file("../iosApp/Podfile")
+        pod("Sentry", "~> 8.20.0")
+
+        framework {
             baseName = "shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
             export(libs.kotlinx.datetime)
+            export(libs.sentry)
         }
     }
 
@@ -30,6 +43,7 @@ kotlin {
 
                 implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
+                api(libs.sentry)
                 implementation(libs.skie.configuration.annotations)
                 api(libs.spatialk.geojson)
                 implementation(libs.spatialk.turf)

@@ -1,2 +1,6 @@
-export SENTRY_DSN= # Find under the Client Keys settings of the mobile_app project in Sentry
+# Required Variables
+
+# Optional Variables
+# Sentry - needed only to record sentry events from local development
+export SENTRY_DSN= Find under the Client Keys settings of the mobile_app_ios project in Sentry
 export SENTRY_ENVIRONMENT=debug
