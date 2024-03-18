@@ -10,6 +10,7 @@ struct IOSApp: App {
     // ignore updates less than 0.1km
     @StateObject var locationDataManager = LocationDataManager(distanceFilter: 100)
 
+    @StateObject var alertsFetcher: AlertsFetcher
     @StateObject var globalFetcher: GlobalFetcher
     @StateObject var nearbyFetcher: NearbyFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
@@ -34,6 +35,7 @@ struct IOSApp: App {
     init(socket: PhoenixSocket) {
         let backend = backend
 
+        _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
@@ -48,6 +50,7 @@ struct IOSApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(locationDataManager)
+                .environmentObject(alertsFetcher)
                 .environmentObject(globalFetcher)
                 .environmentObject(nearbyFetcher)
                 .environmentObject(predictionsFetcher)

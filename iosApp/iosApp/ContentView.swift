@@ -8,6 +8,7 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
+    @EnvironmentObject var alertsFetcher: AlertsFetcher
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
@@ -64,7 +65,7 @@ struct ContentView: View {
             } else if newPhase == .background {
                 socketProvider.socket.disconnect(code: .normal, reason: "backgrounded", callback: nil)
             }
-        }
+        }.task { alertsFetcher.run() }
     }
 }
 
@@ -80,5 +81,7 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: mockSocket))
             .environmentObject(SocketProvider(socket: mockSocket))
+            .environmentObject(AlertsFetcher(socket: mockSocket))
+            .environmentObject(ViewportProvider())
     }
 }
