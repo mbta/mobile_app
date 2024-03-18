@@ -28,6 +28,7 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
+            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
@@ -35,7 +36,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
+            .environmentObject(ViewportProvider())
 
         ViewHosting.host(view: sut)
 
@@ -56,6 +57,7 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
+            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
@@ -63,7 +65,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
+            .environmentObject(ViewportProvider())
 
         ViewHosting.host(view: sut)
 

@@ -125,7 +125,8 @@ data class StopAssociatedRoute(
 /**
  * Attaches [schedules] and [predictions] to the route, stop, and headsign to which they apply.
  * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
- * Sorts routes by nearest stop, stops by distance, and headsigns by route pattern sort order.
+ * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
+ * sort order.
  */
 fun NearbyStaticData.withRealtimeInfo(
     sortByDistanceFrom: Position,
@@ -171,4 +172,5 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.patternsByStop.isEmpty() }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
+        .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
 }
