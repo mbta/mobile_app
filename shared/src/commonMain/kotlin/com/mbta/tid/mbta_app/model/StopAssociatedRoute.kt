@@ -175,5 +175,5 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.patternsByStop.isEmpty() }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
-        .sortedWith { a, b -> Route.subwayFirstComparator.compare(a.route, b.route) }
+        .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
 }

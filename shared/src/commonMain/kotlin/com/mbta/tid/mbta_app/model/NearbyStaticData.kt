@@ -102,7 +102,7 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                             }
                     )
                 }
-                .sortedWith { a, b -> Route.subwayFirstComparator.compare(a.route, b.route) }
+                .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
         }
     )
 
