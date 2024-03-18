@@ -718,7 +718,8 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time
+                filterAtTime = time,
+                schedules = ScheduleResponse(objects),
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
