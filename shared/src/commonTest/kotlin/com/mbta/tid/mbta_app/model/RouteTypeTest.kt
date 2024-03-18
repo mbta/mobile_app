@@ -8,10 +8,10 @@ class RouteTypeTest {
 
     @Test
     fun `isSubway only true when light or heavy rail`() {
-        assertTrue { RouteType.isSubway(RouteType.LIGHT_RAIL) }
-        assertTrue { RouteType.isSubway(RouteType.HEAVY_RAIL) }
-        assertFalse { RouteType.isSubway(RouteType.COMMUTER_RAIL) }
-        assertFalse { RouteType.isSubway(RouteType.BUS) }
-        assertFalse { RouteType.isSubway(RouteType.FERRY) }
+        assertTrue { RouteType.LIGHT_RAIL.isSubway() }
+        assertTrue { RouteType.HEAVY_RAIL.isSubway() }
+        assertFalse { RouteType.COMMUTER_RAIL.isSubway() }
+        assertFalse { RouteType.BUS.isSubway() }
+        assertFalse { RouteType.FERRY.isSubway() }
     }
 }

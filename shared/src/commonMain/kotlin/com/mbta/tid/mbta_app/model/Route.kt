@@ -21,9 +21,9 @@ data class Route(
     companion object {
         val subwayFirstComparator =
             Comparator<Route> { route1, route2 ->
-                if (RouteType.isSubway(route1.type) && !RouteType.isSubway(route2.type)) {
+                if (route1.type.isSubway() && !route2.type.isSubway()) {
                     -1
-                } else if (RouteType.isSubway(route2.type) && !RouteType.isSubway(route1.type)) {
+                } else if (route2.type.isSubway() && !route1.type.isSubway()) {
                     1
                 } else {
                     0

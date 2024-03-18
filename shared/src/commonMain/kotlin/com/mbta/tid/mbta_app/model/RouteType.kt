@@ -11,7 +11,5 @@ enum class RouteType {
     @SerialName("bus") BUS,
     @SerialName("ferry") FERRY;
 
-    companion object {
-        fun isSubway(routeType: RouteType) = routeType === HEAVY_RAIL || routeType === LIGHT_RAIL
-    }
+    fun isSubway(): Boolean = this === HEAVY_RAIL || this === LIGHT_RAIL
 }
