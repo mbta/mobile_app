@@ -23,8 +23,8 @@ final class HomeMapViewTests: XCTestCase {
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        let sut = HomeMapView(globalFetcher: globalFetcher, railRouteShapeFetcher: railRouteShapeFetcher, locationDataManager: locationDataManager)
-        XCTAssertEqual(sut.viewport.camera?.center, HomeMapView.defaultCenter)
+        let sut = HomeMapView(globalFetcher: globalFetcher, railRouteShapeFetcher: railRouteShapeFetcher, locationDataManager: locationDataManager, viewportProvider: ViewportProvider())
+        XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.defaultCenter)
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {
@@ -36,10 +36,10 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
-        var sut = HomeMapView(globalFetcher: globalFetcher, railRouteShapeFetcher: railRouteShapeFetcher, locationDataManager: locationDataManager)
+        var sut = HomeMapView(globalFetcher: globalFetcher, railRouteShapeFetcher: railRouteShapeFetcher, locationDataManager: locationDataManager, viewportProvider: ViewportProvider())
 
         let hasAppeared = sut.on(\.didAppear) { _ in
-            XCTAssertNotNil(sut.viewport.followPuck)
+            XCTAssertNotNil(sut.viewportProvider.viewport.followPuck)
         }
         ViewHosting.host(view: sut)
         locationFetcher.updateLocations(locations: [newLocation])
@@ -82,7 +82,8 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             globalFetcher: FakeGlobalFetcher(getGlobalExpectation: getGlobalExpectation),
-            railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation)
+            railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
+            viewportProvider: ViewportProvider()
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)

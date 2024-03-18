@@ -8,6 +8,7 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
+    @EnvironmentObject var alertsFetcher: AlertsFetcher
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
@@ -15,7 +16,7 @@ struct ContentView: View {
     @EnvironmentObject var scheduleFetcher: ScheduleFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
-    @EnvironmentObject var alertsFetcher: AlertsFetcher
+    @EnvironmentObject var viewportProvider: ViewportProvider
 
     var body: some View {
         NavigationView {
@@ -38,7 +39,8 @@ struct ContentView: View {
                 }
                 HomeMapView(
                     globalFetcher: globalFetcher,
-                    railRouteShapeFetcher: railRouteShapeFetcher
+                    railRouteShapeFetcher: railRouteShapeFetcher,
+                    viewportProvider: viewportProvider
                 )
                 Spacer()
                 if let location = locationDataManager.currentLocation {
@@ -80,5 +82,6 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(PredictionsFetcher(socket: mockSocket))
             .environmentObject(SocketProvider(socket: mockSocket))
             .environmentObject(AlertsFetcher(socket: mockSocket))
+            .environmentObject(ViewportProvider())
     }
 }

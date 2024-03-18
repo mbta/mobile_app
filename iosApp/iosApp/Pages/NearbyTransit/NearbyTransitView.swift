@@ -158,6 +158,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             scheduleRelationship: .scheduled,
             status: nil,
             stopSequence: 30,
+            routeId: "216",
             stopId: busStop.id,
             tripId: busTrip.id,
             vehicleId: nil
@@ -171,6 +172,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             scheduleRelationship: .scheduled,
             status: nil,
             stopSequence: 90,
+            routeId: "216",
             stopId: busStop.id,
             tripId: busTrip.id,
             vehicleId: nil
@@ -219,6 +221,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             scheduleRelationship: .scheduled,
             status: nil,
             stopSequence: 30,
+            routeId: crRoute.id,
             stopId: "place-sstat",
             tripId: crTrip.id,
             vehicleId: nil
@@ -232,6 +235,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             scheduleRelationship: .scheduled,
             status: nil,
             stopSequence: 90,
+            routeId: crRoute.id,
             stopId: "place-sstat",
             tripId: crTrip.id,
             vehicleId: nil
