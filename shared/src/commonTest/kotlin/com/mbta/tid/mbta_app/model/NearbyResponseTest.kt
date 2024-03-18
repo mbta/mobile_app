@@ -618,7 +618,7 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `withRealtimeInfo sorts subway first, then by distance`() {
+    fun `withRealtimeInfo sorts subway first then by distance`() {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
