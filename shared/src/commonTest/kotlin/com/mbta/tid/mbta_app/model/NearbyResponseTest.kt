@@ -693,6 +693,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = closeSubwayRoute.id
             stopId = closeSubwayStop.id
             tripId = closeSubwayPattern.representativeTripId
         }
@@ -701,6 +702,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = farSubwayRoute.id
             stopId = farSubwayStop.id
             tripId = farSubwayPattern.representativeTripId
         }
@@ -709,6 +711,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = closeBusRoute.id
             stopId = closeBusStop.id
             tripId = closeBusPattern.representativeTripId
         }
@@ -717,6 +720,7 @@ class NearbyResponseTest {
         objects.prediction {
             arrivalTime = time
             departureTime = time
+            routeId = farBusRoute.id
             stopId = farBusStop.id
             tripId = farBusPattern.representativeTripId
         }
