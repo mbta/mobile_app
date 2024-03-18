@@ -8,9 +8,9 @@ import io.github.dellisd.spatialk.turf.distance
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
-data class HeadsignAndStop(val headsign: String, val stopId: String)
+data class UpcomingTripKey(val routeId: String, val headsign: String, val stopId: String)
 
-typealias UpcomingTripsByHeadsignAndStop = Map<HeadsignAndStop, List<UpcomingTrip>>
+typealias UpcomingTripsMap = Map<UpcomingTripKey, List<UpcomingTrip>>
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -24,15 +24,16 @@ data class PatternsByHeadsign(
 ) : Comparable<PatternsByHeadsign> {
     constructor(
         staticData: NearbyStaticData.HeadsignWithPatterns,
-        upcomingTripsByHeadsignAndStop: UpcomingTripsByHeadsignAndStop?,
+        routeId: String,
+        upcomingTripsMap: UpcomingTripsMap?,
         stopIds: Set<String>
     ) : this(
         staticData.headsign,
         staticData.patterns,
-        if (upcomingTripsByHeadsignAndStop != null) {
+        if (upcomingTripsMap != null) {
             stopIds
                 .mapNotNull { stopId ->
-                    upcomingTripsByHeadsignAndStop[HeadsignAndStop(staticData.headsign, stopId)]
+                    upcomingTripsMap[UpcomingTripKey(routeId, staticData.headsign, stopId)]
                 }
                 .flatten()
                 .sorted()
@@ -75,17 +76,14 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
 
     constructor(
         staticData: NearbyStaticData.StopWithPatterns,
-        upcomingTripsByHeadsignAndStop: UpcomingTripsByHeadsignAndStop?,
+        routeId: String,
+        upcomingTripsMap: UpcomingTripsMap?,
         cutoffTime: Instant
     ) : this(
         staticData.stop,
         staticData.patternsByHeadsign
             .map {
-                PatternsByHeadsign(
-                    it,
-                    upcomingTripsByHeadsignAndStop,
-                    stopIds = staticData.allStopIds
-                )
+                PatternsByHeadsign(it, routeId, upcomingTripsMap, stopIds = staticData.allStopIds)
             }
             .filter { it.isTypical() || it.isUpcomingBefore(cutoffTime) }
             .sorted()
@@ -104,13 +102,13 @@ data class StopAssociatedRoute(
 ) {
     constructor(
         staticData: NearbyStaticData.RouteWithStops,
-        upcomingTripsByHeadsignAndStop: UpcomingTripsByHeadsignAndStop?,
+        upcomingTripsMap: UpcomingTripsMap?,
         cutoffTime: Instant,
         sortByDistanceFrom: Position
     ) : this(
         staticData.route,
         staticData.patternsByStop
-            .map { PatternsByStop(it, upcomingTripsByHeadsignAndStop, cutoffTime) }
+            .map { PatternsByStop(it, staticData.route.id, upcomingTripsMap, cutoffTime) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
             .sortedWith(
                 compareBy(
@@ -136,33 +134,32 @@ fun NearbyStaticData.withRealtimeInfo(
     filterAtTime: Instant
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
-    val schedulesByHeadsignAndStop =
+    val schedulesMap =
         schedules?.let { scheduleData ->
             scheduleData.schedules.groupBy { schedule ->
                 val trip = scheduleData.trips.getValue(schedule.tripId)
-                HeadsignAndStop(trip.headsign, schedule.stopId)
+                UpcomingTripKey(schedule.routeId, trip.headsign, schedule.stopId)
             }
         }
-    val predictionsByHeadsignAndStop =
+    val predictionsMap =
         predictions?.let { streamData ->
             streamData.predictions.values.groupBy { prediction ->
                 val trip = streamData.trips.getValue(prediction.tripId)
-                HeadsignAndStop(trip.headsign, prediction.stopId)
+                UpcomingTripKey(prediction.routeId, trip.headsign, prediction.stopId)
             }
         }
     val upcomingTripsByHeadsignAndStop =
-        if (schedulesByHeadsignAndStop != null || predictionsByHeadsignAndStop != null) {
-            val schedulesMap = schedulesByHeadsignAndStop ?: emptyMap()
-            val predictionsMap = predictionsByHeadsignAndStop ?: emptyMap()
-            (schedulesMap.keys + predictionsMap.keys).associateWith { headsignAndStop ->
-                val schedulesHere = schedulesMap[headsignAndStop]
-                val predictionsHere = predictionsMap[headsignAndStop]
-                UpcomingTrip.tripsFromData(
-                    schedulesHere ?: emptyList(),
-                    predictionsHere ?: emptyList(),
-                    predictions?.vehicles ?: emptyMap()
-                )
-            }
+        if (schedulesMap != null || predictionsMap != null) {
+            ((schedulesMap?.keys ?: emptySet()) + (predictionsMap?.keys ?: emptySet()))
+                .associateWith { upcomingTripKey ->
+                    val schedulesHere = schedulesMap?.get(upcomingTripKey)
+                    val predictionsHere = predictionsMap?.get(upcomingTripKey)
+                    UpcomingTrip.tripsFromData(
+                        schedulesHere ?: emptyList(),
+                        predictionsHere ?: emptyList(),
+                        predictions?.vehicles ?: emptyMap()
+                    )
+                }
         } else {
             null
         }

@@ -12,6 +12,7 @@ data class Schedule(
     @SerialName("drop_off_type") val dropOffType: StopEdgeType,
     @SerialName("pick_up_type") val pickUpType: StopEdgeType,
     @SerialName("stop_sequence") val stopSequence: Int,
+    @SerialName("route_id") val routeId: String,
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,
 ) : Comparable<Schedule>, BackendObject {
