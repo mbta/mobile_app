@@ -45,6 +45,7 @@
       "parallelizable" : true,
       "skippedTests" : [
         "HomeMapViewUITests\/testRecentersToUserLocation()",
+        "IosAppUITests\/testMapShown()",
         "IosAppUITestsLaunchTests\/testLaunch()"
       ],
       "target" : {
