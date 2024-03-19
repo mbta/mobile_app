@@ -2,7 +2,7 @@
 agp = "8.1.2"
 kotlin = "1.9.23"
 compose = "1.5.3"
-compose-compiler = "1.5.5"
+compose-compiler = "1.5.11-dev-k1.9.23-96ef9dc6af1"
 compose-material3 = "1.1.2"
 androidx-activityCompose = "1.7.2"
 kotlinxCoroutinesCore = "1.7.3"
