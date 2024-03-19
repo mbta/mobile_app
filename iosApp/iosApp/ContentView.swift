@@ -48,7 +48,8 @@ struct ContentView: View {
                         location: location.coordinate,
                         nearbyFetcher: nearbyFetcher,
                         scheduleFetcher: scheduleFetcher,
-                        predictionsFetcher: predictionsFetcher
+                        predictionsFetcher: predictionsFetcher,
+                        alertsFetcher: alertsFetcher
                     )
                 }
             }

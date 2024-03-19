@@ -20,6 +20,7 @@ struct NearbyTransitView: View {
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
+    @ObservedObject var alertsFetcher: AlertsFetcher
     @State var now = Date.now
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
@@ -65,6 +66,7 @@ struct NearbyTransitView: View {
             if let nearby = nearbyFetcher.withRealtimeInfo(
                 schedules: scheduleFetcher.schedules,
                 predictions: predictionsFetcher.predictions,
+                alerts: alertsFetcher.alerts,
                 filterAtTime: now.toKotlinInstant()
             ) {
                 List(nearby, id: \.route.id) { nearbyRoute in
@@ -254,7 +256,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(prediction: busPrediction1),
                                         UpcomingTrip(prediction: busPrediction2),
-                                    ]
+                                    ],
+                                    alertsHere: nil
                                 ),
                             ]
                         ),
@@ -275,7 +278,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(prediction: crPrediction1),
                                         UpcomingTrip(prediction: crPrediction2),
-                                    ]
+                                    ],
+                                    alertsHere: nil
                                 ),
                             ]
                         ),

@@ -61,12 +61,14 @@ class NearbyFetcher: ObservableObject {
     func withRealtimeInfo(
         schedules: ScheduleResponse?,
         predictions: PredictionsStreamDataResponse?,
+        alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant
     ) -> [StopAssociatedRoute]? {
         nearbyByRouteAndStop?.withRealtimeInfo(
             sortByDistanceFrom: .init(longitude: longitude, latitude: latitude),
             schedules: schedules,
             predictions: predictions,
+            alerts: alerts,
             filterAtTime: filterAtTime
         )
     }

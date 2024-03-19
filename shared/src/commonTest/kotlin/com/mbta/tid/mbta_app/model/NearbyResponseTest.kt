@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
@@ -475,7 +476,8 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time
+                filterAtTime = time,
+                alerts = null,
             )
         )
     }
@@ -619,7 +621,8 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time
+                filterAtTime = time,
+                alerts = null,
             )
         )
     }
@@ -731,6 +734,7 @@ class NearbyResponseTest {
                 predictions = PredictionsStreamDataResponse(objects),
                 filterAtTime = time,
                 schedules = ScheduleResponse(objects),
+                alerts = null,
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
@@ -785,7 +789,8 @@ class NearbyResponseTest {
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time
+                filterAtTime = time,
+                alerts = null,
             )
         )
     }
@@ -846,7 +851,8 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time
+                filterAtTime = time,
+                alerts = null,
             )
         )
     }
@@ -926,7 +932,74 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time
+                filterAtTime = time,
+                alerts = null,
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo picks out alerts`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+        val routePattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        val alert =
+            objects.alert {
+                activePeriod(
+                    Instant.parse("2024-03-18T04:30:00-04:00"),
+                    Instant.parse("2024-03-22T02:30:00-04:00")
+                )
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
+            }
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            stop,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "A",
+                                    listOf(routePattern),
+                                    emptyList(),
+                                    alertsHere = listOf(alert)
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time,
+                alerts = AlertsStreamDataResponse(objects),
             )
         )
     }
