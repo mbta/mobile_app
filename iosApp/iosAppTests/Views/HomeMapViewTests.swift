@@ -96,6 +96,7 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             globalFetcher: FakeGlobalFetcher(getGlobalExpectation: getGlobalExpectation),
+            nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
             viewportProvider: ViewportProvider()
         )

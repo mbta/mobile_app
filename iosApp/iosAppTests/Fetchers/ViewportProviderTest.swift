@@ -22,10 +22,10 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertEqual(provider.viewport.camera?.zoom, ViewportProvider.defaultZoom)
     }
 
-    func testFollowViewport() throws {
+    func testFollowViewport() async throws {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
-        provider.follow()
+        await provider.follow()
         XCTAssertNil(provider.viewport.camera)
         XCTAssertNotNil(provider.viewport.followPuck)
     }
@@ -33,7 +33,7 @@ final class ViewportProviderTest: XCTestCase {
     func testUpdateViewport() throws {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
-        provider.updateViewport(nextViewport: .camera(center: .init(latitude: 0, longitude: 0)))
+        provider.viewport = .camera(center: .init(latitude: 0, longitude: 0))
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
 }

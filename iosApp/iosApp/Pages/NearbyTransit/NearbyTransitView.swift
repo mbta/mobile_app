@@ -73,8 +73,10 @@ struct NearbyTransitView: View {
         .onChange(of: currentLocation) { _ in
             getNearby()
         }
-        .onChange(of: viewportProvider.viewport.isFollowing) { _ in
-            getNearby()
+        .onChange(of: viewportProvider.viewport) { newViewport in
+            if newViewport.isFollowing {
+                getNearby(location: currentLocation)
+            }
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             getSchedule()
