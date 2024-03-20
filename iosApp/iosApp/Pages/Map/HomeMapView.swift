@@ -112,7 +112,7 @@ struct HomeMapView: View {
         return Dictionary(uniqueKeysWithValues: stops.map { ($0.id, $0) })
     }
 
-    func splitAlertIntoStopBoundaries(alert: shared.Alert, routePattern: RoutePattern) -> [(Bool, ArraySlice<String>)] {
+    func splitAlertIntoStopBoundaries(alert: shared.Alert, routePattern: RoutePattern) -> [(Bool, ArraySlice<Stop>)] {
         let stopsAffectedByAlert: [String: Stop] = affectedStops(alert: alert)
 
         // TODO: should be grouping by informedEntity more, or safe to assume it will always be the same?
@@ -121,32 +121,93 @@ struct HomeMapView: View {
         // print("TRIP FOUND \(trip?.id) \(trip?.stopIds)")
         // hardcoding canonical-Orange-C1-0 stops for now
         // stop ids not included by default https://api-v3.mbta.com/trips/canonical-Orange-C1-0?include=stops&fields[stop]=id
-        let tripStopIds = ["70036", "70034", "70032", "70278", "70030", "70028", "70026", "70024", "70022", "70020", "70018", "70016", "70014", "70012", "70010", "70008", "70006", "70004", "70002", "70001"]
+        let tripStopIds = ["70036", "70034", "70032", "70278", "70030", "70028", "70026", "70024", "70022", "70020",
+                           "70018", "70016", "70014", "70012", "70010", "70008", "70006", "70004", "70002", "70001"]
 
-        let stopIdsChunkedByAlert = tripStopIds.chunked(on: { stopsAffectedByAlert[$0] != nil })
+        let tripStops: [Stop] = tripStopIds.compactMap { globalFetcher.stopsById[$0] }
+
+        let stopIdsChunkedByAlert = tripStops.chunked(on: { stopsAffectedByAlert[$0.id] != nil })
         return stopIdsChunkedByAlert ?? []
+    }
+
+    struct LineSegmentParams {
+        let isAlert: Bool
+        var startPoint: LocationCoordinate2D?
+        var endPoint: LocationCoordinate2D?
     }
 
     func splitRouteIntoSegments(routePattern: RoutePattern, trip _: Trip, shape: shared.Shape) -> [Feature] {
         let polyline = Polyline(encodedPolyline: shape.polyline!)
+        var segmentsToDraw: [LineSegmentParams] = []
         if routePattern.representativeTripId == "canonical-Orange-C1-0" {
             print("TRYING OL alert split")
 
             let alert = olShuttleAlert
-            let splitBoundaries = splitAlertIntoStopBoundaries(alert: alert, routePattern: routePattern)
+            let splitBoundaries: [(Bool, ArraySlice<Stop>)] = splitAlertIntoStopBoundaries(alert: alert, routePattern: routePattern)
             print(splitBoundaries)
+            let coordinateSegments: [LineSegmentParams] = splitBoundaries
+                .enumerated().map { (index: Int, element: (Bool, ArraySlice<Stop>)) in
+
+                    if index == 0, splitBoundaries.count == 1 {
+                        return LineSegmentParams(isAlert: element.0, startPoint: nil,
+                                                 endPoint: nil)
+                    }
+                    if index == 0 {
+                        let firstStopFollowingSegment: Stop? = splitBoundaries[index + 1].1.first
+                        let endPointCoords: LocationCoordinate2D? = firstStopFollowingSegment == nil
+                            ? nil
+                            : .init(latitude: firstStopFollowingSegment!.latitude, longitude: firstStopFollowingSegment!.longitude)
+                        return LineSegmentParams(isAlert: element.0, startPoint: nil,
+                                                 endPoint: endPointCoords)
+                    }
+
+                    if index == splitBoundaries.count - 1 {
+                        let lastStopPreviousSegment: Stop? = splitBoundaries[index - 1].1.last
+                        let startPointCoords: LocationCoordinate2D? = lastStopPreviousSegment == nil
+                            ? nil
+                            : .init(latitude: lastStopPreviousSegment!.latitude, longitude: lastStopPreviousSegment!.longitude)
+
+                        return LineSegmentParams(isAlert: element.0, startPoint: startPointCoords,
+                                                 endPoint: nil)
+                    }
+
+                    else {
+                        // TODO: this should probably look at the last stop of the previous segment & the first stop
+                        // of the following segment instead
+                        let lastStopPreviousSegment: Stop? = splitBoundaries[index - 1].1.last
+                        let startPointCoords: LocationCoordinate2D? = lastStopPreviousSegment == nil
+                            ? nil
+                            : .init(latitude: lastStopPreviousSegment!.latitude, longitude: lastStopPreviousSegment!.longitude)
+
+                        let firstStopFollowingSegment: Stop? = splitBoundaries[index + 1].1.first
+                        let endPointCoords: LocationCoordinate2D? = firstStopFollowingSegment == nil
+                            ? nil
+                            : .init(latitude: firstStopFollowingSegment!.latitude, longitude: firstStopFollowingSegment!.longitude)
+                        return LineSegmentParams(isAlert: element.0, startPoint: startPointCoords,
+                                                 endPoint: endPointCoords)
+                    }
+                }
+            segmentsToDraw = coordinateSegments
+        } else {
+            segmentsToDraw = [LineSegmentParams(isAlert: false, startPoint: nil, endPoint: nil)]
         }
 
-        let half1: [LocationCoordinate2D] = Array(polyline.coordinates!.prefix(polyline.coordinates!.count / 2))
-        let half2: [LocationCoordinate2D] = Array(polyline.coordinates!.suffix(polyline.coordinates!.count / 2))
+        let fullLineString = LineString(polyline.coordinates!)
 
-        var feature1 = Feature(geometry: LineString(half1))
-        feature1.properties = ["LineType": "Normal"]
+        let features: [Feature] = segmentsToDraw.map { segmentParams in
+            let segmentLineString: LineString = fullLineString.sliced(from: segmentParams.startPoint, to: segmentParams.endPoint)!
 
-        var feature2 = Feature(geometry: LineString(half2))
-        feature2.properties = ["LineType": "Alert"]
+            print("Found segment with coord count \(segmentLineString.coordinates.count)")
+            var feature = Feature(geometry: segmentLineString)
+            if segmentParams.isAlert {
+                feature.properties = ["LineType": "Alert"]
+            } else {
+                feature.properties = ["LineType": "Normal"]
+            }
+            return feature
+        }
 
-        return [feature1, feature2]
+        return features
     }
 
     func createRouteSourceData(route: Route, routesResponse: RouteResponse) -> GeoJSONSourceData {
