@@ -76,29 +76,43 @@ struct HomeMapView: View {
 
     var didAppear: ((Self) -> Void)?
 
-    func createRouteLayer(route: Route) -> Layer {
-        var routeLayer = LineLayer(id: getRouteLayerId(route.id), source: getRouteSourceId(route.id))
+    func createRouteLayer(sourceId: String, route: Route, isAlert: Bool) -> Layer {
+        var routeLayer = LineLayer(id: getRouteLayerId(sourceId), source: sourceId)
         routeLayer.lineWidth = .constant(5.0)
-        routeLayer.lineColor = .expression(Exp(.match) {
-            Exp(.get) { "LineType" }
-            "Normal"
-
-            UIColor(hex: route.color)
-            "Alert"
-            UIColor(.cyan)
-            UIColor(hex: route.color)
-        })
+        routeLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
         routeLayer.lineBorderWidth = .constant(1.0)
         routeLayer.lineBorderColor = .constant(StyleColor(.white))
-        /*   routeLayer.lineDasharray = .expression(Exp(.match) {
-             Exp(.get) { "LineType" }
-             "Normal"
 
-             []
-             "Alert"
-             [5, 5]
-             []
-         })*/
+        /* let stops: [Double: [Double]] = [
+         // If the map is at zoom level 12 or below,
+         // set circle radius to 2
+           5: [1.0, 1.0],
+         // If the map is at zoom level 22 or above,
+         // set circle radius to 180
+           22:  [3.0, 2.0]
+           ]
+
+           let zoomExp = Exp(.interpolate) {
+               // Set the interpolation type
+               Exp(.exponential) { 1.75 }
+               // Get current zoom level
+               Exp(.zoom)
+               // Use the stops defined above
+               stops}
+         */
+
+        routeLayer.lineDasharray = .constant(isAlert ? [2.0, 2.0] : [])
+
+        /*
+         /*   routeLayer.lineDasharray = .expression(Exp(.match) {
+         Exp(.get) { "LineType" }
+         "Normal"
+
+         []
+         "Alert"
+         [5, 5]
+         []
+         })*/ */
         routeLayer.lineJoin = .constant(.round)
         routeLayer.lineCap = .constant(.round)
         return routeLayer
@@ -136,7 +150,19 @@ struct HomeMapView: View {
         var endPoint: LocationCoordinate2D?
     }
 
-    func splitRouteIntoSegments(routePattern: RoutePattern, trip _: Trip, shape: shared.Shape) -> [Feature] {
+    struct FeatureWithCategory {
+        let feature: Feature
+        let sourceId: String
+        let isAlert: Bool
+    }
+
+    struct GeoJSONSourceDataForLineSegment {
+        let geoJSONData: GeoJSONSourceData
+        let sourceId: String
+        let isAlert: Bool
+    }
+
+    func splitRouteIntoSegments(routePattern: RoutePattern, trip _: Trip, shape: shared.Shape) -> [FeatureWithCategory] {
         let polyline = Polyline(encodedPolyline: shape.polyline!)
         var segmentsToDraw: [LineSegmentParams] = []
         if routePattern.representativeTripId == "canonical-Orange-C1-0" {
@@ -194,7 +220,7 @@ struct HomeMapView: View {
 
         let fullLineString = LineString(polyline.coordinates!)
 
-        let features: [Feature] = segmentsToDraw.map { segmentParams in
+        let features: [FeatureWithCategory] = segmentsToDraw.map { segmentParams in
             let segmentLineString: LineString = fullLineString.sliced(from: segmentParams.startPoint, to: segmentParams.endPoint)!
 
             print("Found segment with coord count \(segmentLineString.coordinates.count)")
@@ -204,28 +230,46 @@ struct HomeMapView: View {
             } else {
                 feature.properties = ["LineType": "Normal"]
             }
-            return feature
+            return .init(feature: feature, sourceId:
+                "route-\(routePattern.routeId)-rp-\(routePattern.id)-segment-start-\(segmentParams.startPoint?.latitude)",
+                isAlert: segmentParams.isAlert)
         }
 
         return features
     }
 
-    func createRouteSourceData(route: Route, routesResponse: RouteResponse) -> GeoJSONSourceData {
-        let routeFeatures: [Feature] = route.routePatternIds!
+    func featureToGeoJson(featureWithCagetory: FeatureWithCategory) -> GeoJSONSourceDataForLineSegment {
+        .init(geoJSONData: GeoJSONSourceData
+            .featureCollection(FeatureCollection(features: [featureWithCagetory.feature])),
+            sourceId: featureWithCagetory.sourceId, isAlert: featureWithCagetory.isAlert)
+    }
+
+    func patternToFeatures(routePattern: RoutePattern?, routesResponse: RouteResponse) -> [FeatureWithCategory] {
+        guard let routePattern,
+              let representativeTrip = routesResponse.trips[routePattern.representativeTripId],
+              let shapeId = representativeTrip.shapeId,
+              let shape = routesResponse.shapes[shapeId] else { return [] as [FeatureWithCategory] }
+        return splitRouteIntoSegments(routePattern: routePattern, trip: representativeTrip, shape: shape)
+    }
+
+    func createRouteSourceData(route: Route, routesResponse: RouteResponse) -> [GeoJSONSourceDataForLineSegment] {
+        let routeFeatures: [[FeatureWithCategory]] = route.routePatternIds!
             .map { patternId -> RoutePattern? in
                 routesResponse.routePatterns[patternId]
             }
             .filter { pattern in
                 pattern?.typicality == .typical && pattern?.directionId == 0
             }
-            .flatMap { pattern in
-                guard let pattern,
-                      let representativeTrip = routesResponse.trips[pattern.representativeTripId],
-                      let shapeId = representativeTrip.shapeId,
-                      let shape = routesResponse.shapes[shapeId] else { return [] as [Feature] }
-                return splitRouteIntoSegments(routePattern: pattern, trip: representativeTrip, shape: shape)
+            .map { pattern in
+                patternToFeatures(routePattern: pattern, routesResponse: routesResponse)
             }
-        return .featureCollection(FeatureCollection(features: routeFeatures))
+
+        let routeFeaturesFlattened: [FeatureWithCategory] = routeFeatures.flatMap { $0 }
+
+        // make a separate feature collection for each line segment so they can each be a separate layer
+        return routeFeaturesFlattened.map { featureWithCategory in
+            featureToGeoJson(featureWithCagetory: featureWithCategory)
+        }
     }
 
     func createStopLayer() -> Layer {
@@ -309,33 +353,40 @@ struct HomeMapView: View {
             aRoute.sortOrder >= bRoute.sortOrder
         }
         for route in sortedRoutes {
-            if map.sourceExists(withId: getRouteSourceId(route.id)) {
-                // Don't create new sources if they already exist
-                map.updateGeoJSONSource(
-                    withId: getRouteSourceId(route.id),
-                    data: createRouteSourceData(route: route, routesResponse: routesResponse)
-                )
-            } else {
-                // Create a GeoJSON data source for each typical route pattern shape in this route
-                var routeSource = GeoJSONSource(id: getRouteSourceId(route.id))
-                routeSource.data = createRouteSourceData(route: route, routesResponse: routesResponse)
-                do {
-                    try map.addSource(routeSource)
-                } catch {
-                    let id = getRouteSourceId(route.id)
-                    Logger().error("Failed to add route source \(id)\n\(error)")
+            let routeSegmentSources: [GeoJSONSourceDataForLineSegment] = createRouteSourceData(route: route,
+                                                                                               routesResponse: routesResponse)
+
+            for sourceData in routeSegmentSources {
+                if map.sourceExists(withId: sourceData.sourceId) {
+                    // Don't create new sources if they already exist
+                    map.updateGeoJSONSource(
+                        withId: sourceData.sourceId,
+                        data: sourceData.geoJSONData
+                    )
                 }
 
-                do {
-                    // Create a line layer for each route
-                    if map.layerExists(withId: "puck") {
-                        try map.addLayer(createRouteLayer(route: route), layerPosition: .below("puck"))
-                    } else {
-                        try map.addLayer(createRouteLayer(route: route))
+                else {
+                    // Create a GeoJSON data source for each typical route pattern shape in this route
+                    var routeSource = GeoJSONSource(id: sourceData.sourceId)
+                    routeSource.data = sourceData.geoJSONData
+                    do {
+                        try map.addSource(routeSource)
+                    } catch {
+                        let id = sourceData.sourceId
+                        Logger().error("Failed to add route source \(id)\n\(error)")
                     }
-                } catch {
-                    let id = getRouteLayerId(route.id)
-                    Logger().error("Failed to add route layer \(id)\n\(error)")
+
+                    do {
+                        // Create a line layer for each route
+                        if map.layerExists(withId: "puck") {
+                            try map.addLayer(createRouteLayer(sourceId: sourceData.sourceId, route: route, isAlert: sourceData.isAlert), layerPosition: .below("puck"))
+                        } else {
+                            try map.addLayer(createRouteLayer(sourceId: sourceData.sourceId, route: route, isAlert: sourceData.isAlert))
+                        }
+                    } catch {
+                        let id = sourceData.sourceId
+                        Logger().error("Failed to add route layer \(id)\n\(error)")
+                    }
                 }
             }
         }
