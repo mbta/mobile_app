@@ -77,7 +77,15 @@ struct HomeMapView: View {
     func createRouteLayer(route: Route) -> Layer {
         var routeLayer = LineLayer(id: getRouteLayerId(route.id), source: getRouteSourceId(route.id))
         routeLayer.lineWidth = .constant(4.0)
-        routeLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+        routeLayer.lineColor = .expression(Exp(.match) {
+            Exp(.get) { "LineType" }
+            "Normal"
+
+            UIColor(hex: route.color)
+            "Alert"
+            UIColor(.cyan)
+            UIColor(.black)
+        })
         routeLayer.lineBorderWidth = .constant(1.0)
         routeLayer.lineBorderColor = .constant(StyleColor(.white))
         routeLayer.lineJoin = .constant(.round)
@@ -99,7 +107,9 @@ struct HomeMapView: View {
                       let shapeId = representativeTrip.shapeId,
                       let shape = routesResponse.shapes[shapeId] else { return nil }
                 let polyline = Polyline(encodedPolyline: shape.polyline!)
-                return Feature(geometry: LineString(polyline.coordinates!))
+                var feature = Feature(geometry: LineString(polyline.coordinates!))
+                feature.properties = ["LineType": "Normal"]
+                return feature
             }
         return .featureCollection(FeatureCollection(features: routeFeatures))
     }
