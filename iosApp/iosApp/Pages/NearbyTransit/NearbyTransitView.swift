@@ -6,9 +6,12 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import CoreLocation
+import os
 import shared
 import SwiftUI
+@_spi(Experimental) import MapboxMaps
 
 public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
     lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
@@ -16,48 +19,28 @@ public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Boo
 
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    let location: CLLocationCoordinate2D?
+    let currentLocation: CLLocationCoordinate2D?
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
+    @ObservedObject var viewportProvider: ViewportProvider
     @State var now = Date.now
+    @State var cancellables: [AnyCancellable] = .init()
+
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
-    var didAppear: ((Self) -> Void)?
-    var didChange: ((Self) -> Void)?
-
-    func getNearby(location: CLLocationCoordinate2D?) {
-        Task {
-            if location == nil { return }
-            await nearbyFetcher.getNearby(
-                latitude: location!.latitude,
-                longitude: location!.longitude
-            )
-        }
-    }
-
-    func getSchedule() {
-        Task {
-            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
-                .stopIds() else { return }
-            let stopIdList = Array(stopIds)
-            await scheduleFetcher.getSchedule(stopIds: stopIdList)
-        }
-    }
-
-    func joinPredictions() {
-        Task {
-            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
-                .stopIds() else { return }
-            let stopIdList = Array(stopIds)
-            predictionsFetcher.run(stopIds: stopIdList)
-        }
-    }
-
-    func leavePredictions() {
-        Task {
-            predictionsFetcher.leave()
-        }
+    init(
+        currentLocation: CLLocationCoordinate2D?,
+        nearbyFetcher: NearbyFetcher,
+        scheduleFetcher: ScheduleFetcher,
+        predictionsFetcher: PredictionsFetcher,
+        viewportProvider: ViewportProvider
+    ) {
+        self.currentLocation = currentLocation
+        self.nearbyFetcher = nearbyFetcher
+        self.scheduleFetcher = scheduleFetcher
+        self.predictionsFetcher = predictionsFetcher
+        self.viewportProvider = viewportProvider
     }
 
     var body: some View {
@@ -77,13 +60,21 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getNearby(location: location)
-            didAppear?(self)
+            cancellables.append(
+                viewportProvider.$cameraState
+                    .debounce(for: .seconds(0.75), scheduler: DispatchQueue.main)
+                    .sink { _ in
+                        getNearby()
+                    })
+            getNearby(location: currentLocation)
             joinPredictions()
+            didAppear?(self)
         }
-        .onChange(of: location) { location in
-            getNearby(location: location)
-            didChange?(self)
+        .onChange(of: currentLocation) { _ in
+            getNearby()
+        }
+        .onChange(of: viewportProvider.viewport.isFollowing) { _ in
+            getNearby()
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             getSchedule()
@@ -104,10 +95,48 @@ struct NearbyTransitView: View {
         .onDisappear {
             leavePredictions()
         }
-        .emptyWhen(location == nil)
         .replaceWhen(nearbyFetcher.errorText) { errorText in
             IconCard(iconName: "network.slash", details: errorText)
-                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
+                .refreshable(nearbyFetcher.loading) { getNearby() }
+        }
+    }
+
+    var didAppear: ((Self) -> Void)?
+
+    func getNearby(location: CLLocationCoordinate2D? = nil) {
+        Task {
+            await nearbyFetcher.getNearby(location: location ?? getSearchLocation())
+        }
+    }
+
+    func getSchedule() {
+        Task {
+            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+                .stopIds() else { return }
+            let stopIdList = Array(stopIds)
+            await scheduleFetcher.getSchedule(stopIds: stopIdList)
+        }
+    }
+
+    func getSearchLocation() -> CLLocationCoordinate2D {
+        if viewportProvider.viewport.isFollowing, currentLocation != nil {
+            return currentLocation!
+        }
+        return viewportProvider.cameraState.center
+    }
+
+    func joinPredictions() {
+        Task {
+            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+                .stopIds() else { return }
+            let stopIdList = Array(stopIds)
+            predictionsFetcher.run(stopIds: stopIdList)
+        }
+    }
+
+    func leavePredictions() {
+        Task {
+            predictionsFetcher.leave()
         }
     }
 }

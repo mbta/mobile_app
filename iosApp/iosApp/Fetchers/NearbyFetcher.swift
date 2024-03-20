@@ -6,14 +6,14 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import CoreLocation
 import shared
 import SwiftUI
 
 class NearbyFetcher: ObservableObject {
-    private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
     @Published var error: NSError?
     @Published var errorText: Text?
+    @Published var loadedLocation: CLLocationCoordinate2D?
     @Published var loading: Bool = false
     @Published var nearby: StopAndRoutePatternResponse?
     @Published var nearbyByRouteAndStop: NearbyStaticData?
@@ -23,17 +23,17 @@ class NearbyFetcher: ObservableObject {
         self.backend = backend
     }
 
-    @MainActor func getNearby(latitude: Double, longitude: Double) async {
+    @MainActor func getNearby(location: CLLocationCoordinate2D) async {
+        if loading || location == loadedLocation { return }
         loading = true
-        self.latitude = latitude
-        self.longitude = longitude
         do {
             let response = try await backend.getNearby(
-                latitude: latitude,
-                longitude: longitude
+                latitude: location.latitude,
+                longitude: location.longitude
             )
             nearby = response
             nearbyByRouteAndStop = NearbyStaticData(response: response)
+            loadedLocation = location
             error = nil
             errorText = nil
         } catch let error as NSError {
@@ -63,8 +63,10 @@ class NearbyFetcher: ObservableObject {
         predictions: PredictionsStreamDataResponse?,
         filterAtTime: Instant
     ) -> [StopAssociatedRoute]? {
-        nearbyByRouteAndStop?.withRealtimeInfo(
-            sortByDistanceFrom: .init(longitude: longitude, latitude: latitude),
+        let lat = loadedLocation?.latitude ?? 0.0
+        let lon = loadedLocation?.longitude ?? 0.0
+        return nearbyByRouteAndStop?.withRealtimeInfo(
+            sortByDistanceFrom: .init(longitude: lon, latitude: lat),
             schedules: schedules,
             predictions: predictions,
             filterAtTime: filterAtTime
