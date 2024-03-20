@@ -12,12 +12,14 @@ import shared
 class GlobalFetcher: ObservableObject {
     var response: StopAndRoutePatternResponse?
     @Published var stops: [Stop]
+    @Published var stopsById: [String: Stop]
     @Published var routes: [String: Route]
     let backend: any BackendProtocol
 
     init(backend: any BackendProtocol, stops: [Stop] = [], routes: [String: Route] = [:]) {
         self.backend = backend
         self.stops = stops
+        stopsById = [:]
         self.routes = routes
     }
 
@@ -26,6 +28,7 @@ class GlobalFetcher: ObservableObject {
             let response = try await backend.getGlobalData()
             self.response = response
             stops = response.stops
+            stopsById = Dictionary(uniqueKeysWithValues: stops.map { ($0.id, $0) })
             routes = response.routes
         } catch {
             print("Failed to load global data: \(error)")

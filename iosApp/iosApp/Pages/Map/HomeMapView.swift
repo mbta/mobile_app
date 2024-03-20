@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Algorithms
 import os
 import Polyline
 import shared
@@ -63,6 +64,7 @@ struct HomeMapView: View {
             .accessibilityIdentifier("transitMap")
             .onAppear { handleAppear(location: proxy.location) }
             .onChange(of: globalFetcher.stops) { stops in handleGlobalStops(proxy.map, stops) }
+            .onChange(of: globalFetcher.stops) { _ in handleRouteResponse(proxy.map, railRouteShapeFetcher.response) }
             .onChange(of: railRouteShapeFetcher.response) { response in handleRouteResponse(proxy.map, response) }
             .overlay(alignment: .topTrailing) {
                 if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
@@ -102,8 +104,38 @@ struct HomeMapView: View {
         return routeLayer
     }
 
-    func splitRouteIntoSegments(routePattern _: RoutePattern, trip _: Trip, shape: shared.Shape) -> [Feature] {
+    func affectedStops(alert: shared.Alert) -> [String: Stop] {
+        let stops: [Stop] = alert.informedEntity.compactMap { informedEntity in
+            informedEntity.stop != nil ? globalFetcher.stopsById[informedEntity.stop!] : nil
+        }
+
+        return Dictionary(uniqueKeysWithValues: stops.map { ($0.id, $0) })
+    }
+
+    func splitAlertIntoStopBoundaries(alert: shared.Alert, routePattern: RoutePattern) -> [(Bool, ArraySlice<String>)] {
+        let stopsAffectedByAlert: [String: Stop] = affectedStops(alert: alert)
+
+        // TODO: should be grouping by informedEntity more, or safe to assume it will always be the same?
+        let routeIdForAlert = alert.informedEntity[0].route!
+        let trip: Trip? = railRouteShapeFetcher.response?.trips[routePattern.representativeTripId]
+        // print("TRIP FOUND \(trip?.id) \(trip?.stopIds)")
+        // hardcoding canonical-Orange-C1-0 stops for now
+        // stop ids not included by default https://api-v3.mbta.com/trips/canonical-Orange-C1-0?include=stops&fields[stop]=id
+        let tripStopIds = ["70036", "70034", "70032", "70278", "70030", "70028", "70026", "70024", "70022", "70020", "70018", "70016", "70014", "70012", "70010", "70008", "70006", "70004", "70002", "70001"]
+
+        let stopIdsChunkedByAlert = tripStopIds.chunked(on: { stopsAffectedByAlert[$0] != nil })
+        return stopIdsChunkedByAlert ?? []
+    }
+
+    func splitRouteIntoSegments(routePattern: RoutePattern, trip _: Trip, shape: shared.Shape) -> [Feature] {
         let polyline = Polyline(encodedPolyline: shape.polyline!)
+        if routePattern.representativeTripId == "canonical-Orange-C1-0" {
+            print("TRYING OL alert split")
+
+            let alert = olShuttleAlert
+            let splitBoundaries = splitAlertIntoStopBoundaries(alert: alert, routePattern: routePattern)
+            print(splitBoundaries)
+        }
 
         let half1: [LocationCoordinate2D] = Array(polyline.coordinates!.prefix(polyline.coordinates!.count / 2))
         let half2: [LocationCoordinate2D] = Array(polyline.coordinates!.suffix(polyline.coordinates!.count / 2))
@@ -123,7 +155,7 @@ struct HomeMapView: View {
                 routesResponse.routePatterns[patternId]
             }
             .filter { pattern in
-                pattern?.typicality == .typical
+                pattern?.typicality == .typical && pattern?.directionId == 0
             }
             .flatMap { pattern in
                 guard let pattern,
