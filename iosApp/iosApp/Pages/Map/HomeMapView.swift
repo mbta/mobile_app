@@ -76,7 +76,7 @@ struct HomeMapView: View {
 
     func createRouteLayer(route: Route) -> Layer {
         var routeLayer = LineLayer(id: getRouteLayerId(route.id), source: getRouteSourceId(route.id))
-        routeLayer.lineWidth = .constant(4.0)
+        routeLayer.lineWidth = .constant(5.0)
         routeLayer.lineColor = .expression(Exp(.match) {
             Exp(.get) { "LineType" }
             "Normal"
@@ -84,13 +84,37 @@ struct HomeMapView: View {
             UIColor(hex: route.color)
             "Alert"
             UIColor(.cyan)
-            UIColor(.black)
+            UIColor(hex: route.color)
         })
         routeLayer.lineBorderWidth = .constant(1.0)
         routeLayer.lineBorderColor = .constant(StyleColor(.white))
+        /*   routeLayer.lineDasharray = .expression(Exp(.match) {
+             Exp(.get) { "LineType" }
+             "Normal"
+
+             []
+             "Alert"
+             [5, 5]
+             []
+         })*/
         routeLayer.lineJoin = .constant(.round)
         routeLayer.lineCap = .constant(.round)
         return routeLayer
+    }
+
+    func splitRouteIntoSegments(routePattern _: RoutePattern, trip _: Trip, shape: shared.Shape) -> [Feature] {
+        let polyline = Polyline(encodedPolyline: shape.polyline!)
+
+        let half1: [LocationCoordinate2D] = Array(polyline.coordinates!.prefix(polyline.coordinates!.count / 2))
+        let half2: [LocationCoordinate2D] = Array(polyline.coordinates!.suffix(polyline.coordinates!.count / 2))
+
+        var feature1 = Feature(geometry: LineString(half1))
+        feature1.properties = ["LineType": "Normal"]
+
+        var feature2 = Feature(geometry: LineString(half2))
+        feature2.properties = ["LineType": "Alert"]
+
+        return [feature1, feature2]
     }
 
     func createRouteSourceData(route: Route, routesResponse: RouteResponse) -> GeoJSONSourceData {
@@ -101,15 +125,12 @@ struct HomeMapView: View {
             .filter { pattern in
                 pattern?.typicality == .typical
             }
-            .compactMap { pattern in
+            .flatMap { pattern in
                 guard let pattern,
                       let representativeTrip = routesResponse.trips[pattern.representativeTripId],
                       let shapeId = representativeTrip.shapeId,
-                      let shape = routesResponse.shapes[shapeId] else { return nil }
-                let polyline = Polyline(encodedPolyline: shape.polyline!)
-                var feature = Feature(geometry: LineString(polyline.coordinates!))
-                feature.properties = ["LineType": "Normal"]
-                return feature
+                      let shape = routesResponse.shapes[shapeId] else { return [] as [Feature] }
+                return splitRouteIntoSegments(routePattern: pattern, trip: representativeTrip, shape: shape)
             }
         return .featureCollection(FeatureCollection(features: routeFeatures))
     }
