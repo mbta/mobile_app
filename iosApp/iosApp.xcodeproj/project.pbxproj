@@ -14,6 +14,7 @@
 		6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */; };
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
+		6E9187182BAB5B860024A069 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9187172BAB5B860024A069 /* Alerts.swift */; };
 		6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E99CBB62B9892C80047E78D /* SocketProvider.swift */; };
 		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
@@ -107,6 +108,7 @@
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
+		6E9187172BAB5B860024A069 /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		6E99CBB62B9892C80047E78D /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
 		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
@@ -214,6 +216,14 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
+		6E9187162BAB5B7D0024A069 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6E9187172BAB5B860024A069 /* Alerts.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		6EE7457C2B965AD40052227E /* Phoenix */ = {
 			isa = PBXGroup;
 			children = (
@@ -309,6 +319,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				6E9187162BAB5B7D0024A069 /* Data */,
 				9A2005C02B97B56100F562E1 /* Pages */,
 				6EE7457C2B965AD40052227E /* Phoenix */,
 				9AC10BD82B80060E00EA4605 /* Utils */,
@@ -743,6 +754,7 @@
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
 				8CD1F8CD2B7164C100F419D4 /* PredictionsFetcher.swift in Sources */,
 				9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */,
+				6E9187182BAB5B860024A069 /* Alerts.swift in Sources */,
 				8CEA10252BA4B179001C6EB9 /* AlertsFetcher.swift in Sources */,
 				6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */,
 				8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */,
