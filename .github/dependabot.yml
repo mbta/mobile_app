@@ -12,7 +12,3 @@ updates:
     directory: /
     schedule:
       interval: weekly
-  - package-ecosystem: swift
-    directory: /iosApp/
-    schedule:
-      interval: weekly
