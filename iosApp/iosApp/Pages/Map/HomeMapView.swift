@@ -79,7 +79,7 @@ struct HomeMapView: View {
     func createRouteLayer(sourceId: String, route: Route, isAlert: Bool) -> Layer {
         var routeLayer = LineLayer(id: getRouteLayerId(sourceId), source: sourceId)
         routeLayer.lineWidth = .constant(5.0)
-        routeLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+        routeLayer.lineColor = .constant(isAlert ? StyleColor(.black) : StyleColor(UIColor(hex: route.color)))
         routeLayer.lineBorderWidth = .constant(1.0)
         routeLayer.lineBorderColor = .constant(StyleColor(.white))
 
@@ -173,43 +173,45 @@ struct HomeMapView: View {
             print(splitBoundaries)
             let coordinateSegments: [LineSegmentParams] = splitBoundaries
                 .enumerated().map { (index: Int, element: (Bool, ArraySlice<Stop>)) in
+                    let isAlert: Bool = element.0
+                    let stops: ArraySlice<Stop> = element.1
 
                     if index == 0, splitBoundaries.count == 1 {
-                        return LineSegmentParams(isAlert: element.0, startPoint: nil,
+                        return LineSegmentParams(isAlert: isAlert, startPoint: nil,
                                                  endPoint: nil)
                     }
                     if index == 0 {
-                        let firstStopFollowingSegment: Stop? = splitBoundaries[index + 1].1.first
-                        let endPointCoords: LocationCoordinate2D? = firstStopFollowingSegment == nil
+                        let endPoint: Stop? = isAlert ? splitBoundaries[index + 1].1.first : stops.last
+                        let endPointCoords: LocationCoordinate2D? = endPoint == nil
                             ? nil
-                            : .init(latitude: firstStopFollowingSegment!.latitude, longitude: firstStopFollowingSegment!.longitude)
-                        return LineSegmentParams(isAlert: element.0, startPoint: nil,
+                            : .init(latitude: endPoint!.latitude, longitude: endPoint!.longitude)
+                        return LineSegmentParams(isAlert: isAlert, startPoint: nil,
                                                  endPoint: endPointCoords)
                     }
 
                     if index == splitBoundaries.count - 1 {
-                        let lastStopPreviousSegment: Stop? = splitBoundaries[index - 1].1.last
-                        let startPointCoords: LocationCoordinate2D? = lastStopPreviousSegment == nil
+                        let startPoint: Stop? = isAlert ? splitBoundaries[index - 1].1.last : stops.first
+                        let startPointCoords: LocationCoordinate2D? = startPoint == nil
                             ? nil
-                            : .init(latitude: lastStopPreviousSegment!.latitude, longitude: lastStopPreviousSegment!.longitude)
+                            : .init(latitude: startPoint!.latitude, longitude: startPoint!.longitude)
 
-                        return LineSegmentParams(isAlert: element.0, startPoint: startPointCoords,
+                        return LineSegmentParams(isAlert: isAlert, startPoint: startPointCoords,
                                                  endPoint: nil)
                     }
 
                     else {
                         // TODO: this should probably look at the last stop of the previous segment & the first stop
                         // of the following segment instead
-                        let lastStopPreviousSegment: Stop? = splitBoundaries[index - 1].1.last
-                        let startPointCoords: LocationCoordinate2D? = lastStopPreviousSegment == nil
+                        let startPoint: Stop? = isAlert ? splitBoundaries[index - 1].1.last : stops.first
+                        let startPointCoords: LocationCoordinate2D? = startPoint == nil
                             ? nil
-                            : .init(latitude: lastStopPreviousSegment!.latitude, longitude: lastStopPreviousSegment!.longitude)
+                            : .init(latitude: startPoint!.latitude, longitude: startPoint!.longitude)
 
-                        let firstStopFollowingSegment: Stop? = splitBoundaries[index + 1].1.first
-                        let endPointCoords: LocationCoordinate2D? = firstStopFollowingSegment == nil
+                        let endPoint: Stop? = isAlert ? splitBoundaries[index + 1].1.first : stops.last
+                        let endPointCoords: LocationCoordinate2D? = endPoint == nil
                             ? nil
-                            : .init(latitude: firstStopFollowingSegment!.latitude, longitude: firstStopFollowingSegment!.longitude)
-                        return LineSegmentParams(isAlert: element.0, startPoint: startPointCoords,
+                            : .init(latitude: endPoint!.latitude, longitude: endPoint!.longitude)
+                        return LineSegmentParams(isAlert: isAlert, startPoint: startPointCoords,
                                                  endPoint: endPointCoords)
                     }
                 }
