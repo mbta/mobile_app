@@ -102,7 +102,7 @@ struct HomeMapView: View {
          */
 
         routeLayer.lineDasharray = .constant(isAlert ? [2.0, 2.0] : [])
-
+        routeLayer.lineOffset = .constant(route.type == RouteType.commuterRail ? -5 : 0)
         /*
          /*   routeLayer.lineDasharray = .expression(Exp(.match) {
          Exp(.get) { "LineType" }
