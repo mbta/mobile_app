@@ -53,15 +53,15 @@ data class PatternsByHeadsign(
     /**
      * Checks if a trip exists before the given cutoff time.
      *
-     * If [upcomingTrips] are unavailable (i.e. null), returns true, since nothing should be hidden
-     * until data is available.
+     * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
+     * should be hidden until data is available.
      */
     fun isUpcomingBefore(cutoffTime: Instant) =
         upcomingTrips?.any {
             val tripTime = it.time
             tripTime != null && tripTime < cutoffTime
         }
-            ?: true
+            ?: false
 
     override fun compareTo(other: PatternsByHeadsign): Int =
         patterns.first().compareTo(other.patterns.first())
