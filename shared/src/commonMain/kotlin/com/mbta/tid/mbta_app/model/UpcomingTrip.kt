@@ -38,28 +38,28 @@ data class UpcomingTrip(
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
-    enum class ArrivalOnly {
+    enum class IsArrivalOnly {
         /** This trip is scheduled as arrival-only, so this headsign can be hidden at this stop. */
-        Scheduled,
+        Yes,
         /**
          * This trip has no schedule but is predicted as arrival-only (or is cancelled entirely), so
          * other trips should be checked.
          */
-        Unscheduled,
+        YesButUnscheduled,
         /** This trip has a departure, so this headsign should be shown at this stop. */
-        HasDeparture
+        No
     }
 
     fun isArrivalOnly() =
         if (schedule != null) {
             when (schedule.pickUpType) {
-                Schedule.StopEdgeType.Unavailable -> ArrivalOnly.Scheduled
-                else -> ArrivalOnly.HasDeparture
+                Schedule.StopEdgeType.Unavailable -> IsArrivalOnly.Yes
+                else -> IsArrivalOnly.No
             }
         } else {
             when (prediction?.departureTime) {
-                null -> ArrivalOnly.Unscheduled
-                else -> ArrivalOnly.HasDeparture
+                null -> IsArrivalOnly.YesButUnscheduled
+                else -> IsArrivalOnly.No
             }
         }
 

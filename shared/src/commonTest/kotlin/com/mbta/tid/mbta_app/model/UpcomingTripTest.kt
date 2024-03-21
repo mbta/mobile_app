@@ -382,28 +382,25 @@ class UpcomingTripTest {
             departureTime = null
             pickUpType = Schedule.StopEdgeType.Unavailable
         }
-        assertEquals(UpcomingTrip.ArrivalOnly.Scheduled, UpcomingTrip(schedule1).isArrivalOnly())
+        assertEquals(UpcomingTrip.IsArrivalOnly.Yes, UpcomingTrip(schedule1).isArrivalOnly())
 
         val schedule2 = schedule {
             departureTime = Clock.System.now()
             pickUpType = Schedule.StopEdgeType.Regular
         }
-        assertEquals(UpcomingTrip.ArrivalOnly.HasDeparture, UpcomingTrip(schedule2).isArrivalOnly())
+        assertEquals(UpcomingTrip.IsArrivalOnly.No, UpcomingTrip(schedule2).isArrivalOnly())
     }
 
     @Test
     fun `isArrivalOnly handles prediction without schedule`() {
         val prediction1 = prediction { departureTime = null }
         assertEquals(
-            UpcomingTrip.ArrivalOnly.Unscheduled,
+            UpcomingTrip.IsArrivalOnly.YesButUnscheduled,
             UpcomingTrip(prediction1).isArrivalOnly()
         )
 
         val prediction2 = prediction { departureTime = Clock.System.now() }
-        assertEquals(
-            UpcomingTrip.ArrivalOnly.HasDeparture,
-            UpcomingTrip(prediction2).isArrivalOnly()
-        )
+        assertEquals(UpcomingTrip.IsArrivalOnly.No, UpcomingTrip(prediction2).isArrivalOnly())
     }
 
     @Test
@@ -420,19 +417,19 @@ class UpcomingTripTest {
         val predictionNormal = prediction { departureTime = Clock.System.now() }
 
         assertEquals(
-            UpcomingTrip.ArrivalOnly.Scheduled,
+            UpcomingTrip.IsArrivalOnly.Yes,
             UpcomingTrip(scheduleArrivalOnly, predictionArrivalOnly).isArrivalOnly()
         )
         assertEquals(
-            UpcomingTrip.ArrivalOnly.Scheduled,
+            UpcomingTrip.IsArrivalOnly.Yes,
             UpcomingTrip(scheduleArrivalOnly, predictionNormal).isArrivalOnly()
         )
         assertEquals(
-            UpcomingTrip.ArrivalOnly.HasDeparture,
+            UpcomingTrip.IsArrivalOnly.No,
             UpcomingTrip(scheduleNormal, predictionArrivalOnly).isArrivalOnly()
         )
         assertEquals(
-            UpcomingTrip.ArrivalOnly.HasDeparture,
+            UpcomingTrip.IsArrivalOnly.No,
             UpcomingTrip(scheduleNormal, predictionNormal).isArrivalOnly()
         )
     }
