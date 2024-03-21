@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import CoreLocation
 import shared
 import SwiftUI
@@ -19,28 +20,45 @@ class NearbyFetcher: ObservableObject {
     @Published var nearbyByRouteAndStop: NearbyStaticData?
     let backend: any BackendProtocol
 
+    private var currentTask: Task<Void, Never>?
+
     init(backend: any BackendProtocol) {
         self.backend = backend
     }
 
-    @MainActor func getNearby(location: CLLocationCoordinate2D) async {
-        if loading || location == loadedLocation { return }
-        loading = true
-        do {
-            let response = try await backend.getNearby(
-                latitude: location.latitude,
-                longitude: location.longitude
-            )
-            nearby = response
-            nearbyByRouteAndStop = NearbyStaticData(response: response)
-            loadedLocation = location
-            error = nil
-            errorText = nil
-        } catch let error as NSError {
-            self.error = error
-            errorText = getErrorText(error: error)
+    func getNearby(location: CLLocationCoordinate2D) async {
+        if location.isRoughlyEqualTo(loadedLocation) { return }
+        if loading, currentTask != nil, !currentTask!.isCancelled {
+            currentTask?.cancel()
         }
-        loading = false
+        currentTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            self.loading = true
+            do {
+                let response = try await self.backend.getNearby(
+                    latitude: location.latitude,
+                    longitude: location.longitude
+                )
+                try Task.checkCancellation()
+                self.nearby = response
+                self.nearbyByRouteAndStop = NearbyStaticData(response: response)
+                self.loadedLocation = location
+                self.error = nil
+                self.errorText = nil
+            } catch is CancellationError {
+                // Do nothing when cancelled
+            } catch let error as NSError {
+                withUnsafeCurrentTask { thisTask in
+                    if self.currentTask?.hashValue == thisTask?.hashValue {
+                        print("ewwow \(error.debugDescription)")
+                        self.error = error
+                        self.errorText = self.getErrorText(error: error)
+                    }
+                }
+            }
+            self.loading = false
+        }
     }
 
     func getErrorText(error: NSError) -> Text {
