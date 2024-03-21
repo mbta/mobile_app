@@ -13,34 +13,26 @@ import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
-public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-    lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
-}
-
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    let currentLocation: CLLocationCoordinate2D?
+    let location: CLLocationCoordinate2D
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
-    @ObservedObject var viewportProvider: ViewportProvider
     @State var now = Date.now
-    @State var cancellables: [AnyCancellable] = .init()
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        currentLocation: CLLocationCoordinate2D?,
+        location: CLLocationCoordinate2D,
         nearbyFetcher: NearbyFetcher,
         scheduleFetcher: ScheduleFetcher,
-        predictionsFetcher: PredictionsFetcher,
-        viewportProvider: ViewportProvider
+        predictionsFetcher: PredictionsFetcher
     ) {
-        self.currentLocation = currentLocation
+        self.location = location
         self.nearbyFetcher = nearbyFetcher
         self.scheduleFetcher = scheduleFetcher
         self.predictionsFetcher = predictionsFetcher
-        self.viewportProvider = viewportProvider
     }
 
     var body: some View {
@@ -60,23 +52,12 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            cancellables.append(
-                viewportProvider.$cameraState
-                    .debounce(for: .seconds(0.75), scheduler: DispatchQueue.main)
-                    .sink { _ in
-                        getNearby()
-                    })
-            getNearby(location: currentLocation)
+            getNearby(location: location)
             joinPredictions()
             didAppear?(self)
         }
-        .onChange(of: currentLocation) { _ in
-            getNearby()
-        }
-        .onChange(of: viewportProvider.viewport) { newViewport in
-            if newViewport.isFollowing {
-                getNearby(location: currentLocation)
-            }
+        .onChange(of: location) { newLocation in
+            getNearby(location: newLocation)
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
             getSchedule()
@@ -99,16 +80,14 @@ struct NearbyTransitView: View {
         }
         .replaceWhen(nearbyFetcher.errorText) { errorText in
             IconCard(iconName: "network.slash", details: errorText)
-                .refreshable(nearbyFetcher.loading) { getNearby() }
+                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
         }
     }
 
     var didAppear: ((Self) -> Void)?
 
-    func getNearby(location: CLLocationCoordinate2D? = nil) {
-        Task {
-            await nearbyFetcher.getNearby(location: location ?? getSearchLocation())
-        }
+    func getNearby(location: CLLocationCoordinate2D) {
+        Task { await nearbyFetcher.getNearby(location: location) }
     }
 
     func getSchedule() {
@@ -118,13 +97,6 @@ struct NearbyTransitView: View {
             let stopIdList = Array(stopIds)
             await scheduleFetcher.getSchedule(stopIds: stopIdList)
         }
-    }
-
-    func getSearchLocation() -> CLLocationCoordinate2D {
-        if viewportProvider.viewport.isFollowing, currentLocation != nil {
-            return currentLocation!
-        }
-        return viewportProvider.cameraState.center
     }
 
     func joinPredictions() {

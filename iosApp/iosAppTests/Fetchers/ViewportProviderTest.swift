@@ -25,7 +25,7 @@ final class ViewportProviderTest: XCTestCase {
     func testFollowViewport() async throws {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
-        await provider.follow()
+        provider.follow()
         XCTAssertNil(provider.viewport.camera)
         XCTAssertNotNil(provider.viewport.followPuck)
     }

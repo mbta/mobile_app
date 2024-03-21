@@ -41,9 +41,7 @@ struct IOSApp: App {
 
     init(socket: PhoenixSocket) {
         let backend = backend
-        let locationManager = LocationDataManager(distanceFilter: 100)
-        let alreadyHasLocation = locationManager.currentLocation != nil
-        _locationDataManager = StateObject(wrappedValue: locationManager)
+        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
 
         _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))

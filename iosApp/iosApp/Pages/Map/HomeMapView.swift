@@ -74,12 +74,12 @@ struct HomeMapView: View {
             .onChange(of: railRouteShapeFetcher.response) { response in handleRouteResponse(proxy.map, response) }
             .onChange(of: locationDataManager.authorizationStatus) { status in
                 if status == .authorizedAlways || status == .authorizedWhenInUse {
-                    Task { await viewportProvider.follow(animation: .easeInOut(duration: 0)) }
+                    Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
                 }
             }
             .overlay(alignment: .topTrailing) {
                 if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { Task { await viewportProvider.follow() } }
+                    RecenterButton { Task { viewportProvider.follow() } }
                 }
             }
         }

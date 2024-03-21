@@ -27,7 +27,7 @@ class ViewportProvider: ObservableObject {
         )
     }
 
-    @MainActor func follow(animation: ViewportAnimation = .easeInOut(duration: 1)) async {
+    func follow(animation: ViewportAnimation = .easeInOut(duration: 1)) {
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: self.viewport.camera?.zoom ?? ViewportProvider.defaultZoom)
         }

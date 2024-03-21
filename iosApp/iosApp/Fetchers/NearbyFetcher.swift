@@ -48,6 +48,7 @@ class NearbyFetcher: ObservableObject {
                 self.errorText = nil
             } catch is CancellationError {
                 // Do nothing when cancelled
+                return
             } catch let error as NSError {
                 withUnsafeCurrentTask { thisTask in
                     if self.currentTask?.hashValue == thisTask?.hashValue {

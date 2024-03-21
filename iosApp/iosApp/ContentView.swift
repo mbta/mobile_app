@@ -44,7 +44,7 @@ struct ContentView: View {
                     viewportProvider: viewportProvider
                 )
                 Spacer()
-                NearbyTransitView(
+                NearbyTransitPageView(
                     currentLocation: locationDataManager.currentLocation?.coordinate,
                     nearbyFetcher: nearbyFetcher,
                     scheduleFetcher: scheduleFetcher,
