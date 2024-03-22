@@ -39,6 +39,33 @@ data class UpcomingTrip(
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
     /**
+     * Checks whether this upcoming trip will depart its station or only arrive there.
+     *
+     * If a trip will neither arrive nor depart (e.g. trips with no schedule that have been
+     * cancelled), this function will return `null`. Returning `true` would hide headsigns with no
+     * schedule and predictions exclusively for dropped trips, which may happen during suspensions
+     * and would be incorrect. Returning `false` would show headsigns with added trips even if those
+     * trips have been cancelled, which would be incorrect.
+     */
+    fun isArrivalOnly(): Boolean? {
+        val hasArrival =
+            if (schedule != null) {
+                schedule.dropOffType != Schedule.StopEdgeType.Unavailable
+            } else {
+                prediction?.arrivalTime != null
+            }
+        val hasDeparture =
+            if (schedule != null) {
+                schedule.pickUpType != Schedule.StopEdgeType.Unavailable
+            } else {
+                prediction?.departureTime != null
+            }
+        return if (!hasArrival && !hasDeparture) {
+            null
+        } else !hasDeparture
+    }
+
+    /**
      * The state in which a prediction should be shown.
      *
      * Can be localized in the frontend layer, except for `Overridden` which is always English.

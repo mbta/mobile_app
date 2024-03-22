@@ -63,6 +63,23 @@ data class PatternsByHeadsign(
         }
             ?: false
 
+    /**
+     * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
+     *
+     * Criteria:
+     * - Trips are loaded
+     * - At least one trip is scheduled as arrival-only
+     * - No trips are scheduled or predicted with a departure
+     */
+    fun isArrivalOnly() =
+        upcomingTrips != null &&
+            upcomingTrips
+                .mapTo(mutableSetOf()) { it.isArrivalOnly() }
+                .let { upcomingTripsArrivalOnly ->
+                    upcomingTripsArrivalOnly.contains(true) &&
+                        !upcomingTripsArrivalOnly.contains(false)
+                }
+
     override fun compareTo(other: PatternsByHeadsign): Int =
         patterns.first().compareTo(other.patterns.first())
 }
@@ -85,7 +102,7 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
             .map {
                 PatternsByHeadsign(it, routeId, upcomingTripsMap, stopIds = staticData.allStopIds)
             }
-            .filter { it.isTypical() || it.isUpcomingBefore(cutoffTime) }
+            .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
             .sorted()
     )
 

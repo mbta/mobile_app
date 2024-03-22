@@ -1027,4 +1027,71 @@ class NearbyResponseTest {
             )
         )
     }
+
+    @Test
+    fun `withRealtimeInfo hides headsigns that are arrival-only`() {
+
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route()
+        val routePattern1 = objects.routePattern(route) { representativeTrip { headsign = "A" } }
+        val routePattern2 = objects.routePattern(route) { representativeTrip { headsign = "B" } }
+        val trip1 = objects.trip(routePattern1)
+        val trip2 = objects.trip(routePattern2)
+
+        val time = Instant.parse("2024-03-14T12:23:44-04:00")
+
+        val sched1 =
+            objects.schedule {
+                trip = trip1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+        val sched2 =
+            objects.schedule {
+                trip = trip2
+                stopId = stop.id
+                stopSequence = 90
+                arrivalTime = time + 2.minutes
+                departureTime = null
+                pickUpType = Schedule.StopEdgeType.Unavailable
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route) {
+                    stop(stop) {
+                        headsign("A", listOf(routePattern1))
+                        headsign("B", listOf(routePattern2))
+                    }
+                }
+            }
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            stop,
+                            listOf(
+                                PatternsByHeadsign(
+                                    "A",
+                                    listOf(routePattern1),
+                                    listOf(UpcomingTrip(sched1))
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time
+            )
+        )
+    }
 }
