@@ -6,41 +6,59 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
+import CoreLocation
 import shared
 import SwiftUI
 
 class NearbyFetcher: ObservableObject {
-    private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
     @Published var error: NSError?
     @Published var errorText: Text?
+    @Published var loadedLocation: CLLocationCoordinate2D?
     @Published var loading: Bool = false
     @Published var nearby: StopAndRoutePatternResponse?
     @Published var nearbyByRouteAndStop: NearbyStaticData?
     let backend: any BackendProtocol
 
+    private var currentTask: Task<Void, Never>?
+
     init(backend: any BackendProtocol) {
         self.backend = backend
     }
 
-    @MainActor func getNearby(latitude: Double, longitude: Double) async {
-        loading = true
-        self.latitude = latitude
-        self.longitude = longitude
-        do {
-            let response = try await backend.getNearby(
-                latitude: latitude,
-                longitude: longitude
-            )
-            nearby = response
-            nearbyByRouteAndStop = NearbyStaticData(response: response)
-            error = nil
-            errorText = nil
-        } catch let error as NSError {
-            self.error = error
-            errorText = getErrorText(error: error)
+    func getNearby(location: CLLocationCoordinate2D) async {
+        if location.isRoughlyEqualTo(loadedLocation) { return }
+        if loading, currentTask != nil, !currentTask!.isCancelled {
+            currentTask?.cancel()
         }
-        loading = false
+        currentTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            self.loading = true
+            do {
+                let response = try await self.backend.getNearby(
+                    latitude: location.latitude,
+                    longitude: location.longitude
+                )
+                try Task.checkCancellation()
+                self.nearby = response
+                self.nearbyByRouteAndStop = NearbyStaticData(response: response)
+                self.loadedLocation = location
+                self.error = nil
+                self.errorText = nil
+            } catch is CancellationError {
+                // Do nothing when cancelled
+                return
+            } catch let error as NSError {
+                withUnsafeCurrentTask { thisTask in
+                    if self.currentTask?.hashValue == thisTask?.hashValue {
+                        self.error = error
+                        self.errorText = self.getErrorText(error: error)
+                    }
+                }
+            }
+            self.loading = false
+        }
     }
 
     func getErrorText(error: NSError) -> Text {
@@ -63,8 +81,9 @@ class NearbyFetcher: ObservableObject {
         predictions: PredictionsStreamDataResponse?,
         filterAtTime: Instant
     ) -> [StopAssociatedRoute]? {
-        nearbyByRouteAndStop?.withRealtimeInfo(
-            sortByDistanceFrom: .init(longitude: longitude, latitude: latitude),
+        guard let loadedLocation else { return nil }
+        return nearbyByRouteAndStop?.withRealtimeInfo(
+            sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
             schedules: schedules,
             predictions: predictions,
             filterAtTime: filterAtTime

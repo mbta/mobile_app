@@ -39,18 +39,18 @@ struct ContentView: View {
                 }
                 HomeMapView(
                     globalFetcher: globalFetcher,
+                    nearbyFetcher: nearbyFetcher,
                     railRouteShapeFetcher: railRouteShapeFetcher,
                     viewportProvider: viewportProvider
                 )
                 Spacer()
-                if let location = locationDataManager.currentLocation {
-                    NearbyTransitView(
-                        location: location.coordinate,
-                        nearbyFetcher: nearbyFetcher,
-                        scheduleFetcher: scheduleFetcher,
-                        predictionsFetcher: predictionsFetcher
-                    )
-                }
+                NearbyTransitPageView(
+                    currentLocation: locationDataManager.currentLocation?.coordinate,
+                    nearbyFetcher: nearbyFetcher,
+                    scheduleFetcher: scheduleFetcher,
+                    predictionsFetcher: predictionsFetcher,
+                    viewportProvider: viewportProvider
+                )
             }
         }
         .searchable(

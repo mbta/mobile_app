@@ -8,7 +8,7 @@ struct IOSApp: App {
     let backend: BackendProtocol = CommandLine.arguments.contains("-testing") ? IdleBackend() : Backend()
 
     // ignore updates less than 0.1km
-    @StateObject var locationDataManager = LocationDataManager(distanceFilter: 100)
+    @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var alertsFetcher: AlertsFetcher
     @StateObject var globalFetcher: GlobalFetcher
@@ -41,6 +41,7 @@ struct IOSApp: App {
 
     init(socket: PhoenixSocket) {
         let backend = backend
+        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
 
         _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
