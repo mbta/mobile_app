@@ -12,9 +12,11 @@ import Foundation
 
 open class MockSocket: PhoenixSocket {
     public var channels: [SwiftPhoenixClient.Channel] = []
+    // Channel.socket is weak, so we need to maintain a reference to the Socket
+    private let socket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
 
     public func channel(_ topic: String, params _: [String: Any]) -> Channel {
-        let channel = Channel(topic: topic, socket: Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() }))
+        let channel = Channel(topic: topic, socket: socket)
         channels.append(channel)
         return channel
     }

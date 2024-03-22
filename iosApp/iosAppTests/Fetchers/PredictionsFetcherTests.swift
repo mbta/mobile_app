@@ -58,6 +58,24 @@ final class PredictionsFetcherTests: XCTestCase {
         XCTAssertNil(predictionsFetcher.channel)
     }
 
+    func testSetsPredictionsOnJoinResponse() {
+        let mockSocket = MockSocket()
+        let messageSuccessExpectation = expectation(description: "got initial payload")
+
+        let predictionsFetcher = PredictionsFetcher(socket: mockSocket, onMessageSuccessCallback: {
+            messageSuccessExpectation.fulfill()
+        })
+
+        XCTAssertNil(predictionsFetcher.predictions)
+        predictionsFetcher.run(stopIds: ["1"])
+
+        predictionsFetcher.channel!.joinPush.trigger("ok", payload: ["jsonPayload": "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"])
+
+        wait(for: [messageSuccessExpectation], timeout: 1)
+
+        XCTAssertEqual(predictionsFetcher.predictions, .init(predictions: [:], trips: [:], vehicles: [:]))
+    }
+
     func testSetsPredictionsWhenMessageReceived() {
         let mockSocket = MockSocket()
         let messageSuccessExpectation = expectation(description: "parsed prediction payload prediction payload")

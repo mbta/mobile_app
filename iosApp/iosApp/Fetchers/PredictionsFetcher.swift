@@ -55,6 +55,7 @@ class PredictionsFetcher: ObservableObject {
         }
         channel?.join().receive("ok") { message in
             Logger().debug("joined channel \(message.topic)")
+            self.handleNewDataMessage(message: message)
         }.receive("error", callback: { message in
             DispatchQueue.main.async {
                 self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
