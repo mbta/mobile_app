@@ -6,35 +6,80 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import CoreLocation
+import os
 import shared
 import SwiftUI
-
-public func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-    lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
-}
+@_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    let location: CLLocationCoordinate2D?
+    @ObservedObject var locationProvider: NearbyTransitLocationProvider
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var alertsFetcher: AlertsFetcher
     @State var now = Date.now
+
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+    let inspection = Inspection<Self>()
+
+    var body: some View {
+        VStack {
+            if let nearby = nearbyFetcher.withRealtimeInfo(
+                schedules: scheduleFetcher.schedules,
+                predictions: predictionsFetcher.predictions,
+                alerts: alertsFetcher.alerts,
+                filterAtTime: now.toKotlinInstant()
+            ) {
+                List(nearby, id: \.route.id) { nearbyRoute in
+                    NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
+                }.putAboveWhen(predictionsFetcher.errorText) { errorText in
+                    IconCard(iconName: "network.slash", details: errorText)
+                }
+            } else {
+                Text("Loading...")
+            }
+        }
+        .onAppear {
+            getNearby(location: locationProvider.location)
+            joinPredictions()
+            didAppear?(self)
+        }
+        .onChange(of: locationProvider.location) { newLocation in
+            getNearby(location: newLocation)
+        }
+        .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
+            getSchedule()
+            joinPredictions()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .inactive {
+                leavePredictions()
+            } else if newPhase == .active {
+                joinPredictions()
+            } else if newPhase == .background {
+                leavePredictions()
+            }
+        }
+        .onReceive(timer) { input in
+            now = input
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onDisappear {
+            leavePredictions()
+        }
+        .replaceWhen(nearbyFetcher.errorText) { errorText in
+            IconCard(iconName: "network.slash", details: errorText)
+                .refreshable(nearbyFetcher.loading) { getNearby(location: locationProvider.location) }
+        }
+    }
 
     var didAppear: ((Self) -> Void)?
-    var didChange: ((Self) -> Void)?
 
-    func getNearby(location: CLLocationCoordinate2D?) {
-        Task {
-            if location == nil { return }
-            await nearbyFetcher.getNearby(
-                latitude: location!.latitude,
-                longitude: location!.longitude
-            )
-        }
+    func getNearby(location: CLLocationCoordinate2D) {
+        Task { await nearbyFetcher.getNearby(location: location) }
     }
 
     func getSchedule() {
@@ -58,58 +103,6 @@ struct NearbyTransitView: View {
     func leavePredictions() {
         Task {
             predictionsFetcher.leave()
-        }
-    }
-
-    var body: some View {
-        VStack {
-            if let nearby = nearbyFetcher.withRealtimeInfo(
-                schedules: scheduleFetcher.schedules,
-                predictions: predictionsFetcher.predictions,
-                alerts: alertsFetcher.alerts,
-                filterAtTime: now.toKotlinInstant()
-            ) {
-                List(nearby, id: \.route.id) { nearbyRoute in
-                    NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
-                }.putAboveWhen(predictionsFetcher.errorText) { errorText in
-                    IconCard(iconName: "network.slash", details: errorText)
-                }
-            } else {
-                Text("Loading...")
-            }
-        }
-        .onAppear {
-            getNearby(location: location)
-            didAppear?(self)
-            joinPredictions()
-        }
-        .onChange(of: location) { location in
-            getNearby(location: location)
-            didChange?(self)
-        }
-        .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
-            getSchedule()
-            joinPredictions()
-        }
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .inactive {
-                leavePredictions()
-            } else if newPhase == .active {
-                joinPredictions()
-            } else if newPhase == .background {
-                leavePredictions()
-            }
-        }
-        .onReceive(timer) { input in
-            now = input
-        }
-        .onDisappear {
-            leavePredictions()
-        }
-        .emptyWhen(location == nil)
-        .replaceWhen(nearbyFetcher.errorText) { errorText in
-            IconCard(iconName: "network.slash", details: errorText)
-                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
         }
     }
 }

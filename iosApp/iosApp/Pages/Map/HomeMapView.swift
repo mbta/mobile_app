@@ -15,6 +15,8 @@ import SwiftUI
 struct HomeMapView: View {
     static let stopZoomThreshold: CGFloat = ViewportProvider.defaultZoom - 0.25
 
+    private let cameraDebouncer = Debouncer(delay: 0.25)
+
     private let routeLayerId = "route-layer"
     private let routeSourceId = "route-source"
     private let stopLayerId = "stop-layer"
@@ -22,6 +24,7 @@ struct HomeMapView: View {
     private let stopIconId = "t-logo"
 
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -30,12 +33,14 @@ struct HomeMapView: View {
 
     init(
         globalFetcher: GlobalFetcher,
+        nearbyFetcher: NearbyFetcher,
         railRouteShapeFetcher: RailRouteShapeFetcher,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         viewportProvider: ViewportProvider
     ) {
-        self.railRouteShapeFetcher = railRouteShapeFetcher
         self.globalFetcher = globalFetcher
+        self.nearbyFetcher = nearbyFetcher
+        self.railRouteShapeFetcher = railRouteShapeFetcher
         self.viewportProvider = viewportProvider
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
     }
@@ -44,15 +49,18 @@ struct HomeMapView: View {
         MapReader { proxy in
             Map(viewport: $viewportProvider.viewport) {
                 Puck2D().pulsing(.none)
+                if isNearbyNotFollowing() {
+                    MapViewAnnotation(coordinate: nearbyFetcher.loadedLocation!) {
+                        Circle()
+                            .strokeBorder(.white, lineWidth: 2.5)
+                            .background(Circle().fill(.orange))
+                            .frame(width: 22, height: 22)
+                    }
+                }
             }
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
             .mapStyle(.light)
-            .onCameraChanged { change in
-                updateStopOpacity(
-                    map: proxy.map,
-                    opacity: change.cameraState.zoom > HomeMapView.stopZoomThreshold ? 1 : 0
-                )
-            }
+            .onCameraChanged { change in handleCameraChange(proxy.map, change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(stopLayerId) { _, _ in
                 // Each stop feature has the stop ID as the identifier
@@ -64,9 +72,14 @@ struct HomeMapView: View {
             .onAppear { handleAppear(location: proxy.location) }
             .onChange(of: globalFetcher.stops) { stops in handleGlobalStops(proxy.map, stops) }
             .onChange(of: railRouteShapeFetcher.response) { response in handleRouteResponse(proxy.map, response) }
+            .onChange(of: locationDataManager.authorizationStatus) { status in
+                if status == .authorizedAlways || status == .authorizedWhenInUse {
+                    Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
+                }
+            }
             .overlay(alignment: .topTrailing) {
                 if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { viewportProvider.follow() }
+                    RecenterButton { Task { viewportProvider.follow() } }
                 }
             }
         }
@@ -141,8 +154,11 @@ struct HomeMapView: View {
             } else { [] }
         }.eraseToSignal())
 
-        viewportProvider.follow(animation: .default(maxDuration: 0))
-
+        Task {
+            if locationDataManager.currentLocation != nil {
+                viewportProvider.follow(animation: .default(maxDuration: 0))
+            }
+        }
         Task {
             try await globalFetcher.getGlobalData()
         }
@@ -153,10 +169,19 @@ struct HomeMapView: View {
         didAppear?(self)
     }
 
-    func handleGlobalStops(_ possibleMap: MapboxMap?, _ stops: [Stop]) {
-        guard let map = possibleMap else {
-            return
+    func handleCameraChange(_ possibleMap: MapboxMap?, _ change: CameraChanged) {
+        cameraDebouncer.debounce {
+            guard let map = possibleMap else { return }
+            viewportProvider.cameraState = change.cameraState
+            updateStopOpacity(
+                map: map,
+                opacity: change.cameraState.zoom > HomeMapView.stopZoomThreshold ? 1 : 0
+            )
         }
+    }
+
+    func handleGlobalStops(_ possibleMap: MapboxMap?, _ stops: [Stop]) {
+        guard let map = possibleMap else { return }
         if map.sourceExists(withId: stopSourceId) {
             // Don't create a new source if one already exists
             map.updateGeoJSONSource(
@@ -176,9 +201,7 @@ struct HomeMapView: View {
     }
 
     func handleRouteResponse(_ possibleMap: MapboxMap?, _ response: RouteResponse?) {
-        guard let map = possibleMap else {
-            return
-        }
+        guard let map = possibleMap else { return }
         guard let routesResponse = response else { return }
         // Reverse sort routes so lowest sorted ones are placed lowest on the map
         let sortedRoutes = routesResponse.routes.sorted { aRoute, bRoute in
@@ -215,6 +238,11 @@ struct HomeMapView: View {
                 }
             }
         }
+    }
+
+    func isNearbyNotFollowing() -> Bool {
+        nearbyFetcher.loadedLocation != nil
+            && nearbyFetcher.loadedLocation != locationDataManager.currentLocation?.coordinate
     }
 
     func updateStopOpacity(map: MapboxMap?, opacity: Double) {

@@ -13,13 +13,18 @@ class ViewportProvider: ObservableObject {
     static let defaultZoom: CGFloat = 14
 
     @Published var viewport: Viewport
+    @Published var cameraState: CameraState
 
     init(viewport: Viewport? = nil) {
         self.viewport = viewport ?? .camera(center: ViewportProvider.defaultCenter, zoom: ViewportProvider.defaultZoom)
-    }
-
-    func updateViewport(nextViewport: Viewport) {
-        viewport = nextViewport
+        let viewportCamera = viewport?.camera
+        cameraState = .init(
+            center: viewportCamera?.center ?? ViewportProvider.defaultCenter,
+            padding: viewportCamera?.padding ?? .zero,
+            zoom: viewportCamera?.zoom ?? ViewportProvider.defaultZoom,
+            bearing: viewportCamera?.bearing ?? 0.0,
+            pitch: viewportCamera?.pitch ?? 0.0
+        )
     }
 
     func follow(animation: ViewportAnimation = .easeInOut(duration: 1)) {

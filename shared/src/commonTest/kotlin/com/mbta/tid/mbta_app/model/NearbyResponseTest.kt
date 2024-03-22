@@ -628,6 +628,104 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `withRealtimeInfo hides rare patterns while loading`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+
+        val route1 = objects.route()
+
+        // should be included because typical and has prediction
+        val typicalOutbound =
+            objects.routePattern(route1) {
+                directionId = 0
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Typical Out" }
+            }
+        // should be included because typical
+        val typicalInbound =
+            objects.routePattern(route1) {
+                directionId = 1
+                sortOrder = 2
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Typical In" }
+            }
+        // should be included because prediction within 90 minutes
+        val deviationOutbound =
+            objects.routePattern(route1) {
+                directionId = 0
+                sortOrder = 3
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip { headsign = "Deviation Out" }
+            }
+        // should be included because prediction beyond 90 minutes
+        val deviationInbound =
+            objects.routePattern(route1) {
+                directionId = 1
+                sortOrder = 4
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip { headsign = "Deviation In" }
+            }
+        // should be included because prediction
+        val atypicalOutbound =
+            objects.routePattern(route1) {
+                directionId = 0
+                sortOrder = 5
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Atypical Out" }
+            }
+        // should be excluded because no prediction
+        val atypicalInbound =
+            objects.routePattern(route1) {
+                directionId = 1
+                sortOrder = 6
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Atypical In" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Typical Out", listOf(typicalOutbound))
+                        headsign("Typical In", listOf(typicalInbound))
+                        headsign("Deviation Out", listOf(deviationOutbound))
+                        headsign("Deviation In", listOf(deviationInbound))
+                        headsign("Atypical Out", listOf(atypicalOutbound))
+                        headsign("Atypical In", listOf(atypicalInbound))
+                    }
+                }
+            }
+
+        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+
+        assertEquals(
+            listOf(
+                StopAssociatedRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            stop1,
+                            listOf(
+                                PatternsByHeadsign("Typical Out", listOf(typicalOutbound), null),
+                                PatternsByHeadsign("Typical In", listOf(typicalInbound), null),
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop1.position,
+                schedules = null,
+                predictions = null,
+                alerts = null,
+                filterAtTime = time
+            )
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo sorts subway first then by distance`() {
         val objects = ObjectCollectionBuilder()
 
