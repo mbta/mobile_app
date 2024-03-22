@@ -38,30 +38,32 @@ data class UpcomingTrip(
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
-    enum class IsArrivalOnly {
-        /** This trip is scheduled as arrival-only, so this headsign can be hidden at this stop. */
-        Yes,
-        /**
-         * This trip has no schedule but is predicted as arrival-only (or is cancelled entirely), so
-         * other trips should be checked.
-         */
-        YesButUnscheduled,
-        /** This trip has a departure, so this headsign should be shown at this stop. */
-        No
+    /**
+     * Checks whether this upcoming trip will depart its station or only arrive there.
+     *
+     * If a trip will neither arrive nor depart (e.g. trips with no schedule that have been
+     * cancelled), this function will return `null`. Returning `true` would hide headsigns with no
+     * schedule and predictions exclusively for dropped trips, which may happen during suspensions
+     * and would be incorrect. Returning `false` would show headsigns with added trips even if those
+     * trips have been cancelled, which would be incorrect.
+     */
+    fun isArrivalOnly(): Boolean? {
+        val hasArrival =
+            if (schedule != null) {
+                schedule.dropOffType != Schedule.StopEdgeType.Unavailable
+            } else {
+                prediction?.arrivalTime != null
+            }
+        val hasDeparture =
+            if (schedule != null) {
+                schedule.pickUpType != Schedule.StopEdgeType.Unavailable
+            } else {
+                prediction?.departureTime != null
+            }
+        return if (!hasArrival && !hasDeparture) {
+            null
+        } else !hasDeparture
     }
-
-    fun isArrivalOnly() =
-        if (schedule != null) {
-            when (schedule.pickUpType) {
-                Schedule.StopEdgeType.Unavailable -> IsArrivalOnly.Yes
-                else -> IsArrivalOnly.No
-            }
-        } else {
-            when (prediction?.departureTime) {
-                null -> IsArrivalOnly.YesButUnscheduled
-                else -> IsArrivalOnly.No
-            }
-        }
 
     /**
      * The state in which a prediction should be shown.

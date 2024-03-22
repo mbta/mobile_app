@@ -76,8 +76,8 @@ data class PatternsByHeadsign(
             upcomingTrips
                 .mapTo(mutableSetOf()) { it.isArrivalOnly() }
                 .let { upcomingTripsArrivalOnly ->
-                    upcomingTripsArrivalOnly.contains(UpcomingTrip.IsArrivalOnly.Yes) &&
-                        !upcomingTripsArrivalOnly.contains(UpcomingTrip.IsArrivalOnly.No)
+                    upcomingTripsArrivalOnly.contains(true) &&
+                        !upcomingTripsArrivalOnly.contains(false)
                 }
 
     override fun compareTo(other: PatternsByHeadsign): Int =
