@@ -375,4 +375,80 @@ class UpcomingTripTest {
 
         assertEquals(null, UpcomingTrip(schedule, predictionDropped).time)
     }
+
+    @Test
+    fun `isArrivalOnly handles schedule without prediction`() {
+        val schedule1 = schedule {
+            departureTime = null
+            pickUpType = Schedule.StopEdgeType.Unavailable
+        }
+        assertEquals(true, UpcomingTrip(schedule1).isArrivalOnly())
+
+        val schedule2 = schedule {
+            departureTime = Clock.System.now()
+            pickUpType = Schedule.StopEdgeType.Regular
+        }
+        assertEquals(false, UpcomingTrip(schedule2).isArrivalOnly())
+
+        val schedule3 = schedule {
+            pickUpType = Schedule.StopEdgeType.Unavailable
+            dropOffType = Schedule.StopEdgeType.Unavailable
+        }
+        assertEquals(null, UpcomingTrip(schedule3).isArrivalOnly())
+    }
+
+    @Test
+    fun `isArrivalOnly handles prediction without schedule`() {
+        val prediction1 = prediction {
+            arrivalTime = Clock.System.now()
+            departureTime = null
+        }
+        assertEquals(true, UpcomingTrip(prediction1).isArrivalOnly())
+
+        val prediction2 = prediction {
+            arrivalTime = null
+            departureTime = null
+        }
+        assertEquals(null, UpcomingTrip(prediction2).isArrivalOnly())
+
+        val prediction3 = prediction { departureTime = Clock.System.now() }
+        assertEquals(false, UpcomingTrip(prediction3).isArrivalOnly())
+    }
+
+    @Test
+    fun `isArrivalOnly handles schedule alongside prediction`() {
+        val scheduleArrivalOnly = schedule {
+            arrivalTime = Clock.System.now()
+            dropOffType = Schedule.StopEdgeType.Regular
+            departureTime = null
+            pickUpType = Schedule.StopEdgeType.Unavailable
+        }
+        val scheduleNormal = schedule {
+            departureTime = Clock.System.now()
+            pickUpType = Schedule.StopEdgeType.Regular
+        }
+        val scheduleNeither = schedule {
+            dropOffType = Schedule.StopEdgeType.Unavailable
+            pickUpType = Schedule.StopEdgeType.Unavailable
+        }
+        val predictionArrivalOnly = prediction {
+            arrivalTime = Clock.System.now()
+            departureTime = null
+        }
+        val predictionNormal = prediction { departureTime = Clock.System.now() }
+        val predictionNeither = prediction {
+            arrivalTime = null
+            departureTime = null
+        }
+
+        assertEquals(true, UpcomingTrip(scheduleArrivalOnly, predictionArrivalOnly).isArrivalOnly())
+        assertEquals(true, UpcomingTrip(scheduleArrivalOnly, predictionNormal).isArrivalOnly())
+        assertEquals(true, UpcomingTrip(scheduleArrivalOnly, predictionNeither).isArrivalOnly())
+        assertEquals(false, UpcomingTrip(scheduleNormal, predictionArrivalOnly).isArrivalOnly())
+        assertEquals(false, UpcomingTrip(scheduleNormal, predictionNormal).isArrivalOnly())
+        assertEquals(false, UpcomingTrip(scheduleNormal, predictionNeither).isArrivalOnly())
+        assertEquals(null, UpcomingTrip(scheduleNeither, predictionArrivalOnly).isArrivalOnly())
+        assertEquals(null, UpcomingTrip(scheduleNeither, predictionNormal).isArrivalOnly())
+        assertEquals(null, UpcomingTrip(scheduleNeither, predictionNeither).isArrivalOnly())
+    }
 }
