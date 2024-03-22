@@ -87,14 +87,14 @@ jobs:
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: android-shared-reports
           path: shared/build/reports
       - name: android checks & unit tests
         run: ./gradlew androidApp:check
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: android-android-reports
