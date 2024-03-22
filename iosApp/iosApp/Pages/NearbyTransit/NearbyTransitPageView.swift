@@ -19,6 +19,7 @@ struct NearbyTransitPageView: View {
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var viewportProvider: ViewportProvider
+    @ObservedObject var alertsFetcher: AlertsFetcher
 
     @State var cancellables: [AnyCancellable]
     @State var locationProvider: NearbyTransitLocationProvider
@@ -28,13 +29,15 @@ struct NearbyTransitPageView: View {
         nearbyFetcher: NearbyFetcher,
         scheduleFetcher: ScheduleFetcher,
         predictionsFetcher: PredictionsFetcher,
-        viewportProvider: ViewportProvider
+        viewportProvider: ViewportProvider,
+        alertsFetcher: AlertsFetcher
     ) {
         self.currentLocation = currentLocation
         self.nearbyFetcher = nearbyFetcher
         self.scheduleFetcher = scheduleFetcher
         self.predictionsFetcher = predictionsFetcher
         self.viewportProvider = viewportProvider
+        self.alertsFetcher = alertsFetcher
 
         cancellables = .init()
         locationProvider = .init(
@@ -49,7 +52,8 @@ struct NearbyTransitPageView: View {
             locationProvider: locationProvider,
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: scheduleFetcher,
-            predictionsFetcher: predictionsFetcher
+            predictionsFetcher: predictionsFetcher,
+            alertsFetcher: alertsFetcher
         )
         .onAppear {
             cancellables.append(

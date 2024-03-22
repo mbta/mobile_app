@@ -28,6 +28,9 @@
     "Couldn't load nearby transit, unable to parse response" : {
 
     },
+    "Detour" : {
+
+    },
     "Failed to load alerts, could not connect to the server" : {
 
     },
@@ -55,10 +58,22 @@
     "No results found" : {
 
     },
+    "No Service" : {
+
+    },
     "Routes" : {
 
     },
+    "Shuttle" : {
+
+    },
+    "Stop Closed" : {
+
+    },
     "Stops" : {
+
+    },
+    "Suspension" : {
 
     }
   },

@@ -79,6 +79,7 @@ class NearbyFetcher: ObservableObject {
     func withRealtimeInfo(
         schedules: ScheduleResponse?,
         predictions: PredictionsStreamDataResponse?,
+        alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant
     ) -> [StopAssociatedRoute]? {
         guard let loadedLocation else { return nil }
@@ -86,6 +87,7 @@ class NearbyFetcher: ObservableObject {
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
             schedules: schedules,
             predictions: predictions,
+            alerts: alerts,
             filterAtTime: filterAtTime
         )
     }
