@@ -49,7 +49,8 @@ struct ContentView: View {
                     nearbyFetcher: nearbyFetcher,
                     scheduleFetcher: scheduleFetcher,
                     predictionsFetcher: predictionsFetcher,
-                    viewportProvider: viewportProvider
+                    viewportProvider: viewportProvider,
+                    alertsFetcher: alertsFetcher
                 )
             }
         }
