@@ -52,7 +52,6 @@ class NearbyFetcher: ObservableObject {
             } catch let error as NSError {
                 withUnsafeCurrentTask { thisTask in
                     if self.currentTask?.hashValue == thisTask?.hashValue {
-                        print("ewwow \(error.debugDescription)")
                         self.error = error
                         self.errorText = self.getErrorText(error: error)
                     }
