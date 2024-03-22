@@ -21,7 +21,8 @@ struct NearbyStopView: View {
                 ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
                     NearbyStopRoutePatternView(
                         headsign: patternsByHeadsign.headsign,
-                        predictions: .from(upcomingTrips: patternsByHeadsign.upcomingTrips, now: now)
+                        predictions: .from(upcomingTrips: patternsByHeadsign.upcomingTrips,
+                                           alertsHere: patternsByHeadsign.alertsHere, now: now)
                     )
                 }
             }
