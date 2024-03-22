@@ -82,10 +82,9 @@ class NearbyFetcher: ObservableObject {
         predictions: PredictionsStreamDataResponse?,
         filterAtTime: Instant
     ) -> [StopAssociatedRoute]? {
-        let lat = loadedLocation?.latitude ?? 0.0
-        let lon = loadedLocation?.longitude ?? 0.0
+        guard let loadedLocation else { return nil }
         return nearbyByRouteAndStop?.withRealtimeInfo(
-            sortByDistanceFrom: .init(longitude: lon, latitude: lat),
+            sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
             schedules: schedules,
             predictions: predictions,
             filterAtTime: filterAtTime

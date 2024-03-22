@@ -15,25 +15,14 @@ import SwiftUI
 
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    let location: CLLocationCoordinate2D
+    @ObservedObject var locationProvider: NearbyTransitLocationProvider
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @State var now = Date.now
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-
-    init(
-        location: CLLocationCoordinate2D,
-        nearbyFetcher: NearbyFetcher,
-        scheduleFetcher: ScheduleFetcher,
-        predictionsFetcher: PredictionsFetcher
-    ) {
-        self.location = location
-        self.nearbyFetcher = nearbyFetcher
-        self.scheduleFetcher = scheduleFetcher
-        self.predictionsFetcher = predictionsFetcher
-    }
+    let inspection = Inspection<Self>()
 
     var body: some View {
         VStack {
@@ -52,11 +41,11 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getNearby(location: location)
+            getNearby(location: locationProvider.location)
             joinPredictions()
             didAppear?(self)
         }
-        .onChange(of: location) { newLocation in
+        .onChange(of: locationProvider.location) { newLocation in
             getNearby(location: newLocation)
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
@@ -75,12 +64,13 @@ struct NearbyTransitView: View {
         .onReceive(timer) { input in
             now = input
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onDisappear {
             leavePredictions()
         }
         .replaceWhen(nearbyFetcher.errorText) { errorText in
             IconCard(iconName: "network.slash", details: errorText)
-                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
+                .refreshable(nearbyFetcher.loading) { getNearby(location: locationProvider.location) }
         }
     }
 

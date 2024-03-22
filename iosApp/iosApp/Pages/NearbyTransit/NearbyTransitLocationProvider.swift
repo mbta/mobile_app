@@ -8,18 +8,18 @@
 
 import CoreLocation
 
-struct NearbyTransitLocationProvider {
+class NearbyTransitLocationProvider: ObservableObject {
     let currentLocation: CLLocationCoordinate2D?
     let cameraLocation: CLLocationCoordinate2D
     let isFollowing: Bool
 
-    var location: CLLocationCoordinate2D {
-        if isFollowing, currentLocation != nil { currentLocation! } else { cameraLocation }
-    }
+    @Published var location: CLLocationCoordinate2D
 
     init(currentLocation: CLLocationCoordinate2D? = nil, cameraLocation: CLLocationCoordinate2D, isFollowing: Bool) {
         self.currentLocation = currentLocation
         self.cameraLocation = cameraLocation
         self.isFollowing = isFollowing
+
+        location = if isFollowing, currentLocation != nil { currentLocation! } else { cameraLocation }
     }
 }

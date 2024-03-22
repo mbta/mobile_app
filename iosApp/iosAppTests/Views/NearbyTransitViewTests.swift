@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import CoreLocation
 @testable import iosApp
 import shared
@@ -15,6 +16,8 @@ import ViewInspector
 import XCTest
 @_spi(Experimental) import MapboxMaps
 
+extension Inspection: InspectionEmissary {}
+
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
@@ -22,18 +25,21 @@ final class NearbyTransitViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    @MainActor func testPending() throws {
+    func testPending() throws {
         let sut = NearbyTransitView(
-            currentLocation: nil,
+            locationProvider: .init(
+                currentLocation: nil,
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: .init()
+            predictionsFetcher: .init(socket: MockSocket())
         )
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
 
-    @MainActor func testLoading() throws {
+    func testLoading() throws {
         class FakeNearbyFetcher: NearbyFetcher {
             let getNearbyExpectation: XCTestExpectation
 
@@ -50,11 +56,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let getNearbyExpectation = expectation(description: "getNearby")
 
         var sut = NearbyTransitView(
-            currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: .init()
+            predictionsFetcher: .init(socket: MockSocket())
         )
 
         let hasAppeared = sut.on(\NearbyTransitView.didAppear) { _ in }
@@ -68,6 +77,7 @@ final class NearbyTransitViewTests: XCTestCase {
     class Route52NearbyFetcher: NearbyFetcher {
         init() {
             super.init(backend: IdleBackend())
+
             let objects = ObjectCollectionBuilder()
             let route52 = objects.route { route in
                 route.id = "52"
@@ -128,29 +138,36 @@ final class NearbyTransitViewTests: XCTestCase {
                     }
                 }
             }
+            loadedLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
         }
 
         override func getNearby(location _: CLLocationCoordinate2D) async {}
     }
 
-    @MainActor func testRoutePatternsGroupedByRouteAndStop() throws {
+    func testRoutePatternsGroupedByRouteAndStop() throws {
         let sut = NearbyTransitView(
-            currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: .init()
+            predictionsFetcher: .init(socket: MockSocket())
         )
 
         let routes = try sut.inspect().findAll(NearbyRouteView.self)
 
-        XCTAssertNotNil(try routes[0].find(text: "52"))
-        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
+        XCTAssert(!routes.isEmpty)
+        guard let route = routes.first else { return }
+
+        XCTAssertNotNil(try route.find(text: "52"))
+        XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
             .parent().find(text: "Charles River Loop"))
-        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd")
+        XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
             .parent().find(text: "Dedham Mall"))
 
-        XCTAssertNotNil(try routes[0].find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
+        XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
             .parent().find(text: "Watertown Yard"))
     }
 
@@ -214,11 +231,14 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let sut = NearbyTransitView(
-            currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: FakeScheduleFetcher(objects),
-            predictionsFetcher: FakePredictionsFetcher(objects),
-            viewportProvider: .init()
+            predictionsFetcher: FakePredictionsFetcher(objects)
         )
 
         let patterns = try sut.inspect().findAll(NearbyStopRoutePatternView.self)
@@ -288,11 +308,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let testFormatter = DateFormatter()
         testFormatter.timeStyle = .short
         let sut = NearbyTransitView(
-            currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant),
-            viewportProvider: .init()
+            predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant)
         )
 
         let stops = try sut.inspect().findAll(NearbyStopView.self)
@@ -344,11 +367,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let nearbyFetcher = Route52NearbyFetcher()
         let predictionsFetcher = FakePredictionsFetcher(sawmillAtWalshExpectation: sawmillAtWalshExpectation, lechmereExpectation: lechmereExpectation)
         let sut = NearbyTransitView(
-            currentLocation: .init(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher,
-            viewportProvider: .init()
+            predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -371,11 +397,14 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
         let sut = NearbyTransitView(
-            currentLocation: .init(),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher,
-            viewportProvider: .init()
+            predictionsFetcher: predictionsFetcher
         )
 
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
@@ -427,11 +456,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let nearbyFetcher = Route52NearbyFetcher()
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
-            currentLocation: .init(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher,
-            viewportProvider: .init()
+            predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -468,11 +500,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let nearbyFetcher = Route52NearbyFetcher()
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
-            currentLocation: .init(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher,
-            viewportProvider: .init()
+            predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -512,11 +547,14 @@ final class NearbyTransitViewTests: XCTestCase {
         let nearbyFetcher = Route52NearbyFetcher()
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
-            currentLocation: .init(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher,
-            viewportProvider: .init()
+            predictionsFetcher: predictionsFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -539,11 +577,14 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let sut = NearbyTransitView(
-            currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: .init()
+            predictionsFetcher: .init(socket: MockSocket())
         )
 
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load nearby transit, test error"))
@@ -553,6 +594,7 @@ final class NearbyTransitViewTests: XCTestCase {
         class FakeNearbyFetcher: NearbyFetcher {
             init() {
                 super.init(backend: IdleBackend())
+                loadedLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
                 nearbyByRouteAndStop = NearbyStaticData(data: [])
             }
         }
@@ -564,20 +606,22 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let sut = NearbyTransitView(
-            currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            locationProvider: .init(
+                currentLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+                cameraLocation: ViewportProvider.defaultCenter,
+                isFollowing: true
+            ),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: FakePredictionsFetcher(),
-            viewportProvider: .init()
+            predictionsFetcher: FakePredictionsFetcher()
         )
 
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load predictions, test error"))
     }
 
-    @MainActor func testMapPanReloads() async throws {
+    @MainActor func testReloadsWhenLocationChanges() throws {
         class FakeNearbyFetcher: NearbyFetcher {
             var getNearbyExpectation: XCTestExpectation
-            var passedLocation: CLLocationCoordinate2D?
 
             init(getNearbyExpectation: XCTestExpectation) {
                 self.getNearbyExpectation = getNearbyExpectation
@@ -585,7 +629,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
 
             override func getNearby(location: CLLocationCoordinate2D) async {
-                passedLocation = location
+                loadedLocation = location
                 getNearbyExpectation.fulfill()
             }
         }
@@ -593,63 +637,48 @@ final class NearbyTransitViewTests: XCTestCase {
         let getNearbyExpectation = expectation(description: "getNearby")
         getNearbyExpectation.expectedFulfillmentCount = 2
 
-        let viewportProvider = ViewportProvider()
         let fakeFetcher = FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation)
         let currentLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
-        var sut = NearbyTransitView(
+        let locationProvider: NearbyTransitLocationProvider = .init(
             currentLocation: currentLocation,
-            nearbyFetcher: fakeFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: viewportProvider
+            cameraLocation: ViewportProvider.defaultCenter,
+            isFollowing: true
         )
 
-        let hasAppeared = sut.on(\NearbyTransitView.didAppear) { _ in }
-        ViewHosting.host(view: sut)
-
-        await fulfillment(of: [hasAppeared], timeout: 5)
-        XCTAssertEqual(fakeFetcher.passedLocation, currentLocation)
+        let sut = NearbyTransitView(
+            locationProvider: locationProvider,
+            nearbyFetcher: fakeFetcher,
+            scheduleFetcher: .init(backend: IdleBackend()),
+            predictionsFetcher: .init(socket: MockSocket())
+        )
 
         let newLocation = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-        viewportProvider.cameraState = .init(center: newLocation, padding: .zero, zoom: 1, bearing: 0.0, pitch: 0.0)
-        await fulfillment(of: [getNearbyExpectation], timeout: 1)
-        XCTAssertEqual(fakeFetcher.passedLocation, newLocation)
-    }
 
-    func testLoadsDefaultCenterWithNoLocation() throws {
-        class FakeNearbyFetcher: NearbyFetcher {
-            var getNearbyExpectation: XCTestExpectation
-            var passedLocation: CLLocationCoordinate2D?
-
-            init(getNearbyExpectation: XCTestExpectation) {
-                self.getNearbyExpectation = getNearbyExpectation
-                super.init(backend: IdleBackend())
-            }
-
-            override func getNearby(location: CLLocationCoordinate2D) async {
-                passedLocation = location
-                getNearbyExpectation.fulfill()
-            }
+        let hasAppeared = sut.inspection.inspect(after: 0.2) { view in
+            XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, currentLocation)
         }
 
-        let getNearbyExpectation = expectation(description: "getNearby")
+        let hasChangedLocation = sut.inspection.inspect(onReceive: locationProvider.$location.dropFirst()) { view in
+            XCTAssertEqual(try view.actualView().locationProvider.location, newLocation)
+        }
 
-        let viewportProvider = ViewportProvider()
-        let fakeFetcher = FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation)
-
-        var sut = NearbyTransitView(
-            currentLocation: nil,
-            nearbyFetcher: fakeFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: viewportProvider
-        )
-
-        let hasAppeared = sut.on(\NearbyTransitView.didAppear) { _ in }
         ViewHosting.host(view: sut)
-
         wait(for: [hasAppeared], timeout: 1)
-        wait(for: [getNearbyExpectation], timeout: 1)
-        XCTAssertEqual(fakeFetcher.passedLocation, ViewportProvider.defaultCenter)
+        locationProvider.location = newLocation
+        wait(for: [getNearbyExpectation, hasChangedLocation], timeout: 3)
+    }
+
+    func testLocationProviderResolvesProperly() {
+        let cameraLocation = CLLocationCoordinate2D(latitude: 1.0, longitude: 1.0)
+        let currentLocation = CLLocationCoordinate2D(latitude: 2.0, longitude: 2.0)
+
+        let nilCurrentProvider: NearbyTransitLocationProvider = .init(currentLocation: nil, cameraLocation: cameraLocation, isFollowing: true)
+        XCTAssertEqual(nilCurrentProvider.location, cameraLocation)
+
+        let cameraProvider: NearbyTransitLocationProvider = .init(currentLocation: currentLocation, cameraLocation: cameraLocation, isFollowing: false)
+        XCTAssertEqual(cameraProvider.location, cameraLocation)
+
+        let currentProvider: NearbyTransitLocationProvider = .init(currentLocation: currentLocation, cameraLocation: cameraLocation, isFollowing: true)
+        XCTAssertEqual(currentProvider.location, currentLocation)
     }
 }

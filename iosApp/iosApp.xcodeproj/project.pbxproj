@@ -67,6 +67,7 @@
 		9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */; };
 		9ACA9DF32BA1EC8B003F0E9E /* HomeMapViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */; };
 		9AD1D1FE2BA4D5C600182060 /* ViewportProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */; };
+		9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849C2BAD05BC006581CE /* Inspection.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
 		A430D45FE0676C73075AB85B /* Pods_iosAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */; };
 		A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */; };
@@ -171,6 +172,7 @@
 		9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageView.swift; sourceTree = "<group>"; };
 		9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewUITests.swift; sourceTree = "<group>"; };
 		9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportProviderTest.swift; sourceTree = "<group>"; };
+		9ADB849C2BAD05BC006581CE /* Inspection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspection.swift; sourceTree = "<group>"; };
 		9AF88E042B48913C00E08C7C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 				9A03F3652BA9E68500DA40DC /* Debouncer.swift */,
 				9A37F3042BACCC40001714FE /* DoubleRoundedExtension.swift */,
 				9A37F3062BACCCA5001714FE /* CoordinateExtension.swift */,
+				9ADB849C2BAD05BC006581CE /* Inspection.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -745,6 +748,7 @@
 				8CEA10232BA0F3C6001C6EB9 /* ScheduleFetcher.swift in Sources */,
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
 				9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */,
+				9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */,
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,
 				9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */,
 				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,

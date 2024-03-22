@@ -46,7 +46,7 @@ struct NearbyTransitPageView: View {
 
     var body: some View {
         NearbyTransitView(
-            location: locationProvider.location,
+            locationProvider: locationProvider,
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: scheduleFetcher,
             predictionsFetcher: predictionsFetcher
@@ -69,7 +69,8 @@ struct NearbyTransitPageView: View {
             )
         }
         .onChange(of: currentLocation) { newLocation in
-            let shouldUpdateLocation = viewportProvider.viewport.isFollowing && !locationProvider.location.isRoughlyEqualTo(newLocation)
+            let shouldUpdateLocation = viewportProvider.viewport.isFollowing
+                && !locationProvider.location.isRoughlyEqualTo(newLocation)
             if shouldUpdateLocation {
                 locationProvider = .init(
                     currentLocation: newLocation,
