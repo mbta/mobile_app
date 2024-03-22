@@ -156,7 +156,7 @@ struct HomeMapView: View {
 
         Task {
             if locationDataManager.currentLocation != nil {
-                await viewportProvider.follow(animation: .default(maxDuration: 0))
+                viewportProvider.follow(animation: .default(maxDuration: 0))
             }
         }
         Task {

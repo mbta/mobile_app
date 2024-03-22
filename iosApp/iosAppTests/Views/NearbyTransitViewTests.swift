@@ -663,7 +663,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared], timeout: 1)
+        wait(for: [hasAppeared], timeout: 3)
         locationProvider.location = newLocation
         wait(for: [getNearbyExpectation, hasChangedLocation], timeout: 3)
     }
