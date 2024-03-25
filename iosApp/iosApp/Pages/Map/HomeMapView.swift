@@ -126,17 +126,58 @@ struct HomeMapView: View {
         return Dictionary(uniqueKeysWithValues: stops.map { ($0.id, $0) })
     }
 
-    func splitAlertIntoStopBoundaries(alert: shared.Alert, routePattern: RoutePattern) -> [(Bool, ArraySlice<Stop>)] {
+    let tripStopIdHardcodedMap = ["canonical-Orange-C1-0": ["70036", "70034", "70032", "70278", "70030", "70028", "70026", "70024", "70022", "70020",
+                                                            "70018", "70016", "70014", "70012", "70010", "70008", "70006", "70004", "70002", "70001"],
+                                  "canonical-Red-C1-0": ["70061", "70063", "70065", "70067", "70069", "70071", "70073", "70075", "70077", "70079",
+                                                         "70081", "70083", "70095", "70097", "70099", "70101", "70103", "70105"],
+                                  "canonical-Red-C2-0": ["70061", "70063", "70065", "70067", "70069", "70071", "70073", "70075", "70077",
+                                                         "70079", "70081", "70083", "70085", "70087", "70089", "70091", "70093"]]
+
+    // TODO: Use parent stops - JFK has different child stops for each branch b/c that is where they split
+    func singleShapeForRoutePatterns(routePatterns: [RoutePattern]) {
+        let rpStopPairs: [(String, String)] = routePatterns.flatMap { rp in
+            let stops = tripStopIdHardcodedMap[rp.representativeTripId]!
+            return stops.map { stopId in
+                (stopId, rp.id)
+            }
+        }
+
+        var groupedByStopId = Dictionary(grouping: rpStopPairs, by: { $0.0 })
+
+        print("Grouped by stop \(groupedByStopId)")
+
+        routePatterns.map { rp in
+            let allRpStops = tripStopIdHardcodedMap[rp.representativeTripId]!
+            let untouchedRpStops = Set(allRpStops.filter { stopId in
+                groupedByStopId[stopId] != nil
+            })
+
+            // Find segments of this route pattern that haven't been captured yet
+            let segments: [(Bool, ArraySlice<String>)] = allRpStops.chunked(on: { groupedByStopId[$0] != nil })
+            let newStopSegments = segments.filter { $0.0 }.map { }
+            print("NEW SEGMENT: \(rp.id) \(newStopSegments)")
+            let representativeTrip = railRouteShapeFetcher.response!.trips[rp.representativeTripId]
+            let shapeId = representativeTrip!.shapeId!
+            let shape = railRouteShapeFetcher.response!.shapes[shapeId]!
+
+            // TODO: Some off by one handling here
+            let polyline = Polyline(encodedPolyline: shape.polyline!)
+
+            newStopSegments.map { _ in
+
+            }
+
+            for untouchedRpStop in untouchedRpStops {
+                groupedByStopId.removeValue(forKey: untouchedRpStop)
+            }
+        }
+    }
+
+    func splitAlertIntoStopBoundaries(alert: shared.Alert, tripId: String) -> [(Bool, ArraySlice<Stop>)] {
         let stopsAffectedByAlert: [String: Stop] = affectedStops(alert: alert)
 
-        // TODO: should be grouping by informedEntity more, or safe to assume it will always be the same?
-        let routeIdForAlert = alert.informedEntity[0].route!
-        let trip: Trip? = railRouteShapeFetcher.response?.trips[routePattern.representativeTripId]
-        // print("TRIP FOUND \(trip?.id) \(trip?.stopIds)")
-        // hardcoding canonical-Orange-C1-0 stops for now
-        // stop ids not included by default https://api-v3.mbta.com/trips/canonical-Orange-C1-0?include=stops&fields[stop]=id
-        let tripStopIds = ["70036", "70034", "70032", "70278", "70030", "70028", "70026", "70024", "70022", "70020",
-                           "70018", "70016", "70014", "70012", "70010", "70008", "70006", "70004", "70002", "70001"]
+        let trip: Trip? = railRouteShapeFetcher.response?.trips[tripId]
+        let tripStopIds = tripStopIdHardcodedMap[tripId]!
 
         let tripStops: [Stop] = tripStopIds.compactMap { globalFetcher.stopsById[$0] }
 
@@ -145,7 +186,6 @@ struct HomeMapView: View {
     }
 
     struct LineSegmentParams {
-        let isAlert: Bool
         var startPoint: LocationCoordinate2D?
         var endPoint: LocationCoordinate2D?
     }
@@ -162,79 +202,87 @@ struct HomeMapView: View {
         let isAlert: Bool
     }
 
+    func lineSegmentsFromStopSegments(stopSegments: [ArraySlice<Stop>]) -> [LineSegmentParams]{
+
+        return stopSegments
+            .enumerated().map { (index: Int, stops:  ArraySlice<Stop>) in
+
+                if index == 0, stopSegments.count == 1 {
+                    return LineSegmentParams(startPoint: nil,
+                                                       endPoint: nil)
+                }
+                if index == 0 {
+                    let endPoint: Stop? =  stopSegments[index + 1].first
+                    let endPointCoords: LocationCoordinate2D? = endPoint == nil
+                        ? nil
+                        : .init(latitude: endPoint!.latitude, longitude: endPoint!.longitude)
+                    return LineSegmentParams(startPoint: nil,
+                                                       endPoint: endPointCoords)
+                }
+
+                if index == stopSegments.count - 1 {
+                    let startPoint: Stop? =  stopSegments[index - 1].last
+                    let startPointCoords: LocationCoordinate2D? = startPoint == nil
+                        ? nil
+                        : .init(latitude: startPoint!.latitude, longitude: startPoint!.longitude)
+
+                    return  LineSegmentParams(startPoint: startPointCoords,
+                                                       endPoint: nil)
+                }
+
+                else {
+                    let startPoint: Stop? =  stopSegments[index - 1].last
+                    let startPointCoords: LocationCoordinate2D? = startPoint == nil
+                        ? nil
+                        : .init(latitude: startPoint!.latitude, longitude: startPoint!.longitude)
+
+                    let endPoint: Stop? =  stopSegments[index + 1].first
+                    let endPointCoords: LocationCoordinate2D? = endPoint == nil
+                        ? nil
+                        : .init(latitude: endPoint!.latitude, longitude: endPoint!.longitude)
+                    return  LineSegmentParams(startPoint: startPointCoords,
+                                                       endPoint: endPointCoords)
+                }
+            }
+
+    }
+
     func splitRouteIntoSegments(routePattern: RoutePattern, trip _: Trip, shape: shared.Shape) -> [FeatureWithCategory] {
         let polyline = Polyline(encodedPolyline: shape.polyline!)
-        var segmentsToDraw: [LineSegmentParams] = []
+        var segmentsToDraw: [(Bool, LineSegmentParams)] = []
         if routePattern.representativeTripId == "canonical-Orange-C1-0" {
             print("TRYING OL alert split")
 
             let alert = olShuttleAlert
-            let splitBoundaries: [(Bool, ArraySlice<Stop>)] = splitAlertIntoStopBoundaries(alert: alert, routePattern: routePattern)
+            let splitBoundaries: [(Bool, ArraySlice<Stop>)] = splitAlertIntoStopBoundaries(alert: alert,
+                                                                                           tripId: routePattern.representativeTripId)
             print(splitBoundaries)
-            let coordinateSegments: [LineSegmentParams] = splitBoundaries
-                .enumerated().map { (index: Int, element: (Bool, ArraySlice<Stop>)) in
-                    let isAlert: Bool = element.0
-                    let stops: ArraySlice<Stop> = element.1
-
-                    if index == 0, splitBoundaries.count == 1 {
-                        return LineSegmentParams(isAlert: isAlert, startPoint: nil,
-                                                 endPoint: nil)
-                    }
-                    if index == 0 {
-                        let endPoint: Stop? = isAlert ? splitBoundaries[index + 1].1.first : stops.last
-                        let endPointCoords: LocationCoordinate2D? = endPoint == nil
-                            ? nil
-                            : .init(latitude: endPoint!.latitude, longitude: endPoint!.longitude)
-                        return LineSegmentParams(isAlert: isAlert, startPoint: nil,
-                                                 endPoint: endPointCoords)
-                    }
-
-                    if index == splitBoundaries.count - 1 {
-                        let startPoint: Stop? = isAlert ? splitBoundaries[index - 1].1.last : stops.first
-                        let startPointCoords: LocationCoordinate2D? = startPoint == nil
-                            ? nil
-                            : .init(latitude: startPoint!.latitude, longitude: startPoint!.longitude)
-
-                        return LineSegmentParams(isAlert: isAlert, startPoint: startPointCoords,
-                                                 endPoint: nil)
-                    }
-
-                    else {
-                        // TODO: this should probably look at the last stop of the previous segment & the first stop
-                        // of the following segment instead
-                        let startPoint: Stop? = isAlert ? splitBoundaries[index - 1].1.last : stops.first
-                        let startPointCoords: LocationCoordinate2D? = startPoint == nil
-                            ? nil
-                            : .init(latitude: startPoint!.latitude, longitude: startPoint!.longitude)
-
-                        let endPoint: Stop? = isAlert ? splitBoundaries[index + 1].1.first : stops.last
-                        let endPointCoords: LocationCoordinate2D? = endPoint == nil
-                            ? nil
-                            : .init(latitude: endPoint!.latitude, longitude: endPoint!.longitude)
-                        return LineSegmentParams(isAlert: isAlert, startPoint: startPointCoords,
-                                                 endPoint: endPointCoords)
-                    }
+            let coordinateSegments: [(Bool, LineSegmentParams)] = lineSegmentsFromStopSegments(stopSegments: splitBoundaries.map {$0.1})
+                .enumerated()
+                .map {(index, lineSegment) in
+                    (splitBoundaries[index].0, lineSegment)
                 }
+
             segmentsToDraw = coordinateSegments
         } else {
-            segmentsToDraw = [LineSegmentParams(isAlert: false, startPoint: nil, endPoint: nil)]
+            segmentsToDraw = [(false, LineSegmentParams(startPoint: nil, endPoint: nil))]
         }
 
         let fullLineString = LineString(polyline.coordinates!)
 
-        let features: [FeatureWithCategory] = segmentsToDraw.map { segmentParams in
+        let features: [FeatureWithCategory] = segmentsToDraw.map { isAlert, segmentParams in
             let segmentLineString: LineString = fullLineString.sliced(from: segmentParams.startPoint, to: segmentParams.endPoint)!
 
             print("Found segment with coord count \(segmentLineString.coordinates.count)")
             var feature = Feature(geometry: segmentLineString)
-            if segmentParams.isAlert {
+            if isAlert {
                 feature.properties = ["LineType": "Alert"]
             } else {
                 feature.properties = ["LineType": "Normal"]
             }
             return .init(feature: feature, sourceId:
                 "route-\(routePattern.routeId)-rp-\(routePattern.id)-segment-start-\(segmentParams.startPoint?.latitude)",
-                isAlert: segmentParams.isAlert)
+                isAlert: isAlert)
         }
 
         return features
@@ -255,16 +303,21 @@ struct HomeMapView: View {
     }
 
     func createRouteSourceData(route: Route, routesResponse: RouteResponse) -> [GeoJSONSourceDataForLineSegment] {
-        let routeFeatures: [[FeatureWithCategory]] = route.routePatternIds!
+        let routePatternsToUse = route.routePatternIds!
             .map { patternId -> RoutePattern? in
                 routesResponse.routePatterns[patternId]
             }
-            .filter { pattern in
-                pattern?.typicality == .typical && pattern?.directionId == 0
+            .compactMap { pattern in
+                pattern?.typicality == .typical && pattern?.directionId == 0 ? pattern : nil
             }
-            .map { pattern in
-                patternToFeatures(routePattern: pattern, routesResponse: routesResponse)
-            }
+
+        if route.id == "Red" {
+            singleShapeForRoutePatterns(routePatterns: routePatternsToUse)
+        }
+
+        let routeFeatures: [[FeatureWithCategory]] = routePatternsToUse.map { pattern in
+            patternToFeatures(routePattern: pattern, routesResponse: routesResponse)
+        }
 
         let routeFeaturesFlattened: [FeatureWithCategory] = routeFeatures.flatMap { $0 }
 
