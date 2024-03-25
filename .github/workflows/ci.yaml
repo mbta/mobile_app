@@ -81,7 +81,7 @@ jobs:
           distribution: ${{steps.java-spec.outputs.java-distribution}}
           java-version: ${{steps.java-spec.outputs.java-version}}
           cache: gradle
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
