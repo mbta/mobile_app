@@ -252,9 +252,10 @@ class ObjectCollectionBuilder {
         var latitude = 1.2
         var longitude = 3.4
         var name = ""
+        var locationType = LocationType.STOP
         var parentStationId: String? = null
 
-        override fun built() = Stop(id, latitude, longitude, name, parentStationId)
+        override fun built() = Stop(id, latitude, longitude, name, locationType, parentStationId)
     }
 
     fun stop(block: StopBuilder.() -> Unit = {}) = build(stops, StopBuilder(), block)

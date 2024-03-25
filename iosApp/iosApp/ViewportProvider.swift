@@ -10,7 +10,7 @@
 
 class ViewportProvider: ObservableObject {
     static let defaultCenter: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
-    static let defaultZoom: CGFloat = 14
+    static let defaultZoom: CGFloat = MapLayerManager.stopZoomThreshold + 0.25
 
     @Published var viewport: Viewport
     @Published var cameraState: CameraState

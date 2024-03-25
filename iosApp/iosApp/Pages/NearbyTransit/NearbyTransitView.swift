@@ -126,6 +126,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             latitude: 42.265969,
             longitude: -70.969853,
             name: "Sea St opp Peterson Rd",
+            locationType: LocationType.stop,
             parentStationId: nil
         )
         let busTrip = Trip(
@@ -189,6 +190,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             latitude: 42.265969,
             longitude: -70.969853,
             name: "South Station",
+            locationType: LocationType.stop,
             parentStationId: nil
         )
         let crTrip = Trip(
