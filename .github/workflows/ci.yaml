@@ -104,7 +104,7 @@ jobs:
 
       - name: Fetch AWS secrets
         if: github.actor != 'dependabot[bot]'
-        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             mobile-app-android-upload-key-passphrase
