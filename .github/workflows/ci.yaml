@@ -63,12 +63,14 @@ jobs:
           echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Configure AWS Credentials
+        if: github.actor != 'dependabot[bot]'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
       - name: Configure GCP Credentials
-        uses: google-github-actions/auth@v1
+        if: github.actor != 'dependabot[bot]'
+        uses: google-github-actions/auth@v2
         with:
           create_credentials_file: true
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
@@ -79,7 +81,7 @@ jobs:
           distribution: ${{steps.java-spec.outputs.java-distribution}}
           java-version: ${{steps.java-spec.outputs.java-version}}
           cache: gradle
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
@@ -101,21 +103,26 @@ jobs:
           path: androidApp/build/reports
 
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        if: github.actor != 'dependabot[bot]'
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             mobile-app-android-upload-key-passphrase
       - name: Load code signing key
+        if: github.actor != 'dependabot[bot]'
         run: |
           cd androidApp
           aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
       - name: Set up Ruby
+        if: github.actor != 'dependabot[bot]'
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
       - name: Patch Fastlane to pick up application default credentials
+        if: github.actor != 'dependabot[bot]'
         run: bin/patch-fastlane.sh
       - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+        if: github.actor != 'dependabot[bot]'
         env:
           KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
           KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}

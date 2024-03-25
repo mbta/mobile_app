@@ -72,6 +72,25 @@ data class Alert(
             @SerialName("using_escalator") UsingEscalator,
             @SerialName("using_wheelchair") UsingWheelchair,
         }
+
+        fun appliesTo(
+            directionId: Int? = null,
+            facilityId: String? = null,
+            routeId: String? = null,
+            routeType: RouteType? = null,
+            stopId: String? = null,
+            tripId: String? = null
+        ): Boolean {
+            fun <T> matches(expected: T?, actual: T?) =
+                expected == null || actual == null || expected == actual
+
+            return matches(directionId, this.directionId) &&
+                matches(facilityId, this.facility) &&
+                matches(routeId, this.route) &&
+                matches(routeType, this.routeType) &&
+                matches(stopId, this.stop) &&
+                matches(tripId, this.trip)
+        }
     }
 
     @Serializable
@@ -81,4 +100,9 @@ data class Alert(
         @SerialName("ongoing_upcoming") OngoingUpcoming,
         @SerialName("upcoming") Upcoming,
     }
+
+    fun isActive(time: Instant) =
+        activePeriod.any { it.start <= time && (it.end == null || it.end >= time) }
+
+    fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
 }
