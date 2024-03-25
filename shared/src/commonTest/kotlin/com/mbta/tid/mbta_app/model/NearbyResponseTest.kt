@@ -450,6 +450,7 @@ class NearbyResponseTest {
                             stop1,
                             listOf(
                                 PatternsByHeadsign(
+                                    route1,
                                     "Harvard",
                                     listOf(pattern1, pattern2),
                                     listOf(
@@ -463,6 +464,7 @@ class NearbyResponseTest {
                             stop2,
                             listOf(
                                 PatternsByHeadsign(
+                                    route1,
                                     "Nubian",
                                     listOf(pattern3),
                                     listOf(UpcomingTrip(stop2Pattern3Prediction))
@@ -593,21 +595,25 @@ class NearbyResponseTest {
                             stop1,
                             listOf(
                                 PatternsByHeadsign(
+                                    route1,
                                     "Typical Out",
                                     listOf(typicalOutbound),
                                     listOf(UpcomingTrip(typicalOutboundPrediction))
                                 ),
                                 PatternsByHeadsign(
+                                    route1,
                                     "Typical In",
                                     listOf(typicalInbound),
                                     emptyList()
                                 ),
                                 PatternsByHeadsign(
+                                    route1,
                                     "Deviation Out",
                                     listOf(deviationOutbound),
                                     listOf(UpcomingTrip(deviationOutboundPrediction))
                                 ),
                                 PatternsByHeadsign(
+                                    route1,
                                     "Atypical In",
                                     listOf(atypicalInbound),
                                     listOf(UpcomingTrip(atypicalInboundPrediction))
@@ -708,8 +714,18 @@ class NearbyResponseTest {
                         PatternsByStop(
                             stop1,
                             listOf(
-                                PatternsByHeadsign("Typical Out", listOf(typicalOutbound), null),
-                                PatternsByHeadsign("Typical In", listOf(typicalInbound), null),
+                                PatternsByHeadsign(
+                                    route1,
+                                    "Typical Out",
+                                    listOf(typicalOutbound),
+                                    null
+                                ),
+                                PatternsByHeadsign(
+                                    route1,
+                                    "Typical In",
+                                    listOf(typicalInbound),
+                                    null
+                                ),
                             )
                         )
                     )
@@ -874,6 +890,7 @@ class NearbyResponseTest {
                             parentStop,
                             listOf(
                                 PatternsByHeadsign(
+                                    route1,
                                     "Harvard",
                                     listOf(pattern1),
                                     listOf(UpcomingTrip(prediction1))
@@ -936,6 +953,7 @@ class NearbyResponseTest {
                             stop,
                             listOf(
                                 PatternsByHeadsign(
+                                    route,
                                     "A",
                                     listOf(routePattern),
                                     listOf(UpcomingTrip(sched1, pred1), UpcomingTrip(sched2, pred2))
@@ -1002,6 +1020,7 @@ class NearbyResponseTest {
                             stop,
                             listOf(
                                 PatternsByHeadsign(
+                                    route1,
                                     "A",
                                     listOf(routePattern1),
                                     listOf(UpcomingTrip(sched1, pred1))
@@ -1017,6 +1036,7 @@ class NearbyResponseTest {
                             stop,
                             listOf(
                                 PatternsByHeadsign(
+                                    route2,
                                     "A",
                                     listOf(routePattern2),
                                     listOf(UpcomingTrip(sched2, pred2))
@@ -1082,6 +1102,7 @@ class NearbyResponseTest {
                             stop,
                             listOf(
                                 PatternsByHeadsign(
+                                    route,
                                     "A",
                                     listOf(routePattern),
                                     emptyList(),
@@ -1151,6 +1172,7 @@ class NearbyResponseTest {
                             stop,
                             listOf(
                                 PatternsByHeadsign(
+                                    route,
                                     "A",
                                     listOf(routePattern1),
                                     listOf(UpcomingTrip(sched1))
