@@ -33,14 +33,18 @@ struct NearbyStopRoutePatternView: View {
         case loading
         case none
         case some([TripWithFormat])
+        case noService(shared.Alert)
 
-        static func from(upcomingTrips: [UpcomingTrip]?, now: Instant) -> Self {
+        static func from(upcomingTrips: [UpcomingTrip]?, alertsHere: [shared.Alert]?, now: Instant) -> Self {
             guard let upcomingTrips else { return .loading }
             let tripsToShow = upcomingTrips
                 .map { TripWithFormat($0, now: now) }
                 .filter { !$0.isHidden() }
                 .prefix(2)
             if tripsToShow.isEmpty {
+                if let alert = alertsHere?.first {
+                    return .noService(alert)
+                }
                 return .none
             }
             return .some(Array(tripsToShow))
@@ -56,11 +60,33 @@ struct NearbyStopRoutePatternView: View {
                 ForEach(predictions) { prediction in
                     UpcomingTripView(prediction: .some(prediction.format))
                 }
+            case let .noService(alert):
+                UpcomingTripView(prediction: .noService(alert.effect))
             case .none:
                 UpcomingTripView(prediction: .none)
             case .loading:
                 UpcomingTripView(prediction: .loading)
             }
+        }
+    }
+}
+
+struct NearbyStopRoutePatternView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(alignment: .trailing) {
+            let now = Date.now
+            NearbyStopRoutePatternView(headsign: "Some", predictions: .some([
+                .init(.init(prediction: ObjectCollectionBuilder.Single.shared.prediction { prediction in
+                    prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+                }), now: now.toKotlinInstant()),
+            ]))
+            NearbyStopRoutePatternView(headsign: "None", predictions: .none)
+            NearbyStopRoutePatternView(headsign: "Loading", predictions: .loading)
+            NearbyStopRoutePatternView(headsign: "No Service", predictions: .noService(
+                ObjectCollectionBuilder.Single.shared.alert { alert in
+                    alert.effect = .suspension
+                }
+            ))
         }
     }
 }

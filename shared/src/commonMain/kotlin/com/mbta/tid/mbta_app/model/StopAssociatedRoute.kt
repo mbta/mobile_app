@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -21,12 +22,14 @@ data class PatternsByHeadsign(
     val headsign: String,
     val patterns: List<RoutePattern>,
     val upcomingTrips: List<UpcomingTrip>? = null,
+    val alertsHere: List<Alert>? = null,
 ) : Comparable<PatternsByHeadsign> {
     constructor(
         staticData: NearbyStaticData.HeadsignWithPatterns,
         routeId: String,
         upcomingTripsMap: UpcomingTripsMap?,
-        stopIds: Set<String>
+        stopIds: Set<String>,
+        alerts: Collection<Alert>?,
     ) : this(
         staticData.headsign,
         staticData.patterns,
@@ -37,6 +40,18 @@ data class PatternsByHeadsign(
                 }
                 .flatten()
                 .sorted()
+        } else {
+            null
+        },
+        if (alerts != null) {
+            stopIds.flatMap { stopId ->
+                alerts.filter { alert ->
+                    alert.anyInformedEntity {
+                        it.appliesTo(routeId = routeId, stopId = stopId) &&
+                            it.activities.contains(Alert.InformedEntity.Activity.Board)
+                    }
+                }
+            }
         } else {
             null
         }
@@ -95,12 +110,13 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
         staticData: NearbyStaticData.StopWithPatterns,
         routeId: String,
         upcomingTripsMap: UpcomingTripsMap?,
-        cutoffTime: Instant
+        cutoffTime: Instant,
+        alerts: Collection<Alert>?,
     ) : this(
         staticData.stop,
         staticData.patternsByHeadsign
             .map {
-                PatternsByHeadsign(it, routeId, upcomingTripsMap, stopIds = staticData.allStopIds)
+                PatternsByHeadsign(it, routeId, upcomingTripsMap, staticData.allStopIds, alerts)
             }
             .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
             .sorted()
@@ -121,11 +137,12 @@ data class StopAssociatedRoute(
         staticData: NearbyStaticData.RouteWithStops,
         upcomingTripsMap: UpcomingTripsMap?,
         cutoffTime: Instant,
-        sortByDistanceFrom: Position
+        sortByDistanceFrom: Position,
+        alerts: Collection<Alert>?,
     ) : this(
         staticData.route,
         staticData.patternsByStop
-            .map { PatternsByStop(it, staticData.route.id, upcomingTripsMap, cutoffTime) }
+            .map { PatternsByStop(it, staticData.route.id, upcomingTripsMap, cutoffTime, alerts) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
             .sortedWith(
                 compareBy(
@@ -149,6 +166,7 @@ fun NearbyStaticData.withRealtimeInfo(
     sortByDistanceFrom: Position,
     schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
+    alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
@@ -183,9 +201,28 @@ fun NearbyStaticData.withRealtimeInfo(
         }
     val cutoffTime = filterAtTime.plus(90.minutes)
 
+    val activeRelevantAlerts =
+        alerts?.alerts?.values?.filter {
+            it.isActive(filterAtTime) &&
+                setOf(
+                        Alert.Effect.StationClosure,
+                        Alert.Effect.Shuttle,
+                        Alert.Effect.Suspension,
+                        Alert.Effect.Detour,
+                        Alert.Effect.StopClosure
+                    )
+                    .contains(it.effect)
+        }
+
     return data
         .map {
-            StopAssociatedRoute(it, upcomingTripsByHeadsignAndStop, cutoffTime, sortByDistanceFrom)
+            StopAssociatedRoute(
+                it,
+                upcomingTripsByHeadsignAndStop,
+                cutoffTime,
+                sortByDistanceFrom,
+                activeRelevantAlerts
+            )
         }
         .filterNot { it.patternsByStop.isEmpty() }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))

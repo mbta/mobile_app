@@ -18,6 +18,7 @@ import kotlinx.datetime.Instant
  *   patterns from routes) are built with a required parent argument
  */
 class ObjectCollectionBuilder {
+    val alerts = mutableMapOf<String, Alert>()
     val predictions = mutableMapOf<String, Prediction>()
     val routes = mutableMapOf<String, Route>()
     val routePatterns = mutableMapOf<String, RoutePattern>()
@@ -29,6 +30,46 @@ class ObjectCollectionBuilder {
     interface ObjectBuilder<Built : BackendObject> {
         fun built(): Built
     }
+
+    class AlertBuilder : ObjectBuilder<Alert> {
+        var id = uuid()
+        var activePeriod = mutableListOf<Alert.ActivePeriod>()
+        var effect = Alert.Effect.UnknownEffect
+        var effectName: String? = null
+        var informedEntity = mutableListOf<Alert.InformedEntity>()
+        var lifecycle = Alert.Lifecycle.New
+
+        fun activePeriod(start: Instant, end: Instant?) {
+            activePeriod.add(Alert.ActivePeriod(start, end))
+        }
+
+        fun informedEntity(
+            activities: List<Alert.InformedEntity.Activity>,
+            directionId: Int? = null,
+            facility: String? = null,
+            route: String? = null,
+            routeType: RouteType? = null,
+            stop: String? = null,
+            trip: String? = null,
+        ) {
+            informedEntity.add(
+                Alert.InformedEntity(
+                    activities,
+                    directionId,
+                    facility,
+                    route,
+                    routeType,
+                    stop,
+                    trip
+                )
+            )
+        }
+
+        override fun built() =
+            Alert(id, activePeriod, effect, effectName, informedEntity, lifecycle)
+    }
+
+    fun alert(block: AlertBuilder.() -> Unit) = build(alerts, AlertBuilder(), block)
 
     inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
@@ -241,6 +282,8 @@ class ObjectCollectionBuilder {
     }
 
     object Single {
+        fun alert(block: AlertBuilder.() -> Unit = {}) = ObjectCollectionBuilder().alert(block)
+
         fun prediction(block: PredictionBuilder.() -> Unit = {}) =
             ObjectCollectionBuilder().prediction(block)
 

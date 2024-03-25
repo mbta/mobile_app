@@ -23,6 +23,7 @@ struct UpcomingTripView: View {
     enum State: Equatable {
         case loading
         case none
+        case noService(shared.Alert.Effect)
         case some(UpcomingTrip.Format)
     }
 
@@ -51,6 +52,8 @@ struct UpcomingTripView: View {
             case let .minutes(format):
                 Text("\(format.minutes, specifier: "%ld") min")
             }
+        case let .noService(alertEffect):
+            NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
             Text("No Predictions")
         case .loading:
@@ -58,5 +61,68 @@ struct UpcomingTripView: View {
         }
         AnyView(predictionView)
             .frame(minWidth: 48, alignment: .trailing)
+    }
+}
+
+struct NoServiceView: View {
+    let effect: Effect
+
+    enum Effect {
+        case detour
+        case shuttle
+        case stopClosed
+        case suspension
+        case unknown
+
+        static func from(alertEffect: shared.Alert.Effect) -> Self {
+            switch alertEffect {
+            case .detour: .detour
+            case .shuttle: .shuttle
+            case .stationClosure, .stopClosure: .stopClosed
+            case .suspension: .suspension
+            default: .unknown
+            }
+        }
+    }
+
+    var body: some View {
+        HStack {
+            rawText
+                .font(.system(size: 12))
+                .textCase(.uppercase)
+            rawImage
+        }
+    }
+
+    var rawText: Text {
+        switch effect {
+        case .detour: Text("Detour")
+        case .shuttle: Text("Shuttle")
+        case .stopClosed: Text("Stop Closed")
+        case .suspension: Text("Suspension")
+        case .unknown: Text("No Service")
+        }
+    }
+
+    var rawImage: Image {
+        switch effect {
+        case .detour: Image(systemName: "circle.fill")
+        case .shuttle: Image(systemName: "bus")
+        case .stopClosed: Image(systemName: "xmark.octagon.fill")
+        case .suspension: Image(systemName: "exclamationmark.triangle.fill")
+        case .unknown: Image(systemName: "questionmark.circle.fill")
+        }
+    }
+}
+
+struct UpcomingTripView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(alignment: .trailing) {
+            UpcomingTripView(prediction: .noService(.suspension))
+            UpcomingTripView(prediction: .noService(.shuttle))
+            UpcomingTripView(prediction: .noService(.stopClosure))
+            UpcomingTripView(prediction: .noService(.detour))
+        }
+        .previewDisplayName("No Service")
     }
 }
