@@ -9,8 +9,11 @@ import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
  * route pattern.
  */
 data class NearbyStaticData(val data: List<RouteWithStops>) {
-    data class HeadsignWithPatterns(val headsign: String, val patterns: List<RoutePattern>) :
-        Comparable<HeadsignWithPatterns> {
+    data class HeadsignWithPatterns(
+        val route: Route,
+        val headsign: String,
+        val patterns: List<RoutePattern>
+    ) : Comparable<HeadsignWithPatterns> {
         override fun compareTo(other: HeadsignWithPatterns): Int =
             patterns.first().compareTo(other.patterns.first())
     }
@@ -93,6 +96,7 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                                             }
                                             .map { (headsign, routePatterns) ->
                                                 HeadsignWithPatterns(
+                                                    route,
                                                     headsign,
                                                     routePatterns.sorted()
                                                 )
@@ -119,20 +123,20 @@ class NearbyStaticDataBuilder {
     val data = mutableListOf<NearbyStaticData.RouteWithStops>()
 
     fun route(route: Route, block: PatternsByStopBuilder.() -> Unit) {
-        val builder = PatternsByStopBuilder()
+        val builder = PatternsByStopBuilder(route)
         builder.block()
         data.add(NearbyStaticData.RouteWithStops(route, builder.data))
     }
 
-    class PatternsByHeadsignBuilder {
+    class PatternsByHeadsignBuilder(val route: Route) {
         val data = mutableListOf<NearbyStaticData.HeadsignWithPatterns>()
 
         fun headsign(headsign: String, patterns: List<RoutePattern>) {
-            data.add(NearbyStaticData.HeadsignWithPatterns(headsign, patterns))
+            data.add(NearbyStaticData.HeadsignWithPatterns(route, headsign, patterns))
         }
     }
 
-    class PatternsByStopBuilder {
+    class PatternsByStopBuilder(val route: Route) {
         val data = mutableListOf<NearbyStaticData.StopWithPatterns>()
 
         @DefaultArgumentInterop.Enabled
@@ -141,7 +145,7 @@ class NearbyStaticDataBuilder {
             childStopIds: List<String> = emptyList(),
             block: PatternsByHeadsignBuilder.() -> Unit
         ) {
-            val builder = PatternsByHeadsignBuilder()
+            val builder = PatternsByHeadsignBuilder(route)
             builder.block()
             data.add(
                 NearbyStaticData.StopWithPatterns(

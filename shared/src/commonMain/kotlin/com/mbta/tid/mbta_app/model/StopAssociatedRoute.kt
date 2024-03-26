@@ -19,6 +19,7 @@ typealias UpcomingTripsMap = Map<UpcomingTripKey, List<UpcomingTrip>>
  *   for any of these [patterns]
  */
 data class PatternsByHeadsign(
+    val route: Route,
     val headsign: String,
     val patterns: List<RoutePattern>,
     val upcomingTrips: List<UpcomingTrip>? = null,
@@ -26,17 +27,18 @@ data class PatternsByHeadsign(
 ) : Comparable<PatternsByHeadsign> {
     constructor(
         staticData: NearbyStaticData.HeadsignWithPatterns,
-        routeId: String,
         upcomingTripsMap: UpcomingTripsMap?,
         stopIds: Set<String>,
         alerts: Collection<Alert>?,
     ) : this(
+        staticData.route,
         staticData.headsign,
         staticData.patterns,
         if (upcomingTripsMap != null) {
             stopIds
                 .mapNotNull { stopId ->
-                    upcomingTripsMap[UpcomingTripKey(routeId, staticData.headsign, stopId)]
+                    upcomingTripsMap[
+                        UpcomingTripKey(staticData.route.id, staticData.headsign, stopId)]
                 }
                 .flatten()
                 .sorted()
@@ -47,7 +49,7 @@ data class PatternsByHeadsign(
             stopIds.flatMap { stopId ->
                 alerts.filter { alert ->
                     alert.anyInformedEntity {
-                        it.appliesTo(routeId = routeId, stopId = stopId) &&
+                        it.appliesTo(routeId = staticData.route.id, stopId = stopId) &&
                             it.activities.contains(Alert.InformedEntity.Activity.Board)
                     }
                 }
@@ -117,7 +119,11 @@ data class PatternsByHeadsign(
         val tripsToShow =
             upcomingTrips
                 .map { Format.Some.FormatWithId(it, now) }
-                .filterNot { it.format is UpcomingTrip.Format.Hidden }
+                .filterNot {
+                    it.format is UpcomingTrip.Format.Hidden ||
+                        // API best practices call for hiding scheduled times on subway
+                        (this.route.type.isSubway() && it.format is UpcomingTrip.Format.Schedule)
+                }
                 .take(2)
         if (tripsToShow.isEmpty()) {
             this.alertsHere?.firstOrNull()?.let {
@@ -138,16 +144,13 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
 
     constructor(
         staticData: NearbyStaticData.StopWithPatterns,
-        routeId: String,
         upcomingTripsMap: UpcomingTripsMap?,
         cutoffTime: Instant,
         alerts: Collection<Alert>?,
     ) : this(
         staticData.stop,
         staticData.patternsByHeadsign
-            .map {
-                PatternsByHeadsign(it, routeId, upcomingTripsMap, staticData.allStopIds, alerts)
-            }
+            .map { PatternsByHeadsign(it, upcomingTripsMap, staticData.allStopIds, alerts) }
             .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
             .sorted()
     )
@@ -172,7 +175,7 @@ data class StopAssociatedRoute(
     ) : this(
         staticData.route,
         staticData.patternsByStop
-            .map { PatternsByStop(it, staticData.route.id, upcomingTripsMap, cutoffTime, alerts) }
+            .map { PatternsByStop(it, upcomingTripsMap, cutoffTime, alerts) }
             .filterNot { it.patternsByHeadsign.isEmpty() }
             .sortedWith(
                 compareBy(
