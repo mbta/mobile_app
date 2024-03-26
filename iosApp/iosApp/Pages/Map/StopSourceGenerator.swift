@@ -30,7 +30,7 @@ class StopSourceGenerator {
         "\(stopSourceId)-\(locationType.name)"
     }
 
-    init(stops: [Stop], routeSourceDetails: [RouteSourceData]) {
+    init(stops: [Stop], routeSourceDetails: [RouteSourceData]? = nil) {
         self.stops = stops
         self.routeSourceDetails = routeSourceDetails
 
