@@ -97,6 +97,36 @@ data class PatternsByHeadsign(
 
     override fun compareTo(other: PatternsByHeadsign): Int =
         patterns.first().compareTo(other.patterns.first())
+
+    sealed class Format {
+        data object Loading : Format()
+
+        data object None : Format()
+
+        data class Some(val trips: List<FormatWithId>) : Format() {
+            data class FormatWithId(val id: String, val format: UpcomingTrip.Format) {
+                constructor(trip: UpcomingTrip, now: Instant) : this(trip.id, trip.format(now))
+            }
+        }
+
+        data class NoService(val alert: Alert) : Format()
+    }
+
+    fun format(now: Instant): Format {
+        if (this.upcomingTrips == null) return Format.Loading
+        val tripsToShow =
+            upcomingTrips
+                .map { Format.Some.FormatWithId(it, now) }
+                .filterNot { it.format is UpcomingTrip.Format.Hidden }
+                .take(2)
+        if (tripsToShow.isEmpty()) {
+            this.alertsHere?.firstOrNull()?.let {
+                return Format.NoService(it)
+            }
+            return Format.None
+        }
+        return Format.Some(tripsToShow)
+    }
 }
 
 /**
