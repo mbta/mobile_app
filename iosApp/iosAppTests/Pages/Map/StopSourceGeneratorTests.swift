@@ -91,7 +91,7 @@ final class StopSourceGeneratorTests: XCTestCase {
     }
 
     func testStopsAreSnappedToRoutes() {
-        let objects = ObjectCollectionBuilder()
+        let objects = MapTestDataHelper.objects
 
         let stops = [
             objects.stop { stop in
@@ -117,9 +117,8 @@ final class StopSourceGeneratorTests: XCTestCase {
                 stop.locationType = .station
             },
         ]
-        let routeResponse = getSnapTestRouteResponse(objects)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse)
         let stopSourceGenerator = StopSourceGenerator(stops: stops, routeSourceDetails: routeSourceGenerator.routeSourceDetails)
         let sources = stopSourceGenerator.stopSources
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.39616238508952, longitude: -71.14129664308807)

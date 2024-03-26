@@ -57,6 +57,9 @@
 		9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */; };
 		9A5B27602BB31178009A6FC6 /* StopSourceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */; };
 		9A5B27622BB32621009A6FC6 /* RouteSourceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27612BB32621009A6FC6 /* RouteSourceGeneratorTests.swift */; };
+		9A5B27642BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */; };
+		9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */; };
+		9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */; };
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */; };
 		9A69D4902B99212400235125 /* NearbyFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A69D48F2B99212300235125 /* NearbyFetcherTests.swift */; };
@@ -173,6 +176,9 @@
 		9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecenterButton.swift; sourceTree = "<group>"; };
 		9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSourceGeneratorTests.swift; sourceTree = "<group>"; };
 		9A5B27612BB32621009A6FC6 /* RouteSourceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSourceGeneratorTests.swift; sourceTree = "<group>"; };
+		9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteLayerGeneratorTests.swift; sourceTree = "<group>"; };
+		9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTestDataHelper.swift; sourceTree = "<group>"; };
+		9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopLayerGeneratorTests.swift; sourceTree = "<group>"; };
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
 		9A69D48F2B99212300235125 /* NearbyFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyFetcherTests.swift; sourceTree = "<group>"; };
@@ -447,6 +453,9 @@
 			children = (
 				9A5B27612BB32621009A6FC6 /* RouteSourceGeneratorTests.swift */,
 				9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */,
+				9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */,
+				9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */,
+				9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -769,8 +778,10 @@
 				9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */,
 				9A5B27602BB31178009A6FC6 /* StopSourceGeneratorTests.swift in Sources */,
 				6EE745842B965B9C0052227E /* SocketTests.swift in Sources */,
+				9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */,
 				8CEA10272BA4C83D001C6EB9 /* AlertsFetcherTests.swift in Sources */,
 				6EF50F482B9889D600833070 /* MockSocket.swift in Sources */,
+				9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */,
 				9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */,
 				6EF50F512B988BF600833070 /* PredictionsFetcherTests.swift in Sources */,
 				9A5B27622BB32621009A6FC6 /* RouteSourceGeneratorTests.swift in Sources */,
@@ -779,6 +790,7 @@
 				9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */,
 				6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */,
 				9A69D4902B99212400235125 /* NearbyFetcherTests.swift in Sources */,
+				9A5B27642BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift in Sources */,
 				9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */,
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
