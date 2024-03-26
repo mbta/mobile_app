@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -11,9 +10,12 @@ class PatternsByHeadsignTest {
     fun `formats as loading when null trips`() {
         val now = Clock.System.now()
 
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
         assertEquals(
             PatternsByHeadsign.Format.Loading,
-            PatternsByHeadsign("", emptyList(), null, null).format(now)
+            PatternsByHeadsign(route, "", emptyList(), null, null).format(now)
         )
     }
 
@@ -21,11 +23,14 @@ class PatternsByHeadsignTest {
     fun `formats as alert with no trips and alert`() {
         val now = Clock.System.now()
 
-        val alert = alert {}
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val alert = objects.alert {}
 
         assertEquals(
             PatternsByHeadsign.Format.NoService(alert),
-            PatternsByHeadsign("", emptyList(), emptyList(), listOf(alert)).format(now)
+            PatternsByHeadsign(route, "", emptyList(), emptyList(), listOf(alert)).format(now)
         )
     }
 
@@ -33,9 +38,12 @@ class PatternsByHeadsignTest {
     fun `formats as none with no trips and no alert`() {
         val now = Clock.System.now()
 
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
         assertEquals(
             PatternsByHeadsign.Format.None,
-            PatternsByHeadsign("", emptyList(), emptyList(), emptyList()).format(now)
+            PatternsByHeadsign(route, "", emptyList(), emptyList(), emptyList()).format(now)
         )
     }
 
@@ -44,6 +52,7 @@ class PatternsByHeadsignTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
+        val route = objects.route()
 
         val trip1 = objects.trip()
         val trip2 = objects.trip()
@@ -71,7 +80,63 @@ class PatternsByHeadsignTest {
                     )
                 )
             ),
-            PatternsByHeadsign("", emptyList(), listOf(upcomingTrip1, upcomingTrip2)).format(now)
+            PatternsByHeadsign(route, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
+                .format(now)
+        )
+    }
+
+    @Test
+    fun `format skips schedules on subway but keeps on non-subway`() {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val subwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+        val busRoute = objects.route { type = RouteType.BUS }
+
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                departureTime = now + 5.minutes
+            }
+        val prediction2 =
+            objects.prediction {
+                trip = trip2
+                departureTime = now + 5.minutes
+            }
+
+        val upcomingTrip1 = UpcomingTrip(schedule1)
+        val upcomingTrip2 = UpcomingTrip(prediction2)
+
+        assertEquals(
+            PatternsByHeadsign.Format.Some(
+                listOf(
+                    PatternsByHeadsign.Format.Some.FormatWithId(
+                        trip2.id,
+                        UpcomingTrip.Format.Minutes(5)
+                    )
+                )
+            ),
+            PatternsByHeadsign(subwayRoute, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
+                .format(now)
+        )
+        assertEquals(
+            PatternsByHeadsign.Format.Some(
+                listOf(
+                    PatternsByHeadsign.Format.Some.FormatWithId(
+                        trip1.id,
+                        UpcomingTrip.Format.Schedule(now + 5.minutes)
+                    ),
+                    PatternsByHeadsign.Format.Some.FormatWithId(
+                        trip2.id,
+                        UpcomingTrip.Format.Minutes(5)
+                    )
+                )
+            ),
+            PatternsByHeadsign(busRoute, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
+                .format(now)
         )
     }
 }

@@ -246,6 +246,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                             stop: busStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(
+                                    route: busRoute,
                                     headsign: "Houghs Neck",
                                     patterns: [busPattern],
                                     upcomingTrips: [
@@ -268,6 +269,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                             stop: crStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(
+                                    route: crRoute,
                                     headsign: "Houghs Neck",
                                     patterns: [crPattern],
                                     upcomingTrips: [
