@@ -1,13 +1,14 @@
 [versions]
 agp = "8.2.2"
 kotlin = "1.9.23"
-compose = "1.5.3"
-compose-compiler = "1.5.11-dev-k1.9.23-96ef9dc6af1"
-compose-material3 = "1.1.2"
+# see https://developer.android.com/develop/ui/compose/bom/bom-mapping
+# and https://developer.android.com/jetpack/androidx/releases/compose for release notes
+compose-bom = "2023.10.00"
+compose-compiler = "1.5.11"
 androidx-activityCompose = "1.8.2"
 kotlinxCoroutinesCore = "1.8.0"
-kotlinxDatetime = "0.4.0"
-ktorClientCore = "2.3.9"
+kotlinxDatetime = "0.5.0"
+ktor = "2.3.9"
 sentry = "0.5.0"
 skie = "0.6.2"
 spatialk = "0.3.0"
@@ -15,21 +16,22 @@ spatialk = "0.3.0"
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientCore" }
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktorClientCore" }
-ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = "ktorClientCore" }
-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktorClientCore" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientCore" }
-ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktorClientCore" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorClientCore" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 sentry = { module = "io.sentry:sentry-kotlin-multiplatform", version.ref = "sentry" }
 skie-configuration-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
 spatialk-geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "spatialk" }
