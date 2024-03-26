@@ -121,6 +121,7 @@ data class PatternsByHeadsign(
                 .map { Format.Some.FormatWithId(it, now) }
                 .filterNot {
                     it.format is UpcomingTrip.Format.Hidden ||
+                        // API best practices call for hiding scheduled times on subway
                         (this.route.type.isSubway() && it.format is UpcomingTrip.Format.Schedule)
                 }
                 .take(2)
