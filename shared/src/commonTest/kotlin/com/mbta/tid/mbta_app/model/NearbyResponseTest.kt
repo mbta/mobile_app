@@ -368,6 +368,53 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `byRouteAndStop preserves unscheduled physical platform`() {
+        val objects = ObjectCollectionBuilder()
+
+        val parentStation = objects.stop { id = "place-forhl" }
+
+        val logicalPlatform =
+            objects.stop {
+                id = "70001"
+                parentStationId = parentStation.id
+            }
+        val physicalPlatform =
+            objects.stop {
+                id = "Forest Hills-01"
+                parentStationId = parentStation.id
+            }
+
+        val route = objects.route { id = "Orange" }
+
+        val routePattern =
+            objects.routePattern(route) { representativeTrip { headsign = "Oak Grove" } }
+
+        val response =
+            StopAndRoutePatternResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        logicalPlatform.id to
+                            listOf(
+                                routePattern.id,
+                            ),
+                    ),
+                parentStops = mapOf(parentStation.id to parentStation),
+            )
+
+        assertEquals(
+            NearbyStaticData.build {
+                route(route) {
+                    stop(parentStation, listOf(logicalPlatform.id, physicalPlatform.id)) {
+                        headsign("Oak Grove", listOf(routePattern))
+                    }
+                }
+            },
+            NearbyStaticData(response)
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo includes predictions filtered to the correct stop and pattern`() {
         val objects = ObjectCollectionBuilder()
 
