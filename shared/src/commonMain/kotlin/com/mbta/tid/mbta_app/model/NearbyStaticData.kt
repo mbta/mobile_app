@@ -1,7 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 
 /**
  * Aggregates stops and the patterns that serve them by route. The list of routes is ordered with
@@ -31,9 +32,10 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
         data.flatMapTo(mutableSetOf()) { (_, patternsByStop) -> patternsByStop.map { it.stop.id } }
 
     constructor(
-        response: StopAndRoutePatternResponse
+        global: GlobalResponse,
+        nearby: NearbyResponse
     ) : this(
-        response.run {
+        global.run {
             val routePatternsUsed = mutableSetOf<String>()
 
             val patternsByRouteAndStop =
@@ -41,16 +43,17 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
 
             val fullStopIds = mutableMapOf<String, MutableSet<String>>()
 
-            response.stops.forEach { stop ->
+            nearby.stopIds.forEach { stopId ->
+                val stop = stops.getValue(stopId)
                 val newPatternIds =
-                    response.patternIdsByStop
+                    patternIdsByStop
                         .getOrElse(stop.id) { emptyList() }
                         .filter { !routePatternsUsed.contains(it) }
                 routePatternsUsed.addAll(newPatternIds)
 
                 val newPatternsByRoute =
                     newPatternIds
-                        .map { patternId -> response.routePatterns.getValue(patternId) }
+                        .map { patternId -> routePatterns.getValue(patternId) }
                         .groupBy { it.routeId }
 
                 val stopKey =
@@ -60,15 +63,13 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                             .add(stop.id)
                         // Parents should be disjoint, but if somehow a parent has its own patterns,
                         // find it in the regular stops list
-                        parentStops?.get(parentStationId) ?: stops.find { it.id == parentStationId }
+                        stops.getValue(parentStationId)
                     }
                         ?: stop
 
                 newPatternsByRoute.forEach { (routeId, routePatterns) ->
                     val routeStops =
-                        patternsByRouteAndStop.getOrPut(response.routes.getValue(routeId)) {
-                            mutableMapOf()
-                        }
+                        patternsByRouteAndStop.getOrPut(routes.getValue(routeId)) { mutableMapOf() }
                     val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
                     patternsForStop += routePatterns
                 }
@@ -87,7 +88,7 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                                         patterns
                                             .groupBy {
                                                 val representativeTrip =
-                                                    response.trips.getValue(it.representativeTripId)
+                                                    trips.getValue(it.representativeTripId)
                                                 representativeTrip.headsign
                                             }
                                             .map { (headsign, routePatterns) ->

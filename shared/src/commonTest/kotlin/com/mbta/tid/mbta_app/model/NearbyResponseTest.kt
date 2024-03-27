@@ -1,9 +1,10 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -24,8 +25,8 @@ class NearbyResponseTest {
         val route1rp1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
         val route1rp2 = objects.routePattern(route1) { representativeTrip { headsign = "Nubian" } }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -33,6 +34,7 @@ class NearbyResponseTest {
                         stop2.id to listOf(route1rp1.id, route1rp2.id),
                     ),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -41,7 +43,7 @@ class NearbyResponseTest {
                     stop(stop2) { headsign("Nubian", listOf(route1rp2)) }
                 }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -64,14 +66,15 @@ class NearbyResponseTest {
                 representativeTrip { headsign = "Nubian" }
             }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
                         stop1.id to listOf(route1rp2.id, route1rp1.id),
                     ),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -82,7 +85,7 @@ class NearbyResponseTest {
                     }
                 }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -107,8 +110,8 @@ class NearbyResponseTest {
                 representativeTrip { headsign = "Nubian" }
             }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -116,13 +119,14 @@ class NearbyResponseTest {
                         busStop.id to listOf(busRp.id),
                     ),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
                 route(subwayRoute) { stop(subwayStop) { headsign("Alewife", listOf(subwayRp)) } }
                 route(busRoute) { stop(busStop) { headsign("Nubian", listOf(busRp)) } }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -147,8 +151,8 @@ class NearbyResponseTest {
                 representativeTrip { headsign = "Braintree" }
             }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -156,6 +160,7 @@ class NearbyResponseTest {
                         furtherStop.id to listOf(subway1Rp1.id),
                     ),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -166,7 +171,7 @@ class NearbyResponseTest {
                     stop(furtherStop) { headsign("Alewife", listOf(subway1Rp1)) }
                 }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -195,14 +200,15 @@ class NearbyResponseTest {
                 representativeTrip { headsign = "Nubian" }
             }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
                         stop1.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id),
                     )
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -213,7 +219,7 @@ class NearbyResponseTest {
                     }
                 }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -228,8 +234,8 @@ class NearbyResponseTest {
 
         val route1rp1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -237,12 +243,13 @@ class NearbyResponseTest {
                         stop2.id to listOf(route1rp1.id),
                     )
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
                 route(route1) { stop(stop1) { headsign("Harvard", listOf(route1rp1)) } }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -278,8 +285,8 @@ class NearbyResponseTest {
                 representativeTrip { headsign = "Porter Sq" }
             }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -287,6 +294,7 @@ class NearbyResponseTest {
                         stop2.id to listOf(route1rp1.id, route1rp3.id, route2rp1.id),
                     ),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -299,7 +307,7 @@ class NearbyResponseTest {
                 }
                 route(route2) { stop(stop2) { headsign("Porter Sq", listOf(route2rp1)) } }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -332,8 +340,8 @@ class NearbyResponseTest {
                 representativeTrip { headsign = "Nubian via Allston" }
             }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -350,8 +358,8 @@ class NearbyResponseTest {
                                 route1rp3.id,
                             ),
                     ),
-                parentStops = mapOf(station1.id to station1),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -363,7 +371,7 @@ class NearbyResponseTest {
                     stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3)) }
                 }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 
@@ -389,8 +397,8 @@ class NearbyResponseTest {
         val routePattern =
             objects.routePattern(route) { representativeTrip { headsign = "Oak Grove" } }
 
-        val response =
-            StopAndRoutePatternResponse(
+        val global =
+            GlobalResponse(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -399,8 +407,8 @@ class NearbyResponseTest {
                                 routePattern.id,
                             ),
                     ),
-                parentStops = mapOf(parentStation.id to parentStation),
             )
+        val nearby = NearbyResponse(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -410,7 +418,7 @@ class NearbyResponseTest {
                     }
                 }
             },
-            NearbyStaticData(response)
+            NearbyStaticData(global, nearby)
         )
     }
 

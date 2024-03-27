@@ -46,6 +46,7 @@ struct ContentView: View {
                 Spacer()
                 NearbyTransitPageView(
                     currentLocation: locationDataManager.currentLocation?.coordinate,
+                    globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     scheduleFetcher: scheduleFetcher,
                     predictionsFetcher: predictionsFetcher,

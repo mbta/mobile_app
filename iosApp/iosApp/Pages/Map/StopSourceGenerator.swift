@@ -16,12 +16,11 @@ struct StopFeatureData {
 }
 
 class StopSourceGenerator {
-    let stops: [Stop]
+    let stops: [String: Stop]
     let routeSourceDetails: [RouteSourceData]?
 
     var stopSources: [GeoJSONSource] = []
 
-    private var stopsById: [String: Stop]
     private var stopFeatures: [StopFeatureData] = []
     private var touchedStopIds: Set<String> = []
 
@@ -30,11 +29,10 @@ class StopSourceGenerator {
         "\(stopSourceId)-\(locationType.name)"
     }
 
-    init(stops: [Stop], routeSourceDetails: [RouteSourceData]? = nil) {
+    init(stops: [String: Stop], routeSourceDetails: [RouteSourceData]? = nil) {
         self.stops = stops
         self.routeSourceDetails = routeSourceDetails
 
-        stopsById = stops.reduce(into: [String: Stop]()) { map, stop in map[stop.id] = stop }
         stopFeatures = generateStopFeatures()
         stopSources = generateStopSources()
     }
@@ -48,8 +46,8 @@ class StopSourceGenerator {
         return routeSourceDetails.flatMap { routeSource in
             routeSource.lines.flatMap { lineData in
                 lineData.stopIds.compactMap { childStopId in
-                    guard let stopOnRoute = stopsById[childStopId] else { return nil }
-                    guard let stop = stopOnRoute.resolveParent(stopsById) else { return nil }
+                    guard let stopOnRoute = stops[childStopId] else { return nil }
+                    guard let stop = stopOnRoute.resolveParent(stops) else { return nil }
 
                     if touchedStopIds.contains(stop.id) { return nil }
 
@@ -65,7 +63,7 @@ class StopSourceGenerator {
     }
 
     func generateRemainingStops() -> [StopFeatureData] {
-        stops.compactMap { stop in
+        stops.values.compactMap { stop in
             if touchedStopIds.contains(stop.id) { return nil }
             if stop.parentStationId != nil { return nil }
 

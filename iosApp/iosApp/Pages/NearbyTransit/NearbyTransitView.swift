@@ -16,6 +16,7 @@ import SwiftUI
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject var locationProvider: NearbyTransitLocationProvider
+    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
@@ -46,6 +47,9 @@ struct NearbyTransitView: View {
             getNearby(location: locationProvider.location)
             joinPredictions()
             didAppear?(self)
+        }
+        .onChange(of: globalFetcher.response) { _ in
+            getNearby(location: locationProvider.location)
         }
         .onChange(of: locationProvider.location) { newLocation in
             getNearby(location: newLocation)
@@ -79,7 +83,10 @@ struct NearbyTransitView: View {
     var didAppear: ((Self) -> Void)?
 
     func getNearby(location: CLLocationCoordinate2D) {
-        Task { await nearbyFetcher.getNearby(location: location) }
+        Task {
+            guard let globalData = globalFetcher.response else { return }
+            await nearbyFetcher.getNearby(global: globalData, location: location)
+        }
     }
 
     func getSchedule() {
