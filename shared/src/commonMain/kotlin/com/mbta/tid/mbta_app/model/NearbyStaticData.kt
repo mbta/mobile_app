@@ -53,10 +53,6 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                         .map { patternId -> response.routePatterns.getValue(patternId) }
                         .groupBy { it.routeId }
 
-                if (newPatternsByRoute.isEmpty()) {
-                    return@forEach
-                }
-
                 val stopKey =
                     stop.parentStationId?.let { parentStationId ->
                         fullStopIds
