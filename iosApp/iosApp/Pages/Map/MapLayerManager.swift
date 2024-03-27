@@ -14,22 +14,15 @@ import SwiftUI
 class MapLayerManager {
     let map: MapboxMap
 
-    static let stopZoomThreshold: CGFloat = 13.0
-    static let tombstoneZoomThreshold: CGFloat = 16.0
+    static let stopZoomThreshold: Double = 13.0
+    static let tombstoneZoomThreshold: Double = 16.0
 
     static let stationIconId = "t-station"
     static let stopIconId = "bus-stop"
     static let stopIconSmallId = "bus-stop-small"
-
     static let stopIcons: [String] = [stationIconId, stopIconId, stopIconSmallId]
 
     static let stopLayerTypes: [LocationType] = [.stop, .station]
-
-    static func getStopLayerIcon(_ locationType: LocationType, _ zoomLevel: CGFloat) -> Value<ResolvedImage> {
-        if locationType == .station { return .constant(.name(stationIconId)) }
-        if locationType == .stop, zoomLevel > tombstoneZoomThreshold { return .constant(.name(stopIconId)) }
-        return .constant(.name(stopIconSmallId))
-    }
 
     init(map: MapboxMap) {
         self.map = map
@@ -75,12 +68,6 @@ class MapLayerManager {
                 try map.updateLayer(withId: layerId, type: SymbolLayer.self) { layer in
                     if layer.iconOpacity != .constant(opacity) {
                         layer.iconOpacity = .constant(opacity)
-                    }
-                    if layerType == .stop {
-                        let icon = Self.getStopLayerIcon(layerType, zoomLevel)
-                        if layer.iconImage != icon {
-                            layer.iconImage = icon
-                        }
                     }
                 }
             } catch {
