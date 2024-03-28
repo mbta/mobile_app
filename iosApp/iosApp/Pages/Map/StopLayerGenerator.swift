@@ -33,7 +33,6 @@ class StopLayerGenerator {
         let sourceId = StopSourceGenerator.getStopSourceId(locationType)
         var stopLayer = SymbolLayer(id: layerId, source: sourceId)
         stopLayer.iconImage = Self.getStopLayerIcon(locationType)
-        stopLayer.iconImageCrossFadeTransition = StyleTransition(duration: 3, delay: 0)
         stopLayer.iconAllowOverlap = .constant(true)
         stopLayer.minZoom = MapLayerManager.stopZoomThreshold - 1
         stopLayer.iconOpacity = .constant(0)
