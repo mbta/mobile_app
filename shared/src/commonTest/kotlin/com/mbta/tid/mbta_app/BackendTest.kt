@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app
 
+import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteResult
@@ -40,6 +41,7 @@ class BackendTest {
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289904,
                               "longitude": -71.191003,
+                              "location_type": "stop",
                               "parent_station": null
                             },
                             {
@@ -47,6 +49,7 @@ class BackendTest {
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289995,
                               "longitude": -71.191092,
+                              "location_type": "stop",
                               "parent_station": null
                             }
                           ],
@@ -175,12 +178,14 @@ class BackendTest {
                                 id = "8552",
                                 latitude = 42.289904,
                                 longitude = -71.191003,
+                                locationType = LocationType.STOP,
                                 name = "Sawmill Brook Pkwy @ Walsh Rd"
                             ),
                             Stop(
                                 id = "84791",
                                 latitude = 42.289995,
                                 longitude = -71.191092,
+                                locationType = LocationType.STOP,
                                 name = "Sawmill Brook Pkwy @ Walsh Rd"
                             )
                         ),

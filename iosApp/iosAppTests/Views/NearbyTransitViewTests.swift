@@ -384,7 +384,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         nearbyFetcher.nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
             builder.route(route: nearbyFetcher.nearbyByRouteAndStop!.data[0].route) { builder in
-                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", parentStationId: nil)
+                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", locationType: .station, parentStationId: nil)
                 builder.stop(stop: lechmere) { _ in
                 }
             }

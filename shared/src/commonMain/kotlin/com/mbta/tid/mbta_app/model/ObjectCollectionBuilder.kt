@@ -25,6 +25,7 @@ class ObjectCollectionBuilder {
     val schedules = mutableMapOf<String, Schedule>()
     val stops = mutableMapOf<String, Stop>()
     val trips = mutableMapOf<String, Trip>()
+    val shapes = mutableMapOf<String, Shape>()
     val vehicles = mutableMapOf<String, Vehicle>()
 
     interface ObjectBuilder<Built : BackendObject> {
@@ -247,14 +248,24 @@ class ObjectCollectionBuilder {
             block
         )
 
+    class ShapeBuilder : ObjectBuilder<Shape> {
+        var id = uuid()
+        var polyline = ""
+
+        override fun built() = Shape(id, polyline)
+    }
+
+    fun shape(block: ShapeBuilder.() -> Unit = {}) = build(shapes, ShapeBuilder(), block)
+
     class StopBuilder : ObjectBuilder<Stop> {
         var id = uuid()
         var latitude = 1.2
         var longitude = 3.4
         var name = ""
+        var locationType = LocationType.STOP
         var parentStationId: String? = null
 
-        override fun built() = Stop(id, latitude, longitude, name, parentStationId)
+        override fun built() = Stop(id, latitude, longitude, name, locationType, parentStationId)
     }
 
     fun stop(block: StopBuilder.() -> Unit = {}) = build(stops, StopBuilder(), block)
@@ -293,6 +304,8 @@ class ObjectCollectionBuilder {
             ObjectCollectionBuilder().routePattern(route, block)
 
         fun trip(block: TripBuilder.() -> Unit = {}) = ObjectCollectionBuilder().trip(block)
+
+        fun shape(block: ShapeBuilder.() -> Unit = {}) = ObjectCollectionBuilder().shape(block)
 
         fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
             ObjectCollectionBuilder().schedule(block)
