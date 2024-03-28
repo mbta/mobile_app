@@ -61,6 +61,9 @@
     "No Service" : {
 
     },
+    "Route: %@" : {
+
+    },
     "Routes" : {
 
     },
@@ -68,6 +71,9 @@
 
     },
     "Stop Closed" : {
+
+    },
+    "Stop: %@" : {
 
     },
     "Stops" : {

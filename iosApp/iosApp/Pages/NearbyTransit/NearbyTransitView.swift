@@ -243,6 +243,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
+                            route: busRoute,
                             stop: busStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(
@@ -266,6 +267,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     route: crRoute,
                     patternsByStop: [
                         PatternsByStop(
+                            route: crRoute,
                             stop: crStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(
