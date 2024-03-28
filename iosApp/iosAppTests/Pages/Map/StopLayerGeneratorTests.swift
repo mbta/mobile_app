@@ -24,6 +24,6 @@ final class StopLayerGeneratorTests: XCTestCase {
         let stationLayer = stopLayers.first { $0.id == StopLayerGenerator.getStopLayerId(.station) }
         XCTAssertNotNil(stationLayer)
         guard let stationLayer else { return }
-        XCTAssertEqual(stationLayer.iconImage, MapLayerManager.getStopLayerIcon(.station, MapLayerManager.tombstoneZoomThreshold))
+        XCTAssertEqual(stationLayer.iconImage, StopLayerGenerator.getStopLayerIcon(.station))
     }
 }
