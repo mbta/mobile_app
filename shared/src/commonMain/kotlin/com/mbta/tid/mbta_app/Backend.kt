@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.RouteResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
@@ -32,7 +33,7 @@ class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
 
     companion object {
-        const val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
+        const val mobileBackendHost = "mobile-app-backend-dev-orange.mbtace.com"
     }
 
     private val httpClient =
@@ -90,6 +91,21 @@ class Backend(engine: HttpClientEngine) {
         httpClient
             .get {
                 url { path("api/shapes/rail") }
+                expectSuccess = true
+            }
+            .body()
+
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class,
+        HttpRequestTimeoutException::class
+    )
+    suspend fun getMapFriendlyRailShapes(): MapFriendlyRouteResponse =
+        httpClient
+            .get {
+                url { path("api/shapes/map-friendly/rail") }
                 expectSuccess = true
             }
             .body()

@@ -102,6 +102,10 @@ final class ContentViewTests: XCTestCase {
             func getRailRouteShapes() async throws -> RouteResponse {
                 throw NotUnderTestError()
             }
+
+            func getMapFriendlyRailShapes() async throws -> MapFriendlyRouteResponse {
+                throw NotUnderTestError()
+            }
         }
 
         let fetchesGlobalData = expectation(description: "fetches global data")

@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import OSLog
 import Polyline
 import shared
 @_spi(Experimental) import MapboxMaps
@@ -52,7 +53,10 @@ class StopSourceGenerator {
             routeSource.lines.flatMap { lineData in
                 lineData.stopIds.compactMap { childStopId in
                     guard let stopOnRoute = stops[childStopId],
-                          let stop = stopOnRoute.resolveParent(stops) else { return nil }
+                          let stop = stopOnRoute.resolveParent(stops)
+                    else {
+                        return nil
+                    }
 
                     if touchedStopIds.contains(stop.id) { return nil }
 

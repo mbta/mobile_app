@@ -18,7 +18,11 @@ final class RouteSourceGeneratorTests: XCTestCase {
     }
 
     func testRouteSourcesAreCreated() {
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse,
+                                                        stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                                                                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
+                                                                    MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+                                                                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan])
 
         XCTAssertEqual(routeSourceGenerator.routeSources.count, 2)
 
@@ -28,7 +32,8 @@ final class RouteSourceGeneratorTests: XCTestCase {
             XCTAssertEqual(collection.features.count, 2)
             XCTAssertEqual(
                 collection.features[0].geometry,
-                .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC2.polyline!).coordinates!))
+                .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC2.polyline!).coordinates!)
+                    .sliced(from: MapTestDataHelper.stopAlewife.coordinate, to: MapTestDataHelper.stopDavis.coordinate)!)
             )
         } else {
             XCTFail("Red route source had no features")
@@ -40,7 +45,8 @@ final class RouteSourceGeneratorTests: XCTestCase {
             XCTAssertEqual(collection.features.count, 1)
             XCTAssertEqual(
                 collection.features[0].geometry,
-                .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeOrangeC1.polyline!).coordinates!))
+                .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeOrangeC1.polyline!).coordinates!)
+                    .sliced(from: MapTestDataHelper.stopAssembly.coordinate, to: MapTestDataHelper.stopSullivan.coordinate)!)
             )
         } else {
             XCTFail("Orange route source had no features")

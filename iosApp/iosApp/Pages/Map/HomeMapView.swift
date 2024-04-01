@@ -7,6 +7,7 @@
 //
 
 import os
+import OSLog
 import Polyline
 import shared
 import SwiftUI
@@ -137,14 +138,17 @@ struct HomeMapView: View {
         guard let map,
               let globalResponse = globalFetcher.response,
               let routeResponse = railRouteShapeFetcher.response
-        else { return }
-        handleLayerInit(map, globalResponse.stops, routeResponse)
+        else {
+            return
+        }
+
+        handleLayerInit(map, globalResponse.stops, globalResponse.routes, routeResponse)
     }
 
-    func handleLayerInit(_ map: MapboxMap, _ stops: [String: Stop], _ routeResponse: RouteResponse) {
+    func handleLayerInit(_ map: MapboxMap, _ stops: [String: Stop], _ routes: [String: Route], _ routeResponse: MapFriendlyRouteResponse) {
         let layerManager = MapLayerManager(map: map)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops)
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
             stopSourceGenerator: StopSourceGenerator(
@@ -155,7 +159,7 @@ struct HomeMapView: View {
         )
 
         layerManager.addLayers(
-            routeLayerGenerator: RouteLayerGenerator(routeData: routeResponse),
+            routeLayerGenerator: RouteLayerGenerator(mapFriendlyRoutesResponse: routeResponse, routesById: routes),
             stopLayerGenerator: StopLayerGenerator(stopLayerTypes: MapLayerManager.stopLayerTypes)
         )
 
