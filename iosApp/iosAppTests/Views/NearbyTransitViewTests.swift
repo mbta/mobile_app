@@ -715,4 +715,17 @@ final class NearbyTransitViewTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
     }
+
+    func testStopPageLink() throws {
+        let route = ObjectCollectionBuilder.Single.shared.route { _ in }
+        let stop = ObjectCollectionBuilder.Single.shared.stop { $0.name = "This Stop" }
+        let sut = NearbyStopView(patternsAtStop: PatternsByStop(
+            route: route, stop: stop,
+            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [], upcomingTrips: nil, alertsHere: nil)]
+        ), now: Date.now.toKotlinInstant())
+
+        let stopDetailsPage = try sut.inspect().find(navigationLink: "This Stop").view(StopDetailsPage.self).actualView()
+        XCTAssertEqual(stopDetailsPage.stop, stop)
+        XCTAssertEqual(stopDetailsPage.route, route)
+    }
 }
