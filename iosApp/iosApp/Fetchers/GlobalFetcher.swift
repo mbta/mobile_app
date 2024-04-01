@@ -23,9 +23,12 @@ class GlobalFetcher: ObservableObject {
 
     @MainActor func getGlobalData() async throws {
         do {
+            print("FETCHING")
             let response = try await backend.getGlobalData()
+            print("FETCHED")
             self.response = response
             stops = response.stops
+            print("STOPS \(stops.count)")
             routes = response.routes
         } catch {
             print("Failed to load global data: \(error)")
