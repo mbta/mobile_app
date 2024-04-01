@@ -61,6 +61,9 @@ struct ContentView: View {
             prompt: "Find nearby transit"
         ).onAppear {
             socketProvider.socket.connect()
+            Task {
+                try await globalFetcher.getGlobalData()
+            }
         }.onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.connect()

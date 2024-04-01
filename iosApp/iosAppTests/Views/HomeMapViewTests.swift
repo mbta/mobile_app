@@ -62,17 +62,14 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
     }
 
-    func testGlobalCall() throws {
+    func testFetchData() throws {
         class FakeGlobalFetcher: GlobalFetcher {
-            let getGlobalExpectation: XCTestExpectation
-
-            init(getGlobalExpectation: XCTestExpectation) {
-                self.getGlobalExpectation = getGlobalExpectation
+            init() {
                 super.init(backend: IdleBackend())
             }
 
             override func getGlobalData() async throws {
-                getGlobalExpectation.fulfill()
+                XCTFail("Map tried to fetch global data")
                 throw NotUnderTestError()
             }
         }
@@ -91,11 +88,10 @@ final class HomeMapViewTests: XCTestCase {
             }
         }
 
-        let getGlobalExpectation = expectation(description: "getGlobalData")
         let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
 
         var sut = HomeMapView(
-            globalFetcher: FakeGlobalFetcher(getGlobalExpectation: getGlobalExpectation),
+            globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
             viewportProvider: ViewportProvider()
@@ -103,7 +99,6 @@ final class HomeMapViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
-        wait(for: [getGlobalExpectation], timeout: 1)
         wait(for: [getRailRouteShapeExpectation], timeout: 1)
     }
 }
