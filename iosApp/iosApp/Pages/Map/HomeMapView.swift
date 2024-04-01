@@ -23,18 +23,21 @@ struct HomeMapView: View {
     @State private var layerManager: MapLayerManager?
     @StateObject private var locationDataManager: LocationDataManager
     @State private var recenterButton: ViewAnnotation?
+    @Binding var sheetHeight: CGFloat
 
     init(
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
         railRouteShapeFetcher: RailRouteShapeFetcher,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
-        viewportProvider: ViewportProvider
+        viewportProvider: ViewportProvider,
+        sheetHeight: Binding<CGFloat>
     ) {
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.viewportProvider = viewportProvider
+        _sheetHeight = sheetHeight
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
     }
 
@@ -61,6 +64,7 @@ struct HomeMapView: View {
                 // print(feature.feature.identifier)
                 true
             }
+            .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
             .onChange(of: globalFetcher.response) { _ in handleTryLayerInit(map: proxy.map) }
