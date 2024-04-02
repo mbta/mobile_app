@@ -164,12 +164,12 @@ final class NearbyTransitViewTests: XCTestCase {
 
         XCTAssertNotNil(try route.find(text: "52"))
         XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .parent().find(text: "Charles River Loop"))
+            .find(NearbyStopView.self, relation: .parent).find(text: "Charles River Loop"))
         XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .parent().find(text: "Dedham Mall"))
+            .find(NearbyStopView.self, relation: .parent).find(text: "Dedham Mall"))
 
         XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
-            .parent().find(text: "Watertown Yard"))
+            .find(NearbyStopView.self, relation: .parent).find(text: "Watertown Yard"))
     }
 
     @MainActor func testWithSchedules() throws {
