@@ -170,7 +170,7 @@ class GlobalResponseTest {
         val childStop =
             objects.stop {
                 id = "child"
-                childStopIds = listOf("nestedChild")
+                childStopIds = listOf("nestedChild1", "nestedChild2")
                 parentStationId = parentStop.id
             }
         val nestedChildStop1 =
