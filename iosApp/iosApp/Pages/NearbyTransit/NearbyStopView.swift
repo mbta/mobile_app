@@ -15,7 +15,11 @@ struct NearbyStopView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(patternsAtStop.stop.name).fontWeight(.bold)
+            NavigationLink {
+                StopDetailsPage(stop: patternsAtStop.stop, route: patternsAtStop.route)
+            } label: {
+                Text(patternsAtStop.stop.name).fontWeight(.bold)
+            }
 
             VStack(alignment: .leading) {
                 ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in

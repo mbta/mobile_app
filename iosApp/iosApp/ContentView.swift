@@ -57,14 +57,11 @@ struct ContentView: View {
                 )
                 .ignoresSafeArea(edges: .bottom)
                 .sheet(isPresented: .constant(true)) {
-                    /**
-                     NavigationView is only necessary as a workaround for the sheet automatically expanding
-                     https://www.hackingwithswift.com/forums/swiftui/bottom-sheet-resizing-bug/24155/24169
-                     **/
                     NavigationView {
                         nearbyTransit
                             .navigationBarHidden(true)
                     }
+                    .navigationViewStyle(.stack)
                     .partialSheetDetents(
                         sheetDetents,
                         largestUndimmedDetent: .medium
