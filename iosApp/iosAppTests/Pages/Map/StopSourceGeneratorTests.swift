@@ -84,6 +84,11 @@ final class StopSourceGeneratorTests: XCTestCase {
         XCTAssertNotNil(stopSource)
         if case let .featureCollection(collection) = stopSource!.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
+            if case let .string(serviceStatus) = collection.features[0].properties![StopSourceGenerator.propServiceStatusKey] {
+                XCTAssertEqual(serviceStatus, String(describing: StopSourceServiceStatus.normal))
+            } else {
+                XCTFail("Source status property was not set correctly")
+            }
             XCTAssertTrue(collection.features.contains(where: { $0.geometry == .point(Point(stop4.coordinate)) }))
         } else {
             XCTFail("Stop source had no features")
@@ -136,60 +141,102 @@ final class StopSourceGeneratorTests: XCTestCase {
             XCTFail("Station source had no features")
         }
     }
-}
 
-func getSnapTestRouteResponse(_ objects: ObjectCollectionBuilder) -> RouteResponse {
-    let routeRed = objects.route { route in
-        route.id = "Red"
-        route.routePatternIds = ["Red-1-0"]
+    func testStopsFeaturesHaveServiceStatus() {
+        let objects = MapTestDataHelper.objects
+
+        let stops = [
+            "70061": objects.stop { stop in
+                stop.id = "70061"
+                stop.name = "Alewife"
+                stop.latitude = 42.396158
+                stop.longitude = -71.139971
+                stop.locationType = .stop
+                stop.parentStationId = "place-alfcl"
+            },
+            "place-alfcl": objects.stop { stop in
+                stop.id = "place-alfcl"
+                stop.name = "Alewife"
+                stop.latitude = 42.39583
+                stop.longitude = -71.141287
+                stop.locationType = .station
+                stop.childStopIds = ["70061"]
+            },
+            "place-astao": objects.stop { stop in
+                stop.id = "place-astao"
+                stop.name = "Assembly"
+                stop.latitude = 42.392811
+                stop.longitude = -71.077257
+                stop.locationType = .station
+            },
+        ]
+
+        let now = Date.now
+
+        let redAlert = objects.alert { alert in
+            alert.id = "a1"
+            alert.effect = .shuttle
+            alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
+            alert.informedEntity(activities: [.board], directionId: nil, facility: nil, route: "Red", routeType: .heavyRail, stop: "70061", trip: nil)
+        }
+        let orangeAlert = objects.alert { alert in
+            alert.id = "a2"
+            alert.effect = .stationClosure
+            alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
+            alert.informedEntity(activities: [.board], directionId: nil, facility: nil, route: "Orange", routeType: .heavyRail, stop: "place-astao", trip: nil)
+        }
+
+        let alertsByStop = [
+            "place-alfcl": AlertAssociatedStop(
+                stop: stops["place-alfcl"]!,
+                relevantAlerts: [],
+                routePatterns: [MapTestDataHelper.patternRed30],
+                childStops: ["70061": stops["70061"]!],
+                childAlerts: ["70061": AlertAssociatedStop(
+                    stop: stops["70061"]!,
+                    relevantAlerts: [redAlert],
+                    routePatterns: [MapTestDataHelper.patternRed10],
+                    childStops: [:],
+                    childAlerts: [:]
+                )]
+            ),
+            "place-astao": AlertAssociatedStop(
+                stop: stops["place-astao"]!,
+                relevantAlerts: [orangeAlert],
+                routePatterns: [MapTestDataHelper.patternOrange30],
+                childStops: [:],
+                childAlerts: [:]
+            ),
+        ]
+        let stopSourceGenerator = StopSourceGenerator(stops: stops, alertsByStop: alertsByStop)
+        let sources = stopSourceGenerator.stopSources
+
+        let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }
+        XCTAssertNotNil(stationSource)
+        if case let .featureCollection(collection) = stationSource!.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 2)
+
+            let alewifeFeature = collection.features.first { feat in
+                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-alfcl" } else { false }
+            }
+            XCTAssertNotNil(alewifeFeature)
+            if case let .string(serviceStatus) = alewifeFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
+                XCTAssertEqual(serviceStatus, String(describing: StopSourceServiceStatus.disrupted))
+            } else {
+                XCTFail("Disrupted source status property was not set correctly")
+            }
+
+            let assemblyFeature = collection.features.first { feat in
+                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-astao" } else { false }
+            }
+            XCTAssertNotNil(assemblyFeature)
+            if case let .string(serviceStatus) = assemblyFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
+                XCTAssertEqual(serviceStatus, String(describing: StopSourceServiceStatus.noService))
+            } else {
+                XCTFail("No service source status property was not set correctly")
+            }
+        } else {
+            XCTFail("Station source had no features")
+        }
     }
-
-    let patternRed10 = objects.routePattern(route: routeRed) { pattern in
-        pattern.id = "Red-1-0"
-        pattern.typicality = .typical
-        pattern.representativeTripId = "canonical-Red-C2-0"
-    }
-
-    let tripRedC2 = objects.trip(routePattern: patternRed10) { trip in
-        trip.id = "canonical-Red-C2-0"
-        trip.shapeId = "canonical-931_0009"
-        trip.stopIds = ["70061"]
-    }
-
-    let shapeRedC2 = objects.shape { shape in
-        shape.id = "canonical-931_0009"
-        shape.polyline = "}nwaG~|eqLGyNIqAAc@S_CAEWu@g@}@u@k@u@Wu@OMGIMISQkAOcAGw@SoDFkCf@sUXcJJuERwHPkENqCJmB^mDn@}D??D[TeANy@\\iAt@qB`AwBl@cAl@m@b@Yn@QrBEtCKxQ_ApMT??R?`m@hD`Np@jAF|@C`B_@hBi@n@s@d@gA`@}@Z_@RMZIl@@fBFlB\\tAP??~@L^?HCLKJWJ_@vC{NDGLQvG}HdCiD`@e@Xc@b@oAjEcPrBeGfAsCvMqVl@sA??jByD`DoGd@cAj@cBJkAHqBNiGXeHVmJr@kR~@q^HsB@U??NgDr@gJTcH`@aMFyCF}AL}DN}GL}CXkILaD@QFmA@[??DaAFiBDu@BkA@UB]Fc@Jo@BGJ_@Lc@\\}@vJ_OrCyDj@iAb@_AvBuF`@gA`@aAv@qBVo@Xu@??bDgI??Tm@~IsQj@cAr@wBp@kBj@kB??HWtDcN`@g@POl@UhASh@Eb@?t@FXHl@Px@b@he@h[pCC??bnAm@h@T??xF|BpBp@^PLBXAz@Yl@]l@e@|B}CT[p@iA|A}BZi@zDuF\\c@n@s@VObAw@^Sl@Yj@U\\O|@WdAUxAQRCt@E??xAGrBQZAhAGlAEv@Et@E~@AdAAbCGpCA|BEjCMr@?nBDvANlARdBb@nDbA~@XnBp@\\JRH??|Al@`AZbA^jA^lA\\h@P|@TxAZ|@J~@LN?fBXxHhApDt@b@JXFtAVhALx@FbADtAC`B?z@BHBH@|@f@RN^^T\\h@hANb@HZH`@H^LpADlA@dD@jD@x@@b@Bp@HdAFd@Ll@F^??n@rDBRl@vD^pATp@Rb@b@z@\\l@`@j@p@t@j@h@n@h@n@`@hAh@n@\\t@PzANpAApBGtE}@xBa@??xB_@nOmB`OgBb@IrC[p@MbEmARCV@d@LH?tDyAXM"
-    }
-
-    let stops = [
-        objects.stop { stop in
-            stop.id = "70061"
-            stop.name = "Alewife"
-            stop.latitude = 42.396158
-            stop.longitude = -71.139971
-            stop.locationType = .stop
-            stop.parentStationId = "place-alfcl"
-        },
-        objects.stop { stop in
-            stop.id = "place-alfcl"
-            stop.name = "Alewife"
-            stop.latitude = 42.39583
-            stop.longitude = -71.141287
-            stop.locationType = .station
-        },
-        objects.stop { stop in
-            stop.id = "place-astao"
-            stop.name = "Assembly"
-            stop.latitude = 42.392811
-            stop.longitude = -71.077257
-            stop.locationType = .station
-        },
-    ]
-
-    return RouteResponse(
-        routes: [routeRed],
-        routePatterns: ["Red-1-0": patternRed10],
-        shapes: ["canonical-931_0009": shapeRedC2],
-        trips: ["canonical-Red-C2-0": tripRedC2]
-    )
 }

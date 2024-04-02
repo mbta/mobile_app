@@ -1,13 +1,14 @@
 package com.mbta.tid.mbta_app.model
 
+private val disruptableStopTypes: List<LocationType> =
+    listOf(LocationType.STOP, LocationType.STATION)
+
 class AlertAssociatedStop(
-    private val disruptableStopTypes: List<LocationType> =
-        listOf(LocationType.STOP, LocationType.STATION),
     val stop: Stop,
     val relevantAlerts: Set<Alert>,
     val routePatterns: List<RoutePattern>,
     val childStops: Map<String, Stop>,
-    val childAlerts: Map<String, AlertAssociatedStop>
+    val childAlerts: Map<String, AlertAssociatedStop>,
 ) {
     val serviceAlerts = relevantAlerts.filter { Alert.serviceDisruptionEffects.contains(it.effect) }
 
@@ -25,10 +26,9 @@ class AlertAssociatedStop(
                     alert.anyInformedEntity { entityMatcher(it, stop, pattern) }
                 }
             } &&
-                (childStops.isEmpty() ||
-                    childStops.values
-                        .filter { disruptableStopTypes.contains(it.locationType) }
-                        .all { childAlerts[it.id]?.hasNoService == true })
+                childStops.values
+                    .filter { disruptableStopTypes.contains(it.locationType) }
+                    .all { childAlerts[it.id]?.hasNoService == true }
         }
 
     var hasSomeDisruptedService: Boolean =
