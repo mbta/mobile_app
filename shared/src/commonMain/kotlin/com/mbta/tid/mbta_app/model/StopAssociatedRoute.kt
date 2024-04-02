@@ -236,15 +236,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val activeRelevantAlerts =
         alerts?.alerts?.values?.filter {
-            it.isActive(filterAtTime) &&
-                setOf(
-                        Alert.Effect.StationClosure,
-                        Alert.Effect.Shuttle,
-                        Alert.Effect.Suspension,
-                        Alert.Effect.Detour,
-                        Alert.Effect.StopClosure
-                    )
-                    .contains(it.effect)
+            it.isActive(filterAtTime) && Alert.serviceDisruptionEffects.contains(it.effect)
         }
 
     return data

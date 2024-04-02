@@ -44,13 +44,29 @@ class StopLayerGenerator {
     static func getStopLayerIcon(_ locationType: LocationType) -> Value<ResolvedImage> {
         switch locationType {
         case .station:
-            .constant(.name(MapLayerManager.stationIconId))
+            .expression(
+                Exp(.match) {
+                    Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+                    String(describing: StopSourceServiceStatus.noService)
+                    MapLayerManager.stationIconNoServiceId
+                    String(describing: StopSourceServiceStatus.disrupted)
+                    MapLayerManager.stationIconIssuesId
+                    MapLayerManager.stationIconId
+                }
+            )
         case .stop:
             .expression(Exp(.step) {
                 Exp(.zoom)
                 MapLayerManager.stopIconSmallId
                 MapLayerManager.tombstoneZoomThreshold
-                MapLayerManager.stopIconId
+                Exp(.match) {
+                    Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+                    String(describing: StopSourceServiceStatus.noService)
+                    MapLayerManager.stopIconNoServiceId
+                    String(describing: StopSourceServiceStatus.disrupted)
+                    MapLayerManager.stopIconIssuesId
+                    MapLayerManager.stopIconId
+                }
             })
         default:
             .constant(.name(""))

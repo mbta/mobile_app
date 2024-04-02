@@ -11,7 +11,8 @@ data class Stop(
     val longitude: Double,
     val name: String,
     @SerialName("location_type") val locationType: LocationType,
-    @SerialName("parent_station_id") val parentStationId: String? = null
+    @SerialName("parent_station_id") val parentStationId: String? = null,
+    @SerialName("child_stop_ids") val childStopIds: List<String>? = null
 ) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
 }
