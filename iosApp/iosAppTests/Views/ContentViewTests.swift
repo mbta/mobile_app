@@ -15,6 +15,8 @@ import ViewInspector
 import XCTest
 
 final class ContentViewTests: XCTestCase {
+    struct NotUnderTestError: Error {}
+
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -73,6 +75,51 @@ final class ContentViewTests: XCTestCase {
         wait(for: [disconnectedExpectation], timeout: 1)
         try sut.inspect().navigationView().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
+    }
+
+    func testFetchesGlobalData() throws {
+        struct FakeGlobalFetcherBackend: BackendProtocol {
+            let expectation: XCTestExpectation
+            let idle = IdleBackend()
+
+            func getGlobalData() async throws -> GlobalResponse {
+                expectation.fulfill()
+                throw NotUnderTestError()
+            }
+
+            func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
+                throw NotUnderTestError()
+            }
+
+            func getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
+                throw NotUnderTestError()
+            }
+
+            func getSearchResults(query _: String) async throws -> SearchResponse {
+                throw NotUnderTestError()
+            }
+
+            func getRailRouteShapes() async throws -> RouteResponse {
+                throw NotUnderTestError()
+            }
+        }
+
+        let fetchesGlobalData = expectation(description: "fetches global data")
+
+        let sut = ContentView()
+            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
+            .environmentObject(AlertsFetcher(socket: FakeSocket()))
+            .environmentObject(GlobalFetcher(backend: FakeGlobalFetcherBackend(expectation: fetchesGlobalData)))
+            .environmentObject(NearbyFetcher(backend: IdleBackend()))
+            .environmentObject(PredictionsFetcher(socket: FakeSocket()))
+            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
+            .environmentObject(ScheduleFetcher(backend: IdleBackend()))
+            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
+            .environmentObject(SocketProvider(socket: FakeSocket()))
+            .environmentObject(ViewportProvider())
+
+        ViewHosting.host(view: sut)
+        wait(for: [fetchesGlobalData], timeout: 1)
     }
 
     class FakeSocket: MockSocket {

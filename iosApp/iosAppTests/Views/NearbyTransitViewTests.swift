@@ -32,6 +32,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket()),
@@ -41,6 +42,13 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testLoading() throws {
+        class FakeGlobalFetcher: GlobalFetcher {
+            init() {
+                super.init(backend: IdleBackend())
+                response = GlobalResponse(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+            }
+        }
+
         class FakeNearbyFetcher: NearbyFetcher {
             let getNearbyExpectation: XCTestExpectation
 
@@ -49,7 +57,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 super.init(backend: IdleBackend())
             }
 
-            override func getNearby(location _: CLLocationCoordinate2D) async {
+            override func getNearby(global _: GlobalResponse, location _: CLLocationCoordinate2D) async {
                 getNearbyExpectation.fulfill()
             }
         }
@@ -62,6 +70,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket()), alertsFetcher: .init(socket: MockSocket())
@@ -142,7 +151,7 @@ final class NearbyTransitViewTests: XCTestCase {
             loadedLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
         }
 
-        override func getNearby(location _: CLLocationCoordinate2D) async {}
+        override func getNearby(global _: GlobalResponse, location _: CLLocationCoordinate2D) async {}
     }
 
     func testRoutePatternsGroupedByRouteAndStop() throws {
@@ -152,6 +161,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket()), alertsFetcher: .init(socket: MockSocket())
@@ -237,6 +247,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: FakeScheduleFetcher(objects),
             predictionsFetcher: FakePredictionsFetcher(objects), alertsFetcher: .init(socket: MockSocket())
@@ -314,6 +325,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant), alertsFetcher: .init(socket: MockSocket())
@@ -373,6 +385,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
@@ -403,6 +416,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: predictionsFetcher,
@@ -463,6 +477,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
@@ -507,6 +522,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
@@ -554,6 +570,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
@@ -584,6 +601,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket()), alertsFetcher: .init(socket: MockSocket())
@@ -613,6 +631,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: FakePredictionsFetcher(), alertsFetcher: .init(socket: MockSocket())
@@ -630,7 +649,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 super.init(backend: IdleBackend())
             }
 
-            override func getNearby(location: CLLocationCoordinate2D) async {
+            override func getNearby(global _: GlobalResponse, location: CLLocationCoordinate2D) async {
                 loadedLocation = location
                 getNearbyExpectation.fulfill()
             }
@@ -647,8 +666,12 @@ final class NearbyTransitViewTests: XCTestCase {
             isFollowing: true
         )
 
+        let globalFetcher = GlobalFetcher(backend: IdleBackend())
+        globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+
         let sut = NearbyTransitView(
             locationProvider: locationProvider,
+            globalFetcher: globalFetcher,
             nearbyFetcher: fakeFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
             predictionsFetcher: .init(socket: MockSocket()),
@@ -707,6 +730,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 cameraLocation: ViewportProvider.defaultCenter,
                 isFollowing: true
             ),
+            globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: scheduleFetcher,
             predictionsFetcher: predictionsFetcher,

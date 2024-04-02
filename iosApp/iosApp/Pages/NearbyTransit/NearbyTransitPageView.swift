@@ -15,6 +15,7 @@ import SwiftUI
 
 struct NearbyTransitPageView: View {
     let currentLocation: CLLocationCoordinate2D?
+    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
@@ -26,6 +27,7 @@ struct NearbyTransitPageView: View {
 
     init(
         currentLocation: CLLocationCoordinate2D?,
+        globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
         scheduleFetcher: ScheduleFetcher,
         predictionsFetcher: PredictionsFetcher,
@@ -33,6 +35,7 @@ struct NearbyTransitPageView: View {
         alertsFetcher: AlertsFetcher
     ) {
         self.currentLocation = currentLocation
+        self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
         self.scheduleFetcher = scheduleFetcher
         self.predictionsFetcher = predictionsFetcher
@@ -50,6 +53,7 @@ struct NearbyTransitPageView: View {
     var body: some View {
         NearbyTransitView(
             locationProvider: locationProvider,
+            globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: scheduleFetcher,
             predictionsFetcher: predictionsFetcher,

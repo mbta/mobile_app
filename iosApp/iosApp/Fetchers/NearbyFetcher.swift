@@ -16,7 +16,7 @@ class NearbyFetcher: ObservableObject {
     @Published var errorText: Text?
     @Published var loadedLocation: CLLocationCoordinate2D?
     @Published var loading: Bool = false
-    @Published var nearby: StopAndRoutePatternResponse?
+    @Published var nearby: NearbyResponse?
     @Published var nearbyByRouteAndStop: NearbyStaticData?
     let backend: any BackendProtocol
 
@@ -26,7 +26,7 @@ class NearbyFetcher: ObservableObject {
         self.backend = backend
     }
 
-    func getNearby(location: CLLocationCoordinate2D) async {
+    func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) async {
         if location.isRoughlyEqualTo(loadedLocation) { return }
         if loading, currentTask != nil, !currentTask!.isCancelled {
             currentTask?.cancel()
@@ -42,7 +42,7 @@ class NearbyFetcher: ObservableObject {
                 )
                 try Task.checkCancellation()
                 self.nearby = response
-                self.nearbyByRouteAndStop = NearbyStaticData(response: response)
+                self.nearbyByRouteAndStop = NearbyStaticData(global: global, nearby: response)
                 self.loadedLocation = location
                 self.error = nil
                 self.errorText = nil

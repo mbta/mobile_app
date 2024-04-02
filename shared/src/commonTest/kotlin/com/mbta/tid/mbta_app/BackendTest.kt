@@ -11,9 +11,9 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.StopResultRoute
 import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.RouteResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
-import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -26,17 +26,16 @@ import kotlinx.coroutines.runBlocking
 
 class BackendTest {
     @Test
-    fun testGetNearby() {
+    fun testGetGlobal() {
         runBlocking {
             val mockEngine = MockEngine { request ->
-                assertEquals("latitude=12.34&longitude=-56.78", request.url.encodedQuery)
                 respond(
                     content =
                         ByteReadChannel(
                             """
                         {
-                          "stops": [
-                            {
+                          "stops": {
+                            "8552": {
                               "id": "8552",
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289904,
@@ -44,7 +43,7 @@ class BackendTest {
                               "location_type": "stop",
                               "parent_station": null
                             },
-                            {
+                            "84791": {
                               "id": "84791",
                               "name": "Sawmill Brook Pkwy @ Walsh Rd",
                               "latitude": 42.289995,
@@ -52,7 +51,7 @@ class BackendTest {
                               "location_type": "stop",
                               "parent_station": null
                             }
-                          ],
+                          },
                           "route_patterns": {
                             "52-4-0": {
                               "id": "52-4-0",
@@ -156,7 +155,7 @@ class BackendTest {
             }
 
             val backend = Backend(mockEngine)
-            val response = backend.getNearby(12.34, -56.78)
+            val response = backend.getGlobalData()
 
             val route52 =
                 Route(
@@ -171,23 +170,25 @@ class BackendTest {
                     textColor = "000000"
                 )
             assertEquals(
-                StopAndRoutePatternResponse(
+                GlobalResponse(
                     stops =
-                        listOf(
-                            Stop(
-                                id = "8552",
-                                latitude = 42.289904,
-                                longitude = -71.191003,
-                                locationType = LocationType.STOP,
-                                name = "Sawmill Brook Pkwy @ Walsh Rd"
-                            ),
-                            Stop(
-                                id = "84791",
-                                latitude = 42.289995,
-                                longitude = -71.191092,
-                                locationType = LocationType.STOP,
-                                name = "Sawmill Brook Pkwy @ Walsh Rd"
-                            )
+                        mapOf(
+                            "8552" to
+                                Stop(
+                                    id = "8552",
+                                    latitude = 42.289904,
+                                    longitude = -71.191003,
+                                    locationType = LocationType.STOP,
+                                    name = "Sawmill Brook Pkwy @ Walsh Rd"
+                                ),
+                            "84791" to
+                                Stop(
+                                    id = "84791",
+                                    latitude = 42.289995,
+                                    longitude = -71.191092,
+                                    locationType = LocationType.STOP,
+                                    name = "Sawmill Brook Pkwy @ Walsh Rd"
+                                )
                         ),
                     routePatterns =
                         mapOf(

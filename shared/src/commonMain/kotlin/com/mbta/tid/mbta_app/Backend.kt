@@ -1,10 +1,11 @@
 package com.mbta.tid.mbta_app
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.RouteResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
-import com.mbta.tid.mbta_app.model.response.StopAndRoutePatternResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
@@ -50,7 +51,7 @@ class Backend(engine: HttpClientEngine) {
         ResponseException::class,
         HttpRequestTimeoutException::class
     )
-    suspend fun getGlobalData(): StopAndRoutePatternResponse =
+    suspend fun getGlobalData(): GlobalResponse =
         httpClient
             .get {
                 timeout { requestTimeoutMillis = 10000 }
@@ -66,7 +67,7 @@ class Backend(engine: HttpClientEngine) {
         ResponseException::class,
         HttpRequestTimeoutException::class
     )
-    suspend fun getNearby(latitude: Double, longitude: Double): StopAndRoutePatternResponse =
+    suspend fun getNearby(latitude: Double, longitude: Double): NearbyResponse =
         httpClient
             .get {
                 url {

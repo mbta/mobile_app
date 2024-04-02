@@ -74,6 +74,9 @@ struct ContentView: View {
             prompt: "Find nearby transit"
         ).onAppear {
             socketProvider.socket.connect()
+            Task {
+                try await globalFetcher.getGlobalData()
+            }
         }.onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.connect()
@@ -87,6 +90,7 @@ struct ContentView: View {
         GeometryReader { proxy in
             NearbyTransitPageView(
                 currentLocation: locationDataManager.currentLocation?.coordinate,
+                globalFetcher: globalFetcher,
                 nearbyFetcher: nearbyFetcher,
                 scheduleFetcher: scheduleFetcher,
                 predictionsFetcher: predictionsFetcher,

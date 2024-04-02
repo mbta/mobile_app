@@ -14,7 +14,6 @@ import SwiftUI
 
 struct HomeMapView: View {
     private let cameraDebouncer = Debouncer(delay: 0.25)
-    private let layerInitDispatchGroup = DispatchGroup()
 
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
@@ -68,6 +67,8 @@ struct HomeMapView: View {
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
+            .onChange(of: globalFetcher.response) { _ in handleTryLayerInit(map: proxy.map) }
+            .onChange(of: railRouteShapeFetcher.response) { _ in handleTryLayerInit(map: proxy.map) }
             .onChange(of: locationDataManager.authorizationStatus) { status in
                 if status == .authorizedAlways || status == .authorizedWhenInUse {
                     Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
@@ -83,24 +84,9 @@ struct HomeMapView: View {
 
     var didAppear: ((Self) -> Void)?
 
-    func handleAppear(location: LocationManager?, map: MapboxMap?) {
-        // Wait for routes and stops to both load before initializing layers
-        layerInitDispatchGroup.enter()
-        Task {
-            try await globalFetcher.getGlobalData()
-            layerInitDispatchGroup.leave()
-        }
-        layerInitDispatchGroup.enter()
+    func handleAppear(location: LocationManager?, map _: MapboxMap?) {
         Task {
             try await railRouteShapeFetcher.getRailRouteShapes()
-            layerInitDispatchGroup.leave()
-        }
-        layerInitDispatchGroup.notify(queue: .main) {
-            guard let map,
-                  let globalResponse = globalFetcher.response,
-                  let routeResponse = railRouteShapeFetcher.response
-            else { return }
-            handleLayerInit(map, globalResponse.stops, routeResponse)
         }
 
         // Set MapBox to use the current location to display puck
@@ -128,7 +114,15 @@ struct HomeMapView: View {
         }
     }
 
-    func handleLayerInit(_ map: MapboxMap, _ stops: [Stop], _ routeResponse: RouteResponse) {
+    func handleTryLayerInit(map: MapboxMap?) {
+        guard let map,
+              let globalResponse = globalFetcher.response,
+              let routeResponse = railRouteShapeFetcher.response
+        else { return }
+        handleLayerInit(map, globalResponse.stops, routeResponse)
+    }
+
+    func handleLayerInit(_ map: MapboxMap, _ stops: [String: Stop], _ routeResponse: RouteResponse) {
         let layerManager = MapLayerManager(map: map)
 
         let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse)

@@ -63,7 +63,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             stop.parentStationId = "place-andrw"
         }
 
-        let stopSourceGenerator = StopSourceGenerator(stops: [stop1, stop2, stop3, stop4, stop5, stop6])
+        let stopSourceGenerator = StopSourceGenerator(stops: [stop1.id: stop1, stop2.id: stop2, stop3.id: stop3, stop4.id: stop4, stop5.id: stop5, stop6.id: stop6])
         let sources = stopSourceGenerator.stopSources
         XCTAssertEqual(sources.count, 2)
 
@@ -75,7 +75,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         XCTAssertNotNil(stationSource)
         if case let .featureCollection(collection) = stationSource!.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 3)
-            XCTAssertEqual(collection.features[0].geometry, .point(Point(stop1.coordinate)))
+            XCTAssertTrue(collection.features.contains(where: { $0.geometry == .point(Point(stop1.coordinate)) }))
         } else {
             XCTFail("Station source had no features")
         }
@@ -84,7 +84,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         XCTAssertNotNil(stopSource)
         if case let .featureCollection(collection) = stopSource!.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
-            XCTAssertEqual(collection.features[0].geometry, .point(Point(stop4.coordinate)))
+            XCTAssertTrue(collection.features.contains(where: { $0.geometry == .point(Point(stop4.coordinate)) }))
         } else {
             XCTFail("Stop source had no features")
         }
@@ -94,7 +94,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         let objects = MapTestDataHelper.objects
 
         let stops = [
-            objects.stop { stop in
+            "70061": objects.stop { stop in
                 stop.id = "70061"
                 stop.name = "Alewife"
                 stop.latitude = 42.396158
@@ -102,14 +102,14 @@ final class StopSourceGeneratorTests: XCTestCase {
                 stop.locationType = .stop
                 stop.parentStationId = "place-alfcl"
             },
-            objects.stop { stop in
+            "place-alfcl": objects.stop { stop in
                 stop.id = "place-alfcl"
                 stop.name = "Alewife"
                 stop.latitude = 42.39583
                 stop.longitude = -71.141287
                 stop.locationType = .station
             },
-            objects.stop { stop in
+            "place-astao": objects.stop { stop in
                 stop.id = "place-astao"
                 stop.name = "Assembly"
                 stop.latitude = 42.392811
