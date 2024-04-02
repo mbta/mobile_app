@@ -28,6 +28,7 @@
 		6EF50F482B9889D600833070 /* MockSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF50F472B9889D600833070 /* MockSocket.swift */; };
 		6EF50F512B988BF600833070 /* PredictionsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF50F502B988BF600833070 /* PredictionsFetcherTests.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
 		8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */; };
 		8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7FA8702B5F2EF2009B699D /* NearbyTransitViewTests.swift */; };
 		8C7FA8732B5F36D6009B699D /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7FA8722B5F36D6009B699D /* Backend.swift */; };
@@ -149,6 +150,7 @@
 		8C304C652B69C0C300263886 /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
 		8C42F06F2B890BC800F9A77B /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsPage.swift; sourceTree = "<group>"; };
 		8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManagerTests.swift; sourceTree = "<group>"; };
 		8C7FA8702B5F2EF2009B699D /* NearbyTransitViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitViewTests.swift; sourceTree = "<group>"; };
 		8C7FA8722B5F36D6009B699D /* Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
@@ -389,9 +391,18 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		8C5054562BB5EB5000C6A51C /* StopDetails */ = {
+			isa = PBXGroup;
+			children = (
+				8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */,
+			);
+			path = StopDetails;
+			sourceTree = "<group>";
+		};
 		9A2005C02B97B56100F562E1 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				8C5054562BB5EB5000C6A51C /* StopDetails */,
 				9A2005C32B97B5A000F562E1 /* Search */,
 				9A2005C22B97B57E00F562E1 /* Map */,
 				9A2005C12B97B56C00F562E1 /* NearbyTransit */,
@@ -845,6 +856,7 @@
 				9A2005C92B97B65900F562E1 /* NearbyStopRoutePatternView.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */,
+				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
 				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PartialSheetDetent.swift in Sources */,
 				9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */,
