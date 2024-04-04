@@ -20,6 +20,7 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
     }
 
     data class StopWithPatterns(
+        val route: Route,
         val stop: Stop,
         /** Includes both parent and child stop IDs if present */
         val allStopIds: Set<String>,
@@ -82,6 +83,7 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                         patternsByStop =
                             patternsByStop.map { (stop, patterns) ->
                                 StopWithPatterns(
+                                    route = route,
                                     stop = stop,
                                     allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) },
                                     patternsByHeadsign =
@@ -146,6 +148,7 @@ class NearbyStaticDataBuilder {
             builder.block()
             data.add(
                 NearbyStaticData.StopWithPatterns(
+                    route,
                     stop,
                     setOf(stop.id).plus(childStopIds),
                     builder.data

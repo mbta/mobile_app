@@ -174,12 +174,12 @@ final class NearbyTransitViewTests: XCTestCase {
 
         XCTAssertNotNil(try route.find(text: "52"))
         XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .parent().find(text: "Charles River Loop"))
+            .find(NearbyStopView.self, relation: .parent).find(text: "Charles River Loop"))
         XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .parent().find(text: "Dedham Mall"))
+            .find(NearbyStopView.self, relation: .parent).find(text: "Dedham Mall"))
 
         XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
-            .parent().find(text: "Watertown Yard"))
+            .find(NearbyStopView.self, relation: .parent).find(text: "Watertown Yard"))
     }
 
     @MainActor func testWithSchedules() throws {
@@ -397,7 +397,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         nearbyFetcher.nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
             builder.route(route: nearbyFetcher.nearbyByRouteAndStop!.data[0].route) { builder in
-                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", locationType: .station, parentStationId: nil)
+                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", locationType: .station, parentStationId: nil, childStopIds: [])
                 builder.stop(stop: lechmere) { _ in
                 }
             }
@@ -738,5 +738,18 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
+    }
+
+    func testStopPageLink() throws {
+        let route = ObjectCollectionBuilder.Single.shared.route { _ in }
+        let stop = ObjectCollectionBuilder.Single.shared.stop { $0.name = "This Stop" }
+        let sut = NearbyStopView(patternsAtStop: PatternsByStop(
+            route: route, stop: stop,
+            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [], upcomingTrips: nil, alertsHere: nil)]
+        ), now: Date.now.toKotlinInstant())
+
+        let stopDetailsPage = try sut.inspect().find(navigationLink: "This Stop").view(StopDetailsPage.self).actualView()
+        XCTAssertEqual(stopDetailsPage.stop, stop)
+        XCTAssertEqual(stopDetailsPage.route, route)
     }
 }

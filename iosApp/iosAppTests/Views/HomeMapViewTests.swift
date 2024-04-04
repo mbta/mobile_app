@@ -20,21 +20,25 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testNoLocationDefaultCenter() throws {
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
             locationDataManager: locationDataManager,
-            viewportProvider: ViewportProvider()
+            viewportProvider: ViewportProvider(),
+            sheetHeight: .constant(0)
         )
         XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.defaultCenter)
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
@@ -45,11 +49,13 @@ final class HomeMapViewTests: XCTestCase {
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
         var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
             locationDataManager: locationDataManager,
-            viewportProvider: ViewportProvider()
+            viewportProvider: ViewportProvider(),
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in
@@ -63,6 +69,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFetchData() throws {
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
         class FakeGlobalFetcher: GlobalFetcher {
             init() {
                 super.init(backend: IdleBackend())
@@ -91,10 +98,12 @@ final class HomeMapViewTests: XCTestCase {
         let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
 
         var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
-            viewportProvider: ViewportProvider()
+            viewportProvider: ViewportProvider(),
+            sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)

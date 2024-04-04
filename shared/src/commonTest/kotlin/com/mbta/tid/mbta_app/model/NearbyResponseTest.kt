@@ -502,6 +502,7 @@ class NearbyResponseTest {
                     route1,
                     listOf(
                         PatternsByStop(
+                            route1,
                             stop1,
                             listOf(
                                 PatternsByHeadsign(
@@ -516,6 +517,7 @@ class NearbyResponseTest {
                             )
                         ),
                         PatternsByStop(
+                            route1,
                             stop2,
                             listOf(
                                 PatternsByHeadsign(
@@ -647,6 +649,7 @@ class NearbyResponseTest {
                     route1,
                     listOf(
                         PatternsByStop(
+                            route1,
                             stop1,
                             listOf(
                                 PatternsByHeadsign(
@@ -767,6 +770,7 @@ class NearbyResponseTest {
                     route1,
                     listOf(
                         PatternsByStop(
+                            route1,
                             stop1,
                             listOf(
                                 PatternsByHeadsign(
@@ -942,6 +946,7 @@ class NearbyResponseTest {
                     route1,
                     listOf(
                         PatternsByStop(
+                            route1,
                             parentStop,
                             listOf(
                                 PatternsByHeadsign(
@@ -1005,6 +1010,7 @@ class NearbyResponseTest {
                     route,
                     listOf(
                         PatternsByStop(
+                            route,
                             stop,
                             listOf(
                                 PatternsByHeadsign(
@@ -1072,6 +1078,7 @@ class NearbyResponseTest {
                     route1,
                     listOf(
                         PatternsByStop(
+                            route1,
                             stop,
                             listOf(
                                 PatternsByHeadsign(
@@ -1088,6 +1095,7 @@ class NearbyResponseTest {
                     route2,
                     listOf(
                         PatternsByStop(
+                            route2,
                             stop,
                             listOf(
                                 PatternsByHeadsign(
@@ -1154,6 +1162,7 @@ class NearbyResponseTest {
                     route,
                     listOf(
                         PatternsByStop(
+                            route,
                             stop,
                             listOf(
                                 PatternsByHeadsign(
@@ -1224,6 +1233,7 @@ class NearbyResponseTest {
                     route,
                     listOf(
                         PatternsByStop(
+                            route,
                             stop,
                             listOf(
                                 PatternsByHeadsign(

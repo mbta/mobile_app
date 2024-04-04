@@ -134,7 +134,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longitude: -70.969853,
             name: "Sea St opp Peterson Rd",
             locationType: LocationType.stop,
-            parentStationId: nil
+            parentStationId: nil,
+            childStopIds: []
         )
         let busTrip = Trip(
             id: "trip1",
@@ -198,7 +199,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longitude: -70.969853,
             name: "South Station",
             locationType: LocationType.stop,
-            parentStationId: nil
+            parentStationId: nil,
+            childStopIds: []
         )
         let crTrip = Trip(
             id: "canonical-CR-Providence-C1-0",
@@ -250,6 +252,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
+                            route: busRoute,
                             stop: busStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(
@@ -273,6 +276,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     route: crRoute,
                     patternsByStop: [
                         PatternsByStop(
+                            route: crRoute,
                             stop: crStop,
                             patternsByHeadsign: [
                                 PatternsByHeadsign(

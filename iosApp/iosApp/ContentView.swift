@@ -1,3 +1,4 @@
+import CoreLocation
 import shared
 import SwiftPhoenixClient
 import SwiftUI
@@ -17,6 +18,15 @@ struct ContentView: View {
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
+    @State private var sheetHeight: CGFloat = .zero
+
+    private var sheetDetents: Set<PartialSheetDetent> {
+        if #available(iOS 16, *) {
+            [.small, .medium, .large]
+        } else {
+            [.medium, .large]
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -38,21 +48,25 @@ struct ContentView: View {
                     Text("Location access state unknown")
                 }
                 HomeMapView(
+                    alertsFetcher: alertsFetcher,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     railRouteShapeFetcher: railRouteShapeFetcher,
-                    viewportProvider: viewportProvider
-                )
-                Spacer()
-                NearbyTransitPageView(
-                    currentLocation: locationDataManager.currentLocation?.coordinate,
-                    globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
-                    scheduleFetcher: scheduleFetcher,
-                    predictionsFetcher: predictionsFetcher,
                     viewportProvider: viewportProvider,
-                    alertsFetcher: alertsFetcher
+                    sheetHeight: $sheetHeight
                 )
+                .ignoresSafeArea(edges: .bottom)
+                .sheet(isPresented: .constant(true)) {
+                    NavigationView {
+                        nearbyTransit
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(.stack)
+                    .partialSheetDetents(
+                        sheetDetents,
+                        largestUndimmedDetent: .medium
+                    )
+                }
             }
         }
         .searchable(
@@ -71,6 +85,26 @@ struct ContentView: View {
                 socketProvider.socket.disconnect(code: .normal, reason: "backgrounded", callback: nil)
             }
         }.task { alertsFetcher.run() }
+    }
+
+    private var nearbyTransit: some View {
+        GeometryReader { proxy in
+            NearbyTransitPageView(
+                currentLocation: locationDataManager.currentLocation?.coordinate,
+                globalFetcher: globalFetcher,
+                nearbyFetcher: nearbyFetcher,
+                scheduleFetcher: scheduleFetcher,
+                predictionsFetcher: predictionsFetcher,
+                viewportProvider: viewportProvider,
+                alertsFetcher: alertsFetcher
+            )
+            .onChange(of: proxy.size.height) { newValue in
+                // Not actually restricted to iOS 16, this just behaves terribly on iOS 15
+                if #available(iOS 16, *) {
+                    sheetHeight = newValue
+                }
+            }
+        }
     }
 }
 

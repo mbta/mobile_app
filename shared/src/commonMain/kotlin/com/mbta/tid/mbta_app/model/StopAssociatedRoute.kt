@@ -139,7 +139,11 @@ data class PatternsByHeadsign(
  * @property patternsByHeadsign [RoutePattern]s serving the stop grouped by headsign. The headsigns
  *   are listed in ascending order based on [RoutePattern.sortOrder]
  */
-data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsByHeadsign>) {
+data class PatternsByStop(
+    val route: Route,
+    val stop: Stop,
+    val patternsByHeadsign: List<PatternsByHeadsign>
+) {
     val position = Position(longitude = stop.longitude, latitude = stop.latitude)
 
     constructor(
@@ -148,6 +152,7 @@ data class PatternsByStop(val stop: Stop, val patternsByHeadsign: List<PatternsB
         cutoffTime: Instant,
         alerts: Collection<Alert>?,
     ) : this(
+        staticData.route,
         staticData.stop,
         staticData.patternsByHeadsign
             .map { PatternsByHeadsign(it, upcomingTripsMap, staticData.allStopIds, alerts) }
@@ -236,15 +241,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val activeRelevantAlerts =
         alerts?.alerts?.values?.filter {
-            it.isActive(filterAtTime) &&
-                setOf(
-                        Alert.Effect.StationClosure,
-                        Alert.Effect.Shuttle,
-                        Alert.Effect.Suspension,
-                        Alert.Effect.Detour,
-                        Alert.Effect.StopClosure
-                    )
-                    .contains(it.effect)
+            it.isActive(filterAtTime) && Alert.serviceDisruptionEffects.contains(it.effect)
         }
 
     return data

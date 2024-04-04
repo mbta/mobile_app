@@ -94,5 +94,7 @@ struct NearbyTransitPageView: View {
                 isFollowing: newViewport.isFollowing
             )
         }
+        .navigationTitle("Nearby Transit")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
