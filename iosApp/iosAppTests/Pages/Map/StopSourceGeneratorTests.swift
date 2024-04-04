@@ -123,7 +123,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             },
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse, stopsById: stops)
         let stopSourceGenerator = StopSourceGenerator(stops: stops, routeSourceDetails: routeSourceGenerator.routeSourceDetails)
         let sources = stopSourceGenerator.stopSources
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.39616238508952, longitude: -71.14129664308807)

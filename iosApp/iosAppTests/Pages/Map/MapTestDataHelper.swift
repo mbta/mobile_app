@@ -23,6 +23,30 @@ enum MapTestDataHelper {
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
 
+    static let stopAlewife = objects.stop { stop in
+        stop.id = "place-alfcl"
+        stop.latitude = 42.39583
+        stop.longitude = -71.141287
+    }
+
+    static let stopDavis = objects.stop { stop in
+        stop.id = "place-davis"
+        stop.latitude = 42.39674
+        stop.longitude = -71.121815
+    }
+
+    static let stopOakGrove = objects.stop { stop in
+        stop.id = "place-ogmnl"
+        stop.latitude = 42.43668
+        stop.longitude = -71.071097
+    }
+
+    static let stopMalden = objects.stop { stop in
+        stop.id = "place-mlmnl"
+        stop.latitude = 42.426632
+        stop.longitude = -71.07411
+    }
+
     static let patternRed10 = objects.routePattern(route: routeRed) { pattern in
         pattern.id = "Red-1-0"
         pattern.typicality = .typical
@@ -85,25 +109,28 @@ enum MapTestDataHelper {
 
     static let shapeOrangeAtypical = objects.shape { shape in shape.id = "40460002" }
 
-    static let routeResponse = RouteResponse(
-        routes: [routeRed, routeOrange],
-        routePatterns: [
-            "Red-1-0": patternRed10,
-            "Red-3-0": patternRed30,
-            "Orange-3-0": patternOrange30,
-            "Orange-7-0": patternOrange70,
-        ],
-        shapes: [
-            "canonical-933_0009": shapeRedC1,
-            "canonical-931_0009": shapeRedC2,
-            "canonical-903_0018": shapeOrangeC1,
-            "40460002": shapeOrangeAtypical,
-        ],
-        trips: [
-            "canonical-Red-C1-0": tripRedC1,
-            "canonical-Red-C2-0": tripRedC2,
-            "canonical-Orange-C1-0": tripOrangeC1,
-            "61746557": tripOrangeAtypical,
-        ]
-    )
+    static let routeResponse = MapFriendlyRouteResponse(
+        routeShapes: [
+            MapFriendlyRouteShape(sourceRoutePatternId: patternRed10.id, sourceRouteId: patternRed10.routeId,
+                                  routeSegments: [RouteSegment(id: "segment1",
+                                                               sourceRoutePatternId: patternRed10.id,
+                                                               sourceRouteId: patternRed10.routeId,
+                                                               stopIds: [stopAlewife.id, stopDavis.id],
+                                                               otherPatternsByStopId: [:])],
+                                  shape: shapeRedC1),
+            MapFriendlyRouteShape(sourceRoutePatternId: patternRed30.id, sourceRouteId: patternRed30.routeId,
+                                  routeSegments: [RouteSegment(id: "segment2",
+                                                               sourceRoutePatternId: patternRed30.id,
+                                                               sourceRouteId: patternRed30.routeId,
+                                                               stopIds: [stopAlewife.id, stopDavis.id],
+                                                               otherPatternsByStopId: [:])],
+                                  shape: shapeRedC1),
+            MapFriendlyRouteShape(sourceRoutePatternId: patternOrange30.id, sourceRouteId: patternOrange30.routeId,
+                                  routeSegments: [RouteSegment(id: "segment3",
+                                                               sourceRoutePatternId: patternOrange30.id,
+                                                               sourceRouteId: patternOrange30.routeId,
+                                                               stopIds: [stopOakGrove.id, stopMalden.id],
+                                                               otherPatternsByStopId: [:])],
+                                  shape: shapeOrangeC1),
+        ])
 }
