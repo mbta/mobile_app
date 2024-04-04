@@ -15,12 +15,6 @@ struct StopFeatureData {
     let feature: Feature
 }
 
-enum StopSourceServiceStatus {
-    case normal
-    case disrupted
-    case noService
-}
-
 class StopSourceGenerator {
     let stops: [String: Stop]
     let routeSourceDetails: [RouteSourceData]?
@@ -105,13 +99,7 @@ class StopSourceGenerator {
         }
     }
 
-    func getServiceStatus(stop: Stop) -> StopSourceServiceStatus {
-        guard let alertsAtStop = alertsByStop[stop.id] else { return StopSourceServiceStatus.normal }
-        if alertsAtStop.hasNoService {
-            return StopSourceServiceStatus.noService
-        } else if alertsAtStop.hasSomeDisruptedService {
-            return StopSourceServiceStatus.disrupted
-        }
-        return StopSourceServiceStatus.normal
+    func getServiceStatus(stop: Stop) -> StopServiceStatus {
+        alertsByStop[stop.id]?.serviceStatus ?? StopServiceStatus.normal
     }
 }

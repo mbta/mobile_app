@@ -5,6 +5,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
 data class GlobalStaticData(val globalData: GlobalResponse) {
+
+    /*
+    Only stops that don't have a parent stop (stations and isolated stops) are returned in the map.
+    Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on
+    their children, but those child alerts aren't included in the map returned by this function.
+     */
     fun withRealtimeAlertsByStop(
         alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant
@@ -45,20 +51,18 @@ data class GlobalStaticData(val globalData: GlobalResponse) {
         val alertingStop =
             AlertAssociatedStop(
                 stop = stop,
-                relevantAlerts = alertsByStop[stop.id]?.toSet() ?: emptySet(),
+                relevantAlerts = alertsByStop[stop.id]?.toList() ?: emptyList(),
                 routePatterns = getRoutePatternsFor(stop.id),
                 childStops =
                     stop.childStopIds
-                        ?.mapNotNull { childId -> globalData.stops[childId] }
-                        ?.associateBy { it.id }
-                        ?: emptyMap(),
+                        .mapNotNull { childId -> globalData.stops[childId] }
+                        .associateBy { it.id },
                 childAlerts =
                     stop.childStopIds
-                        ?.mapNotNull { childId ->
+                        .mapNotNull { childId ->
                             generateAlertingStopFor(globalData.stops[childId], alertsByStop)
                         }
-                        ?.associateBy { it.stop.id }
-                        ?: emptyMap()
+                        .associateBy { it.stop.id }
             )
 
         // Return null for any stops without alerts or child alerts
