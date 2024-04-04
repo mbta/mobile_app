@@ -19,6 +19,7 @@ struct ContentView: View {
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = .zero
+    @State private var navigationStack: [SheetNavigationStackEntry] = []
 
     private var sheetDetents: Set<PartialSheetDetent> {
         if #available(iOS 16, *) {
@@ -57,11 +58,16 @@ struct ContentView: View {
                 )
                 .ignoresSafeArea(edges: .bottom)
                 .sheet(isPresented: .constant(true)) {
-                    NavigationStack {
+                    NavigationStack(path: $navigationStack) {
                         nearbyTransit
                             .navigationBarHidden(true)
+                            .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
+                                switch entry {
+                                case let .stopDetails(stop, route):
+                                    StopDetailsPage(stop: stop, route: route)
+                                }
+                            }
                     }
-                    .navigationViewStyle(.stack)
                     .partialSheetDetents(
                         sheetDetents,
                         largestUndimmedDetent: .medium

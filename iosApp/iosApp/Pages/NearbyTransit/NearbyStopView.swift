@@ -15,9 +15,7 @@ struct NearbyStopView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            NavigationLink {
-                StopDetailsPage(stop: patternsAtStop.stop, route: patternsAtStop.route)
-            } label: {
+            NavigationLink(value: SheetNavigationStackEntry.stopDetails(patternsAtStop.stop, patternsAtStop.route)) {
                 Text(patternsAtStop.stop.name).fontWeight(.bold)
             }
 
