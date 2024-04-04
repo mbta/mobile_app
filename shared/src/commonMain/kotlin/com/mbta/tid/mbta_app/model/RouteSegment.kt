@@ -6,6 +6,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RouteSegment(
     val id: String,
-    @SerialName("first_stop") val firstStop: Stop,
-    @SerialName("last_stop") val lastStop: Stop
-)
+    @SerialName("source_route_pattern_id") val sourceRoutePatternId: String,
+    @SerialName("source_route_id") val sourceRouteId: String,
+    @SerialName("stop_ids") val stopIds: String,
+    @SerialName("other_patterns_by_stop_id") val otherPatternsByStopId: Map<String, RoutePatternKey>
+) {
+    @Serializable
+    data class RoutePatternKey(
+        @SerialName("route_id") val routeId: String,
+        @SerialName("route_pattern_id") val routePatternId: String
+    )
+}

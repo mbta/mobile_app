@@ -1,3 +1,4 @@
+
 //
 //  RouteLayerGenerator.swift
 //  iosApp
@@ -15,34 +16,31 @@ class RouteLayerGenerator {
     let routeLayers: [LineLayer]
 
     static let routeLayerId = "route-layer"
-    static func getRouteLayerId(_ routePatternId: String, _ segmentId: String) -> String { "\(routeLayerId)-\(routePatternId)-\(segmentId)" }
+    static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
 
     init(routeData: RouteResponse) {
         self.routeData = routeData
-        routeLayers = Self.createRouteLayers(routeShapes: routeData.routeShapes)
+        routeLayers = Self.createRouteLayers(routes: routeData.routes)
     }
 
-    static func createRouteLayers(routeShapes: [MapFriendlyRouteShape]) -> [LineLayer] {
-        routeShapes
-            .flatMap { createRouteLayers(routeShape: $0) }
+    static func createRouteLayers(routes: [Route]) -> [LineLayer] {
+        // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
+        routes
+            .sorted { $0.sortOrder >= $1.sortOrder }
+            .map { createRouteLayer(route: $0) }
     }
 
-    static func createRouteLayers(routeShape: MapFriendlyRouteShape) -> [LineLayer] {
-        let segments = routeShape.routeSegments
-
-        return segments.map { segment in
-
-            var segmentLayer = LineLayer(
-                id: Self.getRouteLayerId(routeShape.routePatternId, segment.id),
-                source: RouteSourceGenerator.getRouteSourceId(routeShape.routePatternId, segment.id)
-            )
-            segmentLayer.lineWidth = .constant(4.0)
-            segmentLayer.lineColor = .constant(StyleColor(UIColor(hex: routeShape.color)))
-            segmentLayer.lineBorderWidth = .constant(1.0)
-            segmentLayer.lineBorderColor = .constant(StyleColor(.white))
-            segmentLayer.lineJoin = .constant(.round)
-            segmentLayer.lineCap = .constant(.round)
-            return segmentLayer
-        }
+    static func createRouteLayer(route: Route) -> LineLayer {
+        var routeLayer = LineLayer(
+            id: Self.getRouteLayerId(route.id),
+            source: RouteSourceGenerator.getRouteSourceId(route.id)
+        )
+        routeLayer.lineWidth = .constant(4.0)
+        routeLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+        routeLayer.lineBorderWidth = .constant(1.0)
+        routeLayer.lineBorderColor = .constant(StyleColor(.white))
+        routeLayer.lineJoin = .constant(.round)
+        routeLayer.lineCap = .constant(.round)
+        return routeLayer
     }
 }

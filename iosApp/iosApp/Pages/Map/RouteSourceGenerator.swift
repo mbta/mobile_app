@@ -41,7 +41,7 @@ class RouteSourceGenerator {
     let routeSources: [GeoJSONSource]
 
     static let routeSourceId = "route-source"
-    static func getRouteSourceId(_ routePatternId: String, _ segmentId: String) -> String { "\(routeSourceId)-\(routePatternId)-\(segmentId)" }
+    static func getRouteSourceId(_ routeId: String) -> String { "\(routeSourceId)-\(routeId)" }
 
     init(routeData: RouteResponse) {
         self.routeData = routeData
@@ -50,7 +50,7 @@ class RouteSourceGenerator {
     }
 
     static func generateRouteSources(routeData: RouteResponse) -> [RouteSourceData] {
-        routeData.routeShapes.map { Self.generateRouteSource(routeShape: $0) }
+        routeData.routes.map { Self.generateRouteSource(route: $0, routeData: routeData) }
     }
 
     static func generateRouteSource(route: Route, routeData: RouteResponse) -> RouteSourceData {
@@ -62,7 +62,7 @@ class RouteSourceGenerator {
         return .init(route: route, lines: routeLines, source: routeSource)
     }
 
-    static func generateRouteLines(routeShape _: MapFriendlyRouteShape) -> [RouteLineData] {
+    static func generateRouteLines(route: Route, routeData: RouteResponse) -> [RouteLineData] {
         (route.routePatternIds ?? [])
             .map { routeData.routePatterns[$0] }
             .filter { $0?.typicality == .typical }

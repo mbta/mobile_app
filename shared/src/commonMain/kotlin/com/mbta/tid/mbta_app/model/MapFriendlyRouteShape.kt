@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MapFriendlyRouteShape(
     val color: String,
-    @SerialName("route_pattern_id") val routePatternId: String,
-    @SerialName("route_segments") val routeSegments: List<RouteSegment>
+    @SerialName("source_route_pattern_id") val sourceRoutePatternId: String,
+    @SerialName("source_route_id") val sourceRouteId: String,
+    @SerialName("route_segments") val routeSegments: List<RouteSegment>,
+    val shape: Shape
 )
