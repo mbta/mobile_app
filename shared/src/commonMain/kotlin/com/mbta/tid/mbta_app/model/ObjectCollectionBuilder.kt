@@ -264,8 +264,10 @@ class ObjectCollectionBuilder {
         var name = ""
         var locationType = LocationType.STOP
         var parentStationId: String? = null
+        var childStopIds: List<String> = emptyList()
 
-        override fun built() = Stop(id, latitude, longitude, name, locationType, parentStationId)
+        override fun built() =
+            Stop(id, latitude, longitude, name, locationType, parentStationId, childStopIds)
     }
 
     fun stop(block: StopBuilder.() -> Unit = {}) = build(stops, StopBuilder(), block)

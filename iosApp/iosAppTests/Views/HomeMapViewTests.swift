@@ -20,11 +20,13 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testNoLocationDefaultCenter() throws {
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -36,6 +38,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
         let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
@@ -46,6 +49,7 @@ final class HomeMapViewTests: XCTestCase {
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
         var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -65,6 +69,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFetchData() throws {
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
         class FakeGlobalFetcher: GlobalFetcher {
             init() {
                 super.init(backend: IdleBackend())
@@ -93,6 +98,7 @@ final class HomeMapViewTests: XCTestCase {
         let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
 
         var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),

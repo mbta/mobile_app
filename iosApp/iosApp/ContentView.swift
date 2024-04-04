@@ -48,6 +48,7 @@ struct ContentView: View {
                     Text("Location access state unknown")
                 }
                 HomeMapView(
+                    alertsFetcher: alertsFetcher,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     railRouteShapeFetcher: railRouteShapeFetcher,

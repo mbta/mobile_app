@@ -13,21 +13,17 @@ import SwiftUI
 
 class MapLayerManager {
     let map: MapboxMap
-
-    static let stopZoomThreshold: Double = 13.0
-    static let tombstoneZoomThreshold: Double = 16.0
-
-    static let stationIconId = "t-station"
-    static let stopIconId = "bus-stop"
-    static let stopIconSmallId = "bus-stop-small"
-    static let stopIcons: [String] = [stationIconId, stopIconId, stopIconSmallId]
+    var routeSourceGenerator: RouteSourceGenerator?
+    var routeLayerGenerator: RouteLayerGenerator?
+    var stopSourceGenerator: StopSourceGenerator?
+    var stopLayerGenerator: StopLayerGenerator?
 
     static let stopLayerTypes: [LocationType] = [.stop, .station]
 
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in Self.stopIcons {
+        for iconId in StopIcons.all {
             do {
                 try map.addImage(UIImage(named: iconId)!, id: iconId)
             } catch {
@@ -36,17 +32,28 @@ class MapLayerManager {
         }
     }
 
-    func addSources(sources: [GeoJSONSource]) {
-        for source in sources {
-            do {
-                try map.addSource(source)
-            } catch {
-                Logger().error("Failed to add source \(source.id)\n\(error)")
-            }
+    func addSources(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
+        self.routeSourceGenerator = routeSourceGenerator
+        self.stopSourceGenerator = stopSourceGenerator
+
+        for source in routeSourceGenerator.routeSources + stopSourceGenerator.stopSources {
+            addSource(source: source)
         }
     }
 
-    func addLayers(layers: [Layer]) {
+    private func addSource(source: GeoJSONSource) {
+        do {
+            try map.addSource(source)
+        } catch {
+            Logger().error("Failed to add source \(source.id)\n\(error)")
+        }
+    }
+
+    func addLayers(routeLayerGenerator: RouteLayerGenerator, stopLayerGenerator: StopLayerGenerator) {
+        self.routeLayerGenerator = routeLayerGenerator
+        self.stopLayerGenerator = stopLayerGenerator
+
+        let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator.stopLayers
         for layer in layers {
             do {
                 if map.layerExists(withId: "puck") {
@@ -60,8 +67,39 @@ class MapLayerManager {
         }
     }
 
-    func updateStopLayers(_ zoomLevel: CGFloat) {
-        let opacity = zoomLevel > Self.stopZoomThreshold ? 1.0 : 0.0
+    func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
+        self.routeSourceGenerator = routeSourceGenerator
+
+        routeSourceGenerator.routeSources.forEach { routeSource in
+            if map.sourceExists(withId: routeSource.id) {
+                guard let actualData = routeSource.data else { return }
+                map.updateGeoJSONSource(withId: routeSource.id, data: actualData)
+            } else {
+                addSource(source: routeSource)
+            }
+        }
+    }
+
+    func updateSourceData(stopSourceGenerator: StopSourceGenerator) {
+        self.stopSourceGenerator = stopSourceGenerator
+
+        stopSourceGenerator.stopSources.forEach { stopSource in
+            if map.sourceExists(withId: stopSource.id) {
+                guard let actualData = stopSource.data else { return }
+                map.updateGeoJSONSource(withId: stopSource.id, data: actualData)
+            } else {
+                addSource(source: stopSource)
+            }
+        }
+    }
+
+    func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
+        updateSourceData(routeSourceGenerator: routeSourceGenerator)
+        updateSourceData(stopSourceGenerator: stopSourceGenerator)
+    }
+
+    func updateStopLayerZoom(_ zoomLevel: CGFloat) {
+        let opacity = zoomLevel > StopIcons.stopZoomThreshold ? 1.0 : 0.0
         for layerType: LocationType in Self.stopLayerTypes {
             let layerId = StopLayerGenerator.getStopLayerId(layerType)
             do {
