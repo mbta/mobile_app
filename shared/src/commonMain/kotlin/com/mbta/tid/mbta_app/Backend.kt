@@ -32,7 +32,7 @@ class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
 
     companion object {
-        const val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
+        const val mobileBackendHost = "mobile-app-backend-dev-orange.mbtace.com"
     }
 
     private val httpClient =
@@ -90,6 +90,21 @@ class Backend(engine: HttpClientEngine) {
         httpClient
             .get {
                 url { path("api/shapes/rail") }
+                expectSuccess = true
+            }
+            .body()
+
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class,
+        HttpRequestTimeoutException::class
+    )
+    suspend fun getMapFriendlyRailShapes(): RouteResponse =
+        httpClient
+            .get {
+                url { path("api/shapes/map-friendly") }
                 expectSuccess = true
             }
             .body()

@@ -8,8 +8,9 @@ data class RouteSegment(
     val id: String,
     @SerialName("source_route_pattern_id") val sourceRoutePatternId: String,
     @SerialName("source_route_id") val sourceRouteId: String,
-    @SerialName("stop_ids") val stopIds: String,
-    @SerialName("other_patterns_by_stop_id") val otherPatternsByStopId: Map<String, RoutePatternKey>
+    @SerialName("stop_ids") val stopIds: List<String>,
+    @SerialName("other_patterns_by_stop_id")
+    val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
 ) {
     @Serializable
     data class RoutePatternKey(
