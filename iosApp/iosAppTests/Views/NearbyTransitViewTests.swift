@@ -748,8 +748,6 @@ final class NearbyTransitViewTests: XCTestCase {
             patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [], upcomingTrips: nil, alertsHere: nil)]
         ), now: Date.now.toKotlinInstant())
 
-        let stopDetailsPage = try sut.inspect().find(navigationLink: "This Stop").view(StopDetailsPage.self).actualView()
-        XCTAssertEqual(stopDetailsPage.stop, stop)
-        XCTAssertEqual(stopDetailsPage.route, route)
+        XCTAssertEqual(try sut.inspect().find(navigationLink: "This Stop").value(SheetNavigationStackEntry.self), .stopDetails(stop, route))
     }
 }
