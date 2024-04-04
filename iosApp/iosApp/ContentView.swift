@@ -29,7 +29,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 SearchView(
                     query: searchObserver.debouncedText,
@@ -56,7 +56,7 @@ struct ContentView: View {
                 )
                 .ignoresSafeArea(edges: .bottom)
                 .sheet(isPresented: .constant(true)) {
-                    NavigationView {
+                    NavigationStack {
                         nearbyTransit
                             .navigationBarHidden(true)
                     }
