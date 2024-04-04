@@ -32,9 +32,9 @@ enum StopIcons {
             .expression(
                 Exp(.match) {
                     Exp(.get) { StopSourceGenerator.propServiceStatusKey }
-                    String(describing: StopSourceServiceStatus.noService)
+                    String(describing: StopServiceStatus.noService)
                     stationIconNoServiceId
-                    String(describing: StopSourceServiceStatus.disrupted)
+                    String(describing: StopServiceStatus.partialService)
                     stationIconIssuesId
                     stationIconId
                 }
@@ -46,9 +46,9 @@ enum StopIcons {
                 tombstoneZoomThreshold
                 Exp(.match) {
                     Exp(.get) { StopSourceGenerator.propServiceStatusKey }
-                    String(describing: StopSourceServiceStatus.noService)
+                    String(describing: StopServiceStatus.noService)
                     stopIconNoServiceId
-                    String(describing: StopSourceServiceStatus.disrupted)
+                    String(describing: StopServiceStatus.partialService)
                     stopIconIssuesId
                     stopIconId
                 }

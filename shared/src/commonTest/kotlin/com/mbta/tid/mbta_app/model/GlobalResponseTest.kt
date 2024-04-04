@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -50,9 +49,8 @@ class GlobalResponseTest {
 
         val alertingStop = alertsByStop?.get(stop.id)
         assertNotNull(alertingStop)
-        assertEquals(alertingStop.serviceAlerts, listOf(alert))
-        assertTrue(alertingStop.hasNoService)
-        assertTrue(alertingStop.hasSomeDisruptedService)
+        assertEquals(listOf(alert), alertingStop.serviceAlerts)
+        assertEquals(StopServiceStatus.NO_SERVICE, alertingStop.serviceStatus)
     }
 
     @Test
@@ -105,13 +103,7 @@ class GlobalResponseTest {
         val childStop =
             objects.stop {
                 id = "child"
-                childStopIds = listOf("nestedChild")
                 parentStationId = parentStop.id
-            }
-        val nestedChildStop =
-            objects.stop {
-                id = "nestedChild"
-                parentStationId = childStop.id
             }
         val route = objects.route { id = "route" }
         val routePattern = objects.routePattern(route) { id = "rp1" }
@@ -133,14 +125,14 @@ class GlobalResponseTest {
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = nestedChildStop.id
+                    stop = childStop.id
                 )
             }
 
         val globalResponse =
             GlobalResponse(
                 objects = objects,
-                patternIdsByStop = mapOf(Pair(nestedChildStop.id, listOf(routePattern.id)))
+                patternIdsByStop = mapOf(Pair(childStop.id, listOf(routePattern.id)))
             )
         val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
@@ -149,14 +141,12 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertTrue(alertingParent.hasNoService)
-        assertTrue(alertingParent.hasSomeDisruptedService)
+        assertEquals(StopServiceStatus.NO_SERVICE, alertingParent.serviceStatus)
 
         val childAlert = alertingParent.childAlerts[childStop.id]
-        val nestedChildAlert = childAlert?.childAlerts?.get(nestedChildStop.id)
-        assertNotNull(nestedChildAlert)
-        assertTrue(nestedChildAlert.hasNoService)
-        assertEquals(nestedChildAlert.serviceAlerts, listOf(alert))
+        assertNotNull(childAlert)
+        assertEquals(StopServiceStatus.NO_SERVICE, childAlert.serviceStatus)
+        assertEquals(listOf(alert), childAlert.serviceAlerts)
     }
 
     @Test
@@ -165,23 +155,17 @@ class GlobalResponseTest {
         val parentStop =
             objects.stop {
                 id = "parent"
-                childStopIds = listOf("child")
+                childStopIds = listOf("child1", "child2")
             }
-        val childStop =
+        val childStop1 =
             objects.stop {
-                id = "child"
-                childStopIds = listOf("nestedChild1", "nestedChild2")
+                id = "child1"
                 parentStationId = parentStop.id
             }
-        val nestedChildStop1 =
+        val childStop2 =
             objects.stop {
-                id = "nestedChild1"
-                parentStationId = childStop.id
-            }
-        val nestedChildStop2 =
-            objects.stop {
-                id = "nestedChild2"
-                parentStationId = childStop.id
+                id = "child2"
+                parentStationId = parentStop.id
             }
         val route = objects.route { id = "route" }
         val routePattern1 = objects.routePattern(route) { id = "rp1" }
@@ -204,7 +188,7 @@ class GlobalResponseTest {
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = nestedChildStop1.id
+                    stop = childStop1.id
                 )
             }
         val alert2 =
@@ -218,7 +202,7 @@ class GlobalResponseTest {
                     listOf(),
                     route = route.id,
                     routeType = route.type,
-                    stop = nestedChildStop2.id
+                    stop = childStop2.id
                 )
             }
 
@@ -227,8 +211,8 @@ class GlobalResponseTest {
                 objects = objects,
                 patternIdsByStop =
                     mapOf(
-                        Pair(nestedChildStop1.id, listOf(routePattern1.id)),
-                        Pair(nestedChildStop2.id, listOf(routePattern2.id))
+                        Pair(childStop1.id, listOf(routePattern1.id)),
+                        Pair(childStop2.id, listOf(routePattern2.id))
                     )
             )
         val staticData = GlobalStaticData(globalData = globalResponse)
@@ -238,21 +222,17 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertFalse(alertingParent.hasNoService)
-        assertTrue(alertingParent.hasSomeDisruptedService)
+        assertEquals(StopServiceStatus.PARTIAL_SERVICE, alertingParent.serviceStatus)
 
-        val childAlert = alertingParent.childAlerts[childStop.id]
-        assertNotNull(childAlert)
+        val child1Alert = alertingParent.childAlerts[childStop1.id]
+        assertNotNull(child1Alert)
+        assertEquals(StopServiceStatus.NO_SERVICE, child1Alert.serviceStatus)
+        assertEquals(listOf(alert1), child1Alert.serviceAlerts)
 
-        val nestedChild1Alert = childAlert.childAlerts[nestedChildStop1.id]
-        assertNotNull(nestedChild1Alert)
-        assertTrue(nestedChild1Alert.hasNoService)
-        assertEquals(nestedChild1Alert.serviceAlerts, listOf(alert1))
-
-        val nestedChild2Alert = childAlert.childAlerts[nestedChildStop2.id]
-        assertNotNull(nestedChild2Alert)
-        assertFalse(nestedChild2Alert.hasNoService)
-        assertEquals(nestedChild2Alert.serviceAlerts, emptyList())
-        assertEquals(nestedChild2Alert.relevantAlerts, setOf(alert2))
+        val child2Alert = alertingParent.childAlerts[childStop2.id]
+        assertNotNull(child2Alert)
+        assertEquals(StopServiceStatus.NORMAL, child2Alert.serviceStatus)
+        assertEquals(emptyList(), child2Alert.serviceAlerts)
+        assertEquals(listOf(alert2), child2Alert.relevantAlerts)
     }
 }
