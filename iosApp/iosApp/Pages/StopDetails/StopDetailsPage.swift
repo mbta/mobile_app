@@ -12,12 +12,12 @@ import SwiftUI
 
 struct StopDetailsPage: View {
     var stop: Stop
-    var route: Route
+    var route: Route?
 
     var body: some View {
         Text("Stop: \(stop.name)")
             .navigationTitle("Stop Details")
-        Text("Route: \(route.longName)")
+        Text("Route: \(route?.longName ?? "-")")
     }
 }
 
