@@ -13,6 +13,17 @@ data class Alert(
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle
 ) : BackendObject {
+    companion object {
+        val serviceDisruptionEffects =
+            setOf(
+                Alert.Effect.StationClosure,
+                Alert.Effect.Shuttle,
+                Alert.Effect.Suspension,
+                Alert.Effect.Detour,
+                Alert.Effect.StopClosure
+            )
+    }
+
     @Serializable data class ActivePeriod(val start: Instant, val end: Instant?)
 
     @Serializable

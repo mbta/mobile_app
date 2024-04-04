@@ -32,28 +32,12 @@ class StopLayerGenerator {
         let layerId = Self.getStopLayerId(locationType)
         let sourceId = StopSourceGenerator.getStopSourceId(locationType)
         var stopLayer = SymbolLayer(id: layerId, source: sourceId)
-        stopLayer.iconImage = Self.getStopLayerIcon(locationType)
+        stopLayer.iconImage = StopIcons.getStopLayerIcon(locationType)
         stopLayer.iconAllowOverlap = .constant(true)
-        stopLayer.minZoom = MapLayerManager.stopZoomThreshold - 1
+        stopLayer.minZoom = StopIcons.stopZoomThreshold - 1
         stopLayer.iconOpacity = .constant(0)
         stopLayer.iconOpacityTransition = StyleTransition(duration: 1, delay: 0)
 
         return stopLayer
-    }
-
-    static func getStopLayerIcon(_ locationType: LocationType) -> Value<ResolvedImage> {
-        switch locationType {
-        case .station:
-            .constant(.name(MapLayerManager.stationIconId))
-        case .stop:
-            .expression(Exp(.step) {
-                Exp(.zoom)
-                MapLayerManager.stopIconSmallId
-                MapLayerManager.tombstoneZoomThreshold
-                MapLayerManager.stopIconId
-            })
-        default:
-            .constant(.name(""))
-        }
     }
 }

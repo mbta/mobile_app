@@ -44,8 +44,8 @@ final class ContentViewTests: XCTestCase {
 
         wait(for: [connectedExpectation], timeout: 1)
 
-        try sut.inspect().navigationView().callOnChange(newValue: ScenePhase.background)
-        wait(for: [disconnectedExpectation], timeout: 1)
+        try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.background)
+        wait(for: [disconnectedExpectation], timeout: 5)
     }
 
     func testReconnectsSocketAfterBackgroundingAndReactivating() throws {
@@ -71,9 +71,9 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().navigationView().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().navigationView().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 

@@ -18,6 +18,7 @@ struct StopFeatureData {
 class StopSourceGenerator {
     let stops: [String: Stop]
     let routeSourceDetails: [RouteSourceData]?
+    let alertsByStop: [String: AlertAssociatedStop]
 
     var stopSources: [GeoJSONSource] = []
 
@@ -29,16 +30,20 @@ class StopSourceGenerator {
         "\(stopSourceId)-\(locationType.name)"
     }
 
-    init(stops: [String: Stop], routeSourceDetails: [RouteSourceData]? = nil) {
+    static let propIdKey = "id"
+    static let propServiceStatusKey = "serviceStatus"
+
+    init(
+        stops: [String: Stop],
+        routeSourceDetails: [RouteSourceData]? = nil,
+        alertsByStop: [String: AlertAssociatedStop]? = nil
+    ) {
         self.stops = stops
         self.routeSourceDetails = routeSourceDetails
+        self.alertsByStop = alertsByStop ?? [:]
 
-        stopFeatures = generateStopFeatures()
+        stopFeatures = generateRouteAssociatedStops() + generateRemainingStops()
         stopSources = generateStopSources()
-    }
-
-    func generateStopFeatures() -> [StopFeatureData] {
-        generateRouteAssociatedStops() + generateRemainingStops()
     }
 
     func generateRouteAssociatedStops() -> [StopFeatureData] {
@@ -51,12 +56,12 @@ class StopSourceGenerator {
 
                     if touchedStopIds.contains(stop.id) { return nil }
 
-                    let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)
-                    var stopFeature = Feature(geometry: Point(snappedCoord?.coordinate ?? stop.coordinate))
-                    stopFeature.identifier = FeatureIdentifier(stop.id)
-
+                    let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
                     touchedStopIds.insert(stop.id)
-                    return .init(stop: stop, feature: stopFeature)
+                    return .init(
+                        stop: stop,
+                        feature: generateStopFeature(stop, at: snappedCoord)
+                    )
                 }
             }
         }
@@ -67,12 +72,23 @@ class StopSourceGenerator {
             if touchedStopIds.contains(stop.id) { return nil }
             if stop.parentStationId != nil { return nil }
 
-            var stopFeature = Feature(geometry: Point(stop.coordinate))
-            stopFeature.identifier = FeatureIdentifier(stop.id)
-
             touchedStopIds.insert(stop.id)
-            return .init(stop: stop, feature: stopFeature)
+            return .init(stop: stop, feature: generateStopFeature(stop))
         }
+    }
+
+    func generateStopFeature(_ stop: Stop, at overrideLocation: CLLocationCoordinate2D? = nil) -> Feature {
+        var stopFeature = Feature(geometry: Point(overrideLocation ?? stop.coordinate))
+        stopFeature.identifier = FeatureIdentifier(stop.id)
+        stopFeature.properties = generateStopFeatureProperties(stop)
+        return stopFeature
+    }
+
+    func generateStopFeatureProperties(_ stop: Stop) -> JSONObject {
+        var featureProps = JSONObject()
+        featureProps[Self.propIdKey] = JSONValue(String(describing: stop.id))
+        featureProps[Self.propServiceStatusKey] = JSONValue(String(describing: getServiceStatus(stop: stop)))
+        return featureProps
     }
 
     func generateStopSources() -> [GeoJSONSource] {
@@ -81,5 +97,9 @@ class StopSourceGenerator {
             stopSource.data = .featureCollection(FeatureCollection(features: featureData.map(\.feature)))
             return stopSource
         }
+    }
+
+    func getServiceStatus(stop: Stop) -> StopServiceStatus {
+        alertsByStop[stop.id]?.serviceStatus ?? StopServiceStatus.normal
     }
 }

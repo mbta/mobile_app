@@ -30,7 +30,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 SearchView(
                     query: searchObserver.debouncedText,
@@ -49,6 +49,7 @@ struct ContentView: View {
                     Text("Location access state unknown")
                 }
                 HomeMapView(
+                    alertsFetcher: alertsFetcher,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     railRouteShapeFetcher: railRouteShapeFetcher,
