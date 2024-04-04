@@ -10,6 +10,7 @@ struct ContentView: View {
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var alertsFetcher: AlertsFetcher
+    @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
@@ -64,7 +65,12 @@ struct ContentView: View {
                             .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
                                 switch entry {
                                 case let .stopDetails(stop, route):
-                                    StopDetailsPage(stop: stop, route: route)
+                                    StopDetailsPage(
+                                        backend: backendProvider.backend,
+                                        socket: socketProvider.socket,
+                                        globalFetcher: globalFetcher,
+                                        stop: stop, route: route
+                                    )
                                 }
                             }
                     }

@@ -14,13 +14,10 @@ struct NearbyRouteView: View {
     let now: Instant
 
     var body: some View {
-        Section {
+        RoutePillSection(route: nearbyRoute.route) {
             ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsAtStop in
                 NearbyStopView(patternsAtStop: patternsAtStop, now: now)
             }
-        }
-        header: {
-            RoutePill(route: nearbyRoute.route).padding(.leading, -20)
         }
     }
 }
