@@ -85,7 +85,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         if case let .featureCollection(collection) = stopSource!.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
             if case let .string(serviceStatus) = collection.features[0].properties![StopSourceGenerator.propServiceStatusKey] {
-                XCTAssertEqual(serviceStatus, String(describing: StopSourceServiceStatus.normal))
+                XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.normal))
             } else {
                 XCTFail("Source status property was not set correctly")
             }
@@ -221,7 +221,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             }
             XCTAssertNotNil(alewifeFeature)
             if case let .string(serviceStatus) = alewifeFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
-                XCTAssertEqual(serviceStatus, String(describing: StopSourceServiceStatus.disrupted))
+                XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.partialService))
             } else {
                 XCTFail("Disrupted source status property was not set correctly")
             }
@@ -231,7 +231,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             }
             XCTAssertNotNil(assemblyFeature)
             if case let .string(serviceStatus) = assemblyFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
-                XCTAssertEqual(serviceStatus, String(describing: StopSourceServiceStatus.noService))
+                XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.noService))
             } else {
                 XCTFail("No service source status property was not set correctly")
             }
