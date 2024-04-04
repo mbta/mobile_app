@@ -18,27 +18,12 @@ class MapLayerManager {
     var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
 
-    static let stopZoomThreshold: Double = 13.0
-    static let tombstoneZoomThreshold: Double = 16.0
-
-    static let stationIconId = "t-station"
-    static let stationIconIssuesId = "t-station-issues"
-    static let stationIconNoServiceId = "t-station-no-service"
-    static let stopIconId = "bus-stop"
-    static let stopIconIssuesId = "bus-stop-issues"
-    static let stopIconNoServiceId = "bus-stop-no-service"
-    static let stopIconSmallId = "bus-stop-small"
-    static let stopIcons: [String] = [
-        stationIconId, stationIconIssuesId, stationIconNoServiceId,
-        stopIconId, stopIconIssuesId, stopIconNoServiceId, stopIconSmallId,
-    ]
-
     static let stopLayerTypes: [LocationType] = [.stop, .station]
 
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in Self.stopIcons {
+        for iconId in StopIcons.all {
             do {
                 try map.addImage(UIImage(named: iconId)!, id: iconId)
             } catch {
@@ -114,7 +99,7 @@ class MapLayerManager {
     }
 
     func updateStopLayerZoom(_ zoomLevel: CGFloat) {
-        let opacity = zoomLevel > Self.stopZoomThreshold ? 1.0 : 0.0
+        let opacity = zoomLevel > StopIcons.stopZoomThreshold ? 1.0 : 0.0
         for layerType: LocationType in Self.stopLayerTypes {
             let layerId = StopLayerGenerator.getStopLayerId(layerType)
             do {
