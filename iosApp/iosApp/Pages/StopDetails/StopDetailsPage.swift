@@ -73,11 +73,6 @@ struct StopDetailsPage: View {
 
     func joinPredictions() {
         Task {
-            if #available(iOS 16.0, *) {
-                try await Task.sleep(for: .seconds(1))
-            } else {
-                // Fallback on earlier versions
-            }
             predictionsFetcher.run(stopIds: [stop.id])
         }
     }
