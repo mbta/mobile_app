@@ -9,9 +9,9 @@
 @_spi(Experimental) import MapboxMaps
 
 class ViewportProvider: ObservableObject {
+    static let defaultAnimation: ViewportAnimation = .easeInOut(duration: 1)
     static let defaultCenter: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
     static let defaultZoom: CGFloat = StopIcons.stopZoomThreshold + 0.25
-    static let defaultAnimation: ViewportAnimation = .easeInOut(duration: 1)
 
     @Published var viewport: Viewport
     @Published var cameraState: CameraState

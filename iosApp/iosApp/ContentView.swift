@@ -10,6 +10,7 @@ struct ContentView: View {
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var alertsFetcher: AlertsFetcher
+    @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
@@ -59,18 +60,19 @@ struct ContentView: View {
                 )
                 .ignoresSafeArea(edges: .bottom)
                 .sheet(isPresented: .constant(true)) { navigationSheet }
-                .searchable(
-                    text: $searchObserver.searchText,
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: "Find nearby transit"
-                ).onAppear {
-                    socketProvider.socket.connect()
-                    Task {
-                        try await globalFetcher.getGlobalData()
-                    }
-                }
             }
-        }.onChange(of: scenePhase) { newPhase in
+        }
+        .searchable(
+            text: $searchObserver.searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Find nearby transit"
+        ).onAppear {
+            socketProvider.socket.connect()
+            Task {
+                try await globalFetcher.getGlobalData()
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.connect()
             } else if newPhase == .background {
@@ -95,7 +97,13 @@ struct ContentView: View {
                 .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
                     switch entry {
                     case let .stopDetails(stop, route):
-                        StopDetailsPage(stop: stop, route: route, viewportProvider: viewportProvider)
+                        StopDetailsPage(
+                            backend: backendProvider.backend,
+                            socket: socketProvider.socket,
+                            globalFetcher: globalFetcher,
+                            viewportProvider: viewportProvider,
+                            stop: stop, route: route
+                        )
                     }
                 }
             }

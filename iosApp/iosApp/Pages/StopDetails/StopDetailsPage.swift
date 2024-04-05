@@ -8,30 +8,93 @@
 
 import Foundation
 import shared
+import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsPage: View {
-    var stop: Stop
-    var route: Route?
+    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
-    var body: some View {
-        Text("Stop: \(stop.name)")
-            .navigationTitle("Stop Details")
-            .onAppear {
-                viewportProvider.animateTo(coordinates: stop.coordinate)
-            }
-            .onChange(of: stop) { nextStop in
-                viewportProvider.animateTo(coordinates: nextStop.coordinate)
-            }
-        Text("Route: \(route?.longName ?? "-")")
-    }
-}
+    @StateObject var scheduleFetcher: ScheduleFetcher
+    @StateObject var predictionsFetcher: PredictionsFetcher
+    var stop: Stop
+    var route: Route?
+    @State var now = Date.now
 
-#Preview {
-    StopDetailsPage(
-        stop: ObjectCollectionBuilder.Single.shared.stop { $0.name = "Boylston" },
-        route: ObjectCollectionBuilder.Single.shared.route { $0.longName = "Green Line B" },
-        viewportProvider: ViewportProvider()
-    )
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+
+    init(
+        backend: any BackendProtocol,
+        socket: any PhoenixSocket,
+        globalFetcher: GlobalFetcher,
+        viewportProvider: ViewportProvider,
+        stop: Stop, route: Route?
+    ) {
+        self.globalFetcher = globalFetcher
+        self.viewportProvider = viewportProvider
+        _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
+        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
+        self.stop = stop
+        self.route = route
+    }
+
+    var body: some View {
+        VStack {
+            if predictionsFetcher.predictions != nil {
+                Text("Live departures")
+            } else if scheduleFetcher.schedules != nil {
+                Text("Scheduled departures")
+            } else {
+                Text("Departures")
+            }
+            if let globalResponse = globalFetcher.response {
+                StopDetailsRoutesView(departures: StopDetailsDepartures(
+                    stop: stop,
+                    global: globalResponse,
+                    schedules: scheduleFetcher.schedules,
+                    predictions: predictionsFetcher.predictions,
+                    filterAtTime: now.toKotlinInstant()
+                ), now: now.toKotlinInstant())
+            } else {
+                ProgressView()
+            }
+        }
+        .navigationTitle(stop.name)
+        .onAppear {
+            changeStop(stop)
+        }
+        .onChange(of: stop) { nextStop in
+            changeStop(nextStop)
+        }
+        .onReceive(timer) { input in
+            now = input
+        }
+        .onDisappear {
+            leavePredictions()
+        }
+    }
+
+    func changeStop(_ stop: Stop) {
+        getSchedule(stop)
+        joinPredictions(stop)
+        viewportProvider.animateTo(coordinates: stop.coordinate)
+    }
+
+    func getSchedule(_ stop: Stop) {
+        Task {
+            await scheduleFetcher.getSchedule(stopIds: [stop.id])
+        }
+    }
+
+    func joinPredictions(_ stop: Stop) {
+        Task {
+            predictionsFetcher.run(stopIds: [stop.id])
+        }
+    }
+
+    func leavePredictions() {
+        Task {
+            predictionsFetcher.leave()
+        }
+    }
 }
