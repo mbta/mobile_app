@@ -23,22 +23,19 @@ class RouteLayerGenerator {
     init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
         self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
         self.routesById = routesById
-        routeLayers = Self.createRouteLayers(routeShapes: mapFriendlyRoutesResponse.routeShapes, routesById: routesById)
+        routeLayers = Self.createRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes, routesById: routesById)
     }
 
-    static func createRouteLayers(routeShapes: [MapFriendlyRouteShape], routesById: [String: Route]) -> [LineLayer] {
-        let routeShapesByRoute: [String: [MapFriendlyRouteShape]] = Dictionary(grouping: routeShapes) { $0.sourceRouteId }
-
-        return routeShapesByRoute
-            .filter { routesById[$0.key] != nil }
+    static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route]) -> [LineLayer] {
+        routesWithShapes
+            .filter { routesById[$0.routeId] != nil }
             .sorted {
                 // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
-                routesById[$0.key]!.sortOrder >= routesById[$1.key]!.sortOrder
+                routesById[$0.routeId]!.sortOrder >= routesById[$1.routeId]!.sortOrder
             }
-            .map { createRouteLayer(route: routesById[$0.key]!) }
+            .map { createRouteLayer(route: routesById[$0.routeId]!) }
     }
 
-    // TODO: Alert styling
     static func createRouteLayer(route: Route) -> LineLayer {
         var routeLayer = LineLayer(
             id: Self.getRouteLayerId(route.id),

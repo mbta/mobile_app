@@ -114,27 +114,29 @@ enum MapTestDataHelper {
     static let shapeOrangeAtypical = objects.shape { shape in shape.id = "40460002" }
 
     static let routeResponse = MapFriendlyRouteResponse(
-        routeShapes: [
-            MapFriendlyRouteShape(sourceRoutePatternId: patternRed10.id, sourceRouteId: patternRed10.routeId,
-                                  routeSegments: [RouteSegment(id: "segment1",
-                                                               sourceRoutePatternId: patternRed10.id,
-                                                               sourceRouteId: patternRed10.routeId,
-                                                               stopIds: [stopAlewife.id, stopDavis.id],
-                                                               otherPatternsByStopId: [:])],
-                                  shape: shapeRedC1),
-            MapFriendlyRouteShape(sourceRoutePatternId: patternRed30.id, sourceRouteId: patternRed30.routeId,
-                                  routeSegments: [RouteSegment(id: "segment2",
-                                                               sourceRoutePatternId: patternRed30.id,
-                                                               sourceRouteId: patternRed30.routeId,
-                                                               stopIds: [stopAlewife.id, stopDavis.id],
-                                                               otherPatternsByStopId: [:])],
-                                  shape: shapeRedC1),
-            MapFriendlyRouteShape(sourceRoutePatternId: patternOrange30.id, sourceRouteId: patternOrange30.routeId,
-                                  routeSegments: [RouteSegment(id: "segment3",
-                                                               sourceRoutePatternId: patternOrange30.id,
-                                                               sourceRouteId: patternOrange30.routeId,
-                                                               stopIds: [stopAssembly.id, stopSullivan.id],
-                                                               otherPatternsByStopId: [:])],
-                                  shape: shapeOrangeC1),
-        ])
+        routesWithSegmentedShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes(routeId: routeRed.id, segmentedShapes: [
+            SegmentedRouteShape(sourceRoutePatternId: patternRed10.id, sourceRouteId: patternRed10.routeId,
+                                routeSegments: [RouteSegment(id: "segment1",
+                                                             sourceRoutePatternId: patternRed10.id,
+                                                             sourceRouteId: patternRed10.routeId,
+                                                             stopIds: [stopAlewife.id, stopDavis.id],
+                                                             otherPatternsByStopId: [:])],
+                                shape: shapeRedC1),
+            SegmentedRouteShape(sourceRoutePatternId: patternRed30.id, sourceRouteId: patternRed30.routeId,
+                                routeSegments: [RouteSegment(id: "segment2",
+                                                             sourceRoutePatternId: patternRed30.id,
+                                                             sourceRouteId: patternRed30.routeId,
+                                                             stopIds: [stopAlewife.id, stopDavis.id],
+                                                             otherPatternsByStopId: [:])],
+                                shape: shapeRedC1),
+        ]),
+        MapFriendlyRouteResponse.RouteWithSegmentedShapes(routeId: routeOrange.id, segmentedShapes: [
+            SegmentedRouteShape(sourceRoutePatternId: patternOrange30.id, sourceRouteId: patternOrange30.routeId,
+                                routeSegments: [RouteSegment(id: "segment3",
+                                                             sourceRoutePatternId: patternOrange30.id,
+                                                             sourceRouteId: patternOrange30.routeId,
+                                                             stopIds: [stopAssembly.id, stopSullivan.id],
+                                                             otherPatternsByStopId: [:])],
+                                shape: shapeOrangeC1),
+        ])])
 }

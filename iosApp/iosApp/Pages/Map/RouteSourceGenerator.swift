@@ -53,11 +53,11 @@ class RouteSourceGenerator {
 
     static func generateRouteSources(routeData: MapFriendlyRouteResponse, stopsById: [String: Stop]) -> [RouteSourceData] {
         // TODO: Group by route earlier?
-        let routeShapesByRoute: [String: [MapFriendlyRouteShape]] = Dictionary(grouping: routeData.routeShapes) { $0.sourceRouteId }
-        return routeShapesByRoute.map { Self.generateRouteSource(routeId: $0.key, routeShapes: $0.value, stopsById: stopsById) }
+
+        routeData.routesWithSegmentedShapes.map { Self.generateRouteSource(routeId: $0.routeId, routeShapes: $0.segmentedShapes, stopsById: stopsById) }
     }
 
-    static func generateRouteSource(routeId: String, routeShapes: [MapFriendlyRouteShape], stopsById: [String: Stop]) -> RouteSourceData {
+    static func generateRouteSource(routeId: String, routeShapes: [SegmentedRouteShape], stopsById: [String: Stop]) -> RouteSourceData {
         let routeLines = Self.generateRouteLines(routeId: routeId, routeShapes: routeShapes, stopsById: stopsById)
         let routeFeatures: [Feature] = routeLines.map { Feature(geometry: $0.line) }
         var routeSource = GeoJSONSource(id: Self.getRouteSourceId(routeId))
@@ -65,14 +65,14 @@ class RouteSourceGenerator {
         return .init(routeId: routeId, lines: routeLines, source: routeSource)
     }
 
-    static func generateRouteLines(routeId _: String, routeShapes: [MapFriendlyRouteShape], stopsById: [String: Stop]) -> [RouteLineData] {
+    static func generateRouteLines(routeId _: String, routeShapes: [SegmentedRouteShape], stopsById: [String: Stop]) -> [RouteLineData] {
         routeShapes
             .flatMap { routePatternShape in
                 self.routeShapeToLineData(routePatternShape: routePatternShape, stopsById: stopsById)
             }
     }
 
-    private static func routeShapeToLineData(routePatternShape: MapFriendlyRouteShape, stopsById: [String: Stop]) -> [RouteLineData] {
+    private static func routeShapeToLineData(routePatternShape: SegmentedRouteShape, stopsById: [String: Stop]) -> [RouteLineData] {
         guard let polyline = routePatternShape.shape.polyline,
               let coordinates = Polyline(encodedPolyline: polyline).coordinates
         else {

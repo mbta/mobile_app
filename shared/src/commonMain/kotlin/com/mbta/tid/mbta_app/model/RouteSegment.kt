@@ -4,6 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+/**
+ * A sequential chunk of stops on a route pattern that don't overlap with segments for other route
+ * patterns. A segment may only intersect with other segments at the first and last stop.
+ */
 data class RouteSegment(
     val id: String,
     @SerialName("source_route_pattern_id") val sourceRoutePatternId: String,
