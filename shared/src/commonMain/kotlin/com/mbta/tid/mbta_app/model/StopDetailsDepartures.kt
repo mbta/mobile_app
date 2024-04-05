@@ -36,8 +36,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 if (patternIdsByStop.containsKey(stop.id)) {
                     listOf(stop.id)
                 } else {
-                    // TODO use stop children directly
-                    stops.filterValues { it.parentStationId == stop.id }.keys
+                    stop.childStopIds
                 }
 
             val patternsByRoute =
