@@ -144,7 +144,12 @@ struct HomeMapView: View {
         handleLayerInit(map, globalResponse.stops, globalResponse.routes, routeResponse)
     }
 
-    func handleLayerInit(_ map: MapboxMap, _ stops: [String: Stop], _ routes: [String: Route], _ routeResponse: MapFriendlyRouteResponse) {
+    func handleLayerInit(
+        _ map: MapboxMap,
+        _ stops: [String: Stop],
+        _ routes: [String: Route],
+        _ routeResponse: MapFriendlyRouteResponse
+    ) {
         let layerManager = MapLayerManager(map: map)
 
         let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops)

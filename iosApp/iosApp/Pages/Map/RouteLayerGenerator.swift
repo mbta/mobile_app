@@ -1,4 +1,3 @@
-
 //
 //  RouteLayerGenerator.swift
 //  iosApp
@@ -23,10 +22,13 @@ class RouteLayerGenerator {
     init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
         self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
         self.routesById = routesById
-        routeLayers = Self.createRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes, routesById: routesById)
+        routeLayers = Self.createRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes,
+                                             routesById: routesById)
     }
 
-    static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route]) -> [LineLayer] {
+    static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                                  routesById: [String: Route]) -> [LineLayer]
+    {
         routesWithShapes
             .filter { routesById[$0.routeId] != nil }
             .sorted {

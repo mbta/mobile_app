@@ -51,10 +51,12 @@ class RouteSourceGenerator {
         routeSources = routeSourceDetails.map(\.source)
     }
 
-    static func generateRouteSources(routeData: MapFriendlyRouteResponse, stopsById: [String: Stop]) -> [RouteSourceData] {
-        // TODO: Group by route earlier?
-
-        routeData.routesWithSegmentedShapes.map { Self.generateRouteSource(routeId: $0.routeId, routeShapes: $0.segmentedShapes, stopsById: stopsById) }
+    static func generateRouteSources(routeData: MapFriendlyRouteResponse,
+                                     stopsById: [String: Stop]) -> [RouteSourceData]
+    {
+        routeData.routesWithSegmentedShapes.map { Self.generateRouteSource(routeId: $0.routeId,
+                                                                           routeShapes: $0.segmentedShapes,
+                                                                           stopsById: stopsById) }
     }
 
     static func generateRouteSource(routeId: String, routeShapes: [SegmentedRouteShape], stopsById: [String: Stop]) -> RouteSourceData {
