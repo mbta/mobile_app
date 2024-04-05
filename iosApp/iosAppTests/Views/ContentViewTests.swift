@@ -99,10 +99,6 @@ final class ContentViewTests: XCTestCase {
                 throw NotUnderTestError()
             }
 
-            func getRailRouteShapes() async throws -> RouteResponse {
-                throw NotUnderTestError()
-            }
-
             func getMapFriendlyRailShapes() async throws -> MapFriendlyRouteResponse {
                 throw NotUnderTestError()
             }

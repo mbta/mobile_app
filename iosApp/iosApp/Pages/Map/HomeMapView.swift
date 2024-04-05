@@ -7,7 +7,6 @@
 //
 
 import os
-import OSLog
 import Polyline
 import shared
 import SwiftUI

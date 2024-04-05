@@ -4,7 +4,6 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.RouteResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import io.ktor.client.HttpClient
@@ -33,7 +32,7 @@ class Backend(engine: HttpClientEngine) {
     constructor() : this(getPlatform().httpClientEngine)
 
     companion object {
-        const val mobileBackendHost = "mobile-app-backend-dev-orange.mbtace.com"
+        const val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
     }
 
     private val httpClient =
@@ -76,21 +75,6 @@ class Backend(engine: HttpClientEngine) {
                     parameters.append("latitude", latitude.toString())
                     parameters.append("longitude", longitude.toString())
                 }
-                expectSuccess = true
-            }
-            .body()
-
-    @Throws(
-        IOException::class,
-        CancellationException::class,
-        JsonConvertException::class,
-        ResponseException::class,
-        HttpRequestTimeoutException::class
-    )
-    suspend fun getRailRouteShapes(): RouteResponse =
-        httpClient
-            .get {
-                url { path("api/shapes/rail") }
                 expectSuccess = true
             }
             .body()
