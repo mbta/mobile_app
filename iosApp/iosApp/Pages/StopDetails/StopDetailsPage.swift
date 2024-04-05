@@ -8,22 +8,78 @@
 
 import Foundation
 import shared
+import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsPage: View {
+    @ObservedObject var globalFetcher: GlobalFetcher
+    @StateObject var scheduleFetcher: ScheduleFetcher
+    @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
     var route: Route?
+    @State var now = Date.now
+
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+
+    init(backend: any BackendProtocol, socket: any PhoenixSocket, globalFetcher: GlobalFetcher,
+         stop: Stop, route: Route?)
+    {
+        self.globalFetcher = globalFetcher
+        _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
+        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
+        self.stop = stop
+        self.route = route
+    }
 
     var body: some View {
-        Text("Stop: \(stop.name)")
-            .navigationTitle("Stop Details")
-        Text("Route: \(route?.longName ?? "-")")
+        VStack {
+            if predictionsFetcher.predictions != nil {
+                Text("Live departures")
+            } else if scheduleFetcher.schedules != nil {
+                Text("Scheduled departures")
+            } else {
+                Text("Departures")
+            }
+            if let globalResponse = globalFetcher.response {
+                StopDetailsRoutesView(departures: StopDetailsDepartures(
+                    stop: stop,
+                    global: globalResponse,
+                    schedules: scheduleFetcher.schedules,
+                    predictions: predictionsFetcher.predictions,
+                    filterAtTime: now.toKotlinInstant()
+                ), now: now.toKotlinInstant())
+            } else {
+                ProgressView()
+            }
+        }
+        .navigationTitle(stop.name)
+        .onAppear {
+            getSchedule()
+            joinPredictions()
+        }
+        .onReceive(timer) { input in
+            now = input
+        }
+        .onDisappear {
+            leavePredictions()
+        }
     }
-}
 
-#Preview {
-    StopDetailsPage(
-        stop: ObjectCollectionBuilder.Single.shared.stop { $0.name = "Boylston" },
-        route: ObjectCollectionBuilder.Single.shared.route { $0.longName = "Green Line B" }
-    )
+    func getSchedule() {
+        Task {
+            await scheduleFetcher.getSchedule(stopIds: [stop.id])
+        }
+    }
+
+    func joinPredictions() {
+        Task {
+            predictionsFetcher.run(stopIds: [stop.id])
+        }
+    }
+
+    func leavePredictions() {
+        Task {
+            predictionsFetcher.leave()
+        }
+    }
 }

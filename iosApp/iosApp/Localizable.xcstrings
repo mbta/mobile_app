@@ -28,6 +28,9 @@
     "Couldn't load nearby transit, unable to parse response" : {
 
     },
+    "Departures" : {
+
+    },
     "Detour" : {
 
     },
@@ -41,6 +44,9 @@
 
     },
     "Failed to load predictions, could not connect to the server" : {
+
+    },
+    "Live departures" : {
 
     },
     "Loading..." : {
@@ -61,19 +67,16 @@
     "No Service" : {
 
     },
-    "Route: %@" : {
+    "Routes" : {
 
     },
-    "Routes" : {
+    "Scheduled departures" : {
 
     },
     "Shuttle" : {
 
     },
     "Stop Closed" : {
-
-    },
-    "Stop: %@" : {
 
     },
     "Stops" : {

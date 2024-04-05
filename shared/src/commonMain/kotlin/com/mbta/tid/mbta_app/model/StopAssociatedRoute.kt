@@ -208,35 +208,19 @@ fun NearbyStaticData.withRealtimeInfo(
     filterAtTime: Instant
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
-    val schedulesMap =
-        schedules?.let { scheduleData ->
-            scheduleData.schedules.groupBy { schedule ->
+    val upcomingTripsByHeadsignAndStop =
+        UpcomingTrip.tripsMappedBy(
+            schedules,
+            predictions,
+            scheduleKey = { schedule, scheduleData ->
                 val trip = scheduleData.trips.getValue(schedule.tripId)
                 UpcomingTripKey(schedule.routeId, trip.headsign, schedule.stopId)
-            }
-        }
-    val predictionsMap =
-        predictions?.let { streamData ->
-            streamData.predictions.values.groupBy { prediction ->
+            },
+            predictionKey = { prediction, streamData ->
                 val trip = streamData.trips.getValue(prediction.tripId)
                 UpcomingTripKey(prediction.routeId, trip.headsign, prediction.stopId)
             }
-        }
-    val upcomingTripsByHeadsignAndStop =
-        if (schedulesMap != null || predictionsMap != null) {
-            ((schedulesMap?.keys ?: emptySet()) + (predictionsMap?.keys ?: emptySet()))
-                .associateWith { upcomingTripKey ->
-                    val schedulesHere = schedulesMap?.get(upcomingTripKey)
-                    val predictionsHere = predictionsMap?.get(upcomingTripKey)
-                    UpcomingTrip.tripsFromData(
-                        schedulesHere ?: emptyList(),
-                        predictionsHere ?: emptyList(),
-                        predictions?.vehicles ?: emptyMap()
-                    )
-                }
-        } else {
-            null
-        }
+        )
     val cutoffTime = filterAtTime.plus(90.minutes)
 
     val activeRelevantAlerts =
