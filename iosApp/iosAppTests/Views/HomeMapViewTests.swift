@@ -30,8 +30,9 @@ final class HomeMapViewTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
-            locationDataManager: locationDataManager,
             viewportProvider: ViewportProvider(),
+            locationDataManager: locationDataManager,
+            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
         XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.defaultCenter)
@@ -53,8 +54,9 @@ final class HomeMapViewTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
-            locationDataManager: locationDataManager,
             viewportProvider: ViewportProvider(),
+            locationDataManager: locationDataManager,
+            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
 
@@ -103,6 +105,7 @@ final class HomeMapViewTests: XCTestCase {
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
             viewportProvider: ViewportProvider(),
+            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
