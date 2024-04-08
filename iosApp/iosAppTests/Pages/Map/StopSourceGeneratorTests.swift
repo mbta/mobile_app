@@ -117,8 +117,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             if case let .point(point) = collection.features.first(where: { $0.identifier ==
                     FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
             })!
-                .geometry
-            {
+                .geometry {
                 XCTAssertEqual(point.coordinates, snappedStopCoordinates)
             } else {
                 XCTFail("Source feature was not a point")

@@ -22,8 +22,7 @@ struct StopDetailsPage: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(backend: any BackendProtocol, socket: any PhoenixSocket, globalFetcher: GlobalFetcher,
-         stop: Stop, route: Route?)
-    {
+         stop: Stop, route: Route?) {
         self.globalFetcher = globalFetcher
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
