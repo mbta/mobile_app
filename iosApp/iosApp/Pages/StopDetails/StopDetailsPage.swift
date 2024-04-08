@@ -16,18 +16,18 @@ struct StopDetailsPage: View {
     @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
-    var route: Route?
+    var filter: StopDetailsFilter?
     @State var now = Date.now
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(backend: any BackendProtocol, socket: any PhoenixSocket, globalFetcher: GlobalFetcher,
-         stop: Stop, route: Route?) {
+         stop: Stop, filter: StopDetailsFilter?) {
         self.globalFetcher = globalFetcher
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
-        self.route = route
+        self.filter = filter
     }
 
     var body: some View {

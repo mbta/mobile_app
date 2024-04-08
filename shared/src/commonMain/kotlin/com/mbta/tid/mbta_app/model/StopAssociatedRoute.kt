@@ -97,6 +97,14 @@ data class PatternsByHeadsign(
                         !upcomingTripsArrivalOnly.contains(false)
                 }
 
+    fun directionId(): Int {
+        val directionCounts =
+            (upcomingTrips?.groupingBy { it.trip.directionId }
+                    ?: patterns.groupingBy { it.directionId })
+                .eachCount()
+        return checkNotNull(directionCounts.maxByOrNull { it.value }?.key)
+    }
+
     override fun compareTo(other: PatternsByHeadsign): Int =
         patterns.first().compareTo(other.patterns.first())
 
