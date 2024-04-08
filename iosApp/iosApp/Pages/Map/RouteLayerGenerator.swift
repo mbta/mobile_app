@@ -27,8 +27,7 @@ class RouteLayerGenerator {
     }
 
     static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
-                                  routesById: [String: Route]) -> [LineLayer]
-    {
+                                  routesById: [String: Route]) -> [LineLayer] {
         routesWithShapes
             .filter { routesById[$0.routeId] != nil }
             .sorted {

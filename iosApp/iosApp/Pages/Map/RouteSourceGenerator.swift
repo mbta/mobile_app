@@ -52,15 +52,15 @@ class RouteSourceGenerator {
     }
 
     static func generateRouteSources(routeData: MapFriendlyRouteResponse,
-                                     stopsById: [String: Stop]) -> [RouteSourceData]
-    {
+                                     stopsById: [String: Stop]) -> [RouteSourceData] {
         routeData.routesWithSegmentedShapes
             .map { Self.generateRouteSource(routeId: $0.routeId,
                                             routeShapes: $0.segmentedShapes,
                                             stopsById: stopsById) }
     }
 
-    static func generateRouteSource(routeId: String, routeShapes: [SegmentedRouteShape], stopsById: [String: Stop]) -> RouteSourceData {
+    static func generateRouteSource(routeId: String, routeShapes: [SegmentedRouteShape],
+                                    stopsById: [String: Stop]) -> RouteSourceData {
         let routeLines = Self.generateRouteLines(routeId: routeId, routeShapes: routeShapes, stopsById: stopsById)
         let routeFeatures: [Feature] = routeLines.map { Feature(geometry: $0.line) }
         var routeSource = GeoJSONSource(id: Self.getRouteSourceId(routeId))
@@ -68,14 +68,16 @@ class RouteSourceGenerator {
         return .init(routeId: routeId, lines: routeLines, source: routeSource)
     }
 
-    static func generateRouteLines(routeId _: String, routeShapes: [SegmentedRouteShape], stopsById: [String: Stop]) -> [RouteLineData] {
+    static func generateRouteLines(routeId _: String, routeShapes: [SegmentedRouteShape],
+                                   stopsById: [String: Stop]) -> [RouteLineData] {
         routeShapes
             .flatMap { routePatternShape in
                 self.routeShapeToLineData(routePatternShape: routePatternShape, stopsById: stopsById)
             }
     }
 
-    private static func routeShapeToLineData(routePatternShape: SegmentedRouteShape, stopsById: [String: Stop]) -> [RouteLineData] {
+    private static func routeShapeToLineData(routePatternShape: SegmentedRouteShape,
+                                             stopsById: [String: Stop]) -> [RouteLineData] {
         guard let polyline = routePatternShape.shape.polyline,
               let coordinates = Polyline(encodedPolyline: polyline).coordinates
         else {
@@ -84,11 +86,13 @@ class RouteSourceGenerator {
 
         let fullLineString = LineString(coordinates)
         return routePatternShape.routeSegments.compactMap { routeSegment in
-            routeSegmentToRouteLineData(routeSegment: routeSegment, fullLineString: fullLineString, stopsById: stopsById)
+            routeSegmentToRouteLineData(routeSegment: routeSegment, fullLineString: fullLineString,
+                                        stopsById: stopsById)
         }
     }
 
-    private static func routeSegmentToRouteLineData(routeSegment: RouteSegment, fullLineString: LineString, stopsById: [String: Stop]) -> RouteLineData? {
+    private static func routeSegmentToRouteLineData(routeSegment: RouteSegment, fullLineString: LineString,
+                                                    stopsById: [String: Stop]) -> RouteLineData? {
         guard let firstStopId = routeSegment.stopIds.first,
               let firstStop = stopsById[firstStopId],
               let lastStopId = routeSegment.stopIds.last,
