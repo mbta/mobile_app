@@ -18,3 +18,4 @@ repos:
     rev: 0.53.1
     hooks:
       - id: swiftformat
+        args: ["--config","config.swiftformat"]
