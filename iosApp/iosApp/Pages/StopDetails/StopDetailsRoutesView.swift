@@ -13,10 +13,16 @@ import SwiftUI
 struct StopDetailsRoutesView: View {
     let departures: StopDetailsDepartures
     let now: Instant
+    @Binding var filter: StopDetailsFilter?
 
     var body: some View {
-        List(departures.routes, id: \.route.id) { patternsByStop in
-            StopDetailsRouteView(patternsByStop: patternsByStop, now: now)
+        if let filter {
+            let selectedData = departures.routes.first(where: { $0.route.id == filter.routeId })!
+            StopDetailsFilteredRouteView(patternsByStop: selectedData, now: now, filter: $filter)
+        } else {
+            List(departures.routes, id: \.route.id) { patternsByStop in
+                StopDetailsRouteView(patternsByStop: patternsByStop, now: now, filter: $filter)
+            }
         }
     }
 }
@@ -66,5 +72,5 @@ struct StopDetailsRoutesView: View {
                   upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                   alertsHere: nil),
         ]),
-    ]), now: Date.now.toKotlinInstant())
+    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil))
 }

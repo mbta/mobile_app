@@ -30,6 +30,22 @@ struct ContentView: View {
         }
     }
 
+    private var stopDetailsFilterBinding: Binding<StopDetailsFilter?> {
+        .init(get: {
+            switch navigationStack.last {
+            case let .stopDetails(_, filter):
+                filter
+            case _:
+                nil
+            }
+        }, set: { newFilter in
+            let head = navigationStack.last
+            if case let .stopDetails(stop, _) = head {
+                navigationStack.replace([head!], with: [.stopDetails(stop, newFilter)])
+            }
+        })
+    }
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -69,7 +85,7 @@ struct ContentView: View {
                                         backend: backendProvider.backend,
                                         socket: socketProvider.socket,
                                         globalFetcher: globalFetcher,
-                                        stop: stop, filter: filter
+                                        stop: stop, filter: stopDetailsFilterBinding
                                     )
                                 }
                             }

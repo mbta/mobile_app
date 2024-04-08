@@ -110,6 +110,14 @@ data class PatternsByHeadsign(
         throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
     }
 
+    /**
+     * Splits up this [PatternsByHeadsign] into a separate [PatternsByHeadsign] for each trip, for
+     * convenience when drawing each trip separately.
+     */
+    fun splitPerTrip(): List<PatternsByHeadsign> =
+        upcomingTrips?.map { PatternsByHeadsign(route, headsign, patterns, listOf(it), alertsHere) }
+            ?: emptyList()
+
     override fun compareTo(other: PatternsByHeadsign): Int =
         patterns.first().compareTo(other.patterns.first())
 
@@ -175,6 +183,11 @@ data class PatternsByStop(
 
     @OptIn(ExperimentalTurfApi::class)
     fun distanceFrom(position: Position) = distance(position, this.position)
+
+    fun splitPerTrip(): List<PatternsByHeadsign> =
+        this.patternsByHeadsign
+            .flatMap { it.splitPerTrip() }
+            .sortedBy { it.upcomingTrips?.firstOrNull() }
 }
 
 /**
