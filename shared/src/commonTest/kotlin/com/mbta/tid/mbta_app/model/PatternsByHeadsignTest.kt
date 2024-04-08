@@ -68,8 +68,8 @@ class PatternsByHeadsignTest {
                 departureTime = now + 5.minutes
             }
 
-        val upcomingTrip1 = UpcomingTrip(prediction1)
-        val upcomingTrip2 = UpcomingTrip(prediction2)
+        val upcomingTrip1 = objects.upcomingTrip(prediction1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
 
         assertEquals(
             PatternsByHeadsign.Format.Some(
@@ -107,8 +107,8 @@ class PatternsByHeadsignTest {
                 departureTime = now + 5.minutes
             }
 
-        val upcomingTrip1 = UpcomingTrip(schedule1)
-        val upcomingTrip2 = UpcomingTrip(prediction2)
+        val upcomingTrip1 = objects.upcomingTrip(schedule1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
 
         assertEquals(
             PatternsByHeadsign.Format.Some(

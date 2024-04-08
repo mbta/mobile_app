@@ -107,7 +107,7 @@ data class PatternsByHeadsign(
 
         data class Some(val trips: List<FormatWithId>) : Format() {
             data class FormatWithId(val id: String, val format: UpcomingTrip.Format) {
-                constructor(trip: UpcomingTrip, now: Instant) : this(trip.id, trip.format(now))
+                constructor(trip: UpcomingTrip, now: Instant) : this(trip.trip.id, trip.format(now))
             }
         }
 

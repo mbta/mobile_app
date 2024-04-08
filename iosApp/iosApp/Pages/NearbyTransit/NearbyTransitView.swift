@@ -262,8 +262,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     headsign: "Houghs Neck",
                                     patterns: [busPattern],
                                     upcomingTrips: [
-                                        UpcomingTrip(prediction: busPrediction1),
-                                        UpcomingTrip(prediction: busPrediction2),
+                                        UpcomingTrip(trip: busTrip, prediction: busPrediction1),
+                                        UpcomingTrip(trip: busTrip, prediction: busPrediction2),
                                     ],
                                     alertsHere: nil
                                 ),
@@ -286,8 +286,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     headsign: "Houghs Neck",
                                     patterns: [crPattern],
                                     upcomingTrips: [
-                                        UpcomingTrip(prediction: crPrediction1),
-                                        UpcomingTrip(prediction: crPrediction2),
+                                        UpcomingTrip(trip: crTrip, prediction: crPrediction1),
+                                        UpcomingTrip(trip: crTrip, prediction: crPrediction2),
                                     ],
                                     alertsHere: nil
                                 ),

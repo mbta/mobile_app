@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.schedule
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
 import com.mbta.tid.mbta_app.model.UpcomingTrip.Format
 import kotlin.test.Test
@@ -17,7 +18,8 @@ class UpcomingTripTest {
         fun `status is non-null`() {
             assertEquals(
                 Format.Overridden("Custom Text"),
-                UpcomingTrip(prediction { status = "Custom Text" }).format(Clock.System.now())
+                UpcomingTrip(trip {}, prediction { status = "Custom Text" })
+                    .format(Clock.System.now())
             )
         }
 
@@ -25,11 +27,12 @@ class UpcomingTripTest {
         fun `departure_time is null`() {
             assertEquals(
                 Format.Hidden,
-                UpcomingTrip(prediction { departureTime = null }).format(Clock.System.now())
+                UpcomingTrip(trip {}, prediction { departureTime = null })
+                    .format(Clock.System.now())
             )
             assertEquals(
                 Format.Hidden,
-                UpcomingTrip(schedule { departureTime = null }).format(Clock.System.now())
+                UpcomingTrip(trip {}, schedule { departureTime = null }).format(Clock.System.now())
             )
         }
 
@@ -38,7 +41,7 @@ class UpcomingTripTest {
             val now = Clock.System.now()
             assertEquals(
                 Format.Schedule(now + 15.minutes),
-                UpcomingTrip(schedule { departureTime = now + 15.minutes }).format(now)
+                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes }).format(now)
             )
         }
 
@@ -48,6 +51,7 @@ class UpcomingTripTest {
             assertEquals(
                 Format.Hidden,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             arrivalTime = null
                             departureTime = now.minus(2.seconds)
@@ -63,6 +67,7 @@ class UpcomingTripTest {
             assertEquals(
                 Format.Arriving,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             arrivalTime = now.minus(2.seconds)
                             departureTime = now.plus(10.seconds)
@@ -83,6 +88,7 @@ class UpcomingTripTest {
             assertEquals(
                 Format.Boarding,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             departureTime = now.plus(10.seconds)
                             stopId = "12345"
@@ -107,6 +113,7 @@ class UpcomingTripTest {
             assertNotEquals(
                 Format.Boarding,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             departureTime = now.plus(10.seconds)
                             stopId = "12345"
@@ -126,6 +133,7 @@ class UpcomingTripTest {
             assertNotEquals(
                 Format.Boarding,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             departureTime = now.plus(10.seconds)
                             stopId = "12345"
@@ -145,6 +153,7 @@ class UpcomingTripTest {
             assertNotEquals(
                 Format.Boarding,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             departureTime = now.plus(10.seconds)
                             stopId = "12345"
@@ -163,6 +172,7 @@ class UpcomingTripTest {
             assertEquals(
                 Format.Arriving,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             arrivalTime = now.plus(10.seconds)
                             departureTime = now.plus(20.seconds)
@@ -172,7 +182,8 @@ class UpcomingTripTest {
             )
             assertEquals(
                 Format.Arriving,
-                UpcomingTrip(prediction { departureTime = now.plus(15.seconds) }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
+                    .format(now)
             )
         }
 
@@ -182,6 +193,7 @@ class UpcomingTripTest {
             assertEquals(
                 Format.Approaching,
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             arrivalTime = now.plus(45.seconds)
                             departureTime = now.plus(50.seconds)
@@ -191,7 +203,8 @@ class UpcomingTripTest {
             )
             assertEquals(
                 Format.Approaching,
-                UpcomingTrip((prediction { departureTime = now.plus(40.seconds) })).format(now)
+                UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
+                    .format(now)
             )
         }
 
@@ -204,6 +217,7 @@ class UpcomingTripTest {
             assertEquals(
                 Format.DistantFuture(future),
                 UpcomingTrip(
+                        trip {},
                         prediction {
                             arrivalTime = future
                             departureTime = future.plus(1.minutes)
@@ -213,7 +227,7 @@ class UpcomingTripTest {
             )
             assertEquals(
                 Format.DistantFuture(moreFuture),
-                UpcomingTrip(prediction { departureTime = moreFuture }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = moreFuture }).format(now)
             )
         }
 
@@ -222,27 +236,33 @@ class UpcomingTripTest {
             val now = Clock.System.now()
             assertEquals(
                 Format.Minutes(1),
-                UpcomingTrip(prediction { departureTime = now.plus(89.seconds) }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
+                    .format(now)
             )
             assertEquals(
                 Format.Minutes(2),
-                UpcomingTrip(prediction { departureTime = now.plus(90.seconds) }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
+                    .format(now)
             )
             assertEquals(
                 Format.Minutes(2),
-                UpcomingTrip(prediction { departureTime = now.plus(149.seconds) }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
+                    .format(now)
             )
             assertEquals(
                 Format.Minutes(3),
-                UpcomingTrip(prediction { departureTime = now.plus(150.seconds) }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
+                    .format(now)
             )
             assertEquals(
                 Format.Minutes(3),
-                UpcomingTrip(prediction { departureTime = now.plus(209.seconds) }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
+                    .format(now)
             )
             assertEquals(
                 Format.Minutes(45),
-                UpcomingTrip((prediction { departureTime = now.plus(45.minutes) })).format(now)
+                UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
+                    .format(now)
             )
         }
     }
@@ -271,27 +291,31 @@ class UpcomingTripTest {
         val objects = ObjectCollectionBuilder()
 
         // schedule and prediction match
-        val trip1Schedule = objects.schedule { sts("stop1", "trip1", 1) }
-        val trip1Prediction = objects.prediction { sts("stop1", "trip1", 1) }
+        val trip1 = objects.trip()
+        val trip1Schedule = objects.schedule { sts("stop1", trip1.id, 1) }
+        val trip1Prediction = objects.prediction { sts("stop1", trip1.id, 1) }
 
         // schedule, no prediction
-        val trip2Schedule = objects.schedule { sts("stop2", "trip2", 2) }
+        val trip2 = objects.trip()
+        val trip2Schedule = objects.schedule { sts("stop2", trip2.id, 2) }
 
         // prediction, no schedule
-        val trip3Prediction = objects.prediction { sts("stop3", "trip3", 3) }
+        val trip3 = objects.trip()
+        val trip3Prediction = objects.prediction { sts("stop3", trip3.id, 3) }
 
         val result =
             UpcomingTrip.tripsFromData(
                 objects.schedules.values.toList(),
                 objects.predictions.values.toList(),
+                objects.trips,
                 objects.vehicles
             )
 
         assertEquals(
             listOf(
-                UpcomingTrip(trip1Schedule, trip1Prediction, null),
-                UpcomingTrip(trip2Schedule),
-                UpcomingTrip(trip3Prediction)
+                UpcomingTrip(trip1, trip1Schedule, trip1Prediction),
+                UpcomingTrip(trip2, trip2Schedule),
+                UpcomingTrip(trip3, trip3Prediction)
             ),
             result
         )
@@ -300,6 +324,7 @@ class UpcomingTripTest {
     @Test
     fun `time uses schedule time if there's no prediction`() {
         val now = Clock.System.now()
+        val trip = trip()
 
         val scheduleNormal = schedule {
             arrivalTime = now + 2.minutes
@@ -314,14 +339,18 @@ class UpcomingTripTest {
             departureTime = now + 4.minutes
         }
 
-        assertEquals(scheduleNormal.arrivalTime, UpcomingTrip(scheduleNormal).time)
-        assertEquals(scheduleArrivalOnly.arrivalTime, UpcomingTrip(scheduleArrivalOnly).time)
-        assertEquals(scheduleDepartureOnly.departureTime, UpcomingTrip(scheduleDepartureOnly).time)
+        assertEquals(scheduleNormal.arrivalTime, UpcomingTrip(trip, scheduleNormal).time)
+        assertEquals(scheduleArrivalOnly.arrivalTime, UpcomingTrip(trip, scheduleArrivalOnly).time)
+        assertEquals(
+            scheduleDepartureOnly.departureTime,
+            UpcomingTrip(trip, scheduleDepartureOnly).time
+        )
     }
 
     @Test
     fun `time uses prediction time whether there's a schedule or not`() {
         val now = Clock.System.now()
+        val trip = trip()
 
         val schedule = schedule {
             arrivalTime = now + 2.minutes
@@ -340,28 +369,35 @@ class UpcomingTripTest {
             departureTime = now + 4.2.minutes
         }
 
-        assertEquals(predictionNormal.arrivalTime, UpcomingTrip(predictionNormal).time)
-        assertEquals(predictionNormal.arrivalTime, UpcomingTrip(schedule, predictionNormal).time)
+        assertEquals(predictionNormal.arrivalTime, UpcomingTrip(trip, predictionNormal).time)
+        assertEquals(
+            predictionNormal.arrivalTime,
+            UpcomingTrip(trip, schedule, predictionNormal).time
+        )
 
-        assertEquals(predictionArrivalOnly.arrivalTime, UpcomingTrip(predictionArrivalOnly).time)
         assertEquals(
             predictionArrivalOnly.arrivalTime,
-            UpcomingTrip(schedule, predictionArrivalOnly).time
+            UpcomingTrip(trip, predictionArrivalOnly).time
+        )
+        assertEquals(
+            predictionArrivalOnly.arrivalTime,
+            UpcomingTrip(trip, schedule, predictionArrivalOnly).time
         )
 
         assertEquals(
             predictionDepartureOnly.departureTime,
-            UpcomingTrip(predictionDepartureOnly).time
+            UpcomingTrip(trip, predictionDepartureOnly).time
         )
         assertEquals(
             predictionDepartureOnly.departureTime,
-            UpcomingTrip(schedule, predictionDepartureOnly).time
+            UpcomingTrip(trip, schedule, predictionDepartureOnly).time
         )
     }
 
     @Test
     fun `time is null if prediction overrides schedule`() {
         val now = Clock.System.now()
+        val trip = trip()
 
         val schedule = schedule {
             arrivalTime = now + 2.minutes
@@ -373,50 +409,55 @@ class UpcomingTripTest {
             scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
         }
 
-        assertEquals(null, UpcomingTrip(schedule, predictionDropped).time)
+        assertEquals(null, UpcomingTrip(trip, schedule, predictionDropped).time)
     }
 
     @Test
     fun `isArrivalOnly handles schedule without prediction`() {
+        val trip = trip()
+
         val schedule1 = schedule {
             departureTime = null
             pickUpType = Schedule.StopEdgeType.Unavailable
         }
-        assertEquals(true, UpcomingTrip(schedule1).isArrivalOnly())
+        assertEquals(true, UpcomingTrip(trip, schedule1).isArrivalOnly())
 
         val schedule2 = schedule {
             departureTime = Clock.System.now()
             pickUpType = Schedule.StopEdgeType.Regular
         }
-        assertEquals(false, UpcomingTrip(schedule2).isArrivalOnly())
+        assertEquals(false, UpcomingTrip(trip, schedule2).isArrivalOnly())
 
         val schedule3 = schedule {
             pickUpType = Schedule.StopEdgeType.Unavailable
             dropOffType = Schedule.StopEdgeType.Unavailable
         }
-        assertEquals(null, UpcomingTrip(schedule3).isArrivalOnly())
+        assertEquals(null, UpcomingTrip(trip, schedule3).isArrivalOnly())
     }
 
     @Test
     fun `isArrivalOnly handles prediction without schedule`() {
+        val trip = trip()
+
         val prediction1 = prediction {
             arrivalTime = Clock.System.now()
             departureTime = null
         }
-        assertEquals(true, UpcomingTrip(prediction1).isArrivalOnly())
+        assertEquals(true, UpcomingTrip(trip, prediction1).isArrivalOnly())
 
         val prediction2 = prediction {
             arrivalTime = null
             departureTime = null
         }
-        assertEquals(null, UpcomingTrip(prediction2).isArrivalOnly())
+        assertEquals(null, UpcomingTrip(trip, prediction2).isArrivalOnly())
 
         val prediction3 = prediction { departureTime = Clock.System.now() }
-        assertEquals(false, UpcomingTrip(prediction3).isArrivalOnly())
+        assertEquals(false, UpcomingTrip(trip, prediction3).isArrivalOnly())
     }
 
     @Test
     fun `isArrivalOnly handles schedule alongside prediction`() {
+        val trip = trip()
         val scheduleArrivalOnly = schedule {
             arrivalTime = Clock.System.now()
             dropOffType = Schedule.StopEdgeType.Regular
@@ -441,14 +482,29 @@ class UpcomingTripTest {
             departureTime = null
         }
 
-        assertEquals(true, UpcomingTrip(scheduleArrivalOnly, predictionArrivalOnly).isArrivalOnly())
-        assertEquals(true, UpcomingTrip(scheduleArrivalOnly, predictionNormal).isArrivalOnly())
-        assertEquals(true, UpcomingTrip(scheduleArrivalOnly, predictionNeither).isArrivalOnly())
-        assertEquals(false, UpcomingTrip(scheduleNormal, predictionArrivalOnly).isArrivalOnly())
-        assertEquals(false, UpcomingTrip(scheduleNormal, predictionNormal).isArrivalOnly())
-        assertEquals(false, UpcomingTrip(scheduleNormal, predictionNeither).isArrivalOnly())
-        assertEquals(null, UpcomingTrip(scheduleNeither, predictionArrivalOnly).isArrivalOnly())
-        assertEquals(null, UpcomingTrip(scheduleNeither, predictionNormal).isArrivalOnly())
-        assertEquals(null, UpcomingTrip(scheduleNeither, predictionNeither).isArrivalOnly())
+        assertEquals(
+            true,
+            UpcomingTrip(trip, scheduleArrivalOnly, predictionArrivalOnly).isArrivalOnly()
+        )
+        assertEquals(
+            true,
+            UpcomingTrip(trip, scheduleArrivalOnly, predictionNormal).isArrivalOnly()
+        )
+        assertEquals(
+            true,
+            UpcomingTrip(trip, scheduleArrivalOnly, predictionNeither).isArrivalOnly()
+        )
+        assertEquals(
+            false,
+            UpcomingTrip(trip, scheduleNormal, predictionArrivalOnly).isArrivalOnly()
+        )
+        assertEquals(false, UpcomingTrip(trip, scheduleNormal, predictionNormal).isArrivalOnly())
+        assertEquals(false, UpcomingTrip(trip, scheduleNormal, predictionNeither).isArrivalOnly())
+        assertEquals(
+            null,
+            UpcomingTrip(trip, scheduleNeither, predictionArrivalOnly).isArrivalOnly()
+        )
+        assertEquals(null, UpcomingTrip(trip, scheduleNeither, predictionNormal).isArrivalOnly())
+        assertEquals(null, UpcomingTrip(trip, scheduleNeither, predictionNeither).isArrivalOnly())
     }
 }
