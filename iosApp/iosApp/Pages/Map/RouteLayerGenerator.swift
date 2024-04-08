@@ -6,7 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import OSLog
 import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
