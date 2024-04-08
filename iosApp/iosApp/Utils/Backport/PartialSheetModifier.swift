@@ -69,8 +69,7 @@ private extension PartialSheetRepresentable {
             super.willMove(toParent: parent)
             if let controller = parent?.sheetPresentationController,
                controller.delegate !== self,
-               localDelegate == nil
-            {
+               localDelegate == nil {
                 localDelegate = controller.delegate
                 controller.delegate = self
             }

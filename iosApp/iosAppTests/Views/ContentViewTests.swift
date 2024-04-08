@@ -101,7 +101,7 @@ final class ContentViewTests: XCTestCase {
                 throw NotUnderTestError()
             }
 
-            func getRailRouteShapes() async throws -> RouteResponse {
+            func getMapFriendlyRailShapes() async throws -> MapFriendlyRouteResponse {
                 throw NotUnderTestError()
             }
         }
@@ -141,8 +141,7 @@ final class ContentViewTests: XCTestCase {
 
         override func disconnect(code _: Socket.CloseCode,
                                  reason _: String?,
-                                 callback _: (() -> Void)?)
-        {
+                                 callback _: (() -> Void)?) {
             disconnectedExpectation?.fulfill()
         }
     }

@@ -11,22 +11,29 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 class RouteLayerGenerator {
-    let routeData: RouteResponse
+    let mapFriendlyRoutesResponse: MapFriendlyRouteResponse
+    let routesById: [String: Route]
     let routeLayers: [LineLayer]
 
     static let routeLayerId = "route-layer"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
 
-    init(routeData: RouteResponse) {
-        self.routeData = routeData
-        routeLayers = Self.createRouteLayers(routes: routeData.routes)
+    init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
+        self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
+        self.routesById = routesById
+        routeLayers = Self.createRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes,
+                                             routesById: routesById)
     }
 
-    static func createRouteLayers(routes: [Route]) -> [LineLayer] {
-        // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
-        routes
-            .sorted { $0.sortOrder >= $1.sortOrder }
-            .map { createRouteLayer(route: $0) }
+    static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                                  routesById: [String: Route]) -> [LineLayer] {
+        routesWithShapes
+            .filter { routesById[$0.routeId] != nil }
+            .sorted {
+                // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
+                routesById[$0.routeId]!.sortOrder >= routesById[$1.routeId]!.sortOrder
+            }
+            .map { createRouteLayer(route: routesById[$0.routeId]!) }
     }
 
     static func createRouteLayer(route: Route) -> LineLayer {

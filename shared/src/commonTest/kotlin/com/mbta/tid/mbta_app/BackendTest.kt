@@ -4,15 +4,17 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteResult
+import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SearchResults
+import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.StopResultRoute
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.RouteResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -467,7 +469,7 @@ class BackendTest {
     }
 
     @Test
-    fun testGetRailRouteShapes() {
+    fun testGetMapFriendlyRailShapes() {
         runBlocking {
             val mockEngine = MockEngine { request ->
                 assertEquals("", request.url.encodedQuery)
@@ -475,115 +477,61 @@ class BackendTest {
                     content =
                         ByteReadChannel(
                             """
-                    {
-                      "routes": [
+                  {
+                    "map_friendly_route_shapes": [
                         {
-                          "id": "Red",
-                          "type": "heavy_rail",
-                          "color": "DA291C",
-                          "direction_names": [
-                            "South",
-                            "North"
-                          ],
-                          "direction_destinations": [
-                            "Ashmont/Braintree",
-                            "Alewife"
-                          ],
-                          "long_name": "Red Line",
-                          "short_name": "",
-                          "sort_order": 10010,
-                          "text_color": "FFFFFF",
-                          "route_pattern_ids": ["Red-1-0", "Red-1-1", "Red-3-1", "Red-Z-1"]
+                            "route_id": "Red",
+                            "route_shapes": [
+                                {
+                                    "source_route_pattern_id": "red-ashmont",
+                                    "source_route_id": "Red",
+                                                                "shape": {
+                                                                    "id": "ashmont_shape",
+                                                                    "polyline": "ashmont_shape_polyline"
+                                                                }
+                                    "route_segments": [
+                                        {
+                                            "id": "andrew-savin_hill",
+                                            "source_route_id": "Red",
+                                            "source_route_pattern_id": "red-ashmont",
+                                            "stop_ids": [
+                                                "andrew",
+                                                "jfk/umass",
+                                                "savin_hill"
+                                            ],
+                                            "other_patterns_by_stop_id": {}
+                                        }
+                                    ],
+                                    "shape": {
+                                        "id": "ashmont_shape",
+                                        "polyline": "ashmont_shape_polyline"
+                                    }
+                                },
+                                {
+                                    "source_route_pattern_id": "red-braintree",
+                                    "source_route_id": "Red",
+                                    "route_segments": [
+                                        {
+                                            "id": "jfk/umass-north_quincy",
+                                            "source_route_id": "Red",
+                                            "source_route_pattern_id": "red-braintree",
+                                            "stop_ids": [
+                                                "jfk/umass",
+                                                "north_quincy"
+                                            ],
+                                            "other_patterns_by_stop_id": {}
+                                        }
+                                    ],
+                                    "shape": {
+                                        "id": "braintree_shape",
+                                        "polyline": "braintree_shape_polyline"
+                                    }
+                                }
+                            ]
                         }
-                      ],
-                      "route_patterns": {
-                        "Red-1-0": {
-                          "id": "Red-1-0",
-                          "name": "Alewife - Ashmont",
-                          "route_id": "Red",
-                          "direction_id": 0,
-                          "sort_order": 100100001,
-                          "typicality": "typical",
-                          "representative_trip_id": "canonical-Red-C2-0"
-                        },
-                        "Red-1-1": {
-                          "id": "Red-1-1",
-                          "name": "Ashmont - Alewife",
-                          "route_id": "Red",
-                          "direction_id": 1,
-                          "sort_order": 100101001,
-                          "typicality": "typical",
-                          "representative_trip_id": "canonical-Red-C2-1"
-                        },
-                        "Red-3-1": {
-                          "id": "Red-3-1",
-                          "name": "Braintree - Alewife",
-                          "route_id": "Red",
-                          "direction_id": 1,
-                          "sort_order": 100101000,
-                          "typicality": "typical",
-                          "representative_trip_id": "canonical-Red-C1-1"
-                        },
-                        "Red-Z-1": {
-                          "id": "Red-Z-1",
-                          "name": "Ashmont - Broadway",
-                          "route_id": "Red",
-                          "direction_id": 1,
-                          "sort_order": 100101120,
-                          "typicality": "atypical",
-                          "representative_trip_id": "61202958"
-                        }
-                      },
-                      "shapes": {
-                        "canonical-931_0009": {
-                          "id": "canonical-931_0009",
-                          "polyline": "}nwaG~|eqLGyNIqAAc@S_CAEWu@g@}@u@k@u@Wu@OMGIMISQkAOcAGw@SoDFkCf@sUXcJJuERwHPkENqCJmB^mDn@}D??D[TeANy@\\iAt@qB`AwBl@cAl@m@b@Yn@QrBEtCKxQ_ApMT??R?`m@hD`Np@jAF|@C`B_@hBi@n@s@d@gA`@}@Z_@RMZIl@@fBFlB\\tAP??~@L^?HCLKJWJ_@vC{NDGLQvG}HdCiD`@e@Xc@b@oAjEcPrBeGfAsCvMqVl@sA??jByD`DoGd@cAj@cBJkAHqBNiGXeHVmJr@kR~@q^HsB@U??NgDr@gJTcH`@aMFyCF}AL}DN}GL}CXkILaD@QFmA@[??DaAFiBDu@BkA@UB]Fc@Jo@BGJ_@Lc@\\}@vJ_OrCyDj@iAb@_AvBuF`@gA`@aAv@qBVo@Xu@??bDgI??Tm@~IsQj@cAr@wBp@kBj@kB??HWtDcN`@g@POl@UhASh@Eb@?t@FXHl@Px@b@he@h[pCC??bnAm@h@T??xF|BpBp@^PLBXAz@Yl@]l@e@|B}CT[p@iA|A}BZi@zDuF\\c@n@s@VObAw@^Sl@Yj@U\\O|@WdAUxAQRCt@E??xAGrBQZAhAGlAEv@Et@E~@AdAAbCGpCA|BEjCMr@?nBDvANlARdBb@nDbA~@XnBp@\\JRH??|Al@`AZbA^jA^lA\\h@P|@TxAZ|@J~@LN?fBXxHhApDt@b@JXFtAVhALx@FbADtAC`B?z@BHBH@|@f@RN^^T\\h@hANb@HZH`@H^LpADlA@dD@jD@x@@b@Bp@HdAFd@Ll@F^??n@rDBRl@vD^pATp@Rb@b@z@\\l@`@j@p@t@j@h@n@h@n@`@hAh@n@\\t@PzANpAApBGtE}@xBa@??xB_@nOmB`OgBb@IrC[p@MbEmARCV@d@LH?tDyAXM"
-                        },
-                        "canonical-931_0010": {
-                          "id": "canonical-931_0010",
-                          "polyline": "qsaaGfrvpLYLuDxAI?e@MWASBcElAq@LsCZc@HaOfBoOlByB^??yB`@uE|@qBFqA@{AOu@Qo@]iAi@o@a@o@i@k@i@q@u@a@k@]m@c@{@Sc@Uq@_@qAm@wDCSo@sD??G_@Mm@Ge@IeACq@Ac@Ay@AkDAeDEmAMqAI_@Ia@I[Oc@i@iAU]_@_@SO}@g@IAIC{@CaB?uABcAEy@GiAMuAWYGc@KqDu@yHiAgBYO?_AM}@KyA[}@Ui@QmA]kA_@cA_@aA[}Am@??SI]KoBq@_AYoDcAeBc@mASwAOoBEs@?kCL}BDqC@cCFeA@_A@u@Dw@DmADiAF[@sBPyAF??u@DSByAPeAT}@V]Nk@Tm@X_@RcAv@WNo@r@]b@{DtF[h@}A|Bq@hAUZ}B|Cm@d@m@\\{@XY@MC_@QqBq@{F_C??g@ScnAl@??qCBie@i[y@c@m@QYIu@Gc@?i@DiARm@TQNa@f@uDbNIX??k@hBq@jBs@vBk@bA_JrQUj@??aDfI??[v@Wn@w@pBa@`Aa@fAwBtFc@~@k@hAsCxDwJ~N]|@Mb@K^CFKn@Gb@C\\ATCjAEt@GhBEbA??AXGlAAPM`DYjIM|CO|GM|DG|AGxCa@`MUbHs@fJOfD??ATIrB_Ap^s@jRWlJYdHOhGIpBKjAk@bBe@bAaDnGkBzD??m@pAwMpVgArCsBdGkEbPc@nAYb@a@d@eChDwG|HMPEFwCzNK^KVMJIB_@?iAO??kAOmB]gBGm@A[HSL[^a@|@e@fAo@r@iBh@aB^}@BkAGaNq@am@iDQ???sMUyQ~@uCJsBDo@Pc@Xm@l@m@bAaAvBu@pB]hAOx@UdAKr@??i@dD_@lDKlBOpCQjESvHKtEYbJg@rUGjCRnDFv@NbAPjAHRHLLFt@Nt@Vt@j@f@|@Vt@@DR~B@b@HpAFxN"
-                        },
-                        "canonical-933_0010": {
-                          "id": "canonical-933_0010",
-                          "polyline": "iyr`GzmjpLWAgAGoBQoCMo@EwBSaCKgMeAs@EcDUsEa@wAOqAIg@EeCSqA?[Bs@Ds@H{@JcB\\q@Nw@TiA^mAh@mEvCIFA@MHaGlDqAv@{BlAeHbEg@XULOJWLSJiAr@KFKF[PoBfA{Ar@qD`BmBr@iAXaAVy@P}@Lq@HeAH{@?cAEq@Gk@CSCc@G??qAO}BYMAuAQw@KiBOwBYoCe@mPoCkHmA}@OWCWE_@GkIwA{AWQCMAUEyBa@cGy@oC[_BSuAMiAE{@Bm@FcAPODMDE@YJQDYHq@XeAh@q@\\yBdAi@T??u@\\m@ZmBlAgCjA{@h@w@l@MJKH[Zw@|@wLzMSTQR[XoE~E]`@sDtDoEzEe@d@sAvAsD~DmPxQsF~F}AtA]ZOLOLm@`@IF??yAxAWXkCzCeAtA{HfJiIzIcLzLuC`D}F`G??{@z@uBxB{@`AkCfCgA`Ac@Xw@`@i@Vy@XiAZwDdAqA`@o@PiAj@gAr@aAt@wAnAUV}@fAKJKNEDMNmAvA}BjC_EbFyDnEgDzDgAfAeBnB_F|FIHIJw@~@aAfAcAhAcDrDSTSTg@n@a@b@iL`NmEhFiCxCqLjNcDpD}DvE}HtIgAz@oAz@IDgAh@_A`@_ARy@LkBHy@@wAIuAOqBa@YEsWgE{D}@yCw@}IoCeDcAgF_BkB_@_AK}BEyHXeE@{@@sEJkCF]Bg@@}AFM@a@D_AN??]FSDUBm@FqCd@}@VgAd@eAr@m@f@g@j@{@hAoAhBkBdD[h@}A|Bq@hAUZ}B|Cm@d@m@\\{@XY@MC_@QqBq@{F_C??g@ScnAl@??qCBie@i[y@c@m@QYIu@Gc@?i@DiARm@TQNa@f@uDbNIX??k@hBq@jBs@vBk@bA_JrQUj@??aDfI??[v@Wn@w@pBa@`Aa@fAwBtFc@~@k@hAsCxDwJ~N]|@Mb@K^CFKn@Gb@C\\ATCjAEt@GhBEbA??AXGlAAPM`DYjIM|CO|GM|DG|AGxCa@`MUbHs@fJOfD??ATIrB_Ap^s@jRWlJYdHOhGIpBKjAk@bBe@bAaDnGkBzD??m@pAwMpVgArCsBdGkEbPc@nAYb@a@d@eChDwG|HMPEFwCzNK^KVMJIB_@?iAO??kAOmB]gBGm@A[HSL[^a@|@e@fAo@r@iBh@aB^}@BkAGaNq@am@iDQ???sMUyQ~@uCJsBDo@Pc@Xm@l@m@bAaAvBu@pB]hAOx@UdAKr@??i@dD_@lDKlBOpCQjESvHKtEYbJg@rUGjCRnDFv@NbAPjAHRHLLFt@Nt@Vt@j@f@|@Vt@@DR~B@b@HpAFxN"
-                        },
-                        "20320002": {
-                          "id": "20320002",
-                          "polyline": "qsaaGfrvpLYLuDxAI?e@MWASBcElAq@LsCZc@HaOfBoOlByB^??yB`@uE|@qBFqA@{AOu@Qo@]iAi@o@a@o@i@k@i@q@u@a@k@]m@c@{@Sc@Uq@_@qAm@wDCSo@sD??G_@Mm@Ge@IeACq@Ac@Ay@AkDAeDEmAMqAI_@Ia@I[Oc@i@iAU]_@_@SO}@g@IAIC{@CaB?uABcAEy@GiAMuAWYGc@KqDu@yHiAgBYO?_AM}@KyA[}@Ui@QmA]kA_@cA_@aA[}Am@??SI]KoBq@_AYoDcAeBc@mASwAOoBEs@?kCL}BDqC@cCFeA@_A@u@Dw@DmADiAF[@sBPyAF??u@DSByAPeAT}@V]Nk@Tm@X_@RcAv@WNo@r@]b@{DtF[h@}A|Bq@hAUZ}B|Cm@d@m@\\{@XY@MC_@QqBq@{F_C??g@ScnAl@"
-                        }
-                      },
-                      "trips": {
-                        "canonical-Red-C2-0": {
-                          "id": "canonical-Red-C2-0",
-                          "headsign": "Ashmont",
-                          "route_pattern_id": "Red-1-0",
-                          "shape_id": "canonical-931_0009",
-                          "stop_ids": null
-                        },
-                        "canonical-Red-C2-1": {
-                          "id": "canonical-Red-C2-1",
-                          "headsign": "Alewife",
-                          "route_pattern_id": "Red-1-1",
-                          "shape_id": "canonical-931_0010",
-                          "stop_ids": null
-                        },
-                        "canonical-Red-C1-1": {
-                          "id": "canonical-Red-C1-1",
-                          "headsign": "Alewife",
-                          "route_pattern_id": "Red-3-1",
-                          "shape_id": "canonical-933_0010",
-                          "stop_ids": null
-                        },
-                        "61202958": {
-                          "id": "61202958",
-                          "headsign": "Broadway",
-                          "route_pattern_id": "Red-Z-1",
-                          "shape_id": "20320002",
-                          "stop_ids": null
-                        }
-                      }
-                    }
-                    """
+                    ]
+                }
+                            """
                                 .trimIndent()
                         ),
                     status = HttpStatusCode.OK,
@@ -591,125 +539,62 @@ class BackendTest {
                 )
             }
             val backend = Backend(mockEngine)
-            val response = backend.getRailRouteShapes()
+            val response = backend.getMapFriendlyRailShapes()
 
             assertEquals(
-                RouteResponse(
-                    routes =
+                MapFriendlyRouteResponse(
+                    routesWithSegmentedShapes =
                         listOf(
-                            Route(
-                                id = "Red",
-                                type = RouteType.HEAVY_RAIL,
-                                color = "DA291C",
-                                directionNames = listOf("South", "North"),
-                                directionDestinations = listOf("Ashmont/Braintree", "Alewife"),
-                                longName = "Red Line",
-                                shortName = "",
-                                sortOrder = 10010,
-                                textColor = "FFFFFF",
-                                routePatternIds = listOf("Red-1-0", "Red-1-1", "Red-3-1", "Red-Z-1")
+                            MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                                routeId = "Red",
+                                segmentedShapes =
+                                    listOf(
+                                        SegmentedRouteShape(
+                                            sourceRouteId = "Red",
+                                            sourceRoutePatternId = "red-ashmont",
+                                            shape =
+                                                Shape(
+                                                    id = "ashmont_shape",
+                                                    polyline = "ashmont_shape_polyline"
+                                                ),
+                                            routeSegments =
+                                                listOf(
+                                                    RouteSegment(
+                                                        id = "andrew-savin_hill",
+                                                        sourceRoutePatternId = "red-ashmont",
+                                                        sourceRouteId = "Red",
+                                                        stopIds =
+                                                            listOf(
+                                                                "andrew",
+                                                                "jfk/umass",
+                                                                "savin_hill"
+                                                            ),
+                                                        otherPatternsByStopId = mapOf()
+                                                    )
+                                                )
+                                        ),
+                                        SegmentedRouteShape(
+                                            sourceRouteId = "Red",
+                                            sourceRoutePatternId = "red-braintree",
+                                            shape =
+                                                Shape(
+                                                    id = "braintree_shape",
+                                                    polyline = "braintree_shape_polyline"
+                                                ),
+                                            routeSegments =
+                                                listOf(
+                                                    RouteSegment(
+                                                        id = "jfk/umass-north_quincy",
+                                                        sourceRoutePatternId = "red-braintree",
+                                                        sourceRouteId = "Red",
+                                                        stopIds =
+                                                            listOf("jfk/umass", "north_quincy"),
+                                                        otherPatternsByStopId = mapOf()
+                                                    )
+                                                )
+                                        ),
+                                    )
                             )
-                        ),
-                    routePatterns =
-                        mapOf(
-                            "Red-1-0" to
-                                RoutePattern(
-                                    id = "Red-1-0",
-                                    directionId = 0,
-                                    name = "Alewife - Ashmont",
-                                    sortOrder = 100100001,
-                                    typicality = RoutePattern.Typicality.Typical,
-                                    representativeTripId = "canonical-Red-C2-0",
-                                    routeId = "Red"
-                                ),
-                            "Red-1-1" to
-                                RoutePattern(
-                                    id = "Red-1-1",
-                                    directionId = 1,
-                                    name = "Ashmont - Alewife",
-                                    sortOrder = 100101001,
-                                    typicality = RoutePattern.Typicality.Typical,
-                                    representativeTripId = "canonical-Red-C2-1",
-                                    routeId = "Red"
-                                ),
-                            "Red-3-1" to
-                                RoutePattern(
-                                    id = "Red-3-1",
-                                    name = "Braintree - Alewife",
-                                    routeId = "Red",
-                                    directionId = 1,
-                                    sortOrder = 100101000,
-                                    typicality = RoutePattern.Typicality.Typical,
-                                    representativeTripId = "canonical-Red-C1-1"
-                                ),
-                            "Red-Z-1" to
-                                RoutePattern(
-                                    id = "Red-Z-1",
-                                    name = "Ashmont - Broadway",
-                                    routeId = "Red",
-                                    directionId = 1,
-                                    sortOrder = 100101120,
-                                    typicality = RoutePattern.Typicality.Atypical,
-                                    representativeTripId = "61202958"
-                                )
-                        ),
-                    shapes =
-                        mapOf(
-                            "canonical-931_0009" to
-                                Shape(
-                                    id = "canonical-931_0009",
-                                    polyline =
-                                        "}nwaG~|eqLGyNIqAAc@S_CAEWu@g@}@u@k@u@Wu@OMGIMISQkAOcAGw@SoDFkCf@sUXcJJuERwHPkENqCJmB^mDn@}D??D[TeANy@\\iAt@qB`AwBl@cAl@m@b@Yn@QrBEtCKxQ_ApMT??R?`m@hD`Np@jAF|@C`B_@hBi@n@s@d@gA`@}@Z_@RMZIl@@fBFlB\\tAP??~@L^?HCLKJWJ_@vC{NDGLQvG}HdCiD`@e@Xc@b@oAjEcPrBeGfAsCvMqVl@sA??jByD`DoGd@cAj@cBJkAHqBNiGXeHVmJr@kR~@q^HsB@U??NgDr@gJTcH`@aMFyCF}AL}DN}GL}CXkILaD@QFmA@[??DaAFiBDu@BkA@UB]Fc@Jo@BGJ_@Lc@\\}@vJ_OrCyDj@iAb@_AvBuF`@gA`@aAv@qBVo@Xu@??bDgI??Tm@~IsQj@cAr@wBp@kBj@kB??HWtDcN`@g@POl@UhASh@Eb@?t@FXHl@Px@b@he@h[pCC??bnAm@h@T??xF|BpBp@^PLBXAz@Yl@]l@e@|B}CT[p@iA|A}BZi@zDuF\\c@n@s@VObAw@^Sl@Yj@U\\O|@WdAUxAQRCt@E??xAGrBQZAhAGlAEv@Et@E~@AdAAbCGpCA|BEjCMr@?nBDvANlARdBb@nDbA~@XnBp@\\JRH??|Al@`AZbA^jA^lA\\h@P|@TxAZ|@J~@LN?fBXxHhApDt@b@JXFtAVhALx@FbADtAC`B?z@BHBH@|@f@RN^^T\\h@hANb@HZH`@H^LpADlA@dD@jD@x@@b@Bp@HdAFd@Ll@F^??n@rDBRl@vD^pATp@Rb@b@z@\\l@`@j@p@t@j@h@n@h@n@`@hAh@n@\\t@PzANpAApBGtE}@xBa@??xB_@nOmB`OgBb@IrC[p@MbEmARCV@d@LH?tDyAXM"
-                                ),
-                            "canonical-931_0010" to
-                                Shape(
-                                    id = "canonical-931_0010",
-                                    polyline =
-                                        "qsaaGfrvpLYLuDxAI?e@MWASBcElAq@LsCZc@HaOfBoOlByB^??yB`@uE|@qBFqA@{AOu@Qo@]iAi@o@a@o@i@k@i@q@u@a@k@]m@c@{@Sc@Uq@_@qAm@wDCSo@sD??G_@Mm@Ge@IeACq@Ac@Ay@AkDAeDEmAMqAI_@Ia@I[Oc@i@iAU]_@_@SO}@g@IAIC{@CaB?uABcAEy@GiAMuAWYGc@KqDu@yHiAgBYO?_AM}@KyA[}@Ui@QmA]kA_@cA_@aA[}Am@??SI]KoBq@_AYoDcAeBc@mASwAOoBEs@?kCL}BDqC@cCFeA@_A@u@Dw@DmADiAF[@sBPyAF??u@DSByAPeAT}@V]Nk@Tm@X_@RcAv@WNo@r@]b@{DtF[h@}A|Bq@hAUZ}B|Cm@d@m@\\{@XY@MC_@QqBq@{F_C??g@ScnAl@??qCBie@i[y@c@m@QYIu@Gc@?i@DiARm@TQNa@f@uDbNIX??k@hBq@jBs@vBk@bA_JrQUj@??aDfI??[v@Wn@w@pBa@`Aa@fAwBtFc@~@k@hAsCxDwJ~N]|@Mb@K^CFKn@Gb@C\\ATCjAEt@GhBEbA??AXGlAAPM`DYjIM|CO|GM|DG|AGxCa@`MUbHs@fJOfD??ATIrB_Ap^s@jRWlJYdHOhGIpBKjAk@bBe@bAaDnGkBzD??m@pAwMpVgArCsBdGkEbPc@nAYb@a@d@eChDwG|HMPEFwCzNK^KVMJIB_@?iAO??kAOmB]gBGm@A[HSL[^a@|@e@fAo@r@iBh@aB^}@BkAGaNq@am@iDQ???sMUyQ~@uCJsBDo@Pc@Xm@l@m@bAaAvBu@pB]hAOx@UdAKr@??i@dD_@lDKlBOpCQjESvHKtEYbJg@rUGjCRnDFv@NbAPjAHRHLLFt@Nt@Vt@j@f@|@Vt@@DR~B@b@HpAFxN"
-                                ),
-                            "canonical-933_0010" to
-                                Shape(
-                                    id = "canonical-933_0010",
-                                    polyline =
-                                        "iyr`GzmjpLWAgAGoBQoCMo@EwBSaCKgMeAs@EcDUsEa@wAOqAIg@EeCSqA?[Bs@Ds@H{@JcB\\q@Nw@TiA^mAh@mEvCIFA@MHaGlDqAv@{BlAeHbEg@XULOJWLSJiAr@KFKF[PoBfA{Ar@qD`BmBr@iAXaAVy@P}@Lq@HeAH{@?cAEq@Gk@CSCc@G??qAO}BYMAuAQw@KiBOwBYoCe@mPoCkHmA}@OWCWE_@GkIwA{AWQCMAUEyBa@cGy@oC[_BSuAMiAE{@Bm@FcAPODMDE@YJQDYHq@XeAh@q@\\yBdAi@T??u@\\m@ZmBlAgCjA{@h@w@l@MJKH[Zw@|@wLzMSTQR[XoE~E]`@sDtDoEzEe@d@sAvAsD~DmPxQsF~F}AtA]ZOLOLm@`@IF??yAxAWXkCzCeAtA{HfJiIzIcLzLuC`D}F`G??{@z@uBxB{@`AkCfCgA`Ac@Xw@`@i@Vy@XiAZwDdAqA`@o@PiAj@gAr@aAt@wAnAUV}@fAKJKNEDMNmAvA}BjC_EbFyDnEgDzDgAfAeBnB_F|FIHIJw@~@aAfAcAhAcDrDSTSTg@n@a@b@iL`NmEhFiCxCqLjNcDpD}DvE}HtIgAz@oAz@IDgAh@_A`@_ARy@LkBHy@@wAIuAOqBa@YEsWgE{D}@yCw@}IoCeDcAgF_BkB_@_AK}BEyHXeE@{@@sEJkCF]Bg@@}AFM@a@D_AN??]FSDUBm@FqCd@}@VgAd@eAr@m@f@g@j@{@hAoAhBkBdD[h@}A|Bq@hAUZ}B|Cm@d@m@\\{@XY@MC_@QqBq@{F_C??g@ScnAl@??qCBie@i[y@c@m@QYIu@Gc@?i@DiARm@TQNa@f@uDbNIX??k@hBq@jBs@vBk@bA_JrQUj@??aDfI??[v@Wn@w@pBa@`Aa@fAwBtFc@~@k@hAsCxDwJ~N]|@Mb@K^CFKn@Gb@C\\ATCjAEt@GhBEbA??AXGlAAPM`DYjIM|CO|GM|DG|AGxCa@`MUbHs@fJOfD??ATIrB_Ap^s@jRWlJYdHOhGIpBKjAk@bBe@bAaDnGkBzD??m@pAwMpVgArCsBdGkEbPc@nAYb@a@d@eChDwG|HMPEFwCzNK^KVMJIB_@?iAO??kAOmB]gBGm@A[HSL[^a@|@e@fAo@r@iBh@aB^}@BkAGaNq@am@iDQ???sMUyQ~@uCJsBDo@Pc@Xm@l@m@bAaAvBu@pB]hAOx@UdAKr@??i@dD_@lDKlBOpCQjESvHKtEYbJg@rUGjCRnDFv@NbAPjAHRHLLFt@Nt@Vt@j@f@|@Vt@@DR~B@b@HpAFxN"
-                                ),
-                            "20320002" to
-                                Shape(
-                                    id = "20320002",
-                                    polyline =
-                                        "qsaaGfrvpLYLuDxAI?e@MWASBcElAq@LsCZc@HaOfBoOlByB^??yB`@uE|@qBFqA@{AOu@Qo@]iAi@o@a@o@i@k@i@q@u@a@k@]m@c@{@Sc@Uq@_@qAm@wDCSo@sD??G_@Mm@Ge@IeACq@Ac@Ay@AkDAeDEmAMqAI_@Ia@I[Oc@i@iAU]_@_@SO}@g@IAIC{@CaB?uABcAEy@GiAMuAWYGc@KqDu@yHiAgBYO?_AM}@KyA[}@Ui@QmA]kA_@cA_@aA[}Am@??SI]KoBq@_AYoDcAeBc@mASwAOoBEs@?kCL}BDqC@cCFeA@_A@u@Dw@DmADiAF[@sBPyAF??u@DSByAPeAT}@V]Nk@Tm@X_@RcAv@WNo@r@]b@{DtF[h@}A|Bq@hAUZ}B|Cm@d@m@\\{@XY@MC_@QqBq@{F_C??g@ScnAl@"
-                                )
-                        ),
-                    trips =
-                        mapOf(
-                            "canonical-Red-C2-0" to
-                                Trip(
-                                    id = "canonical-Red-C2-0",
-                                    headsign = "Ashmont",
-                                    routePatternId = "Red-1-0",
-                                    shapeId = "canonical-931_0009"
-                                ),
-                            "canonical-Red-C2-1" to
-                                Trip(
-                                    id = "canonical-Red-C2-1",
-                                    headsign = "Alewife",
-                                    routePatternId = "Red-1-1",
-                                    shapeId = "canonical-931_0010"
-                                ),
-                            "canonical-Red-C1-1" to
-                                Trip(
-                                    id = "canonical-Red-C1-1",
-                                    headsign = "Alewife",
-                                    routePatternId = "Red-3-1",
-                                    shapeId = "canonical-933_0010"
-                                ),
-                            "61202958" to
-                                Trip(
-                                    id = "61202958",
-                                    headsign = "Broadway",
-                                    routePatternId = "Red-Z-1",
-                                    shapeId = "20320002"
-                                )
                         )
                 ),
                 response

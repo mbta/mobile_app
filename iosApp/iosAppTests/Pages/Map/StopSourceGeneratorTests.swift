@@ -99,40 +99,25 @@ final class StopSourceGeneratorTests: XCTestCase {
         let objects = MapTestDataHelper.objects
 
         let stops = [
-            "70061": objects.stop { stop in
-                stop.id = "70061"
-                stop.name = "Alewife"
-                stop.latitude = 42.396158
-                stop.longitude = -71.139971
-                stop.locationType = .stop
-                stop.parentStationId = "place-alfcl"
-            },
-            "place-alfcl": objects.stop { stop in
-                stop.id = "place-alfcl"
-                stop.name = "Alewife"
-                stop.latitude = 42.39583
-                stop.longitude = -71.141287
-                stop.locationType = .station
-            },
-            "place-astao": objects.stop { stop in
-                stop.id = "place-astao"
-                stop.name = "Assembly"
-                stop.latitude = 42.392811
-                stop.longitude = -71.077257
-                stop.locationType = .station
-            },
+            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+            MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
+            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+            MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse, stopsById: stops)
         let stopSourceGenerator = StopSourceGenerator(stops: stops, routeSourceDetails: routeSourceGenerator.routeSourceDetails)
         let sources = stopSourceGenerator.stopSources
-        let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.39616238508952, longitude: -71.14129664308807)
+        let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.3961623851223, longitude: -71.14129664101432)
 
         let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }
         XCTAssertNotNil(stationSource)
         if case let .featureCollection(collection) = stationSource!.data.unsafelyUnwrapped {
-            XCTAssertEqual(collection.features.count, 2)
-            if case let .point(point) = collection.features[0].geometry {
+            XCTAssertEqual(collection.features.count, 4)
+            if case let .point(point) = collection.features.first(where: { $0.identifier ==
+                    FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
+            })!
+                .geometry {
                 XCTAssertEqual(point.coordinates, snappedStopCoordinates)
             } else {
                 XCTFail("Source feature was not a point")

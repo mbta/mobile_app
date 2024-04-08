@@ -2,8 +2,8 @@ package com.mbta.tid.mbta_app
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.RouteResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import io.ktor.client.HttpClient
@@ -86,10 +86,10 @@ class Backend(engine: HttpClientEngine) {
         ResponseException::class,
         HttpRequestTimeoutException::class
     )
-    suspend fun getRailRouteShapes(): RouteResponse =
+    suspend fun getMapFriendlyRailShapes(): MapFriendlyRouteResponse =
         httpClient
             .get {
-                url { path("api/shapes/rail") }
+                url { path("api/shapes/map-friendly/rail") }
                 expectSuccess = true
             }
             .body()

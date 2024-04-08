@@ -1,0 +1,22 @@
+package com.mbta.tid.mbta_app.model
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+/**
+ * A route shape with segments of stops that don't overlap with other route shapes. Ideal for use
+ * when drawing multiple lines on a map at once.
+ *
+ * @param sourceRoutePatternId the route pattern of the shape
+ * @param sourceRouteId the route of the shape
+ * @param shape The full shape for the source route pattern
+ * @param routeSegments segments of stops that do not overlap with segments for other route shapes.
+ *   Segments may intersect with other segments only at the first or last stop.
+ */
+@Serializable
+data class SegmentedRouteShape(
+    @SerialName("source_route_pattern_id") val sourceRoutePatternId: String,
+    @SerialName("source_route_id") val sourceRouteId: String,
+    @SerialName("route_segments") val routeSegments: List<RouteSegment>,
+    val shape: Shape
+)

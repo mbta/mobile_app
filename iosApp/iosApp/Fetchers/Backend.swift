@@ -14,7 +14,7 @@ protocol BackendProtocol {
     func getNearby(latitude: Double, longitude: Double) async throws -> NearbyResponse
     func getSchedule(stopIds: [String]) async throws -> ScheduleResponse
     func getSearchResults(query: String) async throws -> SearchResponse
-    func getRailRouteShapes() async throws -> RouteResponse
+    func getMapFriendlyRailShapes() async throws -> MapFriendlyRouteResponse
 }
 
 extension Backend: BackendProtocol {}
@@ -34,7 +34,7 @@ struct IdleBackend: BackendProtocol {
         await hang()
     }
 
-    func getRailRouteShapes() async throws -> RouteResponse {
+    func getMapFriendlyRailShapes() async throws -> MapFriendlyRouteResponse {
         await hang()
     }
 
