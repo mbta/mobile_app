@@ -11,6 +11,7 @@ struct IOSApp: App {
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var alertsFetcher: AlertsFetcher
+    @StateObject var backendProvider: BackendProvider
     @StateObject var globalFetcher: GlobalFetcher
     @StateObject var nearbyFetcher: NearbyFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
@@ -44,6 +45,7 @@ struct IOSApp: App {
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
 
         _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
+        _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
@@ -59,6 +61,7 @@ struct IOSApp: App {
             ContentView()
                 .environmentObject(locationDataManager)
                 .environmentObject(alertsFetcher)
+                .environmentObject(backendProvider)
                 .environmentObject(globalFetcher)
                 .environmentObject(nearbyFetcher)
                 .environmentObject(predictionsFetcher)

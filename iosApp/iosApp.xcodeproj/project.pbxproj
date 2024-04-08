@@ -35,6 +35,10 @@
 		8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */; };
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
 		8CD1F8CD2B7164C100F419D4 /* PredictionsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */; };
+		8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */; };
+		8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */; };
+		8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */; };
+		8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014132BBDBE5200918FAE /* BackendProvider.swift */; };
 		8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */; };
 		8CEA10232BA0F3C6001C6EB9 /* ScheduleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */; };
 		8CEA10252BA4B179001C6EB9 /* AlertsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA10242BA4B179001C6EB9 /* AlertsFetcher.swift */; };
@@ -159,6 +163,10 @@
 		8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitView.swift; sourceTree = "<group>"; };
 		8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsFetcher.swift; sourceTree = "<group>"; };
+		8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillSection.swift; sourceTree = "<group>"; };
+		8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesView.swift; sourceTree = "<group>"; };
+		8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteView.swift; sourceTree = "<group>"; };
+		8CE014132BBDBE5200918FAE /* BackendProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendProvider.swift; sourceTree = "<group>"; };
 		8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntry.swift; sourceTree = "<group>"; };
 		8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFetcher.swift; sourceTree = "<group>"; };
 		8CEA10242BA4B179001C6EB9 /* AlertsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsFetcher.swift; sourceTree = "<group>"; };
@@ -399,6 +407,8 @@
 			isa = PBXGroup;
 			children = (
 				8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */,
+				8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */,
+				8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -456,6 +466,7 @@
 			children = (
 				9A4E8E582B7EC4B90066B936 /* RoutePill.swift */,
 				9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */,
+				8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -493,6 +504,7 @@
 				8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */,
 				8CEA10242BA4B179001C6EB9 /* AlertsFetcher.swift */,
 				9A5830572BA4A1A30039876E /* ViewportProvider.swift */,
+				8CE014132BBDBE5200918FAE /* BackendProvider.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -854,6 +866,7 @@
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,
 				9A5B27582BB22BF9009A6FC6 /* MapLayerManager.swift in Sources */,
 				9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */,
+				8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */,
 				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,
 				9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
@@ -862,6 +875,7 @@
 				9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */,
 				9A2005C92B97B65900F562E1 /* NearbyStopRoutePatternView.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
+				8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */,
 				9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */,
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
@@ -873,6 +887,7 @@
 				9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */,
 				8CEA10252BA4B179001C6EB9 /* AlertsFetcher.swift in Sources */,
 				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
+				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
 				6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */,
 				8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */,
 				ED3581662BB4706F005DDC34 /* PartialSheetModifier.swift in Sources */,
@@ -887,6 +902,7 @@
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
 				9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */,
+				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
 				9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */,
 				9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */,
 				9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */,

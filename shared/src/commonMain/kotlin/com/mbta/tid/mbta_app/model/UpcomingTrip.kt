@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
@@ -132,6 +134,40 @@ data class UpcomingTrip(
     }
 
     companion object {
+        fun <Key> tripsMappedBy(
+            schedules: ScheduleResponse?,
+            predictions: PredictionsStreamDataResponse?,
+            scheduleKey: (Schedule, ScheduleResponse) -> Key,
+            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key
+        ): Map<Key, List<UpcomingTrip>>? {
+            val schedulesMap =
+                schedules?.let { scheduleData ->
+                    scheduleData.schedules.groupBy { schedule ->
+                        scheduleKey(schedule, scheduleData)
+                    }
+                }
+            val predictionsMap =
+                predictions?.let { predictionData ->
+                    predictionData.predictions.values.groupBy { prediction ->
+                        predictionKey(prediction, predictionData)
+                    }
+                }
+            return if (schedulesMap != null || predictionsMap != null) {
+                ((schedulesMap?.keys ?: emptySet()) + (predictionsMap?.keys ?: emptySet()))
+                    .associateWith { upcomingTripKey ->
+                        val schedulesHere = schedulesMap?.get(upcomingTripKey)
+                        val predictionsHere = predictionsMap?.get(upcomingTripKey)
+                        tripsFromData(
+                            schedulesHere ?: emptyList(),
+                            predictionsHere ?: emptyList(),
+                            predictions?.vehicles ?: emptyMap()
+                        )
+                    }
+            } else {
+                null
+            }
+        }
+
         /**
          * Gets the list of [UpcomingTrip]s from the given [schedules], [predictions] and
          * [vehicles]. Matches by trip ID, stop ID, and stop sequence.
