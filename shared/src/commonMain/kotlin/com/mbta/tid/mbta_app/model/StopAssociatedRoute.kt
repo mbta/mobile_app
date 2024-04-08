@@ -98,11 +98,16 @@ data class PatternsByHeadsign(
                 }
 
     fun directionId(): Int {
-        val directionCounts =
-            (upcomingTrips?.groupingBy { it.trip.directionId }
-                    ?: patterns.groupingBy { it.directionId })
-                .eachCount()
-        return checkNotNull(directionCounts.maxByOrNull { it.value }?.key)
+        if (upcomingTrips != null) {
+            for (upcomingTrip in upcomingTrips) {
+                return (upcomingTrip.trip.directionId)
+            }
+        }
+        for (pattern in patterns) {
+            return (pattern.directionId)
+        }
+        // there shouldn't be a headsign with no trips and no patterns
+        throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
     }
 
     override fun compareTo(other: PatternsByHeadsign): Int =

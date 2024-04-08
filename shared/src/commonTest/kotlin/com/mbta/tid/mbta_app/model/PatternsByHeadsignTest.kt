@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
@@ -138,5 +139,43 @@ class PatternsByHeadsignTest {
             PatternsByHeadsign(busRoute, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
                 .format(now)
         )
+    }
+
+    @Test
+    fun `directionId finds trips`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val trip0 = objects.trip { directionId = 0 }
+        val prediction0 = objects.schedule { trip = trip0 }
+        val trip1 = objects.trip { directionId = 1 }
+        val prediction1 = objects.schedule { trip = trip1 }
+        assertEquals(
+            0,
+            PatternsByHeadsign(route, "", emptyList(), listOf(objects.upcomingTrip(prediction0)))
+                .directionId()
+        )
+        assertEquals(
+            1,
+            PatternsByHeadsign(route, "", emptyList(), listOf(objects.upcomingTrip(prediction1)))
+                .directionId()
+        )
+    }
+
+    @Test
+    fun `directionId finds patterns`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val routePattern0 = objects.routePattern(route) { directionId = 0 }
+        val routePattern1 = objects.routePattern(route) { directionId = 1 }
+        assertEquals(0, PatternsByHeadsign(route, "", listOf(routePattern0)).directionId())
+        assertEquals(1, PatternsByHeadsign(route, "", listOf(routePattern1)).directionId())
+    }
+
+    @Test
+    fun `directionId throws if empty`() {
+        assertFailsWith<NoSuchElementException> {
+            PatternsByHeadsign(ObjectCollectionBuilder.Single.route(), "", emptyList())
+                .directionId()
+        }
     }
 }
