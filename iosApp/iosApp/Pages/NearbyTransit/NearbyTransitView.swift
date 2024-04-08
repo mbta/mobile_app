@@ -139,6 +139,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
         )
         let busTrip = Trip(
             id: "trip1",
+            directionId: 1,
             headsign: "Houghs Neck",
             routePatternId: "216-_-1",
             shapeId: "2160144",
@@ -204,6 +205,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
         )
         let crTrip = Trip(
             id: "canonical-CR-Providence-C1-0",
+            directionId: 0,
             headsign: "Wickford Junction",
             routePatternId: "CR-Providence-C1-0",
             shapeId: "canonical-9890009",
