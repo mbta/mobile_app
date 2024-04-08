@@ -30,6 +30,10 @@ data class RouteSegment(
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
 ) : IRouteSegment {
 
+    /**
+     * Split this route segment into one or more `AlertAwareRouteSegments` based on the alerts for
+     * the stops within this segment.
+     */
     fun splitAlertingSegments(
         alertsByStop: Map<String, AlertAssociatedStop>
     ): List<AlertAwareRouteSegment> {
@@ -51,6 +55,11 @@ data class RouteSegment(
         }
     }
 
+    /**
+     * Get the set of stop IDs that have a service alert relevant to this route segment. A service
+     * alert for a stop is relevant if it applies to the `sourceRouteId` for the segment or any
+     * route included in the `otherPatternsByStopId` for that stop.
+     */
     fun hasServiceAlertByStopId(alertsByStop: Map<String, AlertAssociatedStop>): Set<String> {
         return stopIds
             .filter { stopId ->
@@ -132,6 +141,11 @@ data class RouteSegment(
     }
 }
 
+/**
+ * A route segment of consecutive stops that form an alerting or non-alerting segment. Non-alerting
+ * segments that are adjacent to an alerting segment will include the consecutive stops up to and
+ * including the adjacent alerting stop.
+ */
 data class AlertAwareRouteSegment(
     val id: String,
     override val sourceRoutePatternId: String,
