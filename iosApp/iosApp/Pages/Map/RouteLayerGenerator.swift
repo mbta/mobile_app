@@ -33,20 +33,35 @@ class RouteLayerGenerator {
                 // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
                 routesById[$0.routeId]!.sortOrder >= routesById[$1.routeId]!.sortOrder
             }
-            .map { createRouteLayer(route: routesById[$0.routeId]!) }
+            .flatMap { createRouteLayer(route: routesById[$0.routeId]!) }
     }
 
-    static func createRouteLayer(route: Route) -> LineLayer {
-        var routeLayer = LineLayer(
-            id: Self.getRouteLayerId(route.id),
+    static func createRouteLayer(route: Route) -> [LineLayer] {
+        var alertingLayer = LineLayer(
+            id: Self.getRouteLayerId("\(route.id)-alerting"),
             source: RouteSourceGenerator.getRouteSourceId(route.id)
         )
-        routeLayer.lineWidth = .constant(4.0)
-        routeLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
-        routeLayer.lineBorderWidth = .constant(1.0)
-        routeLayer.lineBorderColor = .constant(StyleColor(.white))
-        routeLayer.lineJoin = .constant(.round)
-        routeLayer.lineCap = .constant(.round)
-        return routeLayer
+        alertingLayer.filter = Exp(.get) { RouteSourceGenerator.propIsAlertingKey }
+        alertingLayer.lineDasharray = .constant([2.0, 2.0])
+
+        alertingLayer.lineWidth = .constant(4.0)
+        alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
+        alertingLayer.lineBorderWidth = .constant(1.0)
+        alertingLayer.lineBorderColor = .constant(StyleColor(.white))
+        alertingLayer.lineJoin = .constant(.round)
+        alertingLayer.lineCap = .constant(.round)
+
+        var nonAlertingLayer = LineLayer(
+            id: Self.getRouteLayerId("\(route.id)"),
+            source: RouteSourceGenerator.getRouteSourceId(route.id)
+        )
+
+        nonAlertingLayer.lineWidth = .constant(4.0)
+        nonAlertingLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+        nonAlertingLayer.lineBorderWidth = .constant(1.0)
+        nonAlertingLayer.lineBorderColor = .constant(StyleColor(.white))
+        nonAlertingLayer.lineJoin = .constant(.round)
+        nonAlertingLayer.lineCap = .constant(.round)
+        return [nonAlertingLayer, alertingLayer]
     }
 }

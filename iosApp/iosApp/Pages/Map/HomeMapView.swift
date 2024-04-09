@@ -152,7 +152,7 @@ struct HomeMapView: View {
     ) {
         let layerManager = MapLayerManager(map: map)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops, alertsByStop: currentStopAlerts)
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
             stopSourceGenerator: StopSourceGenerator(
