@@ -50,12 +50,14 @@ class RouteSourceGenerator {
 
     init(routeData: MapFriendlyRouteResponse, stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
         self.routeData = routeData
-        routeSourceDetails = Self.generateRouteSources(routeData: routeData, stopsById: stopsById, alertsByStop: alertsByStop)
+        routeSourceDetails = Self.generateRouteSources(routeData: routeData, stopsById: stopsById,
+                                                       alertsByStop: alertsByStop)
         routeSources = routeSourceDetails.map(\.source)
     }
 
     static func generateRouteSources(routeData: MapFriendlyRouteResponse,
-                                     stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) -> [RouteSourceData] {
+                                     stopsById: [String: Stop],
+                                     alertsByStop: [String: AlertAssociatedStop]) -> [RouteSourceData] {
         routeData.routesWithSegmentedShapes
             .map { generateRouteSource(routeId: $0.routeId,
                                        routeShapes: $0.segmentedShapes,
@@ -64,8 +66,10 @@ class RouteSourceGenerator {
     }
 
     static func generateRouteSource(routeId: String, routeShapes: [SegmentedRouteShape],
-                                    stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) -> RouteSourceData {
-        let routeLines = generateRouteLines(routeId: routeId, routeShapes: routeShapes, stopsById: stopsById, alertsByStop: alertsByStop)
+                                    stopsById: [String: Stop],
+                                    alertsByStop: [String: AlertAssociatedStop]) -> RouteSourceData {
+        let routeLines = generateRouteLines(routeId: routeId, routeShapes: routeShapes, stopsById: stopsById,
+                                            alertsByStop: alertsByStop)
         let routeFeatures: [Feature] = routeLines.map { lineData in
             var feature = Feature(geometry: lineData.line)
             var featureProps = JSONObject()
@@ -79,15 +83,18 @@ class RouteSourceGenerator {
     }
 
     static func generateRouteLines(routeId _: String, routeShapes: [SegmentedRouteShape],
-                                   stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
+                                   stopsById: [String: Stop],
+                                   alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
         routeShapes
             .flatMap { routePatternShape in
-                routeShapeToLineData(routePatternShape: routePatternShape, stopsById: stopsById, alertsByStop: alertsByStop)
+                routeShapeToLineData(routePatternShape: routePatternShape, stopsById: stopsById,
+                                     alertsByStop: alertsByStop)
             }
     }
 
     private static func routeShapeToLineData(routePatternShape: SegmentedRouteShape,
-                                             stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
+                                             stopsById: [String: Stop],
+                                             alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
         guard let polyline = routePatternShape.shape.polyline,
               let coordinates = Polyline(encodedPolyline: polyline).coordinates
         else {

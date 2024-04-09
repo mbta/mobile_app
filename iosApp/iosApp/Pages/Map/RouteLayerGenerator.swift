@@ -42,7 +42,7 @@ class RouteLayerGenerator {
             source: RouteSourceGenerator.getRouteSourceId(route.id)
         )
         alertingLayer.filter = Exp(.get) { RouteSourceGenerator.propIsAlertingKey }
-        alertingLayer.lineDasharray = .constant([2.0, 2.0])
+        alertingLayer.lineDasharray = .constant([2.0, 3.0])
 
         alertingLayer.lineWidth = .constant(4.0)
         alertingLayer.lineColor = .constant(StyleColor(UIColor.white))

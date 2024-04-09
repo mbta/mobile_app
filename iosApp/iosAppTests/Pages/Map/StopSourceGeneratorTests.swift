@@ -84,7 +84,8 @@ final class StopSourceGeneratorTests: XCTestCase {
         XCTAssertNotNil(stopSource)
         if case let .featureCollection(collection) = stopSource!.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
-            if case let .string(serviceStatus) = collection.features[0].properties![StopSourceGenerator.propServiceStatusKey] {
+            if case let .string(serviceStatus) = collection.features[0]
+                .properties![StopSourceGenerator.propServiceStatusKey] {
                 XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.normal))
             } else {
                 XCTFail("Source status property was not set correctly")
@@ -105,8 +106,10 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse, stopsById: stops)
-        let stopSourceGenerator = StopSourceGenerator(stops: stops, routeSourceDetails: routeSourceGenerator.routeSourceDetails)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse, stopsById: stops,
+                                                        alertsByStop: [:])
+        let stopSourceGenerator = StopSourceGenerator(stops: stops,
+                                                      routeSourceDetails: routeSourceGenerator.routeSourceDetails)
         let sources = stopSourceGenerator.stopSources
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.3961623851223, longitude: -71.14129664101432)
 

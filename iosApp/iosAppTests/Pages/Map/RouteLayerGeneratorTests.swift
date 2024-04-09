@@ -22,10 +22,18 @@ final class RouteLayerGeneratorTests: XCTestCase {
                                                                    MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange])
         let routeLayers = routeLayerGenerator.routeLayers
 
-        XCTAssertEqual(routeLayers.count, 2)
+        // 2 layers per route - alerting & non-alerting
+        XCTAssertEqual(routeLayers.count, 4)
         let redRouteLayer = routeLayers.first { $0.id == RouteLayerGenerator.getRouteLayerId(MapTestDataHelper.routeRed.id) }
         XCTAssertNotNil(redRouteLayer)
         guard let redRouteLayer else { return }
         XCTAssertEqual(redRouteLayer.lineColor, .constant(StyleColor(.init(hex: MapTestDataHelper.routeRed.color))))
+
+        let alertingRedLayer = routeLayers.first { $0.id == RouteLayerGenerator
+            .getRouteLayerId("\(MapTestDataHelper.routeRed.id)-alerting")
+        }
+
+        XCTAssertNotNil(alertingRedLayer)
+        XCTAssertNotNil(alertingRedLayer!.lineDasharray)
     }
 }
