@@ -167,6 +167,7 @@ class ObjectCollectionBuilder {
         fun representativeTrip(block: TripBuilder.() -> Unit = {}) =
             this@ObjectCollectionBuilder.trip {
                     routePatternId = this@RoutePatternBuilder.id
+                    directionId = this@RoutePatternBuilder.directionId
                     block()
                 }
                 .also { this.representativeTripId = it.id }
@@ -239,6 +240,7 @@ class ObjectCollectionBuilder {
         build(
             trips,
             TripBuilder().apply {
+                directionId = routePattern.directionId
                 routePatternId = routePattern.id
                 val representativeTrip = trips[routePattern.representativeTripId]
                 if (representativeTrip != null) {
