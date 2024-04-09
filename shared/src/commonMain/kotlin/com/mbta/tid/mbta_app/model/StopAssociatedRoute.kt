@@ -100,11 +100,11 @@ data class PatternsByHeadsign(
     fun directionId(): Int {
         if (upcomingTrips != null) {
             for (upcomingTrip in upcomingTrips) {
-                return (upcomingTrip.trip.directionId)
+                return upcomingTrip.trip.directionId
             }
         }
         for (pattern in patterns) {
-            return (pattern.directionId)
+            return pattern.directionId
         }
         // there shouldn't be a headsign with no trips and no patterns
         throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
