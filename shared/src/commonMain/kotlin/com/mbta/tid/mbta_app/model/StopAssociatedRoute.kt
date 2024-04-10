@@ -128,6 +128,8 @@ data class PatternsByHeadsign(
     }
 
     fun format(now: Instant): Format {
+        val alert = alertsHere?.firstOrNull()
+        if (alert != null) return Format.NoService(alert)
         if (this.upcomingTrips == null) return Format.Loading
         val tripsToShow =
             upcomingTrips
@@ -138,12 +140,7 @@ data class PatternsByHeadsign(
                         (this.route.type.isSubway() && it.format is UpcomingTrip.Format.Schedule)
                 }
                 .take(2)
-        if (tripsToShow.isEmpty()) {
-            this.alertsHere?.firstOrNull()?.let {
-                return Format.NoService(it)
-            }
-            return Format.None
-        }
+        if (tripsToShow.isEmpty()) return Format.None
         return Format.Some(tripsToShow)
     }
 }

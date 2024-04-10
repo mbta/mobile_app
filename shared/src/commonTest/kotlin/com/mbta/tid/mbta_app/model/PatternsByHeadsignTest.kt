@@ -36,6 +36,30 @@ class PatternsByHeadsignTest {
     }
 
     @Test
+    fun `formats as alert with trip and alert`() {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 1.minutes
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        val alert = objects.alert {}
+
+        assertEquals(
+            PatternsByHeadsign.Format.NoService(alert),
+            PatternsByHeadsign(route, "", emptyList(), listOf(upcomingTrip), listOf(alert))
+                .format(now)
+        )
+    }
+
+    @Test
     fun `formats as none with no trips and no alert`() {
         val now = Clock.System.now()
 
