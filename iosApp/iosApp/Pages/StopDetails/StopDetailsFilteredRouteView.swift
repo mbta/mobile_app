@@ -39,12 +39,14 @@ struct StopDetailsFilteredRouteView: View {
 
     let rows: [RowData]
 
-    init(patternsByStop: PatternsByStop, now: Instant, filter: Binding<StopDetailsFilter?>) {
+    init(departures: StopDetailsDepartures, now: Instant, filter filterBinding: Binding<StopDetailsFilter?>) {
+        _filter = filterBinding
+        let filter = filterBinding.wrappedValue
+        let patternsByStop = departures.routes.first(where: { $0.route.id == filter?.routeId })!
         self.patternsByStop = patternsByStop
         self.now = now
-        _filter = filter
 
-        let expectedDirection: Int32? = filter.wrappedValue?.directionId
+        let expectedDirection: Int32? = filter?.directionId
         rows = patternsByStop.allUpcomingTrips().compactMap {
             RowData(trip: $0, route: patternsByStop.route, expectedDirection: expectedDirection, now: now)
         }

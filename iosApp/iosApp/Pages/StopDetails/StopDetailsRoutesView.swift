@@ -17,8 +17,7 @@ struct StopDetailsRoutesView: View {
 
     var body: some View {
         if let filter {
-            let selectedData = departures.routes.first(where: { $0.route.id == filter.routeId })!
-            StopDetailsFilteredRouteView(patternsByStop: selectedData, now: now, filter: $filter)
+            StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter)
         } else {
             List(departures.routes, id: \.route.id) { patternsByStop in
                 StopDetailsRouteView(patternsByStop: patternsByStop, now: now, filter: $filter)

@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class StopDetailsFilteredRouteViewTests: XCTestCase {
-    private func testData() -> (patternsByStop: PatternsByStop, routeId: String, now: Instant) {
+    private func testData() -> (departures: StopDetailsDepartures, routeId: String, now: Instant) {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -45,14 +45,16 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)], alertsHere: nil),
         ])
 
-        return (patternsByStop: patternsByStop, routeId: route.id, now: now.toKotlinInstant())
+        let departures = StopDetailsDepartures(routes: [patternsByStop])
+
+        return (departures: departures, routeId: route.id, now: now.toKotlinInstant())
     }
 
     func testAppliesFilter() throws {
-        let (patternsByStop: patternsByStop, routeId: routeId, now: now) = testData()
+        let (departures: departures, routeId: routeId, now: now) = testData()
 
         let sut = StopDetailsFilteredRouteView(
-            patternsByStop: patternsByStop,
+            departures: departures,
             now: now,
             filter: .constant(.init(routeId: routeId, directionId: 0))
         )
@@ -62,11 +64,11 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
     }
 
     func testClearsFilter() throws {
-        let (patternsByStop: patternsByStop, routeId: routeId, now: now) = testData()
+        let (departures: departures, routeId: routeId, now: now) = testData()
 
         let filter = Binding<StopDetailsFilter?>(wrappedValue: .init(routeId: routeId, directionId: 1))
 
-        let sut = StopDetailsFilteredRouteView(patternsByStop: patternsByStop, now: now, filter: filter)
+        let sut = StopDetailsFilteredRouteView(departures: departures, now: now, filter: filter)
 
         try sut.inspect().find(button: "Clear Filter").tap()
 
