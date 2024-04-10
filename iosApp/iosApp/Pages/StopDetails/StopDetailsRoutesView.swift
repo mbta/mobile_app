@@ -36,29 +36,34 @@ struct StopDetailsRoutesView: View {
         route.type = .bus
     }
     let stop = objects.stop { _ in }
+    let trip1 = objects.trip { _ in }
     let prediction1 = objects.prediction { prediction in
+        prediction.trip = trip1
         prediction.departureTime = (Date.now + 5 * 60).toKotlinInstant()
     }
+    let trip2 = objects.trip { _ in }
     let schedule2 = objects.schedule { schedule in
+        schedule.trip = trip2
         schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
     }
+    let trip3 = objects.trip { _ in }
     let prediction2 = objects.prediction { prediction in
-        prediction.tripId = "something else"
+        prediction.trip = trip3
         prediction.departureTime = (Date.now + 8 * 60).toKotlinInstant()
     }
 
     return StopDetailsRoutesView(departures: .init(routes: [
         .init(route: route1, stop: stop, patternsByHeadsign: [
             .init(route: route1, headsign: "A", patterns: [],
-                  upcomingTrips: [.init(prediction: prediction1)],
+                  upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
                   alertsHere: nil),
         ]),
         .init(route: route2, stop: stop, patternsByHeadsign: [
             .init(route: route2, headsign: "B", patterns: [],
-                  upcomingTrips: [.init(prediction: prediction2)],
+                  upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
                   alertsHere: nil),
             .init(route: route2, headsign: "C", patterns: [],
-                  upcomingTrips: [.init(schedule: schedule2)],
+                  upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                   alertsHere: nil),
         ]),
     ]), now: Date.now.toKotlinInstant())

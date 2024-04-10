@@ -167,6 +167,7 @@ class ObjectCollectionBuilder {
         fun representativeTrip(block: TripBuilder.() -> Unit = {}) =
             this@ObjectCollectionBuilder.trip {
                     routePatternId = this@RoutePatternBuilder.id
+                    directionId = this@RoutePatternBuilder.directionId
                     block()
                 }
                 .also { this.representativeTripId = it.id }
@@ -223,12 +224,13 @@ class ObjectCollectionBuilder {
 
     class TripBuilder : ObjectBuilder<Trip> {
         var id = uuid()
+        var directionId = 0
         var headsign = ""
         var routePatternId: String? = null
         var shapeId: String? = null
         var stopIds: List<String>? = null
 
-        override fun built() = Trip(id, headsign, routePatternId, shapeId, stopIds)
+        override fun built() = Trip(id, directionId, headsign, routePatternId, shapeId, stopIds)
     }
 
     fun trip(block: TripBuilder.() -> Unit = {}) = build(trips, TripBuilder(), block)
@@ -238,6 +240,7 @@ class ObjectCollectionBuilder {
         build(
             trips,
             TripBuilder().apply {
+                directionId = routePattern.directionId
                 routePatternId = routePattern.id
                 val representativeTrip = trips[routePattern.representativeTripId]
                 if (representativeTrip != null) {
@@ -282,6 +285,17 @@ class ObjectCollectionBuilder {
     }
 
     fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(vehicles, VehicleBuilder(), block)
+
+    fun upcomingTrip(schedule: Schedule) =
+        UpcomingTrip(trips.getValue(schedule.tripId), schedule, null, null)
+
+    fun upcomingTrip(schedule: Schedule, prediction: Prediction): UpcomingTrip {
+        check(schedule.tripId == prediction.tripId)
+        return UpcomingTrip(trips.getValue(prediction.tripId), schedule, prediction, null)
+    }
+
+    fun upcomingTrip(prediction: Prediction) =
+        UpcomingTrip(trips.getValue(prediction.tripId), null, prediction, null)
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
         source: MutableMap<String, Built>,

@@ -510,8 +510,8 @@ class NearbyResponseTest {
                                     "Harvard",
                                     listOf(pattern1, pattern2),
                                     listOf(
-                                        UpcomingTrip(stop1Pattern2Prediction),
-                                        UpcomingTrip(stop1Pattern1Prediction)
+                                        objects.upcomingTrip(stop1Pattern2Prediction),
+                                        objects.upcomingTrip(stop1Pattern1Prediction)
                                     )
                                 )
                             )
@@ -524,7 +524,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Nubian",
                                     listOf(pattern3),
-                                    listOf(UpcomingTrip(stop2Pattern3Prediction))
+                                    listOf(objects.upcomingTrip(stop2Pattern3Prediction))
                                 )
                             )
                         )
@@ -656,7 +656,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Typical Out",
                                     listOf(typicalOutbound),
-                                    listOf(UpcomingTrip(typicalOutboundPrediction))
+                                    listOf(objects.upcomingTrip(typicalOutboundPrediction))
                                 ),
                                 PatternsByHeadsign(
                                     route1,
@@ -668,13 +668,13 @@ class NearbyResponseTest {
                                     route1,
                                     "Deviation Out",
                                     listOf(deviationOutbound),
-                                    listOf(UpcomingTrip(deviationOutboundPrediction))
+                                    listOf(objects.upcomingTrip(deviationOutboundPrediction))
                                 ),
                                 PatternsByHeadsign(
                                     route1,
                                     "Atypical In",
                                     listOf(atypicalInbound),
-                                    listOf(UpcomingTrip(atypicalInboundPrediction))
+                                    listOf(objects.upcomingTrip(atypicalInboundPrediction))
                                 )
                             )
                         )
@@ -953,7 +953,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Harvard",
                                     listOf(pattern1),
-                                    listOf(UpcomingTrip(prediction1))
+                                    listOf(objects.upcomingTrip(prediction1))
                                 )
                             )
                         )
@@ -1017,7 +1017,10 @@ class NearbyResponseTest {
                                     route,
                                     "A",
                                     listOf(routePattern),
-                                    listOf(UpcomingTrip(sched1, pred1), UpcomingTrip(sched2, pred2))
+                                    listOf(
+                                        objects.upcomingTrip(sched1, pred1),
+                                        objects.upcomingTrip(sched2, pred2)
+                                    )
                                 )
                             )
                         )
@@ -1085,7 +1088,7 @@ class NearbyResponseTest {
                                     route1,
                                     "A",
                                     listOf(routePattern1),
-                                    listOf(UpcomingTrip(sched1, pred1))
+                                    listOf(objects.upcomingTrip(sched1, pred1))
                                 )
                             )
                         )
@@ -1102,7 +1105,7 @@ class NearbyResponseTest {
                                     route2,
                                     "A",
                                     listOf(routePattern2),
-                                    listOf(UpcomingTrip(sched2, pred2))
+                                    listOf(objects.upcomingTrip(sched2, pred2))
                                 )
                             )
                         )
@@ -1240,7 +1243,7 @@ class NearbyResponseTest {
                                     route,
                                     "A",
                                     listOf(routePattern1),
-                                    listOf(UpcomingTrip(sched1))
+                                    listOf(objects.upcomingTrip(sched1))
                                 )
                             )
                         )
