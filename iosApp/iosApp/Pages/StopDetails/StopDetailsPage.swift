@@ -18,7 +18,7 @@ struct StopDetailsPage: View {
     @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
-    var filter: StopDetailsFilter?
+    @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
 
     let inspection = Inspection<Self>()
@@ -30,14 +30,14 @@ struct StopDetailsPage: View {
         globalFetcher: GlobalFetcher,
         viewportProvider: ViewportProvider,
         stop: Stop,
-        filter: StopDetailsFilter?
+        filter: Binding<StopDetailsFilter?>
     ) {
         self.globalFetcher = globalFetcher
         self.viewportProvider = viewportProvider
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
-        self.filter = filter
+        _filter = filter
     }
 
     var body: some View {
@@ -56,7 +56,7 @@ struct StopDetailsPage: View {
                     schedules: scheduleFetcher.schedules,
                     predictions: predictionsFetcher.predictions,
                     filterAtTime: now.toKotlinInstant()
-                ), now: now.toKotlinInstant())
+                ), now: now.toKotlinInstant(), filter: $filter)
             } else {
                 ProgressView()
             }

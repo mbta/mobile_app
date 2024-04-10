@@ -13,14 +13,19 @@ import SwiftUI
 struct StopDetailsRouteView: View {
     let patternsByStop: PatternsByStop
     let now: Instant
+    @Binding var filter: StopDetailsFilter?
 
     var body: some View {
         RoutePillSection(route: patternsByStop.route) {
             ForEach(patternsByStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
-                NearbyStopRoutePatternView(
-                    headsign: patternsByHeadsign.headsign,
-                    predictions: patternsByHeadsign.format(now: now)
-                )
+                Button(action: {
+                    filter = .init(routeId: patternsByHeadsign.route.id, directionId: patternsByHeadsign.directionId())
+                }, label: {
+                    HeadsignRowView(
+                        headsign: patternsByHeadsign.headsign,
+                        predictions: patternsByHeadsign.format(now: now)
+                    )
+                })
             }
         }
     }

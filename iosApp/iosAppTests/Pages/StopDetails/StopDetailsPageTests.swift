@@ -27,13 +27,15 @@ final class StopDetailsPageTests: XCTestCase {
         let routePattern = objects.routePattern(route: route) { _ in }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
 
         var sut = StopDetailsPage(
             backend: IdleBackend(),
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
             viewportProvider: viewportProvider,
-            stop: stop, filter: .init(routeId: route.id, directionId: routePattern.directionId)
+            stop: stop,
+            filter: filter
         )
 
         let exp = sut.inspection.inspect { _ in

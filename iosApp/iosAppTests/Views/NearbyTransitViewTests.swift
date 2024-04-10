@@ -252,7 +252,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let patterns = try sut.inspect().findAll(ViewType.NavigationLink.self, where: { _ in true })
-            .map { try $0.labelView().view(NearbyStopRoutePatternView.self) }
+            .map { try $0.labelView().view(HeadsignRowView.self) }
 
         XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
         XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
