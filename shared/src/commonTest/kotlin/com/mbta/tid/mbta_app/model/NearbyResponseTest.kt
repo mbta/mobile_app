@@ -807,18 +807,18 @@ class NearbyResponseTest {
         val closeBusStop = objects.stop()
         val farBusStop =
             objects.stop {
-                latitude = closeBusStop.latitude + 0.1
-                longitude = closeBusStop.longitude + 0.1
+                latitude = closeBusStop.latitude + 0.001
+                longitude = closeBusStop.longitude + 0.001
             }
         val closeSubwayStop =
             objects.stop {
-                latitude = closeBusStop.latitude + 0.2
-                longitude = closeBusStop.longitude + 0.2
+                latitude = closeBusStop.latitude + 0.002
+                longitude = closeBusStop.longitude + 0.002
             }
         val farSubwayStop =
             objects.stop {
-                latitude = closeBusStop.latitude + 0.3
-                longitude = closeBusStop.longitude + 0.3
+                latitude = closeBusStop.latitude + 0.003
+                longitude = closeBusStop.longitude + 0.003
             }
 
         val closeBusRoute = objects.route { type = RouteType.BUS }
@@ -911,6 +911,93 @@ class NearbyResponseTest {
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
+            realtimeRoutesSorted.map { it.route }
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo filters out non-CR routes served by distant CR stations`() {
+        val objects = ObjectCollectionBuilder()
+
+        val closeSubwayStop = objects.stop()
+        val farCRSubwayStop =
+            objects.stop {
+                latitude = closeSubwayStop.latitude + 0.04
+                longitude = closeSubwayStop.longitude + 0.04
+            }
+
+        val closeSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+        val farSubwayRoute = objects.route { type = RouteType.HEAVY_RAIL }
+        val farCommuterRoute = objects.route { type = RouteType.COMMUTER_RAIL }
+
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Magoun Square" }
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+            }
+        val farCommuterPattern =
+            objects.routePattern(farCommuterRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(farSubwayRoute) {
+                    stop(farCRSubwayStop) { headsign("Alewife", listOf(farSubwayPattern)) }
+                }
+                route(farCommuterRoute) {
+                    stop(farCRSubwayStop) { headsign("Alewife", listOf(farCommuterPattern)) }
+                }
+                route(closeSubwayRoute) {
+                    stop(closeSubwayStop) { headsign("Magoun Square", listOf(closeSubwayPattern)) }
+                }
+            }
+
+        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+
+        // close subway prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = closeSubwayRoute.id
+            stopId = closeSubwayStop.id
+            tripId = closeSubwayPattern.representativeTripId
+        }
+
+        // far subway prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = farSubwayRoute.id
+            stopId = farCRSubwayStop.id
+            tripId = farSubwayPattern.representativeTripId
+        }
+
+        // far commuter prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = farCommuterRoute.id
+            stopId = farCRSubwayStop.id
+            tripId = farCommuterPattern.representativeTripId
+        }
+
+        val realtimeRoutesSorted =
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = closeSubwayStop.position,
+                predictions = PredictionsStreamDataResponse(objects),
+                filterAtTime = time,
+                schedules = ScheduleResponse(objects),
+                alerts = null,
+            )
+        assertEquals(
+            listOf(closeSubwayRoute, farCommuterRoute),
             realtimeRoutesSorted.map { it.route }
         )
     }
