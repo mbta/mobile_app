@@ -75,32 +75,12 @@ class PatternsByStopTest {
 
         assertEquals(
             listOf(
-                PatternsByHeadsign(
-                    route,
-                    "Ashmont",
-                    listOf(routePatternAshmont),
-                    listOf(upcomingTripAshmont1)
-                ),
-                PatternsByHeadsign(
-                    route,
-                    "Braintree",
-                    listOf(routePatternBraintree),
-                    listOf(upcomingTripBraintree1)
-                ),
-                PatternsByHeadsign(
-                    route,
-                    "Braintree",
-                    listOf(routePatternBraintree),
-                    listOf(upcomingTripBraintree2)
-                ),
-                PatternsByHeadsign(
-                    route,
-                    "Ashmont",
-                    listOf(routePatternAshmont),
-                    listOf(upcomingTripAshmont2)
-                ),
+                upcomingTripAshmont1,
+                upcomingTripBraintree1,
+                upcomingTripBraintree2,
+                upcomingTripAshmont2
             ),
-            patternsByStop.splitPerTrip()
+            patternsByStop.allUpcomingTrips()
         )
     }
 }

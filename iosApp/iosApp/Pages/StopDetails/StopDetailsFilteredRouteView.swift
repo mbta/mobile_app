@@ -15,7 +15,29 @@ struct StopDetailsFilteredRouteView: View {
     let now: Instant
     @Binding var filter: StopDetailsFilter?
 
-    let tripData: [(PatternsByHeadsign, PatternsByHeadsign.Format)]
+    struct RowData {
+        let tripId: String
+        let headsign: String
+        let formatted: PatternsByHeadsign.Format
+
+        init?(trip: UpcomingTrip, route: Route, expectedDirection: Int32?, now: Instant) {
+            if trip.trip.directionId != expectedDirection {
+                return nil
+            }
+
+            tripId = trip.trip.id
+            headsign = trip.trip.headsign
+            formatted = PatternsByHeadsign(
+                route: route, headsign: headsign, patterns: [], upcomingTrips: [trip], alertsHere: nil
+            ).format(now: now)
+
+            if !(formatted is PatternsByHeadsign.FormatSome) {
+                return nil
+            }
+        }
+    }
+
+    let rows: [RowData]
 
     init(patternsByStop: PatternsByStop, now: Instant, filter: Binding<StopDetailsFilter?>) {
         self.patternsByStop = patternsByStop
@@ -23,15 +45,8 @@ struct StopDetailsFilteredRouteView: View {
         _filter = filter
 
         let expectedDirection: Int32? = filter.wrappedValue?.directionId
-        let trips: [PatternsByHeadsign] = patternsByStop.splitPerTrip()
-        let tripsFormatted: [(PatternsByHeadsign, PatternsByHeadsign.Format)] = trips.map { ($0, $0.format(now: now)) }
-        tripData = tripsFormatted.filter {
-            let (patternsByHeadsign, formatted) = $0
-            let trip: UpcomingTrip? = patternsByHeadsign.upcomingTrips?.first
-            let tripDirectionId: Int32? = trip?.trip.directionId
-            let directionIdMatches = tripDirectionId == expectedDirection
-            let willDisplay = formatted is PatternsByHeadsign.FormatSome
-            return directionIdMatches && willDisplay
+        rows = patternsByStop.allUpcomingTrips().compactMap {
+            RowData(trip: $0, route: patternsByStop.route, expectedDirection: expectedDirection, now: now)
         }
     }
 
@@ -39,11 +54,8 @@ struct StopDetailsFilteredRouteView: View {
         Button(action: { filter = nil }, label: { Text("Clear Filter") })
         List {
             RoutePillSection(route: patternsByStop.route) {
-                ForEach(tripData, id: \.0.upcomingTrips?.first?.trip.id) { patternsByHeadsign, formatted in
-                    HeadsignRowView(
-                        headsign: patternsByHeadsign.headsign,
-                        predictions: formatted
-                    )
+                ForEach(rows, id: \.tripId) { row in
+                    HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
                 }
             }
         }
