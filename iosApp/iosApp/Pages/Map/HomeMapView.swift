@@ -21,22 +21,27 @@ struct HomeMapView: View {
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
-    @State private var layerManager: MapLayerManager?
     @StateObject private var locationDataManager: LocationDataManager
+    @Binding var navigationStack: [SheetNavigationStackEntry]
+    @Binding var sheetHeight: CGFloat
+
+    @State private var layerManager: MapLayerManager?
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State private var currentStopAlerts: [String: AlertAssociatedStop] = [:]
-    @Binding var sheetHeight: CGFloat
 
+    let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+    let log = Logger()
 
     init(
         alertsFetcher: AlertsFetcher,
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
         railRouteShapeFetcher: RailRouteShapeFetcher,
-        locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         viewportProvider: ViewportProvider,
+        locationDataManager: LocationDataManager = .init(distanceFilter: 1),
+        navigationStack: Binding<[SheetNavigationStackEntry]>,
         sheetHeight: Binding<CGFloat>
     ) {
         self.alertsFetcher = alertsFetcher
@@ -44,15 +49,16 @@ struct HomeMapView: View {
         self.nearbyFetcher = nearbyFetcher
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.viewportProvider = viewportProvider
-        _sheetHeight = sheetHeight
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
+        _navigationStack = navigationStack
+        _sheetHeight = sheetHeight
     }
 
     var body: some View {
         MapReader { proxy in
             Map(viewport: $viewportProvider.viewport) {
                 Puck2D().pulsing(.none)
-                if isNearbyNotFollowing() {
+                if isNearbyNotFollowing(), navigationStack.isEmpty {
                     MapViewAnnotation(coordinate: nearbyFetcher.loadedLocation!) {
                         Circle()
                             .strokeBorder(.white, lineWidth: 2.5)
@@ -93,6 +99,7 @@ struct HomeMapView: View {
             .onChange(of: currentStopAlerts) { nextStopAlerts in
                 handleStopAlertChange(alertsByStop: nextStopAlerts)
             }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .overlay(alignment: .topTrailing) {
                 if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
                     RecenterButton { Task { viewportProvider.follow() } }
@@ -179,10 +186,25 @@ struct HomeMapView: View {
         layerManager?.updateSourceData(stopSourceGenerator: updatedSources)
     }
 
-    func handleStopLayerTap(feature _: QueriedFeature, _: MapContentGestureContext) -> Bool {
-        // Each stop feature has the stop ID as the identifier
-        // We can also set arbitrary JSON properties if we need to
-        true
+    func handleStopLayerTap(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {
+        guard case let .string(stopId) = feature.feature.properties?[StopSourceGenerator.propIdKey] else {
+            let featureId = feature.feature.identifier.debugDescription
+            log.error("""
+                Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop. sourceId=\(feature.source)
+            """)
+            return true
+        }
+        guard let stop = globalFetcher.stops[stopId] else {
+            let featureId = feature.feature.identifier.debugDescription
+            log.error("""
+                Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.
+            """)
+            return true
+        }
+
+        navigationStack.removeAll()
+        navigationStack.append(.stopDetails(stop, nil))
+        return true
     }
 
     func isNearbyNotFollowing() -> Bool {

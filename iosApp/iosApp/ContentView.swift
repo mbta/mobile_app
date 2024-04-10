@@ -55,30 +55,11 @@ struct ContentView: View {
                     nearbyFetcher: nearbyFetcher,
                     railRouteShapeFetcher: railRouteShapeFetcher,
                     viewportProvider: viewportProvider,
+                    navigationStack: $navigationStack,
                     sheetHeight: $sheetHeight
                 )
                 .ignoresSafeArea(edges: .bottom)
-                .sheet(isPresented: .constant(true)) {
-                    NavigationStack(path: $navigationStack) {
-                        nearbyTransit
-                            .navigationBarHidden(true)
-                            .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
-                                switch entry {
-                                case let .stopDetails(stop, _):
-                                    StopDetailsPage(
-                                        backend: backendProvider.backend,
-                                        socket: socketProvider.socket,
-                                        globalFetcher: globalFetcher,
-                                        stop: stop, filter: $navigationStack.lastStopDetailsFilter
-                                    )
-                                }
-                            }
-                    }
-                    .partialSheetDetents(
-                        sheetDetents,
-                        largestUndimmedDetent: .medium
-                    )
-                }
+                .sheet(isPresented: .constant(true)) { navigationSheet }
             }
         }
         .searchable(
@@ -90,7 +71,8 @@ struct ContentView: View {
             Task {
                 try await globalFetcher.getGlobalData()
             }
-        }.onChange(of: scenePhase) { newPhase in
+        }
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.connect()
             } else if newPhase == .background {
@@ -99,23 +81,42 @@ struct ContentView: View {
         }.task { alertsFetcher.run() }
     }
 
-    private var nearbyTransit: some View {
+    var navigationSheet: some View {
         GeometryReader { proxy in
-            NearbyTransitPageView(
-                currentLocation: locationDataManager.currentLocation?.coordinate,
-                globalFetcher: globalFetcher,
-                nearbyFetcher: nearbyFetcher,
-                scheduleFetcher: scheduleFetcher,
-                predictionsFetcher: predictionsFetcher,
-                viewportProvider: viewportProvider,
-                alertsFetcher: alertsFetcher
-            )
+            NavigationStack(path: $navigationStack) {
+                NearbyTransitPageView(
+                    currentLocation: locationDataManager.currentLocation?.coordinate,
+                    globalFetcher: globalFetcher,
+                    nearbyFetcher: nearbyFetcher,
+                    scheduleFetcher: scheduleFetcher,
+                    predictionsFetcher: predictionsFetcher,
+                    viewportProvider: viewportProvider,
+                    alertsFetcher: alertsFetcher
+                )
+                .navigationBarHidden(true)
+                .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
+                    switch entry {
+                    case let .stopDetails(stop, _):
+                        StopDetailsPage(
+                            backend: backendProvider.backend,
+                            socket: socketProvider.socket,
+                            globalFetcher: globalFetcher,
+                            viewportProvider: viewportProvider,
+                            stop: stop, filter: $navigationStack.lastStopDetailsFilter
+                        )
+                    }
+                }
+            }
             .onChange(of: proxy.size.height) { newValue in
                 // Not actually restricted to iOS 16, this just behaves terribly on iOS 15
                 if #available(iOS 16, *) {
                     sheetHeight = newValue
                 }
             }
+            .partialSheetDetents(
+                sheetDetents,
+                largestUndimmedDetent: .medium
+            )
         }
     }
 }

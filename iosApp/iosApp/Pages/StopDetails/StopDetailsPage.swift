@@ -13,17 +13,27 @@ import SwiftUI
 
 struct StopDetailsPage: View {
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var viewportProvider: ViewportProvider
+
     @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
 
+    let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
-    init(backend: any BackendProtocol, socket: any PhoenixSocket, globalFetcher: GlobalFetcher,
-         stop: Stop, filter: Binding<StopDetailsFilter?>) {
+    init(
+        backend: any BackendProtocol,
+        socket: any PhoenixSocket,
+        globalFetcher: GlobalFetcher,
+        viewportProvider: ViewportProvider,
+        stop: Stop,
+        filter: Binding<StopDetailsFilter?>
+    ) {
         self.globalFetcher = globalFetcher
+        self.viewportProvider = viewportProvider
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
@@ -52,25 +62,26 @@ struct StopDetailsPage: View {
             }
         }
         .navigationTitle(stop.name)
-        .onAppear {
-            getSchedule()
-            joinPredictions()
-        }
-        .onReceive(timer) { input in
-            now = input
-        }
-        .onDisappear {
-            leavePredictions()
-        }
+        .onAppear { changeStop(stop) }
+        .onChange(of: stop) { nextStop in changeStop(nextStop) }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onReceive(timer) { input in now = input }
+        .onDisappear { leavePredictions() }
     }
 
-    func getSchedule() {
+    func changeStop(_ stop: Stop) {
+        getSchedule(stop)
+        joinPredictions(stop)
+        viewportProvider.animateTo(coordinates: stop.coordinate)
+    }
+
+    func getSchedule(_ stop: Stop) {
         Task {
             await scheduleFetcher.getSchedule(stopIds: [stop.id])
         }
     }
 
-    func joinPredictions() {
+    func joinPredictions(_ stop: Stop) {
         Task {
             predictionsFetcher.run(stopIds: [stop.id])
         }
