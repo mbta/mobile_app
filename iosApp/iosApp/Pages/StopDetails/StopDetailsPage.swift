@@ -18,7 +18,7 @@ struct StopDetailsPage: View {
     @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
-    var route: Route?
+    var filter: StopDetailsFilter?
     @State var now = Date.now
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -28,14 +28,15 @@ struct StopDetailsPage: View {
         socket: any PhoenixSocket,
         globalFetcher: GlobalFetcher,
         viewportProvider: ViewportProvider,
-        stop: Stop, route: Route?
+        stop: Stop,
+        filter: StopDetailsFilter?
     ) {
         self.globalFetcher = globalFetcher
         self.viewportProvider = viewportProvider
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
-        self.route = route
+        self.filter = filter
     }
 
     var body: some View {

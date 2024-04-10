@@ -97,6 +97,19 @@ data class PatternsByHeadsign(
                         !upcomingTripsArrivalOnly.contains(false)
                 }
 
+    fun directionId(): Int {
+        if (upcomingTrips != null) {
+            for (upcomingTrip in upcomingTrips) {
+                return upcomingTrip.trip.directionId
+            }
+        }
+        for (pattern in patterns) {
+            return pattern.directionId
+        }
+        // there shouldn't be a headsign with no trips and no patterns
+        throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
+    }
+
     override fun compareTo(other: PatternsByHeadsign): Int =
         patterns.first().compareTo(other.patterns.first())
 
@@ -107,7 +120,7 @@ data class PatternsByHeadsign(
 
         data class Some(val trips: List<FormatWithId>) : Format() {
             data class FormatWithId(val id: String, val format: UpcomingTrip.Format) {
-                constructor(trip: UpcomingTrip, now: Instant) : this(trip.id, trip.format(now))
+                constructor(trip: UpcomingTrip, now: Instant) : this(trip.trip.id, trip.format(now))
             }
         }
 

@@ -55,8 +55,8 @@ class StopDetailsDeparturesTest {
                                 "A",
                                 listOf(routePattern1),
                                 listOf(
-                                    UpcomingTrip(schedule1, prediction1),
-                                    UpcomingTrip(schedule2)
+                                    objects.upcomingTrip(schedule1, prediction1),
+                                    objects.upcomingTrip(schedule2)
                                 )
                             ),
                             PatternsByHeadsign(route, "B", listOf(routePattern2), listOf())

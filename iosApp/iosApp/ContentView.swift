@@ -96,13 +96,13 @@ struct ContentView: View {
                 .navigationBarHidden(true)
                 .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
                     switch entry {
-                    case let .stopDetails(stop, route):
+                    case let .stopDetails(stop, filter):
                         StopDetailsPage(
                             backend: backendProvider.backend,
                             socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
                             viewportProvider: viewportProvider,
-                            stop: stop, route: route
+                            stop: stop, filter: filter
                         )
                     }
                 }

@@ -23,6 +23,34 @@ enum MapTestDataHelper {
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
 
+    static let stopAlewife = objects.stop { stop in
+        stop.id = "place-alfcl"
+        stop.latitude = 42.39583
+        stop.longitude = -71.141287
+        stop.locationType = LocationType.station
+    }
+
+    static let stopDavis = objects.stop { stop in
+        stop.id = "place-davis"
+        stop.latitude = 42.39674
+        stop.longitude = -71.121815
+        stop.locationType = LocationType.station
+    }
+
+    static let stopAssembly = objects.stop { stop in
+        stop.id = "place-astao"
+        stop.latitude = 42.392811
+        stop.longitude = -71.077257
+        stop.locationType = LocationType.station
+    }
+
+    static let stopSullivan = objects.stop { stop in
+        stop.id = "place-sull"
+        stop.latitude = 42.383975
+        stop.longitude = -71.076994
+        stop.locationType = LocationType.station
+    }
+
     static let patternRed10 = objects.routePattern(route: routeRed) { pattern in
         pattern.id = "Red-1-0"
         pattern.typicality = .typical
@@ -85,25 +113,30 @@ enum MapTestDataHelper {
 
     static let shapeOrangeAtypical = objects.shape { shape in shape.id = "40460002" }
 
-    static let routeResponse = RouteResponse(
-        routes: [routeRed, routeOrange],
-        routePatterns: [
-            "Red-1-0": patternRed10,
-            "Red-3-0": patternRed30,
-            "Orange-3-0": patternOrange30,
-            "Orange-7-0": patternOrange70,
-        ],
-        shapes: [
-            "canonical-933_0009": shapeRedC1,
-            "canonical-931_0009": shapeRedC2,
-            "canonical-903_0018": shapeOrangeC1,
-            "40460002": shapeOrangeAtypical,
-        ],
-        trips: [
-            "canonical-Red-C1-0": tripRedC1,
-            "canonical-Red-C2-0": tripRedC2,
-            "canonical-Orange-C1-0": tripOrangeC1,
-            "61746557": tripOrangeAtypical,
-        ]
-    )
+    static let routeResponse = MapFriendlyRouteResponse(
+        routesWithSegmentedShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes(routeId: routeRed.id, segmentedShapes: [
+            SegmentedRouteShape(sourceRoutePatternId: patternRed10.id, sourceRouteId: patternRed10.routeId,
+                                routeSegments: [RouteSegment(id: "segment1",
+                                                             sourceRoutePatternId: patternRed10.id,
+                                                             sourceRouteId: patternRed10.routeId,
+                                                             stopIds: [stopAlewife.id, stopDavis.id],
+                                                             otherPatternsByStopId: [:])],
+                                shape: shapeRedC1),
+            SegmentedRouteShape(sourceRoutePatternId: patternRed30.id, sourceRouteId: patternRed30.routeId,
+                                routeSegments: [RouteSegment(id: "segment2",
+                                                             sourceRoutePatternId: patternRed30.id,
+                                                             sourceRouteId: patternRed30.routeId,
+                                                             stopIds: [stopAlewife.id, stopDavis.id],
+                                                             otherPatternsByStopId: [:])],
+                                shape: shapeRedC1),
+        ]),
+        MapFriendlyRouteResponse.RouteWithSegmentedShapes(routeId: routeOrange.id, segmentedShapes: [
+            SegmentedRouteShape(sourceRoutePatternId: patternOrange30.id, sourceRouteId: patternOrange30.routeId,
+                                routeSegments: [RouteSegment(id: "segment3",
+                                                             sourceRoutePatternId: patternOrange30.id,
+                                                             sourceRouteId: patternOrange30.routeId,
+                                                             stopIds: [stopAssembly.id, stopSullivan.id],
+                                                             otherPatternsByStopId: [:])],
+                                shape: shapeOrangeC1),
+        ])])
 }

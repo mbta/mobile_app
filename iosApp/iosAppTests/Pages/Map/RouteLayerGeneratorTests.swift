@@ -17,7 +17,9 @@ final class RouteLayerGeneratorTests: XCTestCase {
     }
 
     func testRouteLayersAreCreated() {
-        let routeLayerGenerator = RouteLayerGenerator(routeData: MapTestDataHelper.routeResponse)
+        let routeLayerGenerator = RouteLayerGenerator(mapFriendlyRoutesResponse: MapTestDataHelper.routeResponse,
+                                                      routesById: [MapTestDataHelper.routeRed.id: MapTestDataHelper.routeRed,
+                                                                   MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange])
         let routeLayers = routeLayerGenerator.routeLayers
 
         XCTAssertEqual(routeLayers.count, 2)
