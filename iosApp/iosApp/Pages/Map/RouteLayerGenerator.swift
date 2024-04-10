@@ -21,22 +21,27 @@ class RouteLayerGenerator {
     init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
         self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
         self.routesById = routesById
-        routeLayers = Self.createRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes,
-                                             routesById: routesById)
+        routeLayers = Self.createAllRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes,
+                                                routesById: routesById)
     }
 
-    static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
-                                  routesById: [String: Route]) -> [LineLayer] {
+    static func createAllRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                                     routesById: [String: Route]) -> [LineLayer] {
         routesWithShapes
             .filter { routesById[$0.routeId] != nil }
             .sorted {
                 // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
                 routesById[$0.routeId]!.sortOrder >= routesById[$1.routeId]!.sortOrder
             }
-            .flatMap { createRouteLayer(route: routesById[$0.routeId]!) }
+            .flatMap { createRouteLayers(route: routesById[$0.routeId]!) }
     }
 
-    static func createRouteLayer(route: Route) -> [LineLayer] {
+    /**
+     Define the line layers for styling the route's line shapes.
+     Returns a list of 2 LineLayers - one with a styling to be applied to the entirety of all shapes in the route,
+     and a second that is applied only to the portions of the lines that are alerting.
+     */
+    static func createRouteLayers(route: Route) -> [LineLayer] {
         var alertingLayer = LineLayer(
             id: Self.getRouteLayerId("\(route.id)-alerting"),
             source: RouteSourceGenerator.getRouteSourceId(route.id)
