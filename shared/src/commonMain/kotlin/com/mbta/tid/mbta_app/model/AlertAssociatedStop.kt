@@ -26,6 +26,12 @@ class AlertAssociatedStop(
             childAlerts
         )
     )
+
+    constructor(
+        stop: Stop,
+        relevantAlerts: List<Alert>,
+        serviceStatus: StopServiceStatus
+    ) : this(stop, relevantAlerts, getServiceAlerts(relevantAlerts), mapOf(), serviceStatus)
 }
 
 enum class StopServiceStatus {
