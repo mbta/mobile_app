@@ -16,18 +16,18 @@ struct StopDetailsPage: View {
     @StateObject var scheduleFetcher: ScheduleFetcher
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
-    var filter: StopDetailsFilter?
+    @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(backend: any BackendProtocol, socket: any PhoenixSocket, globalFetcher: GlobalFetcher,
-         stop: Stop, filter: StopDetailsFilter?) {
+         stop: Stop, filter: Binding<StopDetailsFilter?>) {
         self.globalFetcher = globalFetcher
         _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
-        self.filter = filter
+        _filter = filter
     }
 
     var body: some View {
@@ -46,7 +46,7 @@ struct StopDetailsPage: View {
                     schedules: scheduleFetcher.schedules,
                     predictions: predictionsFetcher.predictions,
                     filterAtTime: now.toKotlinInstant()
-                ), now: now.toKotlinInstant())
+                ), now: now.toKotlinInstant(), filter: $filter)
             } else {
                 ProgressView()
             }

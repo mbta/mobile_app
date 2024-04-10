@@ -29,10 +29,15 @@
 		6EF50F512B988BF600833070 /* PredictionsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF50F502B988BF600833070 /* PredictionsFetcherTests.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
+		8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */; };
 		8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */; };
 		8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7FA8702B5F2EF2009B699D /* NearbyTransitViewTests.swift */; };
 		8C7FA8732B5F36D6009B699D /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7FA8722B5F36D6009B699D /* Backend.swift */; };
 		8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */; };
+		8CB823D62BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */; };
+		8CB823D92BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823D82BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift */; };
+		8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */; };
+		8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */; };
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
 		8CD1F8CD2B7164C100F419D4 /* PredictionsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */; };
 		8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */; };
@@ -47,7 +52,7 @@
 		9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */; };
 		9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */; };
 		9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C62B97B63300F562E1 /* NearbyStopView.swift */; };
-		9A2005C92B97B65900F562E1 /* NearbyStopRoutePatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C82B97B65900F562E1 /* NearbyStopRoutePatternView.swift */; };
+		9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */; };
 		9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */; };
 		9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A37F3042BACCC40001714FE /* DoubleRoundedExtension.swift */; };
 		9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A37F3062BACCCA5001714FE /* CoordinateExtension.swift */; };
@@ -157,10 +162,15 @@
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
 		8C42F06F2B890BC800F9A77B /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsPage.swift; sourceTree = "<group>"; };
+		8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredRouteView.swift; sourceTree = "<group>"; };
 		8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManagerTests.swift; sourceTree = "<group>"; };
 		8C7FA8702B5F2EF2009B699D /* NearbyTransitViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitViewTests.swift; sourceTree = "<group>"; };
 		8C7FA8722B5F36D6009B699D /* Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
 		8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitView.swift; sourceTree = "<group>"; };
+		8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntryTests.swift; sourceTree = "<group>"; };
+		8CB823D82BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteViewTests.swift; sourceTree = "<group>"; };
+		8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesViewTests.swift; sourceTree = "<group>"; };
+		8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredRouteViewTests.swift; sourceTree = "<group>"; };
 		8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		8CD1F8CC2B7164C100F419D4 /* PredictionsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsFetcher.swift; sourceTree = "<group>"; };
 		8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillSection.swift; sourceTree = "<group>"; };
@@ -175,7 +185,7 @@
 		9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFetcher.swift; sourceTree = "<group>"; };
 		9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyRouteView.swift; sourceTree = "<group>"; };
 		9A2005C62B97B63300F562E1 /* NearbyStopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyStopView.swift; sourceTree = "<group>"; };
-		9A2005C82B97B65900F562E1 /* NearbyStopRoutePatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyStopRoutePatternView.swift; sourceTree = "<group>"; };
+		9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadsignRowView.swift; sourceTree = "<group>"; };
 		9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTripView.swift; sourceTree = "<group>"; };
 		9A37F3042BACCC40001714FE /* DoubleRoundedExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleRoundedExtension.swift; sourceTree = "<group>"; };
 		9A37F3062BACCCA5001714FE /* CoordinateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinateExtension.swift; sourceTree = "<group>"; };
@@ -409,6 +419,17 @@
 				8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */,
 				8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */,
 				8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */,
+				8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */,
+			);
+			path = StopDetails;
+			sourceTree = "<group>";
+		};
+		8CB823D72BC5EDBF002C87E0 /* StopDetails */ = {
+			isa = PBXGroup;
+			children = (
+				8CB823D82BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift */,
+				8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */,
+				8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -430,8 +451,6 @@
 				8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */,
 				9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */,
 				9A2005C62B97B63300F562E1 /* NearbyStopView.swift */,
-				9A2005C82B97B65900F562E1 /* NearbyStopRoutePatternView.swift */,
-				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 				9AC4FDEE2BACE1EC004479BF /* NearbyTransitLocationProvider.swift */,
 				9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */,
 			);
@@ -467,6 +486,8 @@
 				9A4E8E582B7EC4B90066B936 /* RoutePill.swift */,
 				9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */,
 				8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */,
+				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
+				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -474,6 +495,7 @@
 		9A5B275D2BB242EF009A6FC6 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				8CB823D72BC5EDBF002C87E0 /* StopDetails */,
 				9A5B275E2BB24326009A6FC6 /* Map */,
 			);
 			path = Pages;
@@ -532,6 +554,7 @@
 			isa = PBXGroup;
 			children = (
 				9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */,
+				8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -820,7 +843,9 @@
 				9AD1D1FE2BA4D5C600182060 /* ViewportProviderTest.swift in Sources */,
 				9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */,
 				9A5B27602BB31178009A6FC6 /* StopSourceGeneratorTests.swift in Sources */,
+				8CB823D62BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift in Sources */,
 				6EE745842B965B9C0052227E /* SocketTests.swift in Sources */,
+				8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */,
 				9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */,
 				8CEA10272BA4C83D001C6EB9 /* AlertsFetcherTests.swift in Sources */,
 				6EF50F482B9889D600833070 /* MockSocket.swift in Sources */,
@@ -838,7 +863,9 @@
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
 				8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */,
+				8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */,
 				6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */,
+				8CB823D92BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift in Sources */,
 				6EE745882B965C2B0052227E /* MessageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -873,7 +900,7 @@
 				9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */,
 				6EE745862B965C130052227E /* Message.swift in Sources */,
 				9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */,
-				9A2005C92B97B65900F562E1 /* NearbyStopRoutePatternView.swift in Sources */,
+				9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */,
 				9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */,
@@ -907,6 +934,7 @@
 				9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */,
 				9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */,
 				9A5B27522BB1EF45009A6FC6 /* StopSourceGenerator.swift in Sources */,
+				8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */,
 				9AC4FDEF2BACE1EC004479BF /* NearbyTransitLocationProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

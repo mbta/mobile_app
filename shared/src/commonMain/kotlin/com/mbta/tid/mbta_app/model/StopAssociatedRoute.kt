@@ -175,6 +175,9 @@ data class PatternsByStop(
 
     @OptIn(ExperimentalTurfApi::class)
     fun distanceFrom(position: Position) = distance(position, this.position)
+
+    fun allUpcomingTrips(): List<UpcomingTrip> =
+        this.patternsByHeadsign.flatMap { it.upcomingTrips ?: emptyList() }.sorted()
 }
 
 /**

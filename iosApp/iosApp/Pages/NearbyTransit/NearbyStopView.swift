@@ -21,7 +21,7 @@ struct NearbyStopView: View {
                 patternsAtStop.stop,
                 .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
             )) {
-                NearbyStopRoutePatternView(
+                HeadsignRowView(
                     headsign: patternsByHeadsign.headsign,
                     predictions: patternsByHeadsign.format(now: now)
                 )

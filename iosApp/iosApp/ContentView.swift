@@ -64,12 +64,12 @@ struct ContentView: View {
                             .navigationBarHidden(true)
                             .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
                                 switch entry {
-                                case let .stopDetails(stop, filter):
+                                case let .stopDetails(stop, _):
                                     StopDetailsPage(
                                         backend: backendProvider.backend,
                                         socket: socketProvider.socket,
                                         globalFetcher: globalFetcher,
-                                        stop: stop, filter: filter
+                                        stop: stop, filter: $navigationStack.lastStopDetailsFilter
                                     )
                                 }
                             }
