@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
+import io.github.dellisd.spatialk.turf.Units
 import io.github.dellisd.spatialk.turf.distance
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -12,6 +13,8 @@ import kotlinx.datetime.Instant
 data class UpcomingTripKey(val routeId: String, val headsign: String, val stopId: String)
 
 typealias UpcomingTripsMap = Map<UpcomingTripKey, List<UpcomingTrip>>
+
+const val COMMUTER_NEARBY_THRESHOLD = 0.5
 
 /**
  * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -174,7 +177,7 @@ data class PatternsByStop(
     )
 
     @OptIn(ExperimentalTurfApi::class)
-    fun distanceFrom(position: Position) = distance(position, this.position)
+    fun distanceFrom(position: Position) = distance(position, this.position, units = Units.Miles)
 
     fun allUpcomingTrips(): List<UpcomingTrip> =
         this.patternsByHeadsign.flatMap { it.upcomingTrips ?: emptyList() }.sorted()
@@ -207,7 +210,8 @@ data class StopAssociatedRoute(
     )
 
     @OptIn(ExperimentalTurfApi::class)
-    fun distanceFrom(position: Position) = distance(position, patternsByStop.first().position)
+    fun distanceFrom(position: Position) =
+        distance(position, patternsByStop.first().position, units = Units.Miles)
 }
 
 /**
@@ -254,7 +258,11 @@ fun NearbyStaticData.withRealtimeInfo(
                 activeRelevantAlerts
             )
         }
-        .filterNot { it.patternsByStop.isEmpty() }
+        .filter {
+            it.patternsByStop.isNotEmpty() &&
+                (it.route.type == RouteType.COMMUTER_RAIL ||
+                    it.distanceFrom(sortByDistanceFrom) < COMMUTER_NEARBY_THRESHOLD)
+        }
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
         .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
 }
