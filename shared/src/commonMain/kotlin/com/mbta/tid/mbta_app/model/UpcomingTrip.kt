@@ -17,17 +17,26 @@ import kotlinx.datetime.Instant
  * this reason, a prediction that exists but has null times should overwrite scheduled times.
  */
 data class UpcomingTrip(
+    val trip: Trip,
     val schedule: Schedule?,
     val prediction: Prediction?,
     val vehicle: Vehicle?
 ) : Comparable<UpcomingTrip> {
-    constructor(schedule: Schedule) : this(schedule, null, null)
+    constructor(trip: Trip, schedule: Schedule) : this(trip, schedule, null, null)
 
-    constructor(schedule: Schedule, prediction: Prediction) : this(schedule, prediction, null)
+    constructor(
+        trip: Trip,
+        schedule: Schedule,
+        prediction: Prediction
+    ) : this(trip, schedule, prediction, null)
 
-    constructor(prediction: Prediction) : this(null, prediction, null)
+    constructor(trip: Trip, prediction: Prediction) : this(trip, null, prediction, null)
 
-    constructor(prediction: Prediction, vehicle: Vehicle) : this(null, prediction, vehicle)
+    constructor(
+        trip: Trip,
+        prediction: Prediction,
+        vehicle: Vehicle
+    ) : this(trip, null, prediction, vehicle)
 
     val time =
         if (prediction != null) {
@@ -35,8 +44,6 @@ data class UpcomingTrip(
         } else {
             schedule?.scheduleTime
         }
-    /** The [Prediction.tripId] of the [prediction], or the [Schedule.tripId] of the [schedule]. */
-    val id = checkNotNull(prediction?.tripId ?: schedule?.tripId)
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
@@ -153,6 +160,7 @@ data class UpcomingTrip(
                     }
                 }
             return if (schedulesMap != null || predictionsMap != null) {
+                val trips = (schedules?.trips ?: emptyMap()) + (predictions?.trips ?: emptyMap())
                 ((schedulesMap?.keys ?: emptySet()) + (predictionsMap?.keys ?: emptySet()))
                     .associateWith { upcomingTripKey ->
                         val schedulesHere = schedulesMap?.get(upcomingTripKey)
@@ -160,6 +168,7 @@ data class UpcomingTrip(
                         tripsFromData(
                             schedulesHere ?: emptyList(),
                             predictionsHere ?: emptyList(),
+                            trips,
                             predictions?.vehicles ?: emptyMap()
                         )
                     }
@@ -175,10 +184,11 @@ data class UpcomingTrip(
         fun tripsFromData(
             schedules: List<Schedule>,
             predictions: List<Prediction>,
+            trips: Map<String, Trip>,
             vehicles: Map<String, Vehicle>
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
-                val tripId: String?,
+                val tripId: String,
                 val stopId: String?,
                 val stopSequence: Int?
             ) {
@@ -199,6 +209,7 @@ data class UpcomingTrip(
             return keys
                 .map { key ->
                     UpcomingTrip(
+                        trips.getValue(key.tripId),
                         schedulesMap[key],
                         predictionsMap[key],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] }

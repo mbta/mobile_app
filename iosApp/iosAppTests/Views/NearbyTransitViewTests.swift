@@ -253,7 +253,8 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsFetcher: FakePredictionsFetcher(objects), alertsFetcher: .init(socket: MockSocket())
         )
 
-        let patterns = try sut.inspect().findAll(NearbyStopRoutePatternView.self)
+        let patterns = try sut.inspect().findAll(ViewType.NavigationLink.self, where: { _ in true })
+            .map { try $0.labelView().view(NearbyStopRoutePatternView.self) }
 
         XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
         XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
@@ -741,13 +742,20 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testStopPageLink() throws {
-        let route = ObjectCollectionBuilder.Single.shared.route { _ in }
-        let stop = ObjectCollectionBuilder.Single.shared.stop { $0.name = "This Stop" }
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { _ in }
+        let pattern = objects.routePattern(route: route) { pattern in
+            pattern.directionId = 1
+        }
+        let stop = objects.stop { $0.name = "This Stop" }
         let sut = NearbyStopView(patternsAtStop: PatternsByStop(
             route: route, stop: stop,
-            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [], upcomingTrips: nil, alertsHere: nil)]
+            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [pattern], upcomingTrips: nil, alertsHere: nil)]
         ), now: Date.now.toKotlinInstant())
 
-        XCTAssertEqual(try sut.inspect().find(navigationLink: "This Stop").value(SheetNavigationStackEntry.self), .stopDetails(stop, route))
+        XCTAssertEqual(
+            try sut.inspect().find(navigationLink: "Place").value(SheetNavigationStackEntry.self),
+            .stopDetails(stop, .init(routeId: route.id, directionId: 1))
+        )
     }
 }

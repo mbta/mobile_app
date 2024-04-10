@@ -9,6 +9,11 @@
 import Foundation
 import shared
 
+struct StopDetailsFilter: Hashable {
+    let routeId: String
+    let directionId: Int32
+}
+
 enum SheetNavigationStackEntry: Hashable {
-    case stopDetails(Stop, Route?)
+    case stopDetails(Stop, StopDetailsFilter?)
 }

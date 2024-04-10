@@ -37,10 +37,14 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .trailing) {
             let now = Date.now
+            let objects = ObjectCollectionBuilder()
+            let trip = objects.trip { _ in }
+            let prediction = objects.prediction { prediction in
+                prediction.trip = trip
+                prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            }
             NearbyStopRoutePatternView(headsign: "Some", predictions: PatternsByHeadsign.FormatSome(trips: [
-                .init(trip: .init(prediction: ObjectCollectionBuilder.Single.shared.prediction { prediction in
-                    prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
-                }), now: now.toKotlinInstant()),
+                .init(trip: .init(trip: trip, prediction: prediction), now: now.toKotlinInstant()),
             ]))
             NearbyStopRoutePatternView(headsign: "None", predictions: PatternsByHeadsign.FormatNone.shared)
             NearbyStopRoutePatternView(headsign: "Loading", predictions: PatternsByHeadsign.FormatLoading.shared)
