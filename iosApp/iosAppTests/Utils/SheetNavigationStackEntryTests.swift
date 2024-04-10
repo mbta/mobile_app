@@ -41,14 +41,19 @@ final class SheetNavigationStackEntryTests: XCTestCase {
     func testLastFilterDeep() throws {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         let otherStop = ObjectCollectionBuilder.Single.shared.stop { _ in }
-        let previousEntry = SheetNavigationStackEntry.stopDetails(otherStop, .init(routeId: "A", directionId: 1))
-        var stack: [SheetNavigationStackEntry] = [previousEntry, .stopDetails(stop, .init(routeId: "B", directionId: 0))]
+        let previousEntries: [SheetNavigationStackEntry] = [
+            .stopDetails(otherStop, .init(routeId: "A", directionId: 1)),
+            .stopDetails(otherStop, .init(routeId: "B", directionId: 1)),
+            .stopDetails(otherStop, .init(routeId: "C", directionId: 0)),
+            .stopDetails(otherStop, .init(routeId: "D", directionId: 0)),
+        ]
+        var stack: [SheetNavigationStackEntry] = previousEntries + [.stopDetails(stop, .init(routeId: "E", directionId: 0))]
 
-        XCTAssertEqual(stack.lastStopDetailsFilter, .init(routeId: "B", directionId: 0))
+        XCTAssertEqual(stack.lastStopDetailsFilter, .init(routeId: "E", directionId: 0))
 
         stack.lastStopDetailsFilter = nil
 
-        XCTAssertEqual(stack, [previousEntry, .stopDetails(stop, nil)])
+        XCTAssertEqual(stack, previousEntries + [.stopDetails(stop, nil)])
         XCTAssertEqual(stack.lastStopDetailsFilter, nil)
     }
 }
