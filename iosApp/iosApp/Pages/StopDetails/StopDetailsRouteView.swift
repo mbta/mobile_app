@@ -21,7 +21,7 @@ struct StopDetailsRouteView: View {
                 Button(action: {
                     filter = .init(routeId: patternsByHeadsign.route.id, directionId: patternsByHeadsign.directionId())
                 }, label: {
-                    NearbyStopRoutePatternView(
+                    HeadsignRowView(
                         headsign: patternsByHeadsign.headsign,
                         predictions: patternsByHeadsign.format(now: now)
                     )

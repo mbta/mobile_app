@@ -40,7 +40,7 @@ struct StopDetailsFilteredRouteView: View {
         List {
             RoutePillSection(route: patternsByStop.route) {
                 ForEach(tripData, id: \.0.upcomingTrips?.first?.trip.id) { patternsByHeadsign, formatted in
-                    NearbyStopRoutePatternView(
+                    HeadsignRowView(
                         headsign: patternsByHeadsign.headsign,
                         predictions: formatted
                     )
