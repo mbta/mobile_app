@@ -451,7 +451,6 @@
 				8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */,
 				9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */,
 				9A2005C62B97B63300F562E1 /* NearbyStopView.swift */,
-				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 				9AC4FDEE2BACE1EC004479BF /* NearbyTransitLocationProvider.swift */,
 				9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */,
 			);
@@ -488,6 +487,7 @@
 				9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */,
 				8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */,
 				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
+				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
