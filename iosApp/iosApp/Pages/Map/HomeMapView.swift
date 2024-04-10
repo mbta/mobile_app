@@ -30,6 +30,7 @@ struct HomeMapView: View {
     @State private var now = Date.now
     @State private var currentStopAlerts: [String: AlertAssociatedStop] = [:]
 
+    let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
     let log = Logger()
 
@@ -98,6 +99,7 @@ struct HomeMapView: View {
             .onChange(of: currentStopAlerts) { nextStopAlerts in
                 handleStopAlertChange(alertsByStop: nextStopAlerts)
             }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .overlay(alignment: .topTrailing) {
                 if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
                     RecenterButton { Task { viewportProvider.follow() } }

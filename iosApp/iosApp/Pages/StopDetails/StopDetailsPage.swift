@@ -21,6 +21,7 @@ struct StopDetailsPage: View {
     var filter: StopDetailsFilter?
     @State var now = Date.now
 
+    let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
@@ -61,18 +62,11 @@ struct StopDetailsPage: View {
             }
         }
         .navigationTitle(stop.name)
-        .onAppear {
-            changeStop(stop)
-        }
-        .onChange(of: stop) { nextStop in
-            changeStop(nextStop)
-        }
-        .onReceive(timer) { input in
-            now = input
-        }
-        .onDisappear {
-            leavePredictions()
-        }
+        .onAppear { changeStop(stop) }
+        .onChange(of: stop) { nextStop in changeStop(nextStop) }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onReceive(timer) { input in now = input }
+        .onDisappear { leavePredictions() }
     }
 
     func changeStop(_ stop: Stop) {

@@ -16,8 +16,6 @@ import ViewInspector
 import XCTest
 @_spi(Experimental) import MapboxMaps
 
-extension Inspection: InspectionEmissary {}
-
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
