@@ -74,13 +74,14 @@ data class RouteSegment(
                             .toSet()
                     routes = routes.plus(sourceRouteId)
 
-                    var hasServiceAlert: Boolean =
-                        alertsByStop[stopId]!!.serviceAlerts.any { alert ->
+                    val hasServiceAlert: Boolean =
+                        alertsByStop[stopId]?.serviceAlerts?.any { alert ->
                             alert.anyInformedEntity { informedEntity ->
                                 informedEntity.route != null &&
                                     routes.contains(informedEntity.route)
                             }
                         }
+                            ?: false
                     hasServiceAlert
                 }
             }
