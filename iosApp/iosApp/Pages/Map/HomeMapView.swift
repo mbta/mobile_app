@@ -69,15 +69,24 @@ struct HomeMapView: View {
             }
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
             .mapStyle(.light)
-            .onCameraChanged { change in handleCameraChange(change) }
+            .onCameraChanged { change in handleCameraChange(change)
+            }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
-            .onChange(of: globalFetcher.response) { _ in handleTryLayerInit(map: proxy.map) }
-            .onChange(of: railRouteShapeFetcher.response) { _ in handleTryLayerInit(map: proxy.map) }
+            .onChange(of: globalFetcher.response) { _ in
+                handleTryLayerInit(map: proxy.map)
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: alertsFetcher.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
+            }
+            .onChange(of: railRouteShapeFetcher.response) { _ in
+                handleTryLayerInit(map: proxy.map)
+            }
             .onChange(of: locationDataManager.authorizationStatus) { status in
                 if status == .authorizedAlways || status == .authorizedWhenInUse {
                     Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
@@ -159,7 +168,8 @@ struct HomeMapView: View {
     ) {
         let layerManager = MapLayerManager(map: map)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops)
+        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops,
+                                                        alertsByStop: currentStopAlerts)
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
             stopSourceGenerator: StopSourceGenerator(
@@ -178,12 +188,17 @@ struct HomeMapView: View {
     }
 
     func handleStopAlertChange(alertsByStop: [String: AlertAssociatedStop]) {
-        let updatedSources = StopSourceGenerator(
+        let updatedStopSources = StopSourceGenerator(
             stops: globalFetcher.stops,
             routeSourceDetails: layerManager?.routeSourceGenerator?.routeSourceDetails,
             alertsByStop: alertsByStop
         )
-        layerManager?.updateSourceData(stopSourceGenerator: updatedSources)
+        layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
+        if let railResponse = railRouteShapeFetcher.response {
+            let updatedRouteSources = RouteSourceGenerator(routeData: railResponse, stopsById: globalFetcher.stops,
+                                                           alertsByStop: alertsByStop)
+            layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
+        }
     }
 
     func handleStopLayerTap(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {

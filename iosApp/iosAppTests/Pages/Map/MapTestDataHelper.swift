@@ -37,6 +37,27 @@ enum MapTestDataHelper {
         stop.locationType = LocationType.station
     }
 
+    static let stopPorter = objects.stop { stop in
+        stop.id = "place-porter"
+        stop.latitude = 42.3884
+        stop.longitude = -71.119149
+        stop.locationType = LocationType.station
+    }
+
+    static let stopHarvard = objects.stop { stop in
+        stop.id = "place-harsq"
+        stop.latitude = 42.373362
+        stop.longitude = -71.118956
+        stop.locationType = LocationType.station
+    }
+
+    static let stopCentral = objects.stop { stop in
+        stop.id = "place-cntsq"
+        stop.latitude = 42.365486
+        stop.longitude = -71.103802
+        stop.locationType = LocationType.station
+    }
+
     static let stopAssembly = objects.stop { stop in
         stop.id = "place-astao"
         stop.latitude = 42.392811
@@ -126,7 +147,7 @@ enum MapTestDataHelper {
                                 routeSegments: [RouteSegment(id: "segment2",
                                                              sourceRoutePatternId: patternRed30.id,
                                                              sourceRouteId: patternRed30.routeId,
-                                                             stopIds: [stopAlewife.id, stopDavis.id],
+                                                             stopIds: [stopPorter.id, stopHarvard.id, stopCentral.id],
                                                              otherPatternsByStopId: [:])],
                                 shape: shapeRedC1),
         ]),

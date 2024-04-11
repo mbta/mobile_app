@@ -21,32 +21,52 @@ class RouteLayerGenerator {
     init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
         self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
         self.routesById = routesById
-        routeLayers = Self.createRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes,
-                                             routesById: routesById)
+        routeLayers = Self.createAllRouteLayers(routesWithShapes: mapFriendlyRoutesResponse.routesWithSegmentedShapes,
+                                                routesById: routesById)
     }
 
-    static func createRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
-                                  routesById: [String: Route]) -> [LineLayer] {
+    static func createAllRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                                     routesById: [String: Route]) -> [LineLayer] {
         routesWithShapes
             .filter { routesById[$0.routeId] != nil }
             .sorted {
                 // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
                 routesById[$0.routeId]!.sortOrder >= routesById[$1.routeId]!.sortOrder
             }
-            .map { createRouteLayer(route: routesById[$0.routeId]!) }
+            .flatMap { createRouteLayers(route: routesById[$0.routeId]!) }
     }
 
-    static func createRouteLayer(route: Route) -> LineLayer {
-        var routeLayer = LineLayer(
-            id: Self.getRouteLayerId(route.id),
+    /**
+     Define the line layers for styling the route's line shapes.
+     Returns a list of 2 LineLayers - one with a styling to be applied to the entirety of all shapes in the route,
+     and a second that is applied only to the portions of the lines that are alerting.
+     */
+    static func createRouteLayers(route: Route) -> [LineLayer] {
+        var alertingLayer = LineLayer(
+            id: Self.getRouteLayerId("\(route.id)-alerting"),
             source: RouteSourceGenerator.getRouteSourceId(route.id)
         )
-        routeLayer.lineWidth = .constant(4.0)
-        routeLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
-        routeLayer.lineBorderWidth = .constant(1.0)
-        routeLayer.lineBorderColor = .constant(StyleColor(.white))
-        routeLayer.lineJoin = .constant(.round)
-        routeLayer.lineCap = .constant(.round)
-        return routeLayer
+        alertingLayer.filter = Exp(.get) { RouteSourceGenerator.propIsAlertingKey }
+        alertingLayer.lineDasharray = .constant([2.0, 3.0])
+
+        alertingLayer.lineWidth = .constant(4.0)
+        alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
+        alertingLayer.lineBorderWidth = .constant(1.0)
+        alertingLayer.lineBorderColor = .constant(StyleColor(.white))
+        alertingLayer.lineJoin = .constant(.round)
+        alertingLayer.lineCap = .constant(.round)
+
+        var nonAlertingLayer = LineLayer(
+            id: Self.getRouteLayerId("\(route.id)"),
+            source: RouteSourceGenerator.getRouteSourceId(route.id)
+        )
+
+        nonAlertingLayer.lineWidth = .constant(4.0)
+        nonAlertingLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+        nonAlertingLayer.lineBorderWidth = .constant(1.0)
+        nonAlertingLayer.lineBorderColor = .constant(StyleColor(.white))
+        nonAlertingLayer.lineJoin = .constant(.round)
+        nonAlertingLayer.lineCap = .constant(.round)
+        return [nonAlertingLayer, alertingLayer]
     }
 }
