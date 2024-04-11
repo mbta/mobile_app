@@ -123,7 +123,8 @@ data class UpcomingTrip(
         if (
             vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
                 vehicle.stopId == prediction.stopId &&
-                vehicle.tripId == prediction.tripId
+                vehicle.tripId == prediction.tripId &&
+                timeRemaining <= BOARDING_CUTOFF
         ) {
             return Format.Boarding
         }

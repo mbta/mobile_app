@@ -102,6 +102,30 @@ class UpcomingTripTest {
         }
 
         @Test
+        fun `not boarding when stopped at stop but more than 90 seconds until departure`() {
+            val now = Clock.System.now()
+            val vehicle = vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                stopId = "12345"
+                tripId = "trip1"
+            }
+            assertEquals(
+                Format.Minutes(2),
+                UpcomingTrip(
+                        trip {},
+                        prediction {
+                            departureTime = now.plus(95.seconds)
+                            stopId = "12345"
+                            tripId = "trip1"
+                            vehicleId = vehicle.id
+                        },
+                        vehicle
+                    )
+                    .format(now)
+            )
+        }
+
+        @Test
         fun `not boarding`() {
             val now = Clock.System.now()
             // wrong vehicle status
