@@ -15,7 +15,7 @@ import SwiftUI
 
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @ObservedObject var locationProvider: NearbyTransitLocationProvider
+    var location: CLLocationCoordinate2D
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
@@ -44,14 +44,14 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getNearby(location: locationProvider.location)
+            getNearby(location: location)
             joinPredictions()
             didAppear?(self)
         }
         .onChange(of: globalFetcher.response) { _ in
-            getNearby(location: locationProvider.location)
+            getNearby(location: location)
         }
-        .onChange(of: locationProvider.location) { newLocation in
+        .onChange(of: location) { newLocation in
             getNearby(location: newLocation)
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
@@ -76,7 +76,7 @@ struct NearbyTransitView: View {
         }
         .replaceWhen(nearbyFetcher.errorText) { errorText in
             IconCard(iconName: "network.slash", details: errorText)
-                .refreshable(nearbyFetcher.loading) { getNearby(location: locationProvider.location) }
+                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
         }
     }
 

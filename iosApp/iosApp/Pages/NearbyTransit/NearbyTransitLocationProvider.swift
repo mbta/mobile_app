@@ -9,9 +9,9 @@
 import CoreLocation
 
 class NearbyTransitLocationProvider: ObservableObject {
-    let currentLocation: CLLocationCoordinate2D?
-    let cameraLocation: CLLocationCoordinate2D
-    let isFollowing: Bool
+    var currentLocation: CLLocationCoordinate2D?
+    var cameraLocation: CLLocationCoordinate2D
+    var isFollowing: Bool
 
     @Published var location: CLLocationCoordinate2D
 
@@ -20,6 +20,52 @@ class NearbyTransitLocationProvider: ObservableObject {
         self.cameraLocation = cameraLocation
         self.isFollowing = isFollowing
 
-        location = if isFollowing, currentLocation != nil { currentLocation! } else { cameraLocation }
+        location = Self.resolveLocation(currentLocation, cameraLocation, isFollowing)
+        handleFollowingCamera()
+    }
+
+    static func resolveLocation(
+        _ currentLocation: CLLocationCoordinate2D?,
+        _ cameraLocation: CLLocationCoordinate2D,
+        _ isFollowing: Bool
+    ) -> CLLocationCoordinate2D {
+        if isFollowing, currentLocation != nil { currentLocation! } else { cameraLocation }
+    }
+
+    func updateCurrentLocation(_ newLocation: CLLocationCoordinate2D?) {
+        currentLocation = newLocation
+        handleFollowingCamera()
+        updateLocation()
+    }
+
+    func updateCameraLocation(_ newLocation: CLLocationCoordinate2D) {
+        if cameraLocation.isRoughlyEqualTo(newLocation) {
+            return
+        }
+        cameraLocation = newLocation
+        updateLocation()
+    }
+
+    func updateIsFollowing(_ newFollowing: Bool, withCameraLocation newLocation: CLLocationCoordinate2D? = nil) {
+        isFollowing = newFollowing
+        if newLocation != nil {
+            cameraLocation = newLocation!
+        }
+        handleFollowingCamera()
+        updateLocation()
+    }
+
+    private func updateLocation() {
+        location = Self.resolveLocation(currentLocation, cameraLocation, isFollowing)
+    }
+
+    /*
+      Reset camera location to current location when viewport is following.
+      This prevents loading stale camera locations when the viewport stops following.
+     */
+    private func handleFollowingCamera() {
+        if isFollowing, currentLocation != nil {
+            cameraLocation = currentLocation!
+        }
     }
 }

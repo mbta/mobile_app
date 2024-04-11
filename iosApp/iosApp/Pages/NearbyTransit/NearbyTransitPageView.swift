@@ -14,7 +14,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitPageView: View {
-    let currentLocation: CLLocationCoordinate2D?
+    var currentLocation: CLLocationCoordinate2D?
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
@@ -23,7 +23,9 @@ struct NearbyTransitPageView: View {
     @ObservedObject var alertsFetcher: AlertsFetcher
 
     @State var cancellables: [AnyCancellable]
-    @State var locationProvider: NearbyTransitLocationProvider
+    @StateObject var locationProvider: NearbyTransitLocationProvider
+
+    let inspection = Inspection<Self>()
 
     init(
         currentLocation: CLLocationCoordinate2D?,
@@ -43,16 +45,16 @@ struct NearbyTransitPageView: View {
         self.alertsFetcher = alertsFetcher
 
         cancellables = .init()
-        locationProvider = .init(
+        _locationProvider = StateObject(wrappedValue: .init(
             currentLocation: currentLocation,
             cameraLocation: viewportProvider.cameraState.center,
             isFollowing: viewportProvider.viewport.isFollowing
-        )
+        ))
     }
 
     var body: some View {
         NearbyTransitView(
-            locationProvider: locationProvider,
+            location: locationProvider.location,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: scheduleFetcher,
@@ -64,36 +66,20 @@ struct NearbyTransitPageView: View {
                 viewportProvider.$cameraState
                     .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
                     .sink { newCameraState in
-                        let shouldUpdateLocation = !viewportProvider.viewport.isFollowing &&
-                            !locationProvider.location.isRoughlyEqualTo(newCameraState.center)
-                        if shouldUpdateLocation {
-                            locationProvider = .init(
-                                currentLocation: currentLocation,
-                                cameraLocation: newCameraState.center,
-                                isFollowing: viewportProvider.viewport.isFollowing
-                            )
-                        }
+                        locationProvider.updateCameraLocation(newCameraState.center)
                     }
             )
         }
         .onChange(of: currentLocation) { newLocation in
-            let shouldUpdateLocation = viewportProvider.viewport.isFollowing
-                && !locationProvider.location.isRoughlyEqualTo(newLocation)
-            if shouldUpdateLocation {
-                locationProvider = .init(
-                    currentLocation: newLocation,
-                    cameraLocation: viewportProvider.cameraState.center,
-                    isFollowing: viewportProvider.viewport.isFollowing
-                )
-            }
+            locationProvider.updateCurrentLocation(newLocation)
         }
         .onChange(of: viewportProvider.viewport) { newViewport in
-            locationProvider = .init(
-                currentLocation: currentLocation,
-                cameraLocation: viewportProvider.cameraState.center,
-                isFollowing: newViewport.isFollowing
+            locationProvider.updateIsFollowing(
+                newViewport.isFollowing,
+                withCameraLocation: viewportProvider.cameraState.center
             )
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .navigationTitle("Nearby Transit")
         .navigationBarTitleDisplayMode(.inline)
     }
