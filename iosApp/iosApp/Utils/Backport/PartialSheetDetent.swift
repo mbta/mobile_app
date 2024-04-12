@@ -13,7 +13,7 @@ public enum PartialSheetDetent: String, Comparable {
     @available(iOS 16, *)
     case small = "com.mbta.small"
     case medium = "com.apple.UIKit.medium"
-    case large = "com.apple.UIKit.large"
+    case large = "com.mbta.large"
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.ordinal < rhs.ordinal
@@ -33,7 +33,15 @@ public enum PartialSheetDetent: String, Comparable {
         case .medium:
             return .medium()
         case .large:
-            return .large()
+            if #available(iOS 16, *) {
+                let largeDetentIdentifier = UISheetPresentationController.Detent.Identifier(Self.large.rawValue)
+                return UISheetPresentationController.Detent.custom(identifier: largeDetentIdentifier) { context in
+                    // Prevent the background content from shrinking underneath the expanded sheet
+                    context.maximumDetentValue - 1
+                }
+            } else {
+                return .large()
+            }
         }
     }
 
