@@ -21,31 +21,27 @@ struct NearbyTransitView: View {
     @ObservedObject var scheduleFetcher: ScheduleFetcher
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var alertsFetcher: AlertsFetcher
+    @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
     @State var now = Date.now
+    @State var scrollPosition: String?
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
 
     var body: some View {
         VStack {
-            if let nearby = nearbyFetcher.withRealtimeInfo(
-                schedules: scheduleFetcher.schedules,
-                predictions: predictionsFetcher.predictions,
-                alerts: alertsFetcher.alerts,
-                filterAtTime: now.toKotlinInstant()
-            ) {
-                List(nearby, id: \.route.id) { nearbyRoute in
-                    NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
-                }.putAboveWhen(predictionsFetcher.errorText) { errorText in
-                    IconCard(iconName: "network.slash", details: errorText)
-                }
+            if let nearbyWithRealtimeInfo {
+                nearbyList(nearbyWithRealtimeInfo)
             } else {
                 Text("Loading...")
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 24)
             }
         }
         .onAppear {
             getNearby(location: location)
             joinPredictions()
+            updateNearbyRoutes()
             didAppear?(self)
         }
         .onChange(of: globalFetcher.response) { _ in
@@ -55,29 +51,57 @@ struct NearbyTransitView: View {
             getNearby(location: newLocation)
         }
         .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
+            updateNearbyRoutes()
             getSchedule()
             joinPredictions()
+            scrollToTop()
+        }
+        .onChange(of: scheduleFetcher.schedules) { _ in
+            updateNearbyRoutes()
+        }
+        .onChange(of: predictionsFetcher.predictions) { _ in
+            updateNearbyRoutes()
+        }
+        .onChange(of: alertsFetcher.alerts) { _ in
+            updateNearbyRoutes()
         }
         .onChange(of: scenePhase) { newPhase in
-            if newPhase == .inactive {
-                leavePredictions()
-            } else if newPhase == .active {
-                joinPredictions()
-            } else if newPhase == .background {
-                leavePredictions()
-            }
+            onSceneChange(newPhase)
         }
         .onReceive(timer) { input in
             now = input
+            updateNearbyRoutes()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onDisappear {
             leavePredictions()
         }
         .replaceWhen(nearbyFetcher.errorText) { errorText in
-            IconCard(iconName: "network.slash", details: errorText)
-                .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
+            errorCard(errorText)
         }
+    }
+
+    private func nearbyList(_ routes: [StopAssociatedRoute]) -> some View {
+        ScrollViewReader { proxy in
+            List(routes, id: \.route.id) { nearbyRoute in
+                NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
+            }
+            .onChange(of: scrollPosition) { id in
+                guard let id else { return }
+                withAnimation {
+                    proxy.scrollTo(id, anchor: .center)
+                    scrollPosition = nil
+                }
+            }
+            .putAboveWhen(predictionsFetcher.errorText) { errorText in
+                IconCard(iconName: "network.slash", details: errorText)
+            }
+        }
+    }
+
+    private func errorCard(_ errorText: Text) -> some View {
+        IconCard(iconName: "network.slash", details: errorText)
+            .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
     }
 
     var didAppear: ((Self) -> Void)?
@@ -99,17 +123,39 @@ struct NearbyTransitView: View {
     }
 
     func joinPredictions() {
-        Task {
-            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
-                .stopIds() else { return }
-            let stopIdList = Array(stopIds)
-            predictionsFetcher.run(stopIds: stopIdList)
-        }
+        guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+            .stopIds() else { return }
+        let stopIdList = Array(stopIds)
+        predictionsFetcher.run(stopIds: stopIdList)
     }
 
     func leavePredictions() {
+        predictionsFetcher.leave()
+    }
+
+    private func scrollToTop() {
+        guard let id = nearbyWithRealtimeInfo?.first?.route.id else { return }
+        scrollPosition = id
+    }
+
+    private func updateNearbyRoutes() {
+        nearbyWithRealtimeInfo = nearbyFetcher.withRealtimeInfo(
+            schedules: scheduleFetcher.schedules,
+            predictions: predictionsFetcher.predictions,
+            alerts: alertsFetcher.alerts,
+            filterAtTime: now.toKotlinInstant()
+        )
+    }
+
+    private func onSceneChange(_ phase: ScenePhase) {
         Task {
-            predictionsFetcher.leave()
+            if phase == .inactive {
+                leavePredictions()
+            } else if phase == .active {
+                joinPredictions()
+            } else if phase == .background {
+                leavePredictions()
+            }
         }
     }
 }

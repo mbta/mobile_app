@@ -145,27 +145,30 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testRoutePatternsGroupedByRouteAndStop() throws {
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()), alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: .init(socket: MockSocket()),
+            alertsFetcher: .init(socket: MockSocket())
         )
+        let exp = sut.on(\.didAppear) { view in
+            let routes = view.findAll(NearbyRouteView.self)
+            XCTAssert(!routes.isEmpty)
+            guard let route = routes.first else { return }
 
-        let routes = try sut.inspect().findAll(NearbyRouteView.self)
+            XCTAssertNotNil(try route.find(text: "52"))
+            XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
+                .find(NearbyStopView.self, relation: .parent).find(text: "Charles River Loop"))
+            XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
+                .find(NearbyStopView.self, relation: .parent).find(text: "Dedham Mall"))
 
-        XCTAssert(!routes.isEmpty)
-        guard let route = routes.first else { return }
-
-        XCTAssertNotNil(try route.find(text: "52"))
-        XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .find(NearbyStopView.self, relation: .parent).find(text: "Charles River Loop"))
-        XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
-            .find(NearbyStopView.self, relation: .parent).find(text: "Dedham Mall"))
-
-        XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
-            .find(NearbyStopView.self, relation: .parent).find(text: "Watertown Yard"))
+            XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
+                .find(NearbyStopView.self, relation: .parent).find(text: "Watertown Yard"))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     @MainActor func testWithSchedules() throws {
@@ -227,7 +230,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
@@ -235,18 +238,22 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsFetcher: FakePredictionsFetcher(objects), alertsFetcher: .init(socket: MockSocket())
         )
 
-        let patterns = try sut.inspect().findAll(ViewType.NavigationLink.self, where: { _ in true })
-            .map { try $0.labelView().view(HeadsignRowView.self) }
+        let exp = sut.on(\.didAppear) { view in
+            let patterns = try view.findAll(ViewType.NavigationLink.self, where: { _ in true })
+                .map { try $0.labelView().view(HeadsignRowView.self) }
 
-        XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
-        XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
-        XCTAssertEqual(try patterns[0].find(ViewType.Image.self).actualImage().name(), "clock")
+            XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
+            XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
+            XCTAssertEqual(try patterns[0].find(ViewType.Image.self).actualImage().name(), "clock")
 
-        XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
-        XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
+            XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
+            XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
 
-        XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
-        XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
+            XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
+            XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     @MainActor func testWithPredictions() throws {
@@ -302,33 +309,38 @@ final class NearbyTransitViewTests: XCTestCase {
         let distantInstant = Date.now.addingTimeInterval(TimeInterval(DISTANT_FUTURE_CUTOFF)).addingTimeInterval(5 * 60).toKotlinInstant()
         let testFormatter = DateFormatter()
         testFormatter.timeStyle = .short
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant), alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant),
+            alertsFetcher: .init(socket: MockSocket())
         )
 
-        let stops = try sut.inspect().findAll(NearbyStopView.self)
+        let exp = sut.on(\.didAppear) { view in
+            let stops = view.findAll(NearbyStopView.self)
 
-        XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-            .parent().find(text: "No Predictions"))
+            XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
+                .parent().find(text: "No Predictions"))
 
-        XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-            .parent().find(text: "10 min"))
-        XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-            .parent().find(text: "Overridden"))
+            XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
+                .parent().find(text: "10 min"))
+            XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
+                .parent().find(text: "Overridden"))
 
-        XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-            .parent().find(text: "1 min"))
+            XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
+                .parent().find(text: "1 min"))
 
-        let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
-        XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
-            .findAll(UpcomingTripView.self, where: { sut in
-                try debugPrint(sut.actualView())
-                return try sut.actualView().prediction == expectedState
-            }).isEmpty)
+            let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
+            XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
+                .findAll(UpcomingTripView.self, where: { sut in
+                    try debugPrint(sut.actualView())
+                    return try sut.actualView().prediction == expectedState
+                }).isEmpty)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
@@ -385,7 +397,7 @@ final class NearbyTransitViewTests: XCTestCase {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
         let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
@@ -408,13 +420,16 @@ final class NearbyTransitViewTests: XCTestCase {
             return PredictionsStreamDataResponse(objects: objects)
         }
 
-        predictionsFetcher.predictions = prediction(minutesAway: 2)
-
-        XCTAssertNotNil(try sut.inspect().find(text: "2 min"))
-
-        predictionsFetcher.predictions = prediction(minutesAway: 3)
-
-        XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
+        let exp = sut.on(\.didAppear) { view in
+            predictionsFetcher.predictions = prediction(minutesAway: 2)
+            try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
+            XCTAssertNotNil(try view.find(text: "2 min"))
+            predictionsFetcher.predictions = prediction(minutesAway: 3)
+            try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
+            XCTAssertNotNil(try view.find(text: "3 min"))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     func testLeavesChannelWhenBackgrounded() throws {
@@ -546,6 +561,25 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
+    func testScrollToTopWhenNearbyChanges() throws {
+        let nearbyFetcher = Route52NearbyFetcher()
+        var sut = NearbyTransitView(
+            location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: Route52NearbyFetcher(),
+            scheduleFetcher: .init(backend: IdleBackend()),
+            predictionsFetcher: .init(socket: MockSocket()),
+            alertsFetcher: .init(socket: MockSocket())
+        )
+        let exp = sut.on(\.didAppear) { view in
+            XCTAssertNil(try view.actualView().scrollPosition)
+            try view.vStack().callOnChange(newValue: nearbyFetcher.nearbyByRouteAndStop)
+            XCTAssertNotNil(try view.actualView().scrollPosition)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
+    }
+
     func testNearbyErrorMessage() throws {
         class FakeNearbyFetcher: NearbyFetcher {
             init() {
@@ -580,7 +614,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
@@ -588,7 +622,11 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsFetcher: FakePredictionsFetcher(), alertsFetcher: .init(socket: MockSocket())
         )
 
-        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load predictions, test error"))
+        let exp = sut.on(\.didAppear) { view in
+            XCTAssertNotNil(try view.find(text: "Failed to load predictions, test error"))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     @MainActor func testReloadsWhenLocationChanges() throws {
@@ -672,7 +710,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         alertsFetcher.alerts = AlertsStreamDataResponse(objects: objects)
 
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
@@ -681,7 +719,11 @@ final class NearbyTransitViewTests: XCTestCase {
             alertsFetcher: alertsFetcher
         )
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
+        let exp = sut.on(\.didAppear) { view in
+            XCTAssertNotNil(try view.find(text: "Suspension"))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     func testStopPageLink() throws {

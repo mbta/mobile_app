@@ -106,6 +106,7 @@ private extension PartialSheetRepresentable {
             controller.animateChanges {
                 controller.detents = detents.map(\.uiKitDetent)
                 controller.prefersScrollingExpandsWhenScrolledToEdge = true
+                controller.prefersGrabberVisible = true
 
                 if let largestUndimmedDetent {
                     controller.largestUndimmedDetentIdentifier = .init(largestUndimmedDetent.rawValue)
