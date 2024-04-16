@@ -35,6 +35,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project.dependencies.platform(libs.koin.bom))
+                implementation(libs.koin.core)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.encoding)
                 implementation(libs.ktor.client.content.negotiation)

@@ -16,6 +16,7 @@ struct ContentView: View {
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var scheduleFetcher: ScheduleFetcher
+    @Environment(\.injected) var diContainer: DIContainer
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -98,9 +99,9 @@ struct ContentView: View {
                     switch entry {
                     case let .stopDetails(stop, _):
                         StopDetailsPage(
-                            backend: backendProvider.backend,
                             socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
+                            schedulesUseCase: diContainer.schedulesUseCase,
                             viewportProvider: viewportProvider,
                             stop: stop, filter: $navigationStack.lastStopDetailsFilter
                         )

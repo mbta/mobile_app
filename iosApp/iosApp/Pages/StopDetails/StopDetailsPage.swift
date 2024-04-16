@@ -14,8 +14,8 @@ import SwiftUI
 struct StopDetailsPage: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var viewportProvider: ViewportProvider
-
-    @StateObject var scheduleFetcher: ScheduleFetcher
+    let schedulesUseCase: ISchedulesUseCase
+    @State var schedulesResponse: ScheduleResponse?
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
@@ -25,26 +25,28 @@ struct StopDetailsPage: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        backend: any BackendProtocol,
         socket: any PhoenixSocket,
         globalFetcher: GlobalFetcher,
+        schedulesUseCase: ISchedulesUseCase,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>
     ) {
         self.globalFetcher = globalFetcher
+        self.schedulesUseCase = schedulesUseCase
         self.viewportProvider = viewportProvider
-        _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
         _filter = filter
     }
 
+    var schedulesDidAppear: ((Self) -> Void)?
+
     var body: some View {
         VStack {
             if predictionsFetcher.predictions != nil {
                 Text("Live departures")
-            } else if scheduleFetcher.schedules != nil {
+            } else if schedulesResponse != nil {
                 Text("Scheduled departures")
             } else {
                 Text("Departures")
@@ -53,7 +55,7 @@ struct StopDetailsPage: View {
                 StopDetailsRoutesView(departures: StopDetailsDepartures(
                     stop: stop,
                     global: globalResponse,
-                    schedules: scheduleFetcher.schedules,
+                    schedules: schedulesResponse,
                     predictions: predictionsFetcher.predictions,
                     filterAtTime: now.toKotlinInstant()
                 ), now: now.toKotlinInstant(), filter: $filter)
@@ -77,7 +79,11 @@ struct StopDetailsPage: View {
 
     func getSchedule(_ stop: Stop) {
         Task {
-            await scheduleFetcher.getSchedule(stopIds: [stop.id])
+            do {
+                schedulesResponse = try await schedulesUseCase
+                    .getSchedule(stopIds: [stop.id])
+                schedulesDidAppear?(self)
+            } catch {}
         }
     }
 

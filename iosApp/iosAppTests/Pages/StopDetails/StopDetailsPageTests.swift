@@ -30,9 +30,9 @@ final class StopDetailsPageTests: XCTestCase {
         let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
 
         var sut = StopDetailsPage(
-            backend: IdleBackend(),
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
+            schedulesUseCase: EmptySchedulesUseCase(),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter
@@ -42,6 +42,53 @@ final class StopDetailsPageTests: XCTestCase {
             XCTAssertEqual(viewportProvider.viewport.camera?.center, stop.coordinate)
             sut.stop = nextStop
             XCTAssertEqual(viewportProvider.viewport.camera?.center, nextStop.coordinate)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 2)
+    }
+
+    func testDisplaysSchedules() {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
+        objects.schedule { schedule in
+            schedule.trip = trip
+            schedule.routeId = route.id
+            schedule.stopId = stop.id
+            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+        }
+        let routePattern = objects.routePattern(route: route) { _ in }
+
+        class fakeSchedulesUseCase: ISchedulesUseCase {
+            let objects: ObjectCollectionBuilder
+            init(objects: ObjectCollectionBuilder) {
+                self.objects = objects
+            }
+
+            func __getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
+                ScheduleResponse(objects: objects)
+            }
+
+            func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ScheduleResponse {
+                ScheduleResponse(objects: objects)
+            }
+        }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
+
+        var sut = StopDetailsPage(
+            socket: MockSocket(),
+            globalFetcher: .init(backend: IdleBackend()),
+            schedulesUseCase: fakeSchedulesUseCase(objects: objects),
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter
+        )
+
+        let exp = sut.on(\.schedulesDidAppear) { view in
+            XCTAssertNotNil(try view.find(text: "Scheduled departures"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)
