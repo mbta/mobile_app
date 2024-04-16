@@ -69,8 +69,8 @@ struct HomeMapView: View {
             }
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
             .mapStyle(.light)
-            .onCameraChanged { change in handleCameraChange(change)
-            }
+            .onCameraChanged { change in handleCameraChange(change) }
+            .debugOptions(.camera)
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
@@ -110,10 +110,29 @@ struct HomeMapView: View {
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .overlay(alignment: .topTrailing) {
-                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { Task { viewportProvider.follow() } }
-                }
+//                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+//                    RecenterButton { Task { viewportProvider.follow() } }
+//                }
+                debugSizeButton
             }
+        }
+    }
+
+    var debugSizeButton: some View {
+        VStack {
+            Image(systemName: "binoculars")
+                .frame(width: 50, height: 50)
+                .foregroundColor(.white)
+                .background(.gray.opacity(0.8))
+                .clipShape(Circle())
+                .padding(20)
+                .onTapGesture(perform: layerManager?.updateStopLayerIconSize ?? {})
+                .transition(AnyTransition.opacity.animation(.linear(duration: 0.25)))
+            Text(layerManager?.getIconSizeLabel() ?? "None")
+                .padding(3)
+                .background(.gray)
+                .foregroundColor(.white)
+                .clipShape(.rect(cornerSize: .init(width: 5, height: 5)))
         }
     }
 

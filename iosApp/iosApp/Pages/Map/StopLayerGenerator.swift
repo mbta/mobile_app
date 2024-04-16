@@ -32,11 +32,12 @@ class StopLayerGenerator {
         let layerId = Self.getStopLayerId(locationType)
         let sourceId = StopSourceGenerator.getStopSourceId(locationType)
         var stopLayer = SymbolLayer(id: layerId, source: sourceId)
-        stopLayer.iconImage = StopIcons.getStopLayerIcon(locationType)
         stopLayer.iconAllowOverlap = .constant(true)
-        stopLayer.minZoom = StopIcons.stopZoomThreshold - 1
+        stopLayer.iconImage = StopIcons.getStopLayerIcon(locationType)
         stopLayer.iconOpacity = .constant(0)
         stopLayer.iconOpacityTransition = StyleTransition(duration: 1, delay: 0)
+        stopLayer.iconSize = StopIcons.stopIconFixedSize
+        stopLayer.minZoom = StopIcons.stopZoomThreshold - 1
 
         return stopLayer
     }

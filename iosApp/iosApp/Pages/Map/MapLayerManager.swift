@@ -17,7 +17,14 @@ class MapLayerManager {
     var routeLayerGenerator: RouteLayerGenerator?
     var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
+    var iconSizeIndex = 0
 
+    static let iconSizes: [Value<Double>] = [
+        StopIcons.stopIconFixedSize,
+        StopIcons.stopIconLinearSizeExpression,
+        StopIcons.stopIconExponentialSizeExpression,
+        StopIcons.stopIconCubicSizeExpression,
+    ]
     static let stopLayerTypes: [LocationType] = [.stop, .station]
 
     init(map: MapboxMap) {
@@ -96,6 +103,24 @@ class MapLayerManager {
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
         updateSourceData(routeSourceGenerator: routeSourceGenerator)
         updateSourceData(stopSourceGenerator: stopSourceGenerator)
+    }
+
+    func updateStopLayerIconSize() {
+        iconSizeIndex = (iconSizeIndex + 1) % Self.iconSizes.count
+        for layerType: LocationType in Self.stopLayerTypes {
+            let layerId = StopLayerGenerator.getStopLayerId(layerType)
+            do {
+                try map.updateLayer(withId: layerId, type: SymbolLayer.self) { layer in
+                    layer.iconSize = Self.iconSizes[self.iconSizeIndex]
+                }
+            } catch {
+                Logger().error("Failed to update layer \(layerId)\n\(error)")
+            }
+        }
+    }
+
+    func getIconSizeLabel() -> String {
+        ["Fixed", "Linear", "Exponential", "Ease in-out Bezier"][iconSizeIndex]
     }
 
     func updateStopLayerZoom(_ zoomLevel: CGFloat) {
