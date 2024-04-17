@@ -15,7 +15,6 @@
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
 		6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E99CBB62B9892C80047E78D /* SocketProvider.swift */; };
-		6ED411AC2BCF15A9007CD651 /* DependencyInjection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED411AB2BCF15A9007CD651 /* DependencyInjection.swift */; };
 		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
 		6EE745842B965B9C0052227E /* SocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745832B965B9C0052227E /* SocketTests.swift */; };
@@ -146,7 +145,6 @@
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
 		6E99CBB62B9892C80047E78D /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
 		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
-		6ED411AB2BCF15A9007CD651 /* DependencyInjection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyInjection.swift; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		6EE745832B965B9C0052227E /* SocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTests.swift; sourceTree = "<group>"; };
 		6EE745852B965C130052227E /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -398,7 +396,6 @@
 				7555FF82242A565900829871 /* ContentView.swift */,
 				8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
-				6ED411AB2BCF15A9007CD651 /* DependencyInjection.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -916,7 +913,6 @@
 				6EE745862B965C130052227E /* Message.swift in Sources */,
 				9A9E05F62B6D6EF70086B437 /* NearbyFetcher.swift in Sources */,
 				9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */,
-				6ED411AC2BCF15A9007CD651 /* DependencyInjection.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */,
 				9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */,

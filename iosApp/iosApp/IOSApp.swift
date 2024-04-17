@@ -69,8 +69,6 @@ struct IOSApp: App {
                 .environmentObject(railRouteShapeFetcher)
                 // TODO: Fully replace scheduleFetcher
                 .environmentObject(scheduleFetcher)
-                // TODO: Nicer init for DIContainer
-                .environment(\.injected, DIContainer(schedulesUseCase: SchedulesUseCaseDI().schedulesUseCase))
                 .environmentObject(searchResultFetcher)
                 .environmentObject(socketProvider)
                 .environmentObject(viewportProvider)
