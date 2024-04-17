@@ -17,6 +17,7 @@ class RouteLayerGenerator {
 
     static let routeLayerId = "route-layer"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
+    private static let lineWidth = 4.0
 
     init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
         self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
@@ -42,31 +43,66 @@ class RouteLayerGenerator {
      and a second that is applied only to the portions of the lines that are alerting.
      */
     static func createRouteLayers(route: Route) -> [LineLayer] {
+        let lineOffset = lineOffset(route)
+
         var alertingLayer = LineLayer(
             id: Self.getRouteLayerId("\(route.id)-alerting"),
             source: RouteSourceGenerator.getRouteSourceId(route.id)
         )
+
         alertingLayer.filter = Exp(.get) { RouteSourceGenerator.propIsAlertingKey }
         alertingLayer.lineDasharray = .constant([2.0, 3.0])
-
-        alertingLayer.lineWidth = .constant(4.0)
+        alertingLayer.lineWidth = .constant(lineWidth)
         alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
         alertingLayer.lineBorderWidth = .constant(1.0)
         alertingLayer.lineBorderColor = .constant(StyleColor(.white))
         alertingLayer.lineJoin = .constant(.round)
         alertingLayer.lineCap = .constant(.round)
+        alertingLayer.lineOffset = .constant(lineOffset)
+        alertingLayer.lineOpacity = .constant(0.7)
 
         var nonAlertingLayer = LineLayer(
             id: Self.getRouteLayerId("\(route.id)"),
             source: RouteSourceGenerator.getRouteSourceId(route.id)
         )
 
-        nonAlertingLayer.lineWidth = .constant(4.0)
+        nonAlertingLayer.lineWidth = .constant(lineWidth)
         nonAlertingLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
         nonAlertingLayer.lineBorderWidth = .constant(1.0)
         nonAlertingLayer.lineBorderColor = .constant(StyleColor(.white))
         nonAlertingLayer.lineJoin = .constant(.round)
         nonAlertingLayer.lineCap = .constant(.round)
+        nonAlertingLayer.lineOffset = .constant(lineOffset)
+
         return [nonAlertingLayer, alertingLayer]
+    }
+
+    /**
+     Hardcoding offsets based on route properties to minimize the occurences of overlapping rail lines when drawn on the map
+     */
+    private static func lineOffset(_ route: Route) -> Double {
+        let greenOverlappingCR: Set = ["CR-Lowell", "CR-Fitchburg"]
+        let redOverlappingCR: Set = ["CR-Greenbush", "CR-Kingston", "CR-Middleborough"]
+
+        return if route.type == RouteType.commuterRail {
+            if greenOverlappingCR.contains(route.id) {
+                // These overlap with GL. GL is offset below, so do nothing
+                0
+            } else if redOverlappingCR.contains(route.id) {
+                // These overlap with RL. RL is offset below, shift West
+                RouteLayerGenerator.lineWidth * 1.5
+
+            } else {
+                // Some overlap with OL and should shift East.
+                // Shift the rest east too so they scale porportionally
+                -RouteLayerGenerator.lineWidth
+            }
+        } else if route.id.contains("Green") {
+            // Account for overlapping North Station - Haymarket
+            // Offset to the East
+            RouteLayerGenerator.lineWidth
+        } else {
+            0
+        }
     }
 }
