@@ -81,6 +81,7 @@
 		9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7B7CA82B98E41B0045214F /* NonNilModifierTests.swift */; };
 		9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D562B683103006F5B80 /* SearchResultView.swift */; };
 		9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */; };
+		9A88AAC12BD0680C00A5BF88 /* StopDetailsRoutePills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC02BD0680C00A5BF88 /* StopDetailsRoutePills.swift */; };
 		9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */; };
 		9A8B34B02B892C810018412C /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 9A8B34AF2B892C810018412C /* Polyline */; };
 		9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */; };
@@ -217,6 +218,7 @@
 		9A7B7CA82B98E41B0045214F /* NonNilModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonNilModifierTests.swift; sourceTree = "<group>"; };
 		9A887D562B683103006F5B80 /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
 		9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewTests.swift; sourceTree = "<group>"; };
+		9A88AAC02BD0680C00A5BF88 /* StopDetailsRoutePills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutePills.swift; sourceTree = "<group>"; };
 		9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailRouteShapeFetcher.swift; sourceTree = "<group>"; };
 		9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultFetcher.swift; sourceTree = "<group>"; };
 		9A9E05F52B6D6EF70086B437 /* NearbyFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyFetcher.swift; sourceTree = "<group>"; };
@@ -427,6 +429,7 @@
 				8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */,
 				8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */,
 				8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */,
+				9A88AAC02BD0680C00A5BF88 /* StopDetailsRoutePills.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -916,6 +919,7 @@
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */,
 				9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */,
+				9A88AAC12BD0680C00A5BF88 /* StopDetailsRoutePills.swift in Sources */,
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
 				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,

@@ -43,7 +43,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         VStack {
-            routePills
+            StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
             clearFilterButton
             departureHeader
             if let departures {
@@ -64,18 +64,6 @@ struct StopDetailsPage: View {
             updateDepartures()
         }
         .onDisappear { leavePredictions() }
-    }
-
-    @ViewBuilder
-    private var routePills: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(servedRoutes, id: \.id) { route in
-                    RoutePill(route: route)
-                }
-            }
-            .padding(.horizontal, 15)
-        }
     }
 
     @ViewBuilder
@@ -119,6 +107,16 @@ struct StopDetailsPage: View {
         Task {
             predictionsFetcher.leave()
         }
+    }
+
+    func tapRoutePill(_ route: Route) {
+        guard let departures else { return }
+        let patterns = departures.routes.first { patterns in patterns.route.id == route.id }
+        if patterns == nil { return }
+        let defaultDirectionId = patterns?.patternsByHeadsign.flatMap { headsign in
+            headsign.patterns.map { pattern in pattern.directionId }
+        }.min() ?? 0
+        filter = .init(routeId: route.id, directionId: defaultDirectionId)
     }
 
     func updateDepartures(_ stop: Stop? = nil) {
