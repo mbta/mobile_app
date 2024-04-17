@@ -17,7 +17,7 @@ class RouteLayerGenerator {
 
     static let routeLayerId = "route-layer"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
-    static let lineWidth = 4.0
+    private static let lineWidth = 4.0
 
     init(mapFriendlyRoutesResponse: MapFriendlyRouteResponse, routesById: [String: Route]) {
         self.mapFriendlyRoutesResponse = mapFriendlyRoutesResponse
@@ -81,8 +81,8 @@ class RouteLayerGenerator {
      Hardcoding offsets based on route properties to minimize the occurences of overlapping rail lines when drawn on the map
      */
     private static func lineOffset(_ route: Route) -> Double {
-        var greenOverlappingCR: Set = ["CR-Lowell", "CR-Fitchburg"]
-        var redOverlappingCR: Set = ["CR-Greenbush", "CR-Kingston", "CR-Middleborough"]
+        let greenOverlappingCR: Set = ["CR-Lowell", "CR-Fitchburg"]
+        let redOverlappingCR: Set = ["CR-Greenbush", "CR-Kingston", "CR-Middleborough"]
 
         return if route.type == RouteType.commuterRail {
             if greenOverlappingCR.contains(route.id) {
