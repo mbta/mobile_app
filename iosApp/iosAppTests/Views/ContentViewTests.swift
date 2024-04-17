@@ -40,6 +40,10 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
             .environmentObject(ViewportProvider())
+            .environmentObject(PinnedRouteRepositoryProvider(MockPinnedRoutesRepository()))
+            .environmentObject(
+                TogglePinnedRouteUsecaseProvider(TogglePinnedRouteUsecase(repository: MockPinnedRoutesRepository()))
+            )
 
         ViewHosting.host(view: sut)
 
@@ -70,6 +74,10 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
             .environmentObject(ViewportProvider())
+            .environmentObject(PinnedRouteRepositoryProvider(MockPinnedRoutesRepository()))
+            .environmentObject(
+                TogglePinnedRouteUsecaseProvider(TogglePinnedRouteUsecase(repository: MockPinnedRoutesRepository()))
+            )
 
         ViewHosting.host(view: sut)
 
@@ -120,6 +128,10 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: FakeSocket()))
             .environmentObject(ViewportProvider())
+            .environmentObject(PinnedRouteRepositoryProvider(MockPinnedRoutesRepository()))
+            .environmentObject(
+                TogglePinnedRouteUsecaseProvider(TogglePinnedRouteUsecase(repository: MockPinnedRoutesRepository()))
+            )
 
         ViewHosting.host(view: sut)
         wait(for: [fetchesGlobalData], timeout: 1)

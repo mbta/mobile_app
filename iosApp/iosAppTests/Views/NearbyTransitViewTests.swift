@@ -19,8 +19,15 @@ import XCTest
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
+    private var pinnedRouteRepositoryProvider: PinnedRouteRepositoryProvider?
+    private var togglePinnedRouteUsecaseProvider: TogglePinnedRouteUsecaseProvider?
+
     override func setUp() {
         executionTimeAllowance = 60
+        let pinnedRouteRepository = MockPinnedRoutesRepository()
+        let toggledPinnedRouteUseCase = TogglePinnedRouteUsecase(repository: pinnedRouteRepository)
+        pinnedRouteRepositoryProvider = PinnedRouteRepositoryProvider(pinnedRouteRepository)
+        togglePinnedRouteUsecaseProvider = TogglePinnedRouteUsecaseProvider(toggledPinnedRouteUseCase)
     }
 
     func testPending() throws {
@@ -32,6 +39,8 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
+        .environmentObject(pinnedRouteRepositoryProvider!)
+        .environmentObject(togglePinnedRouteUsecaseProvider!)
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
 
@@ -63,14 +72,19 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()), alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: .init(socket: MockSocket()),
+            alertsFetcher: .init(socket: MockSocket())
         )
 
-        let hasAppeared = sut.on(\NearbyTransitView.didAppear) { _ in }
-        ViewHosting.host(view: sut)
-
+        let hasAppeared = sut.on(\.didAppear) { view in
+            XCTAssertNotNil(try view.find(text: "Loading..."))
+        }
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [hasAppeared], timeout: 5)
-        XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
         wait(for: [getNearbyExpectation], timeout: 1)
     }
 
@@ -167,7 +181,11 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
                 .find(NearbyStopView.self, relation: .parent).find(text: "Watertown Yard"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
@@ -235,7 +253,8 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: FakeScheduleFetcher(objects),
-            predictionsFetcher: FakePredictionsFetcher(objects), alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: FakePredictionsFetcher(objects),
+            alertsFetcher: .init(socket: MockSocket())
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -252,7 +271,11 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
             XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
@@ -339,7 +362,11 @@ final class NearbyTransitViewTests: XCTestCase {
                     return try sut.actualView().prediction == expectedState
                 }).isEmpty)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
@@ -375,10 +402,15 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: predictionsFetcher,
+            alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
@@ -395,7 +427,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
     func testRendersUpdatedPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-
         let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
@@ -428,7 +459,11 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
             XCTAssertNotNil(try view.find(text: "3 min"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
@@ -462,10 +497,15 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: predictionsFetcher,
+            alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
 
         wait(for: [joinExpectation], timeout: 1)
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
@@ -503,10 +543,15 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: predictionsFetcher,
+            alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
 
         wait(for: [joinExpectation], timeout: 1)
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
@@ -547,10 +592,15 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: predictionsFetcher, alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: predictionsFetcher,
+            alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
 
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
 
@@ -576,7 +626,11 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: nearbyFetcher.nearbyByRouteAndStop)
             XCTAssertNotNil(try view.actualView().scrollPosition)
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
@@ -587,15 +641,16 @@ final class NearbyTransitViewTests: XCTestCase {
                 errorText = Text("Failed to load nearby transit, test error")
             }
         }
-
-        let sut = NearbyTransitView(
+        var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: .init(socket: MockSocket()), alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: .init(socket: MockSocket()),
+            alertsFetcher: .init(socket: MockSocket())
         )
-
+        .environmentObject(pinnedRouteRepositoryProvider!)
+        .environmentObject(togglePinnedRouteUsecaseProvider!)
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load nearby transit, test error"))
     }
 
@@ -613,19 +668,23 @@ final class NearbyTransitViewTests: XCTestCase {
                 errorText = Text("Failed to load predictions, test error")
             }
         }
-
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
-            predictionsFetcher: FakePredictionsFetcher(), alertsFetcher: .init(socket: MockSocket())
+            predictionsFetcher: FakePredictionsFetcher(),
+            alertsFetcher: .init(socket: MockSocket())
         )
 
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNotNil(try view.find(text: "Failed to load predictions, test error"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
@@ -652,7 +711,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
         globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
-
         var sut = NearbyTransitPageView(
             currentLocation: currentLocation,
             globalFetcher: globalFetcher,
@@ -676,7 +734,11 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, newLocation)
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [hasAppeared, getNearbyExpectation, hasChangedLocation], timeout: 3)
     }
 
@@ -709,7 +771,6 @@ final class NearbyTransitViewTests: XCTestCase {
             alert.informedEntity(activities: [.board], directionId: nil, facility: nil, route: "52", routeType: .bus, stop: "8552", trip: nil)
         }
         alertsFetcher.alerts = AlertsStreamDataResponse(objects: objects)
-
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
@@ -722,7 +783,11 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNotNil(try view.find(text: "Suspension"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(
+            view: sut
+                .environmentObject(pinnedRouteRepositoryProvider!)
+                .environmentObject(togglePinnedRouteUsecaseProvider!)
+        )
         wait(for: [exp], timeout: 1)
     }
 
