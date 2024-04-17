@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 
 val ARRIVAL_CUTOFF = 30.seconds
 val APPROACH_CUTOFF = 60.seconds
+val BOARDING_CUTOFF = 90.seconds
 val DISTANT_FUTURE_CUTOFF = 60.minutes
 
 @Serializable
