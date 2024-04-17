@@ -44,6 +44,7 @@ struct StopDetailsPage: View {
     var body: some View {
         VStack {
             routePills
+            clearFilterButton
             departureHeader
             if let departures {
                 StopDetailsRoutesView(departures: departures, now: now.toKotlinInstant(), filter: $filter)
@@ -75,6 +76,10 @@ struct StopDetailsPage: View {
             }
             .padding(.horizontal, 15)
         }
+    }
+
+    @ViewBuilder
+    private var clearFilterButton: some View {
         if filter != nil {
             Button(action: { filter = nil }, label: { Text("Clear Filter") })
         }
