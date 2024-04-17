@@ -55,6 +55,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.ktor.client.mock)
+                implementation(libs.koin.test)
             }
         }
         val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }
