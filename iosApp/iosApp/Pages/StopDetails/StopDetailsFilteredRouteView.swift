@@ -53,7 +53,6 @@ struct StopDetailsFilteredRouteView: View {
     }
 
     var body: some View {
-        Button(action: { filter = nil }, label: { Text("Clear Filter") })
         List {
             RoutePillSection(route: patternsByStop.route) {
                 ForEach(rows, id: \.tripId) { row in
