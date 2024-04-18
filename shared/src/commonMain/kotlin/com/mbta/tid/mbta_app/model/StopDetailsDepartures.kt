@@ -17,6 +17,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         global.run {
             data class UpcomingTripKey(val routeId: String, val headsign: String?)
 
+            val loading = schedules == null || predictions == null
             val upcomingTripsByHeadsignAndStop =
                 UpcomingTrip.tripsMappedBy(
                     schedules,
@@ -69,8 +70,9 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 PatternsByHeadsign(route, headsign, patterns, upcomingTrips)
                             }
                             .filter {
-                                (it.isTypical() || it.isUpcomingBefore(cutoffTime)) &&
-                                    !it.isArrivalOnly()
+                                loading ||
+                                    ((it.isTypical() || it.isUpcomingBefore(cutoffTime)) &&
+                                        !it.isArrivalOnly())
                             }
                             .sorted()
                     )

@@ -47,6 +47,28 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
+    func testClearsFilter() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+        let routePattern = objects.routePattern(route: route) { _ in }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(routeId: route.id, directionId: routePattern.directionId))
+
+        let sut = StopDetailsPage(
+            socket: MockSocket(),
+            globalFetcher: .init(backend: IdleBackend()),
+            schedulesUseCase: EmptySchedulesUseCase(),
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter
+        )
+
+        try sut.inspect().find(button: "Clear Filter").tap()
+        XCTAssertNil(filter.wrappedValue)
+    }
+
     func testDisplaysSchedules() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
