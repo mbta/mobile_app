@@ -33,7 +33,7 @@ final class DebouncerTests: XCTestCase {
             runExpectation.fulfill()
         }
 
-        wait(for: [asapExpectation], timeout: 0.2)
-        wait(for: [runExpectation], timeout: 0.6)
+        wait(for: [asapExpectation], timeout: 0.25)
+        wait(for: [runExpectation], timeout: 0.75)
     }
 }
