@@ -41,8 +41,6 @@ struct StopDetailsPage: View {
         _filter = filter
     }
 
-    var schedulesDidAppear: ((Self) -> Void)?
-
     var body: some View {
         VStack {
             StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
@@ -97,7 +95,6 @@ struct StopDetailsPage: View {
             do {
                 schedulesResponse = try await schedulesUseCase
                     .getSchedule(stopIds: [stop.id])
-                schedulesDidAppear?(self)
             } catch {}
         }
     }

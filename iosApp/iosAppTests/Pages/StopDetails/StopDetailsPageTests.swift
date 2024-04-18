@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 @testable import iosApp
 import shared
 import SwiftPhoenixClient
@@ -82,18 +83,24 @@ final class StopDetailsPageTests: XCTestCase {
         }
         let routePattern = objects.routePattern(route: route) { _ in }
 
+        let schedulesLoadedPublisher = PassthroughSubject<Bool, Never>()
+
         class fakeSchedulesUseCase: ISchedulesUseCase {
             let objects: ObjectCollectionBuilder
-            init(objects: ObjectCollectionBuilder) {
+            let callback: (() -> Void)?
+            init(objects: ObjectCollectionBuilder, callback: (() -> Void)?) {
                 self.objects = objects
+                self.callback = callback
             }
 
             func __getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
-                ScheduleResponse(objects: objects)
+                callback?()
+                return ScheduleResponse(objects: objects)
             }
 
             func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ScheduleResponse {
-                ScheduleResponse(objects: objects)
+                callback?()
+                return ScheduleResponse(objects: objects)
             }
         }
 
@@ -103,13 +110,13 @@ final class StopDetailsPageTests: XCTestCase {
         var sut = StopDetailsPage(
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesUseCase: fakeSchedulesUseCase(objects: objects),
+            schedulesUseCase: fakeSchedulesUseCase(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter
         )
 
-        let exp = sut.on(\.schedulesDidAppear) { view in
+        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 0.2) { view in
             XCTAssertNotNil(try view.find(text: "Scheduled departures"))
         }
         ViewHosting.host(view: sut)
