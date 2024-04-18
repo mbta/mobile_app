@@ -73,7 +73,6 @@ struct StopDetailsPage: View {
         }
     }
 
-    @ViewBuilder
     private var departureHeader: some View {
         if predictionsFetcher.predictions != nil {
             Text("Live departures")
