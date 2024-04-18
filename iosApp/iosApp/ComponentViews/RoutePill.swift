@@ -11,16 +11,16 @@ import SwiftUI
 
 struct RoutePill: View {
     let route: Route?
-    let isInactive: Bool
+    let isActive: Bool
     let textColor: Color?
     let routeColor: Color?
 
     static let inactiveTextColor: Color = .white
     static let inactiveColor: Color = .gray.opacity(0.5)
 
-    init(route: Route?, isInactive: Bool = false) {
+    init(route: Route?, isActive: Bool = true) {
         self.route = route
-        self.isInactive = isInactive
+        self.isActive = isActive
         textColor = route?.textColor != nil ? Color(hex: route!.textColor) : nil
         routeColor = route?.color != nil ? Color(hex: route!.color) : nil
     }
@@ -48,8 +48,8 @@ struct RoutePill: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
                 .lineLimit(1)
-                .foregroundColor(isInactive ? Self.inactiveTextColor : textColor)
-                .background(isInactive ? Self.inactiveColor : routeColor)
+                .foregroundColor(isActive ? textColor : Self.inactiveTextColor)
+                .background(isActive ? routeColor : Self.inactiveColor)
                 .clipShape(Capsule())
         }
     }

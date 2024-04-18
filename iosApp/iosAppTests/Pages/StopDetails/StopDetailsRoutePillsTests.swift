@@ -39,8 +39,8 @@ final class StopDetailsRoutePillsTests: XCTestCase {
         )
 
         let pills = try sut.inspect().findAll(RoutePill.self)
-        XCTAssertFalse(try pills.first!.actualView().isInactive)
-        XCTAssertTrue(try pills.last!.actualView().isInactive)
+        XCTAssertTrue(try pills.first!.actualView().isActive)
+        XCTAssertFalse(try pills.last!.actualView().isActive)
     }
 
     func testRoutePillTap() throws {

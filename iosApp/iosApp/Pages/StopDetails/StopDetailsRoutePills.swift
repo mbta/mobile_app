@@ -18,7 +18,7 @@ struct StopDetailsRoutePills: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(servedRoutes, id: \.id) { route in
-                    RoutePill(route: route, isInactive: filter != nil && filter?.routeId != route.id)
+                    RoutePill(route: route, isActive: filter == nil || filter?.routeId == route.id)
                         .onTapGesture { tapRoutePill(route) }
                 }
             }
