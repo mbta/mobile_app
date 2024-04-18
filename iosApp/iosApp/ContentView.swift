@@ -100,7 +100,6 @@ struct ContentView: View {
                         StopDetailsPage(
                             socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
-                            schedulesUseCase: SchedulesUseCaseDI().schedulesUseCase,
                             viewportProvider: viewportProvider,
                             stop: stop, filter: $navigationStack.lastStopDetailsFilter
                         )

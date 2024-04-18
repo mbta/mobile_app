@@ -28,7 +28,7 @@ struct StopDetailsPage: View {
     init(
         socket: any PhoenixSocket,
         globalFetcher: GlobalFetcher,
-        schedulesUseCase: ISchedulesUseCase,
+        schedulesUseCase: ISchedulesUseCase = UseCaseDI().schedules,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>
