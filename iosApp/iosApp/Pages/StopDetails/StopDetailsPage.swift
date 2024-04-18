@@ -66,7 +66,6 @@ struct StopDetailsPage: View {
         .onDisappear { leavePredictions() }
     }
 
-    @ViewBuilder
     private var routePills: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
@@ -85,7 +84,6 @@ struct StopDetailsPage: View {
         }
     }
 
-    @ViewBuilder
     private var departureHeader: some View {
         if predictionsFetcher.predictions != nil {
             Text("Live departures")
