@@ -9,7 +9,7 @@ import org.koin.dsl.module
 
 /** Define the koin module with the resources to use in dependency injection */
 fun appModule() = module {
-    single<ISchedulesRepository> { SchedulesRepository() }
     single { MobileBackendClient() }
+    single<ISchedulesRepository> { SchedulesRepository() }
     single<ISchedulesUseCase> { SchedulesUseCase(get()) }
 }
