@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.repositories
 
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
@@ -39,7 +38,6 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
 
     private val mobileBackendClient: MobileBackendClient by inject()
 
-    @DefaultArgumentInterop.Enabled
     override suspend fun getSchedule(stopIds: List<String>, now: Instant): ScheduleResponse =
         mobileBackendClient
             .get {
