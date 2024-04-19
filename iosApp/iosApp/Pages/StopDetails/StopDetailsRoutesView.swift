@@ -16,7 +16,7 @@ struct StopDetailsRoutesView: View {
     @Binding var filter: StopDetailsFilter?
 
     var body: some View {
-        if let filter {
+        if filter != nil {
             StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter)
         } else {
             List(departures.routes, id: \.route.id) { patternsByStop in
