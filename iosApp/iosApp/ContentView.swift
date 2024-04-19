@@ -15,7 +15,6 @@ struct ContentView: View {
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @EnvironmentObject var scheduleFetcher: ScheduleFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -88,7 +87,6 @@ struct ContentView: View {
                     currentLocation: locationDataManager.currentLocation?.coordinate,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
-                    scheduleFetcher: scheduleFetcher,
                     predictionsFetcher: predictionsFetcher,
                     viewportProvider: viewportProvider,
                     alertsFetcher: alertsFetcher

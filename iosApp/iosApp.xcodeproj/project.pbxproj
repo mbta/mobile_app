@@ -45,7 +45,6 @@
 		8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */; };
 		8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014132BBDBE5200918FAE /* BackendProvider.swift */; };
 		8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */; };
-		8CEA10232BA0F3C6001C6EB9 /* ScheduleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */; };
 		8CEA10252BA4B179001C6EB9 /* AlertsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA10242BA4B179001C6EB9 /* AlertsFetcher.swift */; };
 		8CEA10272BA4C83D001C6EB9 /* AlertsFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA10262BA4C83D001C6EB9 /* AlertsFetcherTests.swift */; };
 		9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A03F3652BA9E68500DA40DC /* Debouncer.swift */; };
@@ -183,7 +182,6 @@
 		8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteView.swift; sourceTree = "<group>"; };
 		8CE014132BBDBE5200918FAE /* BackendProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendProvider.swift; sourceTree = "<group>"; };
 		8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntry.swift; sourceTree = "<group>"; };
-		8CEA10222BA0F3C6001C6EB9 /* ScheduleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFetcher.swift; sourceTree = "<group>"; };
 		8CEA10242BA4B179001C6EB9 /* AlertsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsFetcher.swift; sourceTree = "<group>"; };
 		8CEA10262BA4C83D001C6EB9 /* AlertsFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsFetcherTests.swift; sourceTree = "<group>"; };
 		9A03F3652BA9E68500DA40DC /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
