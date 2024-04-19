@@ -33,7 +33,7 @@ final class StopDetailsPageTests: XCTestCase {
         var sut = StopDetailsPage(
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesUseCase: EmptySchedulesUseCase(),
+            schedulesRepository: MockScheduleRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter
@@ -60,7 +60,7 @@ final class StopDetailsPageTests: XCTestCase {
         let sut = StopDetailsPage(
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesUseCase: EmptySchedulesUseCase(),
+            schedulesRepository: MockScheduleRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter
@@ -85,7 +85,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let schedulesLoadedPublisher = PassthroughSubject<Bool, Never>()
 
-        class fakeSchedulesUseCase: ISchedulesUseCase {
+        class fakeSchedulesRepository: ISchedulesRepository {
             let objects: ObjectCollectionBuilder
             let callback: (() -> Void)?
             init(objects: ObjectCollectionBuilder, callback: (() -> Void)?) {
@@ -110,7 +110,7 @@ final class StopDetailsPageTests: XCTestCase {
         var sut = StopDetailsPage(
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesUseCase: fakeSchedulesUseCase(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
+            schedulesRepository: fakeSchedulesRepository(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter

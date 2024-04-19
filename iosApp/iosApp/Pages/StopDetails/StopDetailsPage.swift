@@ -13,7 +13,7 @@ import SwiftUI
 struct StopDetailsPage: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var viewportProvider: ViewportProvider
-    let schedulesUseCase: ISchedulesUseCase
+    let schedulesRepository: ISchedulesRepository
     @State var schedulesResponse: ScheduleResponse?
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
@@ -28,13 +28,13 @@ struct StopDetailsPage: View {
     init(
         socket: any PhoenixSocket,
         globalFetcher: GlobalFetcher,
-        schedulesUseCase: ISchedulesUseCase = UseCaseDI().schedules,
+        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>
     ) {
         self.globalFetcher = globalFetcher
-        self.schedulesUseCase = schedulesUseCase
+        self.schedulesRepository = schedulesRepository
         self.viewportProvider = viewportProvider
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
@@ -93,7 +93,7 @@ struct StopDetailsPage: View {
     func getSchedule(_ stop: Stop) {
         Task {
             do {
-                schedulesResponse = try await schedulesUseCase
+                schedulesResponse = try await schedulesRepository
                     .getSchedule(stopIds: [stop.id])
             } catch {}
         }

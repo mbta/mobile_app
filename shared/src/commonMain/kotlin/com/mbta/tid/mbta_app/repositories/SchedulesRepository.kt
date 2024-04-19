@@ -23,11 +23,16 @@ interface ISchedulesRepository {
         ResponseException::class,
         HttpRequestTimeoutException::class
     )
-    @DefaultArgumentInterop.Enabled
-    suspend fun getSchedule(
-        stopIds: List<String>,
-        now: Instant = Clock.System.now()
-    ): ScheduleResponse
+    suspend fun getSchedule(stopIds: List<String>, now: Instant): ScheduleResponse
+
+    @Throws(
+        IOException::class,
+        CancellationException::class,
+        JsonConvertException::class,
+        ResponseException::class,
+        HttpRequestTimeoutException::class
+    )
+    suspend fun getSchedule(stopIds: List<String>): ScheduleResponse
 }
 
 class SchedulesRepository : ISchedulesRepository, KoinComponent {
@@ -45,10 +50,18 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
                 }
             }
             .body()
+
+    override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
+        return getSchedule(stopIds, Clock.System.now())
+    }
 }
 
 class MockScheduleRepository : ISchedulesRepository {
     override suspend fun getSchedule(stopIds: List<String>, now: Instant): ScheduleResponse {
+        return ScheduleResponse(schedules = listOf(), trips = mapOf())
+    }
+
+    override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
         return ScheduleResponse(schedules = listOf(), trips = mapOf())
     }
 }

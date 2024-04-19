@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
-import ISchedulesUseCase
-import SchedulesUseCase
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
@@ -11,5 +9,4 @@ import org.koin.dsl.module
 fun appModule() = module {
     single { MobileBackendClient() }
     single<ISchedulesRepository> { SchedulesRepository() }
-    single<ISchedulesUseCase> { SchedulesUseCase(get()) }
 }
