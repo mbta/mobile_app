@@ -223,26 +223,11 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        class FakeScheduleRepository: ISchedulesRepository {
-            var scheduleResponse: ScheduleResponse
-            init(_ objects: ObjectCollectionBuilder) {
-                scheduleResponse = .init(objects: objects)
-            }
-
-            func __getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
-                scheduleResponse
-            }
-
-            func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ScheduleResponse {
-                scheduleResponse
-            }
-        }
-
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            schedulesRepository: FakeScheduleRepository(objects),
+            schedulesRepository: IdleScheduleRepository(),
             scheduleResponse: .init(objects: objects),
             predictionsFetcher: FakePredictionsFetcher(objects), alertsFetcher: .init(socket: MockSocket())
         )
