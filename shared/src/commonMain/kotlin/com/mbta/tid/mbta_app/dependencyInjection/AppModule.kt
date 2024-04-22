@@ -13,5 +13,5 @@ fun appModule() = module {
     single { MobileBackendClient() }
     single<ISchedulesRepository> { SchedulesRepository() }
     single<IPinnedRoutesRepository> { PinnedRoutesRepository() }
-    single { TogglePinnedRouteUsecase() }
+    single { TogglePinnedRouteUsecase(get()) }
 }

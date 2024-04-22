@@ -2,11 +2,8 @@ package com.mbta.tid.mbta_app.usecases
 
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class TogglePinnedRouteUsecase : KoinComponent {
-
-    private val repository: IPinnedRoutesRepository by inject()
+class TogglePinnedRouteUsecase(private val repository: IPinnedRoutesRepository) : KoinComponent {
 
     suspend fun execute(route: String) {
         val currentRoutes = repository.getPinnedRoutes().toMutableSet()

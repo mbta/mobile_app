@@ -19,6 +19,8 @@ import XCTest
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
+    private let pinnedRoutesRepository = MockPinnedRoutesRepository()
+
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -26,6 +28,8 @@ final class NearbyTransitViewTests: XCTestCase {
     func testPending() throws {
         let sut = NearbyTransitView(
             location: ViewportProvider.defaultCenter,
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -60,6 +64,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -148,6 +154,8 @@ final class NearbyTransitViewTests: XCTestCase {
     func testRoutePatternsGroupedByRouteAndStop() throws {
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -233,6 +241,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: FakeScheduleFetcher(objects),
@@ -313,6 +323,8 @@ final class NearbyTransitViewTests: XCTestCase {
         testFormatter.timeStyle = .short
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -374,6 +386,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(sawmillAtWalshExpectation: sawmillAtWalshExpectation, lechmereExpectation: lechmereExpectation)
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -401,6 +415,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -461,6 +477,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -503,6 +521,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -548,6 +568,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -570,6 +592,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let nearbyFetcher = Route52NearbyFetcher()
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -594,6 +618,8 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -619,6 +645,8 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
             scheduleFetcher: .init(backend: IdleBackend()),
@@ -714,6 +742,8 @@ final class NearbyTransitViewTests: XCTestCase {
         alertsFetcher.alerts = AlertsStreamDataResponse(objects: objects)
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
             scheduleFetcher: scheduleFetcher,
