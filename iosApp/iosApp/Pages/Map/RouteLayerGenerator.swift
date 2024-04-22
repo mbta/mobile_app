@@ -39,15 +39,38 @@ class RouteLayerGenerator {
             .map { createRouteLayer(route: routesById[$0.routeId]!) } +
             // Draw all alerting layers on top so they are not covered by any overlapping route shape
             sortedRoutes
-            .map { createAlertingRouteLayer(route: routesById[$0.routeId]!) }
+            .flatMap { createAlertingRouteLayers(route: routesById[$0.routeId]!) }
     }
 
     static func createRouteLayer(route: Route) -> LineLayer {
+        baseRouteLayer(layerId: getRouteLayerId(route.id), route: route)
+    }
+
+    /**
+     Styling applied only to the portions of the lines that are alerting
+     */
+    static func createAlertingRouteLayers(route: Route) -> [LineLayer] {
+        var alertingLayer = baseRouteLayer(layerId: Self.getRouteLayerId("\(route.id)-alerting"), route: route)
+
+        alertingLayer.filter = Exp(.get) { RouteSourceGenerator.propIsAlertingKey }
+        alertingLayer.lineDasharray = .constant([2.0, 3.0])
+        alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
+        alertingLayer.lineOpacity = .constant(0.7)
+
+        var alertBackgroundLayer = baseRouteLayer(layerId: Self.getRouteLayerId("\(route.id)-alerting-bg"), route: route)
+
+        alertBackgroundLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+
+        var alertLayers: [LineLayer] = [alertBackgroundLayer, alertingLayer]
+
+        return alertLayers
+    }
+
+    private static func baseRouteLayer(layerId: String, route: Route) -> LineLayer {
         var layer = LineLayer(
-            id: Self.getRouteLayerId("\(route.id)"),
+            id: layerId,
             source: RouteSourceGenerator.getRouteSourceId(route.id)
         )
-
         layer.lineWidth = .constant(lineWidth)
         layer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
         layer.lineBorderWidth = .constant(1.0)
@@ -57,29 +80,6 @@ class RouteLayerGenerator {
         layer.lineOffset = .constant(lineOffset(route))
 
         return layer
-    }
-
-    /**
-     Styling applied only to the portions of the lines that are alerting
-     */
-    static func createAlertingRouteLayer(route: Route) -> LineLayer {
-        var alertingLayer = LineLayer(
-            id: Self.getRouteLayerId("\(route.id)-alerting"),
-            source: RouteSourceGenerator.getRouteSourceId(route.id)
-        )
-
-        alertingLayer.filter = Exp(.get) { RouteSourceGenerator.propIsAlertingKey }
-        alertingLayer.lineDasharray = .constant([2.0, 3.0])
-        alertingLayer.lineWidth = .constant(lineWidth)
-        alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
-        alertingLayer.lineBorderWidth = .constant(1.0)
-        alertingLayer.lineBorderColor = .constant(StyleColor(.white))
-        alertingLayer.lineJoin = .constant(.round)
-        alertingLayer.lineCap = .constant(.round)
-        alertingLayer.lineOffset = .constant(lineOffset(route))
-        alertingLayer.lineOpacity = .constant(0.7)
-
-        return alertingLayer
     }
 
     /**
