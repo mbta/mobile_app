@@ -13,8 +13,8 @@ import SwiftUI
 struct StopDetailsPage: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var viewportProvider: ViewportProvider
-
-    @StateObject var scheduleFetcher: ScheduleFetcher
+    let schedulesRepository: ISchedulesRepository
+    @State var schedulesResponse: ScheduleResponse?
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
@@ -26,16 +26,16 @@ struct StopDetailsPage: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        backend: any BackendProtocol,
         socket: any PhoenixSocket,
         globalFetcher: GlobalFetcher,
+        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>
     ) {
         self.globalFetcher = globalFetcher
+        self.schedulesRepository = schedulesRepository
         self.viewportProvider = viewportProvider
-        _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
         _filter = filter
@@ -57,7 +57,7 @@ struct StopDetailsPage: View {
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }
         .onChange(of: predictionsFetcher.predictions) { _ in updateDepartures() }
-        .onChange(of: scheduleFetcher.schedules) { _ in updateDepartures() }
+        .onChange(of: schedulesResponse) { _ in updateDepartures() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onReceive(timer) { input in
             now = input
@@ -76,7 +76,7 @@ struct StopDetailsPage: View {
     private var departureHeader: some View {
         if predictionsFetcher.predictions != nil {
             Text("Live departures")
-        } else if scheduleFetcher.schedules != nil {
+        } else if schedulesResponse != nil {
             Text("Scheduled departures")
         } else {
             Text("Departures")
@@ -92,7 +92,10 @@ struct StopDetailsPage: View {
 
     func getSchedule(_ stop: Stop) {
         Task {
-            await scheduleFetcher.getSchedule(stopIds: [stop.id])
+            do {
+                schedulesResponse = try await schedulesRepository
+                    .getSchedule(stopIds: [stop.id])
+            } catch {}
         }
     }
 
@@ -125,7 +128,7 @@ struct StopDetailsPage: View {
             StopDetailsDepartures(
                 stop: stop,
                 global: globalResponse,
-                schedules: scheduleFetcher.schedules,
+                schedules: schedulesResponse,
                 predictions: predictionsFetcher.predictions,
                 filterAtTime: now.toKotlinInstant()
             )
