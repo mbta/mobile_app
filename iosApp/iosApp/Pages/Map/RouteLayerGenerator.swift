@@ -28,23 +28,41 @@ class RouteLayerGenerator {
 
     static func createAllRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
                                      routesById: [String: Route]) -> [LineLayer] {
-        routesWithShapes
+        var sortedRoutes = routesWithShapes
             .filter { routesById[$0.routeId] != nil }
             .sorted {
                 // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
                 routesById[$0.routeId]!.sortOrder >= routesById[$1.routeId]!.sortOrder
             }
-            .flatMap { createRouteLayers(route: routesById[$0.routeId]!) }
+
+        return sortedRoutes
+            .map { createRouteLayer(route: routesById[$0.routeId]!) } +
+            // Draw all alerting layers on top so they are not covered by any overlapping route shape
+            sortedRoutes
+            .map { createAlertingRouteLayer(route: routesById[$0.routeId]!) }
+    }
+
+    static func createRouteLayer(route: Route) -> LineLayer {
+        var layer = LineLayer(
+            id: Self.getRouteLayerId("\(route.id)"),
+            source: RouteSourceGenerator.getRouteSourceId(route.id)
+        )
+
+        layer.lineWidth = .constant(lineWidth)
+        layer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
+        layer.lineBorderWidth = .constant(1.0)
+        layer.lineBorderColor = .constant(StyleColor(.white))
+        layer.lineJoin = .constant(.round)
+        layer.lineCap = .constant(.round)
+        layer.lineOffset = .constant(lineOffset(route))
+
+        return layer
     }
 
     /**
-     Define the line layers for styling the route's line shapes.
-     Returns a list of 2 LineLayers - one with a styling to be applied to the entirety of all shapes in the route,
-     and a second that is applied only to the portions of the lines that are alerting.
+     Styling applied only to the portions of the lines that are alerting
      */
-    static func createRouteLayers(route: Route) -> [LineLayer] {
-        let lineOffset = lineOffset(route)
-
+    static func createAlertingRouteLayer(route: Route) -> LineLayer {
         var alertingLayer = LineLayer(
             id: Self.getRouteLayerId("\(route.id)-alerting"),
             source: RouteSourceGenerator.getRouteSourceId(route.id)
@@ -58,23 +76,10 @@ class RouteLayerGenerator {
         alertingLayer.lineBorderColor = .constant(StyleColor(.white))
         alertingLayer.lineJoin = .constant(.round)
         alertingLayer.lineCap = .constant(.round)
-        alertingLayer.lineOffset = .constant(lineOffset)
+        alertingLayer.lineOffset = .constant(lineOffset(route))
         alertingLayer.lineOpacity = .constant(0.7)
 
-        var nonAlertingLayer = LineLayer(
-            id: Self.getRouteLayerId("\(route.id)"),
-            source: RouteSourceGenerator.getRouteSourceId(route.id)
-        )
-
-        nonAlertingLayer.lineWidth = .constant(lineWidth)
-        nonAlertingLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
-        nonAlertingLayer.lineBorderWidth = .constant(1.0)
-        nonAlertingLayer.lineBorderColor = .constant(StyleColor(.white))
-        nonAlertingLayer.lineJoin = .constant(.round)
-        nonAlertingLayer.lineCap = .constant(.round)
-        nonAlertingLayer.lineOffset = .constant(lineOffset)
-
-        return [nonAlertingLayer, alertingLayer]
+        return alertingLayer
     }
 
     /**

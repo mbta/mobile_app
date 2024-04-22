@@ -36,4 +36,20 @@ final class RouteLayerGeneratorTests: XCTestCase {
         XCTAssertNotNil(alertingRedLayer)
         XCTAssertNotNil(alertingRedLayer!.lineDasharray)
     }
+
+    func testAlertingLayersLast() {
+        let routeLayerGenerator = RouteLayerGenerator(mapFriendlyRoutesResponse: MapTestDataHelper.routeResponse,
+                                                      routesById: [MapTestDataHelper.routeRed.id: MapTestDataHelper.routeRed,
+                                                                   MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange])
+        let routeLayers = routeLayerGenerator.routeLayers
+
+        XCTAssertEqual(RouteLayerGenerator
+            .getRouteLayerId(MapTestDataHelper.routeOrange.id), routeLayers[0].id)
+        XCTAssertEqual(RouteLayerGenerator
+            .getRouteLayerId(MapTestDataHelper.routeRed.id), routeLayers[1].id)
+        XCTAssertEqual(RouteLayerGenerator
+            .getRouteLayerId("\(MapTestDataHelper.routeOrange.id)-alerting"), routeLayers[2].id)
+        XCTAssertEqual(RouteLayerGenerator
+            .getRouteLayerId("\(MapTestDataHelper.routeRed.id)-alerting"), routeLayers[3].id)
+    }
 }
