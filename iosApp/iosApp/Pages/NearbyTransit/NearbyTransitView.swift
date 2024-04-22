@@ -15,9 +15,9 @@ import SwiftUI
 
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @EnvironmentObject private var togglePinnedUsecaseProvider: TogglePinnedRouteUsecaseProvider
-    @EnvironmentObject private var pinnedRouteRepositoryProvider: PinnedRouteRepositoryProvider
     var location: CLLocationCoordinate2D
+    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
+    var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
@@ -171,8 +171,7 @@ struct NearbyTransitView: View {
     func updatePinnedRoutes() {
         Task {
             do {
-                let repository = pinnedRouteRepositoryProvider.repository
-                pinnedRoutes = try await repository.getPinnedRoutes()
+                pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
             } catch {
                 debugPrint(error)
             }
@@ -182,8 +181,7 @@ struct NearbyTransitView: View {
     func toggledPinnedRoute(_ routeId: String) {
         Task {
             do {
-                let usecase = togglePinnedUsecaseProvider.usecase
-                try await usecase.execute(route: routeId)
+                try await togglePinnedUsecase.execute(route: routeId)
                 updatePinnedRoutes()
             } catch {
                 debugPrint(error)

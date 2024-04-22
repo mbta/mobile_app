@@ -20,8 +20,6 @@ struct IOSApp: App {
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
     @StateObject var viewportProvider: ViewportProvider
-    @StateObject var pinnedRouteRepositoryProvider: PinnedRouteRepositoryProvider
-    @StateObject var togglePinnedRouteUsecaseProvider: TogglePinnedRouteUsecaseProvider
 
     init() {
         if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
@@ -30,7 +28,7 @@ struct IOSApp: App {
         } else {
             Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
         }
-        KoinHelpersKt.doInitKoin()
+        HelpersKt.doInitKoin()
 
         let socket = Socket(SocketUtils.companion.url)
         socket.withRawMessages()
@@ -57,10 +55,6 @@ struct IOSApp: App {
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
-        let repository = PinnedRoutesRepositoryImpl(dataStore: createDataStore())
-        let usecase = TogglePinnedRouteUsecase(repository: repository)
-        _pinnedRouteRepositoryProvider = StateObject(wrappedValue: PinnedRouteRepositoryProvider(repository))
-        _togglePinnedRouteUsecaseProvider = StateObject(wrappedValue: TogglePinnedRouteUsecaseProvider(usecase))
     }
 
     var body: some Scene {
@@ -78,8 +72,6 @@ struct IOSApp: App {
                 .environmentObject(searchResultFetcher)
                 .environmentObject(socketProvider)
                 .environmentObject(viewportProvider)
-                .environmentObject(togglePinnedRouteUsecaseProvider)
-                .environmentObject(pinnedRouteRepositoryProvider)
         }
     }
 }

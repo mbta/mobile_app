@@ -103,10 +103,7 @@
 		A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */; };
 		ED3581662BB4706F005DDC34 /* PartialSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3581652BB4706F005DDC34 /* PartialSheetModifier.swift */; };
 		ED3581682BB470C4005DDC34 /* PartialSheetDetent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3581672BB470C4005DDC34 /* PartialSheetDetent.swift */; };
-		ED98F62F2BD07522006EBDF5 /* TogglePinnedRouteUsecaseProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F62E2BD07522006EBDF5 /* TogglePinnedRouteUsecaseProvider.swift */; };
-		ED98F6312BD07560006EBDF5 /* PinnedRouteRepositoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F6302BD07560006EBDF5 /* PinnedRouteRepositoryProvider.swift */; };
 		EDC768C72BCF6FD6008BAE58 /* NearbyTransitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* NearbyTransitSection.swift */; };
-		EDC768C92BD04302008BAE58 /* MockPinnedRoutesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C82BD04302008BAE58 /* MockPinnedRoutesRepository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -243,10 +240,7 @@
 		ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED3581652BB4706F005DDC34 /* PartialSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSheetModifier.swift; sourceTree = "<group>"; };
 		ED3581672BB470C4005DDC34 /* PartialSheetDetent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSheetDetent.swift; sourceTree = "<group>"; };
-		ED98F62E2BD07522006EBDF5 /* TogglePinnedRouteUsecaseProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglePinnedRouteUsecaseProvider.swift; sourceTree = "<group>"; };
-		ED98F6302BD07560006EBDF5 /* PinnedRouteRepositoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedRouteRepositoryProvider.swift; sourceTree = "<group>"; };
 		EDC768C62BCF6FD6008BAE58 /* NearbyTransitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitSection.swift; sourceTree = "<group>"; };
-		EDC768C82BD04302008BAE58 /* MockPinnedRoutesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPinnedRoutesRepository.swift; sourceTree = "<group>"; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -294,7 +288,6 @@
 			children = (
 				6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */,
 				6EF50F472B9889D600833070 /* MockSocket.swift */,
-				EDC768C82BD04302008BAE58 /* MockPinnedRoutesRepository.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -552,8 +545,6 @@
 				8CEA10242BA4B179001C6EB9 /* AlertsFetcher.swift */,
 				9A5830572BA4A1A30039876E /* ViewportProvider.swift */,
 				8CE014132BBDBE5200918FAE /* BackendProvider.swift */,
-				ED98F62E2BD07522006EBDF5 /* TogglePinnedRouteUsecaseProvider.swift */,
-				ED98F6302BD07560006EBDF5 /* PinnedRouteRepositoryProvider.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -892,7 +883,6 @@
 				9A6FA0282BC72F110067769C /* StopDetailsPageTests.swift in Sources */,
 				9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */,
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,
-				EDC768C92BD04302008BAE58 /* MockPinnedRoutesRepository.swift in Sources */,
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
 				8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */,
 				8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */,
@@ -928,7 +918,6 @@
 				8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */,
 				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,
 				9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */,
-				ED98F62F2BD07522006EBDF5 /* TogglePinnedRouteUsecaseProvider.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
 				EDC768C72BCF6FD6008BAE58 /* NearbyTransitSection.swift in Sources */,
 				9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */,
@@ -963,7 +952,6 @@
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
-				ED98F6312BD07560006EBDF5 /* PinnedRouteRepositoryProvider.swift in Sources */,
 				9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */,
 				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
 				9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */,

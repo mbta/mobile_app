@@ -19,15 +19,8 @@ import XCTest
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
-    private var pinnedRouteRepositoryProvider: PinnedRouteRepositoryProvider?
-    private var togglePinnedRouteUsecaseProvider: TogglePinnedRouteUsecaseProvider?
-
     override func setUp() {
         executionTimeAllowance = 60
-        let pinnedRouteRepository = MockPinnedRoutesRepository()
-        let toggledPinnedRouteUseCase = TogglePinnedRouteUsecase(repository: pinnedRouteRepository)
-        pinnedRouteRepositoryProvider = PinnedRouteRepositoryProvider(pinnedRouteRepository)
-        togglePinnedRouteUsecaseProvider = TogglePinnedRouteUsecaseProvider(toggledPinnedRouteUseCase)
     }
 
     func testPending() throws {
@@ -39,8 +32,6 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
-        .environmentObject(pinnedRouteRepositoryProvider!)
-        .environmentObject(togglePinnedRouteUsecaseProvider!)
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
 
@@ -79,11 +70,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { view in
             XCTAssertNotNil(try view.find(text: "Loading..."))
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
         wait(for: [getNearbyExpectation], timeout: 1)
     }
@@ -181,11 +168,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side")
                 .find(NearbyStopView.self, relation: .parent).find(text: "Watertown Yard"))
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
@@ -271,11 +254,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
             XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
@@ -362,11 +341,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     return try sut.actualView().prediction == expectedState
                 }).isEmpty)
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
@@ -406,11 +381,7 @@ final class NearbyTransitViewTests: XCTestCase {
             alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
@@ -459,11 +430,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
             XCTAssertNotNil(try view.find(text: "3 min"))
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
@@ -501,11 +468,7 @@ final class NearbyTransitViewTests: XCTestCase {
             alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
 
         wait(for: [joinExpectation], timeout: 1)
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
@@ -547,11 +510,7 @@ final class NearbyTransitViewTests: XCTestCase {
             alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
 
         wait(for: [joinExpectation], timeout: 1)
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
@@ -596,11 +555,7 @@ final class NearbyTransitViewTests: XCTestCase {
             alertsFetcher: .init(socket: MockSocket())
         )
 
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
 
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
 
@@ -626,11 +581,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: nearbyFetcher.nearbyByRouteAndStop)
             XCTAssertNotNil(try view.actualView().scrollPosition)
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
@@ -649,8 +600,6 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
-        .environmentObject(pinnedRouteRepositoryProvider!)
-        .environmentObject(togglePinnedRouteUsecaseProvider!)
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load nearby transit, test error"))
     }
 
@@ -680,11 +629,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNotNil(try view.find(text: "Failed to load predictions, test error"))
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
@@ -734,11 +679,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, newLocation)
         }
 
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [hasAppeared, getNearbyExpectation, hasChangedLocation], timeout: 3)
     }
 
@@ -783,11 +724,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNotNil(try view.find(text: "Suspension"))
         }
-        ViewHosting.host(
-            view: sut
-                .environmentObject(pinnedRouteRepositoryProvider!)
-                .environmentObject(togglePinnedRouteUsecaseProvider!)
-        )
+        ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
     }
 
