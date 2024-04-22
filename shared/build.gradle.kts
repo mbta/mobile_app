@@ -40,6 +40,7 @@ kotlin {
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.encoding)
                 implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.mock)
                 implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
 
@@ -54,7 +55,6 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
-                implementation(libs.ktor.client.mock)
                 implementation(libs.koin.test)
             }
         }

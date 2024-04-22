@@ -7,6 +7,9 @@
         "commandLineArgumentEntries" : [
           {
             "argument" : "--skip-map"
+          },
+          {
+            "argument" : "--mock-koin"
           }
         ],
         "defaultTestExecutionTimeAllowance" : 60,
@@ -21,6 +24,9 @@
 
     ],
     "defaultTestExecutionTimeAllowance" : 60,
+    "environmentVariableEntries" : [
+
+    ],
     "maximumTestExecutionTimeAllowance" : 60,
     "targetForVariableExpansion" : {
       "containerPath" : "container:iosApp.xcodeproj",
