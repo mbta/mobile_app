@@ -28,7 +28,7 @@ class RouteLayerGenerator {
 
     static func createAllRouteLayers(routesWithShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
                                      routesById: [String: Route]) -> [LineLayer] {
-        var sortedRoutes = routesWithShapes
+        let sortedRoutes = routesWithShapes
             .filter { routesById[$0.routeId] != nil }
             .sorted {
                 // Sort by reverse sort order so that lowest ordered routes are drawn first/lowest
@@ -57,13 +57,12 @@ class RouteLayerGenerator {
         alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
         alertingLayer.lineOpacity = .constant(0.7)
 
-        var alertBackgroundLayer = baseRouteLayer(layerId: Self.getRouteLayerId("\(route.id)-alerting-bg"), route: route)
+        var alertBackgroundLayer = baseRouteLayer(layerId: Self.getRouteLayerId("\(route.id)-alerting-bg"),
+                                                  route: route)
 
         alertBackgroundLayer.lineColor = .constant(StyleColor(UIColor(hex: route.color)))
 
-        var alertLayers: [LineLayer] = [alertBackgroundLayer, alertingLayer]
-
-        return alertLayers
+        return [alertBackgroundLayer, alertingLayer]
     }
 
     private static func baseRouteLayer(layerId: String, route: Route) -> LineLayer {
