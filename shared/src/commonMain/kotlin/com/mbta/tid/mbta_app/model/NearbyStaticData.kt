@@ -155,7 +155,10 @@ class NearbyStaticDataBuilder {
                     stop,
                     setOf(stop.id).plus(childStopIds),
                     builder.data,
-                    emptyList()
+                    listOf(
+                        Direction(name = "", destination = ""),
+                        Direction(name = "", destination = "")
+                    )
                 )
             )
         }

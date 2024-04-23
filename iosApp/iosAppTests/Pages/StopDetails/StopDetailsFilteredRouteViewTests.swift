@@ -43,7 +43,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [
             .init(route: route, headsign: "North", patterns: [patternNorth], upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)], alertsHere: nil),
             .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)], alertsHere: nil),
-        ], directions: [])
+        ], directions: [Direction(name: "North", destination: "Selected Destination"), Direction(name: "South", destination: "Other Destination")])
 
         let departures = StopDetailsDepartures(routes: [patternsByStop])
 
@@ -61,5 +61,23 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: "North"))
         XCTAssertNil(try? sut.inspect().find(text: "South"))
+    }
+
+    func testDirectionFilter() throws {
+        let (departures: departures, routeId: routeId, now: now) = testData()
+
+        var filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(routeId: routeId, directionId: 0))
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: departures,
+            now: now,
+            filter: filter
+        )
+
+        XCTAssertEqual(0, filter.wrappedValue?.directionId)
+        XCTAssertNotNil(try sut.inspect().find(text: "Selected Destination"))
+        XCTAssertNotNil(try? sut.inspect().find(text: "Other Destination"))
+        try sut.inspect().find(button: "Other Destination").tap()
+        XCTAssertEqual(1, filter.wrappedValue?.directionId)
     }
 }
