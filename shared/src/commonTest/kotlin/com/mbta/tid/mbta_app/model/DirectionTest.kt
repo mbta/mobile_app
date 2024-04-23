@@ -98,6 +98,10 @@ class DirectionTest {
     fun `both direction helper provides correct values`() {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-bckhl" }
+        objects.stop {
+            id = "70199"
+            parentStationId = "place-pktrm"
+        }
         val route =
             objects.route {
                 id = "Green-E"
@@ -135,7 +139,7 @@ class DirectionTest {
         }
         objects.trip(routePattern3) {
             id = "trp3"
-            stopIds = listOf("place-hsmnl", "place-bckhl", "place-pktrm", "place-mdftf")
+            stopIds = listOf("place-hsmnl", "place-bckhl", "70199", "place-mdftf")
         }
 
         val patterns = listOf(routePattern1, routePattern2, routePattern3)
