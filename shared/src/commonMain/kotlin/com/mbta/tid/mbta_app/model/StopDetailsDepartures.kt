@@ -66,7 +66,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                     } else {
                                         null
                                     }
-
                                 PatternsByHeadsign(route, headsign, patterns, upcomingTrips)
                             }
                             .filter {
@@ -74,7 +73,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                     ((it.isTypical() || it.isUpcomingBefore(cutoffTime)) &&
                                         !it.isArrivalOnly())
                             }
-                            .sorted()
+                            .sorted(),
+                        Direction.getDirections(global, stop, route, routePatterns)
                     )
                 }
                 .filterNot { it.patternsByHeadsign.isEmpty() }

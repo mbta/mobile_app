@@ -43,7 +43,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [
             .init(route: route, headsign: "North", patterns: [patternNorth], upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)], alertsHere: nil),
             .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)], alertsHere: nil),
-        ])
+        ], directions: [])
 
         let departures = StopDetailsDepartures(routes: [patternsByStop])
 

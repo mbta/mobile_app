@@ -21,8 +21,7 @@ struct StopDetailsFilteredRouteView: View {
     @Binding var filter: StopDetailsFilter?
 
     let availableDirections: [Int32]
-    let destinationLabels: [String]
-    let directionLabels: [String]
+    let directions: [Direction]
 
     struct RowData {
         let tripId: String
@@ -62,8 +61,7 @@ struct StopDetailsFilteredRouteView: View {
         }
 
         availableDirections = Set(patternsByStop.patternsByHeadsign.map { pattern in pattern.directionId() }).sorted()
-        destinationLabels = route.directionDestinations.map { $0 as? String ?? "" }
-        directionLabels = route.directionNames.map { ($0 as? String ?? "").uppercased() }
+        directions = patternsByStop.directions
     }
 
     var body: some View {
@@ -86,10 +84,10 @@ struct StopDetailsFilteredRouteView: View {
 
                     Button(action: action) {
                         VStack(alignment: .leading) {
-                            Text("\(directionLabels[Int(direction)]) to")
+                            Text("\(directions[Int(direction)].name.uppercased()) to")
                                 .font(.footnote)
                                 .textCase(.none)
-                            Text(destinationLabels[Int(direction)])
+                            Text(directions[Int(direction)].destination)
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .textCase(.none)

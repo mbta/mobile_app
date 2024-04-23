@@ -313,7 +313,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     ],
                                     alertsHere: nil
                                 ),
-                            ]
+                            ],
+                            directions: [Direction(name: "Outbound", destination: "Houghs Neck")]
                         ),
                     ]
                 ),
@@ -337,7 +338,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     ],
                                     alertsHere: nil
                                 ),
-                            ]
+                            ],
+                            directions: [Direction(name: "Outbound", destination: "Stoughton or Wickford Junction")]
                         ),
                     ]
                 ),

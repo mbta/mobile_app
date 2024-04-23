@@ -735,7 +735,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let stop = objects.stop { $0.name = "This Stop" }
         let sut = NearbyStopView(patternsAtStop: PatternsByStop(
             route: route, stop: stop,
-            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [pattern], upcomingTrips: nil, alertsHere: nil)]
+            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [pattern], upcomingTrips: nil, alertsHere: nil)],
+            directions: []
         ), now: Date.now.toKotlinInstant())
 
         XCTAssertEqual(

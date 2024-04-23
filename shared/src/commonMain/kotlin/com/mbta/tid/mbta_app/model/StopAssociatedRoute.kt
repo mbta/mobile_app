@@ -152,7 +152,8 @@ data class PatternsByHeadsign(
 data class PatternsByStop(
     val route: Route,
     val stop: Stop,
-    val patternsByHeadsign: List<PatternsByHeadsign>
+    val patternsByHeadsign: List<PatternsByHeadsign>,
+    val directions: List<Direction>
 ) {
     val position = Position(longitude = stop.longitude, latitude = stop.latitude)
 
@@ -167,7 +168,8 @@ data class PatternsByStop(
         staticData.patternsByHeadsign
             .map { PatternsByHeadsign(it, upcomingTripsMap, staticData.allStopIds, alerts) }
             .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
-            .sorted()
+            .sorted(),
+        staticData.directions
     )
 
     @OptIn(ExperimentalTurfApi::class)
