@@ -49,6 +49,7 @@ kotlin {
                 implementation(libs.skie.configuration.annotations)
                 api(libs.spatialk.geojson)
                 implementation(libs.spatialk.turf)
+                implementation(libs.androidx.datastore.preferences.core)
             }
         }
         val commonTest by getting {

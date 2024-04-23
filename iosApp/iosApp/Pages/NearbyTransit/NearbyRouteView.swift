@@ -11,10 +11,12 @@ import SwiftUI
 
 struct NearbyRouteView: View {
     let nearbyRoute: StopAssociatedRoute
+    let pinned: Bool
+    let onPin: (String) -> Void
     let now: Instant
 
     var body: some View {
-        RoutePillSection(route: nearbyRoute.route) {
+        NearbyTransitSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
             ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsAtStop in
                 NearbyStopView(patternsAtStop: patternsAtStop, now: now)
             }

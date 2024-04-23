@@ -28,7 +28,7 @@ struct IOSApp: App {
         } else {
             Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
         }
-        KoinHelpersKt.doInitKoin()
+        HelpersKt.doInitKoin()
 
         let socket = Socket(SocketUtils.companion.url)
         socket.withRawMessages()
