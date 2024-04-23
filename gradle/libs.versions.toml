@@ -1,19 +1,22 @@
 [versions]
 agp = "8.2.2"
+datastorePreferencesCore = "1.1.0-rc01"
 kotlin = "1.9.23"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
 compose-bom = "2024.03.00"
 compose-compiler = "1.5.11"
 androidx-activityCompose = "1.8.2"
+koin-bom = "3.5.6"
 kotlinxCoroutinesCore = "1.8.0"
 kotlinxDatetime = "0.5.0"
 ktor = "2.3.10"
 sentry = "0.5.0"
-skie = "0.6.3"
+skie = "0.6.4"
 spatialk = "0.3.0"
 
 [libraries]
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
@@ -22,6 +25,9 @@ compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-test = { module = "io.insert-koin:koin-test" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

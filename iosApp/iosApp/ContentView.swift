@@ -98,7 +98,6 @@ struct ContentView: View {
                     switch entry {
                     case let .stopDetails(stop, _):
                         StopDetailsPage(
-                            backend: backendProvider.backend,
                             socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
                             viewportProvider: viewportProvider,

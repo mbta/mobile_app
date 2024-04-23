@@ -16,6 +16,8 @@ import SwiftUI
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
     var location: CLLocationCoordinate2D
+    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
+    var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var scheduleFetcher: ScheduleFetcher
@@ -24,6 +26,7 @@ struct NearbyTransitView: View {
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
     @State var now = Date.now
     @State var scrollPosition: String?
+    @State var pinnedRoutes: Set<String> = []
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
@@ -42,6 +45,7 @@ struct NearbyTransitView: View {
             getNearby(location: location)
             joinPredictions()
             updateNearbyRoutes()
+            updatePinnedRoutes()
             didAppear?(self)
         }
         .onChange(of: globalFetcher.response) { _ in
@@ -84,7 +88,12 @@ struct NearbyTransitView: View {
     private func nearbyList(_ routes: [StopAssociatedRoute]) -> some View {
         ScrollViewReader { proxy in
             List(routes, id: \.route.id) { nearbyRoute in
-                NearbyRouteView(nearbyRoute: nearbyRoute, now: now.toKotlinInstant())
+                NearbyRouteView(
+                    nearbyRoute: nearbyRoute,
+                    pinned: pinnedRoutes.contains(nearbyRoute.route.id),
+                    onPin: { id in toggledPinnedRoute(id) },
+                    now: now.toKotlinInstant()
+                )
             }
             .onChange(of: scrollPosition) { id in
                 guard let id else { return }
@@ -155,6 +164,27 @@ struct NearbyTransitView: View {
                 joinPredictions()
             } else if phase == .background {
                 leavePredictions()
+            }
+        }
+    }
+
+    func updatePinnedRoutes() {
+        Task {
+            do {
+                pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
+
+    func toggledPinnedRoute(_ routeId: String) {
+        Task {
+            do {
+                try await togglePinnedUsecase.execute(route: routeId)
+                updatePinnedRoutes()
+            } catch {
+                debugPrint(error)
             }
         }
     }
@@ -318,6 +348,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         ),
                     ]
                 ),
+                pinned: false,
+                onPin: { _ in },
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
@@ -343,6 +375,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                         ),
                     ]
                 ),
+                pinned: true,
+                onPin: { _ in },
                 now: Date.now.toKotlinInstant()
             )
         }.previewDisplayName("NearbyRouteView")

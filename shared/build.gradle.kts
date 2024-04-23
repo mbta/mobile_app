@@ -35,6 +35,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project.dependencies.platform(libs.koin.bom))
+                implementation(libs.koin.core)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.encoding)
                 implementation(libs.ktor.client.content.negotiation)
@@ -47,12 +49,14 @@ kotlin {
                 implementation(libs.skie.configuration.annotations)
                 api(libs.spatialk.geojson)
                 implementation(libs.spatialk.turf)
+                implementation(libs.androidx.datastore.preferences.core)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.ktor.client.mock)
+                implementation(libs.koin.test)
             }
         }
         val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }

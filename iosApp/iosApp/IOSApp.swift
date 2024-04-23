@@ -28,6 +28,7 @@ struct IOSApp: App {
         } else {
             Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
         }
+        HelpersKt.doInitKoin()
 
         let socket = Socket(SocketUtils.companion.url)
         socket.withRawMessages()
@@ -66,6 +67,7 @@ struct IOSApp: App {
                 .environmentObject(nearbyFetcher)
                 .environmentObject(predictionsFetcher)
                 .environmentObject(railRouteShapeFetcher)
+                // TODO: Fully replace scheduleFetcher
                 .environmentObject(scheduleFetcher)
                 .environmentObject(searchResultFetcher)
                 .environmentObject(socketProvider)
