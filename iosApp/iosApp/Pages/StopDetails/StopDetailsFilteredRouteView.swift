@@ -54,7 +54,13 @@ struct StopDetailsFilteredRouteView: View {
 
     var body: some View {
         List {
-            RoutePillSection(route: patternsByStop.route) {
+            RoutePillSection(
+                route: patternsByStop.route,
+                headerContent: DirectionPicker(
+                    patternsByStop: patternsByStop,
+                    filter: $filter
+                )
+            ) {
                 ForEach(rows, id: \.tripId) { row in
                     HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
                 }
