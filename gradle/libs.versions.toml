@@ -6,7 +6,7 @@ kotlin = "1.9.23"
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
 compose-bom = "2024.03.00"
 compose-compiler = "1.5.11"
-androidx-activityCompose = "1.8.2"
+androidx-activityCompose = "1.9.0"
 koin-bom = "3.5.6"
 kotlinxCoroutinesCore = "1.8.0"
 kotlinxDatetime = "0.5.0"
