@@ -27,10 +27,18 @@ final class DirectionPickerTests: XCTestCase {
             pattern.representativeTrip { $0.headsign = "South" }
         }
 
-        let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [
-            .init(route: route, headsign: "North", patterns: [patternNorth], upcomingTrips: [], alertsHere: nil),
-            .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [], alertsHere: nil),
-        ], directions: [Direction(name: "North", destination: "Selected Destination"), Direction(name: "South", destination: "Other Destination")])
+        let patternsByStop = PatternsByStop(
+            route: route,
+            stop: stop,
+            patternsByHeadsign: [
+                .init(route: route, headsign: "North", patterns: [patternNorth], upcomingTrips: [], alertsHere: nil),
+                .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [], alertsHere: nil),
+            ],
+            directions: [
+                Direction(name: "North", destination: "Selected Destination"),
+                Direction(name: "South", destination: "Other Destination"),
+            ]
+        )
 
         return patternsByStop
     }

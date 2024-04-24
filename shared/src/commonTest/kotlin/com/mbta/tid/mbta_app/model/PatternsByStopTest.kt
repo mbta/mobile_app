@@ -70,8 +70,7 @@ class PatternsByStopTest {
                         listOf(routePatternBraintree),
                         listOf(upcomingTripBraintree1, upcomingTripBraintree2)
                     )
-                ),
-                listOf()
+                )
             )
 
         assertEquals(

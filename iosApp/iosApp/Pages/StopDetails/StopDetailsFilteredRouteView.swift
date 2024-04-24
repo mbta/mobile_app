@@ -46,10 +46,9 @@ struct StopDetailsFilteredRouteView: View {
         self.patternsByStop = patternsByStop
         self.now = now
 
-        let route = patternsByStop.route
         let expectedDirection: Int32? = filter?.directionId
         rows = patternsByStop.allUpcomingTrips().compactMap {
-            RowData(trip: $0, route: route, expectedDirection: expectedDirection, now: now)
+            RowData(trip: $0, route: patternsByStop.route, expectedDirection: expectedDirection, now: now)
         }
     }
 

@@ -784,7 +784,7 @@ class NearbyResponseTest {
                                     "Typical In",
                                     listOf(typicalInbound),
                                     null
-                                )
+                                ),
                             )
                         )
                     )
