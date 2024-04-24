@@ -18,8 +18,8 @@ data class RoutePatternKey(
 
 @Serializable
 /**
- * A sequential chunk of stops on a route pattern that don't overlap with segments for other route
- * patterns. A segment may only intersect with other segments at the first and last stop.
+ * A sequential chunk of stops on a route pattern. A segment may only intersect with other segments
+ * at the first and last stop.
  */
 data class RouteSegment(
     val id: String,
