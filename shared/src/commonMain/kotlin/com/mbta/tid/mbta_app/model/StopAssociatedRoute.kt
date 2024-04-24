@@ -172,6 +172,12 @@ data class PatternsByStop(
         staticData.directions
     )
 
+    constructor(
+        route: Route,
+        stop: Stop,
+        patternsByHeadsign: List<PatternsByHeadsign>
+    ) : this(route, stop, patternsByHeadsign, listOf(Direction(0, route), Direction(1, route)))
+
     @OptIn(ExperimentalTurfApi::class)
     fun distanceFrom(position: Position) = distance(position, this.position)
 

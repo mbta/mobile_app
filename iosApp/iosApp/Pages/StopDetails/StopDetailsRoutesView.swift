@@ -62,7 +62,7 @@ struct StopDetailsRoutesView: View {
             .init(route: route1, headsign: "A", patterns: [],
                   upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
                   alertsHere: nil),
-        ], directions: [Direction(name: "West", destination: "Boston College")]),
+        ]),
         .init(route: route2, stop: stop, patternsByHeadsign: [
             .init(route: route2, headsign: "B", patterns: [],
                   upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
@@ -70,6 +70,6 @@ struct StopDetailsRoutesView: View {
             .init(route: route2, headsign: "C", patterns: [],
                   upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                   alertsHere: nil),
-        ], directions: [Direction(name: "Outbound", destination: "Watertown Yard")]),
+        ]),
     ]), now: Date.now.toKotlinInstant(), filter: .constant(nil))
 }

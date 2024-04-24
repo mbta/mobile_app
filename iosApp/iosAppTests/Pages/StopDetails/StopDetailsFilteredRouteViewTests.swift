@@ -62,22 +62,4 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "North"))
         XCTAssertNil(try? sut.inspect().find(text: "South"))
     }
-
-    func testDirectionFilter() throws {
-        let (departures: departures, routeId: routeId, now: now) = testData()
-
-        var filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(routeId: routeId, directionId: 0))
-
-        let sut = StopDetailsFilteredRouteView(
-            departures: departures,
-            now: now,
-            filter: filter
-        )
-
-        XCTAssertEqual(0, filter.wrappedValue?.directionId)
-        XCTAssertNotNil(try sut.inspect().find(text: "Selected Destination"))
-        XCTAssertNotNil(try? sut.inspect().find(text: "Other Destination"))
-        try sut.inspect().find(button: "Other Destination").tap()
-        XCTAssertEqual(1, filter.wrappedValue?.directionId)
-    }
 }

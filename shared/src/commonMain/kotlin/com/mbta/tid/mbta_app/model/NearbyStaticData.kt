@@ -26,7 +26,20 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
         val allStopIds: Set<String>,
         val patternsByHeadsign: List<HeadsignWithPatterns>,
         val directions: List<Direction>
-    )
+    ) {
+        constructor(
+            route: Route,
+            stop: Stop,
+            allStopIds: Set<String>,
+            patternsByHeadsign: List<HeadsignWithPatterns>
+        ) : this(
+            route,
+            stop,
+            allStopIds,
+            patternsByHeadsign,
+            listOf(Direction(0, route), Direction(1, route))
+        )
+    }
 
     data class RouteWithStops(val route: Route, val patternsByStop: List<StopWithPatterns>)
 
@@ -154,11 +167,7 @@ class NearbyStaticDataBuilder {
                     route,
                     stop,
                     setOf(stop.id).plus(childStopIds),
-                    builder.data,
-                    listOf(
-                        Direction(name = "", destination = ""),
-                        Direction(name = "", destination = "")
-                    )
+                    builder.data
                 )
             )
         }

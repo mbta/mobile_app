@@ -61,10 +61,6 @@ class StopDetailsDeparturesTest {
                                 )
                             ),
                             PatternsByHeadsign(route, "B", listOf(routePattern2), listOf())
-                        ),
-                        listOf(
-                            Direction(name = "", destination = ""),
-                            Direction(name = "", destination = "")
                         )
                     )
                 )
@@ -151,19 +147,7 @@ class StopDetailsDeparturesTest {
         val unscheduledUnpredicted = buildPattern(scheduled = false, predicted = false)
 
         fun expected(vararg pattern: PatternsByHeadsign): StopDetailsDepartures =
-            StopDetailsDepartures(
-                listOf(
-                    PatternsByStop(
-                        route,
-                        stop,
-                        pattern.toList(),
-                        listOf(
-                            Direction(name = "", destination = ""),
-                            Direction(name = "", destination = "")
-                        )
-                    )
-                )
-            )
+            StopDetailsDepartures(listOf(PatternsByStop(route, stop, pattern.toList())))
 
         fun actual(includeSchedules: Boolean = true, includePredictions: Boolean = true) =
             StopDetailsDepartures(

@@ -20,8 +20,8 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let wrongRoute = objects.route()
 
         let departures = StopDetailsDepartures(routes: [
-            PatternsByStop(route: route, stop: stop, patternsByHeadsign: [], directions: []),
-            PatternsByStop(route: wrongRoute, stop: stop, patternsByHeadsign: [], directions: []),
+            PatternsByStop(route: route, stop: stop, patternsByHeadsign: []),
+            PatternsByStop(route: wrongRoute, stop: stop, patternsByHeadsign: []),
         ])
 
         return (departures: departures, routeId: route.id)

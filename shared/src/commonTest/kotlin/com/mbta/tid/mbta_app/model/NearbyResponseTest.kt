@@ -514,10 +514,6 @@ class NearbyResponseTest {
                                         objects.upcomingTrip(stop1Pattern1Prediction)
                                     )
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         ),
                         PatternsByStop(
@@ -530,10 +526,6 @@ class NearbyResponseTest {
                                     listOf(pattern3),
                                     listOf(objects.upcomingTrip(stop2Pattern3Prediction))
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -684,10 +676,6 @@ class NearbyResponseTest {
                                     listOf(atypicalInbound),
                                     listOf(objects.upcomingTrip(atypicalInboundPrediction))
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -796,11 +784,7 @@ class NearbyResponseTest {
                                     "Typical In",
                                     listOf(typicalInbound),
                                     null
-                                ),
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
+                                )
                             )
                         )
                     )
@@ -971,10 +955,6 @@ class NearbyResponseTest {
                                     listOf(pattern1),
                                     listOf(objects.upcomingTrip(prediction1))
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -1042,10 +1022,6 @@ class NearbyResponseTest {
                                         objects.upcomingTrip(sched2, pred2)
                                     )
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -1114,10 +1090,6 @@ class NearbyResponseTest {
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1, pred1))
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -1135,10 +1107,6 @@ class NearbyResponseTest {
                                     listOf(routePattern2),
                                     listOf(objects.upcomingTrip(sched2, pred2))
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -1207,10 +1175,6 @@ class NearbyResponseTest {
                                     emptyList(),
                                     alertsHere = listOf(alert)
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )
@@ -1281,10 +1245,6 @@ class NearbyResponseTest {
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1))
                                 )
-                            ),
-                            listOf(
-                                Direction(name = "", destination = ""),
-                                Direction(name = "", destination = "")
                             )
                         )
                     )

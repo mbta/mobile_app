@@ -8,14 +8,13 @@ class DirectionTest {
     @Test
     fun `basic case gets correct values`() {
         val objects = ObjectCollectionBuilder()
-        val stop = objects.stop { id = "1" }
         val route =
             objects.route {
                 directionNames = listOf("Wrong Name", "Right Name")
                 directionDestinations = listOf("Wrong Destination", "Right Destination")
             }
 
-        val direction = Direction(1, stop, route, null)
+        val direction = Direction(1, route)
         assertEquals("Right Name", direction.name)
         assertEquals("Right Destination", direction.destination)
     }
@@ -42,8 +41,8 @@ class DirectionTest {
         val glWest =
             Direction(
                 0,
-                arlington,
                 greenB,
+                arlington,
                 listOf(
                     "place-gover",
                     "place-pktrm",
@@ -59,8 +58,8 @@ class DirectionTest {
         val glEast =
             Direction(
                 1,
-                arlington,
                 greenB,
+                arlington,
                 listOf(
                     "place-lake",
                     "place-kencl",
@@ -76,8 +75,8 @@ class DirectionTest {
         val rlSouth =
             Direction(
                 0,
-                savinHill,
                 red,
+                savinHill,
                 listOf("place-alfcl", "place-jfk", "place-shmnl", "place-asmnl")
             )
         assertEquals("South", rlSouth.name)
@@ -86,8 +85,8 @@ class DirectionTest {
         val rlNorth =
             Direction(
                 1,
-                savinHill,
                 red,
+                savinHill,
                 listOf("place-asmnl", "place-shmnl", "place-jfk", "place-alfcl")
             )
         assertEquals("North", rlNorth.name)
