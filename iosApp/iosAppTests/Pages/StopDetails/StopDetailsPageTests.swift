@@ -9,6 +9,7 @@
 import Combine
 @testable import iosApp
 import shared
+import sharedTestUtil
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector

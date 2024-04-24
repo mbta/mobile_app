@@ -601,6 +601,7 @@
 				6EED5E882B3DC69F0052A1B8 /* Sources */,
 				6EED5E892B3DC69F0052A1B8 /* Frameworks */,
 				6EED5E8A2B3DC69F0052A1B8 /* Resources */,
+				C0BDC86264524A4C1A7C74C8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -854,6 +855,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		C0BDC86264524A4C1A7C74C8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iosAppTests/Pods-iosAppTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iosAppTests/Pods-iosAppTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosAppTests/Pods-iosAppTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -982,7 +1000,7 @@
 		};
 		8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */;
+			productRef = 8C42F06D2B87BD1D00F9A77B /* plugin:SwiftLintPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1375,7 +1393,7 @@
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
 		};
-		8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */ = {
+		8C42F06D2B87BD1D00F9A77B /* plugin:SwiftLintPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */;
 			productName = "plugin:SwiftLintPlugin";

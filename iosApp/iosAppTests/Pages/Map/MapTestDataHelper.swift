@@ -8,6 +8,7 @@
 
 @testable import iosApp
 import shared
+import sharedTestUtil
 
 enum MapTestDataHelper {
     static let objects = ObjectCollectionBuilder()

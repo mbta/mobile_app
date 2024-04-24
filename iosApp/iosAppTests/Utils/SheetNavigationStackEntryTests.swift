@@ -8,6 +8,7 @@
 
 @testable import iosApp
 import shared
+import sharedTestUtil
 import XCTest
 
 final class SheetNavigationStackEntryTests: XCTestCase {

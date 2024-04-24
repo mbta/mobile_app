@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.fromObjectCollection
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -26,7 +27,7 @@ class NearbyResponseTest {
         val route1rp2 = objects.routePattern(route1) { representativeTrip { headsign = "Nubian" } }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -34,7 +35,7 @@ class NearbyResponseTest {
                         stop2.id to listOf(route1rp1.id, route1rp2.id),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -67,14 +68,14 @@ class NearbyResponseTest {
             }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
                         stop1.id to listOf(route1rp2.id, route1rp1.id),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -111,7 +112,7 @@ class NearbyResponseTest {
             }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -119,7 +120,7 @@ class NearbyResponseTest {
                         busStop.id to listOf(busRp.id),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -152,7 +153,7 @@ class NearbyResponseTest {
             }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -160,7 +161,7 @@ class NearbyResponseTest {
                         furtherStop.id to listOf(subway1Rp1.id),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -201,14 +202,14 @@ class NearbyResponseTest {
             }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
                         stop1.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id),
                     )
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -235,7 +236,7 @@ class NearbyResponseTest {
         val route1rp1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -243,7 +244,7 @@ class NearbyResponseTest {
                         stop2.id to listOf(route1rp1.id),
                     )
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -286,7 +287,7 @@ class NearbyResponseTest {
             }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -294,7 +295,7 @@ class NearbyResponseTest {
                         stop2.id to listOf(route1rp1.id, route1rp3.id, route2rp1.id),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -341,7 +342,7 @@ class NearbyResponseTest {
             }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -359,7 +360,7 @@ class NearbyResponseTest {
                             ),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -398,7 +399,7 @@ class NearbyResponseTest {
             objects.routePattern(route) { representativeTrip { headsign = "Oak Grove" } }
 
         val global =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects,
                 patternIdsByStop =
                     mapOf(
@@ -408,7 +409,7 @@ class NearbyResponseTest {
                             ),
                     ),
             )
-        val nearby = NearbyResponse(objects)
+        val nearby = NearbyResponse.fromObjectCollection(objects)
 
         assertEquals(
             NearbyStaticData.build {
@@ -534,7 +535,7 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
-                predictions = PredictionsStreamDataResponse(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
                 alerts = null,
             )
@@ -684,7 +685,7 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
-                predictions = PredictionsStreamDataResponse(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
                 alerts = null,
             )
@@ -904,9 +905,9 @@ class NearbyResponseTest {
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = closeBusStop.position,
-                predictions = PredictionsStreamDataResponse(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
-                schedules = ScheduleResponse(objects),
+                schedules = ScheduleResponse.fromObjectCollection(objects),
                 alerts = null,
             )
         assertEquals(
@@ -963,7 +964,7 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
-                predictions = PredictionsStreamDataResponse(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
                 alerts = null,
             )
@@ -1029,8 +1030,8 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop.position,
-                schedules = ScheduleResponse(objects),
-                predictions = PredictionsStreamDataResponse(objects),
+                schedules = ScheduleResponse.fromObjectCollection(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
                 alerts = null,
             )
@@ -1114,8 +1115,8 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop.position,
-                schedules = ScheduleResponse(objects),
-                predictions = PredictionsStreamDataResponse(objects),
+                schedules = ScheduleResponse.fromObjectCollection(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
                 alerts = null,
             )
@@ -1182,10 +1183,10 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop.position,
-                schedules = ScheduleResponse(objects),
-                predictions = PredictionsStreamDataResponse(objects),
+                schedules = ScheduleResponse.fromObjectCollection(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time,
-                alerts = AlertsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse.fromObjectCollection(objects),
             )
         )
     }
@@ -1252,8 +1253,8 @@ class NearbyResponseTest {
             ),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop.position,
-                schedules = ScheduleResponse(objects),
-                predictions = PredictionsStreamDataResponse(objects),
+                schedules = ScheduleResponse.fromObjectCollection(objects),
+                predictions = PredictionsStreamDataResponse.fromObjectCollection(objects),
                 alerts = null,
                 filterAtTime = time
             )

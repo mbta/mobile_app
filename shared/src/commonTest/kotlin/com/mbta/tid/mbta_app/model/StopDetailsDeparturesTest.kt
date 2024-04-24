@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.fromObjectCollection
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.Clock
@@ -67,12 +68,12 @@ class StopDetailsDeparturesTest {
             ),
             StopDetailsDepartures(
                 stop,
-                GlobalResponse(
+                GlobalResponse.fromObjectCollection(
                     objects,
                     mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
                 ),
-                ScheduleResponse(objects),
-                PredictionsStreamDataResponse(objects),
+                ScheduleResponse.fromObjectCollection(objects),
+                PredictionsStreamDataResponse.fromObjectCollection(objects),
                 filterAtTime = time1
             )
         )
@@ -152,9 +153,14 @@ class StopDetailsDeparturesTest {
         fun actual(includeSchedules: Boolean = true, includePredictions: Boolean = true) =
             StopDetailsDepartures(
                 stop,
-                GlobalResponse(objects, mapOf(stop.id to objects.routePatterns.keys.toList())),
-                ScheduleResponse(objects).takeIf { includeSchedules },
-                PredictionsStreamDataResponse(objects).takeIf { includePredictions },
+                GlobalResponse.fromObjectCollection(
+                    objects,
+                    mapOf(stop.id to objects.routePatterns.keys.toList())
+                ),
+                ScheduleResponse.fromObjectCollection(objects).takeIf { includeSchedules },
+                PredictionsStreamDataResponse.fromObjectCollection(objects).takeIf {
+                    includePredictions
+                },
                 filterAtTime = time
             )
 

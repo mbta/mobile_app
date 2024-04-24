@@ -8,7 +8,7 @@ plugins {
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
 
@@ -57,6 +57,7 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.ktor.client.mock)
                 implementation(libs.koin.test)
+                implementation(projects.sharedTestUtil)
             }
         }
         val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }

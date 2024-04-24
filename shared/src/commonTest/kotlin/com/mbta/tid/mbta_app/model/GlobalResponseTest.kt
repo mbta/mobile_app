@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.fromObjectCollection
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -39,13 +40,16 @@ class GlobalResponseTest {
             }
 
         val globalResponse =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects = objects,
                 patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id)))
             )
         val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            staticData.withRealtimeAlertsByStop(
+                AlertsStreamDataResponse.fromObjectCollection(objects),
+                time
+            )
 
         val alertingStop = alertsByStop?.get(stop.id)
         assertNotNull(alertingStop)
@@ -81,13 +85,16 @@ class GlobalResponseTest {
         }
 
         val globalResponse =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects = objects,
                 patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id)))
             )
         val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            staticData.withRealtimeAlertsByStop(
+                AlertsStreamDataResponse.fromObjectCollection(objects),
+                time
+            )
 
         assertNull(alertsByStop?.get(stop.id))
     }
@@ -130,13 +137,16 @@ class GlobalResponseTest {
             }
 
         val globalResponse =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects = objects,
                 patternIdsByStop = mapOf(Pair(childStop.id, listOf(routePattern.id)))
             )
         val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            staticData.withRealtimeAlertsByStop(
+                AlertsStreamDataResponse.fromObjectCollection(objects),
+                time
+            )
 
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
@@ -207,7 +217,7 @@ class GlobalResponseTest {
             }
 
         val globalResponse =
-            GlobalResponse(
+            GlobalResponse.fromObjectCollection(
                 objects = objects,
                 patternIdsByStop =
                     mapOf(
@@ -217,7 +227,10 @@ class GlobalResponseTest {
             )
         val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            staticData.withRealtimeAlertsByStop(
+                AlertsStreamDataResponse.fromObjectCollection(objects),
+                time
+            )
 
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)

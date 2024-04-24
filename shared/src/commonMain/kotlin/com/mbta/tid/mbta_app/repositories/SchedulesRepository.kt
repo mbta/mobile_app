@@ -53,13 +53,3 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
         return getSchedule(stopIds, Clock.System.now())
     }
 }
-
-class MockScheduleRepository : ISchedulesRepository {
-    override suspend fun getSchedule(stopIds: List<String>, now: Instant): ScheduleResponse {
-        return ScheduleResponse(schedules = listOf(), trips = mapOf())
-    }
-
-    override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
-        return ScheduleResponse(schedules = listOf(), trips = mapOf())
-    }
-}

@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model.response
 
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.Stop
@@ -15,9 +14,4 @@ data class GlobalResponse(
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
     val stops: Map<String, Stop>,
     val trips: Map<String, Trip>,
-) {
-    constructor(
-        objects: ObjectCollectionBuilder,
-        patternIdsByStop: Map<String, List<String>>,
-    ) : this(patternIdsByStop, objects.routes, objects.routePatterns, objects.stops, objects.trips)
-}
+)
