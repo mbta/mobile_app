@@ -27,7 +27,6 @@ struct IOSApp: App {
         } else {
             Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
         }
-
         if ProcessInfo.processInfo.arguments.contains("--mock-koin")
             || ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != nil {
             Logger().warning("mocking repositories")

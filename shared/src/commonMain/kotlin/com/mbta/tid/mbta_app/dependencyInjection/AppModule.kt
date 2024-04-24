@@ -1,9 +1,12 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
+import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
+import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -16,6 +19,8 @@ import org.koin.dsl.module
 fun appModule() = module {
     single { MobileBackendClient() }
     single<ISchedulesRepository> { SchedulesRepository() }
+    single<IPinnedRoutesRepository> { PinnedRoutesRepository() }
+    single { TogglePinnedRouteUsecase(get()) }
 }
 
 fun mockAppModule() = module {

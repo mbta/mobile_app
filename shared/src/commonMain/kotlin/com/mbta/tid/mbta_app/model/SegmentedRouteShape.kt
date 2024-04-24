@@ -10,8 +10,7 @@ import kotlinx.serialization.Serializable
  * @param sourceRoutePatternId the route pattern of the shape
  * @param sourceRouteId the route of the shape
  * @param shape The full shape for the source route pattern
- * @param routeSegments segments of stops that do not overlap with segments for other route shapes.
- *   Segments may intersect with other segments only at the first or last stop.
+ * @param routeSegments segments of stops that stopped at on the route pattern.
  */
 @Serializable
 data class SegmentedRouteShape(
