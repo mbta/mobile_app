@@ -40,23 +40,21 @@ kotlin {
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.encoding)
                 implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.client.mock)
                 implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
-
                 implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
                 api(libs.sentry)
                 implementation(libs.skie.configuration.annotations)
                 api(libs.spatialk.geojson)
                 implementation(libs.spatialk.turf)
-                implementation(libs.androidx.datastore.preferences.core)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.koin.test)
+                implementation(libs.ktor.client.mock)
             }
         }
         val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }
