@@ -60,7 +60,9 @@ class SchedulesRepositoryTest : KoinTest {
             )
         }
 
-        startKoin { modules(module { single { MobileBackendClient(mockEngine) } }) }
+        startKoin {
+            modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
+        }
         runBlocking {
             val response = SchedulesRepository().getSchedule(stopIds = listOf("place-davis"))
             assertEquals(

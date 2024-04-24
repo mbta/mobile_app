@@ -3,9 +3,20 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+#if STAGING
+    let appVariant = AppVariant.staging
+#elseif PROD
+    let appVariant = AppVariant.prod
+#endif
+
 @main
 struct IOSApp: App {
-    let backend: BackendProtocol = CommandLine.arguments.contains("-testing") ? IdleBackend() : Backend()
+    let backend: BackendProtocol =
+        if CommandLine.arguments.contains("-testing") {
+            IdleBackend()
+        } else {
+            Backend(appVariant: appVariant)
+        }
 
     // ignore updates less than 0.1km
     @StateObject var locationDataManager: LocationDataManager
@@ -28,9 +39,9 @@ struct IOSApp: App {
         } else {
             Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
         }
-        HelpersKt.doInitKoin()
+        HelpersKt.doInitKoin(appVariant: appVariant)
 
-        let socket = Socket(SocketUtils.companion.url)
+        let socket = Socket(appVariant.socketUrl)
         socket.withRawMessages()
         socket.onOpen {
             Logger().debug("Socket opened")

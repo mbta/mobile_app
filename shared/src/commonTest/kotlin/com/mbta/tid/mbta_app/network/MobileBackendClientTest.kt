@@ -40,11 +40,13 @@ class MobileBackendClientTest : KoinTest {
 
         runBlocking {
             val response: HttpResponse =
-                MobileBackendClient(mockEngine).get { url { path("api/schedules") } }
+                MobileBackendClient(mockEngine, AppVariant.Staging).get {
+                    url { path("api/schedules") }
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals("/api/schedules", response.request.url.encodedPath)
-            assertEquals(MobileBackendClient.mobileBackendHost, response.request.url.host)
+            assertEquals(AppVariant.Staging.backendHost, response.request.url.host)
         }
     }
 }
