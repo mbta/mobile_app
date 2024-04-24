@@ -19,6 +19,11 @@ final class ContentViewTests: XCTestCase {
 
     override func setUp() {
         executionTimeAllowance = 60
+        HelpersKt.loadKoinMocks(scheduleRepository: MockScheduleRepository())
+    }
+
+    override func tearDown() {
+        HelpersKt.loadDefaultRepoModules()
     }
 
     func testDisconnectsSocketAfterBackgrounding() throws {
@@ -43,7 +48,6 @@ final class ContentViewTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [connectedExpectation], timeout: 1)
-
         try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }

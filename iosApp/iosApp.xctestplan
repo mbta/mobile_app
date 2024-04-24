@@ -9,7 +9,7 @@
             "argument" : "--skip-map"
           },
           {
-            "argument" : "--mock-koin"
+            "argument" : "--dummy-test-app"
           }
         ],
         "defaultTestExecutionTimeAllowance" : 60,

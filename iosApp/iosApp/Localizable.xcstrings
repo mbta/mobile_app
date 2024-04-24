@@ -37,6 +37,9 @@
     "Detour" : {
 
     },
+    "Dummy app for launching unit tests" : {
+
+    },
     "Failed to load alerts, could not connect to the server" : {
 
     },

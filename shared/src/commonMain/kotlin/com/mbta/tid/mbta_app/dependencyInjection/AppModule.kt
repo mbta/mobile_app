@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.dependencyInjection
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
@@ -16,5 +15,3 @@ fun appModule() = module {
     single<IPinnedRoutesRepository> { PinnedRoutesRepository() }
     single { TogglePinnedRouteUsecase(get()) }
 }
-
-fun mockAppModule() = module { single<ISchedulesRepository> { IdleScheduleRepository() } }
