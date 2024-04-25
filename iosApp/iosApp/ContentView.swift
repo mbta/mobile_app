@@ -117,20 +117,3 @@ struct ContentView: View {
         }
     }
 }
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockSocket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
-
-        ContentView()
-            .environmentObject(LocationDataManager())
-            .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(GlobalFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(socket: mockSocket))
-            .environmentObject(SocketProvider(socket: mockSocket))
-            .environmentObject(AlertsFetcher(socket: mockSocket))
-            .environmentObject(ViewportProvider())
-    }
-}
