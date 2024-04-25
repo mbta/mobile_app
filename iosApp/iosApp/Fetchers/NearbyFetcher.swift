@@ -80,7 +80,8 @@ class NearbyFetcher: ObservableObject {
         schedules: ScheduleResponse?,
         predictions: PredictionsStreamDataResponse?,
         alerts: AlertsStreamDataResponse?,
-        filterAtTime: Instant
+        filterAtTime: Instant,
+        pinnedRoutes: Set<String>
     ) -> [StopAssociatedRoute]? {
         guard let loadedLocation else { return nil }
         return nearbyByRouteAndStop?.withRealtimeInfo(
@@ -88,7 +89,8 @@ class NearbyFetcher: ObservableObject {
             schedules: schedules,
             predictions: predictions,
             alerts: alerts,
-            filterAtTime: filterAtTime
+            filterAtTime: filterAtTime,
+            pinnedRoutes: pinnedRoutes
         )
     }
 }
