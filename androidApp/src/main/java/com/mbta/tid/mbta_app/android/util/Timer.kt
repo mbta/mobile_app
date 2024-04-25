@@ -15,7 +15,7 @@ import kotlinx.datetime.Instant
 fun timer(updateInterval: Duration): Instant {
     var now by remember { mutableStateOf(Clock.System.now()) }
 
-    DisposableEffect(key1 = null) {
+    DisposableEffect(null) {
         val timer =
             fixedRateTimer(initialDelay = 0, period = updateInterval.inWholeMilliseconds) {
                 now = Clock.System.now()

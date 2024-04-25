@@ -24,7 +24,7 @@ data class GlobalData(
 fun fetchGlobalData(backend: Backend): GlobalData {
     var data by remember { mutableStateOf(GlobalData()) }
 
-    LaunchedEffect(key1 = null) { data = GlobalData(backend.getGlobalData()) }
+    LaunchedEffect(null) { data = GlobalData(backend.getGlobalData()) }
 
     return data
 }

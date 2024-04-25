@@ -23,7 +23,7 @@ fun ContentView() {
     val globalData = fetchGlobalData(backend = backend)
     val mapCenter = Position(longitude = -71.062424, latitude = 42.356395)
 
-    DisposableEffect(key1 = null) {
+    DisposableEffect(null) {
         socket.connect()
         socket.onMessage { message -> Log.i("Socket", message.toString()) }
         socket.onError { throwable, response -> Log.e("Socket", response.toString(), throwable) }

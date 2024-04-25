@@ -58,7 +58,7 @@ fun NearbyTransitPage(
             )
         }
 
-    LaunchedEffect(key1 = targetLocation) {
+    LaunchedEffect(targetLocation) {
         nearby =
             backend.getNearby(
                 latitude = targetLocation.latitude,
