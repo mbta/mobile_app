@@ -99,6 +99,8 @@
 		9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849C2BAD05BC006581CE /* Inspection.swift */; };
 		9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */; };
 		9ADB84A22BAE37C0006581CE /* StopExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB84A12BAE37C0006581CE /* StopExtension.swift */; };
+		9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093772BD943A4001DF39F /* DirectionPicker.swift */; };
+		9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
 		A430D45FE0676C73075AB85B /* Pods_iosAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */; };
 		A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */; };
@@ -239,6 +241,8 @@
 		9ADB849C2BAD05BC006581CE /* Inspection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspection.swift; sourceTree = "<group>"; };
 		9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncerTests.swift; sourceTree = "<group>"; };
 		9ADB84A12BAE37C0006581CE /* StopExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopExtension.swift; sourceTree = "<group>"; };
+		9AF093772BD943A4001DF39F /* DirectionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPicker.swift; sourceTree = "<group>"; };
+		9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPickerTests.swift; sourceTree = "<group>"; };
 		9AF88E042B48913C00E08C7C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED3581652BB4706F005DDC34 /* PartialSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSheetModifier.swift; sourceTree = "<group>"; };
@@ -441,6 +445,7 @@
 				8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */,
 				8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */,
 				9A88AAC02BD0680C00A5BF88 /* StopDetailsRoutePills.swift */,
+				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -453,6 +458,7 @@
 				8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */,
 				8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */,
 				9A88AAC22BD07B3C00A5BF88 /* StopDetailsRoutePillsTests.swift */,
+				9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -886,6 +892,7 @@
 				9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */,
 				6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */,
 				9A69D4902B99212400235125 /* NearbyFetcherTests.swift in Sources */,
+				9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */,
 				9A5B27642BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift in Sources */,
 				9A6FA0282BC72F110067769C /* StopDetailsPageTests.swift in Sources */,
 				9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */,
@@ -955,6 +962,7 @@
 				9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				9ADB84A22BAE37C0006581CE /* StopExtension.swift in Sources */,
+				9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */,
 				9AB44A112B8FC43E00E8FFB3 /* IconCard.swift in Sources */,
 				9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */,
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
