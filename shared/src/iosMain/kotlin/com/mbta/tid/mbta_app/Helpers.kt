@@ -4,7 +4,6 @@ import IRepositories
 import MockRepositories
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -35,7 +34,9 @@ fun initKoin() {
     startKoin { modules(appModule() + platformModule()) }
 }
 
-@DefaultArgumentInterop.Enabled
+/*
+Load the Koin mock repositories and use cases, overriding their existing definitions
+ */
 fun loadKoinMocks(repositories: IRepositories) {
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
