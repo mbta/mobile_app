@@ -19,7 +19,7 @@ final class ContentViewTests: XCTestCase {
 
     override func setUp() {
         executionTimeAllowance = 60
-        HelpersKt.loadKoinMocks(scheduleRepository: MockScheduleRepository())
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(schedules: MockScheduleRepository()))
     }
 
     override func tearDown() {

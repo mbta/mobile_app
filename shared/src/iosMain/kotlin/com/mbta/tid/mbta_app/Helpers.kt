@@ -1,19 +1,15 @@
 package com.mbta.tid.mbta_app
 
+import IRepositories
+import MockRepositories
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
-import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
-import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
-import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
-import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -40,30 +36,15 @@ fun initKoin() {
 }
 
 @DefaultArgumentInterop.Enabled
-fun loadKoinMocks(
-    scheduleRepository: ISchedulesRepository = IdleScheduleRepository(),
-    pinnedRoutesRepository: IPinnedRoutesRepository = PinnedRoutesRepository()
-) {
-    loadKoinModules(
-        module {
-            single<ISchedulesRepository> { MockScheduleRepository() }
-            single<IPinnedRoutesRepository> { PinnedRoutesRepository() }
-            single { TogglePinnedRouteUsecase(get()) }
-        }
-    )
+fun loadKoinMocks(repositories: IRepositories) {
+    loadKoinModules(listOf(repositoriesModule(repositories)))
 }
 
 /*
 Load the default Koin mock repositories and use cases, overriding their existing definitions
  */
 fun loadDefaultRepoModules() {
-    loadKoinModules(
-        module {
-            single<ISchedulesRepository> { IdleScheduleRepository() }
-            single<IPinnedRoutesRepository> { PinnedRoutesRepository() }
-            single { TogglePinnedRouteUsecase(get()) }
-        }
-    )
+    loadKoinModules(repositoriesModule(MockRepositories.buildWithDefaults()))
 }
 
 /*
