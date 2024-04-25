@@ -33,10 +33,10 @@ kotlin {
             export(libs.sentry)
         }
 
-        xcodeConfigurationToNativeBuildType["Staging Debug"] = NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["Staging Release"] = NativeBuildType.RELEASE
-        xcodeConfigurationToNativeBuildType["Prod Debug"] = NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["Prod Release"] = NativeBuildType.RELEASE
+        xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["StagingRelease"] = NativeBuildType.RELEASE
+        xcodeConfigurationToNativeBuildType["ProdDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["ProdRelease"] = NativeBuildType.RELEASE
     }
 
     sourceSets {
