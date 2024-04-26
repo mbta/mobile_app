@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.android.fetcher.fetchGlobalData
 import com.mbta.tid.mbta_app.android.fetcher.subscribeToAlerts
@@ -27,7 +28,6 @@ import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.android.util.toPosition
-import com.mbta.tid.mbta_app.phoenix.SocketUtils
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.FlowPreview
@@ -37,9 +37,9 @@ import org.phoenixframework.Socket
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
-fun ContentView() {
-    val backend = remember { Backend() }
-    val socket = remember { Socket(SocketUtils.url, decode = ::decodeMessage) }
+fun ContentView(appVariant: AppVariant) {
+    val backend = remember { Backend(appVariant) }
+    val socket = remember { Socket(appVariant.socketUrl, decode = ::decodeMessage) }
     val alertData = subscribeToAlerts(socket = socket)
     val globalData = fetchGlobalData(backend = backend)
     val mapViewportState = rememberMapViewportState {
