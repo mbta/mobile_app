@@ -42,7 +42,7 @@ class StopLayerGenerator {
                 Exp(.get) { StopSourceGenerator.propIsSelectedKey }
                 true
             }
-            1.5
+            1.25
             1
         }
         )

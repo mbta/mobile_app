@@ -214,6 +214,10 @@ struct HomeMapView: View {
                                                            alertsByStop: currentStopAlerts)
             layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
         }
+
+        if selectedStop != nil {
+            viewportProvider.animateTo(coordinates: selectedStop!.coordinate, zoom: 17.0)
+        }
     }
 
     func handleStopAlertChange(alertsByStop: [String: AlertAssociatedStop]) {
