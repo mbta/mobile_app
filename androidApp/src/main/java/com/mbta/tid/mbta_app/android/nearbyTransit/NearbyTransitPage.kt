@@ -31,6 +31,7 @@ fun NearbyTransitPage(
     alertData: AlertsStreamDataResponse?,
     globalData: GlobalData,
     targetLocation: Position,
+    setLastLocation: (Position) -> Unit,
 ) {
     var nearby by remember { mutableStateOf<NearbyResponse?>(null) }
     val nearbyByRouteAndStop =
@@ -64,6 +65,7 @@ fun NearbyTransitPage(
                 latitude = targetLocation.latitude,
                 longitude = targetLocation.longitude
             )
+        setLastLocation(targetLocation)
     }
 
     if (nearbyWithRealtimeInfo != null) {

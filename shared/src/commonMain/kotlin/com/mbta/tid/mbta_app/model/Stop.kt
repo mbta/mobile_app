@@ -15,4 +15,10 @@ data class Stop(
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList()
 ) : BackendObject {
     val position = Position(latitude = latitude, longitude = longitude)
+
+    fun resolveParent(stops: Map<String, Stop>): Stop {
+        if (this.parentStationId == null) return this
+        val parentStation = stops[parentStationId] ?: return this
+        return parentStation.resolveParent(stops)
+    }
 }
