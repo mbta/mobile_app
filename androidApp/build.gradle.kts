@@ -13,6 +13,7 @@ android {
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
         versionName = (findProperty("android.injected.version.name") ?: "0.1.0") as String
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true }
     composeOptions { kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get() }
@@ -32,5 +33,14 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.javaPhoenixClient)
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.datetime)
+    debugImplementation(platform(libs.compose.bom))
+    debugImplementation(libs.compose.ui.test.manifest)
     debugImplementation(libs.compose.ui.tooling)
+    testImplementation(libs.junit)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.ktor.client.mock)
 }
