@@ -40,4 +40,12 @@ extension [SheetNavigationStackEntry] {
             }
         }
     }
+
+    var lastStopDetails: (stop: Stop, filter: StopDetailsFilter?)? { switch self.last {
+    case let .stopDetails(stop, filter):
+        (stop: stop, filter: filter)
+    case _:
+        nil
+    }
+    }
 }

@@ -122,13 +122,12 @@ final class HomeMapViewTests: XCTestCase {
             stop.latitude = 1
             stop.longitude = 1
         }
-        let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
 
         var sut = HomeMapView(
             alertsFetcher: .init(socket: MockSocket()),
             globalFetcher: GlobalFetcher(backend: IdleBackend()),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
-            railRouteShapeFetcher: RailRouteShapeFetcher((backend: IdleBackend()),
+            railRouteShapeFetcher: RailRouteShapeFetcher(backend: IdleBackend()),
             viewportProvider: viewportProvider,
             navigationStack: .constant([.stopDetails(stop, nil)]),
             sheetHeight: .constant(0)
@@ -136,6 +135,6 @@ final class HomeMapViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
-        wait(for: [getRailRouteShapeExpectation], timeout: 1)
+        XCTAssertEqual(stop.coordinate, viewportProvider.cameraState.center)
     }
 }

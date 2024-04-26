@@ -29,7 +29,7 @@ struct HomeMapView: View {
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State private var currentStopAlerts: [String: AlertAssociatedStop] = [:]
-    @State var selectedStop: Stop?
+    @State var selectedStopDetails: (stop: Stop, filter: StopDetailsFilter?)?
 
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
@@ -100,15 +100,11 @@ struct HomeMapView: View {
             }
 
             .onChange(of: navigationStack) { nextNavStack in
-                switch nextNavStack.last {
-                case let .stopDetails(stop, _):
-                    selectedStop = stop
-                case _:
-                    selectedStop = nil
-                }
+                let nextStopDetails = nextNavStack.lastStopDetails
+                selectedStopDetails = nextStopDetails
             }
-            .onChange(of: selectedStop) { nextSelectedStop in
-                handleSelectedStopChange(selectedStop: nextSelectedStop)
+            .onChange(of: selectedStopDetails) { nextSelectedStopDetails in
+                handleSelectedStopChange(selectedStopDetails: nextSelectedStopDetails)
             }
 
             .onReceive(timer) { input in
@@ -133,6 +129,7 @@ struct HomeMapView: View {
     var didAppear: ((Self) -> Void)?
 
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
+        selectedStopDetails = navigationStack.lastStopDetails
         Task {
             try await railRouteShapeFetcher.getRailRouteShapes()
         }
@@ -187,7 +184,7 @@ struct HomeMapView: View {
             routeSourceGenerator: routeSourceGenerator,
             stopSourceGenerator: StopSourceGenerator(
                 stops: stops,
-                selectedStop: selectedStop, routeSourceDetails: routeSourceGenerator.routeSourceDetails,
+                selectedStop: selectedStopDetails?.stop, routeSourceDetails: routeSourceGenerator.routeSourceDetails,
 
                 alertsByStop: currentStopAlerts
             )
@@ -201,10 +198,10 @@ struct HomeMapView: View {
         self.layerManager = layerManager
     }
 
-    func handleSelectedStopChange(selectedStop: Stop?) {
+    func handleSelectedStopChange(newStopDetails: (stop: Stop, filter: StopDetailsFilter)?) {
         let updatedStopSources = StopSourceGenerator(
             stops: globalFetcher.stops,
-            selectedStop: selectedStop,
+            selectedStop: newStopDetails?.stop,
             routeSourceDetails: layerManager?.routeSourceGenerator?.routeSourceDetails,
             alertsByStop: currentStopAlerts
         )
@@ -215,8 +212,8 @@ struct HomeMapView: View {
             layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
         }
 
-        if selectedStop != nil {
-            viewportProvider.animateTo(coordinates: selectedStop!.coordinate, zoom: 17.0)
+        if newStopDetails?.stop != nil {
+            viewportProvider.animateTo(coordinates: newStopDetails!stop.coordinate, zoom: 17.0)
         }
     }
 
