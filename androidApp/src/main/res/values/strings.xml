@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="hello_platform">Hello, %1$s!</string>
+    <string name="boarding_abbr">BRD</string>
+    <string name="arriving_abbr">ARR</string>
+    <string name="minutes_abbr">%1$s min</string>
+    <string name="approaching_abbr">1 min</string>
+    <string name="detour">Detour</string>
+    <string name="shuttle">Shuttle</string>
+    <string name="stop_closed">Stop Closed</string>
+    <string name="suspension">Suspension</string>
+    <string name="no_service">No Service</string>
 </resources>

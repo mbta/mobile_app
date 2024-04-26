@@ -22,6 +22,12 @@ We use mapbox for custom interactive maps.
 
 Mapbox requires 2 keys - a private key for installing the library and a public key for rendering map tiles. Follow the above keys link for instructions on how to configure the secret key. Add the public key to `/iosApp/secrets/mapbox`.
 
+##### android - [guide](https://docs.mapbox.com/android/maps/guides/) - [docs](https://docs.mapbox.com/android/maps/api/11.3.0/) - [keys](https://docs.mapbox.com/android/maps/guides/install/#configure-your-secret-token)
+
+Like on iOS, Mapbox for Android requires two keys. Follow the above keys link for instructions on how to configure the secret and public key.
+
+**Note**: The property name in `~/.gradle/gradle.properties` is `MAPBOX_SECRET_TOKEN`, not `MAPBOX_DOWNLOADS_TOKEN` as used in the Mapbox documentation. Also, the public token should be stored in `androidApp/src/main/res/values/secrets.xml`, which will be created with a placeholder value if it does not already exist at build time.
+
 #### Sentry - [docs](https://docs.sentry.io/platforms/kotlin-multiplatform/) - [keys](https://mbtace.sentry.io/settings/projects/mobile_app_ios/keys/)
 
 Sentry is used for error logging and aggregation.

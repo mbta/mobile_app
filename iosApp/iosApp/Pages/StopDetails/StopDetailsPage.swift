@@ -112,6 +112,7 @@ struct StopDetailsPage: View {
     }
 
     func tapRoutePill(_ route: Route) {
+        if filter?.routeId == route.id { return }
         guard let departures else { return }
         let patterns = departures.routes.first { patterns in patterns.route.id == route.id }
         if patterns == nil { return }
