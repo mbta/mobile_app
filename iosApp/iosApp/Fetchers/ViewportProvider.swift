@@ -34,9 +34,11 @@ class ViewportProvider: ObservableObject {
         }
     }
 
-    func animateTo(coordinates: CLLocationCoordinate2D, animation: ViewportAnimation = defaultAnimation, zoom: CGFloat? = nil) {
+    func animateTo(coordinates: CLLocationCoordinate2D,
+                   animation: ViewportAnimation = defaultAnimation,
+                   zoom: CGFloat? = nil) {
         withViewportAnimation(animation) {
-            self.viewport = .camera(center: coordinates, zoom: zoom == nil ? self.viewport.camera?.zoom : zoom)
+            self.viewport = .camera(center: coordinates, zoom: zoom == nil ? self.cameraState.zoom : zoom)
         }
     }
 }

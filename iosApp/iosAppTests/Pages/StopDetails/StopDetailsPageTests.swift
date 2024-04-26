@@ -20,7 +20,7 @@ final class StopDetailsPageTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testStopChange() throws {
+    func testStopChangeFetchesNewData() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -30,22 +30,44 @@ final class StopDetailsPageTests: XCTestCase {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
 
+        class FakeSchedulesRepository: ISchedulesRepository {
+            let callback: (_ stopIds: [String]) -> Void
+
+            init(callback: @escaping (_ stopIds: [String]) -> Void) {
+                self.callback = callback
+            }
+
+            func __getSchedule(stopIds: [String]) async throws -> ScheduleResponse {
+                callback(stopIds)
+                return ScheduleResponse(objects: ObjectCollectionBuilder())
+            }
+
+            func __getSchedule(stopIds: [String], now _: Instant) async throws -> ScheduleResponse {
+                callback(stopIds)
+                return ScheduleResponse(objects: ObjectCollectionBuilder())
+            }
+        }
+
+        let newStopSchedulesFetchedExpectation = XCTestExpectation(description: "Fetched stops for next stop")
+        func callback(stopIds: [String]) {
+            if stopIds == [nextStop.id] {
+                newStopSchedulesFetchedExpectation.fulfill()
+            }
+        }
+
         var sut = StopDetailsPage(
             socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesRepository: MockScheduleRepository(),
+            schedulesRepository: FakeSchedulesRepository(callback: callback),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter
         )
 
-        let exp = sut.inspection.inspect { _ in
-            XCTAssertEqual(viewportProvider.viewport.camera?.center, stop.coordinate)
-            sut.stop = nextStop
-            XCTAssertEqual(viewportProvider.viewport.camera?.center, nextStop.coordinate)
-        }
         ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 2)
+        try sut.inspect().vStack().callOnChange(newValue: nextStop)
+
+        wait(for: [newStopSchedulesFetchedExpectation], timeout: 5)
     }
 
     func testClearsFilter() throws {

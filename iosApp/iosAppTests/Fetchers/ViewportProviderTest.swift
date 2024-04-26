@@ -36,4 +36,20 @@ final class ViewportProviderTest: XCTestCase {
         provider.viewport = .camera(center: .init(latitude: 0, longitude: 0))
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
+
+    func testAnimateToPreservesZoomIfNotGiven() throws {
+        let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
+
+        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1))
+        XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 1, longitude: 1))
+        XCTAssertEqual(provider.viewport.camera?.zoom, 14.0)
+    }
+
+    func testAnimateToSetsZoom() throws {
+        let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
+
+        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1), zoom: 17.0)
+        XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 1, longitude: 1))
+        XCTAssertEqual(provider.viewport.camera?.zoom, 17.0)
+    }
 }
