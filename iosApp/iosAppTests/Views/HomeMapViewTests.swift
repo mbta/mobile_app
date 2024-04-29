@@ -113,4 +113,33 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
         wait(for: [getRailRouteShapeExpectation], timeout: 1)
     }
+
+    func testCentersOnSelectedStop() throws {
+        let objectCollection = ObjectCollectionBuilder()
+        let stop = objectCollection.stop { stop in
+            stop.id = "1"
+            stop.latitude = 1
+            stop.longitude = 1
+        }
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
+        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
+        let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
+            globalFetcher: globalFetcher,
+            nearbyFetcher: nearbyFetcher,
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            viewportProvider: ViewportProvider(),
+            locationDataManager: locationDataManager,
+            navigationStack: .constant([.stopDetails(stop, nil)]),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { _ in }
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared], timeout: 1)
+        XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
+    }
 }

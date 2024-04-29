@@ -133,6 +133,12 @@ struct HomeMapView: View {
     var didAppear: ((Self) -> Void)?
 
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
+        switch navigationStack.last {
+        case let .stopDetails(stop, _):
+            selectedStop = stop
+        case _:
+            selectedStop = nil
+        }
         Task {
             try await railRouteShapeFetcher.getRailRouteShapes()
         }
@@ -209,12 +215,6 @@ struct HomeMapView: View {
             alertsByStop: currentStopAlerts
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
-        if let railResponse = railRouteShapeFetcher.response {
-            let updatedRouteSources = RouteSourceGenerator(routeData: railResponse, stopsById: globalFetcher.stops,
-                                                           alertsByStop: currentStopAlerts)
-            layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
-        }
-
         if selectedStop != nil {
             viewportProvider.animateTo(coordinates: selectedStop!.coordinate, zoom: 17.0)
         }
@@ -225,7 +225,6 @@ struct HomeMapView: View {
             stops: globalFetcher.stops,
             selectedStop: selectedStop,
             routeSourceDetails: layerManager?.routeSourceGenerator?.routeSourceDetails,
-
             alertsByStop: alertsByStop
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
