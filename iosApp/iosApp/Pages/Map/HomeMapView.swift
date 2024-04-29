@@ -20,6 +20,9 @@ struct HomeMapView: View {
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
+    var stopRepository: IStopRepository
+    @State var stopMapData: StopMapResponse?
+
     @StateObject private var locationDataManager: LocationDataManager
     @Binding var navigationStack: [SheetNavigationStackEntry]
     @Binding var sheetHeight: CGFloat
@@ -45,6 +48,7 @@ struct HomeMapView: View {
         railRouteShapeFetcher: RailRouteShapeFetcher,
         vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
+        stopRepository: IStopRepository = RepositoryDI().stop,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         navigationStack: Binding<[SheetNavigationStackEntry]>,
         sheetHeight: Binding<CGFloat>
@@ -55,6 +59,7 @@ struct HomeMapView: View {
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.vehiclesFetcher = vehiclesFetcher
         self.viewportProvider = viewportProvider
+        self.stopRepository = stopRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _navigationStack = navigationStack
         _sheetHeight = sheetHeight
@@ -209,14 +214,17 @@ struct HomeMapView: View {
     ) {
         let layerManager = MapLayerManager(map: map)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops,
-                                                        alertsByStop: currentStopAlerts)
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: routeResponse,
+            stopsById: stops,
+            alertsByStop: currentStopAlerts
+        )
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
             stopSourceGenerator: StopSourceGenerator(
                 stops: stops,
-                selectedStop: selectedStop, routeSourceDetails: routeSourceGenerator.routeSourceDetails,
-
+                selectedStop: selectedStop,
+                routeSourceDetails: routeSourceGenerator.routeSourceDetails,
                 alertsByStop: currentStopAlerts
             )
         )
@@ -239,6 +247,11 @@ struct HomeMapView: View {
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         if let selectedStop {
             viewportProvider.animateTo(coordinates: selectedStop.coordinate, zoom: 17.0)
+            Task {
+                stopMapData = try await stopRepository.getStopMapData(stopId: selectedStop.id)
+            }
+        } else {
+            stopMapData = nil
         }
     }
 
@@ -251,8 +264,11 @@ struct HomeMapView: View {
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         if let railResponse = railRouteShapeFetcher.response {
-            let updatedRouteSources = RouteSourceGenerator(routeData: railResponse, stopsById: globalFetcher.stops,
-                                                           alertsByStop: alertsByStop)
+            let updatedRouteSources = RouteSourceGenerator(
+                routeData: railResponse,
+                stopsById: globalFetcher.stops,
+                alertsByStop: alertsByStop
+            )
             layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
         }
     }
