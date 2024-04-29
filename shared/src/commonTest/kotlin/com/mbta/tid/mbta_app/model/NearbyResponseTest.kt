@@ -535,8 +535,9 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -685,8 +686,9 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -795,7 +797,8 @@ class NearbyResponseTest {
                 schedules = null,
                 predictions = null,
                 alerts = null,
-                filterAtTime = time
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -905,12 +908,129 @@ class NearbyResponseTest {
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 schedules = ScheduleResponse(objects),
                 alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
+            realtimeRoutesSorted.map { it.route }
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo sorts pinned routes to the top`() {
+        val objects = ObjectCollectionBuilder()
+
+        val closeBusStop = objects.stop()
+        val farBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.1
+                longitude = closeBusStop.longitude + 0.1
+            }
+        val closeSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.2
+                longitude = closeBusStop.longitude + 0.2
+            }
+        val farSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.3
+                longitude = closeBusStop.longitude + 0.3
+            }
+
+        val closeBusRoute = objects.route { type = RouteType.BUS }
+        val farBusRoute = objects.route { type = RouteType.BUS }
+        val closeSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+        val farSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Oak Grove" }
+            }
+        val closeBusPattern =
+            objects.routePattern(closeBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+            }
+        val farBusPattern =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(farBusRoute) {
+                    stop(farBusStop) { headsign("Malden Center", listOf(farBusPattern)) }
+                }
+                route(closeBusRoute) {
+                    stop(closeBusStop) { headsign("Nubian", listOf(closeBusPattern)) }
+                }
+                route(farSubwayRoute) {
+                    stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
+                }
+                route(closeSubwayRoute) {
+                    stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
+                }
+            }
+
+        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+
+        // close subway prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = closeSubwayRoute.id
+            stopId = closeSubwayStop.id
+            tripId = closeSubwayPattern.representativeTripId
+        }
+
+        // far subway prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = farSubwayRoute.id
+            stopId = farSubwayStop.id
+            tripId = farSubwayPattern.representativeTripId
+        }
+
+        // close bus prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = closeBusRoute.id
+            stopId = closeBusStop.id
+            tripId = closeBusPattern.representativeTripId
+        }
+
+        // far bus prediction
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = farBusRoute.id
+            stopId = farBusStop.id
+            tripId = farBusPattern.representativeTripId
+        }
+
+        val realtimeRoutesSorted =
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = closeBusStop.position,
+                predictions = PredictionsStreamDataResponse(objects),
+                schedules = ScheduleResponse(objects),
+                alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(farBusRoute.id, farSubwayRoute.id),
+            )
+        assertEquals(
+            listOf(farSubwayRoute, farBusRoute, closeSubwayRoute, closeBusRoute),
             realtimeRoutesSorted.map { it.route }
         )
     }
@@ -964,8 +1084,9 @@ class NearbyResponseTest {
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -1031,8 +1152,9 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -1116,8 +1238,9 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -1184,8 +1307,9 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                filterAtTime = time,
                 alerts = AlertsStreamDataResponse(objects),
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }
@@ -1255,7 +1379,8 @@ class NearbyResponseTest {
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
                 alerts = null,
-                filterAtTime = time
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
             )
         )
     }

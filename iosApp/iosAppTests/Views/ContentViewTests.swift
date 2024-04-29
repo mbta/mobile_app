@@ -19,6 +19,11 @@ final class ContentViewTests: XCTestCase {
 
     override func setUp() {
         executionTimeAllowance = 60
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(schedules: MockScheduleRepository()))
+    }
+
+    override func tearDown() {
+        HelpersKt.loadDefaultRepoModules()
     }
 
     func testDisconnectsSocketAfterBackgrounding() throws {
@@ -36,7 +41,6 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
             .environmentObject(ViewportProvider())
@@ -44,7 +48,6 @@ final class ContentViewTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [connectedExpectation], timeout: 1)
-
         try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
@@ -66,7 +69,6 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
             .environmentObject(ViewportProvider())
@@ -116,7 +118,6 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(ScheduleFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: FakeSocket()))
             .environmentObject(ViewportProvider())

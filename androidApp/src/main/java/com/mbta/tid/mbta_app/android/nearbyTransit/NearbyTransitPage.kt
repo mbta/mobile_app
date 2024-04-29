@@ -55,7 +55,8 @@ fun NearbyTransitPage(
                 schedules,
                 predictions,
                 alertData,
-                now
+                now,
+                pinnedRoutes = setOf()
             )
         }
 
