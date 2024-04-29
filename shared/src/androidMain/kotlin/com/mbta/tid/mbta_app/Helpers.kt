@@ -9,6 +9,6 @@ import org.koin.core.context.startKoin
 internal fun createDataStore(context: Context): DataStore<Preferences> =
     getDataStore(producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath })
 
-fun initKoin() {
-    startKoin { modules(appModule() + platformModule()) }
+fun initKoin(appVariant: AppVariant) {
+    startKoin { modules(appModule(appVariant) + platformModule()) }
 }

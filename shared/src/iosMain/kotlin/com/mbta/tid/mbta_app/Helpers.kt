@@ -30,8 +30,8 @@ internal fun createDataStore(): DataStore<Preferences> =
         }
     )
 
-fun initKoin() {
-    startKoin { modules(appModule() + platformModule()) }
+fun initKoin(appVariant: AppVariant) {
+    startKoin { modules(appModule(appVariant) + platformModule()) }
 }
 
 /*
