@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+
 plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
@@ -30,6 +32,11 @@ kotlin {
             export(libs.kotlinx.datetime)
             export(libs.sentry)
         }
+
+        xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["StagingRelease"] = NativeBuildType.RELEASE
+        xcodeConfigurationToNativeBuildType["ProdDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["ProdRelease"] = NativeBuildType.RELEASE
     }
 
     sourceSets {
@@ -42,7 +49,6 @@ kotlin {
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
-
                 implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
                 api(libs.sentry)
@@ -55,8 +61,8 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
-                implementation(libs.ktor.client.mock)
                 implementation(libs.koin.test)
+                implementation(libs.ktor.client.mock)
             }
         }
         val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }

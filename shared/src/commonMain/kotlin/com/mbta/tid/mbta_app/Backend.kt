@@ -28,12 +28,8 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-class Backend(engine: HttpClientEngine) {
-    constructor() : this(getPlatform().httpClientEngine)
-
-    companion object {
-        const val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
-    }
+class Backend(engine: HttpClientEngine, val appVariant: AppVariant) {
+    constructor(appVariant: AppVariant) : this(getPlatform().httpClientEngine, appVariant)
 
     private val httpClient =
         HttpClient(engine) {
@@ -41,7 +37,7 @@ class Backend(engine: HttpClientEngine) {
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
             install(HttpTimeout) { requestTimeoutMillis = 5000 }
-            defaultRequest { url("https://$mobileBackendHost") }
+            defaultRequest { url(appVariant.backendRoot) }
         }
 
     @Throws(

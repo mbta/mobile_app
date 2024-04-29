@@ -5,73 +5,17 @@ import SwiftUI
 
 @main
 struct IOSApp: App {
-    let backend: BackendProtocol = CommandLine.arguments.contains("-testing") ? IdleBackend() : Backend()
-
-    // ignore updates less than 0.1km
-    @StateObject var locationDataManager: LocationDataManager
-
-    @StateObject var alertsFetcher: AlertsFetcher
-    @StateObject var backendProvider: BackendProvider
-    @StateObject var globalFetcher: GlobalFetcher
-    @StateObject var nearbyFetcher: NearbyFetcher
-    @StateObject var predictionsFetcher: PredictionsFetcher
-    @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @StateObject var scheduleFetcher: ScheduleFetcher
-    @StateObject var searchResultFetcher: SearchResultFetcher
-    @StateObject var socketProvider: SocketProvider
-    @StateObject var viewportProvider: ViewportProvider
-
-    init() {
-        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
-            let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
-            AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
-        } else {
-            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
-        }
-        HelpersKt.doInitKoin()
-
-        let socket = Socket(SocketUtils.companion.url)
-        socket.withRawMessages()
-        socket.onOpen {
-            Logger().debug("Socket opened")
-        }
-        socket.onClose {
-            Logger().debug("Socket closed")
-        }
-        self.init(socket: socket)
-    }
-
-    init(socket: PhoenixSocket) {
-        let backend = backend
-        _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
-
-        _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
-        _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
-        _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
-        _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
-        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
-        _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
-        _scheduleFetcher = StateObject(wrappedValue: ScheduleFetcher(backend: backend))
-        _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
-        _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
-        _viewportProvider = StateObject(wrappedValue: ViewportProvider())
-    }
+    // When running unit tests or previews, don't mount the entire app which makes real API requests.
+    private let isTestOrPreview = ProcessInfo.processInfo.arguments.contains("--dummy-test-app")
+        || ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != nil
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(locationDataManager)
-                .environmentObject(alertsFetcher)
-                .environmentObject(backendProvider)
-                .environmentObject(globalFetcher)
-                .environmentObject(nearbyFetcher)
-                .environmentObject(predictionsFetcher)
-                .environmentObject(railRouteShapeFetcher)
-                // TODO: Fully replace scheduleFetcher
-                .environmentObject(scheduleFetcher)
-                .environmentObject(searchResultFetcher)
-                .environmentObject(socketProvider)
-                .environmentObject(viewportProvider)
+            if isTestOrPreview {
+                DummyTestAppView()
+            } else {
+                ProductionAppView()
+            }
         }
     }
 }
