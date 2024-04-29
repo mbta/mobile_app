@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.network
 
+import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.json
 import io.ktor.client.HttpClient
@@ -15,12 +16,8 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 
-class MobileBackendClient(engine: HttpClientEngine) {
-    constructor() : this(getPlatform().httpClientEngine)
-
-    companion object {
-        const val mobileBackendHost = "mobile-app-backend-staging.mbtace.com"
-    }
+class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) {
+    constructor(appVariant: AppVariant) : this(getPlatform().httpClientEngine, appVariant)
 
     private val httpClient =
         HttpClient(engine) {
@@ -28,7 +25,7 @@ class MobileBackendClient(engine: HttpClientEngine) {
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
             install(HttpTimeout) { requestTimeoutMillis = 5000 }
-            defaultRequest { url("https://$mobileBackendHost") }
+            defaultRequest { url(appVariant.backendRoot) }
         }
 
     suspend fun get(request: HttpRequestBuilder.() -> Unit): HttpResponse {

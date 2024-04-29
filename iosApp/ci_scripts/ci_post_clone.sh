@@ -63,6 +63,9 @@ if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
   echo "${MAPBOX_PUBLIC_TOKEN}" >> mapbox
 fi
 
+echo "Creating temporary iosApp scheme to preserve existing Xcode Cloud CI setup"
+ln -s "${CI_PRIMARY_REPOSITORY_PATH}/iosApp/iosApp.xcodeproj/xcshareddata/xcschemes/Prod.xcscheme" "${CI_PRIMARY_REPOSITORY_PATH}/iosApp/iosApp.xcodeproj/xcshareddata/xcschemes/iosApp.xcscheme"
+
 echo "Adding build environment variables"
 cd ${CI_PRIMARY_REPOSITORY_PATH}
 touch .envrc

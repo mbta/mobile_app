@@ -160,7 +160,7 @@ class BackendTest {
                 )
             }
 
-            val backend = Backend(mockEngine)
+            val backend = Backend(mockEngine, AppVariant.Staging)
             val response = backend.getGlobalData()
 
             val route52 =
@@ -387,7 +387,7 @@ class BackendTest {
                 )
             }
 
-            val backend = Backend(mockEngine)
+            val backend = Backend(mockEngine, AppVariant.Staging)
             val response = backend.getSearchResults("hay")
 
             assertEquals(
@@ -546,7 +546,7 @@ class BackendTest {
                     headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
             }
-            val backend = Backend(mockEngine)
+            val backend = Backend(mockEngine, AppVariant.Staging)
             val response = backend.getMapFriendlyRailShapes()
 
             assertEquals(

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+
 plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
@@ -30,6 +32,11 @@ kotlin {
             export(libs.kotlinx.datetime)
             export(libs.sentry)
         }
+
+        xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["StagingRelease"] = NativeBuildType.RELEASE
+        xcodeConfigurationToNativeBuildType["ProdDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["ProdRelease"] = NativeBuildType.RELEASE
     }
 
     sourceSets {

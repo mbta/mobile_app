@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import io.ktor.client.engine.mock.MockEngine
@@ -39,7 +40,7 @@ class BackendFetcherTest {
             )
         }
 
-        val backend = Backend(engine)
+        val backend = Backend(engine, AppVariant.Staging)
 
         var key by mutableStateOf(1)
         var lastState: NearbyResponse? =
