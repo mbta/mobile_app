@@ -9,6 +9,7 @@ import io.ktor.http.path
 import io.ktor.serialization.JsonConvertException
 import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -61,5 +62,15 @@ class MockScheduleRepository : ISchedulesRepository {
 
     override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
         return ScheduleResponse(schedules = listOf(), trips = mapOf())
+    }
+}
+
+class IdleScheduleRepository : ISchedulesRepository {
+    override suspend fun getSchedule(stopIds: List<String>, now: Instant): ScheduleResponse {
+        return suspendCancellableCoroutine {}
+    }
+
+    override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
+        return suspendCancellableCoroutine {}
     }
 }
