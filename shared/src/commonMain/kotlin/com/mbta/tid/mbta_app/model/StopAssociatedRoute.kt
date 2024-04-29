@@ -226,7 +226,8 @@ fun NearbyStaticData.withRealtimeInfo(
     schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
     alerts: AlertsStreamDataResponse?,
-    filterAtTime: Instant
+    filterAtTime: Instant,
+    pinnedRoutes: Set<String>
 ): List<StopAssociatedRoute> {
     // add predictions and apply filtering
     val upcomingTripsByHeadsignAndStop =
@@ -250,6 +251,7 @@ fun NearbyStaticData.withRealtimeInfo(
         }
 
     return data
+        .asSequence()
         .map {
             StopAssociatedRoute(
                 it,
@@ -260,6 +262,8 @@ fun NearbyStaticData.withRealtimeInfo(
             )
         }
         .filterNot { it.patternsByStop.isEmpty() }
+        .toList()
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.route }))
         .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
+        .sortedWith(compareBy { !pinnedRoutes.contains(it.route.id) })
 }

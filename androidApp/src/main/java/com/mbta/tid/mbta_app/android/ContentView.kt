@@ -85,6 +85,9 @@ fun ContentView() {
         HomeMapView(
             Modifier.padding(sheetPadding),
             mapViewportState,
+            backend = backend,
+            globalData = globalData,
+            alertsData = alertData,
             lastNearbyTransitLocation = lastNearbyTransitLocation
         )
     }

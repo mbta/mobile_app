@@ -243,6 +243,7 @@
 		9ADB84A12BAE37C0006581CE /* StopExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopExtension.swift; sourceTree = "<group>"; };
 		9AF093772BD943A4001DF39F /* DirectionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPicker.swift; sourceTree = "<group>"; };
 		9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPickerTests.swift; sourceTree = "<group>"; };
+		9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9AF88E042B48913C00E08C7C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED3581652BB4706F005DDC34 /* PartialSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialSheetModifier.swift; sourceTree = "<group>"; };
@@ -375,6 +376,7 @@
 			children = (
 				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
 				8C304C652B69C0C300263886 /* .swift-version */,
+				9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */,
 				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
 				8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */,
 				7555FF7D242A565900829871 /* iosApp */,

@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.mapbox.android)
     implementation(libs.mapbox.compose)
+    implementation(libs.mapbox.turf)
     implementation(libs.accompanist.permissions)
     debugImplementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.test.manifest)

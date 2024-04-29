@@ -153,7 +153,8 @@ struct NearbyTransitView: View {
             schedules: scheduleResponse,
             predictions: predictionsFetcher.predictions,
             alerts: alertsFetcher.alerts,
-            filterAtTime: now.toKotlinInstant()
+            filterAtTime: now.toKotlinInstant(),
+            pinnedRoutes: pinnedRoutes
         )
     }
 
@@ -173,6 +174,7 @@ struct NearbyTransitView: View {
         Task {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
+                updateNearbyRoutes()
             } catch {
                 debugPrint(error)
             }

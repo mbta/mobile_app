@@ -52,11 +52,10 @@ class StopSourceGenerator {
 
             routeSource.lines.flatMap { lineData in
                 lineData.stopIds.compactMap { childStopId in
-                    guard let stopOnRoute = stops[childStopId],
-                          let stop = stopOnRoute.resolveParent(stops)
-                    else {
+                    guard let stopOnRoute = stops[childStopId] else {
                         return nil
                     }
+                    let stop = stopOnRoute.resolveParent(stops: stops)
 
                     if touchedStopIds.contains(stop.id) { return nil }
 
