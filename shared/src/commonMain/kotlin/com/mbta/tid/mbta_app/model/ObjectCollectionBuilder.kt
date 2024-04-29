@@ -277,11 +277,27 @@ class ObjectCollectionBuilder {
 
     class VehicleBuilder : ObjectBuilder<Vehicle> {
         var id: String = uuid()
+        var bearing = 0.0
         lateinit var currentStatus: Vehicle.CurrentStatus
+        var directionId = 0
+        var latitude = 1.2
+        var longitude = 3.4
+        var routeId: String? = null
         var stopId: String? = null
         var tripId = ""
 
-        override fun built() = Vehicle(id, currentStatus, stopId, tripId)
+        override fun built() =
+            Vehicle(
+                id,
+                bearing,
+                currentStatus,
+                directionId,
+                latitude,
+                longitude,
+                routeId,
+                stopId,
+                tripId
+            )
     }
 
     fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(vehicles, VehicleBuilder(), block)

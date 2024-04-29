@@ -17,6 +17,7 @@ struct ContentView: View {
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
+    @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = .zero
     @State private var navigationStack: [SheetNavigationStackEntry] = []
@@ -53,6 +54,7 @@ struct ContentView: View {
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     railRouteShapeFetcher: railRouteShapeFetcher,
+                    vehiclesFetcher: vehiclesFetcher,
                     viewportProvider: viewportProvider,
                     navigationStack: $navigationStack,
                     sheetHeight: $sheetHeight

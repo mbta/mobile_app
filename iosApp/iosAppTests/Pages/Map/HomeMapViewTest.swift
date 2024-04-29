@@ -29,6 +29,7 @@ final class HomeMapViewTest: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: .init(backend: IdleBackend()),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
+            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             navigationStack: navStack,
             sheetHeight: sheetHeight
