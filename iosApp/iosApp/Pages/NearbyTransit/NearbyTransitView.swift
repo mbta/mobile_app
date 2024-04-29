@@ -20,7 +20,8 @@ struct NearbyTransitView: View {
     var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
-    @ObservedObject var scheduleFetcher: ScheduleFetcher
+    var schedulesRepository: ISchedulesRepository
+    @State var scheduleResponse: ScheduleResponse?
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var alertsFetcher: AlertsFetcher
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
@@ -60,7 +61,7 @@ struct NearbyTransitView: View {
             joinPredictions()
             scrollToTop()
         }
-        .onChange(of: scheduleFetcher.schedules) { _ in
+        .onChange(of: scheduleResponse) { _ in
             updateNearbyRoutes()
         }
         .onChange(of: predictionsFetcher.predictions) { _ in
@@ -127,7 +128,7 @@ struct NearbyTransitView: View {
             guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
-            await scheduleFetcher.getSchedule(stopIds: stopIdList)
+            scheduleResponse = try await schedulesRepository.getSchedule(stopIds: stopIdList)
         }
     }
 
@@ -149,7 +150,7 @@ struct NearbyTransitView: View {
 
     private func updateNearbyRoutes() {
         nearbyWithRealtimeInfo = nearbyFetcher.withRealtimeInfo(
-            schedules: scheduleFetcher.schedules,
+            schedules: scheduleResponse,
             predictions: predictionsFetcher.predictions,
             alerts: alertsFetcher.alerts,
             filterAtTime: now.toKotlinInstant(),

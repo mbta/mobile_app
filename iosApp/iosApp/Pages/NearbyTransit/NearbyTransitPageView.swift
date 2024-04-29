@@ -17,7 +17,7 @@ struct NearbyTransitPageView: View {
     var currentLocation: CLLocationCoordinate2D?
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
-    @ObservedObject var scheduleFetcher: ScheduleFetcher
+    var schedulesRepository: ISchedulesRepository
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var viewportProvider: ViewportProvider
     @ObservedObject var alertsFetcher: AlertsFetcher
@@ -31,7 +31,7 @@ struct NearbyTransitPageView: View {
         currentLocation: CLLocationCoordinate2D?,
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
-        scheduleFetcher: ScheduleFetcher,
+        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsFetcher: PredictionsFetcher,
         viewportProvider: ViewportProvider,
         alertsFetcher: AlertsFetcher
@@ -39,7 +39,7 @@ struct NearbyTransitPageView: View {
         self.currentLocation = currentLocation
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
-        self.scheduleFetcher = scheduleFetcher
+        self.schedulesRepository = schedulesRepository
         self.predictionsFetcher = predictionsFetcher
         self.viewportProvider = viewportProvider
         self.alertsFetcher = alertsFetcher
@@ -57,7 +57,7 @@ struct NearbyTransitPageView: View {
             location: locationProvider.location,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
-            scheduleFetcher: scheduleFetcher,
+            schedulesRepository: schedulesRepository,
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: alertsFetcher
         )
