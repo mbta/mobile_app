@@ -15,7 +15,6 @@ struct ContentView: View {
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var predictionsFetcher: PredictionsFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @EnvironmentObject var scheduleFetcher: ScheduleFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -88,7 +87,6 @@ struct ContentView: View {
                     currentLocation: locationDataManager.currentLocation?.coordinate,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
-                    scheduleFetcher: scheduleFetcher,
                     predictionsFetcher: predictionsFetcher,
                     viewportProvider: viewportProvider,
                     alertsFetcher: alertsFetcher
@@ -117,22 +115,5 @@ struct ContentView: View {
                 largestUndimmedDetent: .medium
             )
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockSocket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
-
-        ContentView()
-            .environmentObject(LocationDataManager())
-            .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(GlobalFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(socket: mockSocket))
-            .environmentObject(SocketProvider(socket: mockSocket))
-            .environmentObject(AlertsFetcher(socket: mockSocket))
-            .environmentObject(ViewportProvider())
     }
 }

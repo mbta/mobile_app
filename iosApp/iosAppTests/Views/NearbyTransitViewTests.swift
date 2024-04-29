@@ -32,7 +32,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -68,7 +68,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -158,7 +158,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -232,20 +232,14 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        class FakeScheduleFetcher: ScheduleFetcher {
-            init(_ objects: ObjectCollectionBuilder) {
-                super.init(backend: IdleBackend())
-                schedules = .init(objects: objects)
-            }
-        }
-
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: FakeScheduleFetcher(objects),
+            schedulesRepository: IdleScheduleRepository(),
+            scheduleResponse: .init(objects: objects),
             predictionsFetcher: FakePredictionsFetcher(objects),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -327,7 +321,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: FakePredictionsFetcher(distantInstant: distantInstant),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -390,7 +384,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -419,7 +413,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -481,7 +475,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -525,7 +519,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -572,7 +566,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -596,7 +590,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -622,7 +616,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -649,7 +643,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: FakePredictionsFetcher(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -688,7 +682,7 @@ final class NearbyTransitViewTests: XCTestCase {
             currentLocation: currentLocation,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
-            scheduleFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             viewportProvider: .init(viewport: .followPuck(zoom: ViewportProvider.defaultZoom)),
             alertsFetcher: .init(socket: MockSocket())
@@ -726,9 +720,6 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testNoService() throws {
-        let scheduleFetcher = ScheduleFetcher(backend: IdleBackend())
-        scheduleFetcher.schedules = .init(schedules: [], trips: [:])
-
         let predictionsFetcher = PredictionsFetcher(socket: MockSocket())
         predictionsFetcher.predictions = .init(predictions: [:], trips: [:], vehicles: [:])
 
@@ -746,7 +737,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            scheduleFetcher: scheduleFetcher,
+            schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: alertsFetcher
         )
