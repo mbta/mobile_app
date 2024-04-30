@@ -64,49 +64,16 @@ struct HomeMapView: View {
     }
 
     var body: some View {
-        MapReader { proxy in
-            Map(viewport: $viewportProvider.viewport) {
-                Puck2D().pulsing(.none)
-                if isNearbyNotFollowing(), navigationStack.isEmpty {
-                    MapViewAnnotation(coordinate: nearbyFetcher.loadedLocation!) {
-                        Circle()
-                            .strokeBorder(.white, lineWidth: 2.5)
-                            .background(Circle().fill(.orange))
-                            .frame(width: 22, height: 22)
-                    }
-                }
-                if let filter = navigationStack.lastStopDetailsFilter, let vehicles = vehiclesFetcher.vehicles {
-                    ForEvery(vehicles, id: \.id) { vehicle in
-                        if vehicle.routeId == filter.routeId, vehicle.directionId == filter.directionId {
-                            MapViewAnnotation(coordinate: vehicle.coordinate) {
-                                Circle()
-                                    .strokeBorder(.white, lineWidth: 2.5)
-                                    .background(Circle().fill(.black))
-                                    .frame(width: 16, height: 16)
-                            }
-                        }
-                    }
-                }
+        modifiedMap.overlay(alignment: .topTrailing) {
+            if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                RecenterButton { Task { viewportProvider.follow() } }
             }
-            .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-            .mapStyle(.light)
-            .onCameraChanged { change in handleCameraChange(change) }
-            .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
-            .additionalSafeAreaInsets(.bottom, sheetHeight)
-            .accessibilityIdentifier("transitMap")
-            .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
-            .onChange(of: globalFetcher.response) { _ in
-                handleTryLayerInit(map: proxy.map)
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: alertsFetcher.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
-            }
-            .onChange(of: railRouteShapeFetcher.response) { _ in
-                handleTryLayerInit(map: proxy.map)
-            }
+        }
+    }
+
+    @ViewBuilder
+    var modifiedMap: some View {
+        proxyModifiedMap
             .onChange(of: locationDataManager.authorizationStatus) { status in
                 if status == .authorizedAlways || status == .authorizedWhenInUse {
                     Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
@@ -119,25 +86,10 @@ struct HomeMapView: View {
                 )
             }
             .onChange(of: navigationStack) { nextNavStack in
-                switch nextNavStack.last {
-                case let .stopDetails(stop, _):
-                    selectedStop = stop
-                case _:
-                    selectedStop = nil
-                }
+                handleNavStackChange(navigationStack: nextNavStack)
             }
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
-            }
-            .onChange(of: navigationStack.lastStopDetailsFilter) { filter in
-                if let filter {
-                    vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
-                } else {
-                    vehiclesFetcher.leave()
-                }
-            }
-            .onDisappear {
-                vehiclesFetcher.leave()
             }
             .onReceive(timer) { input in
                 now = input
@@ -149,10 +101,67 @@ struct HomeMapView: View {
             .onChange(of: currentStopAlerts) { nextStopAlerts in
                 handleStopAlertChange(alertsByStop: nextStopAlerts)
             }
+            .onDisappear {
+                vehiclesFetcher.leave()
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .overlay(alignment: .topTrailing) {
-                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { Task { viewportProvider.follow() } }
+    }
+
+    @ViewBuilder
+    var proxyModifiedMap: some View {
+        MapReader { proxy in
+            configuredMap
+                .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
+                .onChange(of: globalFetcher.response) { _ in
+                    handleTryLayerInit(map: proxy.map)
+                    currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                        alerts: alertsFetcher.alerts,
+                        filterAtTime: now.toKotlinInstant()
+                    )
+                }
+                .onChange(of: railRouteShapeFetcher.response) { _ in
+                    handleTryLayerInit(map: proxy.map)
+                }
+        }
+    }
+
+    @ViewBuilder
+    var configuredMap: some View {
+        map
+            .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
+            .mapStyle(.light)
+            .onCameraChanged { change in handleCameraChange(change) }
+            .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
+            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
+            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
+            .additionalSafeAreaInsets(.bottom, sheetHeight)
+            .accessibilityIdentifier("transitMap")
+    }
+
+    @ViewBuilder
+    var map: Map {
+        Map(viewport: $viewportProvider.viewport) {
+            Puck2D().pulsing(.none)
+            if isNearbyNotFollowing(), navigationStack.isEmpty {
+                MapViewAnnotation(coordinate: nearbyFetcher.loadedLocation!) {
+                    Circle()
+                        .strokeBorder(.white, lineWidth: 2.5)
+                        .background(Circle().fill(.orange))
+                        .frame(width: 22, height: 22)
+                }
+            }
+            if let filter = navigationStack.lastStopDetailsFilter {
+                if let vehicles = vehiclesFetcher.vehicles {
+                    ForEvery(vehicles, id: \.id) { vehicle in
+                        if vehicle.routeId == filter.routeId, vehicle.directionId == filter.directionId {
+                            MapViewAnnotation(coordinate: vehicle.coordinate) {
+                                Circle()
+                                    .strokeBorder(.white, lineWidth: 2.5)
+                                    .background(Circle().fill(.black))
+                                    .frame(width: 16, height: 16)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -236,6 +245,21 @@ struct HomeMapView: View {
         )
 
         self.layerManager = layerManager
+    }
+
+    func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
+        if let filter = navigationStack.lastStopDetailsFilter {
+            vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
+        } else {
+            vehiclesFetcher.leave()
+        }
+
+        switch navigationStack.last {
+        case let .stopDetails(stop, _):
+            selectedStop = stop
+        case _:
+            selectedStop = nil
+        }
     }
 
     func handleSelectedStopChange(selectedStop: Stop?) {

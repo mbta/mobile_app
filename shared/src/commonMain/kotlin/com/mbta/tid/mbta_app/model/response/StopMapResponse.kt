@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
 data class StopMapResponse(
     @SerialName("map_friendly_route_shapes")
     val routeShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-    @SerialName("child_stops") val stops: Map<String, Stop>
+    @SerialName("child_stops") val childStops: Map<String, Stop>
 )
