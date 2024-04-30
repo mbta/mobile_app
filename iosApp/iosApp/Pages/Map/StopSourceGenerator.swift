@@ -17,6 +17,7 @@ struct StopFeatureData {
 
 class StopSourceGenerator {
     let stops: [String: Stop]
+    let selectedStop: Stop?
     let routeSourceDetails: [RouteSourceData]?
     let alertsByStop: [String: AlertAssociatedStop]
 
@@ -32,13 +33,16 @@ class StopSourceGenerator {
 
     static let propIdKey = "id"
     static let propServiceStatusKey = "serviceStatus"
+    static let propIsSelectedKey = "isSelected"
 
     init(
         stops: [String: Stop],
+        selectedStop: Stop? = nil,
         routeSourceDetails: [RouteSourceData]? = nil,
         alertsByStop: [String: AlertAssociatedStop]? = nil
     ) {
         self.stops = stops
+        self.selectedStop = selectedStop
         self.routeSourceDetails = routeSourceDetails
         self.alertsByStop = alertsByStop ?? [:]
 
@@ -91,6 +95,8 @@ class StopSourceGenerator {
         var featureProps = JSONObject()
         featureProps[Self.propIdKey] = JSONValue(String(describing: stop.id))
         featureProps[Self.propServiceStatusKey] = JSONValue(String(describing: getServiceStatus(stop: stop)))
+        featureProps[Self.propIsSelectedKey] = JSONValue(stop.id == selectedStop?.id)
+
         return featureProps
     }
 
