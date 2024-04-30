@@ -37,7 +37,7 @@ final class HomeMapViewTests: XCTestCase {
             navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
-        XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.defaultCenter)
+        XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.Defaults.center)
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {

@@ -13,8 +13,6 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-    private let cameraDebouncer = Debouncer(delay: 0.25)
-
     @ObservedObject var alertsFetcher: AlertsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
@@ -38,6 +36,10 @@ struct HomeMapView: View {
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
     let log = Logger()
+
+    private var isNearbyNotFollowing: Bool {
+        !viewportProvider.viewport.isFollowing && locationDataManager.currentLocation != nil && navigationStack.isEmpty
+    }
 
     init(
         alertsFetcher: AlertsFetcher,
@@ -75,9 +77,8 @@ struct HomeMapView: View {
     var modifiedMap: some View {
         proxyModifiedMap
             .onChange(of: locationDataManager.authorizationStatus) { status in
-                if status == .authorizedAlways || status == .authorizedWhenInUse {
-                    Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
-                }
+                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+                viewportProvider.follow(animation: .easeInOut(duration: 0))
             }
             .onChange(of: alertsFetcher.alerts) { nextAlerts in
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
@@ -91,18 +92,18 @@ struct HomeMapView: View {
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
             }
+            .onChange(of: currentStopAlerts) { nextStopAlerts in
+                handleStopAlertChange(alertsByStop: nextStopAlerts)
+            }
+            .onDisappear {
+                vehiclesFetcher.leave()
+            }
             .onReceive(timer) { input in
                 now = input
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
                     alerts: alertsFetcher.alerts,
                     filterAtTime: now.toKotlinInstant()
                 )
-            }
-            .onChange(of: currentStopAlerts) { nextStopAlerts in
-                handleStopAlertChange(alertsByStop: nextStopAlerts)
-            }
-            .onDisappear {
-                vehiclesFetcher.leave()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
@@ -112,7 +113,7 @@ struct HomeMapView: View {
         MapReader { proxy in
             AnnotatedMap(
                 filter: navigationStack.lastStopDetailsFilter,
-                nearbyLocation: isNearbyNotFollowing() && navigationStack.isEmpty ? nearbyFetcher.loadedLocation : nil,
+                nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
                 sheetHeight: sheetHeight,
                 vehicles: vehiclesFetcher.vehicles,
                 viewportProvider: viewportProvider,
@@ -154,10 +155,8 @@ struct HomeMapView: View {
         }.eraseToSignal())
 
         // If location data is provided, follow the user's location
-        Task {
-            if locationDataManager.currentLocation != nil {
-                viewportProvider.follow(animation: .easeInOut(duration: .zero))
-            }
+        if locationDataManager.currentLocation != nil {
+            viewportProvider.follow(animation: .easeInOut(duration: .zero))
         }
 
         didAppear?(self)
@@ -166,9 +165,7 @@ struct HomeMapView: View {
     func handleCameraChange(_ change: CameraChanged) {
         guard let layerManager else { return }
         layerManager.updateStopLayerZoom(change.cameraState.zoom)
-        cameraDebouncer.debounce {
-            viewportProvider.cameraState = change.cameraState
-        }
+        viewportProvider.updateCameraState(change.cameraState)
     }
 
     func handleTryLayerInit(map: MapboxMap?) {
@@ -283,10 +280,5 @@ struct HomeMapView: View {
         navigationStack.removeAll()
         navigationStack.append(.stopDetails(stop, nil))
         return true
-    }
-
-    func isNearbyNotFollowing() -> Bool {
-        nearbyFetcher.loadedLocation != nil
-            && nearbyFetcher.loadedLocation != locationDataManager.currentLocation?.coordinate
     }
 }

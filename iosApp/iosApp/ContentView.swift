@@ -86,7 +86,6 @@ struct ContentView: View {
         GeometryReader { proxy in
             NavigationStack(path: $navigationStack) {
                 NearbyTransitPageView(
-                    currentLocation: locationDataManager.currentLocation?.coordinate,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     predictionsFetcher: predictionsFetcher,
