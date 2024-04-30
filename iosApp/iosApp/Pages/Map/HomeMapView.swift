@@ -19,6 +19,7 @@ struct HomeMapView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
     @StateObject private var locationDataManager: LocationDataManager
@@ -40,6 +41,7 @@ struct HomeMapView: View {
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
         railRouteShapeFetcher: RailRouteShapeFetcher,
+        vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         navigationStack: Binding<[SheetNavigationStackEntry]>,
@@ -49,6 +51,7 @@ struct HomeMapView: View {
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
         self.railRouteShapeFetcher = railRouteShapeFetcher
+        self.vehiclesFetcher = vehiclesFetcher
         self.viewportProvider = viewportProvider
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _navigationStack = navigationStack
@@ -65,6 +68,18 @@ struct HomeMapView: View {
                             .strokeBorder(.white, lineWidth: 2.5)
                             .background(Circle().fill(.orange))
                             .frame(width: 22, height: 22)
+                    }
+                }
+                if let filter = navigationStack.lastStopDetailsFilter, let vehicles = vehiclesFetcher.vehicles {
+                    ForEvery(vehicles, id: \.id) { vehicle in
+                        if vehicle.routeId == filter.routeId, vehicle.directionId == filter.directionId {
+                            MapViewAnnotation(coordinate: vehicle.coordinate) {
+                                Circle()
+                                    .strokeBorder(.white, lineWidth: 2.5)
+                                    .background(Circle().fill(.black))
+                                    .frame(width: 16, height: 16)
+                            }
+                        }
                     }
                 }
             }
@@ -98,7 +113,6 @@ struct HomeMapView: View {
                     filterAtTime: now.toKotlinInstant()
                 )
             }
-
             .onChange(of: navigationStack) { nextNavStack in
                 switch nextNavStack.last {
                 case let .stopDetails(stop, _):
@@ -110,7 +124,16 @@ struct HomeMapView: View {
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
             }
-
+            .onChange(of: navigationStack.lastStopDetailsFilter) { filter in
+                if let filter {
+                    vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
+                } else {
+                    vehiclesFetcher.leave()
+                }
+            }
+            .onDisappear {
+                vehiclesFetcher.leave()
+            }
             .onReceive(timer) { input in
                 now = input
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
