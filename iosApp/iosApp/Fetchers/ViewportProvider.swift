@@ -52,7 +52,7 @@ class ViewportProvider: ObservableObject {
                    animation: ViewportAnimation = Defaults.animation,
                    zoom: CGFloat? = nil) {
         withViewportAnimation(animation) {
-            self.viewport = .camera(center: coordinates, zoom: zoom == nil ? self.cameraState.zoom : zoom)
+            self.viewport = .camera(center: coordinates, zoom: zoom == nil ? self.cameraStateSubject.value.zoom : zoom)
         }
     }
 
