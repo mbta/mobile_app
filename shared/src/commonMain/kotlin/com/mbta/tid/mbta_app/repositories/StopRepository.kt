@@ -41,7 +41,7 @@ class StopRepository : IStopRepository, KoinComponent {
 
 class MockStopRepository : IStopRepository {
     override suspend fun getStopMapData(stopId: String): StopMapResponse {
-        return StopMapResponse(routeShapes = listOf(), stops = mapOf())
+        return StopMapResponse(routeShapes = listOf(), childStops = mapOf())
     }
 }
 
