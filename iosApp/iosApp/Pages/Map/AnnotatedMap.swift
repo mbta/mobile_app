@@ -11,6 +11,9 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct AnnotatedMap: View {
+    static let annotationTextZoomThreshold = 19.0
+
+    var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
     var sheetHeight: CGFloat
@@ -20,6 +23,8 @@ struct AnnotatedMap: View {
 
     var handleCameraChange: (CameraChanged) -> Void
     var handleStopLayerTap: (QueriedFeature, MapContentGestureContext) -> Bool
+
+    @State private var zoomLevel: CGFloat = 0
 
     var body: some View {
         map
@@ -31,6 +36,9 @@ struct AnnotatedMap: View {
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
+            .onReceive(viewportProvider.cameraStateSubject) { newCameraState in
+                zoomLevel = newCameraState.zoom
+            }
     }
 
     @ViewBuilder
@@ -54,6 +62,46 @@ struct AnnotatedMap: View {
                                 .background(Circle().fill(.black))
                                 .frame(width: 16, height: 16)
                         }
+                    }
+                }
+            }
+            if let childStops = stopMapData?.childStops.values {
+                ForEvery(Array(childStops), id: \.id) { child in
+                    switch child.locationType {
+                    case .entranceExit:
+                        MapViewAnnotation(coordinate: child.coordinate) {
+                            Image(systemName: "door.left.hand.open").annotationLabel(
+                                Text(child.name.split(separator: " - ").last ?? "")
+                                    .font(.caption)
+                                    .italic()
+                                    .foregroundStyle(.gray)
+                                    .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
+                            )
+                        }
+                        .allowHitTesting(false)
+                        .ignoreCameraPadding(true)
+                        .visible(zoomLevel >= StopIcons.tombstoneZoomThreshold)
+                    case .boardingArea, .stop:
+                        MapViewAnnotation(coordinate: child.coordinate) {
+                            Circle()
+                                .strokeBorder(.white, lineWidth: 2.5)
+                                .background(Circle().fill(.gray))
+                                .frame(width: 12, height: 12)
+                                .annotationLabel(
+                                    Text(child.platformName ?? child.name)
+                                        .font(.caption)
+                                        .italic()
+                                        .foregroundStyle(.gray)
+                                        .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
+                                )
+                        }
+                        .allowHitTesting(false)
+                        .ignoreCameraPadding(true)
+                        .visible(zoomLevel >= StopIcons.tombstoneZoomThreshold)
+                    default:
+                        MapViewAnnotation(coordinate: child.coordinate) {
+                            EmptyView()
+                        }.visible(false)
                     }
                 }
             }

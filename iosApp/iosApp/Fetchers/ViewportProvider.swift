@@ -27,7 +27,7 @@ class ViewportProvider: ObservableObject {
             .eraseToAnyPublisher()
     }
 
-    private let cameraStateSubject: CurrentValueSubject<CameraState, Never>
+    let cameraStateSubject: CurrentValueSubject<CameraState, Never>
 
     init(viewport: Viewport? = nil) {
         self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
@@ -48,11 +48,16 @@ class ViewportProvider: ObservableObject {
         }
     }
 
-    func animateTo(coordinates: CLLocationCoordinate2D,
-                   animation: ViewportAnimation = Defaults.animation,
-                   zoom: CGFloat? = nil) {
+    func animateTo(
+        coordinates: CLLocationCoordinate2D,
+        animation: ViewportAnimation = Defaults.animation,
+        zoom: CGFloat? = nil
+    ) {
         withViewportAnimation(animation) {
-            self.viewport = .camera(center: coordinates, zoom: zoom == nil ? self.cameraStateSubject.value.zoom : zoom)
+            self.viewport = .camera(
+                center: coordinates,
+                zoom: zoom == nil ? self.cameraStateSubject.value.zoom : zoom
+            )
         }
     }
 

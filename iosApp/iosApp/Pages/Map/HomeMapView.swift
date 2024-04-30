@@ -109,9 +109,10 @@ struct HomeMapView: View {
     }
 
     @ViewBuilder
-    var proxyModifiedMap: some View {
+    var proxyModifiedMap: MapReader<some View> {
         MapReader { proxy in
             AnnotatedMap(
+                stopMapData: stopMapData,
                 filter: navigationStack.lastStopDetailsFilter,
                 nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
                 sheetHeight: sheetHeight,
@@ -233,13 +234,12 @@ struct HomeMapView: View {
             alertsByStop: currentStopAlerts
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
+        stopMapData = nil
         if let selectedStop {
             viewportProvider.animateTo(coordinates: selectedStop.coordinate, zoom: 17.0)
             Task {
                 stopMapData = try await stopRepository.getStopMapData(stopId: selectedStop.id)
             }
-        } else {
-            stopMapData = nil
         }
     }
 

@@ -213,6 +213,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longitude: -70.969853,
             name: "Sea St opp Peterson Rd",
             locationType: LocationType.stop,
+            description: nil,
+            platformName: nil,
             parentStationId: nil,
             childStopIds: []
         )
@@ -279,6 +281,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longitude: -70.969853,
             name: "South Station",
             locationType: LocationType.stop,
+            description: nil,
+            platformName: nil,
             parentStationId: nil,
             childStopIds: []
         )
