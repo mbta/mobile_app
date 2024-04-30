@@ -86,14 +86,14 @@ struct HomeMapView: View {
                     filterAtTime: now.toKotlinInstant()
                 )
             }
+            .onChange(of: currentStopAlerts) { nextStopAlerts in
+                handleStopAlertChange(alertsByStop: nextStopAlerts)
+            }
             .onChange(of: navigationStack) { nextNavStack in
                 handleNavStackChange(navigationStack: nextNavStack)
             }
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
-            }
-            .onChange(of: currentStopAlerts) { nextStopAlerts in
-                handleStopAlertChange(alertsByStop: nextStopAlerts)
             }
             .onDisappear {
                 vehiclesFetcher.leave()
