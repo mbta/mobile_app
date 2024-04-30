@@ -18,8 +18,8 @@ final class ViewportProviderTest: XCTestCase {
     func testDefaultViewport() throws {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
-        XCTAssertEqual(provider.viewport.camera?.center, ViewportProvider.defaultCenter)
-        XCTAssertEqual(provider.viewport.camera?.zoom, ViewportProvider.defaultZoom)
+        XCTAssertEqual(provider.viewport.camera?.center, ViewportProvider.Defaults.center)
+        XCTAssertEqual(provider.viewport.camera?.zoom, ViewportProvider.Defaults.zoom)
     }
 
     func testFollowViewport() async throws {

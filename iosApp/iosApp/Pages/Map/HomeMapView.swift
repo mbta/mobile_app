@@ -13,8 +13,6 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-    private let cameraDebouncer = Debouncer(delay: 0.25)
-
     @ObservedObject var alertsFetcher: AlertsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
@@ -35,6 +33,10 @@ struct HomeMapView: View {
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
     let log = Logger()
+
+    private var isNearbyNotFollowing: Bool {
+        !viewportProvider.viewport.isFollowing && locationDataManager.currentLocation != nil && navigationStack.isEmpty
+    }
 
     init(
         alertsFetcher: AlertsFetcher,
@@ -62,8 +64,8 @@ struct HomeMapView: View {
         MapReader { proxy in
             Map(viewport: $viewportProvider.viewport) {
                 Puck2D().pulsing(.none)
-                if isNearbyNotFollowing(), navigationStack.isEmpty {
-                    MapViewAnnotation(coordinate: nearbyFetcher.loadedLocation!) {
+                if let loadedLocation = nearbyFetcher.loadedLocation, isNearbyNotFollowing {
+                    MapViewAnnotation(coordinate: loadedLocation) {
                         Circle()
                             .strokeBorder(.white, lineWidth: 2.5)
                             .background(Circle().fill(.orange))
@@ -85,7 +87,9 @@ struct HomeMapView: View {
             }
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
             .mapStyle(.light)
-            .onCameraChanged { change in handleCameraChange(change) }
+            .onCameraChanged { change in
+                handleCameraChange(change)
+            }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
@@ -103,9 +107,8 @@ struct HomeMapView: View {
                 handleTryLayerInit(map: proxy.map)
             }
             .onChange(of: locationDataManager.authorizationStatus) { status in
-                if status == .authorizedAlways || status == .authorizedWhenInUse {
-                    Task { viewportProvider.follow(animation: .easeInOut(duration: 0)) }
-                }
+                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+                viewportProvider.follow(animation: .easeInOut(duration: 0))
             }
             .onChange(of: alertsFetcher.alerts) { nextAlerts in
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
@@ -147,7 +150,7 @@ struct HomeMapView: View {
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .overlay(alignment: .topTrailing) {
                 if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { Task { viewportProvider.follow() } }
+                    RecenterButton { viewportProvider.follow() }
                 }
             }
         }
@@ -174,10 +177,8 @@ struct HomeMapView: View {
         }.eraseToSignal())
 
         // If location data is provided, follow the user's location
-        Task {
-            if locationDataManager.currentLocation != nil {
-                viewportProvider.follow(animation: .easeInOut(duration: .zero))
-            }
+        if locationDataManager.currentLocation != nil {
+            viewportProvider.follow(animation: .easeInOut(duration: .zero))
         }
 
         didAppear?(self)
@@ -186,9 +187,7 @@ struct HomeMapView: View {
     func handleCameraChange(_ change: CameraChanged) {
         guard let layerManager else { return }
         layerManager.updateStopLayerZoom(change.cameraState.zoom)
-        cameraDebouncer.debounce {
-            viewportProvider.cameraState = change.cameraState
-        }
+        viewportProvider.updateCameraState(change.cameraState)
     }
 
     func handleTryLayerInit(map: MapboxMap?) {
@@ -277,10 +276,5 @@ struct HomeMapView: View {
         navigationStack.removeAll()
         navigationStack.append(.stopDetails(stop, nil))
         return true
-    }
-
-    func isNearbyNotFollowing() -> Bool {
-        nearbyFetcher.loadedLocation != nil
-            && nearbyFetcher.loadedLocation != locationDataManager.currentLocation?.coordinate
     }
 }
