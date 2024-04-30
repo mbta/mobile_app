@@ -30,6 +30,7 @@ final class HomeMapViewTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             navigationStack: .constant([]),
@@ -54,6 +55,7 @@ final class HomeMapViewTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             navigationStack: .constant([]),
@@ -104,6 +106,7 @@ final class HomeMapViewTests: XCTestCase {
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
+            vehiclesFetcher: VehiclesFetcher(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             navigationStack: .constant([]),
             sheetHeight: .constant(0)

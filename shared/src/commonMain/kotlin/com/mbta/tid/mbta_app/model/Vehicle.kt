@@ -6,7 +6,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Vehicle(
     override val id: String,
+    val bearing: Double?,
     @SerialName("current_status") val currentStatus: CurrentStatus,
+    @SerialName("direction_id") val directionId: Int,
+    val latitude: Double,
+    val longitude: Double,
+    @SerialName("route_id") val routeId: String?,
     @SerialName("stop_id") val stopId: String?,
     @SerialName("trip_id") val tripId: String?,
 ) : BackendObject {
