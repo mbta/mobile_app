@@ -112,6 +112,7 @@ struct HomeMapView: View {
     var proxyModifiedMap: some View {
         MapReader { proxy in
             AnnotatedMap(
+                stopMapData: stopMapData,
                 filter: navigationStack.lastStopDetailsFilter,
                 nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
                 sheetHeight: sheetHeight,

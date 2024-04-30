@@ -11,6 +11,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct AnnotatedMap: View {
+    var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
     var sheetHeight: CGFloat
@@ -54,6 +55,27 @@ struct AnnotatedMap: View {
                                 .background(Circle().fill(.black))
                                 .frame(width: 16, height: 16)
                         }
+                    }
+                }
+            }
+            if let childStops = stopMapData?.childStops.values {
+                ForEvery(Array(childStops), id: \.id) { child in
+                    switch child.locationType {
+                    case .entranceExit:
+                        MapViewAnnotation(coordinate: child.coordinate) {
+                            Image(systemName: "door.left.hand.open")
+                        }
+                    case .boardingArea, .stop:
+                        MapViewAnnotation(coordinate: child.coordinate) {
+                            Circle()
+                                .strokeBorder(.white, lineWidth: 2.5)
+                                .background(Circle().fill(.pink))
+                                .frame(width: 16, height: 16)
+                        }
+                    default:
+                        MapViewAnnotation(coordinate: child.coordinate) {
+                            EmptyView()
+                        }.visible(false)
                     }
                 }
             }

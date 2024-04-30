@@ -527,6 +527,7 @@
 		9A2005C22B97B57E00F562E1 /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				9A7AC5C12BE139FB0036126F /* AnnotatedMap.swift */,
 				6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */,
 				9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */,
 				9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */,
@@ -535,7 +536,6 @@
 				9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */,
 				9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */,
 				9A5B27512BB1EF45009A6FC6 /* StopSourceGenerator.swift */,
-				9A7AC5C12BE139FB0036126F /* AnnotatedMap.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
