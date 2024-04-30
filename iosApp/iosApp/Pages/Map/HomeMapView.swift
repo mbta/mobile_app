@@ -111,59 +111,25 @@ struct HomeMapView: View {
     @ViewBuilder
     var proxyModifiedMap: some View {
         MapReader { proxy in
-            configuredMap
-                .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
-                .onChange(of: globalFetcher.response) { _ in
-                    handleTryLayerInit(map: proxy.map)
-                    currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                        alerts: alertsFetcher.alerts,
-                        filterAtTime: now.toKotlinInstant()
-                    )
-                }
-                .onChange(of: railRouteShapeFetcher.response) { _ in
-                    handleTryLayerInit(map: proxy.map)
-                }
-        }
-    }
-
-    @ViewBuilder
-    var configuredMap: some View {
-        map
-            .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-            .mapStyle(.light)
-            .onCameraChanged { change in handleCameraChange(change) }
-            .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
-            .additionalSafeAreaInsets(.bottom, sheetHeight)
-            .accessibilityIdentifier("transitMap")
-    }
-
-    @ViewBuilder
-    var map: Map {
-        Map(viewport: $viewportProvider.viewport) {
-            Puck2D().pulsing(.none)
-            if let loadedLocation = nearbyFetcher.loadedLocation, isNearbyNotFollowing {
-                MapViewAnnotation(coordinate: loadedLocation) {
-                    Circle()
-                        .strokeBorder(.white, lineWidth: 2.5)
-                        .background(Circle().fill(.orange))
-                        .frame(width: 22, height: 22)
-                }
+            AnnotatedMap(
+                filter: navigationStack.lastStopDetailsFilter,
+                nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
+                sheetHeight: sheetHeight,
+                vehicles: vehiclesFetcher.vehicles,
+                viewportProvider: viewportProvider,
+                handleCameraChange: handleCameraChange,
+                handleStopLayerTap: handleStopLayerTap
+            )
+            .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
+            .onChange(of: globalFetcher.response) { _ in
+                handleTryLayerInit(map: proxy.map)
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: alertsFetcher.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
             }
-            if let filter = navigationStack.lastStopDetailsFilter {
-                if let vehicles = vehiclesFetcher.vehicles {
-                    ForEvery(vehicles, id: \.id) { vehicle in
-                        if vehicle.routeId == filter.routeId, vehicle.directionId == filter.directionId {
-                            MapViewAnnotation(coordinate: vehicle.coordinate) {
-                                Circle()
-                                    .strokeBorder(.white, lineWidth: 2.5)
-                                    .background(Circle().fill(.black))
-                                    .frame(width: 16, height: 16)
-                            }
-                        }
-                    }
-                }
+            .onChange(of: railRouteShapeFetcher.response) { _ in
+                handleTryLayerInit(map: proxy.map)
             }
         }
     }
