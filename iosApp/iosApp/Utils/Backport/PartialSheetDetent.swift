@@ -25,7 +25,7 @@ public enum PartialSheetDetent: String, Comparable {
             if #available(iOS 16, *) {
                 let smallDetentIdentifier = UISheetPresentationController.Detent.Identifier(Self.small.rawValue)
                 return UISheetPresentationController.Detent.custom(identifier: smallDetentIdentifier) { _ in
-                    120
+                    200
                 }
             } else {
                 return .medium()
