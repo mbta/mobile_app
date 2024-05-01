@@ -244,7 +244,7 @@ struct HomeMapView: View {
                 stopMapData = try await stopRepository.getStopMapData(stopId: selectedStop.id)
 
                 if let stopMapShapes = stopMapData?.routeShapes {
-                    let stopRailRoutes = stopMapShapes.filter { routeWithShape in
+                    let stopRailRouteIds: Set<String> = Set(stopMapShapes.filter { routeWithShape in
                         let maybeRouteType = globalFetcher.routes[routeWithShape.routeId]?.type
                         if let routeType = maybeRouteType {
                             return routeType == RouteType.heavyRail ||
@@ -253,22 +253,25 @@ struct HomeMapView: View {
                         } else {
                             return false
                         }
-                    }
-                    layerManager?.setVisibleLayers(routeSourceGenerator: RouteSourceGenerator(
-                        routeData: stopRailRoutes,
+                    }.map(\.routeId))
+                    layerManager?.updateSourceData(routeSourceGenerator: RouteSourceGenerator(
+                        // TODO: if a route/direction filter is applied, use  route data  from the stopMapData
+                        routeData: (railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? []).filter { stopRailRouteIds.contains($0.routeId) },
+                        routesById: globalFetcher.routes,
                         stopsById: globalFetcher.stops,
                         alertsByStop: currentStopAlerts
-                    ), routesById: globalFetcher.routes)
+                    ))
                 }
             }
 
         } else {
             stopMapData = nil
-            layerManager?.setVisibleLayers(routeSourceGenerator: RouteSourceGenerator(
+            layerManager?.updateSourceData(routeSourceGenerator: RouteSourceGenerator(
                 routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
+                routesById: globalFetcher.routes,
                 stopsById: globalFetcher.stops,
                 alertsByStop: currentStopAlerts
-            ), routesById: globalFetcher.routes)
+            ))
         }
     }
 
@@ -279,14 +282,11 @@ struct HomeMapView: View {
             routeLines: layerManager?.routeSourceGenerator?.routeLines,
             alertsByStop: alertsByStop
         )
-        layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
-        if let railResponse = railRouteShapeFetcher.response {
-            let updatedRouteSources = RouteSourceGenerator(
-                routeData: railResponse.routesWithSegmentedShapes,
-                routesById: globalFetcher.routes,
-                stopsById: globalFetcher.stops,
-                alertsByStop: alertsByStop
-            )
+        if let existingRouteSourceGenerator = layerManager?.routeSourceGenerator {
+            let updatedRouteSources = RouteSourceGenerator(routeData: existingRouteSourceGenerator.routeData,
+                                                           routesById: globalFetcher.routes,
+                                                           stopsById: globalFetcher.stops,
+                                                           alertsByStop: alertsByStop)
             layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
         }
     }
