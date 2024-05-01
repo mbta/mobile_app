@@ -75,7 +75,8 @@ class RouteLayerGenerator {
     }
 
     /**
-     Hardcoding offsets based on route properties to minimize the occurences of overlapping rail lines when drawn on the map
+     Hardcoding offsets based on route properties to minimize the occurences of overlapping rail lines
+     when drawn on the map
      */
     private static func lineOffsetExpression() -> Exp {
         Expression(.switchCase) {

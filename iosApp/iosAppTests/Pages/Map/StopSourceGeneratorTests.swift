@@ -97,8 +97,6 @@ final class StopSourceGeneratorTests: XCTestCase {
     }
 
     func testStopsAreSnappedToRoutes() {
-        let objects = MapTestDataHelper.objects
-
         let stops = [
             MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
             MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
