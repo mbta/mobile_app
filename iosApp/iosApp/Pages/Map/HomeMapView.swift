@@ -102,6 +102,7 @@ struct HomeMapView: View {
             .onChange(of: navigationStack) { nextNavStack in
                 handleNavStackChange(navigationStack: nextNavStack)
             }
+            // TODO: get rid of selectedStop in favor of stopMapData representing the selected stop
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
             }
@@ -241,7 +242,33 @@ struct HomeMapView: View {
             viewportProvider.animateTo(coordinates: selectedStop.coordinate, zoom: 17.0)
             Task {
                 stopMapData = try await stopRepository.getStopMapData(stopId: selectedStop.id)
+
+                if let stopMapShapes = stopMapData?.routeShapes {
+                    let stopRailRoutes = stopMapShapes.filter { routeWithShape in
+                        let maybeRouteType = globalFetcher.routes[routeWithShape.routeId]?.type
+                        if let routeType = maybeRouteType {
+                            return routeType == RouteType.heavyRail ||
+                                routeType == RouteType.lightRail ||
+                                routeType == RouteType.commuterRail
+                        } else {
+                            return false
+                        }
+                    }
+                    layerManager?.setVisibleLayers(routeSourceGenerator: RouteSourceGenerator(
+                        routeData: stopRailRoutes,
+                        stopsById: globalFetcher.stops,
+                        alertsByStop: currentStopAlerts
+                    ), routesById: globalFetcher.routes)
+                }
             }
+
+        } else {
+            stopMapData = nil
+            layerManager?.setVisibleLayers(routeSourceGenerator: RouteSourceGenerator(
+                routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
+                stopsById: globalFetcher.stops,
+                alertsByStop: currentStopAlerts
+            ), routesById: globalFetcher.routes)
         }
     }
 

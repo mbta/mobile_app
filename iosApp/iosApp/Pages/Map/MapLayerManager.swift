@@ -73,8 +73,10 @@ class MapLayerManager: IMapLayerManager {
         for layer in layers {
             do {
                 if map.layerExists(withId: "puck") {
+                    print("adding layer \(layer.id)")
                     try map.addLayer(layer, layerPosition: .below("puck"))
                 } else {
+                    print("adding layer \(layer.id)")
                     try map.addLayer(layer)
                 }
             } catch {
@@ -92,6 +94,67 @@ class MapLayerManager: IMapLayerManager {
             map.updateGeoJSONSource(withId: routeSource.id, data: actualData)
         } else {
             addSource(source: routeSource)
+        }
+    }
+
+    func setVisibleLayers(routeSourceGenerator: RouteSourceGenerator, routesById: [String: Route]) {
+        let oldRouteIds: Set<String> = Set(routeIdsFromSources(sources: map.allSourceIdentifiers))
+        let newRouteIds: Set<String> = Set(routeSourceGenerator.routeSourceDetails.map(\.routeId))
+
+        let routeIdsToRemove = oldRouteIds.subtracting(newRouteIds)
+
+        for routeId in routeIdsToRemove {
+            setLayerVisibility(routeId: routeId, visible: false)
+        }
+
+        // TODO: Stop storing these?
+        self.routeSourceGenerator = routeSourceGenerator
+
+        routeSourceGenerator.routeSourceDetails.forEach { routeSourceDetails in
+            let sourceId = routeSourceDetails.source.id
+            let routeId = routeSourceDetails.routeId
+            if map.sourceExists(withId: sourceId) {
+                guard let actualData = routeSourceDetails.source.data else { return }
+                map.updateGeoJSONSource(withId: sourceId, data: actualData)
+                setLayerVisibility(routeId: routeId, visible: true)
+
+            } else {
+                addSource(source: routeSourceDetails.source)
+                let newLayers = RouteLayerGenerator.createAllRouteLayers(routeIds: [routeSourceDetails.routeId], routesById: routesById)
+                for layer in newLayers {
+                    do {
+                        try map.addLayer(layer)
+                    } catch {
+                        Sentry.shared.captureError(error: error)
+                    }
+                }
+            }
+        }
+    }
+
+    func routeIdsFromSources(sources: [SourceInfo]) -> [String] {
+        let prefixSize = RouteSourceGenerator.routeSourceId.count + 1 // +1 for joining dash
+        return sources.filter { source in
+            source.id.hasPrefix(RouteSourceGenerator.routeSourceId)
+        }.map { routeSource in
+            String(routeSource.id.dropFirst(prefixSize))
+        }
+    }
+
+    func setLayerVisibility(routeId: String, visible: Bool) {
+        let visibility: Value<MapboxMaps.Visibility> = visible ? .constant(.visible) : .constant(.none)
+
+        let baseRouteLayerId = RouteLayerGenerator.getRouteLayerId(routeId)
+        let allRouteLayerIds = [baseRouteLayerId, "\(baseRouteLayerId)-alerting", "\(baseRouteLayerId)-alerting-bg"]
+
+        for layerId in allRouteLayerIds {
+            do {
+                try map.updateLayer(withId: layerId, type: LineLayer.self) { layer in
+                    layer.visibility = visibility
+                }
+            } catch {
+                Sentry.shared.captureError(error: error)
+            }
         }
     }
 
