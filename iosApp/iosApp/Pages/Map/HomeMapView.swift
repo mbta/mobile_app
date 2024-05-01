@@ -246,8 +246,8 @@ struct HomeMapView: View {
                 // TODO: if a route/direction filter is applied, update route source w/ targeted route shapes
                 // from stopMapData. Consider doing away with selectedStop entirely - what if we just reference
                 //  navigationStack.last everywhere instead?
-                if navigationStack.lastStopDetailsFilter == nil {
-                    filterRouteSourceToRail(selectedStop, stopMapData)
+                if navigationStack.lastStopDetailsFilter == nil, let stopMapData {
+                    layerManager?.updateSourceData(routeSourceGenerator: filterRouteSourceToRail(selectedStop, stopMapData))
                 }
             }
 
@@ -263,26 +263,24 @@ struct HomeMapView: View {
         }
     }
 
-    private func filterRouteSourceToRail(_: Stop, _ stopMapData: StopMapResponse?) {
-        if let stopMapShapes = stopMapData?.routeShapes {
-            let stopRailRouteIds: Set<String> = Set(stopMapShapes.filter { routeWithShape in
-                let maybeRouteType = globalFetcher.routes[routeWithShape.routeId]?.type
-                if let routeType = maybeRouteType {
-                    return routeType == RouteType.heavyRail ||
-                        routeType == RouteType.lightRail ||
-                        routeType == RouteType.commuterRail
-                } else {
-                    return false
-                }
-            }.map(\.routeId))
-            layerManager?.updateSourceData(routeSourceGenerator: RouteSourceGenerator(
-                routeData: (railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [])
-                    .filter { stopRailRouteIds.contains($0.routeId) },
-                routesById: globalFetcher.routes,
-                stopsById: globalFetcher.stops,
-                alertsByStop: currentStopAlerts
-            ))
-        }
+    private func filterRouteSourceToRail(_: Stop, _ stopMapResponse: StopMapResponse) -> RouteSourceGenerator {
+        let stopRailRouteIds: Set<String> = Set(stopMapResponse.routeShapes.filter { routeWithShape in
+            let maybeRouteType = globalFetcher.routes[routeWithShape.routeId]?.type
+            if let routeType = maybeRouteType {
+                return routeType == RouteType.heavyRail ||
+                    routeType == RouteType.lightRail ||
+                    routeType == RouteType.commuterRail
+            } else {
+                return false
+            }
+        }.map(\.routeId))
+        return RouteSourceGenerator(
+            routeData: (railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [])
+                .filter { stopRailRouteIds.contains($0.routeId) },
+            routesById: globalFetcher.routes,
+            stopsById: globalFetcher.stops,
+            alertsByStop: currentStopAlerts
+        )
     }
 
     func handleStopAlertChange(alertsByStop: [String: AlertAssociatedStop]) {
