@@ -22,6 +22,13 @@ struct ContentView: View {
     @State private var sheetHeight: CGFloat = .zero
     @State private var navigationStack: [SheetNavigationStackEntry] = []
 
+    private enum SelectedTab: Hashable {
+        case nearby
+        case settings
+    }
+
+    @State private var selectedTab = SelectedTab.nearby
+
     private var sheetDetents: Set<PartialSheetDetent> {
         if #available(iOS 16, *) {
             [.small, .medium, .large]
@@ -31,6 +38,17 @@ struct ContentView: View {
     }
 
     var body: some View {
+        TabView(selection: $selectedTab) {
+            nearbyTab
+                .tag(SelectedTab.nearby)
+                .tabItem { Label("Nearby", systemImage: "mappin") }
+            SettingsPage()
+                .tag(SelectedTab.settings)
+                .tabItem { Label("Settings", systemImage: "gear") }
+        }
+    }
+
+    var nearbyTab: some View {
         NavigationStack {
             VStack {
                 SearchView(
@@ -59,8 +77,7 @@ struct ContentView: View {
                     navigationStack: $navigationStack,
                     sheetHeight: $sheetHeight
                 )
-                .ignoresSafeArea(edges: .bottom)
-                .sheet(isPresented: .constant(true)) { navigationSheet }
+                .sheet(isPresented: .constant(selectedTab == .nearby)) { sheet }
             }
         }
         .searchable(
@@ -82,7 +99,33 @@ struct ContentView: View {
         }.task { alertsFetcher.run() }
     }
 
-    var navigationSheet: some View {
+    struct AllowsBackgroundInteraction: ViewModifier {
+        func body(content: Content) -> some View {
+            if #available(iOS 16.4, *) {
+                content.presentationBackgroundInteraction(.enabled(upThrough: .medium))
+            } else {
+                // This is actually a purely cosmetic issue - the interaction still works, things are just greyed out
+                // We might need to fix that later if it looks too bad to even ship, but for now, it's probably fine
+                content
+            }
+        }
+    }
+
+    var sheet: some View {
+        TabView(selection: $selectedTab) {
+            nearbySheet
+                .tag(SelectedTab.nearby)
+                .tabItem { Label("Nearby", systemImage: "mappin") }
+            // we want to show nothing in the sheet when the settings tab is open,
+            // but an EmptyView here causes the tab to not be listed
+            VStack {}
+                .tag(SelectedTab.settings)
+                .tabItem { Label("Settings", systemImage: "gear") }
+        }
+        .modifier(AllowsBackgroundInteraction())
+    }
+
+    var nearbySheet: some View {
         GeometryReader { proxy in
             NavigationStack(path: $navigationStack) {
                 NearbyTransitPageView(
