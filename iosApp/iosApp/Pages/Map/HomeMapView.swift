@@ -102,7 +102,6 @@ struct HomeMapView: View {
             .onChange(of: navigationStack) { nextNavStack in
                 handleNavStackChange(navigationStack: nextNavStack)
             }
-            // TODO: get rid of selectedStop in favor of stopMapData representing the selected stop
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
             }
@@ -237,37 +236,48 @@ struct HomeMapView: View {
             alertsByStop: currentStopAlerts
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
-        stopMapData = nil
+
         if let selectedStop {
             viewportProvider.animateTo(coordinates: selectedStop.coordinate, zoom: 17.0)
+
             Task {
                 stopMapData = try await stopRepository.getStopMapData(stopId: selectedStop.id)
 
-                if let stopMapShapes = stopMapData?.routeShapes {
-                    let stopRailRouteIds: Set<String> = Set(stopMapShapes.filter { routeWithShape in
-                        let maybeRouteType = globalFetcher.routes[routeWithShape.routeId]?.type
-                        if let routeType = maybeRouteType {
-                            return routeType == RouteType.heavyRail ||
-                                routeType == RouteType.lightRail ||
-                                routeType == RouteType.commuterRail
-                        } else {
-                            return false
-                        }
-                    }.map(\.routeId))
-                    layerManager?.updateSourceData(routeSourceGenerator: RouteSourceGenerator(
-                        // TODO: if a route/direction filter is applied, use  route data  from the stopMapData
-                        routeData: (railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? []).filter { stopRailRouteIds.contains($0.routeId) },
-                        routesById: globalFetcher.routes,
-                        stopsById: globalFetcher.stops,
-                        alertsByStop: currentStopAlerts
-                    ))
+                // TODO: if a route/direction filter is applied, update route source w/ targeted route shapes
+                // from stopMapData. Consider doing away with selectedStop entirely - what if we just reference
+                //  navigationStack.last everywhere instead?
+                if navigationStack.lastStopDetailsFilter == nil {
+                    filterRouteSourceToRail(selectedStop, stopMapData)
                 }
             }
 
         } else {
             stopMapData = nil
+            // reset to showing all rail routes
             layerManager?.updateSourceData(routeSourceGenerator: RouteSourceGenerator(
                 routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
+                routesById: globalFetcher.routes,
+                stopsById: globalFetcher.stops,
+                alertsByStop: currentStopAlerts
+            ))
+        }
+    }
+
+    private func filterRouteSourceToRail(_: Stop, _ stopMapData: StopMapResponse?) {
+        if let stopMapShapes = stopMapData?.routeShapes {
+            let stopRailRouteIds: Set<String> = Set(stopMapShapes.filter { routeWithShape in
+                let maybeRouteType = globalFetcher.routes[routeWithShape.routeId]?.type
+                if let routeType = maybeRouteType {
+                    return routeType == RouteType.heavyRail ||
+                        routeType == RouteType.lightRail ||
+                        routeType == RouteType.commuterRail
+                } else {
+                    return false
+                }
+            }.map(\.routeId))
+            layerManager?.updateSourceData(routeSourceGenerator: RouteSourceGenerator(
+                routeData: (railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [])
+                    .filter { stopRailRouteIds.contains($0.routeId) },
                 routesById: globalFetcher.routes,
                 stopsById: globalFetcher.stops,
                 alertsByStop: currentStopAlerts
