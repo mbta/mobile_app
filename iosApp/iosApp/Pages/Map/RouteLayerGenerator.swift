@@ -24,7 +24,6 @@ class RouteLayerGenerator {
     }
 
     static func createAllRouteLayers() -> [LineLayer] {
-        // TODO: account for lineSortKey
         [createRouteLayer()] +
             // Draw all alerting layers on top so they are not covered by any overlapping route shape
             createAlertingRouteLayers()

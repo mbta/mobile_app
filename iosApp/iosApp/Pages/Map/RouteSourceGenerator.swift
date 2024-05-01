@@ -32,7 +32,11 @@ class RouteLineData {
         self.isAlerting = isAlerting
         let hexFormattedColor: String? = route?.color == nil ? nil : "#\(route!.color)"
         color = hexFormattedColor
+
         sortKey = if let sortOrder = route?.sortOrder {
+            // GTFS sort order has lower numbers displayed first,
+            // reverse that so that Mapbox draws the route with the lowest sort order last.
+            // https://docs.mapbox.com/style-spec/reference/layers/#layout-line-line-sort-key
             sortOrder * -1
         } else {
             Int32.min

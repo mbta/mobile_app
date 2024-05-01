@@ -58,6 +58,32 @@ final class RouteSourceGeneratorTests: XCTestCase {
         }
     }
 
+    func testRouteSourcePreservesRouteProps() {
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+                                                        routesById: MapTestDataHelper.routesById,
+                                                        stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                                                                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
+                                                                    MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter,
+                                                                    MapTestDataHelper.stopHarvard.id: MapTestDataHelper.stopHarvard,
+                                                                    MapTestDataHelper.stopCentral.id: MapTestDataHelper.stopCentral,
+                                                                    MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+                                                                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan],
+                                                        alertsByStop: [:])
+
+        if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
+            let firstRedFeature = collection.features.filter {
+                $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
+            }[0]
+
+            XCTAssertEqual(firstRedFeature.properties![RouteSourceGenerator.propRouteColor], JSONValue(String("#DA291C")))
+            XCTAssertEqual(firstRedFeature.properties![RouteSourceGenerator.propRouteType], JSONValue(String("HEAVY_RAIL")))
+            XCTAssertEqual(firstRedFeature.properties![RouteSourceGenerator.propRouteSortKey], JSONValue(Int(-10010)))
+
+        } else {
+            XCTFail("Route source had no features")
+        }
+    }
+
     func testAlertingSourcesCreated() {
         let now = Date.now
 

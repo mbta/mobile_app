@@ -53,4 +53,14 @@ final class RouteLayerGeneratorTests: XCTestCase {
             RouteSourceGenerator.propRouteColor
         }))
     }
+
+    func testSortKeyFromData() {
+        let routeLayerGenerator = RouteLayerGenerator()
+        let routeLayers = routeLayerGenerator.routeLayers
+
+        let baseRouteLayer = routeLayers[0]
+        XCTAssertEqual(baseRouteLayer.lineSortKey, .expression(Exp(.get) {
+            RouteSourceGenerator.propRouteSortKey
+        }))
+    }
 }
