@@ -209,20 +209,22 @@ struct HomeMapView: View {
     ) {
         let layerManager = MapLayerManager(map: map)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse, stopsById: stops,
+        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse.routesWithSegmentedShapes,
+                                                        routesById: routes,
+                                                        stopsById: stops,
                                                         alertsByStop: currentStopAlerts)
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
             stopSourceGenerator: StopSourceGenerator(
                 stops: stops,
-                selectedStop: selectedStop, routeSourceDetails: routeSourceGenerator.routeSourceDetails,
+                selectedStop: selectedStop, routeLines: routeSourceGenerator.routeLines,
 
                 alertsByStop: currentStopAlerts
             )
         )
 
         layerManager.addLayers(
-            routeLayerGenerator: RouteLayerGenerator(mapFriendlyRoutesResponse: routeResponse, routesById: routes),
+            routeLayerGenerator: RouteLayerGenerator(),
             stopLayerGenerator: StopLayerGenerator(stopLayerTypes: MapLayerManager.stopLayerTypes)
         )
 
@@ -233,7 +235,7 @@ struct HomeMapView: View {
         let updatedStopSources = StopSourceGenerator(
             stops: globalFetcher.stops,
             selectedStop: selectedStop,
-            routeSourceDetails: layerManager?.routeSourceGenerator?.routeSourceDetails,
+            routeLines: layerManager?.routeSourceGenerator?.routeLines,
             alertsByStop: currentStopAlerts
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
@@ -246,12 +248,14 @@ struct HomeMapView: View {
         let updatedStopSources = StopSourceGenerator(
             stops: globalFetcher.stops,
             selectedStop: selectedStop,
-            routeSourceDetails: layerManager?.routeSourceGenerator?.routeSourceDetails,
+            routeLines: layerManager?.routeSourceGenerator?.routeLines,
             alertsByStop: alertsByStop
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         if let railResponse = railRouteShapeFetcher.response {
-            let updatedRouteSources = RouteSourceGenerator(routeData: railResponse, stopsById: globalFetcher.stops,
+            let updatedRouteSources = RouteSourceGenerator(routeData: railResponse.routesWithSegmentedShapes,
+                                                           routesById: globalFetcher.routes,
+                                                           stopsById: globalFetcher.stops,
                                                            alertsByStop: alertsByStop)
             layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
         }

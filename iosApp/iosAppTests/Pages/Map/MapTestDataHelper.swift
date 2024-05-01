@@ -23,6 +23,8 @@ enum MapTestDataHelper {
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
 
+    static let routesById = [routeRed.id: routeRed, routeOrange.id: routeOrange]
+
     static let stopAlewife = objects.stop { stop in
         stop.id = "place-alfcl"
         stop.latitude = 42.39583

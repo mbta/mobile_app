@@ -12,87 +12,92 @@ import shared
 
 class RouteLineData {
     let id: String
-    let sourceRoutePatternId: String
+    let routeId: String
+    let routePatternId: String
+    let routeType: String?
     let line: LineString
     let stopIds: [String]
     let isAlerting: Bool
+    let color: String?
+    let sortKey: Int32
 
-    init(id: String, sourceRoutePatternId: String, line: LineString, stopIds: [String], isAlerting: Bool) {
+    init(id: String, routeId: String, route: Route?, routePatternId: String, line: LineString, stopIds: [String],
+         isAlerting: Bool) {
         self.id = id
-        self.sourceRoutePatternId = sourceRoutePatternId
+        self.routeId = routeId
+        self.routePatternId = routePatternId
+        routeType = route?.type.name
         self.line = line
         self.stopIds = stopIds
         self.isAlerting = isAlerting
-    }
-}
-
-class RouteSourceData {
-    let routeId: String
-    let lines: [RouteLineData]
-    let source: GeoJSONSource
-
-    init(routeId: String, lines: [RouteLineData], source: GeoJSONSource) {
-        self.routeId = routeId
-        self.lines = lines
-        self.source = source
+        let hexFormattedColor: String? = route?.color == nil ? nil : "#\(route!.color)"
+        color = hexFormattedColor
+        sortKey = if let sortOrder = route?.sortOrder {
+            sortOrder * -1
+        } else {
+            Int32.min
+        }
     }
 }
 
 class RouteSourceGenerator {
-    let routeData: MapFriendlyRouteResponse
-    let routeSourceDetails: [RouteSourceData]
-    let routeSources: [GeoJSONSource]
+    let routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]
+    let routeLines: [RouteLineData]
+    let routeSource: GeoJSONSource
 
     static let routeSourceId = "route-source"
-    static func getRouteSourceId(_ routeId: String) -> String { "\(routeSourceId)-\(routeId)" }
 
+    static let propRouteId = "routeId"
+    static let propRouteType = "routeType"
+    static let propRouteSortKey = "routeSortKey"
+    static let propRouteColor = "routeColor"
     static let propIsAlertingKey = "isAlerting"
 
-    init(routeData: MapFriendlyRouteResponse, stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
+    init(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route],
+         stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
         self.routeData = routeData
-        routeSourceDetails = Self.generateRouteSources(routeData: routeData, stopsById: stopsById,
-                                                       alertsByStop: alertsByStop)
-        routeSources = routeSourceDetails.map(\.source)
+        routeLines = routeData.flatMap { Self.generateRouteLines(routeWithShapes: $0, route: routesById[$0.routeId],
+                                                                 stopsById: stopsById,
+                                                                 alertsByStop: alertsByStop) }
+
+        let routeFeatures = routeLines.map { Self.lineToFeature(routeLineData: $0) }
+        var source = GeoJSONSource(id: Self.routeSourceId)
+        source.data = .featureCollection(FeatureCollection(features: routeFeatures))
+
+        routeSource = source
     }
 
-    static func generateRouteSources(routeData: MapFriendlyRouteResponse,
-                                     stopsById: [String: Stop],
-                                     alertsByStop: [String: AlertAssociatedStop]) -> [RouteSourceData] {
-        routeData.routesWithSegmentedShapes
-            .map { generateRouteSource(routeId: $0.routeId,
-                                       routeShapes: $0.segmentedShapes,
-                                       stopsById: stopsById,
-                                       alertsByStop: alertsByStop) }
-    }
-
-    static func generateRouteSource(routeId: String, routeShapes: [SegmentedRouteShape],
-                                    stopsById: [String: Stop],
-                                    alertsByStop: [String: AlertAssociatedStop]) -> RouteSourceData {
-        let routeLines = generateRouteLines(routeId: routeId, routeShapes: routeShapes, stopsById: stopsById,
-                                            alertsByStop: alertsByStop)
-        let routeFeatures: [Feature] = routeLines.map { lineData in
-            var feature = Feature(geometry: lineData.line)
-            var featureProps = JSONObject()
-            featureProps[Self.propIsAlertingKey] = JSONValue(Bool(lineData.isAlerting))
-            feature.properties = featureProps
-            return feature
+    static func lineToFeature(routeLineData: RouteLineData) -> Feature {
+        var feature = Feature(geometry: routeLineData.line)
+        var featureProps = JSONObject()
+        featureProps[Self.propRouteId] = JSONValue(String(routeLineData.routeId))
+        if let routeType = routeLineData.routeType {
+            featureProps[Self.propRouteType] = JSONValue(String(routeType))
         }
-        var routeSource = GeoJSONSource(id: Self.getRouteSourceId(routeId))
-        routeSource.data = .featureCollection(FeatureCollection(features: routeFeatures))
-        return .init(routeId: routeId, lines: routeLines, source: routeSource)
+        if let color = routeLineData.color {
+            featureProps[Self.propRouteColor] = JSONValue(String(color))
+        }
+        featureProps[Self.propRouteSortKey] = JSONValue(Int(routeLineData.sortKey))
+
+        featureProps[Self.propIsAlertingKey] = JSONValue(Bool(routeLineData.isAlerting))
+        feature.properties = featureProps
+        return feature
     }
 
-    static func generateRouteLines(routeId _: String, routeShapes: [SegmentedRouteShape],
+    static func generateRouteLines(routeWithShapes: MapFriendlyRouteResponse.RouteWithSegmentedShapes,
+                                   route: Route?,
                                    stopsById: [String: Stop],
-                                   alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
-        routeShapes
+                                   alertsByStop: [String: AlertAssociatedStop])
+        -> [RouteLineData] {
+        routeWithShapes.segmentedShapes
             .flatMap { routePatternShape in
-                routeShapeToLineData(routePatternShape: routePatternShape, stopsById: stopsById,
+                routeShapeToLineData(routePatternShape: routePatternShape, route: route, stopsById: stopsById,
                                      alertsByStop: alertsByStop)
             }
     }
 
     private static func routeShapeToLineData(routePatternShape: SegmentedRouteShape,
+                                             route: Route?,
                                              stopsById: [String: Stop],
                                              alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
         guard let polyline = routePatternShape.shape.polyline,
@@ -106,12 +111,15 @@ class RouteSourceGenerator {
             segment.splitAlertingSegments(alertsByStop: alertsByStop)
         }
         return alertAwareSegments.compactMap { segment in
-            routeSegmentToRouteLineData(segment: segment, fullLineString: fullLineString,
+
+            routeSegmentToRouteLineData(segment: segment, route: route,
+                                        fullLineString: fullLineString,
                                         stopsById: stopsById)
         }
     }
 
-    private static func routeSegmentToRouteLineData(segment: AlertAwareRouteSegment, fullLineString: LineString,
+    private static func routeSegmentToRouteLineData(segment: AlertAwareRouteSegment, route: Route?,
+                                                    fullLineString: LineString,
                                                     stopsById: [String: Stop]) -> RouteLineData? {
         guard let firstStopId = segment.stopIds.first,
               let firstStop = stopsById[firstStopId],
@@ -123,7 +131,9 @@ class RouteSourceGenerator {
             return nil
         }
         return RouteLineData(id: segment.id,
-                             sourceRoutePatternId: segment.sourceRoutePatternId,
+                             routeId: segment.sourceRouteId,
+                             route: route,
+                             routePatternId: segment.sourceRoutePatternId,
                              line: lineSegment,
                              stopIds: segment.stopIds, isAlerting: segment.isAlerting)
     }
