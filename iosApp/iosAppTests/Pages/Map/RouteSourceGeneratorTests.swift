@@ -17,7 +17,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testRouteSourcesAreCreated() {
+    func testRouteSourceIsCreated() {
         let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                                                         routesById: MapTestDataHelper.routesById,
                                                         stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
