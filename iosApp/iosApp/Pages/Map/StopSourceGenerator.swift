@@ -18,7 +18,7 @@ struct StopFeatureData {
 class StopSourceGenerator {
     let stops: [String: Stop]
     let selectedStop: Stop?
-    let routeSourceDetails: [RouteSourceData]?
+    let routeLines: [RouteLineData]?
     let alertsByStop: [String: AlertAssociatedStop]
 
     var stopSources: [GeoJSONSource] = []
@@ -38,12 +38,12 @@ class StopSourceGenerator {
     init(
         stops: [String: Stop],
         selectedStop: Stop? = nil,
-        routeSourceDetails: [RouteSourceData]? = nil,
+        routeLines: [RouteLineData]? = nil,
         alertsByStop: [String: AlertAssociatedStop]? = nil
     ) {
         self.stops = stops
         self.selectedStop = selectedStop
-        self.routeSourceDetails = routeSourceDetails
+        self.routeLines = routeLines
         self.alertsByStop = alertsByStop ?? [:]
 
         stopFeatures = generateRouteAssociatedStops() + generateRemainingStops()
@@ -51,25 +51,22 @@ class StopSourceGenerator {
     }
 
     func generateRouteAssociatedStops() -> [StopFeatureData] {
-        guard let routeSourceDetails else { return [] }
-        return routeSourceDetails.flatMap { routeSource in
-
-            routeSource.lines.flatMap { lineData in
-                lineData.stopIds.compactMap { childStopId in
-                    guard let stopOnRoute = stops[childStopId] else {
-                        return nil
-                    }
-                    let stop = stopOnRoute.resolveParent(stops: stops)
-
-                    if touchedStopIds.contains(stop.id) { return nil }
-
-                    let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
-                    touchedStopIds.insert(stop.id)
-                    return .init(
-                        stop: stop,
-                        feature: generateStopFeature(stop, at: snappedCoord)
-                    )
+        guard let routeLines else { return [] }
+        return routeLines.flatMap { lineData in
+            lineData.stopIds.compactMap { childStopId in
+                guard let stopOnRoute = stops[childStopId] else {
+                    return nil
                 }
+                let stop = stopOnRoute.resolveParent(stops: stops)
+
+                if touchedStopIds.contains(stop.id) { return nil }
+
+                let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
+                touchedStopIds.insert(stop.id)
+                return .init(
+                    stop: stop,
+                    feature: generateStopFeature(stop, at: snappedCoord)
+                )
             }
         }
     }

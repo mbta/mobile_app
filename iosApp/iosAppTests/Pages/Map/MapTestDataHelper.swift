@@ -14,7 +14,9 @@ enum MapTestDataHelper {
     static let routeRed = objects.route { route in
         route.id = "Red"
         route.color = "DA291C"
+        route.type = RouteType.heavyRail
         route.routePatternIds = ["Red-1-0", "Red-3-0"]
+        route.sortOrder = 10010
     }
 
     static let routeOrange = objects.route { route in
@@ -22,6 +24,8 @@ enum MapTestDataHelper {
         route.color = "ED8B00"
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
+
+    static let routesById = [routeRed.id: routeRed, routeOrange.id: routeOrange]
 
     static let stopAlewife = objects.stop { stop in
         stop.id = "place-alfcl"
