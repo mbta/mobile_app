@@ -75,7 +75,9 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var modifiedMap: some View {
-        proxyModifiedMap
+        ProxyModifiedMap(mapContent: AnyView(annotatedMap), handleAppear: handleAppear,
+                         handleTryLayerInit: handleTryLayerInit, globalFetcher: globalFetcher,
+                         railRouteShapeFetcher: railRouteShapeFetcher)
             .onChange(of: locationDataManager.authorizationStatus) { status in
                 guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
                 viewportProvider.follow(animation: .easeInOut(duration: 0))
@@ -99,6 +101,12 @@ struct HomeMapView: View {
                     filterAtTime: now.toKotlinInstant()
                 )
             }
+            .onChange(of: globalFetcher.response) { _ in
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: alertsFetcher.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
+            }
             .onChange(of: currentStopAlerts) { nextStopAlerts in
                 handleStopAlertChange(alertsByStop: nextStopAlerts)
             }
@@ -109,30 +117,17 @@ struct HomeMapView: View {
     }
 
     @ViewBuilder
-    var proxyModifiedMap: some View {
-        MapReader { proxy in
-            AnnotatedMap(
-                stopMapData: stopMapData,
-                filter: navigationStack.lastStopDetailsFilter,
-                nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
-                sheetHeight: sheetHeight,
-                vehicles: vehiclesFetcher.vehicles,
-                viewportProvider: viewportProvider,
-                handleCameraChange: handleCameraChange,
-                handleStopLayerTap: handleStopLayerTap
-            )
-            .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
-            .onChange(of: globalFetcher.response) { _ in
-                handleTryLayerInit(map: proxy.map)
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: alertsFetcher.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
-            }
-            .onChange(of: railRouteShapeFetcher.response) { _ in
-                handleTryLayerInit(map: proxy.map)
-            }
-        }
+    var annotatedMap: some View {
+        AnnotatedMap(
+            stopMapData: stopMapData,
+            filter: navigationStack.lastStopDetailsFilter,
+            nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
+            sheetHeight: sheetHeight,
+            vehicles: vehiclesFetcher.vehicles,
+            viewportProvider: viewportProvider,
+            handleCameraChange: handleCameraChange,
+            handleStopLayerTap: handleStopLayerTap
+        )
     }
 
     var didAppear: ((Self) -> Void)?
@@ -281,5 +276,26 @@ struct HomeMapView: View {
         navigationStack.removeAll()
         navigationStack.append(.stopDetails(stop, nil))
         return true
+    }
+}
+
+struct ProxyModifiedMap: View {
+    var mapContent: AnyView
+    var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
+    var handleTryLayerInit: (_ map: MapboxMap?) -> Void
+    var globalFetcher: GlobalFetcher
+    var railRouteShapeFetcher: RailRouteShapeFetcher
+
+    var body: some View {
+        MapReader { proxy in
+            mapContent
+                .onAppear { handleAppear(proxy.location, proxy.map) }
+                .onChange(of: globalFetcher.response) { _ in
+                    handleTryLayerInit(proxy.map)
+                }
+                .onChange(of: railRouteShapeFetcher.response) { _ in
+                    handleTryLayerInit(proxy.map)
+                }
+        }
     }
 }
