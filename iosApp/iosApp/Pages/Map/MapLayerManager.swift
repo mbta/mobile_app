@@ -36,7 +36,9 @@ class MapLayerManager {
         self.routeSourceGenerator = routeSourceGenerator
         self.stopSourceGenerator = stopSourceGenerator
 
-        for source in routeSourceGenerator.routeSources + stopSourceGenerator.stopSources {
+        addSource(source: routeSourceGenerator.routeSource)
+
+        for source in stopSourceGenerator.stopSources {
             addSource(source: source)
         }
     }
@@ -69,14 +71,13 @@ class MapLayerManager {
 
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
         self.routeSourceGenerator = routeSourceGenerator
+        let routeSource = routeSourceGenerator.routeSource
 
-        routeSourceGenerator.routeSources.forEach { routeSource in
-            if map.sourceExists(withId: routeSource.id) {
-                guard let actualData = routeSource.data else { return }
-                map.updateGeoJSONSource(withId: routeSource.id, data: actualData)
-            } else {
-                addSource(source: routeSource)
-            }
+        if map.sourceExists(withId: routeSource.id) {
+            guard let actualData = routeSource.data else { return }
+            map.updateGeoJSONSource(withId: routeSource.id, data: actualData)
+        } else {
+            addSource(source: routeSource)
         }
     }
 
