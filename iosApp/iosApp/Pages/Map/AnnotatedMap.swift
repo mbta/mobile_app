@@ -66,6 +66,12 @@ struct AnnotatedMap: View {
                 }
             }
             if let childStops = stopMapData?.childStops.values {
+                /* TODO: Switch these to PointAnnotations once we have finalized icons and have decided
+                    how to handle child stops in general. We should be taking advantage of the text label
+                    functionality, and possibly the PointAnnotationGroup clustering behavior to
+                    handle stations with overlapping child stops. They may even need to be SymbolLayers
+                    if we need to do something really complicated with clustering.
+                 */
                 ForEvery(Array(childStops), id: \.id) { child in
                     switch child.locationType {
                     case .entranceExit:
