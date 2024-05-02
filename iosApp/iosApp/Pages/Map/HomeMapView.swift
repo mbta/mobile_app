@@ -246,7 +246,7 @@ struct HomeMapView: View {
                 // TODO: if a route/direction filter is applied, update route source w/ targeted route shapes
                 // from stopMapData. Consider doing away with selectedStop entirely - what if we just reference
                 //  navigationStack.last everywhere instead?
-                if navigationStack.lastStopDetailsFilter == nil, let stopMapData {
+                if let stopMapData {
                     layerManager?.updateSourceData(routeSourceGenerator: filterRouteSourceToRail(selectedStop, stopMapData))
                 }
             }
