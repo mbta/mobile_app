@@ -16,6 +16,7 @@ import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -97,5 +98,6 @@ class SchedulesRepositoryTest : KoinTest {
                 response
             )
         }
+        stopKoin()
     }
 }

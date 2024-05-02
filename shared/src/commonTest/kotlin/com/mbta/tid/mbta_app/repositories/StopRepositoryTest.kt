@@ -19,6 +19,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -137,5 +138,6 @@ class StopRepositoryTest : KoinTest {
                 response
             )
         }
+        stopKoin()
     }
 }
