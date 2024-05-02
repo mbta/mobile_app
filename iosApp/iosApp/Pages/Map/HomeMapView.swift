@@ -78,28 +78,14 @@ struct HomeMapView: View {
         ProxyModifiedMap(mapContent: AnyView(annotatedMap), handleAppear: handleAppear,
                          handleTryLayerInit: handleTryLayerInit, globalFetcher: globalFetcher,
                          railRouteShapeFetcher: railRouteShapeFetcher)
-            .onChange(of: locationDataManager.authorizationStatus) { status in
-                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
-                viewportProvider.follow(animation: .easeInOut(duration: 0))
-            }
             .onChange(of: alertsFetcher.alerts) { nextAlerts in
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
                     alerts: nextAlerts,
                     filterAtTime: now.toKotlinInstant()
                 )
             }
-            .onChange(of: navigationStack) { nextNavStack in
-                handleNavStackChange(navigationStack: nextNavStack)
-            }
-            .onChange(of: selectedStop) { nextSelectedStop in
-                handleSelectedStopChange(selectedStop: nextSelectedStop)
-            }
-            .onReceive(timer) { input in
-                now = input
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: alertsFetcher.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
+            .onChange(of: currentStopAlerts) { nextStopAlerts in
+                handleStopAlertChange(alertsByStop: nextStopAlerts)
             }
             .onChange(of: globalFetcher.response) { _ in
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
@@ -107,13 +93,27 @@ struct HomeMapView: View {
                     filterAtTime: now.toKotlinInstant()
                 )
             }
-            .onChange(of: currentStopAlerts) { nextStopAlerts in
-                handleStopAlertChange(alertsByStop: nextStopAlerts)
+            .onChange(of: locationDataManager.authorizationStatus) { status in
+                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+                viewportProvider.follow(animation: .easeInOut(duration: 0))
+            }
+            .onChange(of: navigationStack) { nextNavStack in
+                handleNavStackChange(navigationStack: nextNavStack)
+            }
+            .onChange(of: selectedStop) { nextSelectedStop in
+                handleSelectedStopChange(selectedStop: nextSelectedStop)
             }
             .onDisappear {
                 vehiclesFetcher.leave()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .onReceive(timer) { input in
+                now = input
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: alertsFetcher.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
+            }
     }
 
     @ViewBuilder
