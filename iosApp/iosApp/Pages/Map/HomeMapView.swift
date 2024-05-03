@@ -27,7 +27,7 @@ struct HomeMapView: View {
     @Binding var navigationStack: [SheetNavigationStackEntry]
     @Binding var sheetHeight: CGFloat
 
-    @State private var layerManager: MapLayerManager?
+    @State private var layerManager: IMapLayerManager?
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State private var currentStopAlerts: [String: AlertAssociatedStop] = [:]
@@ -51,7 +51,8 @@ struct HomeMapView: View {
         stopRepository: IStopRepository = RepositoryDI().stop,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         navigationStack: Binding<[SheetNavigationStackEntry]>,
-        sheetHeight: Binding<CGFloat>
+        sheetHeight: Binding<CGFloat>,
+        layerManager: IMapLayerManager? = nil
     ) {
         self.alertsFetcher = alertsFetcher
         self.globalFetcher = globalFetcher
@@ -63,6 +64,7 @@ struct HomeMapView: View {
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _navigationStack = navigationStack
         _sheetHeight = sheetHeight
+        _layerManager = State(wrappedValue: layerManager)
     }
 
     var body: some View {
@@ -189,20 +191,24 @@ struct HomeMapView: View {
             stopsById: stops,
             alertsByStop: currentStopAlerts
         )
+        let stopSourceGenerator = StopSourceGenerator(
+            stops: stops,
+            selectedStop: selectedStop,
+            routeLines: routeSourceGenerator.routeLines,
+            alertsByStop: currentStopAlerts
+        )
+
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
-            stopSourceGenerator: StopSourceGenerator(
-                stops: stops,
-                selectedStop: selectedStop,
-                routeLines: routeSourceGenerator.routeLines,
-                alertsByStop: currentStopAlerts
-            )
+            stopSourceGenerator: stopSourceGenerator
         )
 
         layerManager.addLayers(
             routeLayerGenerator: RouteLayerGenerator(),
             stopLayerGenerator: StopLayerGenerator(stopLayerTypes: MapLayerManager.stopLayerTypes)
         )
+
+        layerManager.updateStopLayerZoom(map.cameraState.zoom)
 
         self.layerManager = layerManager
     }

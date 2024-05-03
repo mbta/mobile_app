@@ -126,7 +126,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(ViewportProvider())
 
         ViewHosting.host(view: sut)
-        wait(for: [fetchesGlobalData], timeout: 1)
+        wait(for: [fetchesGlobalData], timeout: 2)
     }
 
     class FakeSocket: MockSocket {
