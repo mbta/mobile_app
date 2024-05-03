@@ -710,8 +710,8 @@
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
-				6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */,
 				8E51C9A5DAABE639C0FD100E /* [CP] Embed Pods Frameworks */,
+				6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */,
 				6ECD29FE2BA31201005CD381 /* Configure Build Variables */,
 			);
 			buildRules = (
@@ -835,6 +835,7 @@
 		};
 		6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -853,6 +854,7 @@
 		};
 		6ECD29FE2BA31201005CD381 /* Configure Build Variables */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -867,7 +869,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Adding info.plist values from .envrc\"\ncat ../.envrc | while IFS=\"=\" read -r key value; do\n    key=$(echo $key | sed 's/export //')    \n    echo \"$key\"\n    if [ -n \"$value\" ]; then\n        plutil -replace $key -string $value \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\n        echo \"plist entry for $key added\"\n    else\n        echo \"Skipping plist entry for $key - no value set\"\n    fi\ndone\n";
+			shellScript = "echo \"Adding info.plist values from .envrc\"\ncat ../.envrc | while IFS=\"=\" read -r key value; do\n    key=$(echo $key | sed 's/export //')    \n    echo \"$key\"\n    case \"$key\" in\n        \"FIREBASE_KEY\")\n            if [ -n \"$value\" ]; then\n                    plutil -replace API_KEY -string $value \"$TARGET_BUILD_DIR/iosApp.app/GoogleService-Info.plist\"\n                echo \"Google plist entry for $key added\"\n            else\n                echo \"Skipping google plist entry for $key - no value set, this will crash the app\"\n            fi\n        ;;\n        \"\");;\n        *)\n            if [ -n \"$value\" ]; then\n                plutil -replace $key -string $value \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\n                echo \"plist entry for $key added\"\n            else\n                echo \"Skipping plist entry for $key - no value set\"\n            fi\n        ;;\n    esac\ndone\n";
 		};
 		7E1E3E807BCE8F2D4B7E5C7B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

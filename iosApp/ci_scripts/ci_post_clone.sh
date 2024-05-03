@@ -71,3 +71,4 @@ cd ${CI_PRIMARY_REPOSITORY_PATH}
 touch .envrc
 echo "export SENTRY_DSN=${SENTRY_DSN}" >> .envrc
 echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}" >> .envrc
+echo "export FIREBASE_KEY=${FIREBASE_KEY}" >> .envrc
