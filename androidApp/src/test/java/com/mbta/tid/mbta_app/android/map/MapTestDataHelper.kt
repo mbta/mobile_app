@@ -165,6 +165,7 @@ object MapTestDataHelper {
                         SegmentedRouteShape(
                             patternRed10.id,
                             patternRed10.routeId,
+                            patternRed10.directionId,
                             listOf(
                                 RouteSegment(
                                     "segment1",
@@ -179,6 +180,7 @@ object MapTestDataHelper {
                         SegmentedRouteShape(
                             patternRed30.id,
                             patternRed30.routeId,
+                            patternRed30.directionId,
                             listOf(
                                 RouteSegment(
                                     "segment2",
@@ -198,6 +200,7 @@ object MapTestDataHelper {
                         SegmentedRouteShape(
                             patternOrange30.id,
                             patternOrange30.routeId,
+                            patternOrange30.directionId,
                             listOf(
                                 RouteSegment(
                                     "segment3",
