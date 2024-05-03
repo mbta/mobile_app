@@ -259,14 +259,12 @@ struct HomeMapView: View {
     }
 
     func handleRouteFilterChange(_ filter: StopDetailsFilter?) {
-        Task {
-            if let stopMapData {
-                if let filter {
-                    layerManager?.updateSourceData(routeSourceGenerator: filterRouteSourceData(stopMapData, filter))
+        if let stopMapData {
+            if let filter {
+                layerManager?.updateSourceData(routeSourceGenerator: filterRouteSourceData(stopMapData, filter))
 
-                } else {
-                    layerManager?.updateSourceData(routeSourceGenerator: filterRouteSourceToRail(stopMapData))
-                }
+            } else {
+                layerManager?.updateSourceData(routeSourceGenerator: filterRouteSourceToRail(stopMapData))
             }
         }
     }
