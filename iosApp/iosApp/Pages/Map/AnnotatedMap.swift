@@ -19,6 +19,9 @@ struct AnnotatedMap: View {
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
+    var settingsRepository: ISettingsRepository = RepositoryDI().settings
+    @State var mapDebug = false
+
     @ObservedObject var viewportProvider: ViewportProvider
 
     var handleCameraChange: (CameraChanged) -> Void
@@ -30,6 +33,7 @@ struct AnnotatedMap: View {
         map
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
             .mapStyle(.light)
+            .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
@@ -38,6 +42,13 @@ struct AnnotatedMap: View {
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom
+            }
+            .task {
+                do {
+                    mapDebug = try await settingsRepository.getMapDebug().boolValue
+                } catch {
+                    debugPrint("Failed to load map debug", error)
+                }
             }
     }
 
