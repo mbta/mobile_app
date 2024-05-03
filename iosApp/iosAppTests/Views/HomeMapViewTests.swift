@@ -178,7 +178,9 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 1)
         XCTAssertEqual(ViewportProvider.Defaults.center, sut.viewportProvider.viewport.camera!.center)
 
-        try sut.inspect().find(ProxyModifiedMap.self).callOnChange(newValue: stop)
+        let newEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
+
+        try sut.inspect().find(ProxyModifiedMap.self).callOnChange(newValue: newEntry)
         XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
     }
 
@@ -195,7 +197,10 @@ final class HomeMapViewTests: XCTestCase {
 
         func addSources(routeSourceGenerator _: RouteSourceGenerator, stopSourceGenerator _: StopSourceGenerator) {}
         func addLayers(routeLayerGenerator _: RouteLayerGenerator, stopLayerGenerator _: StopLayerGenerator) {}
-        func updateSourceData(routeSourceGenerator _: RouteSourceGenerator, stopSourceGenerator _: StopSourceGenerator) {}
+        func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator _: StopSourceGenerator) {
+            updateRouteSourceCallback(routeSourceGenerator)
+        }
+
         func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
             updateRouteSourceCallback(routeSourceGenerator)
         }
@@ -246,7 +251,8 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: stop)
+            let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
         ViewHosting.host(view: sut)
@@ -299,7 +305,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as Stop?)
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as SheetNavigationStackEntry?)
         }
 
         ViewHosting.host(view: sut)
