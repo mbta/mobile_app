@@ -173,11 +173,12 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
+
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 1)
         XCTAssertEqual(ViewportProvider.Defaults.center, sut.viewportProvider.viewport.camera!.center)
 
-        try sut.inspect().find(Map.self).callOnChange(newValue: stop)
+        try sut.inspect().find(ProxyModifiedMap.self).callOnChange(newValue: stop)
         XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
     }
 }

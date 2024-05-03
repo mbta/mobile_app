@@ -22,7 +22,6 @@ class ViewportProvider: ObservableObject {
             .removeDuplicates(by: { lhs, rhs in
                 lhs.center.isRoughlyEqualTo(rhs.center)
             })
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -48,11 +47,16 @@ class ViewportProvider: ObservableObject {
         }
     }
 
-    func animateTo(coordinates: CLLocationCoordinate2D,
-                   animation: ViewportAnimation = Defaults.animation,
-                   zoom: CGFloat? = nil) {
+    func animateTo(
+        coordinates: CLLocationCoordinate2D,
+        animation: ViewportAnimation = Defaults.animation,
+        zoom: CGFloat? = nil
+    ) {
         withViewportAnimation(animation) {
-            self.viewport = .camera(center: coordinates, zoom: zoom == nil ? self.cameraStateSubject.value.zoom : zoom)
+            self.viewport = .camera(
+                center: coordinates,
+                zoom: zoom == nil ? self.cameraStateSubject.value.zoom : zoom
+            )
         }
     }
 

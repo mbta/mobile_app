@@ -20,6 +20,9 @@ struct HomeMapView: View {
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
+    var stopRepository: IStopRepository
+    @State var stopMapData: StopMapResponse?
+
     @StateObject private var locationDataManager: LocationDataManager
     @Binding var navigationStack: [SheetNavigationStackEntry]
     @Binding var sheetHeight: CGFloat
@@ -45,6 +48,7 @@ struct HomeMapView: View {
         railRouteShapeFetcher: RailRouteShapeFetcher,
         vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
+        stopRepository: IStopRepository = RepositoryDI().stop,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         navigationStack: Binding<[SheetNavigationStackEntry]>,
         sheetHeight: Binding<CGFloat>,
@@ -56,6 +60,7 @@ struct HomeMapView: View {
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.vehiclesFetcher = vehiclesFetcher
         self.viewportProvider = viewportProvider
+        self.stopRepository = stopRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _navigationStack = navigationStack
         _sheetHeight = sheetHeight
@@ -63,80 +68,47 @@ struct HomeMapView: View {
     }
 
     var body: some View {
-        MapReader { proxy in
-            Map(viewport: $viewportProvider.viewport) {
-                Puck2D().pulsing(.none)
-                if let loadedLocation = nearbyFetcher.loadedLocation, isNearbyNotFollowing {
-                    MapViewAnnotation(coordinate: loadedLocation) {
-                        Circle()
-                            .strokeBorder(.white, lineWidth: 2.5)
-                            .background(Circle().fill(.orange))
-                            .frame(width: 22, height: 22)
-                    }
-                }
-                if let filter = navigationStack.lastStopDetailsFilter, let vehicles = vehiclesFetcher.vehicles {
-                    ForEvery(vehicles, id: \.id) { vehicle in
-                        if vehicle.routeId == filter.routeId, vehicle.directionId == filter.directionId {
-                            MapViewAnnotation(coordinate: vehicle.coordinate) {
-                                Circle()
-                                    .strokeBorder(.white, lineWidth: 2.5)
-                                    .background(Circle().fill(.black))
-                                    .frame(width: 16, height: 16)
-                            }
-                        }
-                    }
-                }
+        modifiedMap.overlay(alignment: .topTrailing) {
+            if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                RecenterButton { Task { viewportProvider.follow() } }
             }
-            .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-            .mapStyle(.light)
-            .onCameraChanged { change in handleCameraChange(change) }
-            .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
-            .additionalSafeAreaInsets(.bottom, sheetHeight)
-            .accessibilityIdentifier("transitMap")
-            .onAppear { handleAppear(location: proxy.location, map: proxy.map) }
-            .onChange(of: globalFetcher.response) { _ in
-                handleTryLayerInit(map: proxy.map)
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: alertsFetcher.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
-            }
-            .onChange(of: railRouteShapeFetcher.response) { _ in
-                handleTryLayerInit(map: proxy.map)
-            }
-            .onChange(of: locationDataManager.authorizationStatus) { status in
-                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
-                viewportProvider.follow(animation: .easeInOut(duration: 0))
-            }
+        }
+    }
+
+    @ViewBuilder
+    var modifiedMap: some View {
+        ProxyModifiedMap(mapContent: AnyView(annotatedMap), handleAppear: handleAppear,
+                         handleTryLayerInit: handleTryLayerInit, globalFetcher: globalFetcher,
+                         railRouteShapeFetcher: railRouteShapeFetcher)
             .onChange(of: alertsFetcher.alerts) { nextAlerts in
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
                     alerts: nextAlerts,
                     filterAtTime: now.toKotlinInstant()
                 )
             }
+            .onChange(of: currentStopAlerts) { nextStopAlerts in
+                handleStopAlertChange(alertsByStop: nextStopAlerts)
+            }
+            .onChange(of: globalFetcher.response) { _ in
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: alertsFetcher.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
+            }
+            .onChange(of: locationDataManager.authorizationStatus) { status in
+                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+                viewportProvider.follow(animation: .easeInOut(duration: 0))
+            }
             .onChange(of: navigationStack) { nextNavStack in
-                switch nextNavStack.last {
-                case let .stopDetails(stop, _):
-                    selectedStop = stop
-                case _:
-                    selectedStop = nil
-                }
+                handleNavStackChange(navigationStack: nextNavStack)
             }
             .onChange(of: selectedStop) { nextSelectedStop in
                 handleSelectedStopChange(selectedStop: nextSelectedStop)
             }
-            .onChange(of: navigationStack.lastStopDetailsFilter) { filter in
-                if let filter {
-                    vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
-                } else {
-                    vehiclesFetcher.leave()
-                }
-            }
             .onDisappear {
                 vehiclesFetcher.leave()
             }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onReceive(timer) { input in
                 now = input
                 currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
@@ -144,16 +116,20 @@ struct HomeMapView: View {
                     filterAtTime: now.toKotlinInstant()
                 )
             }
-            .onChange(of: currentStopAlerts) { nextStopAlerts in
-                handleStopAlertChange(alertsByStop: nextStopAlerts)
-            }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .overlay(alignment: .topTrailing) {
-                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { viewportProvider.follow() }
-                }
-            }
-        }
+    }
+
+    @ViewBuilder
+    var annotatedMap: some View {
+        AnnotatedMap(
+            stopMapData: stopMapData,
+            filter: navigationStack.lastStopDetailsFilter,
+            nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
+            sheetHeight: sheetHeight,
+            vehicles: vehiclesFetcher.vehicles,
+            viewportProvider: viewportProvider,
+            handleCameraChange: handleCameraChange,
+            handleStopLayerTap: handleStopLayerTap
+        )
     }
 
     var didAppear: ((Self) -> Void)?
@@ -237,6 +213,21 @@ struct HomeMapView: View {
         self.layerManager = layerManager
     }
 
+    func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
+        if let filter = navigationStack.lastStopDetailsFilter {
+            vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
+        } else {
+            vehiclesFetcher.leave()
+        }
+
+        switch navigationStack.last {
+        case let .stopDetails(stop, _):
+            selectedStop = stop
+        case _:
+            selectedStop = nil
+        }
+    }
+
     func handleSelectedStopChange(selectedStop: Stop?) {
         let updatedStopSources = StopSourceGenerator(
             stops: globalFetcher.stops,
@@ -245,8 +236,12 @@ struct HomeMapView: View {
             alertsByStop: currentStopAlerts
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
+        stopMapData = nil
         if let selectedStop {
             viewportProvider.animateTo(coordinates: selectedStop.coordinate, zoom: 17.0)
+            Task {
+                stopMapData = try await stopRepository.getStopMapData(stopId: selectedStop.id)
+            }
         }
     }
 
@@ -259,10 +254,12 @@ struct HomeMapView: View {
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         if let railResponse = railRouteShapeFetcher.response {
-            let updatedRouteSources = RouteSourceGenerator(routeData: railResponse.routesWithSegmentedShapes,
-                                                           routesById: globalFetcher.routes,
-                                                           stopsById: globalFetcher.stops,
-                                                           alertsByStop: alertsByStop)
+            let updatedRouteSources = RouteSourceGenerator(
+                routeData: railResponse.routesWithSegmentedShapes,
+                routesById: globalFetcher.routes,
+                stopsById: globalFetcher.stops,
+                alertsByStop: alertsByStop
+            )
             layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
         }
     }
@@ -286,5 +283,26 @@ struct HomeMapView: View {
         navigationStack.removeAll()
         navigationStack.append(.stopDetails(stop, nil))
         return true
+    }
+}
+
+struct ProxyModifiedMap: View {
+    var mapContent: AnyView
+    var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
+    var handleTryLayerInit: (_ map: MapboxMap?) -> Void
+    var globalFetcher: GlobalFetcher
+    var railRouteShapeFetcher: RailRouteShapeFetcher
+
+    var body: some View {
+        MapReader { proxy in
+            mapContent
+                .onAppear { handleAppear(proxy.location, proxy.map) }
+                .onChange(of: globalFetcher.response) { _ in
+                    handleTryLayerInit(proxy.map)
+                }
+                .onChange(of: railRouteShapeFetcher.response) { _ in
+                    handleTryLayerInit(proxy.map)
+                }
+        }
     }
 }

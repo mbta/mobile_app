@@ -50,7 +50,10 @@ struct NearbyTransitPageView: View {
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: alertsFetcher
         )
-        .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
+        .onReceive(
+            viewportProvider.cameraStatePublisher
+                .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        ) { newCameraState in
             location = newCameraState.center
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
