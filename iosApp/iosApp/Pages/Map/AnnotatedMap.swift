@@ -36,7 +36,7 @@ struct AnnotatedMap: View {
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
-            .onReceive(viewportProvider.cameraStateSubject) { newCameraState in
+            .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom
             }
     }

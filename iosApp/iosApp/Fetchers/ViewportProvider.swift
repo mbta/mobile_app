@@ -22,12 +22,11 @@ class ViewportProvider: ObservableObject {
             .removeDuplicates(by: { lhs, rhs in
                 lhs.center.isRoughlyEqualTo(rhs.center)
             })
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
-    let cameraStateSubject: CurrentValueSubject<CameraState, Never>
+    private let cameraStateSubject: CurrentValueSubject<CameraState, Never>
 
     init(viewport: Viewport? = nil) {
         self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
