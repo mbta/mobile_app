@@ -73,10 +73,8 @@ class MapLayerManager: IMapLayerManager {
         for layer in layers {
             do {
                 if map.layerExists(withId: "puck") {
-                    print("adding layer \(layer.id)")
                     try map.addLayer(layer, layerPosition: .below("puck"))
                 } else {
-                    print("adding layer \(layer.id)")
                     try map.addLayer(layer)
                 }
             } catch {
@@ -94,32 +92,6 @@ class MapLayerManager: IMapLayerManager {
             map.updateGeoJSONSource(withId: routeSource.id, data: actualData)
         } else {
             addSource(source: routeSource)
-        }
-    }
-
-    func routeIdsFromSources(sources: [SourceInfo]) -> [String] {
-        let prefixSize = RouteSourceGenerator.routeSourceId.count + 1 // +1 for joining dash
-        return sources.filter { source in
-            source.id.hasPrefix(RouteSourceGenerator.routeSourceId)
-        }.map { routeSource in
-            String(routeSource.id.dropFirst(prefixSize))
-        }
-    }
-
-    func setLayerVisibility(routeId: String, visible: Bool) {
-        let visibility: Value<MapboxMaps.Visibility> = visible ? .constant(.visible) : .constant(.none)
-
-        let baseRouteLayerId = RouteLayerGenerator.getRouteLayerId(routeId)
-        let allRouteLayerIds = [baseRouteLayerId, "\(baseRouteLayerId)-alerting", "\(baseRouteLayerId)-alerting-bg"]
-
-        for layerId in allRouteLayerIds {
-            do {
-                try map.updateLayer(withId: layerId, type: LineLayer.self) { layer in
-                    layer.visibility = visibility
-                }
-            } catch {
-                Sentry.shared.captureError(error: error)
-            }
         }
     }
 
