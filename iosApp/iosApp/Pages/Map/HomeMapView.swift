@@ -24,7 +24,7 @@ struct HomeMapView: View {
     @Binding var navigationStack: [SheetNavigationStackEntry]
     @Binding var sheetHeight: CGFloat
 
-    @State private var layerManager: MapLayerManager?
+    @State private var layerManager: IMapLayerManager?
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State private var currentStopAlerts: [String: AlertAssociatedStop] = [:]
@@ -47,7 +47,8 @@ struct HomeMapView: View {
         viewportProvider: ViewportProvider,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         navigationStack: Binding<[SheetNavigationStackEntry]>,
-        sheetHeight: Binding<CGFloat>
+        sheetHeight: Binding<CGFloat>,
+        layerManager: IMapLayerManager? = nil
     ) {
         self.alertsFetcher = alertsFetcher
         self.globalFetcher = globalFetcher
@@ -58,6 +59,7 @@ struct HomeMapView: View {
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _navigationStack = navigationStack
         _sheetHeight = sheetHeight
+        _layerManager = State(wrappedValue: layerManager)
     }
 
     var body: some View {
@@ -87,9 +89,7 @@ struct HomeMapView: View {
             }
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
             .mapStyle(.light)
-            .onCameraChanged { change in
-                handleCameraChange(change)
-            }
+            .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
             .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
@@ -209,24 +209,30 @@ struct HomeMapView: View {
     ) {
         let layerManager = MapLayerManager(map: map)
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: routeResponse.routesWithSegmentedShapes,
-                                                        routesById: routes,
-                                                        stopsById: stops,
-                                                        alertsByStop: currentStopAlerts)
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: routeResponse.routesWithSegmentedShapes,
+            routesById: routes,
+            stopsById: stops,
+            alertsByStop: currentStopAlerts
+        )
+        let stopSourceGenerator = StopSourceGenerator(
+            stops: stops,
+            selectedStop: selectedStop,
+            routeLines: routeSourceGenerator.routeLines,
+            alertsByStop: currentStopAlerts
+        )
+
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
-            stopSourceGenerator: StopSourceGenerator(
-                stops: stops,
-                selectedStop: selectedStop, routeLines: routeSourceGenerator.routeLines,
-
-                alertsByStop: currentStopAlerts
-            )
+            stopSourceGenerator: stopSourceGenerator
         )
 
         layerManager.addLayers(
             routeLayerGenerator: RouteLayerGenerator(),
             stopLayerGenerator: StopLayerGenerator(stopLayerTypes: MapLayerManager.stopLayerTypes)
         )
+
+        layerManager.updateStopLayerZoom(map.cameraState.zoom)
 
         self.layerManager = layerManager
     }

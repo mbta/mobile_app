@@ -11,7 +11,21 @@ import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
-class MapLayerManager {
+protocol IMapLayerManager {
+    var routeSourceGenerator: RouteSourceGenerator? { get }
+    var routeLayerGenerator: RouteLayerGenerator? { get }
+    var stopSourceGenerator: StopSourceGenerator? { get }
+    var stopLayerGenerator: StopLayerGenerator? { get }
+
+    func addSources(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
+    func addLayers(routeLayerGenerator: RouteLayerGenerator, stopLayerGenerator: StopLayerGenerator)
+    func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
+    func updateSourceData(routeSourceGenerator: RouteSourceGenerator)
+    func updateSourceData(stopSourceGenerator: StopSourceGenerator)
+    func updateStopLayerZoom(_ zoomLevel: CGFloat)
+}
+
+class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
     var routeSourceGenerator: RouteSourceGenerator?
     var routeLayerGenerator: RouteLayerGenerator?
