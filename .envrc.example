@@ -1,6 +1,12 @@
 # Required Variables
 
+# Firebase - used for Google Analytics collection, required because the library crashes without it
+# Find at https://console.firebase.google.com/u/0/project/mbta-app-c574d/settings/general
+export FIREBASE_KEY=
+
 # Optional Variables
+
 # Sentry - needed only to record sentry events from local development
-export SENTRY_DSN= Find under the Client Keys settings of the mobile_app_ios project in Sentry
+# Find DSN under the Client Keys settings of the mobile_app_ios project in Sentry
+export SENTRY_DSN=
 export SENTRY_ENVIRONMENT=debug
