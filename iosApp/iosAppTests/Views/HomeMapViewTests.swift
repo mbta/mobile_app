@@ -227,7 +227,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called only OL route")
         func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeLines.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id } {
+            if routeGenerator.routeLines.allSatisfy({ $0.routeId == MapTestDataHelper.routeOrange.id }) {
                 olRouteSourceUpdateExpectation.fulfill()
             }
         }
@@ -280,7 +280,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called only OL route")
         func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeLines.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id } {
+            if routeGenerator.routeLines.allSatisfy({ $0.routeId == MapTestDataHelper.routeOrange.id }) {
                 olRouteSourceUpdateExpectation.fulfill()
             }
         }
