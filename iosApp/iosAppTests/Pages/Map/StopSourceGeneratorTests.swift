@@ -97,8 +97,6 @@ final class StopSourceGeneratorTests: XCTestCase {
     }
 
     func testStopsAreSnappedToRoutes() {
-        let objects = MapTestDataHelper.objects
-
         let stops = [
             MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
             MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
@@ -106,10 +104,12 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse, stopsById: stops,
+        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+                                                        routesById: MapTestDataHelper.routesById,
+                                                        stopsById: stops,
                                                         alertsByStop: [:])
         let stopSourceGenerator = StopSourceGenerator(stops: stops,
-                                                      routeSourceDetails: routeSourceGenerator.routeSourceDetails)
+                                                      routeLines: routeSourceGenerator.routeLines)
         let sources = stopSourceGenerator.stopSources
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.3961623851223, longitude: -71.14129664101432)
 
@@ -124,6 +124,55 @@ final class StopSourceGeneratorTests: XCTestCase {
                 XCTAssertEqual(point.coordinates, snappedStopCoordinates)
             } else {
                 XCTFail("Source feature was not a point")
+            }
+        } else {
+            XCTFail("Station source had no features")
+        }
+    }
+
+    func testSelectedStopHasPropSet() {
+        let objects = ObjectCollectionBuilder()
+        let selectedStop = objects.stop { stop in
+            stop.id = "place-alfcl"
+            stop.name = "Alewife"
+            stop.latitude = 42.39583
+            stop.longitude = -71.141287
+            stop.locationType = .station
+            stop.childStopIds = ["70061"]
+        }
+
+        let otherStop = objects.stop { stop in
+            stop.id = "place-davis"
+            stop.name = "Davis"
+            stop.locationType = .station
+            stop.childStopIds = []
+        }
+
+        let stopSourceGenerator = StopSourceGenerator(stops: [selectedStop.id: selectedStop, otherStop.id: otherStop],
+                                                      selectedStop: selectedStop, routeLines: [])
+
+        let sources = stopSourceGenerator.stopSources
+        let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }!
+        if case let .featureCollection(collection) = stationSource.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 2)
+
+            let selectedFeature = collection.features.first { feat in
+                feat.identifier == FeatureIdentifier(selectedStop.id)
+            }
+            let otherFeature = collection.features.first { feat in
+                feat.identifier == FeatureIdentifier(otherStop.id)
+            }
+            XCTAssertNotNil(selectedFeature)
+            if case let .boolean(isSelected) = selectedFeature!.properties![StopSourceGenerator.propIsSelectedKey] {
+                XCTAssertTrue(isSelected)
+            } else {
+                XCTFail("Selected stop doesn't have isSelected prop set")
+            }
+
+            if case let .boolean(isOtherSelected) = otherFeature!.properties![StopSourceGenerator.propIsSelectedKey] {
+                XCTAssertFalse(isOtherSelected)
+            } else {
+                XCTFail("Selected stop doesn't have isSelected prop set")
             }
         } else {
             XCTFail("Station source had no features")

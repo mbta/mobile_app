@@ -15,7 +15,7 @@ import SwiftUI
 
 struct NearbyTransitView: View {
     @Environment(\.scenePhase) private var scenePhase
-    var location: CLLocationCoordinate2D
+    var location: CLLocationCoordinate2D?
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
     @ObservedObject var globalFetcher: GlobalFetcher
@@ -116,9 +116,9 @@ struct NearbyTransitView: View {
 
     var didAppear: ((Self) -> Void)?
 
-    func getNearby(location: CLLocationCoordinate2D) {
+    func getNearby(location: CLLocationCoordinate2D?) {
         Task {
-            guard let globalData = globalFetcher.response else { return }
+            guard let location, let globalData = globalFetcher.response else { return }
             await nearbyFetcher.getNearby(global: globalData, location: location)
         }
     }
@@ -213,6 +213,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longitude: -70.969853,
             name: "Sea St opp Peterson Rd",
             locationType: LocationType.stop,
+            description: nil,
+            platformName: nil,
             parentStationId: nil,
             childStopIds: []
         )
@@ -279,6 +281,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
             longitude: -70.969853,
             name: "South Station",
             locationType: LocationType.stop,
+            description: nil,
+            platformName: nil,
             parentStationId: nil,
             childStopIds: []
         )

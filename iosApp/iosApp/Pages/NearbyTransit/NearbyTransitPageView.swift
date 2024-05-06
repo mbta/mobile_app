@@ -14,7 +14,6 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitPageView: View {
-    var currentLocation: CLLocationCoordinate2D?
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     var schedulesRepository: ISchedulesRepository
@@ -22,13 +21,11 @@ struct NearbyTransitPageView: View {
     @ObservedObject var viewportProvider: ViewportProvider
     @ObservedObject var alertsFetcher: AlertsFetcher
 
-    @State var cancellables: [AnyCancellable]
-    @StateObject var locationProvider: NearbyTransitLocationProvider
+    @State var location: CLLocationCoordinate2D?
 
     let inspection = Inspection<Self>()
 
     init(
-        currentLocation: CLLocationCoordinate2D?,
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
@@ -36,48 +33,28 @@ struct NearbyTransitPageView: View {
         viewportProvider: ViewportProvider,
         alertsFetcher: AlertsFetcher
     ) {
-        self.currentLocation = currentLocation
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
         self.schedulesRepository = schedulesRepository
         self.predictionsFetcher = predictionsFetcher
         self.viewportProvider = viewportProvider
         self.alertsFetcher = alertsFetcher
-
-        cancellables = .init()
-        _locationProvider = StateObject(wrappedValue: .init(
-            currentLocation: currentLocation,
-            cameraLocation: viewportProvider.cameraState.center,
-            isFollowing: viewportProvider.viewport.isFollowing
-        ))
     }
 
     var body: some View {
         NearbyTransitView(
-            location: locationProvider.location,
+            location: location,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             schedulesRepository: schedulesRepository,
             predictionsFetcher: predictionsFetcher,
             alertsFetcher: alertsFetcher
         )
-        .onAppear {
-            cancellables.append(
-                viewportProvider.$cameraState
-                    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-                    .sink { newCameraState in
-                        locationProvider.updateCameraLocation(newCameraState.center)
-                    }
-            )
-        }
-        .onChange(of: currentLocation) { newLocation in
-            locationProvider.updateCurrentLocation(newLocation)
-        }
-        .onChange(of: viewportProvider.viewport) { newViewport in
-            locationProvider.updateIsFollowing(
-                newViewport.isFollowing,
-                withCameraLocation: viewportProvider.cameraState.center
-            )
+        .onReceive(
+            viewportProvider.cameraStatePublisher
+                .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        ) { newCameraState in
+            location = newCameraState.center
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .navigationTitle("Nearby Transit")

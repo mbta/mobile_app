@@ -28,8 +28,8 @@ class NearbyFetcher: ObservableObject {
 
     func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) async {
         if location.isRoughlyEqualTo(loadedLocation) { return }
-        if loading, currentTask != nil, !currentTask!.isCancelled {
-            currentTask?.cancel()
+        if loading, let currentTask, !currentTask.isCancelled {
+            currentTask.cancel()
         }
         currentTask = Task { @MainActor [weak self] in
             guard let self else { return }

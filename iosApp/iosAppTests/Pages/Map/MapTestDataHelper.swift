@@ -14,7 +14,9 @@ enum MapTestDataHelper {
     static let routeRed = objects.route { route in
         route.id = "Red"
         route.color = "DA291C"
+        route.type = RouteType.heavyRail
         route.routePatternIds = ["Red-1-0", "Red-3-0"]
+        route.sortOrder = 10010
     }
 
     static let routeOrange = objects.route { route in
@@ -22,6 +24,8 @@ enum MapTestDataHelper {
         route.color = "ED8B00"
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
+
+    static let routesById = [routeRed.id: routeRed, routeOrange.id: routeOrange]
 
     static let stopAlewife = objects.stop { stop in
         stop.id = "place-alfcl"
@@ -137,6 +141,7 @@ enum MapTestDataHelper {
     static let routeResponse = MapFriendlyRouteResponse(
         routesWithSegmentedShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes(routeId: routeRed.id, segmentedShapes: [
             SegmentedRouteShape(sourceRoutePatternId: patternRed10.id, sourceRouteId: patternRed10.routeId,
+                                directionId: patternRed10.directionId,
                                 routeSegments: [RouteSegment(id: "segment1",
                                                              sourceRoutePatternId: patternRed10.id,
                                                              sourceRouteId: patternRed10.routeId,
@@ -144,6 +149,7 @@ enum MapTestDataHelper {
                                                              otherPatternsByStopId: [:])],
                                 shape: shapeRedC1),
             SegmentedRouteShape(sourceRoutePatternId: patternRed30.id, sourceRouteId: patternRed30.routeId,
+                                directionId: patternRed30.directionId,
                                 routeSegments: [RouteSegment(id: "segment2",
                                                              sourceRoutePatternId: patternRed30.id,
                                                              sourceRouteId: patternRed30.routeId,
@@ -153,6 +159,7 @@ enum MapTestDataHelper {
         ]),
         MapFriendlyRouteResponse.RouteWithSegmentedShapes(routeId: routeOrange.id, segmentedShapes: [
             SegmentedRouteShape(sourceRoutePatternId: patternOrange30.id, sourceRouteId: patternOrange30.routeId,
+                                directionId: patternOrange30.directionId,
                                 routeSegments: [RouteSegment(id: "segment3",
                                                              sourceRoutePatternId: patternOrange30.id,
                                                              sourceRouteId: patternOrange30.routeId,

@@ -87,7 +87,6 @@ struct StopDetailsPage: View {
         getSchedule(stop)
         joinPredictions(stop)
         updateDepartures(stop)
-        viewportProvider.animateTo(coordinates: stop.coordinate)
     }
 
     func getSchedule(_ stop: Stop) {

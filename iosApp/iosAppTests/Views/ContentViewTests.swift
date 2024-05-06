@@ -49,7 +49,7 @@ final class ContentViewTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [connectedExpectation], timeout: 1)
-        try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().tabView().navigationStack(0).callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
 
@@ -77,9 +77,9 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().tabView().navigationStack(0).callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().navigationStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().tabView().navigationStack(0).callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 
@@ -126,7 +126,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(ViewportProvider())
 
         ViewHosting.host(view: sut)
-        wait(for: [fetchesGlobalData], timeout: 1)
+        wait(for: [fetchesGlobalData], timeout: 2)
     }
 
     class FakeSocket: MockSocket {

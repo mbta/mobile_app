@@ -16,6 +16,13 @@ struct StopDetailsFilter: Hashable {
 
 enum SheetNavigationStackEntry: Hashable {
     case stopDetails(Stop, StopDetailsFilter?)
+
+    func stop() -> Stop? {
+        switch self {
+        case let .stopDetails(stop, _): stop
+        case _: nil
+        }
+    }
 }
 
 extension [SheetNavigationStackEntry] {
@@ -29,7 +36,7 @@ extension [SheetNavigationStackEntry] {
     var lastStopDetailsFilter: StopDetailsFilter? {
         get {
             switch self.last {
-            case let .stopDetails(_, filter): filter
+            case let .stopDetails(stop, filter): filter
             case _: nil
             }
         }

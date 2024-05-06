@@ -17,7 +17,8 @@ struct StopFeatureData {
 
 class StopSourceGenerator {
     let stops: [String: Stop]
-    let routeSourceDetails: [RouteSourceData]?
+    let selectedStop: Stop?
+    let routeLines: [RouteLineData]?
     let alertsByStop: [String: AlertAssociatedStop]
 
     var stopSources: [GeoJSONSource] = []
@@ -32,14 +33,17 @@ class StopSourceGenerator {
 
     static let propIdKey = "id"
     static let propServiceStatusKey = "serviceStatus"
+    static let propIsSelectedKey = "isSelected"
 
     init(
         stops: [String: Stop],
-        routeSourceDetails: [RouteSourceData]? = nil,
+        selectedStop: Stop? = nil,
+        routeLines: [RouteLineData]? = nil,
         alertsByStop: [String: AlertAssociatedStop]? = nil
     ) {
         self.stops = stops
-        self.routeSourceDetails = routeSourceDetails
+        self.selectedStop = selectedStop
+        self.routeLines = routeLines
         self.alertsByStop = alertsByStop ?? [:]
 
         stopFeatures = generateRouteAssociatedStops() + generateRemainingStops()
@@ -47,25 +51,22 @@ class StopSourceGenerator {
     }
 
     func generateRouteAssociatedStops() -> [StopFeatureData] {
-        guard let routeSourceDetails else { return [] }
-        return routeSourceDetails.flatMap { routeSource in
-
-            routeSource.lines.flatMap { lineData in
-                lineData.stopIds.compactMap { childStopId in
-                    guard let stopOnRoute = stops[childStopId] else {
-                        return nil
-                    }
-                    let stop = stopOnRoute.resolveParent(stops: stops)
-
-                    if touchedStopIds.contains(stop.id) { return nil }
-
-                    let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
-                    touchedStopIds.insert(stop.id)
-                    return .init(
-                        stop: stop,
-                        feature: generateStopFeature(stop, at: snappedCoord)
-                    )
+        guard let routeLines else { return [] }
+        return routeLines.flatMap { lineData in
+            lineData.stopIds.compactMap { childStopId in
+                guard let stopOnRoute = stops[childStopId] else {
+                    return nil
                 }
+                let stop = stopOnRoute.resolveParent(stops: stops)
+
+                if touchedStopIds.contains(stop.id) { return nil }
+
+                let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
+                touchedStopIds.insert(stop.id)
+                return .init(
+                    stop: stop,
+                    feature: generateStopFeature(stop, at: snappedCoord)
+                )
             }
         }
     }
@@ -91,6 +92,8 @@ class StopSourceGenerator {
         var featureProps = JSONObject()
         featureProps[Self.propIdKey] = JSONValue(String(describing: stop.id))
         featureProps[Self.propServiceStatusKey] = JSONValue(String(describing: getServiceStatus(stop: stop)))
+        featureProps[Self.propIsSelectedKey] = JSONValue(stop.id == selectedStop?.id)
+
         return featureProps
     }
 

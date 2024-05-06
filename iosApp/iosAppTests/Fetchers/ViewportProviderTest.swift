@@ -18,8 +18,8 @@ final class ViewportProviderTest: XCTestCase {
     func testDefaultViewport() throws {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
-        XCTAssertEqual(provider.viewport.camera?.center, ViewportProvider.defaultCenter)
-        XCTAssertEqual(provider.viewport.camera?.zoom, ViewportProvider.defaultZoom)
+        XCTAssertEqual(provider.viewport.camera?.center, ViewportProvider.Defaults.center)
+        XCTAssertEqual(provider.viewport.camera?.zoom, ViewportProvider.Defaults.zoom)
     }
 
     func testFollowViewport() async throws {
@@ -35,5 +35,21 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertNotNil(provider.viewport.camera)
         provider.viewport = .camera(center: .init(latitude: 0, longitude: 0))
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
+    }
+
+    func testAnimateToPreservesZoomIfNotGiven() throws {
+        let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
+
+        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1))
+        XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 1, longitude: 1))
+        XCTAssertEqual(provider.viewport.camera?.zoom, 14.0)
+    }
+
+    func testAnimateToSetsZoom() throws {
+        let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
+
+        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1), zoom: 17.0)
+        XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 1, longitude: 1))
+        XCTAssertEqual(provider.viewport.camera?.zoom, 17.0)
     }
 }

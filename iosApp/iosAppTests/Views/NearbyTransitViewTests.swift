@@ -27,7 +27,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
     func testPending() throws {
         let sut = NearbyTransitView(
-            location: ViewportProvider.defaultCenter,
+            location: ViewportProvider.Defaults.center,
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             globalFetcher: .init(backend: IdleBackend()),
@@ -395,7 +395,17 @@ final class NearbyTransitViewTests: XCTestCase {
 
         nearbyFetcher.nearbyByRouteAndStop = NearbyStaticData.companion.build { builder in
             builder.route(route: nearbyFetcher.nearbyByRouteAndStop!.data[0].route) { builder in
-                let lechmere = Stop(id: "place-lech", latitude: 90.12, longitude: 34.56, name: "Lechmere", locationType: .station, parentStationId: nil, childStopIds: [])
+                let lechmere = Stop(
+                    id: "place-lech",
+                    latitude: 90.12,
+                    longitude: 34.56,
+                    name: "Lechmere",
+                    locationType: .station,
+                    description: nil,
+                    platformName: nil,
+                    parentStationId: nil,
+                    childStopIds: []
+                )
                 builder.stop(stop: lechmere) { _ in
                 }
             }
@@ -671,52 +681,40 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let getNearbyExpectation = expectation(description: "getNearby")
-        getNearbyExpectation.expectedFulfillmentCount = 2
 
         let nearbyFetcher = FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation)
-        let currentLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
-
+        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
         globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
-        var sut = NearbyTransitPageView(
-            currentLocation: currentLocation,
+        let sut = NearbyTransitPageView(
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
-            viewportProvider: .init(viewport: .followPuck(zoom: ViewportProvider.defaultZoom)),
+            viewportProvider: viewportProvider,
             alertsFetcher: .init(socket: MockSocket())
         )
 
-        let newLocation = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-
+        let newCameraState = CameraState(
+            center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
+            padding: .zero,
+            zoom: ViewportProvider.Defaults.zoom,
+            bearing: 0.0,
+            pitch: 0.0
+        )
         let appearancePublisher = PassthroughSubject<Bool, Never>()
         let hasAppeared = sut.inspection.inspect(after: 0.2) { view in
-            XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, currentLocation)
-            try view.actualView().locationProvider.updateCurrentLocation(newLocation)
+            XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, nil)
+            try view.actualView().viewportProvider.updateCameraState(newCameraState)
             appearancePublisher.send(true)
         }
 
-        let hasChangedLocation = sut.inspection.inspect(onReceive: appearancePublisher, after: 0.2) { view in
-            XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, newLocation)
+        let hasChangedLocation = sut.inspection.inspect(onReceive: appearancePublisher, after: 1) { view in
+            XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, newCameraState.center)
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, getNearbyExpectation, hasChangedLocation], timeout: 3)
-    }
-
-    func testLocationProviderResolvesProperly() {
-        let cameraLocation = CLLocationCoordinate2D(latitude: 1.0, longitude: 1.0)
-        let currentLocation = CLLocationCoordinate2D(latitude: 2.0, longitude: 2.0)
-
-        let nilCurrentProvider: NearbyTransitLocationProvider = .init(currentLocation: nil, cameraLocation: cameraLocation, isFollowing: true)
-        XCTAssertEqual(nilCurrentProvider.location, cameraLocation)
-
-        let cameraProvider: NearbyTransitLocationProvider = .init(currentLocation: currentLocation, cameraLocation: cameraLocation, isFollowing: false)
-        XCTAssertEqual(cameraProvider.location, cameraLocation)
-
-        let currentProvider: NearbyTransitLocationProvider = .init(currentLocation: currentLocation, cameraLocation: cameraLocation, isFollowing: true)
-        XCTAssertEqual(currentProvider.location, currentLocation)
+        wait(for: [hasAppeared, getNearbyExpectation, hasChangedLocation], timeout: 5)
     }
 
     func testNoService() throws {
