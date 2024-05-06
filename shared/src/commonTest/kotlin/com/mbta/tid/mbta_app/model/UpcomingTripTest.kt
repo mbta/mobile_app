@@ -7,7 +7,9 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
 import com.mbta.tid.mbta_app.model.UpcomingTrip.Format
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
@@ -530,5 +532,38 @@ class UpcomingTripTest {
         )
         assertEquals(null, UpcomingTrip(trip, scheduleNeither, predictionNormal).isArrivalOnly())
         assertEquals(null, UpcomingTrip(trip, scheduleNeither, predictionNeither).isArrivalOnly())
+    }
+
+    @Test
+    fun `stopSequence works if prediction and schedule both exist`() {
+        val trip = trip()
+
+        val schedule1 = schedule { stopSequence = 1 }
+        val schedule2 = schedule { stopSequence = 2 }
+        val prediction1 = prediction { stopSequence = 1 }
+        val prediction2 = prediction { stopSequence = 2 }
+
+        assertEquals(1, UpcomingTrip(trip, schedule1, prediction1).stopSequence)
+        assertFails { UpcomingTrip(trip, schedule1, prediction2).stopSequence }
+        assertFails { UpcomingTrip(trip, schedule2, prediction1).stopSequence }
+        assertEquals(2, UpcomingTrip(trip, schedule2, prediction2).stopSequence)
+    }
+
+    @Test
+    fun `stopSequence works if only prediction or only schedule exists`() {
+        val trip = trip()
+
+        val schedule = schedule { stopSequence = 90 }
+        val prediction = prediction { stopSequence = 120 }
+
+        assertEquals(90, UpcomingTrip(trip, schedule).stopSequence)
+        assertEquals(120, UpcomingTrip(trip, prediction).stopSequence)
+    }
+
+    @Test
+    fun `stopSequence returns null if neither prediction nor schedule exists`() {
+        val trip = trip()
+
+        assertNull(UpcomingTrip(trip, null, null, null).stopSequence)
     }
 }
