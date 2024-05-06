@@ -141,4 +141,52 @@ class RouteSourceGenerator {
                              line: lineSegment,
                              stopIds: segment.stopIds, isAlerting: segment.isAlerting)
     }
+
+    static func forRailAtStop(_ stopShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                              _ railShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                              _ routesById: [String: Route],
+                              _ stopsById: [String: Stop],
+                              _ alertsByStop: [String: AlertAssociatedStop]) -> RouteSourceGenerator {
+        let stopRailRouteIds: Set<String> = Set(stopShapes.filter { routeWithShape in
+            let maybeRouteType = routesById[routeWithShape.routeId]?.type
+            if let routeType = maybeRouteType {
+                return routeType == RouteType.heavyRail ||
+                    routeType == RouteType.lightRail ||
+                    routeType == RouteType.commuterRail
+            } else {
+                return false
+            }
+        }.map(\.routeId))
+        return RouteSourceGenerator(
+            routeData: railShapes.filter { stopRailRouteIds.contains($0.routeId) },
+            routesById: routesById,
+            stopsById: stopsById,
+            alertsByStop: alertsByStop
+        )
+    }
+
+    static func forFilteredStop(_ stopShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                                _ filter: StopDetailsFilter,
+                                _ routesById: [String: Route],
+                                _ stopsById: [String: Stop],
+                                _ alertsByStop: [String: AlertAssociatedStop]) -> RouteSourceGenerator {
+        let targetRouteData = stopShapes.first { $0.routeId == filter.routeId }
+        if let targetRouteData {
+            let targetDirectionShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId }
+            return RouteSourceGenerator(
+                routeData: [.init(routeId: targetRouteData.routeId, segmentedShapes: targetDirectionShapes)],
+                routesById: routesById,
+                stopsById: stopsById,
+                alertsByStop: alertsByStop
+            )
+
+        } else {
+            return RouteSourceGenerator(
+                routeData: [],
+                routesById: routesById,
+                stopsById: stopsById,
+                alertsByStop: alertsByStop
+            )
+        }
+    }
 }

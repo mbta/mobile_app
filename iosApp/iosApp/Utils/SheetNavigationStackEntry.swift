@@ -22,6 +22,13 @@ struct TripDetailsTarget: Hashable {
 enum SheetNavigationStackEntry: Hashable {
     case stopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?)
+
+    func stop() -> Stop? {
+        switch self {
+        case let .stopDetails(stop, _): stop
+        case _: nil
+        }
+    }
 }
 
 extension [SheetNavigationStackEntry] {

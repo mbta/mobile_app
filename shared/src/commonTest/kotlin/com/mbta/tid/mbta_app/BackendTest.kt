@@ -493,6 +493,7 @@ class BackendTest {
                                 {
                                     "source_route_pattern_id": "red-ashmont",
                                     "source_route_id": "Red",
+                                    "direction_id": 0,
                                                                 "shape": {
                                                                     "id": "ashmont_shape",
                                                                     "polyline": "ashmont_shape_polyline"
@@ -518,6 +519,7 @@ class BackendTest {
                                 {
                                     "source_route_pattern_id": "red-braintree",
                                     "source_route_id": "Red",
+                                    "direction_id": 0,
                                     "route_segments": [
                                         {
                                             "id": "jfk/umass-north_quincy",
@@ -560,6 +562,7 @@ class BackendTest {
                                         SegmentedRouteShape(
                                             sourceRouteId = "Red",
                                             sourceRoutePatternId = "red-ashmont",
+                                            directionId = 0,
                                             shape =
                                                 Shape(
                                                     id = "ashmont_shape",
@@ -584,6 +587,7 @@ class BackendTest {
                                         SegmentedRouteShape(
                                             sourceRouteId = "Red",
                                             sourceRoutePatternId = "red-braintree",
+                                            directionId = 0,
                                             shape =
                                                 Shape(
                                                     id = "braintree_shape",

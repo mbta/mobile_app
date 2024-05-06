@@ -98,6 +98,7 @@ class StopRepositoryTest : KoinTest {
                                         SegmentedRouteShape(
                                             sourceRoutePatternId = "Blue-6-0",
                                             sourceRouteId = "Blue",
+                                            directionId = 0,
                                             routeSegments =
                                                 listOf(
                                                     RouteSegment(
