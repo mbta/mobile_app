@@ -14,8 +14,14 @@ struct StopDetailsFilter: Hashable {
     let directionId: Int32
 }
 
+struct TripDetailsTarget: Hashable {
+    let stopId: String
+    let stopSequence: Int
+}
+
 enum SheetNavigationStackEntry: Hashable {
     case stopDetails(Stop, StopDetailsFilter?)
+    case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?)
 
     func stop() -> Stop? {
         switch self {

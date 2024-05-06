@@ -19,8 +19,9 @@ struct StopDetailsFilteredRouteView: View {
         let tripId: String
         let headsign: String
         let formatted: PatternsByHeadsign.Format
+        let navigationTarget: SheetNavigationStackEntry?
 
-        init?(trip: UpcomingTrip, route: Route, expectedDirection: Int32?, now: Instant) {
+        init?(trip: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
             if trip.trip.directionId != expectedDirection {
                 return nil
             }
@@ -30,6 +31,12 @@ struct StopDetailsFilteredRouteView: View {
             formatted = PatternsByHeadsign(
                 route: route, headsign: headsign, patterns: [], upcomingTrips: [trip], alertsHere: nil
             ).format(now: now)
+            if let vehicleId = trip.prediction?.vehicleId, let stopSequence = trip.stopSequence {
+                navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
+                                                target: .init(stopId: stopId, stopSequence: stopSequence.intValue))
+            } else {
+                navigationTarget = nil
+            }
 
             if !(formatted is PatternsByHeadsign.FormatSome) {
                 return nil
@@ -48,7 +55,7 @@ struct StopDetailsFilteredRouteView: View {
 
         let expectedDirection: Int32? = filter?.directionId
         rows = patternsByStop.allUpcomingTrips().compactMap {
-            RowData(trip: $0, route: patternsByStop.route, expectedDirection: expectedDirection, now: now)
+            RowData(trip: $0, route: patternsByStop.route, stopId: patternsByStop.stop.id, expectedDirection: expectedDirection, now: now)
         }
     }
 
@@ -62,7 +69,9 @@ struct StopDetailsFilteredRouteView: View {
                 )
             ) {
                 ForEach(rows, id: \.tripId) { row in
-                    HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
+                    OptionalNavigationLink(value: row.navigationTarget) {
+                        HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
+                    }
                 }
             }
         }
