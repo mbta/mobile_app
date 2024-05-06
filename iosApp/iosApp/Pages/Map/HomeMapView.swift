@@ -199,14 +199,11 @@ struct HomeMapView: View {
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
-        if let nextNavEntry {
-            switch nextNavEntry {
-            case let .stopDetails(stop, filter):
-                if oldNavEntry?.stop()?.id == stop.id {
-                    handleRouteFilterChange(filter)
-                } else {
-                    handleStopDetailsChange(stop, filter)
-                }
+        if case let .stopDetails(stop, filter) = nextNavEntry {
+            if oldNavEntry?.stop()?.id == stop.id {
+                handleRouteFilterChange(filter)
+            } else {
+                handleStopDetailsChange(stop, filter)
             }
         } else {
             clearSelectedStop()
