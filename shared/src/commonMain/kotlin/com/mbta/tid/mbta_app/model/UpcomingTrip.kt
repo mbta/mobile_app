@@ -45,6 +45,13 @@ data class UpcomingTrip(
             schedule?.scheduleTime
         }
 
+    val stopSequence: Int? = run {
+        if (schedule != null && prediction?.stopSequence != null) {
+            check(schedule.stopSequence == prediction.stopSequence)
+        }
+        prediction?.stopSequence ?: schedule?.stopSequence
+    }
+
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
     /**

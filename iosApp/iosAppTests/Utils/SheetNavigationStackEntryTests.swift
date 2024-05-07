@@ -44,6 +44,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         let previousEntries: [SheetNavigationStackEntry] = [
             .stopDetails(otherStop, .init(routeId: "A", directionId: 1)),
             .stopDetails(otherStop, .init(routeId: "B", directionId: 1)),
+            .tripDetails(tripId: "345", vehicleId: "abc", target: .init(stopId: "999", stopSequence: 111)),
             .stopDetails(otherStop, .init(routeId: "C", directionId: 0)),
             .stopDetails(otherStop, .init(routeId: "D", directionId: 0)),
         ]
@@ -55,5 +56,21 @@ final class SheetNavigationStackEntryTests: XCTestCase {
 
         XCTAssertEqual(stack, previousEntries + [.stopDetails(stop, nil)])
         XCTAssertEqual(stack.lastStopDetailsFilter, nil)
+    }
+
+    func testLastFilterNotTop() throws {
+        let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
+        var stack: [SheetNavigationStackEntry] = [
+            .stopDetails(stop, .init(routeId: "A", directionId: 1)),
+            .stopDetails(stop, .init(routeId: "B", directionId: 0)),
+            .tripDetails(tripId: "a", vehicleId: "1", target: nil),
+        ]
+
+        XCTAssertEqual(stack.lastStopDetailsFilter, nil)
+
+        let prevStack = Array(stack)
+        stack.lastStopDetailsFilter = nil
+
+        XCTAssertEqual(stack, prevStack)
     }
 }
