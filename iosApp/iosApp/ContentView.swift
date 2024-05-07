@@ -21,6 +21,7 @@ struct ContentView: View {
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = .zero
     @State private var navigationStack: [SheetNavigationStackEntry] = []
+    @StateObject var nearbyVM: NearbyViewModel = .init()
 
     private enum SelectedTab: Hashable {
         case nearby
@@ -71,6 +72,7 @@ struct ContentView: View {
                     alertsFetcher: alertsFetcher,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
+                    nearbyVM: nearbyVM,
                     railRouteShapeFetcher: railRouteShapeFetcher,
                     vehiclesFetcher: vehiclesFetcher,
                     viewportProvider: viewportProvider,
@@ -143,7 +145,8 @@ struct ContentView: View {
                             socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
                             viewportProvider: viewportProvider,
-                            stop: stop, filter: $navigationStack.lastStopDetailsFilter
+                            stop: stop, filter: $navigationStack.lastStopDetailsFilter,
+                            nearbyVM: nearbyVM
                         )
                     case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
                         TripDetailsPage(tripId: tripId, vehicleId: vehicleId, target: target)

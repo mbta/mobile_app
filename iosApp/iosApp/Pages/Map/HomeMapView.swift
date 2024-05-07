@@ -16,12 +16,14 @@ struct HomeMapView: View {
     @ObservedObject var alertsFetcher: AlertsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
+    @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
     var stopRepository: IStopRepository
     @State var stopMapData: StopMapResponse?
+    @State var upcomingRoutePatterns: Set<String> = .init()
 
     @StateObject private var locationDataManager: LocationDataManager
     @Binding var navigationStack: [SheetNavigationStackEntry]
@@ -45,7 +47,9 @@ struct HomeMapView: View {
         alertsFetcher: AlertsFetcher,
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
+        nearbyVM: NearbyViewModel,
         railRouteShapeFetcher: RailRouteShapeFetcher,
+
         vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
         stopRepository: IStopRepository = RepositoryDI().stop,
@@ -57,6 +61,7 @@ struct HomeMapView: View {
         self.alertsFetcher = alertsFetcher
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
+        self.nearbyVM = nearbyVM
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.vehiclesFetcher = vehiclesFetcher
         self.viewportProvider = viewportProvider
@@ -85,6 +90,12 @@ struct HomeMapView: View {
                     alerts: nextAlerts,
                     filterAtTime: now.toKotlinInstant()
                 )
+            }
+
+            .onChange(of: nearbyVM.departures) { _ in
+                if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
+                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+                }
             }
             .onChange(of: currentStopAlerts) { nextStopAlerts in
                 handleStopAlertChange(alertsByStop: nextStopAlerts)
@@ -224,14 +235,14 @@ struct HomeMapView: View {
             stopMapData = try await stopRepository.getStopMapData(stopId: stop.id)
 
             if let stopMapData {
-                updateStopDetailsLayers(stopMapData, filter)
+                updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
             }
         }
     }
 
     func handleRouteFilterChange(_ filter: StopDetailsFilter?) {
         if let stopMapData {
-            updateStopDetailsLayers(stopMapData, filter)
+            updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
         }
     }
 
@@ -308,13 +319,16 @@ extension HomeMapView {
                                        stopSourceGenerator: updatedStopSources)
     }
 
-    func updateStopDetailsLayers(_ stopMapData: StopMapResponse, _ filter: StopDetailsFilter?) {
+    func updateStopDetailsLayers(_ stopMapData: StopMapResponse, _ filter: StopDetailsFilter?,
+                                 _ departures: StopDetailsDepartures?) {
         if let filter {
-            let filteredSource = RouteSourceGenerator.forFilteredStop(stopMapData.routeShapes,
-                                                                      filter,
-                                                                      globalFetcher.routes,
-                                                                      globalFetcher.stops,
-                                                                      currentStopAlerts)
+            let filteredRouteWithShapes = filteredRouteShapesForStop(stopMapData: stopMapData,
+                                                                     filter: filter,
+                                                                     departures: departures)
+            let filteredSource = RouteSourceGenerator(routeData: [filteredRouteWithShapes],
+                                                      routesById: globalFetcher.routes,
+                                                      stopsById: globalFetcher.stops,
+                                                      alertsByStop: currentStopAlerts)
             layerManager?.updateSourceData(routeSourceGenerator: filteredSource)
 
         } else {
@@ -326,6 +340,31 @@ extension HomeMapView {
                                                                      currentStopAlerts)
             layerManager?.updateSourceData(routeSourceGenerator: railRouteSource)
         }
+    }
+
+    func filteredRouteShapesForStop(stopMapData: StopMapResponse,
+                                    filter: StopDetailsFilter,
+                                    departures: StopDetailsDepartures?)
+        -> MapFriendlyRouteResponse.RouteWithSegmentedShapes {
+        let targetRouteData = stopMapData.routeShapes.first { $0.routeId == filter.routeId }
+        if let targetRouteData {
+            if let departures {
+                let upcomingRoutePatternIds: [String] = departures.routes
+                    .flatMap { $0.allUpcomingTrips() }
+                    .compactMap(\.trip.routePatternId)
+                let targetRoutePatternIds: Set<String> = Set(upcomingRoutePatternIds)
+
+                let filteredShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId &&
+                    targetRoutePatternIds.contains($0.sourceRoutePatternId)
+                }
+                return .init(routeId: filter.routeId, segmentedShapes: filteredShapes)
+            } else {
+                let filteredShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId }
+                return .init(routeId: filter.routeId, segmentedShapes: filteredShapes)
+            }
+        }
+
+        return .init(routeId: filter.routeId, segmentedShapes: [])
     }
 
     func handleStopAlertChange(alertsByStop: [String: AlertAssociatedStop]) {
@@ -358,7 +397,9 @@ struct ProxyModifiedMap: View {
     var body: some View {
         MapReader { proxy in
             mapContent
-                .onAppear { handleAppear(proxy.location, proxy.map) }
+                .onAppear {
+                    handleAppear(proxy.location, proxy.map)
+                }
                 .onChange(of: globalFetcher.response) { _ in
                     handleTryLayerInit(proxy.map)
                 }
