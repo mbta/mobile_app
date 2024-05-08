@@ -12,6 +12,12 @@ import SwiftUI
 
 class NearbyViewModel: ObservableObject {
     @Published var departures: StopDetailsDepartures?
+    @Published var navigationStack: [SheetNavigationStackEntry] = []
+
+    init(departures: StopDetailsDepartures? = nil, navigationStack: [SheetNavigationStackEntry] = []) {
+        self.departures = departures
+        self.navigationStack = navigationStack
+    }
 
     func setDepartures(_ newDepartures: StopDetailsDepartures?) {
         departures = newDepartures

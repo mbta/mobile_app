@@ -20,7 +20,6 @@ struct ContentView: View {
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = .zero
-    @State private var navigationStack: [SheetNavigationStackEntry] = []
     @StateObject var nearbyVM: NearbyViewModel = .init()
 
     private enum SelectedTab: Hashable {
@@ -76,7 +75,6 @@ struct ContentView: View {
                     railRouteShapeFetcher: railRouteShapeFetcher,
                     vehiclesFetcher: vehiclesFetcher,
                     viewportProvider: viewportProvider,
-                    navigationStack: $navigationStack,
                     sheetHeight: $sheetHeight
                 )
                 .sheet(isPresented: .constant(selectedTab == .nearby)) { sheet }
@@ -129,7 +127,7 @@ struct ContentView: View {
 
     var nearbySheet: some View {
         GeometryReader { proxy in
-            NavigationStack(path: $navigationStack) {
+            NavigationStack(path: $nearbyVM.navigationStack) {
                 NearbyTransitPageView(
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
@@ -145,7 +143,7 @@ struct ContentView: View {
                             socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
                             viewportProvider: viewportProvider,
-                            stop: stop, filter: $navigationStack.lastStopDetailsFilter,
+                            stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                             nearbyVM: nearbyVM
                         )
                     case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
