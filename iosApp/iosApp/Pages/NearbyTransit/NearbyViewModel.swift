@@ -22,4 +22,8 @@ class NearbyViewModel: ObservableObject {
     func setDepartures(_ newDepartures: StopDetailsDepartures?) {
         departures = newDepartures
     }
+
+    func isNearbyVisible() -> Bool {
+        navigationStack == []
+    }
 }

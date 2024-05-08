@@ -131,6 +131,7 @@ struct ContentView: View {
                 NearbyTransitPageView(
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
+                    nearbyVM: nearbyVM,
                     predictionsFetcher: predictionsFetcher,
                     viewportProvider: viewportProvider,
                     alertsFetcher: alertsFetcher
