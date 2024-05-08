@@ -61,7 +61,8 @@ final class StopDetailsPageTests: XCTestCase {
             schedulesRepository: FakeSchedulesRepository(callback: callback),
             viewportProvider: viewportProvider,
             stop: stop,
-            filter: filter
+            filter: filter,
+            nearbyVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -85,7 +86,8 @@ final class StopDetailsPageTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
-            filter: filter
+            filter: filter,
+            nearbyVM: .init()
         )
 
         try sut.inspect().find(button: "Clear Filter").tap()
@@ -135,7 +137,8 @@ final class StopDetailsPageTests: XCTestCase {
             schedulesRepository: fakeSchedulesRepository(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
             viewportProvider: viewportProvider,
             stop: stop,
-            filter: filter
+            filter: filter,
+            nearbyVM: .init()
         )
 
         let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 0.2) { view in

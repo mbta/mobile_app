@@ -10,6 +10,7 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* IOSApp.swift */; };
+		6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */; };
 		6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278D2BD989630037554F /* DummyTestAppView.swift */; };
 		6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278F2BD989AC0037554F /* ProductionAppView.swift */; };
 		6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 6E35D4CD2B72C74500A2BF95 /* MapboxMaps */; };
@@ -165,6 +166,7 @@
 		59BA20329B947F0211D70C0D /* Pods-iosAppTests.prodrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.prodrelease.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.prodrelease.xcconfig"; sourceTree = "<group>"; };
 		5D90749ECA9D2A48F600A230 /* Pods-iosAppTests.prod release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.prod release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.prod release.xcconfig"; sourceTree = "<group>"; };
 		6C6BFDA87BC771B9484C9447 /* Pods-iosAppTests.stagingrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.stagingrelease.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.stagingrelease.xcconfig"; sourceTree = "<group>"; };
+		6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyViewModel.swift; sourceTree = "<group>"; };
 		6E20278D2BD989630037554F /* DummyTestAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyTestAppView.swift; sourceTree = "<group>"; };
 		6E20278F2BD989AC0037554F /* ProductionAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductionAppView.swift; sourceTree = "<group>"; };
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
@@ -453,6 +455,7 @@
 				7555FF82242A565900829871 /* ContentView.swift */,
 				8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
+				6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -1039,6 +1042,7 @@
 				8CA485B62BDC610B00E84E1F /* VehiclesFetcher.swift in Sources */,
 				9A74A2112BE2D71400E57102 /* AnnotationLabel.swift in Sources */,
 				9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */,
+				6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */,
 				9A88AAC12BD0680C00A5BF88 /* StopDetailsRoutePills.swift in Sources */,
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */,

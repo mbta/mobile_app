@@ -74,6 +74,7 @@ class PredictionsFetcher: ObservableObject {
             if let stringPayload = rawPayload {
                 let newPredictions = try PredictionsForStopsChannel.companion
                     .parseMessage(payload: stringPayload)
+
                 Logger().debug("Received \(newPredictions.predictions.count) predictions")
                 DispatchQueue.main.async {
                     self.predictions = newPredictions
