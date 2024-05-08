@@ -1,9 +1,11 @@
 package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.schedule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -52,5 +54,48 @@ class TripSchedulesResponseTest {
         val payload = buildJsonObject { put("type", "unknown") }
 
         assertEquals(TripSchedulesResponse.Unknown, json.decodeFromJsonElement(payload))
+    }
+
+    @Test
+    fun `can get stops from schedules`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+
+        val tripSchedulesResponse =
+            TripSchedulesResponse.Schedules(
+                listOf(
+                    objects.schedule { stopId = stop1.id },
+                    objects.schedule { stopId = stop2.id },
+                )
+            )
+
+        val globalResponse = GlobalResponse(objects, emptyMap())
+
+        assertEquals(listOf(stop1, stop2), tripSchedulesResponse.stops(globalResponse))
+    }
+
+    @Test
+    fun `can get stops from stopIds`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+
+        val tripSchedulesResponse = TripSchedulesResponse.StopIds(listOf(stop1.id, stop2.id))
+
+        val globalResponse = GlobalResponse(objects, emptyMap())
+
+        assertEquals(listOf(stop1, stop2), tripSchedulesResponse.stops(globalResponse))
+    }
+
+    @Test
+    fun `can't get stops from stopIds`() {
+        val tripSchedulesResponse = TripSchedulesResponse.Unknown
+
+        val globalResponse = GlobalResponse(ObjectCollectionBuilder(), emptyMap())
+
+        assertNull(tripSchedulesResponse.stops(globalResponse))
     }
 }
