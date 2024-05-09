@@ -147,4 +147,59 @@ final class StopDetailsPageTests: XCTestCase {
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)
     }
+
+    func testRejoinsPredictionsAfterBackgrounding() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: 0))
+        let joinExpectation = expectation(description: "joins predictions")
+        joinExpectation.expectedFulfillmentCount = 2
+        joinExpectation.assertForOverFulfill = true
+
+        let leaveExpectation = expectation(description: "leaves predictions")
+
+        class FakePredictionsFetcher: PredictionsFetcher {
+            let joinExpectation: XCTestExpectation
+            let leaveExpectation: XCTestExpectation
+
+            init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
+                self.joinExpectation = joinExpectation
+                self.leaveExpectation = leaveExpectation
+                super.init(socket: MockSocket())
+            }
+
+            override func run(stopIds _: [String]) {
+                joinExpectation.fulfill()
+            }
+
+            override func leave() {
+                leaveExpectation.fulfill()
+            }
+        }
+
+        let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let sut = StopDetailsPage(
+            socket: MockSocket(),
+            globalFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter,
+            nearbyVM: .init(),
+            predictionsFetcher: predictionsFetcher
+        )
+
+        ViewHosting.host(view: sut)
+
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+
+        wait(for: [leaveExpectation], timeout: 1)
+
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+
+        wait(for: [joinExpectation], timeout: 1)
+    }
 }
