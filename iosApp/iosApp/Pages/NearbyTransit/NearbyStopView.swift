@@ -14,17 +14,32 @@ struct NearbyStopView: View {
     let now: Instant
 
     var body: some View {
-        Text(patternsAtStop.stop.name).fontWeight(.bold)
+        Text(patternsAtStop.stop.name)
+            .font(.callout)
+            .foregroundStyle(Color.text)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.fill2)
 
-        ForEach(patternsAtStop.patternsByHeadsign, id: \.headsign) { patternsByHeadsign in
+        ForEach(Array(patternsAtStop.patternsByHeadsign.enumerated()), id: \.offset) { index, patternsByHeadsign in
             NavigationLink(value: SheetNavigationStackEntry.stopDetails(
                 patternsAtStop.stop,
                 .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
             )) {
-                HeadsignRowView(
-                    headsign: patternsByHeadsign.headsign,
-                    predictions: patternsByHeadsign.format(now: now)
-                )
+                VStack(spacing: 0) {
+                    HeadsignRowView(
+                        headsign: patternsByHeadsign.headsign,
+                        predictions: patternsByHeadsign.format(now: now)
+                    )
+                    .padding(8)
+                    .padding(.leading, 8)
+                    if index < patternsAtStop.patternsByHeadsign.count - 1 {
+                        Rectangle()
+                            .fill(Color.halo)
+                            .frame(maxWidth: .infinity, maxHeight: 1)
+                    }
+                }
             }
         }
     }

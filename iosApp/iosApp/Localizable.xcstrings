@@ -4,16 +4,19 @@
     "%@ to" : {
 
     },
-    "%ld min" : {
+    "%ld" : {
 
     },
-    "1 min" : {
+    "1" : {
 
     },
     "ARR" : {
 
     },
     "BRD" : {
+
+    },
+    "Bus" : {
 
     },
     "Clear Filter" : {
@@ -71,6 +74,9 @@
 
     },
     "Location access state unknown" : {
+
+    },
+    "min" : {
 
     },
     "No Predictions" : {

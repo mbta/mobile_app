@@ -88,13 +88,17 @@ struct NearbyTransitView: View {
 
     private func nearbyList(_ routes: [StopAssociatedRoute]) -> some View {
         ScrollViewReader { proxy in
-            List(routes, id: \.route.id) { nearbyRoute in
-                NearbyRouteView(
-                    nearbyRoute: nearbyRoute,
-                    pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                    onPin: { id in toggledPinnedRoute(id) },
-                    now: now.toKotlinInstant()
-                )
+            ScrollView {
+                VStack {
+                    ForEach(routes, id: \.route.id) { nearbyRoute in
+                        NearbyRouteView(
+                            nearbyRoute: nearbyRoute,
+                            pinned: pinnedRoutes.contains(nearbyRoute.route.id),
+                            onPin: { id in toggledPinnedRoute(id) },
+                            now: now.toKotlinInstant()
+                        )
+                    }
+                }
             }
             .onChange(of: scrollPosition) { id in
                 guard let id else { return }
