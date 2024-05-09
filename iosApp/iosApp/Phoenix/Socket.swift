@@ -8,24 +8,34 @@
 
 import Foundation
 import os
+import shared
 import SwiftPhoenixClient
 
-public protocol PhoenixSocket: AnyObject {
-    var channels: [Channel] { get }
+extension Socket: PhoenixSocket {
+    public func onAttach(callback: @escaping () -> Void) -> String {
+        onOpen(callback: callback)
+    }
 
-    func onOpen(callback: @escaping () -> Void) -> String
-    func onError(error: Error, response: URLResponse?)
-    func onMessage(message: String)
-    func onClose(callback: @escaping () -> Void) -> String
-    func connect()
-    func channel(_ topic: String,
-                 params: [String: Any]) -> Channel
-    func disconnect(code: Socket.CloseCode,
-                    reason: String?,
-                    callback: (() -> Void)?)
+    public func onDetach(callback: @escaping () -> Void) -> String {
+        onClose(callback: callback)
+    }
+
+    public func attach() {
+        connect()
+    }
+
+    public func getChannel(topic: String, params: [String: Any]) -> any PhoenixChannel {
+        channel(topic, params: params)
+    }
+
+    public func detach() {
+        disconnect(code: .normal, reason: "backgrounded", callback: nil)
+    }
+
+    func withRawMessages() {
+        decode = decodeWithRawMessage
+    }
 }
-
-extension Socket: PhoenixSocket {}
 
 class PhoenixTransportMock: PhoenixTransport {
     var readyState: PhoenixTransportReadyState {
@@ -49,12 +59,6 @@ class PhoenixTransportMock: PhoenixTransport {
     func disconnect(code _: Int, reason _: String?) {}
 
     func send(data _: Data) {}
-}
-
-extension Socket {
-    func withRawMessages() {
-        decode = decodeWithRawMessage
-    }
 }
 
 /*
@@ -130,11 +134,7 @@ private func decodeMessageParts(data: Data) -> DecodedMessageParts {
 }
 
 private func parseValue(str: String) -> String? {
-    if str == "null" {
-        nil
-    } else {
-        str.replacingOccurrences(of: "\"", with: "")
-    }
+    str == "null" ? nil : str.replacingOccurrences(of: "\"", with: "")
 }
 
 private func isResponseEvent(payload: [String: Any?]) -> Bool {

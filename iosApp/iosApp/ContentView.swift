@@ -13,7 +13,6 @@ struct ContentView: View {
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
-    @EnvironmentObject var predictionsFetcher: PredictionsFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
@@ -87,16 +86,16 @@ struct ContentView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Find nearby transit"
         ).onAppear {
-            socketProvider.socket.connect()
+            socketProvider.socket.attach()
             Task {
                 try await globalFetcher.getGlobalData()
             }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                socketProvider.socket.connect()
+                socketProvider.socket.attach()
             } else if newPhase == .background {
-                socketProvider.socket.disconnect(code: .normal, reason: "backgrounded", callback: nil)
+                socketProvider.socket.detach()
             }
         }.task { alertsFetcher.run() }
     }
@@ -134,7 +133,6 @@ struct ContentView: View {
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
-                    predictionsFetcher: predictionsFetcher,
                     viewportProvider: viewportProvider,
                     alertsFetcher: alertsFetcher
                 )
@@ -142,7 +140,6 @@ struct ContentView: View {
                     switch entry {
                     case let .stopDetails(stop, _):
                         StopDetailsPage(
-                            socket: socketProvider.socket,
                             globalFetcher: globalFetcher,
                             viewportProvider: viewportProvider,
                             stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,

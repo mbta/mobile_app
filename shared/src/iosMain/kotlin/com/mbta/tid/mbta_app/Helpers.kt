@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
@@ -30,8 +31,8 @@ internal fun createDataStore(): DataStore<Preferences> =
         }
     )
 
-fun initKoin(appVariant: AppVariant) {
-    startKoin { modules(appModule(appVariant) + platformModule()) }
+fun initKoin(appVariant: AppVariant, nativeModule: Module) {
+    startKoin { modules(appModule(appVariant) + platformModule() + nativeModule) }
 }
 
 /*

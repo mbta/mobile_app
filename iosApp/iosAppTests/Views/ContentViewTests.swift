@@ -39,7 +39,6 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
@@ -70,7 +69,6 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
@@ -122,7 +120,6 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: FakeGlobalFetcherBackend(expectation: fetchesGlobalData)))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
-            .environmentObject(PredictionsFetcher(socket: FakeSocket()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: FakeSocket()))
@@ -145,13 +142,11 @@ final class ContentViewTests: XCTestCase {
             super.init()
         }
 
-        override func connect() {
+        override func attach() {
             connectedExpecation?.fulfill()
         }
 
-        override func disconnect(code _: Socket.CloseCode,
-                                 reason _: String?,
-                                 callback _: (() -> Void)?) {
+        override func detach() {
             disconnectedExpectation?.fulfill()
         }
     }

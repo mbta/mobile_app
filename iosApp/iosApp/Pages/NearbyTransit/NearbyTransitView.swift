@@ -17,16 +17,18 @@ struct NearbyTransitView: View {
     var location: CLLocationCoordinate2D?
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
+    var predictionsRepository = RepositoryDI().predictions
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     var schedulesRepository: ISchedulesRepository
     @State var scheduleResponse: ScheduleResponse?
-    @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var alertsFetcher: AlertsFetcher
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
     @State var now = Date.now
     @State var scrollPosition: String?
     @State var pinnedRoutes: Set<String> = []
+    @State var predictions: PredictionsStreamDataResponse?
+    @State var predictionsError: PredictionsError?
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
@@ -60,14 +62,14 @@ struct NearbyTransitView: View {
             joinPredictions()
             scrollToTop()
         }
-        .onChange(of: scheduleResponse) { _ in
-            updateNearbyRoutes()
+        .onChange(of: scheduleResponse) { response in
+            updateNearbyRoutes(scheduleResponse: response)
         }
-        .onChange(of: predictionsFetcher.predictions) { _ in
-            updateNearbyRoutes()
+        .onChange(of: predictions) { predictions in
+            updateNearbyRoutes(predictions: predictions)
         }
-        .onChange(of: alertsFetcher.alerts) { _ in
-            updateNearbyRoutes()
+        .onChange(of: alertsFetcher.alerts) { alerts in
+            updateNearbyRoutes(alerts: alerts)
         }
         .onReceive(timer) { input in
             now = input
@@ -104,8 +106,8 @@ struct NearbyTransitView: View {
                     scrollPosition = nil
                 }
             }
-            .putAboveWhen(predictionsFetcher.errorText) { errorText in
-                IconCard(iconName: "network.slash", details: errorText)
+            .putAboveWhen(predictionsError) { error in
+                IconCard(iconName: "network.slash", details: Text(error.text))
             }
         }
     }
@@ -134,14 +136,21 @@ struct NearbyTransitView: View {
     }
 
     func joinPredictions() {
-        guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
-            .stopIds() else { return }
-        let stopIdList = Array(stopIds)
-        predictionsFetcher.run(stopIds: stopIdList)
+        guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?.stopIds() else { return }
+        predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    predictions = data
+                    predictionsError = nil
+                } else if let error = outcome.error {
+                    predictionsError = error.toSwiftEnum()
+                }
+            }
+        }
     }
 
     func leavePredictions() {
-        predictionsFetcher.leave()
+        predictionsRepository.disconnect()
     }
 
     private func scrollToTop() {
@@ -149,13 +158,18 @@ struct NearbyTransitView: View {
         scrollPosition = id
     }
 
-    private func updateNearbyRoutes() {
+    private func updateNearbyRoutes(
+        scheduleResponse: ScheduleResponse? = nil,
+        predictions: PredictionsStreamDataResponse? = nil,
+        alerts: AlertsStreamDataResponse? = nil,
+        pinnedRoutes: Set<String>? = nil
+    ) {
         nearbyWithRealtimeInfo = nearbyFetcher.withRealtimeInfo(
-            schedules: scheduleResponse,
-            predictions: predictionsFetcher.predictions,
-            alerts: alertsFetcher.alerts,
+            schedules: scheduleResponse ?? self.scheduleResponse,
+            predictions: predictions ?? self.predictions,
+            alerts: alerts ?? alertsFetcher.alerts,
             filterAtTime: now.toKotlinInstant(),
-            pinnedRoutes: pinnedRoutes
+            pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
         )
     }
 
@@ -163,7 +177,7 @@ struct NearbyTransitView: View {
         Task {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
-                updateNearbyRoutes()
+                updateNearbyRoutes(pinnedRoutes: pinnedRoutes)
             } catch {
                 debugPrint(error)
             }
