@@ -13,6 +13,9 @@ struct NearbyStopView: View {
     let patternsAtStop: PatternsByStop
     let now: Instant
 
+    @ScaledMetric private var chevronHeight: CGFloat = 14
+    @ScaledMetric private var chevronWidth: CGFloat = 8
+
     var body: some View {
         Text(patternsAtStop.stop.name)
             .font(.callout)
@@ -28,10 +31,18 @@ struct NearbyStopView: View {
                 .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
             )) {
                 VStack(spacing: 0) {
-                    HeadsignRowView(
-                        headsign: patternsByHeadsign.headsign,
-                        predictions: patternsByHeadsign.format(now: now)
-                    )
+                    HStack(spacing: 0) {
+                        HeadsignRowView(
+                            headsign: patternsByHeadsign.headsign,
+                            predictions: patternsByHeadsign.format(now: now)
+                        )
+                        Image(.faChevronRight)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: chevronWidth, height: chevronHeight)
+                            .padding(5)
+                            .foregroundStyle(Color.deemphasized)
+                    }
                     .padding(8)
                     .padding(.leading, 8)
                     if index < patternsAtStop.patternsByHeadsign.count - 1 {

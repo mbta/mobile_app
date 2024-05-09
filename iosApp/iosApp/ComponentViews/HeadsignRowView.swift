@@ -13,9 +13,6 @@ struct HeadsignRowView: View {
     let headsign: String
     let predictions: PatternsByHeadsign.Format
 
-    @ScaledMetric private var chevronHeight: CGFloat = 14
-    @ScaledMetric private var chevronWidth: CGFloat = 8
-
     var body: some View {
         HStack(spacing: 0) {
             Text(headsign)
@@ -31,12 +28,7 @@ struct HeadsignRowView: View {
                         UpcomingTripView(prediction: .some(prediction.format))
                     }
                 }
-                Image(.faChevronRight)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: chevronWidth, height: chevronHeight)
-                    .padding(5)
-                    .foregroundStyle(Color.deemphasized)
+
             case let .noService(alert):
                 UpcomingTripView(prediction: .noService(alert.alert.effect))
             case .none:
