@@ -3,12 +3,15 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
+import com.mbta.tid.mbta_app.repositories.IdleTripSchedulesRepository
 import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
+import com.mbta.tid.mbta_app.repositories.TripSchedulesRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -17,6 +20,7 @@ interface IRepositories {
     val schedules: ISchedulesRepository
     val settings: ISettingsRepository
     val stop: IStopRepository
+    val tripSchedules: ITripSchedulesRepository
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -24,6 +28,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val schedules: ISchedulesRepository by inject()
     override val settings: ISettingsRepository by inject()
     override val stop: IStopRepository by inject()
+    override val tripSchedules: ITripSchedulesRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -31,6 +36,7 @@ class RealRepositories : IRepositories {
     override val schedules = SchedulesRepository()
     override val settings = SettingsRepository()
     override val stop = StopRepository()
+    override val tripSchedules = TripSchedulesRepository()
 }
 
 class MockRepositories(
@@ -38,6 +44,7 @@ class MockRepositories(
     override val schedules: ISchedulesRepository,
     override val settings: ISettingsRepository,
     override val stop: IStopRepository,
+    override val tripSchedules: ITripSchedulesRepository,
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
@@ -45,13 +52,15 @@ class MockRepositories(
             pinnedRoutesRepository: IPinnedRoutesRepository = PinnedRoutesRepository(),
             schedules: ISchedulesRepository = IdleScheduleRepository(),
             settings: ISettingsRepository = SettingsRepository(),
-            stop: IStopRepository = IdleStopRepository()
+            stop: IStopRepository = IdleStopRepository(),
+            tripSchedules: ITripSchedulesRepository = IdleTripSchedulesRepository(),
         ): MockRepositories {
             return MockRepositories(
                 pinnedRoutesRepository = pinnedRoutesRepository,
                 schedules = schedules,
                 settings = settings,
-                stop = stop
+                stop = stop,
+                tripSchedules = tripSchedules,
             )
         }
     }

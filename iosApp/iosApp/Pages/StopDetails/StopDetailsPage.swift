@@ -19,8 +19,8 @@ struct StopDetailsPage: View {
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
-    @State var departures: StopDetailsDepartures?
     @State var servedRoutes: [Route] = []
+    @ObservedObject var nearbyVM: NearbyViewModel
 
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -31,7 +31,8 @@ struct StopDetailsPage: View {
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         viewportProvider: ViewportProvider,
         stop: Stop,
-        filter: Binding<StopDetailsFilter?>
+        filter: Binding<StopDetailsFilter?>,
+        nearbyVM: NearbyViewModel
     ) {
         self.globalFetcher = globalFetcher
         self.schedulesRepository = schedulesRepository
@@ -39,6 +40,7 @@ struct StopDetailsPage: View {
         _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         self.stop = stop
         _filter = filter
+        self.nearbyVM = nearbyVM
     }
 
     var body: some View {
@@ -46,7 +48,7 @@ struct StopDetailsPage: View {
             StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
             clearFilterButton
             departureHeader
-            if let departures {
+            if let departures = nearbyVM.departures {
                 StopDetailsRoutesView(departures: departures, now: now.toKotlinInstant(), filter: $filter)
             } else {
                 ProgressView()
@@ -112,7 +114,7 @@ struct StopDetailsPage: View {
 
     func tapRoutePill(_ route: Route) {
         if filter?.routeId == route.id { return }
-        guard let departures else { return }
+        guard let departures = nearbyVM.departures else { return }
         let patterns = departures.routes.first { patterns in patterns.route.id == route.id }
         if patterns == nil { return }
         let defaultDirectionId = patterns?.patternsByHeadsign.flatMap { headsign in
@@ -124,7 +126,7 @@ struct StopDetailsPage: View {
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
         servedRoutes = []
-        departures = if let globalResponse = globalFetcher.response {
+        let newDepartures: StopDetailsDepartures? = if let globalResponse = globalFetcher.response {
             StopDetailsDepartures(
                 stop: stop,
                 global: globalResponse,
@@ -135,7 +137,9 @@ struct StopDetailsPage: View {
         } else {
             nil
         }
-        if let departures {
+
+        nearbyVM.setDepartures(newDepartures)
+        if let departures = nearbyVM.departures {
             servedRoutes = Set(departures.routes.map { pattern in pattern.route })
                 .sorted { $0.sortOrder < $1.sortOrder }
         }

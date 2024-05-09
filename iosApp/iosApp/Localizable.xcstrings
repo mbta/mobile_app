@@ -37,6 +37,9 @@
     "Couldn't load nearby transit, unable to parse response" : {
 
     },
+    "Couldn't load stop list" : {
+
+    },
     "Departures" : {
 
     },

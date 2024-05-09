@@ -28,6 +28,7 @@ final class HomeMapViewTest: XCTestCase {
             alertsFetcher: .init(socket: MockSocket()),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),

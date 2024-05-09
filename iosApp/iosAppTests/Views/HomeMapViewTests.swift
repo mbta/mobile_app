@@ -30,6 +30,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -55,6 +56,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -106,6 +108,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
+            nearbyVM: .init(),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
             vehiclesFetcher: VehiclesFetcher(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -134,6 +137,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -164,6 +168,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -241,6 +246,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -294,6 +300,80 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: locationDataManager,
+            navigationStack: .constant([]),
+            sheetHeight: .constant(0),
+            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            let newNavStackEntry: SheetNavigationStackEntry =
+                .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
+                                         directionId: MapTestDataHelper.patternOrange30.directionId))
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, olRouteSourceUpdateExpectation], timeout: 5)
+
+        addTeardownBlock {
+            HelpersKt.loadDefaultRepoModules()
+        }
+    }
+
+    func testUpdatesRouteSourceWhenStopSelectedWithRouteFilterAndUpcomingDepartures() throws {
+        class FakeStopRepository: IStopRepository {
+            func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
+                StopMapResponse(routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes, childStops: [:])
+            }
+        }
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
+
+        let objectCollection = ObjectCollectionBuilder()
+        let stop = objectCollection.stop { stop in
+            stop.id = "1"
+            stop.latitude = 1
+            stop.longitude = 1
+        }
+        let trip = objectCollection.trip { trip in
+            trip.routePatternId = MapTestDataHelper.patternOrange30.id
+        }
+
+        let prediction = objectCollection.prediction { prediction in
+            prediction.trip = trip
+        }
+
+        let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSouce called for expected RP")
+        func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
+            if routeGenerator.routeLines.allSatisfy({ $0.routePatternId == MapTestDataHelper.patternOrange30.id }) {
+                olRouteSourceUpdateExpectation.fulfill()
+            }
+        }
+
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
+        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
+        let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
+        let nearbyVM: NearbyViewModel = .init()
+        nearbyVM.setDepartures(StopDetailsDepartures(routes:
+            [.init(route: MapTestDataHelper.routeOrange, stop: stop,
+                   patternsByHeadsign: [.init(route: MapTestDataHelper.routeOrange,
+                                              headsign: MapTestDataHelper.tripOrangeC1.headsign,
+                                              patterns: [MapTestDataHelper.patternOrange30],
+                                              upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                                              alertsHere: nil)])]))
+
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
+        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
+            globalFetcher: globalFetcher,
+            nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
@@ -350,6 +430,7 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
