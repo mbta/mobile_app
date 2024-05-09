@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
+		058557BB273AAA24004C7B11 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Icons.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* IOSApp.swift */; };
 		6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278D2BD989630037554F /* DummyTestAppView.swift */; };
@@ -153,7 +153,7 @@
 /* Begin PBXFileReference section */
 		044872B56401E9A9CE49444E /* Pods-iosApp.prodrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.prodrelease.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.prodrelease.xcconfig"; sourceTree = "<group>"; };
 		045B95AAE1BBCE8EA1E47693 /* Pods-iosApp.prod debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.prod debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.prod debug.xcconfig"; sourceTree = "<group>"; };
-		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		058557BA273AAA24004C7B11 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1574C5AA434EB793C01B3A95 /* Pods-iosAppTests.stagingdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.stagingdebug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.stagingdebug.xcconfig"; sourceTree = "<group>"; };
 		1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -443,7 +443,7 @@
 				9AC10BD82B80060E00EA4605 /* Utils */,
 				9A4E8E572B7EC49A0066B936 /* ComponentViews */,
 				9A9E05F22B6D6D9F0086B437 /* Fetchers */,
-				058557BA273AAA24004C7B11 /* Assets.xcassets */,
+				058557BA273AAA24004C7B11 /* Icons.xcassets */,
 				9AF88E042B48913C00E08C7C /* Localizable.xcstrings */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */,
@@ -831,7 +831,7 @@
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				9AB3F50F2BE45382008D9E40 /* GoogleService-Info.plist in Resources */,
-				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				058557BB273AAA24004C7B11 /* Icons.xcassets in Resources */,
 				9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
