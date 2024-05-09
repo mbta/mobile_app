@@ -246,11 +246,12 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didAppear) { view in
             let patterns = try view.findAll(ViewType.NavigationLink.self, where: { _ in true })
-                .map { try $0.labelView().view(HeadsignRowView.self) }
+                .map { try $0.find(HeadsignRowView.self) }
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
-            XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
-            XCTAssertEqual(try patterns[0].find(ViewType.Image.self).actualImage().name(), "clock")
+            let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
+            XCTAssertEqual(try upcomingSchedule.actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
+            XCTAssertEqual(try upcomingSchedule.find(ViewType.Image.self).actualImage().name(), "fa-clock")
 
             XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
             XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
@@ -333,12 +334,12 @@ final class NearbyTransitViewTests: XCTestCase {
                 .parent().find(text: "No Predictions"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().find(text: "10 min"))
+                .parent().find(text: "10"))
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().find(text: "Overridden"))
 
             XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-                .parent().find(text: "1 min"))
+                .parent().find(text: "1"))
 
             let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
             XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
@@ -445,10 +446,10 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             predictionsFetcher.predictions = prediction(minutesAway: 2)
             try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
-            XCTAssertNotNil(try view.find(text: "2 min"))
+            XCTAssertNotNil(try view.find(text: "2"))
             predictionsFetcher.predictions = prediction(minutesAway: 3)
             try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
-            XCTAssertNotNil(try view.find(text: "3 min"))
+            XCTAssertNotNil(try view.find(text: "3"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
