@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -26,6 +27,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<ISchedulesRepository> { repositories.schedules }
         single<ISettingsRepository> { repositories.settings }
         single<IStopRepository> { repositories.stop }
+        single<ITripSchedulesRepository> { repositories.tripSchedules }
 
         single { TogglePinnedRouteUsecase(get()) }
     }

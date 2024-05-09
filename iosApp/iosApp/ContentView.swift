@@ -149,7 +149,12 @@ struct ContentView: View {
                             nearbyVM: nearbyVM
                         )
                     case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
-                        TripDetailsPage(tripId: tripId, vehicleId: vehicleId, target: target)
+                        TripDetailsPage(
+                            tripId: tripId,
+                            vehicleId: vehicleId,
+                            target: target,
+                            globalFetcher: globalFetcher
+                        )
                     }
                 }
             }
