@@ -167,7 +167,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssert(!routes.isEmpty)
             guard let route = routes.first else { return }
 
-            XCTAssertNotNil(try route.find(text: "52"))
+            XCTAssertNotNil(try route.find(text: "52 Bus"))
             XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
                 .find(NearbyStopView.self, relation: .parent).find(text: "Charles River Loop"))
             XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")

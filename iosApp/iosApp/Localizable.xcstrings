@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ Bus" : {
+
+    },
     "%@ to" : {
 
     },
@@ -14,9 +17,6 @@
 
     },
     "BRD" : {
-
-    },
-    "Bus" : {
 
     },
     "Clear Filter" : {

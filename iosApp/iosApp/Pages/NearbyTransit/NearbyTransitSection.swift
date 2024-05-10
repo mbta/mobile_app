@@ -47,18 +47,14 @@ struct NearbyTransitSection<Content: View>: View {
         }
     }
 
-    @ViewBuilder
-    private var routeName: some View {
+    private var routeName: Text {
         switch route.type {
         case .bus:
-            HStack(spacing: 8) {
-                Text(route.shortName).bold()
-                Text("Bus")
-            }
+            Text("\(route.shortName) Bus")
         case .commuterRail:
-            Text(route.longName.replacingOccurrences(of: "/", with: " / ")).bold()
+            Text(route.longName.replacingOccurrences(of: "/", with: " / "))
         default:
-            Text(route.longName).bold()
+            Text(route.longName)
         }
     }
 
@@ -69,6 +65,7 @@ struct NearbyTransitSection<Content: View>: View {
                 .foregroundStyle(Color(hex: route.textColor))
                 .textCase(.none)
                 .font(.body)
+                .bold()
                 .border(Color.pink, width: 2)
             Spacer()
             pinButton
