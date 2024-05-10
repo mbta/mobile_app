@@ -66,10 +66,8 @@ struct NearbyTransitSection<Content: View>: View {
                 .textCase(.none)
                 .font(.body)
                 .bold()
-                .border(Color.pink, width: 2)
-            Spacer()
+                .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
             pinButton
-                .border(Color.purple, width: 2)
         } icon: {
             routeIcon
                 .resizable()
@@ -77,11 +75,9 @@ struct NearbyTransitSection<Content: View>: View {
                 .scaledToFit()
                 .frame(maxHeight: modeIconHeight, alignment: .topLeading)
                 .foregroundStyle(Color(hex: route.textColor))
-                .border(Color.orange, width: 2)
         }
         .padding(8)
         .background(Color(hex: route.color))
-        .border(Color.green, width: 2)
     }
 
     private var pinButton: some View {
