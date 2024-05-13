@@ -21,9 +21,7 @@ struct NearbyRouteView: View {
                 VStack(spacing: 0) {
                     NearbyStopView(patternsAtStop: patternsAtStop, now: now)
                     if index < nearbyRoute.patternsByStop.count - 1 {
-                        Rectangle()
-                            .fill(Color.halo)
-                            .frame(maxWidth: .infinity, maxHeight: 1)
+                        Divider().background(Color.halo)
                     }
                 }
             }

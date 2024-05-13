@@ -46,9 +46,7 @@ struct NearbyStopView: View {
                     .padding(8)
                     .padding(.leading, 8)
                     if index < patternsAtStop.patternsByHeadsign.count - 1 {
-                        Rectangle()
-                            .fill(Color.halo)
-                            .frame(maxWidth: .infinity, maxHeight: 1)
+                        Divider().background(Color.halo)
                     }
                 }
             }
