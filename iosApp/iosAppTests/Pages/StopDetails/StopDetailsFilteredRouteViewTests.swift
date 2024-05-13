@@ -78,12 +78,17 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         let sut = StopDetailsFilteredRouteView(
             departures: data.departures,
-            now: data.now,
             filter: .constant(.init(routeId: data.routeId, directionId: 0))
         )
 
-        XCTAssertNotNil(try sut.inspect().find(text: "North"))
-        XCTAssertNil(try? sut.inspect().find(text: "South"))
+        let exp = sut.inspection.inspect { view in
+            XCTAssertNotNil(try view.find(text: "North"))
+            XCTAssertNil(try? view.find(text: "South"))
+        }
+
+        ViewHosting.host(view: sut.environment(\.now, data.now))
+
+        wait(for: [exp], timeout: 1)
     }
 
     func testLinks() throws {
@@ -91,15 +96,20 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         let sut = StopDetailsFilteredRouteView(
             departures: data.departures,
-            now: data.now,
             filter: .constant(.init(routeId: data.routeId, directionId: 0))
         )
 
-        let expected = SheetNavigationStackEntry.tripDetails(
-            tripId: data.tripNorthId,
-            vehicleId: data.vehicleNorthId,
-            target: .init(stopId: data.stopId, stopSequence: data.stopSequence)
-        )
-        XCTAssertEqual(try sut.inspect().find(navigationLink: "North").value(), expected)
+        let exp = sut.inspection.inspect { view in
+            let expected = SheetNavigationStackEntry.tripDetails(
+                tripId: data.tripNorthId,
+                vehicleId: data.vehicleNorthId,
+                target: .init(stopId: data.stopId, stopSequence: data.stopSequence)
+            )
+            XCTAssertEqual(try view.find(navigationLink: "North").value(), expected)
+        }
+
+        ViewHosting.host(view: sut.environment(\.now, data.now))
+
+        wait(for: [exp], timeout: 1)
     }
 }

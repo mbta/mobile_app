@@ -24,11 +24,10 @@ struct NearbyTransitView: View {
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var alertsFetcher: AlertsFetcher
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
-    @State var now = Date.now
+    @Environment(\.now) var now: Instant
     @State var scrollPosition: String?
     @State var pinnedRoutes: Set<String> = []
 
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
 
     var body: some View {
@@ -69,8 +68,7 @@ struct NearbyTransitView: View {
         .onChange(of: alertsFetcher.alerts) { _ in
             updateNearbyRoutes()
         }
-        .onReceive(timer) { input in
-            now = input
+        .onChange(of: now) { _ in
             updateNearbyRoutes()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -89,8 +87,7 @@ struct NearbyTransitView: View {
                 NearbyRouteView(
                     nearbyRoute: nearbyRoute,
                     pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                    onPin: { id in toggledPinnedRoute(id) },
-                    now: now.toKotlinInstant()
+                    onPin: { id in toggledPinnedRoute(id) }
                 )
             }
             .onChange(of: scrollPosition) { id in
@@ -150,7 +147,7 @@ struct NearbyTransitView: View {
             schedules: scheduleResponse,
             predictions: predictionsFetcher.predictions,
             alerts: alertsFetcher.alerts,
-            filterAtTime: now.toKotlinInstant(),
+            filterAtTime: now,
             pinnedRoutes: pinnedRoutes
         )
     }
@@ -340,8 +337,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     ]
                 ),
                 pinned: false,
-                onPin: { _ in },
-                now: Date.now.toKotlinInstant()
+                onPin: { _ in }
             )
             NearbyRouteView(
                 nearbyRoute: StopAssociatedRoute(
@@ -366,8 +362,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                     ]
                 ),
                 pinned: true,
-                onPin: { _ in },
-                now: Date.now.toKotlinInstant()
+                onPin: { _ in }
             )
         }.previewDisplayName("NearbyRouteView")
     }

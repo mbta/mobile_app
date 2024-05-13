@@ -34,6 +34,7 @@
 		6EFEE42D2BED0FA800810319 /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEE42C2BED0FA800810319 /* ScenePhaseChangeModifier.swift */; };
 		6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEE42E2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		8C0FC29B2BF297E300817E58 /* EnvironmentValuesExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0FC29A2BF297E300817E58 /* EnvironmentValuesExtension.swift */; };
 		8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */; };
 		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
 		8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */; };
@@ -199,6 +200,7 @@
 		7AEBEB5506194DEAD258EFCD /* Pods-iosAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7F6FAE3113D2D3B7BC40E9E4 /* Pods-iosApp.prod release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.prod release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.prod release.xcconfig"; sourceTree = "<group>"; };
 		84B5D164E49C6058407CC984 /* Pods-iosApp.stagingrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingrelease.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingrelease.xcconfig"; sourceTree = "<group>"; };
+		8C0FC29A2BF297E300817E58 /* EnvironmentValuesExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValuesExtension.swift; sourceTree = "<group>"; };
 		8C304C652B69C0C300263886 /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
 		8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
@@ -693,6 +695,7 @@
 				8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */,
 				8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */,
 				6EFEE42C2BED0FA800810319 /* ScenePhaseChangeModifier.swift */,
+				8C0FC29A2BF297E300817E58 /* EnvironmentValuesExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1089,6 +1092,7 @@
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
 				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
+				8C0FC29B2BF297E300817E58 /* EnvironmentValuesExtension.swift in Sources */,
 				6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */,
 				8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */,
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,

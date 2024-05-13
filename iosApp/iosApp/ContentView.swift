@@ -8,6 +8,7 @@ struct ContentView: View {
 
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
+    @State var now = Date.now
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var alertsFetcher: AlertsFetcher
     @EnvironmentObject var backendProvider: BackendProvider
@@ -45,6 +46,17 @@ struct ContentView: View {
             SettingsPage()
                 .tag(SelectedTab.settings)
                 .tabItem { Label("Settings", systemImage: "gear") }
+        }
+        .environment(\.now, now.toKotlinInstant())
+        .task {
+            while true {
+                do {
+                    try await Task.sleep(for: .seconds(5))
+                } catch {
+                    debugPrint("Could not sleep", error)
+                }
+                now = Date.now
+            }
         }
     }
 

@@ -12,7 +12,7 @@ import SwiftUI
 
 struct StopDetailsRouteView: View {
     let patternsByStop: PatternsByStop
-    let now: Instant
+    @Environment(\.now) var now: Instant
     @Binding var filter: StopDetailsFilter?
 
     var body: some View {

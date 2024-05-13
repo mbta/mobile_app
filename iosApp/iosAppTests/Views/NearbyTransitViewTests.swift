@@ -795,7 +795,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNotNil(try view.find(text: "Suspension"))
         }
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.environment(\.now, Date.now.toKotlinInstant()))
         wait(for: [exp], timeout: 1)
     }
 
@@ -809,7 +809,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyStopView(patternsAtStop: PatternsByStop(
             route: route, stop: stop,
             patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [pattern], upcomingTrips: nil, alertsHere: nil)]
-        ), now: Date.now.toKotlinInstant())
+        ))
 
         XCTAssertEqual(
             try sut.inspect().find(navigationLink: "Place").value(SheetNavigationStackEntry.self),

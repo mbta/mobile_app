@@ -11,7 +11,7 @@ import SwiftUI
 
 struct NearbyStopView: View {
     let patternsAtStop: PatternsByStop
-    let now: Instant
+    @Environment(\.now) var now: Instant
 
     var body: some View {
         Text(patternsAtStop.stop.name).fontWeight(.bold)

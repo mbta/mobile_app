@@ -18,12 +18,11 @@ struct StopDetailsPage: View {
     @StateObject var predictionsFetcher: PredictionsFetcher
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
-    @State var now = Date.now
+    @Environment(\.now) var now: Instant
     @State var servedRoutes: [Route] = []
     @ObservedObject var nearbyVM: NearbyViewModel
 
     let inspection = Inspection<Self>()
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
         socket: any PhoenixSocket,
@@ -50,7 +49,7 @@ struct StopDetailsPage: View {
             clearFilterButton
             departureHeader
             if let departures = nearbyVM.departures {
-                StopDetailsRoutesView(departures: departures, now: now.toKotlinInstant(), filter: $filter)
+                StopDetailsRoutesView(departures: departures, filter: $filter)
             } else {
                 ProgressView()
             }
@@ -61,11 +60,8 @@ struct StopDetailsPage: View {
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }
         .onChange(of: predictionsFetcher.predictions) { _ in updateDepartures() }
         .onChange(of: schedulesResponse) { _ in updateDepartures() }
+        .onChange(of: now) { _ in updateDepartures() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .onReceive(timer) { input in
-            now = input
-            updateDepartures()
-        }
         .onDisappear { leavePredictions() }
         .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
                                 onInactive: leavePredictions,
@@ -136,7 +132,7 @@ struct StopDetailsPage: View {
                 global: globalResponse,
                 schedules: schedulesResponse,
                 predictions: predictionsFetcher.predictions,
-                filterAtTime: now.toKotlinInstant()
+                filterAtTime: now
             )
         } else {
             nil

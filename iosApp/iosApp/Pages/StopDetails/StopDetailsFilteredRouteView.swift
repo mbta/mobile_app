@@ -11,9 +11,11 @@ import shared
 import SwiftUI
 
 struct StopDetailsFilteredRouteView: View {
-    let patternsByStop: PatternsByStop
-    let now: Instant
+    let patternsByStop: PatternsByStop?
+    @Environment(\.now) var now: Instant
     @Binding var filter: StopDetailsFilter?
+
+    let inspection = Inspection<Self>()
 
     struct RowData {
         let tripId: String
@@ -44,35 +46,52 @@ struct StopDetailsFilteredRouteView: View {
         }
     }
 
-    let rows: [RowData]
+    @State var rows: [RowData]?
 
-    init(departures: StopDetailsDepartures, now: Instant, filter filterBinding: Binding<StopDetailsFilter?>) {
+    init(departures: StopDetailsDepartures, filter filterBinding: Binding<StopDetailsFilter?>) {
         _filter = filterBinding
         let filter = filterBinding.wrappedValue
-        let patternsByStop = departures.routes.first(where: { $0.route.id == filter?.routeId })!
+        let patternsByStop = departures.routes.first(where: { $0.route.id == filter?.routeId })
         self.patternsByStop = patternsByStop
-        self.now = now
 
-        let expectedDirection: Int32? = filter?.directionId
-        rows = patternsByStop.allUpcomingTrips().compactMap {
-            RowData(trip: $0, route: patternsByStop.route, stopId: patternsByStop.stop.id, expectedDirection: expectedDirection, now: now)
-        }
+        recalculateRows()
     }
 
     var body: some View {
         List {
-            RoutePillSection(
-                route: patternsByStop.route,
-                headerContent: DirectionPicker(
-                    patternsByStop: patternsByStop,
-                    filter: $filter
-                )
-            ) {
-                ForEach(rows, id: \.tripId) { row in
-                    OptionalNavigationLink(value: row.navigationTarget) {
-                        HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
+            if let patternsByStop {
+                RoutePillSection(
+                    route: patternsByStop.route,
+                    headerContent: DirectionPicker(
+                        patternsByStop: patternsByStop,
+                        filter: $filter
+                    )
+                ) {
+                    ForEach(rows ?? [], id: \.tripId) { row in
+                        OptionalNavigationLink(value: row.navigationTarget) {
+                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
+                        }
                     }
                 }
+            }
+        }
+        .onAppear { recalculateRows() }
+        .onChange(of: patternsByStop) { _ in recalculateRows() }
+        .onChange(of: filter) { _ in recalculateRows() }
+        .onChange(of: now) { _ in recalculateRows() }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+    }
+
+    private func recalculateRows() {
+        if let patternsByStop {
+            rows = patternsByStop.allUpcomingTrips().compactMap {
+                RowData(
+                    trip: $0,
+                    route: patternsByStop.route,
+                    stopId: patternsByStop.stop.id,
+                    expectedDirection: filter?.directionId,
+                    now: now
+                )
             }
         }
     }

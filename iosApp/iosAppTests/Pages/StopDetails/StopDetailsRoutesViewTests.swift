@@ -30,7 +30,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
     func testShowsListWithoutFilter() throws {
         let (departures: departures, routeId: _) = testData()
 
-        let sut = StopDetailsRoutesView(departures: departures, now: Date.now.toKotlinInstant(), filter: .constant(nil))
+        let sut = StopDetailsRoutesView(departures: departures, filter: .constant(nil))
 
         XCTAssertNotNil(try sut.inspect().list())
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilteredRouteView.self))
@@ -40,7 +40,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let (departures: departures, routeId: routeId) = testData()
 
         let filter = StopDetailsFilter(routeId: routeId, directionId: 0)
-        let sut = StopDetailsRoutesView(departures: departures, now: Date.now.toKotlinInstant(), filter: .constant(filter))
+        let sut = StopDetailsRoutesView(departures: departures, filter: .constant(filter))
 
         let actualView = try sut.inspect().find(StopDetailsFilteredRouteView.self).actualView()
         XCTAssertEqual(actualView.filter, filter)

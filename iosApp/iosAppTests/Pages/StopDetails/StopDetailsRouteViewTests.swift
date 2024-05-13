@@ -27,7 +27,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let patternsByHeadsignNorth = PatternsByHeadsign(route: route, headsign: "North", patterns: [northPattern], upcomingTrips: nil, alertsHere: nil)
         let patternsByHeadsignSouth = PatternsByHeadsign(route: route, headsign: "South", patterns: [southPattern], upcomingTrips: nil, alertsHere: nil)
         let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth])
-        let sut = StopDetailsRouteView(patternsByStop: patternsByStop, now: now, filter: filter)
+        let sut = StopDetailsRouteView(patternsByStop: patternsByStop, filter: filter)
 
         XCTAssertNil(filter.wrappedValue)
         try sut.inspect().find(button: "North").tap()
