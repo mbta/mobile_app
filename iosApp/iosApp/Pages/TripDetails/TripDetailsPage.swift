@@ -19,6 +19,10 @@ struct TripDetailsPage: View {
     @State var tripSchedulesResponse: TripSchedulesResponse?
 
     let inspection = Inspection<Self>()
+    let route: Route
+    let stop: Stop
+    let vehicle: Vehicle
+    let trip: Trip
 
     init(
         tripId: String,
@@ -32,10 +36,35 @@ struct TripDetailsPage: View {
         self.target = target
         self.globalFetcher = globalFetcher
         self.tripSchedulesRepository = tripSchedulesRepository
+        let objects = ObjectCollectionBuilder()
+        route = objects.route { route in
+            route.id = "Red"
+            route.longName = "Red Line"
+            route.color = "DA291C"
+            route.type = RouteType.heavyRail
+            route.textColor = "FFFFFF"
+        }
+        vehicle = Vehicle(id: "y1234", bearing: nil,
+                          currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
+                          directionId: 1,
+                          latitude: 0.0,
+                          longitude: 0.0,
+                          updatedAt: ISO8601DateFormatter().date(from: "2024-05-15T07:04:15Z")!.toKotlinInstant(),
+                          routeId: "66",
+                          stopId: "place-davis",
+                          tripId: "1234")
+        trip = objects.trip { trip in
+            trip.headsign = "Alewife"
+        }
+
+        stop = objects.stop { stop in
+            stop.name = "Davis"
+        }
     }
 
     var body: some View {
         VStack {
+            VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
             Text("Trip \(tripId)")
             Text("Vehicle \(vehicleId)")
             if let target {
