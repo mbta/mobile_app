@@ -32,12 +32,13 @@ struct StopDetailsPage: View {
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
-        nearbyVM: NearbyViewModel
+        nearbyVM: NearbyViewModel,
+        predictionsFetcher: PredictionsFetcher? = nil
     ) {
         self.globalFetcher = globalFetcher
         self.schedulesRepository = schedulesRepository
         self.viewportProvider = viewportProvider
-        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
+        _predictionsFetcher = StateObject(wrappedValue: predictionsFetcher ?? PredictionsFetcher(socket: socket))
         self.stop = stop
         _filter = filter
         self.nearbyVM = nearbyVM
@@ -66,6 +67,9 @@ struct StopDetailsPage: View {
             updateDepartures()
         }
         .onDisappear { leavePredictions() }
+        .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
+                                onInactive: leavePredictions,
+                                onBackground: leavePredictions)
     }
 
     @ViewBuilder

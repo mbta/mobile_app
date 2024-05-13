@@ -26,7 +26,6 @@ struct HomeMapView: View {
     @State var upcomingRoutePatterns: Set<String> = .init()
 
     @StateObject private var locationDataManager: LocationDataManager
-    @Binding var navigationStack: [SheetNavigationStackEntry]
     @Binding var sheetHeight: CGFloat
 
     @State private var layerManager: IMapLayerManager?
@@ -40,7 +39,8 @@ struct HomeMapView: View {
     let log = Logger()
 
     private var isNearbyNotFollowing: Bool {
-        !viewportProvider.viewport.isFollowing && locationDataManager.currentLocation != nil && navigationStack.isEmpty
+        !viewportProvider.viewport.isFollowing && locationDataManager.currentLocation != nil
+            && nearbyVM.navigationStack.isEmpty
     }
 
     init(
@@ -54,7 +54,6 @@ struct HomeMapView: View {
         viewportProvider: ViewportProvider,
         stopRepository: IStopRepository = RepositoryDI().stop,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
-        navigationStack: Binding<[SheetNavigationStackEntry]>,
         sheetHeight: Binding<CGFloat>,
         layerManager: IMapLayerManager? = nil
     ) {
@@ -67,7 +66,6 @@ struct HomeMapView: View {
         self.viewportProvider = viewportProvider
         self.stopRepository = stopRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
-        _navigationStack = navigationStack
         _sheetHeight = sheetHeight
         _layerManager = State(wrappedValue: layerManager)
     }
@@ -110,7 +108,7 @@ struct HomeMapView: View {
                 guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
                 viewportProvider.follow(animation: .easeInOut(duration: 0))
             }
-            .onChange(of: navigationStack) { nextNavStack in
+            .onChange(of: nearbyVM.navigationStack) { nextNavStack in
                 handleNavStackChange(navigationStack: nextNavStack)
             }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
@@ -134,7 +132,7 @@ struct HomeMapView: View {
     var annotatedMap: some View {
         AnnotatedMap(
             stopMapData: stopMapData,
-            filter: navigationStack.lastStopDetailsFilter,
+            filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
             sheetHeight: sheetHeight,
             vehicles: vehiclesFetcher.vehicles,
@@ -147,7 +145,7 @@ struct HomeMapView: View {
     var didAppear: ((Self) -> Void)?
 
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
-        lastNavEntry = navigationStack.last
+        lastNavEntry = nearbyVM.navigationStack.last
         Task {
             try await railRouteShapeFetcher.getRailRouteShapes()
         }
@@ -267,8 +265,8 @@ struct HomeMapView: View {
             return true
         }
 
-        navigationStack.removeAll()
-        navigationStack.append(.stopDetails(stop, nil))
+        nearbyVM.navigationStack.removeAll()
+        nearbyVM.navigationStack.append(.stopDetails(stop, nil))
         return true
     }
 }

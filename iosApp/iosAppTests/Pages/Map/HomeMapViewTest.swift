@@ -21,7 +21,6 @@ final class HomeMapViewTest: XCTestCase {
 
     func testAppears() throws {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let navStack: Binding<[SheetNavigationStackEntry]> = .init(wrappedValue: [])
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
         var sut = HomeMapView(
@@ -32,7 +31,6 @@ final class HomeMapViewTest: XCTestCase {
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
-            navigationStack: navStack,
             sheetHeight: sheetHeight
         )
 
