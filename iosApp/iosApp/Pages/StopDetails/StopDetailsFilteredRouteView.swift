@@ -70,11 +70,6 @@ struct StopDetailsFilteredRouteView: View {
     }
 
     var body: some View {
-        content
-    }
-
-    @ViewBuilder
-    var content: some View {
         if let patternsByStop {
             List {
                 RoutePillSection(
