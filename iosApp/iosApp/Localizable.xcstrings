@@ -105,18 +105,6 @@
     },
     "Suspension" : {
 
-    },
-    "Target Stop %@" : {
-
-    },
-    "Target Stop Sequence %@" : {
-
-    },
-    "Trip %@" : {
-
-    },
-    "Vehicle %@" : {
-
     }
   },
   "version" : "1.0"

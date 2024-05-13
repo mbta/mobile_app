@@ -43,6 +43,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
+            .environmentObject(TripPredictionsFetcher(socket: FakeSocket()))
             .environmentObject(VehiclesFetcher(socket: FakeSocket()))
             .environmentObject(ViewportProvider())
 
@@ -72,6 +73,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
+            .environmentObject(TripPredictionsFetcher(socket: FakeSocket()))
             .environmentObject(VehiclesFetcher(socket: FakeSocket()))
             .environmentObject(ViewportProvider())
 
@@ -122,6 +124,7 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: FakeSocket()))
+            .environmentObject(TripPredictionsFetcher(socket: FakeSocket()))
             .environmentObject(VehiclesFetcher(socket: FakeSocket()))
             .environmentObject(ViewportProvider())
 

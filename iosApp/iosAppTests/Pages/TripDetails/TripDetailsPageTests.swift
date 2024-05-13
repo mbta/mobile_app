@@ -23,6 +23,12 @@ final class TripDetailsPageTests: XCTestCase {
             stop.name = "Elsewhere"
         }
 
+        let prediction = objects.prediction { prediction in
+            prediction.stopId = stop2.id
+            prediction.stopSequence = 2
+            prediction.departureTime = Date.now.toKotlinInstant()
+        }
+
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
         globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
 
@@ -33,6 +39,9 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
+        let tripPredictionsFetcher = TripPredictionsFetcher(socket: MockSocket())
+        tripPredictionsFetcher.predictions = .init(objects: objects)
+
         let tripId = "123"
         let vehicleId = "999"
         let sut = TripDetailsPage(
@@ -40,12 +49,14 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository
         )
 
         let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
             XCTAssertNotNil(try view.find(text: "Somewhere"))
             XCTAssertNotNil(try view.find(text: "Elsewhere"))
+            XCTAssertNotNil(try view.find(text: "Elsewhere").parent().find(text: "ARR"))
         }
 
         ViewHosting.host(view: sut)
