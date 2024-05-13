@@ -57,9 +57,8 @@ struct NearbyTransitPageView: View {
             viewportProvider.cameraStatePublisher
                 .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
         ) { newCameraState in
-            if nearbyVM.isNearbyVisible() {
-                location = newCameraState.center
-            }
+            guard nearbyVM.isNearbyVisible() else { return }
+            location = newCameraState.center
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .navigationTitle("Nearby Transit")

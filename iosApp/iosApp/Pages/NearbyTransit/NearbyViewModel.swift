@@ -24,6 +24,6 @@ class NearbyViewModel: ObservableObject {
     }
 
     func isNearbyVisible() -> Bool {
-        navigationStack == []
+        navigationStack.isEmpty
     }
 }
