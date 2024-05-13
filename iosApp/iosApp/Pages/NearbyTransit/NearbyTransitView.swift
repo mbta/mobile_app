@@ -14,7 +14,6 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
-    @Environment(\.scenePhase) private var scenePhase
     var location: CLLocationCoordinate2D?
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
@@ -70,9 +69,6 @@ struct NearbyTransitView: View {
         .onChange(of: alertsFetcher.alerts) { _ in
             updateNearbyRoutes()
         }
-        .onChange(of: scenePhase) { newPhase in
-            onSceneChange(newPhase)
-        }
         .onReceive(timer) { input in
             now = input
             updateNearbyRoutes()
@@ -81,6 +77,7 @@ struct NearbyTransitView: View {
         .onDisappear {
             leavePredictions()
         }
+        .withScenePhaseHandlers(onActive: joinPredictions, onInactive: leavePredictions, onBackground: leavePredictions)
         .replaceWhen(nearbyFetcher.errorText) { errorText in
             errorCard(errorText)
         }
@@ -156,18 +153,6 @@ struct NearbyTransitView: View {
             filterAtTime: now.toKotlinInstant(),
             pinnedRoutes: pinnedRoutes
         )
-    }
-
-    private func onSceneChange(_ phase: ScenePhase) {
-        Task {
-            if phase == .inactive {
-                leavePredictions()
-            } else if phase == .active {
-                joinPredictions()
-            } else if phase == .background {
-                leavePredictions()
-            }
-        }
     }
 
     func updatePinnedRoutes() {

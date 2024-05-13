@@ -689,6 +689,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitPageView(
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             predictionsFetcher: .init(socket: MockSocket()),
             viewportProvider: viewportProvider,
@@ -715,6 +716,57 @@ final class NearbyTransitViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared, getNearbyExpectation, hasChangedLocation], timeout: 5)
+    }
+
+    @MainActor func testNoReloadWhenNotVisbleAndLocationChanges() throws {
+        class FakeNearbyFetcher: NearbyFetcher {
+            var getNearbyExpectation: XCTestExpectation
+
+            init(getNearbyExpectation: XCTestExpectation) {
+                self.getNearbyExpectation = getNearbyExpectation
+                super.init(backend: IdleBackend())
+            }
+
+            override func getNearby(global _: GlobalResponse, location: CLLocationCoordinate2D) async {
+                loadedLocation = location
+                getNearbyExpectation.fulfill()
+            }
+        }
+
+        let getNearbyNotCalledExpectation = expectation(description: "getNearbyNotCalled")
+        getNearbyNotCalledExpectation.isInverted = true
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyFetcher = FakeNearbyFetcher(getNearbyExpectation: getNearbyNotCalledExpectation)
+        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
+        let globalFetcher = GlobalFetcher(backend: IdleBackend())
+        globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+        let sut = NearbyTransitPageView(
+            globalFetcher: globalFetcher,
+            nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
+            schedulesRepository: MockScheduleRepository(),
+            predictionsFetcher: .init(socket: MockSocket()),
+            viewportProvider: viewportProvider,
+            alertsFetcher: .init(socket: MockSocket())
+        )
+
+        let newCameraState = CameraState(
+            center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
+            padding: .zero,
+            zoom: ViewportProvider.Defaults.zoom,
+            bearing: 0.0,
+            pitch: 0.0
+        )
+        let appearancePublisher = PassthroughSubject<Bool, Never>()
+        let hasAppeared = sut.inspection.inspect(after: 0.2) { view in
+            XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, nil)
+            try view.actualView().viewportProvider.updateCameraState(newCameraState)
+            appearancePublisher.send(true)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, getNearbyNotCalledExpectation], timeout: 5)
     }
 
     func testNoService() throws {

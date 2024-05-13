@@ -35,7 +35,6 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
         XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.Defaults.center)
@@ -61,7 +60,6 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
 
@@ -112,7 +110,6 @@ final class HomeMapViewTests: XCTestCase {
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
             vehiclesFetcher: VehiclesFetcher(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
-            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
@@ -137,12 +134,11 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
-            nearbyVM: .init(),
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([.stopDetails(stop, nil)]),
             sheetHeight: .constant(0)
         )
 
@@ -173,7 +169,6 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([]),
             sheetHeight: .constant(0)
         )
 
@@ -251,7 +246,6 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([]),
             sheetHeight: .constant(0),
             layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
         )
@@ -305,7 +299,6 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([]),
             sheetHeight: .constant(0),
             layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
         )
@@ -378,7 +371,6 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([]),
             sheetHeight: .constant(0),
             layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
         )
@@ -430,12 +422,11 @@ final class HomeMapViewTests: XCTestCase {
             alertsFetcher: alertsFetcher,
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
-            nearbyVM: .init(),
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            navigationStack: .constant([.stopDetails(stop, nil)]),
             sheetHeight: .constant(0),
             layerManager: FakeLayerManager(updateRouteSourceCallback: allRailRouteSourceCheck)
         )

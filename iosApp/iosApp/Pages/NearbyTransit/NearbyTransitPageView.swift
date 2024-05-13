@@ -16,6 +16,7 @@ import SwiftUI
 struct NearbyTransitPageView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
+    @ObservedObject var nearbyVM: NearbyViewModel
     var schedulesRepository: ISchedulesRepository
     @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var viewportProvider: ViewportProvider
@@ -28,6 +29,7 @@ struct NearbyTransitPageView: View {
     init(
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
+        nearbyVM: NearbyViewModel,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsFetcher: PredictionsFetcher,
         viewportProvider: ViewportProvider,
@@ -35,6 +37,7 @@ struct NearbyTransitPageView: View {
     ) {
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
+        self.nearbyVM = nearbyVM
         self.schedulesRepository = schedulesRepository
         self.predictionsFetcher = predictionsFetcher
         self.viewportProvider = viewportProvider
@@ -54,6 +57,7 @@ struct NearbyTransitPageView: View {
             viewportProvider.cameraStatePublisher
                 .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
         ) { newCameraState in
+            guard nearbyVM.isNearbyVisible() else { return }
             location = newCameraState.center
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
