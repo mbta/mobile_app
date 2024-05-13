@@ -7,11 +7,8 @@
     "%@ to" : {
 
     },
-    "%ld" : {
-
-    },
-    "1" : {
-
+    "%ld min" : {
+      "extractionState" : "manual"
     },
     "ARR" : {
 
@@ -77,9 +74,6 @@
 
     },
     "Location access state unknown" : {
-
-    },
-    "min" : {
 
     },
     "No Predictions" : {

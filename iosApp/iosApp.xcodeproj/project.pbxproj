@@ -109,6 +109,7 @@
 		9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */; };
 		9AB44A112B8FC43E00E8FFB3 /* IconCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */; };
 		9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB44A122B911E6400E8FFB3 /* DateExtension.swift */; };
+		9AB619AC2BF29FC6007E7191 /* PredictionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB619AB2BF29FC6007E7191 /* PredictionText.swift */; };
 		9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */; };
 		9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */; };
 		9ACA9DF32BA1EC8B003F0E9E /* HomeMapViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */; };
@@ -278,6 +279,7 @@
 		9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopIcons.swift; sourceTree = "<group>"; };
 		9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCard.swift; sourceTree = "<group>"; };
 		9AB44A122B911E6400E8FFB3 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		9AB619AB2BF29FC6007E7191 /* PredictionText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PredictionText.swift; sourceTree = "<group>"; };
 		9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHexExtension.swift; sourceTree = "<group>"; };
 		9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageView.swift; sourceTree = "<group>"; };
 		9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewUITests.swift; sourceTree = "<group>"; };
@@ -629,6 +631,7 @@
 		9A4E8E572B7EC49A0066B936 /* ComponentViews */ = {
 			isa = PBXGroup;
 			children = (
+				9AB619AB2BF29FC6007E7191 /* PredictionText.swift */,
 				9A4E8E582B7EC4B90066B936 /* RoutePill.swift */,
 				9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */,
 				8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */,
@@ -1113,6 +1116,7 @@
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
 				9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */,
+				9AB619AC2BF29FC6007E7191 /* PredictionText.swift in Sources */,
 				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
 				9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */,
 				8C7726192BE5941E0088D423 /* OptionalNavigationLink.swift in Sources */,

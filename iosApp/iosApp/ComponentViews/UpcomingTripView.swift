@@ -44,10 +44,7 @@ struct UpcomingTripView: View {
             case .arriving:
                 Text("ARR").font(.headline).bold()
             case .approaching:
-                HStack(spacing: Self.subjectSpacing) {
-                    Text("1").font(.headline).bold()
-                    Text("min").font(.body)
-                }
+                PredictionText(minutes: 1)
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
                     .font(.footnote)
@@ -65,12 +62,7 @@ struct UpcomingTripView: View {
                         .foregroundStyle(Color.deemphasized)
                 }
             case let .minutes(format):
-                HStack(spacing: Self.subjectSpacing) {
-                    Text("\(format.minutes, specifier: "%ld")")
-                        .font(.headline)
-                        .bold()
-                    Text("min").font(.body)
-                }
+                PredictionText(minutes: format.minutes)
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
