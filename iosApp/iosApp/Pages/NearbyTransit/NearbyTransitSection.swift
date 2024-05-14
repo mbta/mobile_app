@@ -47,14 +47,22 @@ struct NearbyTransitSection<Content: View>: View {
         }
     }
 
+    private var busLabel: AttributedString {
+        var label = AttributedString(localized: "\(route.shortName) Bus")
+        label.font = .body
+        guard let routeNameRange = label.range(of: route.shortName) else { return label }
+        label[routeNameRange].font = .body.bold()
+        return label
+    }
+
     private var routeName: Text {
         switch route.type {
         case .bus:
-            Text("\(route.shortName) Bus")
+            Text(busLabel)
         case .commuterRail:
-            Text(route.longName.replacingOccurrences(of: "/", with: " / "))
+            Text(route.longName.replacingOccurrences(of: "/", with: " / ")).font(.body).bold()
         default:
-            Text(route.longName)
+            Text(route.longName).font(.body).bold()
         }
     }
 
@@ -64,8 +72,6 @@ struct NearbyTransitSection<Content: View>: View {
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(Color(hex: route.textColor))
                 .textCase(.none)
-                .font(.body)
-                .bold()
                 .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
             pinButton
         } icon: {

@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%@ Bus" : {
-
+        "extractionState" : "manual"
     },
     "%@ to" : {
 
