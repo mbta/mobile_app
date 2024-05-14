@@ -86,7 +86,7 @@ struct NearbyTransitView: View {
     private func nearbyList(_ routes: [StopAssociatedRoute]) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
-                VStack {
+                LazyVStack {
                     ForEach(routes, id: \.route.id) { nearbyRoute in
                         NearbyRouteView(
                             nearbyRoute: nearbyRoute,
