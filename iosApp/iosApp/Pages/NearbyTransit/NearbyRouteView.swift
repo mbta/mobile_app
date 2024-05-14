@@ -17,8 +17,13 @@ struct NearbyRouteView: View {
 
     var body: some View {
         NearbyTransitSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
-            ForEach(nearbyRoute.patternsByStop, id: \.stop.id) { patternsAtStop in
-                NearbyStopView(patternsAtStop: patternsAtStop, now: now)
+            ForEach(Array(nearbyRoute.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
+                VStack(spacing: 0) {
+                    NearbyStopView(patternsAtStop: patternsAtStop, now: now)
+                    if index < nearbyRoute.patternsByStop.count - 1 {
+                        Divider().background(Color.halo)
+                    }
+                }
             }
         }
     }

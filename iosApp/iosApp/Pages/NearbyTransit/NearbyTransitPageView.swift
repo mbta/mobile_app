@@ -45,23 +45,26 @@ struct NearbyTransitPageView: View {
     }
 
     var body: some View {
-        NearbyTransitView(
-            location: location,
-            globalFetcher: globalFetcher,
-            nearbyFetcher: nearbyFetcher,
-            schedulesRepository: schedulesRepository,
-            predictionsFetcher: predictionsFetcher,
-            alertsFetcher: alertsFetcher
-        )
-        .onReceive(
-            viewportProvider.cameraStatePublisher
-                .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-        ) { newCameraState in
-            guard nearbyVM.isNearbyVisible() else { return }
-            location = newCameraState.center
+        ZStack {
+            Color.fill1.ignoresSafeArea(.all)
+            NearbyTransitView(
+                location: location,
+                globalFetcher: globalFetcher,
+                nearbyFetcher: nearbyFetcher,
+                schedulesRepository: schedulesRepository,
+                predictionsFetcher: predictionsFetcher,
+                alertsFetcher: alertsFetcher
+            )
+            .onReceive(
+                viewportProvider.cameraStatePublisher
+                    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            ) { newCameraState in
+                guard nearbyVM.isNearbyVisible() else { return }
+                location = newCameraState.center
+            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .navigationTitle("Nearby Transit")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .navigationTitle("Nearby Transit")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
