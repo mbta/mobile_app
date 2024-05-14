@@ -46,13 +46,13 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             $0.trip = tripNorth
             $0.vehicleId = vehicleNorth.id
             $0.departureTime = now.toKotlinInstant()
-            $0.stopSequence = KotlinInt(int: Int32(stopSequence))
+            $0.stopSequence = Int32(stopSequence)
         }
         let tripSouth = objects.trip(routePattern: patternSouth)
         let predictionSouth = objects.prediction {
             $0.trip = tripSouth
             $0.departureTime = now.toKotlinInstant()
-            $0.stopSequence = KotlinInt(int: Int32(stopSequence))
+            $0.stopSequence = Int32(stopSequence)
         }
 
         let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [
