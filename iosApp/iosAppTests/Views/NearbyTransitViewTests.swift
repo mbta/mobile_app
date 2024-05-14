@@ -334,12 +334,12 @@ final class NearbyTransitViewTests: XCTestCase {
                 .parent().find(text: "No Predictions"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().find(text: "10"))
+                .parent().find(text: "10 min"))
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().find(text: "Overridden"))
 
             XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-                .parent().find(text: "1"))
+                .parent().find(text: "1 min"))
 
             let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
             XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
@@ -446,10 +446,10 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             predictionsFetcher.predictions = prediction(minutesAway: 2)
             try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
-            XCTAssertNotNil(try view.find(text: "2"))
+            XCTAssertNotNil(try view.find(text: "2 min"))
             predictionsFetcher.predictions = prediction(minutesAway: 3)
             try view.vStack().callOnChange(newValue: predictionsFetcher.predictions)
-            XCTAssertNotNil(try view.find(text: "3"))
+            XCTAssertNotNil(try view.find(text: "3 min"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
