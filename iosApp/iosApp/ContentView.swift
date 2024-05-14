@@ -50,12 +50,12 @@ struct ContentView: View {
         .environment(\.now, now.toKotlinInstant())
         .task {
             while true {
+                now = Date.now
                 do {
                     try await Task.sleep(for: .seconds(5))
                 } catch {
                     debugPrint("Could not sleep", error)
                 }
-                now = Date.now
             }
         }
     }
