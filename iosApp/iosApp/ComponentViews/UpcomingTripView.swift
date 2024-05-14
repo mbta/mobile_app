@@ -20,6 +20,9 @@ extension UpcomingTrip.FormatOverridden {
 struct UpcomingTripView: View {
     let prediction: State
 
+    private static let subjectSpacing: CGFloat = 4
+    @ScaledMetric private var iconSize: CGFloat = 16
+
     enum State: Equatable {
         case loading
         case none
@@ -37,20 +40,29 @@ struct UpcomingTripView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
-                Text("BRD")
+                Text("BRD").font(.headline).bold()
             case .arriving:
-                Text("ARR")
+                Text("ARR").font(.headline).bold()
             case .approaching:
-                Text("1 min")
+                PredictionText(minutes: 1)
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
             case let .schedule(schedule):
-                HStack {
+                HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
-                    Image(systemName: "clock")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                    Image(.faClock)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: iconSize, height: iconSize)
+                        .padding(4)
+                        .foregroundStyle(Color.deemphasized)
                 }
             case let .minutes(format):
-                Text("\(format.minutes, specifier: "%ld") min")
+                PredictionText(minutes: format.minutes)
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
@@ -60,12 +72,16 @@ struct UpcomingTripView: View {
             ProgressView()
         }
         AnyView(predictionView)
+            .foregroundStyle(Color.text)
             .frame(minWidth: 48, alignment: .trailing)
+            .padding(.trailing, 4)
     }
 }
 
 struct NoServiceView: View {
     let effect: Effect
+
+    @ScaledMetric private var iconSize: CGFloat = 20
 
     enum Effect {
         case detour
@@ -88,9 +104,14 @@ struct NoServiceView: View {
     var body: some View {
         HStack {
             rawText
-                .font(.system(size: 12))
+                .font(.footnote)
                 .textCase(.uppercase)
             rawImage
+                .resizable()
+                .scaledToFill()
+                .foregroundStyle(Color.deemphasized)
+                .frame(width: iconSize, height: iconSize)
+                .padding(2)
         }
     }
 
@@ -107,7 +128,7 @@ struct NoServiceView: View {
     var rawImage: Image {
         switch effect {
         case .detour: Image(systemName: "circle.fill")
-        case .shuttle: Image(systemName: "bus")
+        case .shuttle: Image(.modeBus)
         case .stopClosed: Image(systemName: "xmark.octagon.fill")
         case .suspension: Image(systemName: "exclamationmark.triangle.fill")
         case .unknown: Image(systemName: "questionmark.circle.fill")

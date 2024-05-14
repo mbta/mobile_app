@@ -1,14 +1,14 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ Bus" : {
+        "extractionState" : "manual"
+    },
     "%@ to" : {
 
     },
     "%ld min" : {
-
-    },
-    "1 min" : {
-
+      "extractionState" : "manual"
     },
     "ARR" : {
 

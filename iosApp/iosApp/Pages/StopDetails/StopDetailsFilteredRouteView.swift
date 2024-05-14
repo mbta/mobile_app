@@ -74,6 +74,8 @@ struct StopDetailsFilteredRouteView: View {
                     }
                 }
             }
+        } else {
+            EmptyView()
         }
         .onAppear { recalculateRows() }
         .onChange(of: patternsByStop) { _ in recalculateRows() }

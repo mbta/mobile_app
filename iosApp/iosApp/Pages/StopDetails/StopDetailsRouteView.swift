@@ -25,7 +25,7 @@ struct StopDetailsRouteView: View {
                         headsign: patternsByHeadsign.headsign,
                         predictions: patternsByHeadsign.format(now: now)
                     )
-                })
+                }).listRowBackground(Color.fill3)
             }
         }
     }

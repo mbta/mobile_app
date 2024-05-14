@@ -14,13 +14,18 @@ struct HeadsignRowView: View {
     let predictions: PatternsByHeadsign.Format
 
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             Text(headsign)
-            Spacer()
+                .foregroundStyle(Color.text)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.leading)
+            Spacer(minLength: 8)
             switch onEnum(of: predictions) {
             case let .some(trips):
-                ForEach(trips.trips, id: \.id) { prediction in
-                    UpcomingTripView(prediction: .some(prediction.format))
+                VStack(alignment: .trailing, spacing: 4) {
+                    ForEach(trips.trips, id: \.id) { prediction in
+                        UpcomingTripView(prediction: .some(prediction.format))
+                    }
                 }
             case let .noService(alert):
                 UpcomingTripView(prediction: .noService(alert.alert.effect))
@@ -29,7 +34,7 @@ struct HeadsignRowView: View {
             case .loading:
                 UpcomingTripView(prediction: .loading)
             }
-        }
+        }.background(Color.fill3).frame(maxWidth: .infinity)
     }
 }
 

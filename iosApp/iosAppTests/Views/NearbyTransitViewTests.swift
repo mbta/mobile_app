@@ -167,7 +167,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssert(!routes.isEmpty)
             guard let route = routes.first else { return }
 
-            XCTAssertNotNil(try route.find(text: "52"))
+            XCTAssertNotNil(try route.find(text: "52 Bus"))
             XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
                 .find(NearbyStopView.self, relation: .parent).find(text: "Charles River Loop"))
             XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd")
@@ -246,11 +246,12 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didAppear) { view in
             let patterns = try view.findAll(ViewType.NavigationLink.self, where: { _ in true })
-                .map { try $0.labelView().view(HeadsignRowView.self) }
+                .map { try $0.find(HeadsignRowView.self) }
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
-            XCTAssertEqual(try patterns[0].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
-            XCTAssertEqual(try patterns[0].find(ViewType.Image.self).actualImage().name(), "clock")
+            let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
+            XCTAssertEqual(try upcomingSchedule.actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
+            XCTAssertEqual(try upcomingSchedule.find(ViewType.Image.self).actualImage().name(), "fa-clock")
 
             XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
             XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
