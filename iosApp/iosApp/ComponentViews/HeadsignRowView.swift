@@ -18,9 +18,8 @@ struct HeadsignRowView: View {
             Text(headsign)
                 .foregroundStyle(Color.text)
                 .fontWeight(.semibold)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
-                .padding(.trailing, 8)
+            Spacer(minLength: 8)
             switch onEnum(of: predictions) {
             case let .some(trips):
                 VStack(alignment: .trailing, spacing: 4) {
@@ -28,7 +27,6 @@ struct HeadsignRowView: View {
                         UpcomingTripView(prediction: .some(prediction.format))
                     }
                 }
-
             case let .noService(alert):
                 UpcomingTripView(prediction: .noService(alert.alert.effect))
             case .none:
@@ -36,7 +34,7 @@ struct HeadsignRowView: View {
             case .loading:
                 UpcomingTripView(prediction: .loading)
             }
-        }.background(Color.fill3)
+        }.background(Color.fill3).frame(maxWidth: .infinity)
     }
 }
 
