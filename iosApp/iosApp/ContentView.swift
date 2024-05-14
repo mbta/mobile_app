@@ -136,7 +136,6 @@ struct ContentView: View {
                     viewportProvider: viewportProvider,
                     alertsFetcher: alertsFetcher
                 )
-                .navigationBarHidden(true)
                 .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
                     switch entry {
                     case let .stopDetails(stop, _):
