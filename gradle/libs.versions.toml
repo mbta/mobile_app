@@ -17,7 +17,7 @@ ktor = "2.3.10"
 mapbox = "11.3.0"
 mapboxTurf = "6.15.0"
 okhttp = "4.12.0"
-sentry = "0.5.0"
+sentry = "0.6.0"
 skie = "0.7.0"
 spatialk = "0.3.0"
 
