@@ -94,19 +94,6 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             }
         }
 
-        private fun stopsEquivalent(
-            stopId1: String,
-            stopId2: String,
-            globalData: GlobalResponse
-        ): Boolean {
-            if (stopId1 == stopId2) return true
-            val stop1 = globalData.stops.getValue(stopId1)
-            val stop2 = globalData.stops.getValue(stopId2)
-            val parent1 = stop1.parentStationId ?: stopId1
-            val parent2 = stop2.parentStationId ?: stopId2
-            return parent1 == parent2
-        }
-
         fun fromPieces(
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
@@ -163,10 +150,10 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 if (lastPrediction != null) {
                     while (
                         scheduleIndex in stopIds.indices &&
-                            !stopsEquivalent(
+                            !Stop.equalOrFamily(
                                 stopIds[scheduleIndex],
                                 lastPrediction.stopId,
-                                globalData
+                                globalData.stops
                             )
                     ) {
                         scheduleIndex--
@@ -178,7 +165,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 while (scheduleIndex in stopIds.indices && predictionIndex in predictions.indices) {
                     val stopId = stopIds[scheduleIndex]
                     val prediction = predictions[predictionIndex]
-                    check(stopsEquivalent(stopId, prediction.stopId, globalData)) {
+                    check(Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
                         "predictions=$predictions schedules=$tripSchedules predictionIndex=$predictionIndex scheduleIndex=$scheduleIndex"
                     }
                     lastDelta = lastStopSequence?.minus(prediction.stopSequence)

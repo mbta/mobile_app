@@ -72,6 +72,7 @@ class TripDetailsStopListTest {
                 id = "70158"
                 parentStationId = "place-boyls"
             }
+        objects.stop { id = "place-pktrm" }
         objects.stop {
             id = "70200"
             parentStationId = "place-pktrm"

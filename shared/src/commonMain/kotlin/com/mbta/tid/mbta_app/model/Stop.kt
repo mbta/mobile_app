@@ -23,4 +23,19 @@ data class Stop(
         val parentStation = stops[parentStationId] ?: return this
         return parentStation.resolveParent(stops)
     }
+
+    companion object {
+        /**
+         * Checks if the given stop IDs (as resolved in [stops]) refer to stops which are the same,
+         * have the same parent, or are a parent and child.
+         */
+        fun equalOrFamily(stopId1: String, stopId2: String, stops: Map<String, Stop>): Boolean {
+            if (stopId1 == stopId2) return true
+            val stop1 = stops.getValue(stopId1)
+            val stop2 = stops.getValue(stopId2)
+            val parent1 = stop1.resolveParent(stops)
+            val parent2 = stop2.resolveParent(stops)
+            return parent1.id == parent2.id
+        }
+    }
 }
