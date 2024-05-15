@@ -87,7 +87,6 @@ struct TripDetailsPage: View {
             tripPredictionsFetcher.run(tripId: tripId)
         }
         .onChange(of: tripId) { tripId in
-            tripPredictionsFetcher.leave()
             tripPredictionsFetcher.run(tripId: tripId)
         }
         .onDisappear {

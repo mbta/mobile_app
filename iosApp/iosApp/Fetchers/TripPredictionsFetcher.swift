@@ -29,6 +29,7 @@ class TripPredictionsFetcher: ObservableObject {
     }
 
     func run(tripId: String) {
+        leave()
         socket.connect()
         channel = socket.channel("predictions:trip:\(tripId)", params: [:])
 
