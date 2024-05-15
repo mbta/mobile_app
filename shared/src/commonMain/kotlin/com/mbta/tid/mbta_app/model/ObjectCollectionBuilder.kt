@@ -80,7 +80,7 @@ class ObjectCollectionBuilder {
         var revenue = true
         var scheduleRelationship = Prediction.ScheduleRelationship.Scheduled
         var status: String? = null
-        var stopSequence: Int? = null
+        var stopSequence = 0
         var routeId = ""
         var stopId = ""
         var tripId = ""
