@@ -101,32 +101,12 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         ): TripDetailsStopList? {
             val entries = mutableMapOf<Int, WorkingEntry>()
 
-            // unfortunately, stop sequence is not always actually unique
-            // conveniently, it seems like duplicates are rare
             val predictions =
-                tripPredictions
-                    ?.predictions
-                    ?.values
-                    ?.groupBy { it.stopSequence }
-                    ?.mapValues { (stopSequence, predictions) ->
-                        if (predictions.size == 1) {
-                            predictions.single()
-                        } else {
-                            // the only encountered case so far here has the incorrect duplicate not
-                            // included in the schedule
-                            val scheduledStopIds =
-                                tripSchedules?.stops(globalData).orEmpty().map { it.id }.toSet()
-                            val scheduledPredictions =
-                                predictions.filter { it.stopId in scheduledStopIds }
-                            check(scheduledPredictions.size == 1) {
-                                "Trip ${predictions.first().tripId} has duplicate predictions $predictions at stop sequence $stopSequence"
-                            }
-                            scheduledPredictions.single()
-                        }
-                    }
-                    .orEmpty()
-                    .values
-                    .sortedBy { it.stopSequence }
+                deduplicatePredictionsByStopSequence(
+                    tripPredictions?.predictions?.values.orEmpty(),
+                    tripSchedules,
+                    globalData
+                )
 
             predictions.forEach { prediction ->
                 entries.putPrediction(
@@ -138,64 +118,14 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             if (tripSchedules is TripSchedulesResponse.Schedules) {
                 tripSchedules.schedules.forEach { entries.putSchedule(it) }
             } else if (tripSchedules is TripSchedulesResponse.StopIds) {
-                val stopIds = tripSchedules.stopIds
-                var lastStopSequence: Int? = null
-                var lastDelta: Int? = null
-                var scheduleIndex = stopIds.lastIndex
-                var predictionIndex = predictions.lastIndex
-
-                // if predictions don't hit the end of the schedule, rewind
-                val lastPrediction = predictions.lastOrNull()
-                var unpredictedTrailingSchedules = 0
-                if (lastPrediction != null) {
-                    while (
-                        scheduleIndex in stopIds.indices &&
-                            !Stop.equalOrFamily(
-                                stopIds[scheduleIndex],
-                                lastPrediction.stopId,
-                                globalData.stops
-                            )
-                    ) {
-                        scheduleIndex--
-                        unpredictedTrailingSchedules++
-                    }
-                }
-
-                // find the difference between adjacent stop sequences
-                while (scheduleIndex in stopIds.indices && predictionIndex in predictions.indices) {
-                    val stopId = stopIds[scheduleIndex]
-                    val prediction = predictions[predictionIndex]
-                    check(Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
-                        "predictions=$predictions schedules=$tripSchedules predictionIndex=$predictionIndex scheduleIndex=$scheduleIndex"
-                    }
-                    lastDelta = lastStopSequence?.minus(prediction.stopSequence)
-                    lastStopSequence = prediction.stopSequence
-
-                    scheduleIndex--
-                    predictionIndex--
-                }
-                lastDelta = lastDelta ?: 1
-                lastStopSequence = lastStopSequence ?: 1000
-
-                // apply that difference the rest of the way backwards
-                while (scheduleIndex in stopIds.indices) {
-                    val stopId = stopIds[scheduleIndex]
-                    lastStopSequence -= lastDelta
-                    entries.putEmpty(stopId, lastStopSequence)
-                    scheduleIndex--
-                }
-
-                // fill in anything at the end
-                if (lastPrediction != null && unpredictedTrailingSchedules > 0) {
-                    scheduleIndex = stopIds.lastIndex - unpredictedTrailingSchedules + 1
-                    lastStopSequence = lastPrediction.stopSequence
-                    while (scheduleIndex in stopIds.indices) {
-                        val stopId = stopIds[scheduleIndex]
-                        lastStopSequence += lastDelta
-                        entries.putEmpty(stopId, lastStopSequence)
-                        scheduleIndex++
-                    }
-                }
+                val aligner =
+                    ScheduleStopSequenceAligner(
+                        tripSchedules.stopIds,
+                        predictions,
+                        globalData,
+                        entries
+                    )
+                aligner.run()
             }
 
             if (entries.isEmpty()) {
@@ -214,6 +144,114 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                         )
                     }
             )
+        }
+
+        // unfortunately, stop sequence is not always actually unique
+        // conveniently, it seems like duplicates are rare
+        private fun deduplicatePredictionsByStopSequence(
+            predictions: Collection<Prediction>,
+            tripSchedules: TripSchedulesResponse?,
+            globalData: GlobalResponse
+        ) =
+            predictions
+                .groupBy { it.stopSequence }
+                .mapValues { (stopSequence, predictions) ->
+                    if (predictions.size == 1) {
+                        predictions.single()
+                    } else {
+                        // the only encountered case so far here has the incorrect duplicate not
+                        // included in the schedule
+                        val scheduledStopIds =
+                            tripSchedules?.stops(globalData).orEmpty().map { it.id }.toSet()
+                        val scheduledPredictions =
+                            predictions.filter { it.stopId in scheduledStopIds }
+                        check(scheduledPredictions.size == 1) {
+                            "Trip ${predictions.first().tripId} has duplicate predictions $predictions at stop sequence $stopSequence"
+                        }
+                        scheduledPredictions.single()
+                    }
+                }
+                .values
+                .sortedBy { it.stopSequence }
+
+        private class ScheduleStopSequenceAligner(
+            val stopIds: List<String>,
+            val predictions: List<Prediction>,
+            val globalData: GlobalResponse,
+            val entries: MutableMap<Int, WorkingEntry>
+        ) {
+            var lastStopSequence: Int? = null
+            var lastDelta: Int? = null
+            var scheduleIndex = stopIds.lastIndex
+            var predictionIndex = predictions.lastIndex
+            val lastPrediction = predictions.lastOrNull()
+            var unpredictedTrailingSchedules = 0
+
+            fun run() {
+                countUnpredictedTrailingSchedules()
+                zipPredictedSchedules()
+                assignDefaultStateIfMissing()
+                inferUnpredictedLeadingSchedules()
+                inferUnpredictedTrailingSchedules()
+            }
+
+            fun countUnpredictedTrailingSchedules() {
+                if (lastPrediction != null) {
+                    while (
+                        scheduleIndex in stopIds.indices &&
+                            !Stop.equalOrFamily(
+                                stopIds[scheduleIndex],
+                                lastPrediction.stopId,
+                                globalData.stops
+                            )
+                    ) {
+                        scheduleIndex--
+                        unpredictedTrailingSchedules++
+                    }
+                }
+            }
+
+            fun zipPredictedSchedules() {
+                while (scheduleIndex in stopIds.indices && predictionIndex in predictions.indices) {
+                    val stopId = stopIds[scheduleIndex]
+                    val prediction = predictions[predictionIndex]
+                    check(Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
+                        "predictions=$predictions stopIds=$stopIds predictionIndex=$predictionIndex scheduleIndex=$scheduleIndex"
+                    }
+                    lastDelta = lastStopSequence?.minus(prediction.stopSequence)
+                    lastStopSequence = prediction.stopSequence
+
+                    scheduleIndex--
+                    predictionIndex--
+                }
+            }
+
+            fun assignDefaultStateIfMissing() {
+                lastStopSequence = lastStopSequence ?: 1000
+                lastDelta = lastDelta ?: 1
+            }
+
+            fun inferUnpredictedLeadingSchedules() {
+                while (scheduleIndex in stopIds.indices) {
+                    val stopId = stopIds[scheduleIndex]
+                    lastStopSequence = lastStopSequence!! - lastDelta!!
+                    entries.putEmpty(stopId, lastStopSequence!!)
+                    scheduleIndex--
+                }
+            }
+
+            fun inferUnpredictedTrailingSchedules() {
+                if (lastPrediction != null && unpredictedTrailingSchedules > 0) {
+                    scheduleIndex = stopIds.lastIndex - unpredictedTrailingSchedules + 1
+                    lastStopSequence = lastPrediction.stopSequence
+                    while (scheduleIndex in stopIds.indices) {
+                        val stopId = stopIds[scheduleIndex]
+                        lastStopSequence = lastStopSequence!! + lastDelta!!
+                        entries.putEmpty(stopId, lastStopSequence!!)
+                        scheduleIndex++
+                    }
+                }
+            }
         }
     }
 }
