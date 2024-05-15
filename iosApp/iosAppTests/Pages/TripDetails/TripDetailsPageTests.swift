@@ -39,8 +39,7 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
-        let tripPredictionsFetcher = TripPredictionsFetcher(socket: MockSocket())
-        tripPredictionsFetcher.predictions = .init(objects: objects)
+        let tripPredictionsFetcher = FakeTripPredictionsFetcher(response: .init(objects: objects))
 
         let tripId = "123"
         let vehicleId = "999"
@@ -76,6 +75,22 @@ final class TripDetailsPageTests: XCTestCase {
         func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
             onGetTripSchedules?()
             return response
+        }
+    }
+
+    class FakeTripPredictionsFetcher: TripPredictionsFetcher {
+        let response: PredictionsStreamDataResponse
+        let onRun: ((_ tripId: String) -> Void)?
+
+        init(response: PredictionsStreamDataResponse, onRun: ((_ tripId: String) -> Void)? = nil) {
+            self.response = response
+            self.onRun = onRun
+            super.init(socket: MockSocket())
+        }
+
+        override func run(tripId: String) {
+            onRun?(tripId)
+            predictions = response
         }
     }
 }
