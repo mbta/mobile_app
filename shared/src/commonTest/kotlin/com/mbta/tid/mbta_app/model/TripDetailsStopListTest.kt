@@ -38,7 +38,7 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `handles wacky Park St mismatch`() {
+    fun `can align against siblings from schedule`() {
         val objects = ObjectCollectionBuilder()
 
         val prediction =
@@ -109,7 +109,7 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `handles this case`() {
+    fun `can deduplicate predictions by stop sequence`() {
         val objects = ObjectCollectionBuilder()
 
         val p1 =
