@@ -457,7 +457,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertEqual(nearbyVM.navigationStack.last, .tripDetails(
                 tripId: trip.id,
                 vehicleId: vehicle.id,
-                target: .init(stopId: stop.id, stopSequence: prediction.stopSequence!.intValue)
+                target: .init(stopId: stop.id, stopSequence: Int(prediction.stopSequence))
             ))
         }
 
