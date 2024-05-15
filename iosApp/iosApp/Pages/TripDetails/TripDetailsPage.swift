@@ -49,13 +49,7 @@ struct TripDetailsPage: View {
                     tripPredictions: tripPredictionsFetcher.predictions,
                     globalData: globalData
                 ) {
-                    List(stops.stops, id: \.stopSequence) { stop in
-                        HStack {
-                            Text(stop.stop.name)
-                            Spacer()
-                            UpcomingTripView(prediction: .some(stop.format(now: now)))
-                        }
-                    }
+                    TripDetailsStopListView(stops: stops, now: now)
                 } else {
                     Text("Couldn't load stop list")
                 }

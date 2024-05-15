@@ -23,7 +23,7 @@ final class TripDetailsPageTests: XCTestCase {
             stop.name = "Elsewhere"
         }
 
-        let prediction = objects.prediction { prediction in
+        objects.prediction { prediction in
             prediction.stopId = stop2.id
             prediction.stopSequence = 2
             prediction.departureTime = Date.now.toKotlinInstant()
