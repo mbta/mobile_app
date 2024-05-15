@@ -177,4 +177,52 @@ class TripDetailsStopListTest {
             list
         )
     }
+
+    @Test
+    fun `handles happy path with schedules and vehicles`() {
+        val objects = ObjectCollectionBuilder()
+
+        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
+
+        val stop1 = objects.stop()
+        val schedule1 =
+            objects.schedule {
+                stopId = stop1.id
+                stopSequence = 1
+            }
+        val prediction1 = objects.prediction(schedule1) { vehicleId = vehicle.id }
+
+        val stop2 = objects.stop()
+        val schedule2 =
+            objects.schedule {
+                stopId = stop2.id
+                stopSequence = 2
+            }
+        val prediction2 = objects.prediction(schedule2) { vehicleId = vehicle.id }
+
+        val stop3 = objects.stop()
+        val schedule3 =
+            objects.schedule {
+                stopId = stop3.id
+                stopSequence = 3
+            }
+        val prediction3 = objects.prediction(schedule3) { vehicleId = vehicle.id }
+
+        val schedules = TripSchedulesResponse.Schedules(listOf(schedule1, schedule2, schedule3))
+        val predictions = PredictionsStreamDataResponse(objects)
+        val globalData = GlobalResponse(objects, emptyMap())
+
+        val list = TripDetailsStopList.fromPieces(schedules, predictions, globalData)
+
+        assertEquals(
+            TripDetailsStopList(
+                listOf(
+                    TripDetailsStopList.Entry(stop1, 1, schedule1, prediction1, vehicle),
+                    TripDetailsStopList.Entry(stop2, 2, schedule2, prediction2, vehicle),
+                    TripDetailsStopList.Entry(stop3, 3, schedule3, prediction3, vehicle)
+                )
+            ),
+            list
+        )
+    }
 }
