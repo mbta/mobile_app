@@ -274,10 +274,7 @@ struct HomeMapView: View {
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
-        guard let tripId = vehicle.tripId else {
-            // If the vehicle has no trip ID, it's not possible to view trip details for it
-            return
-        }
+        guard let tripId = vehicle.tripId else { return }
 
         if case .tripDetails = nearbyVM.navigationStack.last {
             // If a trip details page is already on the stack, replace it with this one
