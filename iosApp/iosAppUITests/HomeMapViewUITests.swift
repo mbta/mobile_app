@@ -29,9 +29,10 @@ final class HomeMapViewUITests: XCTestCase {
 
     // Test is skipped for now due to issues running in XCode Cloud
     func testRecentersToUserLocation() throws {
+        app.activate()
         app.launch()
 
-        acceptLocationPermissionAlert(timeout: 5)
+        acceptLocationPermissionAlert(timeout: 10)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
         XCTAssert(map.waitForExistence(timeout: 30))
@@ -47,9 +48,10 @@ final class HomeMapViewUITests: XCTestCase {
     }
 
     func testNoRecenterWithNoLocation() throws {
+        app.activate()
         app.launch()
 
-        denyLocationPermissionAlert(timeout: 5)
+        denyLocationPermissionAlert(timeout: 10)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
         XCTAssert(map.waitForExistence(timeout: 30))

@@ -34,19 +34,6 @@ struct NearbyTransitSection<Content: View>: View {
         .padding(.bottom, 16)
     }
 
-    private var routeIcon: Image {
-        switch route.type {
-        case .bus:
-            Image(.modeBus)
-        case .commuterRail:
-            Image(.modeCr)
-        case .ferry:
-            Image(.modeFerry)
-        default:
-            Image(.modeSubway)
-        }
-    }
-
     private var busLabel: AttributedString {
         var label = AttributedString(localized: "\(route.shortName) Bus")
         label.font = .body
@@ -75,7 +62,7 @@ struct NearbyTransitSection<Content: View>: View {
                 .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
             pinButton
         } icon: {
-            routeIcon
+            routeIcon(route)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .scaledToFit()
