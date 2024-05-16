@@ -705,13 +705,13 @@ final class NearbyTransitViewTests: XCTestCase {
             pitch: 0.0
         )
         let appearancePublisher = PassthroughSubject<Bool, Never>()
-        let hasAppeared = sut.inspection.inspect(after: 1) { view in
+        let hasAppeared = sut.inspection.inspect { view in
             XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, nil)
             try view.actualView().viewportProvider.updateCameraState(newCameraState)
             appearancePublisher.send(true)
         }
 
-        let hasChangedLocation = sut.inspection.inspect(onReceive: appearancePublisher, after: 5) { view in
+        let hasChangedLocation = sut.inspection.inspect(onReceive: appearancePublisher, after: 2) { view in
             XCTAssertEqual(try view.actualView().nearbyFetcher.loadedLocation, newCameraState.center)
         }
 
