@@ -40,7 +40,7 @@ struct VehicleCardView: View {
             HStack {
                 VStack {
                     RoutePill(route: route)
-                    routeIconView(route)
+                    routeIcon(route)
                 }.padding([.trailing], 8)
                 VStack {
                     HStack {

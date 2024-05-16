@@ -62,7 +62,7 @@ struct NearbyTransitSection<Content: View>: View {
                 .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
             pinButton
         } icon: {
-            routeIconView(route)
+            routeIcon(route)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .scaledToFit()

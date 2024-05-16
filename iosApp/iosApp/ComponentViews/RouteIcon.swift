@@ -10,7 +10,7 @@ import Foundation
 import shared
 import SwiftUI
 
-func routeIconView(_ route: Route) -> Image {
+func routeIcon(_ route: Route) -> Image {
     switch route.type {
     case .bus:
         Image(.modeBus)
