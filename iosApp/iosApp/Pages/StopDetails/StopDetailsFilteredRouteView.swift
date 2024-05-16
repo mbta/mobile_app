@@ -31,6 +31,7 @@ struct StopDetailsFilteredRouteView: View {
             formatted = PatternsByHeadsign(
                 route: route, headsign: headsign, patterns: [], upcomingTrips: [trip], alertsHere: nil
             ).format(now: now)
+
             if let vehicleId = trip.prediction?.vehicleId, let stopSequence = trip.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
                                                 target: .init(stopId: stopId, stopSequence: stopSequence.intValue))
