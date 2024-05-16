@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.datetime.Instant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -24,6 +25,7 @@ class VehiclesOnRouteChannelTest {
                             put("direction_id", 0)
                             put("latitude", 42.359901428222656)
                             put("longitude", -71.09449005126953)
+                            put("updated_at", "2024-05-15T09:00:00-04:00")
                             put("route_id", "1")
                             put("stop_id", "99")
                             put("trip_id", "61391720")
@@ -45,6 +47,7 @@ class VehiclesOnRouteChannelTest {
                             0,
                             42.359901428222656,
                             -71.09449005126953,
+                            Instant.parse("2024-05-15T09:00:00-04:00"),
                             "1",
                             "99",
                             "61391720"

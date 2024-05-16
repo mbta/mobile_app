@@ -2,13 +2,16 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%@ Bus" : {
-        "extractionState" : "manual"
+      "extractionState" : "manual"
     },
     "%@ to" : {
 
     },
     "%ld min" : {
       "extractionState" : "manual"
+    },
+    "Approaching" : {
+
     },
     "ARR" : {
 
@@ -64,6 +67,12 @@
     "Failed to load vehicles, could not connect to the server" : {
 
     },
+    "last updated %@s ago" : {
+
+    },
+    "Live" : {
+
+    },
     "Live departures" : {
 
     },
@@ -76,6 +85,9 @@
     "Location access state unknown" : {
 
     },
+    "Next stop" : {
+
+    },
     "No Predictions" : {
 
     },
@@ -83,6 +95,9 @@
 
     },
     "No Service" : {
+
+    },
+    "Now at" : {
 
     },
     "Routes" : {
