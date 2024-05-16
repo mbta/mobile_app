@@ -11,31 +11,32 @@ import shared
 import SwiftUI
 
 struct VehicleCardView: View {
+    let vehicle: Vehicle?
+    let route: Route?
+    let stop: Stop?
+    let trip: Trip?
+    var now: Date = .now
+
+    var body: some View {
+        if let vehicle, let route, let stop, let trip {
+            if vehicle.tripId == trip.id {
+                VehicleOnTripView(vehicle: vehicle, route: route, stop: stop, trip: trip, now: now)
+            } else {
+                Text("This vehicle is completing another trip.")
+            }
+        } else {
+            Text("Loading...")
+        }
+    }
+}
+
+struct VehicleOnTripView: View {
     let vehicle: Vehicle
     let route: Route
     let stop: Stop
     let trip: Trip
-    var now: Date = .now
-
+    let now: Date
     var body: some View {
-        if vehicle.tripId == trip.id {
-            vehicleOnTripView
-        } else {
-            Text("This vehicle is completing another trip.")
-        }
-    }
-
-    @ViewBuilder
-    func vehicleStatusDescription(_ vehicleStatus: __Bridge__Vehicle_CurrentStatus) -> some View {
-        switch vehicleStatus {
-        case .incomingAt: Text("Approaching")
-        case .inTransitTo: Text("Next stop")
-        case .stoppedAt: Text("Now at")
-        }
-    }
-
-    @ViewBuilder
-    var vehicleOnTripView: some View {
         VStack {
             HStack {
                 VStack {
@@ -63,6 +64,15 @@ struct VehicleCardView: View {
                     .font(.caption2)
 
             }.frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    func vehicleStatusDescription(_ vehicleStatus: __Bridge__Vehicle_CurrentStatus) -> some View {
+        switch vehicleStatus {
+        case .incomingAt: Text("Approaching")
+        case .inTransitTo: Text("Next stop")
+        case .stoppedAt: Text("Now at")
         }
     }
 

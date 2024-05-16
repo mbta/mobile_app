@@ -63,6 +63,68 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [showsStopsExp], timeout: 1)
     }
 
+    func testIncludesVehicleCard() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let stop1 = objects.stop { stop in
+            stop.name = "Somewhere"
+        }
+
+        let route = objects.route { route in
+            route.id = "Red"
+        }
+
+        let trip = objects.trip { trip in
+            trip.routeId = "Red"
+        }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.stopId = stop1.id
+            vehicle.currentStatus = .inTransitTo
+        }
+
+        objects.prediction { prediction in
+            prediction.stopId = stop1.id
+            prediction.tripId = trip.id
+            prediction.vehicleId = vehicle.id
+            prediction.stopSequence = 1
+            prediction.departureTime = Date.now.toKotlinInstant()
+        }
+
+        let response = GlobalResponse(objects: objects, patternIdsByStop: [:])
+        let globalFetcher = GlobalFetcher(backend: IdleBackend(), stops: response.stops, routes: response.routes)
+        globalFetcher.response = response
+
+        let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
+
+        let tripSchedulesRepository = FakeTripSchedulesRepository(
+            response: TripSchedulesResponse.StopIds(stopIds: [stop1.id]),
+            onGetTripSchedules: { tripSchedulesLoaded.send() }
+        )
+
+        let tripPredictionsFetcher = FakeTripPredictionsFetcher(response: .init(objects: objects))
+
+        let tripId = trip.id
+        let vehicleId = vehicle.id
+        let sut = TripDetailsPage(
+            tripId: tripId,
+            vehicleId: vehicleId,
+            target: nil,
+            globalFetcher: globalFetcher,
+            tripPredictionsFetcher: tripPredictionsFetcher,
+            tripSchedulesRepository: tripSchedulesRepository
+        )
+
+        let showVehicleCardExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
+            XCTAssertNotNil(try view.find(VehicleOnTripView.self))
+        }
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [showVehicleCardExp], timeout: 2)
+    }
+
     class FakeTripSchedulesRepository: ITripSchedulesRepository {
         let response: TripSchedulesResponse
         let onGetTripSchedules: (() -> Void)?

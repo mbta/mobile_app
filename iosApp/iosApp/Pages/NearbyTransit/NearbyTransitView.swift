@@ -211,6 +211,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             id: "trip1",
             directionId: 1,
             headsign: "Houghs Neck",
+            routeId: "216",
             routePatternId: "216-_-1",
             shapeId: "2160144",
             stopIds: nil
@@ -279,6 +280,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             id: "canonical-CR-Providence-C1-0",
             directionId: 0,
             headsign: "Wickford Junction",
+            routeId: "CR-Providence",
             routePatternId: "CR-Providence-C1-0",
             shapeId: "canonical-9890009",
             stopIds: nil

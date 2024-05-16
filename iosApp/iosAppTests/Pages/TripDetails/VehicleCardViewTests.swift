@@ -114,4 +114,15 @@ final class VehicleCardViewTests: XCTestCase {
         let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
         XCTAssertNotNil(try sut.inspect().find(text: "Now at"))
     }
+
+    func testLoading() {
+        let objects = ObjectCollectionBuilder()
+        let trip = objects.trip { trip in
+            trip.id = "target"
+            trip.headsign = "Alewife"
+        }
+
+        let sut = VehicleCardView(vehicle: nil, route: nil, stop: nil, trip: trip)
+        XCTAssertNotNil(try sut.inspect().find(text: "Loading..."))
+    }
 }

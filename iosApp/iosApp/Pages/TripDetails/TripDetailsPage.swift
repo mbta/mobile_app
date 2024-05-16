@@ -49,6 +49,7 @@ struct TripDetailsPage: View {
                     tripPredictions: tripPredictionsFetcher.predictions,
                     globalData: globalData
                 ) {
+                    vehicleCardView
                     TripDetailsStopListView(stops: stops, now: now)
                 } else {
                     Text("Couldn't load stop list")
@@ -92,5 +93,26 @@ struct TripDetailsPage: View {
 
     private func leavePredictions() {
         tripPredictionsFetcher.leave()
+    }
+
+    @ViewBuilder
+    var vehicleCardView: some View {
+        let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
+        let vehicle: Vehicle? = tripPredictionsFetcher.predictions?.vehicles[vehicleId]
+        let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
+            globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
+        } else {
+            nil
+        }
+        let route: Route? = if let routeId = trip?.routeId {
+            globalFetcher.routes[routeId]
+        } else {
+            nil
+        }
+        VehicleCardView(vehicle: vehicle,
+                        route: route,
+                        stop: vehicleStop,
+                        trip: trip,
+                        now: now.toNSDate())
     }
 }
