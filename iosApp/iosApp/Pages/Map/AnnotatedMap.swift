@@ -25,7 +25,8 @@ struct AnnotatedMap: View {
     @ObservedObject var viewportProvider: ViewportProvider
 
     var handleCameraChange: (CameraChanged) -> Void
-    var handleStopLayerTap: (QueriedFeature, MapContentGestureContext) -> Bool
+    var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
+    var handleTapVehicle: (Vehicle) -> Void
 
     @State private var zoomLevel: CGFloat = 0
 
@@ -36,8 +37,8 @@ struct AnnotatedMap: View {
             .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleStopLayerTap)
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleStopLayerTap)
+            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleTapStopLayer)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
@@ -72,6 +73,7 @@ struct AnnotatedMap: View {
                                 .strokeBorder(.white, lineWidth: 2.5)
                                 .background(Circle().fill(.black))
                                 .frame(width: 16, height: 16)
+                                .onTapGesture { handleTapVehicle(vehicle) }
                         }
                     }
                 }

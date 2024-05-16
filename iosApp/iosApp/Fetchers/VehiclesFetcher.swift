@@ -23,10 +23,16 @@ class VehiclesFetcher: ObservableObject {
     var onMessageSuccessCallback: (() -> Void)?
     var onErrorCallback: (() -> Void)?
 
-    init(socket: PhoenixSocket, onMessageSuccessCallback: (() -> Void)? = nil, onErrorCallback: (() -> Void)? = nil) {
+    init(
+        socket: PhoenixSocket,
+        onMessageSuccessCallback: (() -> Void)? = nil,
+        onErrorCallback: (() -> Void)? = nil,
+        vehicles: [Vehicle]? = nil
+    ) {
         self.socket = socket
         self.onMessageSuccessCallback = onMessageSuccessCallback
         self.onErrorCallback = onErrorCallback
+        self.vehicles = vehicles
     }
 
     func run(routeId: String, directionId: Int) {

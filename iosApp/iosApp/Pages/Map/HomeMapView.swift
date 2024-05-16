@@ -80,52 +80,54 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var modifiedMap: some View {
-        ProxyModifiedMap(mapContent: AnyView(annotatedMap), handleAppear: handleAppear,
-                         handleTryLayerInit: handleTryLayerInit, globalFetcher: globalFetcher,
-                         railRouteShapeFetcher: railRouteShapeFetcher)
-            .onChange(of: alertsFetcher.alerts) { nextAlerts in
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: nextAlerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
+        ProxyModifiedMap(
+            mapContent: AnyView(annotatedMap),
+            handleAppear: handleAppear,
+            handleTryLayerInit: handleTryLayerInit,
+            globalFetcher: globalFetcher,
+            railRouteShapeFetcher: railRouteShapeFetcher
+        )
+        .onChange(of: alertsFetcher.alerts) { nextAlerts in
+            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                alerts: nextAlerts,
+                filterAtTime: now.toKotlinInstant()
+            )
+        }
+        .onChange(of: nearbyVM.departures) { _ in
+            if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
+                updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
             }
-
-            .onChange(of: nearbyVM.departures) { _ in
-                if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
-                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
-                }
-            }
-            .onChange(of: currentStopAlerts) { nextStopAlerts in
-                handleStopAlertChange(alertsByStop: nextStopAlerts)
-            }
-            .onChange(of: globalFetcher.response) { _ in
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: alertsFetcher.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
-            }
-            .onChange(of: locationDataManager.authorizationStatus) { status in
-                guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
-                viewportProvider.follow(animation: .easeInOut(duration: 0))
-            }
-            .onChange(of: nearbyVM.navigationStack) { nextNavStack in
-                handleNavStackChange(navigationStack: nextNavStack)
-            }
-            .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
-                handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
-            }
-
-            .onDisappear {
-                vehiclesFetcher.leave()
-            }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .onReceive(timer) { input in
-                now = input
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: alertsFetcher.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
-            }
+        }
+        .onChange(of: currentStopAlerts) { nextStopAlerts in
+            handleStopAlertChange(alertsByStop: nextStopAlerts)
+        }
+        .onChange(of: globalFetcher.response) { _ in
+            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                alerts: alertsFetcher.alerts,
+                filterAtTime: now.toKotlinInstant()
+            )
+        }
+        .onChange(of: locationDataManager.authorizationStatus) { status in
+            guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+            viewportProvider.follow(animation: .easeInOut(duration: 0))
+        }
+        .onChange(of: nearbyVM.navigationStack) { nextNavStack in
+            handleNavStackChange(navigationStack: nextNavStack)
+        }
+        .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
+            handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
+        }
+        .onDisappear {
+            vehiclesFetcher.leave()
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onReceive(timer) { input in
+            now = input
+            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                alerts: alertsFetcher.alerts,
+                filterAtTime: now.toKotlinInstant()
+            )
+        }
     }
 
     @ViewBuilder
@@ -138,7 +140,8 @@ struct HomeMapView: View {
             vehicles: vehiclesFetcher.vehicles,
             viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
-            handleStopLayerTap: handleStopLayerTap
+            handleTapStopLayer: handleTapStopLayer,
+            handleTapVehicle: handleTapVehicle
         )
     }
 
@@ -249,7 +252,7 @@ struct HomeMapView: View {
         resetDefaultSources()
     }
 
-    func handleStopLayerTap(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {
+    func handleTapStopLayer(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {
         guard case let .string(stopId) = feature.feature.properties?[StopSourceGenerator.propIdKey] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
@@ -268,6 +271,43 @@ struct HomeMapView: View {
         nearbyVM.navigationStack.removeAll()
         nearbyVM.navigationStack.append(.stopDetails(stop, nil))
         return true
+    }
+
+    func handleTapVehicle(_ vehicle: Vehicle) {
+        guard let tripId = vehicle.tripId else { return }
+
+        if case .tripDetails = nearbyVM.navigationStack.last {
+            // If a trip details page is already on the stack, replace it with this one
+            _ = nearbyVM.navigationStack.popLast()
+        }
+
+        guard let departures = nearbyVM.departures,
+              let patterns = departures.routes.first(where: { patterns in
+                  patterns.route.id == vehicle.routeId
+              }),
+              let trip = patterns.allUpcomingTrips().first(where: { upcoming in
+                  upcoming.trip.id == tripId
+              }),
+              let stopSequence = trip.stopSequence?.intValue
+        else {
+            // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
+            // page, but we won't be able to tell what the target stop was.
+            nearbyVM.navigationStack.append(.tripDetails(
+                tripId: tripId,
+                vehicleId: vehicle.id,
+                target: nil
+            ))
+            return
+        }
+
+        nearbyVM.navigationStack.append(.tripDetails(
+            tripId: tripId,
+            vehicleId: vehicle.id,
+            target: .init(
+                stopId: patterns.stop.id,
+                stopSequence: stopSequence
+            )
+        ))
     }
 }
 
@@ -317,8 +357,11 @@ extension HomeMapView {
                                        stopSourceGenerator: updatedStopSources)
     }
 
-    func updateStopDetailsLayers(_ stopMapData: StopMapResponse, _ filter: StopDetailsFilter?,
-                                 _ departures: StopDetailsDepartures?) {
+    func updateStopDetailsLayers(
+        _ stopMapData: StopMapResponse,
+        _ filter: StopDetailsFilter?,
+        _ departures: StopDetailsDepartures?
+    ) {
         if let filter {
             let filteredRouteWithShapes = filteredRouteShapesForStop(stopMapData: stopMapData,
                                                                      filter: filter,
@@ -340,10 +383,11 @@ extension HomeMapView {
         }
     }
 
-    func filteredRouteShapesForStop(stopMapData: StopMapResponse,
-                                    filter: StopDetailsFilter,
-                                    departures: StopDetailsDepartures?)
-        -> MapFriendlyRouteResponse.RouteWithSegmentedShapes {
+    func filteredRouteShapesForStop(
+        stopMapData: StopMapResponse,
+        filter: StopDetailsFilter,
+        departures: StopDetailsDepartures?
+    ) -> MapFriendlyRouteResponse.RouteWithSegmentedShapes {
         let targetRouteData = stopMapData.routeShapes.first { $0.routeId == filter.routeId }
         if let targetRouteData {
             if let departures {
