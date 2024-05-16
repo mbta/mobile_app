@@ -71,7 +71,7 @@ struct TripDetailsPage: View {
             now = Date.now.toKotlinInstant()
             while !Task.isCancelled {
                 do {
-                    try await Task.sleep(for: .seconds(5))
+                    try await Task.sleep(for: .seconds(1))
                 } catch {
                     debugPrint("Can't sleep", error)
                 }
