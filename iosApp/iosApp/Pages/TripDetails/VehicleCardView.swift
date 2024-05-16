@@ -28,9 +28,9 @@ struct VehicleCardView: View {
     @ViewBuilder
     func vehicleStatusDescription(_ vehicleStatus: __Bridge__Vehicle_CurrentStatus) -> some View {
         switch vehicleStatus {
-        case __Bridge__Vehicle_CurrentStatus.incomingAt: Text("Approaching")
-        case __Bridge__Vehicle_CurrentStatus.inTransitTo: Text("Next stop")
-        case __Bridge__Vehicle_CurrentStatus.stoppedAt: Text("Now at")
+        case .incomingAt: Text("Approaching")
+        case .inTransitTo: Text("Next stop")
+        case .stoppedAt: Text("Now at")
         }
     }
 
