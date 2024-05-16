@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.uuid
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 /**
@@ -294,6 +296,7 @@ class ObjectCollectionBuilder {
         var directionId = 0
         var latitude = 1.2
         var longitude = 3.4
+        var updatedAt = Clock.System.now() - 10.seconds
         var routeId: String? = null
         var stopId: String? = null
         var tripId = ""
@@ -306,6 +309,7 @@ class ObjectCollectionBuilder {
                 directionId,
                 latitude,
                 longitude,
+                updatedAt,
                 routeId,
                 stopId,
                 tripId
