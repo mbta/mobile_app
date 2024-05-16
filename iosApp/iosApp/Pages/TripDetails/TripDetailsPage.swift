@@ -77,15 +77,20 @@ struct TripDetailsPage: View {
                 now = Date.now.toKotlinInstant()
             }
         }
-        .onAppear {
-            tripPredictionsFetcher.run(tripId: tripId)
-        }
-        .onChange(of: tripId) { tripId in
-            tripPredictionsFetcher.run(tripId: tripId)
-        }
-        .onDisappear {
-            tripPredictionsFetcher.leave()
-        }
+        .onAppear { joinPredictions(tripId: tripId) }
+        .onChange(of: tripId) { joinPredictions(tripId: $0) }
+        .onDisappear { leavePredictions() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .withScenePhaseHandlers(onActive: { joinPredictions(tripId: tripId) },
+                                onInactive: leavePredictions,
+                                onBackground: leavePredictions)
+    }
+
+    private func joinPredictions(tripId: String) {
+        tripPredictionsFetcher.run(tripId: tripId)
+    }
+
+    private func leavePredictions() {
+        tripPredictionsFetcher.leave()
     }
 }
