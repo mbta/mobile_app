@@ -190,6 +190,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             fun run() {
                 countUnpredictedTrailingSchedules()
                 zipPredictedSchedules()
+                // everything needs a stop sequence, whether it matches to a prediction or not
                 assignDefaultStateIfMissing()
                 inferUnpredictedLeadingSchedules()
                 inferUnpredictedTrailingSchedules()
