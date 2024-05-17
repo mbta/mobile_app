@@ -49,7 +49,8 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             tripPredictionsFetcher: tripPredictionsFetcher,
-            tripSchedulesRepository: tripSchedulesRepository
+            tripSchedulesRepository: tripSchedulesRepository,
+            vehicleFetcher: .init(socket: MockSocket())
         )
 
         let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
@@ -113,7 +114,8 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             tripPredictionsFetcher: tripPredictionsFetcher,
-            tripSchedulesRepository: tripSchedulesRepository
+            tripSchedulesRepository: tripSchedulesRepository,
+            vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
         )
 
         let showVehicleCardExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
@@ -153,6 +155,18 @@ final class TripDetailsPageTests: XCTestCase {
         override func run(tripId: String) {
             onRun?(tripId)
             predictions = response
+        }
+    }
+
+    class FakeVehicleFetcher: VehicleFetcher {
+        let overriddenResponse: VehicleStreamDataResponse?
+        init(response: VehicleStreamDataResponse?) {
+            overriddenResponse = response
+            super.init(socket: MockSocket())
+        }
+
+        override func run(vehicleId _: String) {
+            response = overriddenResponse
         }
     }
 }

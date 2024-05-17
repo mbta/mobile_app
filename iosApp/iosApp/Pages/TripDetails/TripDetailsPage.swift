@@ -18,6 +18,7 @@ struct TripDetailsPage: View {
 
     @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var vehicleFetcher: VehicleFetcher
     var tripSchedulesRepository: ITripSchedulesRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
 
@@ -31,7 +32,8 @@ struct TripDetailsPage: View {
         target: TripDetailsTarget?,
         globalFetcher: GlobalFetcher,
         tripPredictionsFetcher: TripPredictionsFetcher,
-        tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules
+        tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
+        vehicleFetcher: VehicleFetcher
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
@@ -39,6 +41,7 @@ struct TripDetailsPage: View {
         self.globalFetcher = globalFetcher
         self.tripPredictionsFetcher = tripPredictionsFetcher
         self.tripSchedulesRepository = tripSchedulesRepository
+        self.vehicleFetcher = vehicleFetcher
     }
 
     var body: some View {
@@ -47,7 +50,7 @@ struct TripDetailsPage: View {
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictionsFetcher.predictions,
-                    globalData: globalData
+                    vehicle: vehicleFetcher.response?.vehicle, globalData: globalData
                 ) {
                     vehicleCardView
                     TripDetailsStopListView(stops: stops, now: now)
@@ -78,13 +81,28 @@ struct TripDetailsPage: View {
                 now = Date.now.toKotlinInstant()
             }
         }
-        .onAppear { joinPredictions(tripId: tripId) }
+        .onAppear { joinRealtime()
+        }
+        .onDisappear { leaveRealtime()
+        }
         .onChange(of: tripId) { joinPredictions(tripId: $0) }
-        .onDisappear { leavePredictions() }
+        .onChange(of: vehicleId) { vehicleId in
+            vehicleFetcher.run(vehicleId: vehicleId)
+        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .withScenePhaseHandlers(onActive: { joinPredictions(tripId: tripId) },
-                                onInactive: leavePredictions,
-                                onBackground: leavePredictions)
+        .withScenePhaseHandlers(onActive: joinRealtime,
+                                onInactive: leaveRealtime,
+                                onBackground: leaveRealtime)
+    }
+
+    private func joinRealtime() {
+        joinPredictions(tripId: tripId)
+        vehicleFetcher.run(vehicleId: vehicleId)
+    }
+
+    private func leaveRealtime() {
+        leavePredictions()
+        vehicleFetcher.leave()
     }
 
     private func joinPredictions(tripId: String) {
@@ -98,7 +116,7 @@ struct TripDetailsPage: View {
     @ViewBuilder
     var vehicleCardView: some View {
         let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
-        let vehicle: Vehicle? = tripPredictionsFetcher.predictions?.vehicles[vehicleId]
+        let vehicle: Vehicle? = vehicleFetcher.response?.vehicle
         let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
             globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
         } else {

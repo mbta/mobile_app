@@ -126,6 +126,7 @@ class BackendTest {
                               "id": "trip1",
                               "direction_id": 0,
                               "headsign": "Watertown",
+                              "route_id": "52",
                               "route_pattern_id": "52-4-0",
                               "shape_id": "520215"
                             },
@@ -133,6 +134,7 @@ class BackendTest {
                               "id": "trip2",
                               "direction_id": 1,
                               "headsign": "Charles River Loop",
+                               "route_id": "52",
                               "route_pattern_id": "52-4-1",
                               "shape_id": "520213"
                             },
@@ -140,6 +142,7 @@ class BackendTest {
                               "id": "trip3",
                               "direction_id": 0,
                               "headsign": "Watertown",
+                              "route_id": "52",
                               "route_pattern_id": "52-5-0",
                               "shape_id": "520212"
                             },
@@ -147,6 +150,7 @@ class BackendTest {
                               "id": "trip4",
                               "direction_id": 1,
                               "headsign": "Dedham Mall",
+                              "route_id": "52",
                               "route_pattern_id": "52-5-1",
                               "shape_id": "520211"
                             }
@@ -252,6 +256,7 @@ class BackendTest {
                                     id = "trip1",
                                     directionId = 0,
                                     headsign = "Watertown",
+                                    routeId = "52",
                                     routePatternId = "52-4-0",
                                     shapeId = "520215"
                                 ),
@@ -260,6 +265,7 @@ class BackendTest {
                                     id = "trip2",
                                     directionId = 1,
                                     headsign = "Charles River Loop",
+                                    routeId = "52",
                                     routePatternId = "52-4-1",
                                     shapeId = "520213"
                                 ),
@@ -268,6 +274,7 @@ class BackendTest {
                                     id = "trip3",
                                     directionId = 0,
                                     headsign = "Watertown",
+                                    routeId = "52",
                                     routePatternId = "52-5-0",
                                     shapeId = "520212"
                                 ),
@@ -276,6 +283,7 @@ class BackendTest {
                                     id = "trip4",
                                     directionId = 1,
                                     headsign = "Dedham Mall",
+                                    routeId = "52",
                                     routePatternId = "52-5-1",
                                     shapeId = "520211"
                                 )

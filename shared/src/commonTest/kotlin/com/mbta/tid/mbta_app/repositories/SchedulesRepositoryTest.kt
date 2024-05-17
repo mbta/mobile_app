@@ -47,6 +47,7 @@ class SchedulesRepositoryTest : KoinTest {
                               "id": "trip1",
                               "direction_id": 0,
                               "headsign": "Alewife",
+                              "route_id": "Red",
                               "route_pattern_id": "rp1",
                               "shape_id": "shape1",
                               "stop_ids": ["70064", "70065"]
@@ -89,6 +90,7 @@ class SchedulesRepositoryTest : KoinTest {
                                     id = "trip1",
                                     directionId = 0,
                                     headsign = "Alewife",
+                                    routeId = "Red",
                                     routePatternId = "rp1",
                                     shapeId = "shape1",
                                     stopIds = listOf("70064", "70065")

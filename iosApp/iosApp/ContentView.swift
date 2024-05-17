@@ -18,6 +18,7 @@ struct ContentView: View {
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var tripPredictionsFetcher: TripPredictionsFetcher
+    @EnvironmentObject var vehicleFetcher: VehicleFetcher
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = .zero
@@ -153,7 +154,8 @@ struct ContentView: View {
                             vehicleId: vehicleId,
                             target: target,
                             globalFetcher: globalFetcher,
-                            tripPredictionsFetcher: tripPredictionsFetcher
+                            tripPredictionsFetcher: tripPredictionsFetcher,
+                            vehicleFetcher: vehicleFetcher
                         )
                     }
                 }

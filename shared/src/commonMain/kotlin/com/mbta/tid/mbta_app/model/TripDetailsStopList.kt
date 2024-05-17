@@ -97,6 +97,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         fun fromPieces(
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
+            vehicle: Vehicle?,
             globalData: GlobalResponse,
         ): TripDetailsStopList? {
             val entries = mutableMapOf<Int, WorkingEntry>()
@@ -108,12 +109,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                     globalData
                 )
 
-            predictions.forEach { prediction ->
-                entries.putPrediction(
-                    prediction,
-                    tripPredictions?.vehicles?.get(prediction.vehicleId)
-                )
-            }
+            predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
 
             if (tripSchedules is TripSchedulesResponse.Schedules) {
                 tripSchedules.schedules.forEach { entries.putSchedule(it) }

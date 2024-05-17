@@ -37,6 +37,7 @@ struct ProductionAppView: View {
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
     @StateObject var tripPredictionsFetcher: TripPredictionsFetcher
+    @StateObject var vehicleFetcher: VehicleFetcher
     @StateObject var vehiclesFetcher: VehiclesFetcher
     @StateObject var viewportProvider: ViewportProvider
 
@@ -74,6 +75,7 @@ struct ProductionAppView: View {
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _tripPredictionsFetcher = StateObject(wrappedValue: TripPredictionsFetcher(socket: socket))
+        _vehicleFetcher = StateObject(wrappedValue: VehicleFetcher(socket: socket))
         _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }
@@ -90,6 +92,7 @@ struct ProductionAppView: View {
             .environmentObject(searchResultFetcher)
             .environmentObject(socketProvider)
             .environmentObject(tripPredictionsFetcher)
+            .environmentObject(vehicleFetcher)
             .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)
     }
