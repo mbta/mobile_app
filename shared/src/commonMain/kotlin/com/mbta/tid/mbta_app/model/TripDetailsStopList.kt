@@ -14,6 +14,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         val schedule: Schedule?,
         val prediction: Prediction?,
         val vehicle: Vehicle?,
+        val routes: List<Route>
     ) {
         // we want very slightly different logic than the UpcomingTrip itself has
         // specifically, we want to still render predictions that are arrival-only
@@ -141,6 +142,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                             it.value.schedule,
                             it.value.prediction,
                             it.value.vehicle,
+                            getTransferRoutes(it.value, globalData)
                         )
                     }
             )
@@ -173,6 +175,47 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 }
                 .values
                 .sortedBy { it.stopSequence }
+
+        private fun getTransferRoutes(
+            entry: WorkingEntry,
+            globalData: GlobalResponse
+        ): List<Route> {
+            val stop = globalData.stops.getValue(entry.stopId)
+            val selfOrParent =
+                if (stop.parentStationId == null) stop
+                else globalData.stops[stop.parentStationId] ?: return emptyList()
+            // Bail if stop is not a parent and parent stop can't be found
+
+            val currentRoute =
+                globalData.routes[
+                        entry.prediction?.routeId
+                            ?: entry.schedule?.routeId ?: entry.vehicle?.routeId]
+                    ?: return emptyList() // Bail if no current route can be found
+
+            val transferStopIds =
+                listOf(selfOrParent.id) +
+                    selfOrParent.connectingStopIds +
+                    selfOrParent.childStopIds +
+                    selfOrParent.childStopIds.flatMap {
+                        globalData.stops[it]?.connectingStopIds ?: emptyList()
+                    }
+
+            return transferStopIds
+                .flatMapTo(mutableSetOf()) { getRoutesForStop(it, globalData) }
+                .minus(currentRoute)
+                .sortedBy(Route::sortOrder)
+        }
+
+        private fun getRoutesForStop(stopId: String, globalData: GlobalResponse): Set<Route> {
+            return globalData.patternIdsByStop[stopId]
+                ?.map { globalData.routePatterns[it] }
+                ?.mapNotNull {
+                    if (it?.typicality != RoutePattern.Typicality.Typical) null
+                    else globalData.routes[it.routeId]
+                }
+                ?.toSet()
+                ?: emptySet()
+        }
 
         private class ScheduleStopSequenceAligner(
             val stopIds: List<String>,

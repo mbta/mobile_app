@@ -404,8 +404,9 @@ final class NearbyTransitViewTests: XCTestCase {
                     locationType: .station,
                     description: nil,
                     platformName: nil,
-                    parentStationId: nil,
-                    childStopIds: []
+                    childStopIds: [],
+                    connectingStopIds: [],
+                    parentStationId: nil
                 )
                 builder.stop(stop: lechmere) { _ in
                 }

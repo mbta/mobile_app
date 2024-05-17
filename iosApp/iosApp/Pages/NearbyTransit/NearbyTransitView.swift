@@ -204,8 +204,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
             locationType: LocationType.stop,
             description: nil,
             platformName: nil,
-            parentStationId: nil,
-            childStopIds: []
+            childStopIds: [],
+            connectingStopIds: [],
+            parentStationId: nil
         )
         let busTrip = Trip(
             id: "trip1",
@@ -272,8 +273,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
             locationType: LocationType.stop,
             description: nil,
             platformName: nil,
-            parentStationId: nil,
-            childStopIds: []
+            childStopIds: [],
+            connectingStopIds: [],
+            parentStationId: nil
         )
         let crTrip = Trip(
             id: "canonical-CR-Providence-C1-0",
