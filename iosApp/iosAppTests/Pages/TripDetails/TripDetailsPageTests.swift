@@ -26,7 +26,7 @@ final class TripDetailsPageTests: XCTestCase {
         objects.prediction { prediction in
             prediction.stopId = stop2.id
             prediction.stopSequence = 2
-            prediction.departureTime = Date.now.toKotlinInstant()
+            prediction.departureTime = Date.now.addingTimeInterval(30).toKotlinInstant()
         }
 
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
