@@ -10,6 +10,29 @@
     "%ld min" : {
       "extractionState" : "manual"
     },
+    "%ld stops" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ld stop"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%ld stops"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Approaching" : {
 
     },
@@ -121,19 +144,7 @@
     "Suspension" : {
 
     },
-    "Target Stop %@" : {
-
-    },
-    "Target Stop Sequence %@" : {
-
-    },
     "This vehicle is completing another trip." : {
-
-    },
-    "Trip %@" : {
-
-    },
-    "Vehicle %@" : {
 
     }
   },

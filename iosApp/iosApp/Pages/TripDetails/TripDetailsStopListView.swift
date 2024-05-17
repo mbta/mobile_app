@@ -15,11 +15,7 @@ struct TripDetailsStopListView: View {
 
     var body: some View {
         List(stops.stops, id: \.stopSequence) { stop in
-            HStack {
-                Text(stop.stop.name)
-                Spacer()
-                UpcomingTripView(prediction: .some(stop.format(now: now)))
-            }
+            TripDetailsStopView(stop: stop, now: now)
         }
     }
 }

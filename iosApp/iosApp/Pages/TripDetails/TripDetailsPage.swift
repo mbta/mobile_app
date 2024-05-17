@@ -49,7 +49,15 @@ struct TripDetailsPage: View {
                     tripPredictions: tripPredictionsFetcher.predictions,
                     globalData: globalData
                 ) {
-                    TripDetailsStopListView(stops: stops, now: now)
+                    if let target, let splitStops = stops.splitForTarget(
+                        targetStopId: target.stopId,
+                        targetStopSequence: Int32(target.stopSequence),
+                        globalData: globalData
+                    ) {
+                        TripDetailsStopListSplitView(splitStops: splitStops, now: now)
+                    } else {
+                        TripDetailsStopListView(stops: stops, now: now)
+                    }
                 } else {
                     Text("Couldn't load stop list")
                 }

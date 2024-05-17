@@ -55,6 +55,39 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         }
     }
 
+    fun splitForTarget(
+        targetStopId: String,
+        targetStopSequence: Int,
+        globalData: GlobalResponse
+    ): TargetSplit? {
+        var targetStopIndex =
+            stops.indexOfFirst {
+                Stop.equalOrFamily(targetStopId, it.stop.id, globalData.stops) &&
+                    it.stopSequence == targetStopSequence
+            }
+        if (targetStopIndex == -1) {
+            // couldn't match by stop sequence, so just match by stop id
+            targetStopIndex =
+                stops.indexOfLast { Stop.equalOrFamily(targetStopId, it.stop.id, globalData.stops) }
+        }
+        if (targetStopIndex == -1) {
+            return null
+        }
+
+        val collapsedStops = stops.subList(fromIndex = 0, toIndex = targetStopIndex)
+        val targetStop = stops[targetStopIndex]
+        val followingStops =
+            stops.subList(fromIndex = targetStopIndex + 1, toIndex = stops.lastIndex + 1)
+
+        return TargetSplit(collapsedStops, targetStop, followingStops)
+    }
+
+    data class TargetSplit(
+        val collapsedStops: List<Entry>,
+        val targetStop: Entry,
+        val followingStops: List<Entry>
+    )
+
     private data class WorkingEntry(
         val stopId: String,
         val stopSequence: Int,
