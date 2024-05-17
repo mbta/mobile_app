@@ -23,6 +23,12 @@ final class TripDetailsPageTests: XCTestCase {
             stop.name = "Elsewhere"
         }
 
+        objects.prediction { prediction in
+            prediction.stopId = stop2.id
+            prediction.stopSequence = 2
+            prediction.departureTime = Date.now.addingTimeInterval(30).toKotlinInstant()
+        }
+
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
         globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
 
@@ -33,6 +39,8 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
+        let tripPredictionsFetcher = FakeTripPredictionsFetcher(response: .init(objects: objects))
+
         let tripId = "123"
         let vehicleId = "999"
         let sut = TripDetailsPage(
@@ -40,12 +48,14 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository
         )
 
         let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
             XCTAssertNotNil(try view.find(text: "Somewhere"))
             XCTAssertNotNil(try view.find(text: "Elsewhere"))
+            XCTAssertNotNil(try view.find(text: "Elsewhere").parent().find(text: "ARR"))
         }
 
         ViewHosting.host(view: sut)
@@ -65,6 +75,22 @@ final class TripDetailsPageTests: XCTestCase {
         func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
             onGetTripSchedules?()
             return response
+        }
+    }
+
+    class FakeTripPredictionsFetcher: TripPredictionsFetcher {
+        let response: PredictionsStreamDataResponse
+        let onRun: ((_ tripId: String) -> Void)?
+
+        init(response: PredictionsStreamDataResponse, onRun: ((_ tripId: String) -> Void)? = nil) {
+            self.response = response
+            self.onRun = onRun
+            super.init(socket: MockSocket())
+        }
+
+        override func run(tripId: String) {
+            onRun?(tripId)
+            predictions = response
         }
     }
 }

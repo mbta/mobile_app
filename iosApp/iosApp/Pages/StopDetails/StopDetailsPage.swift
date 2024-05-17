@@ -97,6 +97,7 @@ struct StopDetailsPage: View {
 
     func getSchedule(_ stop: Stop) {
         Task {
+            schedulesResponse = nil
             do {
                 schedulesResponse = try await schedulesRepository
                     .getSchedule(stopIds: [stop.id])
