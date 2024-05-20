@@ -155,7 +155,8 @@ final class TripDetailsPageTests: XCTestCase {
             target: .init(stopId: stop1.id, stopSequence: 998),
             globalFetcher: globalFetcher,
             tripPredictionsFetcher: FakeTripPredictionsFetcher(response: .init(objects: objects)),
-            tripSchedulesRepository: tripSchedulesRepository
+            tripSchedulesRepository: tripSchedulesRepository,
+            vehicleFetcher: FakeVehicleFetcher(response: nil)
         )
 
         let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
