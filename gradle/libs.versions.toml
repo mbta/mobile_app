@@ -1,7 +1,7 @@
 [versions]
 accompanist = "0.34.0"
 agp = "8.2.2"
-datastorePreferencesCore = "1.1.0"
+datastorePreferencesCore = "1.1.1"
 kotlin = "1.9.23"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
