@@ -20,7 +20,7 @@ data class Prediction(
     val revenue: Boolean,
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,
     val status: String?,
-    @SerialName("stop_sequence") val stopSequence: Int?,
+    @SerialName("stop_sequence") val stopSequence: Int,
     @SerialName("route_id") val routeId: String,
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,

@@ -390,6 +390,85 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
+    func testVehicleTapping() throws {
+        class FakeStopRepository: IStopRepository {
+            func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
+                StopMapResponse(routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes, childStops: [:])
+            }
+        }
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
+
+        let objectCollection = ObjectCollectionBuilder()
+        let stop = objectCollection.stop { stop in
+            stop.id = "1"
+            stop.latitude = 1
+            stop.longitude = 1
+        }
+        let trip = objectCollection.trip { trip in
+            trip.routePatternId = MapTestDataHelper.patternOrange30.id
+            trip.id = "1"
+            trip.directionId = 0
+        }
+
+        let prediction = objectCollection.prediction { prediction in
+            prediction.trip = trip
+            prediction.stopSequence = 100
+        }
+
+        let vehicle = objectCollection.vehicle { vehicle in
+            vehicle.id = "1"
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.routeId = MapTestDataHelper.patternOrange30.routeId
+            vehicle.directionId = 0
+        }
+
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
+        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
+        let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
+        let nearbyVM: NearbyViewModel = .init()
+        nearbyVM.setDepartures(StopDetailsDepartures(routes:
+            [.init(route: MapTestDataHelper.routeOrange, stop: stop,
+                   patternsByHeadsign: [.init(route: MapTestDataHelper.routeOrange,
+                                              headsign: MapTestDataHelper.tripOrangeC1.headsign,
+                                              patterns: [MapTestDataHelper.patternOrange30],
+                                              upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                                              alertsHere: nil)])]))
+
+        let initialNav: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: vehicle.routeId!, directionId: vehicle.directionId))
+        nearbyVM.navigationStack = [initialNav]
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
+            globalFetcher: globalFetcher,
+            nearbyFetcher: nearbyFetcher,
+            nearbyVM: nearbyVM,
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle]),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: locationDataManager,
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
+            try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
+            XCTAssertEqual(nearbyVM.navigationStack.last, .tripDetails(
+                tripId: trip.id,
+                vehicleId: vehicle.id,
+                target: .init(stopId: stop.id, stopSequence: Int(prediction.stopSequence))
+            ))
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared], timeout: 5)
+
+        addTeardownBlock {
+            HelpersKt.loadDefaultRepoModules()
+        }
+    }
+
     func testShowsAllRailShapesWhenSelectedStopCleared() throws {
         class OLOnlyStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {

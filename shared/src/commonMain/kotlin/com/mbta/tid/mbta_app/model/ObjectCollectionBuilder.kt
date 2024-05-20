@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.uuid
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 /**
@@ -80,7 +82,7 @@ class ObjectCollectionBuilder {
         var revenue = true
         var scheduleRelationship = Prediction.ScheduleRelationship.Scheduled
         var status: String? = null
-        var stopSequence: Int? = null
+        var stopSequence = 0
         var routeId = ""
         var stopId = ""
         var tripId = ""
@@ -226,11 +228,13 @@ class ObjectCollectionBuilder {
         var id = uuid()
         var directionId = 0
         var headsign = ""
+        var routeId = ""
         var routePatternId: String? = null
         var shapeId: String? = null
         var stopIds: List<String>? = null
 
-        override fun built() = Trip(id, directionId, headsign, routePatternId, shapeId, stopIds)
+        override fun built() =
+            Trip(id, directionId, headsign, routeId, routePatternId, shapeId, stopIds)
     }
 
     fun trip(block: TripBuilder.() -> Unit = {}) = build(trips, TripBuilder(), block)
@@ -294,6 +298,7 @@ class ObjectCollectionBuilder {
         var directionId = 0
         var latitude = 1.2
         var longitude = 3.4
+        var updatedAt = Clock.System.now() - 10.seconds
         var routeId: String? = null
         var stopId: String? = null
         var tripId = ""
@@ -306,6 +311,7 @@ class ObjectCollectionBuilder {
                 directionId,
                 latitude,
                 longitude,
+                updatedAt,
                 routeId,
                 stopId,
                 tripId

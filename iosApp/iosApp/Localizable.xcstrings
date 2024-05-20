@@ -2,13 +2,16 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%@ Bus" : {
-        "extractionState" : "manual"
+      "extractionState" : "manual"
     },
     "%@ to" : {
 
     },
     "%ld min" : {
       "extractionState" : "manual"
+    },
+    "Approaching" : {
+
     },
     "ARR" : {
 
@@ -49,6 +52,9 @@
     "Failed to load alerts, could not connect to the server" : {
 
     },
+    "Failed to load data for vehicle %@, something went wrong" : {
+
+    },
     "Failed to load new alerts, something went wrong" : {
 
     },
@@ -64,6 +70,12 @@
     "Failed to load vehicles, could not connect to the server" : {
 
     },
+    "last updated %.0fs ago" : {
+
+    },
+    "Live" : {
+
+    },
     "Live departures" : {
 
     },
@@ -76,6 +88,9 @@
     "Location access state unknown" : {
 
     },
+    "Next stop" : {
+
+    },
     "No Predictions" : {
 
     },
@@ -83,6 +98,9 @@
 
     },
     "No Service" : {
+
+    },
+    "Now at" : {
 
     },
     "Routes" : {
@@ -106,17 +124,7 @@
     "Suspension" : {
 
     },
-    "Target Stop %@" : {
-
-    },
-    "Target Stop Sequence %@" : {
-
-    },
-    "Trip %@" : {
-
-    },
-    "Vehicle %@" : {
-
+    "This vehicle is completing another trip." : {
     }
   },
   "version" : "1.0"

@@ -1,8 +1,8 @@
 //
-//  VehiclesFetcher.swift
+//  VehicleFetcher.swift
 //  iosApp
 //
-//  Created by Horn, Melody on 2024-04-26.
+//  Created by Brady, Kayla on 5/17/24.
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
@@ -12,9 +12,8 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
-class VehiclesFetcher: ObservableObject {
-    @Published var response: VehiclesStreamDataResponse?
-    @Published var vehicles: [Vehicle]?
+class VehicleFetcher: ObservableObject {
+    @Published var response: VehicleStreamDataResponse?
     @Published var socketError: Error?
     @Published var errorText: Text?
 
@@ -23,30 +22,24 @@ class VehiclesFetcher: ObservableObject {
     var onMessageSuccessCallback: (() -> Void)?
     var onErrorCallback: (() -> Void)?
 
-    init(
-        socket: PhoenixSocket,
-        onMessageSuccessCallback: (() -> Void)? = nil,
-        onErrorCallback: (() -> Void)? = nil,
-        vehicles: [Vehicle]? = nil
-    ) {
+    init(socket: PhoenixSocket, onMessageSuccessCallback: (() -> Void)? = nil, onErrorCallback: (() -> Void)? = nil) {
         self.socket = socket
         self.onMessageSuccessCallback = onMessageSuccessCallback
         self.onErrorCallback = onErrorCallback
-        self.vehicles = vehicles
     }
 
-    func run(routeId: String, directionId: Int) {
+    func run(vehicleId: String) {
         socket.connect()
-        let joinPayload = VehiclesOnRouteChannel.shared.joinPayload(routeId: routeId, directionId: Int32(directionId))
-        channel = socket.channel(VehiclesOnRouteChannel.shared.topic, params: joinPayload)
+        leave()
+        channel = socket.channel(VehicleChannel.companion.topic(vehicleId: vehicleId), params: [:])
 
-        channel?.on(VehiclesOnRouteChannel.shared.newDataEvent, callback: { message in
+        channel?.on(VehicleChannel.companion.newDataEvent, callback: { message in
             self.handleNewDataMessage(message: message)
         })
         channel?.onError { message in
             DispatchQueue.main.async {
-                self.socketError = PhoenixChannelError.channelError("A: \(message.payload)")
-                self.errorText = Text("Failed to load new vehicles, something went wrong")
+                self.socketError = PhoenixChannelError.channelError("\(message.payload)")
+                self.errorText = Text("Failed to load data for vehicle \(vehicleId), something went wrong")
                 if let callback = self.onErrorCallback {
                     callback()
                 }
@@ -61,7 +54,7 @@ class VehiclesFetcher: ObservableObject {
             self.handleNewDataMessage(message: message)
         }.receive("error", callback: { message in
             DispatchQueue.main.async {
-                self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
+                self.socketError = PhoenixChannelError.channelError("\(message.payload)")
                 self.errorText = Text("Failed to load vehicles, could not connect to the server")
                 if let callback = self.onErrorCallback {
                     callback()
@@ -75,12 +68,11 @@ class VehiclesFetcher: ObservableObject {
             let rawPayload: String? = message.jsonPayload()
 
             if let stringPayload = rawPayload {
-                let newVehicles = try VehiclesOnRouteChannel.shared
+                let newVehicleData = try VehicleChannel.companion
                     .parseMessage(payload: stringPayload)
-                Logger().debug("Received \(newVehicles.vehicles.count) vehicles")
+                Logger().debug("Received vehicle update")
                 DispatchQueue.main.async {
-                    self.response = newVehicles
-                    self.vehicles = Array(newVehicles.vehicles.values)
+                    self.response = newVehicleData
                     self.socketError = nil
                     self.errorText = nil
                     if let callback = self.onMessageSuccessCallback {
@@ -96,7 +88,7 @@ class VehiclesFetcher: ObservableObject {
 
         } catch {
             DispatchQueue.main.async {
-                self.socketError = PhoenixChannelError.channelError("C: \(message.payload)")
+                self.socketError = PhoenixChannelError.channelError("\(message.payload)")
                 self.errorText = Text("Failed to load new vehicles, something went wrong")
             }
             Logger().error("\(error)")
@@ -106,7 +98,7 @@ class VehiclesFetcher: ObservableObject {
     func leave() {
         channel?.leave()
         channel = nil
-        vehicles = nil
+        response = nil
         errorText = nil
         socketError = nil
     }

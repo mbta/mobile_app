@@ -17,6 +17,8 @@ struct ContentView: View {
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
+    @EnvironmentObject var tripPredictionsFetcher: TripPredictionsFetcher
+    @EnvironmentObject var vehicleFetcher: VehicleFetcher
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = .zero
@@ -151,7 +153,9 @@ struct ContentView: View {
                             tripId: tripId,
                             vehicleId: vehicleId,
                             target: target,
-                            globalFetcher: globalFetcher
+                            globalFetcher: globalFetcher,
+                            tripPredictionsFetcher: tripPredictionsFetcher,
+                            vehicleFetcher: vehicleFetcher
                         )
                     }
                 }
