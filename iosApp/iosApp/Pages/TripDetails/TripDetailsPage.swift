@@ -18,6 +18,7 @@ struct TripDetailsPage: View {
 
     @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var vehicleFetcher: VehicleFetcher
     var tripSchedulesRepository: ITripSchedulesRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
 
@@ -31,7 +32,8 @@ struct TripDetailsPage: View {
         target: TripDetailsTarget?,
         globalFetcher: GlobalFetcher,
         tripPredictionsFetcher: TripPredictionsFetcher,
-        tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules
+        tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
+        vehicleFetcher: VehicleFetcher
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
@@ -39,6 +41,7 @@ struct TripDetailsPage: View {
         self.globalFetcher = globalFetcher
         self.tripPredictionsFetcher = tripPredictionsFetcher
         self.tripSchedulesRepository = tripSchedulesRepository
+        self.vehicleFetcher = vehicleFetcher
     }
 
     var body: some View {
@@ -47,9 +50,18 @@ struct TripDetailsPage: View {
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictionsFetcher.predictions,
-                    globalData: globalData
+                    vehicle: vehicleFetcher.response?.vehicle, globalData: globalData
                 ) {
-                    TripDetailsStopListView(stops: stops, now: now)
+                    vehicleCardView
+                    if let target, let splitStops = stops.splitForTarget(
+                        targetStopId: target.stopId,
+                        targetStopSequence: Int32(target.stopSequence),
+                        globalData: globalData
+                    ) {
+                        TripDetailsStopListSplitView(splitStops: splitStops, now: now)
+                    } else {
+                        TripDetailsStopListView(stops: stops, now: now)
+                    }
                 } else {
                     Text("Couldn't load stop list")
                 }
@@ -70,20 +82,35 @@ struct TripDetailsPage: View {
             now = Date.now.toKotlinInstant()
             while !Task.isCancelled {
                 do {
-                    try await Task.sleep(for: .seconds(5))
+                    try await Task.sleep(for: .seconds(1))
                 } catch {
                     debugPrint("Can't sleep", error)
                 }
                 now = Date.now.toKotlinInstant()
             }
         }
-        .onAppear { joinPredictions(tripId: tripId) }
+        .onAppear { joinRealtime()
+        }
+        .onDisappear { leaveRealtime()
+        }
         .onChange(of: tripId) { joinPredictions(tripId: $0) }
-        .onDisappear { leavePredictions() }
+        .onChange(of: vehicleId) { vehicleId in
+            vehicleFetcher.run(vehicleId: vehicleId)
+        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .withScenePhaseHandlers(onActive: { joinPredictions(tripId: tripId) },
-                                onInactive: leavePredictions,
-                                onBackground: leavePredictions)
+        .withScenePhaseHandlers(onActive: joinRealtime,
+                                onInactive: leaveRealtime,
+                                onBackground: leaveRealtime)
+    }
+
+    private func joinRealtime() {
+        joinPredictions(tripId: tripId)
+        vehicleFetcher.run(vehicleId: vehicleId)
+    }
+
+    private func leaveRealtime() {
+        leavePredictions()
+        vehicleFetcher.leave()
     }
 
     private func joinPredictions(tripId: String) {
@@ -92,5 +119,26 @@ struct TripDetailsPage: View {
 
     private func leavePredictions() {
         tripPredictionsFetcher.leave()
+    }
+
+    @ViewBuilder
+    var vehicleCardView: some View {
+        let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
+        let vehicle: Vehicle? = vehicleFetcher.response?.vehicle
+        let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
+            globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
+        } else {
+            nil
+        }
+        let route: Route? = if let routeId = trip?.routeId {
+            globalFetcher.routes[routeId]
+        } else {
+            nil
+        }
+        VehicleCardView(vehicle: vehicle,
+                        route: route,
+                        stop: vehicleStop,
+                        trip: trip,
+                        now: now.toNSDate())
     }
 }

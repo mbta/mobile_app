@@ -13,7 +13,8 @@ class TripTest {
                 id = "1",
                 directionId = 0,
                 headsign = "Harvard",
-                routePatternId = null,
+                routeId = "Red",
+                routePatternId = "red-1",
                 shapeId = null
             ),
             json.decodeFromString<Trip>(
@@ -21,7 +22,8 @@ class TripTest {
                 {"id": "1",
                 "direction_id":0,
                 "headsign": "Harvard",
-                "routePatternId":null,
+                "route_id": "Red",
+                "route_pattern_id":"red-1",
                 "shapeId":null}
             """
                     .trimIndent()

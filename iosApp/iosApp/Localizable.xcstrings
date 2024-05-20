@@ -10,6 +10,29 @@
     "%ld min" : {
       "extractionState" : "manual"
     },
+    "%ld stops" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ld stop"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%ld stops"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Approaching" : {
 
     },
@@ -50,6 +73,9 @@
 
     },
     "Failed to load alerts, could not connect to the server" : {
+
+    },
+    "Failed to load data for vehicle %@, something went wrong" : {
 
     },
     "Failed to load new alerts, something went wrong" : {

@@ -55,15 +55,13 @@ class TripDetailsStopListTest {
             vehicle: Vehicle? = null
         ) = TripDetailsStopList.Entry(stop(stopId), stopSequence, schedule, prediction, vehicle)
 
+        fun globalData() = GlobalResponse(objects, emptyMap())
+
         fun fromPieces(
             tripSchedules: TripSchedulesResponse?,
-            tripPredictions: PredictionsStreamDataResponse?
-        ) =
-            TripDetailsStopList.fromPieces(
-                tripSchedules,
-                tripPredictions,
-                GlobalResponse(objects, emptyMap())
-            )
+            tripPredictions: PredictionsStreamDataResponse?,
+            vehicle: Vehicle? = null
+        ) = TripDetailsStopList.fromPieces(tripSchedules, tripPredictions, vehicle, globalData())
 
         fun schedulesResponseOf(vararg schedules: Schedule) =
             TripSchedulesResponse.Schedules(schedules.asList())
@@ -308,7 +306,7 @@ class TripDetailsStopListTest {
 
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val list = TripDetailsStopList.fromPieces(schedules, predictions, globalData)
+        val list = TripDetailsStopList.fromPieces(schedules, predictions, null, globalData)
 
         assertEquals(
             TripDetailsStopList(
@@ -327,6 +325,7 @@ class TripDetailsStopListTest {
         val objects = ObjectCollectionBuilder()
 
         val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
+        val outOfDateVehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
 
         val stop1 = objects.stop()
         val schedule1 =
@@ -334,7 +333,7 @@ class TripDetailsStopListTest {
                 stopId = stop1.id
                 stopSequence = 1
             }
-        val prediction1 = objects.prediction(schedule1) { vehicleId = vehicle.id }
+        val prediction1 = objects.prediction(schedule1) { vehicleId = outOfDateVehicle.id }
 
         val stop2 = objects.stop()
         val schedule2 =
@@ -342,7 +341,7 @@ class TripDetailsStopListTest {
                 stopId = stop2.id
                 stopSequence = 2
             }
-        val prediction2 = objects.prediction(schedule2) { vehicleId = vehicle.id }
+        val prediction2 = objects.prediction(schedule2) { vehicleId = outOfDateVehicle.id }
 
         val stop3 = objects.stop()
         val schedule3 =
@@ -350,13 +349,13 @@ class TripDetailsStopListTest {
                 stopId = stop3.id
                 stopSequence = 3
             }
-        val prediction3 = objects.prediction(schedule3) { vehicleId = vehicle.id }
+        val prediction3 = objects.prediction(schedule3) { vehicleId = outOfDateVehicle.id }
 
         val schedules = TripSchedulesResponse.Schedules(listOf(schedule1, schedule2, schedule3))
         val predictions = PredictionsStreamDataResponse(objects)
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val list = TripDetailsStopList.fromPieces(schedules, predictions, globalData)
+        val list = TripDetailsStopList.fromPieces(schedules, predictions, vehicle, globalData)
 
         assertEquals(
             TripDetailsStopList(
@@ -368,5 +367,64 @@ class TripDetailsStopListTest {
             ),
             list
         )
+    }
+
+    @Test
+    fun `splitForTarget distinguishes duplicate stop IDs by stop sequence`() = test {
+        val list = stopListOf(entry("A", 10), entry("B", 20), entry("C", 30), entry("A", 40))
+
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                collapsedStops = emptyList(),
+                targetStop = entry("A", 10),
+                followingStops = listOf(entry("B", 20), entry("C", 30), entry("A", 40))
+            ),
+            list.splitForTarget("A", 10, globalData())
+        )
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                collapsedStops = listOf(entry("A", 10), entry("B", 20), entry("C", 30)),
+                targetStop = entry("A", 40),
+                followingStops = emptyList()
+            ),
+            list.splitForTarget("A", 40, globalData())
+        )
+    }
+
+    @Test
+    fun `splitForTarget uses last copy if stop sequence not found`() = test {
+        val list = stopListOf(entry("A", 996), entry("C", 997), entry("A", 998), entry("B", 999))
+
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                collapsedStops = listOf(entry("A", 996), entry("C", 997)),
+                targetStop = entry("A", 998),
+                followingStops = listOf(entry("B", 999))
+            ),
+            list.splitForTarget("A", 3, globalData())
+        )
+    }
+
+    @Test
+    fun `splitForTarget accepts siblings`() = test {
+        val list = stopListOf(entry("A1", 10), entry("B1", 20), entry("C1", 30))
+        stop("B2")
+
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                collapsedStops = listOf(entry("A1", 10)),
+                targetStop = entry("B1", 20),
+                followingStops = listOf(entry("C1", 30)),
+            ),
+            list.splitForTarget("B2", 20, globalData())
+        )
+    }
+
+    @Test
+    fun `splitForTarget returns null if target not found`() = test {
+        val list = stopListOf(entry("A", 10), entry("B", 20), entry("C", 30))
+        stop("D")
+
+        assertNull(list.splitForTarget("D", 40, globalData()))
     }
 }
