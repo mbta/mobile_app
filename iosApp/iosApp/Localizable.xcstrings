@@ -52,6 +52,9 @@
     "Failed to load alerts, could not connect to the server" : {
 
     },
+    "Failed to load data for vehicle %@, something went wrong" : {
+
+    },
     "Failed to load new alerts, something went wrong" : {
 
     },
@@ -121,20 +124,7 @@
     "Suspension" : {
 
     },
-    "Target Stop %@" : {
-
-    },
-    "Target Stop Sequence %@" : {
-
-    },
     "This vehicle is completing another trip." : {
-
-    },
-    "Trip %@" : {
-
-    },
-    "Vehicle %@" : {
-
     }
   },
   "version" : "1.0"

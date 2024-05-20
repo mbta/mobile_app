@@ -57,11 +57,13 @@ class TripDetailsStopListTest {
 
         fun fromPieces(
             tripSchedules: TripSchedulesResponse?,
-            tripPredictions: PredictionsStreamDataResponse?
+            tripPredictions: PredictionsStreamDataResponse?,
+            vehicle: Vehicle? = null
         ) =
             TripDetailsStopList.fromPieces(
                 tripSchedules,
                 tripPredictions,
+                vehicle,
                 GlobalResponse(objects, emptyMap())
             )
 
@@ -308,7 +310,7 @@ class TripDetailsStopListTest {
 
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val list = TripDetailsStopList.fromPieces(schedules, predictions, globalData)
+        val list = TripDetailsStopList.fromPieces(schedules, predictions, null, globalData)
 
         assertEquals(
             TripDetailsStopList(
@@ -327,6 +329,7 @@ class TripDetailsStopListTest {
         val objects = ObjectCollectionBuilder()
 
         val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
+        val outOfDateVehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
 
         val stop1 = objects.stop()
         val schedule1 =
@@ -334,7 +337,7 @@ class TripDetailsStopListTest {
                 stopId = stop1.id
                 stopSequence = 1
             }
-        val prediction1 = objects.prediction(schedule1) { vehicleId = vehicle.id }
+        val prediction1 = objects.prediction(schedule1) { vehicleId = outOfDateVehicle.id }
 
         val stop2 = objects.stop()
         val schedule2 =
@@ -342,7 +345,7 @@ class TripDetailsStopListTest {
                 stopId = stop2.id
                 stopSequence = 2
             }
-        val prediction2 = objects.prediction(schedule2) { vehicleId = vehicle.id }
+        val prediction2 = objects.prediction(schedule2) { vehicleId = outOfDateVehicle.id }
 
         val stop3 = objects.stop()
         val schedule3 =
@@ -350,13 +353,13 @@ class TripDetailsStopListTest {
                 stopId = stop3.id
                 stopSequence = 3
             }
-        val prediction3 = objects.prediction(schedule3) { vehicleId = vehicle.id }
+        val prediction3 = objects.prediction(schedule3) { vehicleId = outOfDateVehicle.id }
 
         val schedules = TripSchedulesResponse.Schedules(listOf(schedule1, schedule2, schedule3))
         val predictions = PredictionsStreamDataResponse(objects)
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val list = TripDetailsStopList.fromPieces(schedules, predictions, globalData)
+        val list = TripDetailsStopList.fromPieces(schedules, predictions, vehicle, globalData)
 
         assertEquals(
             TripDetailsStopList(
