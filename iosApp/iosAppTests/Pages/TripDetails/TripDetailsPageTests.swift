@@ -127,6 +127,47 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [showVehicleCardExp], timeout: 2)
     }
 
+    func testSplitsWithTarget() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let stop1 = objects.stop { stop in
+            stop.name = "Somewhere"
+        }
+        let stop2 = objects.stop { stop in
+            stop.name = "Elsewhere"
+        }
+
+        let globalFetcher = GlobalFetcher(backend: IdleBackend())
+        globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
+
+        let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
+
+        let tripSchedulesRepository = FakeTripSchedulesRepository(
+            response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
+            onGetTripSchedules: { tripSchedulesLoaded.send() }
+        )
+
+        let tripId = "123"
+        let vehicleId = "999"
+        let sut = TripDetailsPage(
+            tripId: tripId,
+            vehicleId: vehicleId,
+            target: .init(stopId: stop1.id, stopSequence: 998),
+            globalFetcher: globalFetcher,
+            tripPredictionsFetcher: FakeTripPredictionsFetcher(response: .init(objects: objects)),
+            tripSchedulesRepository: tripSchedulesRepository,
+            vehicleFetcher: FakeVehicleFetcher(response: nil)
+        )
+
+        let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
+            XCTAssertNotNil(try view.find(TripDetailsStopListSplitView.self))
+        }
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [splitViewExp], timeout: 1)
+    }
+
     class FakeTripSchedulesRepository: ITripSchedulesRepository {
         let response: TripSchedulesResponse
         let onGetTripSchedules: (() -> Void)?

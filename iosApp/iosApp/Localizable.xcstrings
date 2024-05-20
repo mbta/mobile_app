@@ -10,6 +10,29 @@
     "%ld min" : {
       "extractionState" : "manual"
     },
+    "%ld stops" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ld stop"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%ld stops"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Approaching" : {
 
     },
@@ -125,6 +148,7 @@
 
     },
     "This vehicle is completing another trip." : {
+
     }
   },
   "version" : "1.0"

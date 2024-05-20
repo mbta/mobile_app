@@ -53,7 +53,15 @@ struct TripDetailsPage: View {
                     vehicle: vehicleFetcher.response?.vehicle, globalData: globalData
                 ) {
                     vehicleCardView
-                    TripDetailsStopListView(stops: stops, now: now)
+                    if let target, let splitStops = stops.splitForTarget(
+                        targetStopId: target.stopId,
+                        targetStopSequence: Int32(target.stopSequence),
+                        globalData: globalData
+                    ) {
+                        TripDetailsStopListSplitView(splitStops: splitStops, now: now)
+                    } else {
+                        TripDetailsStopListView(stops: stops, now: now)
+                    }
                 } else {
                     Text("Couldn't load stop list")
                 }
