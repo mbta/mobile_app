@@ -59,9 +59,8 @@ extension HomeMapView {
     }
 
     func handleCameraChange(_ change: CameraChanged) {
-        guard let layerManager else { return }
-        layerManager.updateStopLayerZoom(change.cameraState.zoom)
         viewportProvider.updateCameraState(change.cameraState)
+        layerManager?.updateStopLayerZoom(change.cameraState.zoom)
     }
 
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
