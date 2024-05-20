@@ -55,6 +55,12 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         }
     }
 
+    /**
+     * Splits these stops around the given target stop, counting parent/child/sibling stops as
+     * equivalent. If no exact match can be found by stop ID and stop sequence, matches only on stop
+     * ID, picking the last copy if there are duplicates. Returns null if no match at all can be
+     * found.
+     */
     fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int,
@@ -66,7 +72,6 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                     it.stopSequence == targetStopSequence
             }
         if (targetStopIndex == -1) {
-            // couldn't match by stop sequence, so just match by stop id
             targetStopIndex =
                 stops.indexOfLast { Stop.equalOrFamily(targetStopId, it.stop.id, globalData.stops) }
         }
