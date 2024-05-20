@@ -521,4 +521,46 @@ final class HomeMapViewTests: XCTestCase {
             HelpersKt.loadDefaultRepoModules()
         }
     }
+
+    func testUpdatesViewportOnCameraChangeBeforeLayersLoad() throws {
+        let updateCameraExpectation = XCTestExpectation(description: "updateCameraState called")
+
+        class FakeViewportProvider: ViewportProvider {
+            let updateCameraExpectation: XCTestExpectation
+
+            init(updateCameraExpectation: XCTestExpectation) {
+                self.updateCameraExpectation = updateCameraExpectation
+            }
+
+            override func updateCameraState(_: CameraState) {
+                updateCameraExpectation.fulfill()
+            }
+        }
+        let alertsFetcher: AlertsFetcher = .init(socket: MockSocket())
+        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [:], routes: [:])
+        let nearbyFetcher: NearbyFetcher = .init(backend: IdleBackend())
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
+        var sut = HomeMapView(
+            alertsFetcher: alertsFetcher,
+            globalFetcher: globalFetcher,
+            nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: viewportProvider,
+            locationDataManager: locationDataManager,
+            sheetHeight: .constant(0),
+            layerManager: nil
+        )
+
+        sut.handleCameraChange(.init(cameraState: CameraState(center: .init(latitude: 2, longitude: 2),
+                                                              padding: .zero,
+                                                              zoom: 12,
+                                                              bearing: .leastNormalMagnitude,
+                                                              pitch: 0.0), timestamp: Date.now))
+
+        wait(for: [updateCameraExpectation], timeout: 5)
+    }
 }
