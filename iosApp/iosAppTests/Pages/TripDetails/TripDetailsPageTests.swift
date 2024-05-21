@@ -263,8 +263,12 @@ final class TripDetailsPageTests: XCTestCase {
         )
 
         let routeExp = sut.inspection.inspect { view in
-            XCTAssertNotNil(try view.find(RoutePill.self, containing: "Green Line"))
-            XCTAssertNotNil(try view.find(RoutePill.self, containing: "1"))
+            let stop1Row = try view.find(TripDetailsStopView.self, containing: stop1.name)
+            let stop2Row = try view.find(TripDetailsStopView.self, containing: stop2.name)
+            XCTAssertNotNil(try stop1Row.find(RoutePill.self, containing: "Green Line"))
+            XCTAssertThrowsError(try stop1Row.find(RoutePill.self, containing: "Red Line"))
+            XCTAssertNotNil(try stop2Row.find(RoutePill.self, containing: "1"))
+            XCTAssertThrowsError(try stop2Row.find(RoutePill.self, containing: "Red Line"))
         }
 
         ViewHosting.host(view: sut)

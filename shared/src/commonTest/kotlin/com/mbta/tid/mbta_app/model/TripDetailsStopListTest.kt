@@ -406,13 +406,12 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces includes all transfer routes`() = test {
-        stop("A", listOf("A1", "A2"), listOf("A4"))
+        stop("A", listOf("A1", "A2"), listOf("A3"))
         stop("B", listOf("B1"))
         val stopC = stop("C", listOf("C1"))
         val stopA1 = stop("A1")
-        val stopA2 = stop("A2", connectingStopIds = listOf("A3"))
+        val stopA2 = stop("A2")
         val stopA3 = stop("A3")
-        val stopA4 = stop("A4")
         val stopB1 = stop("B1")
         val stopC1 = stop("C1")
 
@@ -474,7 +473,7 @@ class TripDetailsStopListTest {
                     vehicle = vehicle,
                     schedule = sched1,
                     prediction = pred1,
-                    routes = listOf(routeW, routeX, routeY, routeZ)
+                    routes = listOf(routeW, routeX, routeZ)
                 ),
                 entry(
                     "B1",
@@ -499,9 +498,8 @@ class TripDetailsStopListTest {
                 vehicle,
                 mapOf(
                     Pair(stopA1.id, listOf(patternCurrent1.id, patternW1.id)),
-                    Pair(stopA2.id, listOf(patternZ1.id)),
+                    Pair(stopA2.id, listOf(patternZ1.id, patternExcluded.id)),
                     Pair(stopA3.id, listOf(patternX1.id)),
-                    Pair(stopA4.id, listOf(patternY1.id, patternExcluded.id)),
                     Pair(stopB1.id, listOf(patternZ1.id, patternCurrent2.id)),
                     Pair(stopC.id, listOf(patternW2.id, patternY1.id, patternExcluded.id)),
                     Pair(stopC1.id, listOf(patternY1.id, patternCurrent1.id, patternCurrent2.id))

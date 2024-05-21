@@ -20,14 +20,14 @@ struct TripDetailsStopView: View {
                 Spacer()
                 UpcomingTripView(prediction: .some(stop.format(now: now)))
             }
-            scrollRoutes(stop.routes)
+            scrollRoutes
         }
     }
 
-    func scrollRoutes(_ routes: [Route]) -> some View {
+    var scrollRoutes: some View {
         let routeView = ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                ForEach(routes, id: \.id) { route in
+                ForEach(stop.routes, id: \.id) { route in
                     RoutePill(route: route)
                 }
             }.padding(.horizontal, 20)
@@ -40,14 +40,26 @@ struct TripDetailsStopView: View {
 }
 
 #Preview {
-    TripDetailsStopView(
+    var objects = ObjectCollectionBuilder()
+    return TripDetailsStopView(
         stop: .init(
-            stop: ObjectCollectionBuilder.Single.shared.stop { $0.name = "ABC" },
+            stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
             schedule: nil,
             prediction: nil,
             vehicle: nil,
-            routes: []
+            routes: [
+                objects.route {
+                    $0.longName = "Red Line"
+                    $0.color = "#DA291C"
+                    $0.textColor = "#ffffff"
+                },
+                objects.route {
+                    $0.longName = "Green Line"
+                    $0.color = "#008400"
+                    $0.textColor = "#ffffff"
+                },
+            ]
         ),
         now: Date.now.toKotlinInstant()
     )
