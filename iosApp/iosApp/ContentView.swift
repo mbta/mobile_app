@@ -30,14 +30,6 @@ struct ContentView: View {
 
     @State private var selectedTab = SelectedTab.nearby
 
-    private var sheetDetents: Set<PartialSheetDetent> {
-        if #available(iOS 16, *) {
-            [.small, .medium, .large]
-        } else {
-            [.medium, .large]
-        }
-    }
-
     var body: some View {
         TabView(selection: $selectedTab) {
             nearbyTab
@@ -158,13 +150,15 @@ struct ContentView: View {
                 }
             }
             .onChange(of: proxy.size.height) { newValue in
-                // Not actually restricted to iOS 16, this just behaves terribly on iOS 15
-                if #available(iOS 16, *) {
-                    sheetHeight = newValue
-                }
+                /*
+                 Only update this if we're less than half way up the users screen
+                 to mitigate undesired behavior
+                 */
+                guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                sheetHeight = newValue
             }
             .partialSheetDetents(
-                sheetDetents,
+                [.small, .medium, .large],
                 largestUndimmedDetent: .medium
             )
         }
