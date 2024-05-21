@@ -15,30 +15,30 @@ struct StopDetailsPage: View {
     @ObservedObject var viewportProvider: ViewportProvider
     let schedulesRepository: ISchedulesRepository
     @State var schedulesResponse: ScheduleResponse?
-    @StateObject var predictionsFetcher: PredictionsFetcher
+    let predictionsRepository: IPredictionsRepository
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
     @State var servedRoutes: [Route] = []
     @ObservedObject var nearbyVM: NearbyViewModel
+    @State var predictions: PredictionsStreamDataResponse?
 
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        socket: any PhoenixSocket,
         globalFetcher: GlobalFetcher,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
+        predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
-        nearbyVM: NearbyViewModel,
-        predictionsFetcher: PredictionsFetcher? = nil
+        nearbyVM: NearbyViewModel
     ) {
         self.globalFetcher = globalFetcher
         self.schedulesRepository = schedulesRepository
+        self.predictionsRepository = predictionsRepository
         self.viewportProvider = viewportProvider
-        _predictionsFetcher = StateObject(wrappedValue: predictionsFetcher ?? PredictionsFetcher(socket: socket))
         self.stop = stop
         _filter = filter
         self.nearbyVM = nearbyVM
@@ -59,7 +59,7 @@ struct StopDetailsPage: View {
         .onAppear { changeStop(stop) }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }
-        .onChange(of: predictionsFetcher.predictions) { _ in updateDepartures() }
+        .onChange(of: predictions) { _ in updateDepartures() }
         .onChange(of: schedulesResponse) { _ in updateDepartures() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onReceive(timer) { input in
@@ -80,7 +80,7 @@ struct StopDetailsPage: View {
     }
 
     private var departureHeader: some View {
-        if predictionsFetcher.predictions != nil {
+        if predictions != nil {
             Text("Live departures")
         } else if schedulesResponse != nil {
             Text("Scheduled departures")
@@ -106,15 +106,19 @@ struct StopDetailsPage: View {
     }
 
     func joinPredictions(_ stop: Stop) {
-        Task {
-            predictionsFetcher.run(stopIds: [stop.id])
+        predictionsRepository.connect(stopIds: [stop.id]) { outcome in
+            DispatchQueue.main.async {
+                predictions = if let data = outcome.data {
+                    data
+                } else {
+                    nil
+                }
+            }
         }
     }
 
     func leavePredictions() {
-        Task {
-            predictionsFetcher.leave()
-        }
+        predictionsRepository.disconnect()
     }
 
     func tapRoutePill(_ route: Route) {
@@ -136,7 +140,7 @@ struct StopDetailsPage: View {
                 stop: stop,
                 global: globalResponse,
                 schedules: schedulesResponse,
-                predictions: predictionsFetcher.predictions,
+                predictions: predictions,
                 filterAtTime: now.toKotlinInstant()
             )
         } else {

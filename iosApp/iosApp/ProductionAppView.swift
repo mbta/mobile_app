@@ -32,7 +32,6 @@ struct ProductionAppView: View {
     @StateObject var backendProvider: BackendProvider
     @StateObject var globalFetcher: GlobalFetcher
     @StateObject var nearbyFetcher: NearbyFetcher
-    @StateObject var predictionsFetcher: PredictionsFetcher
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
@@ -42,23 +41,9 @@ struct ProductionAppView: View {
     @StateObject var viewportProvider: ViewportProvider
 
     init() {
-        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
-            let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
-            AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
-        } else {
-            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
-        }
-
-        HelpersKt.doInitKoin(appVariant: appVariant)
-
-        let socket = Socket(appVariant.socketUrl)
-        socket.withRawMessages()
-        socket.onOpen {
-            Logger().debug("Socket opened")
-        }
-        socket.onClose {
-            Logger().debug("Socket closed")
-        }
+        Self.initSentry()
+        let socket = Self.initSocket()
+        Self.initKoin(socket: socket)
         self.init(socket: socket)
     }
 
@@ -70,7 +55,6 @@ struct ProductionAppView: View {
         _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
-        _predictionsFetcher = StateObject(wrappedValue: PredictionsFetcher(socket: socket))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
         _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
@@ -87,7 +71,6 @@ struct ProductionAppView: View {
             .environmentObject(backendProvider)
             .environmentObject(globalFetcher)
             .environmentObject(nearbyFetcher)
-            .environmentObject(predictionsFetcher)
             .environmentObject(railRouteShapeFetcher)
             .environmentObject(searchResultFetcher)
             .environmentObject(socketProvider)
@@ -95,5 +78,31 @@ struct ProductionAppView: View {
             .environmentObject(vehicleFetcher)
             .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)
+    }
+
+    private static func initSocket() -> PhoenixSocket {
+        let socket = Socket(appVariant.socketUrl)
+        socket.withRawMessages()
+        socket.onOpen {
+            Logger().debug("Socket opened")
+        }
+        socket.onClose {
+            Logger().debug("Socket closed")
+        }
+        return socket
+    }
+
+    private static func initKoin(socket: PhoenixSocket) {
+        let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(socket: socket)
+        HelpersKt.doInitKoin(appVariant: appVariant, nativeModule: nativeModule)
+    }
+
+    private static func initSentry() {
+        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
+            let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
+            AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
+        } else {
+            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
+        }
     }
 }

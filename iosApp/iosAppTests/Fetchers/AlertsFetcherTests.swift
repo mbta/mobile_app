@@ -25,7 +25,7 @@ final class AlertsFetcherTests: XCTestCase {
                 self.connectionExpectation = connectionExpectation
             }
 
-            override func connect() {
+            override func attach() {
                 connectionExpectation.fulfill()
             }
         }
@@ -51,7 +51,7 @@ final class AlertsFetcherTests: XCTestCase {
     func testChannelClearedOnLeave() {
         let mockSocket = MockSocket()
         let alertsFetcher = AlertsFetcher(socket: mockSocket)
-        alertsFetcher.channel = mockSocket.channel(AlertsChannel.companion.topic, params: [:])
+        alertsFetcher.channel = mockSocket.getChannel(topic: AlertsChannel.companion.topic, params: [:])
         XCTAssertNotNil(alertsFetcher.channel)
 
         alertsFetcher.leave()
@@ -69,12 +69,15 @@ final class AlertsFetcherTests: XCTestCase {
         XCTAssertEqual(alertsFetcher.alerts, nil)
         alertsFetcher.run()
 
-        alertsFetcher.channel!
-            .trigger(Message(ref: "1",
-                             topic: AlertsChannel.companion.topic,
-                             event: AlertsChannel.companion.newDataEvent,
-                             payload: ["jsonPayload": "{\"alerts\": {}}"],
-                             joinRef: "2"))
+        mockSocket.channels.first?.trigger(
+            Message(
+                ref: "1",
+                topic: AlertsChannel.companion.topic,
+                event: AlertsChannel.companion.newDataEvent,
+                payload: ["jsonPayload": "{\"alerts\": {}}"],
+                joinRef: "2"
+            )
+        )
 
         wait(for: [messageSuccessExpectation], timeout: 1)
 
@@ -92,7 +95,7 @@ final class AlertsFetcherTests: XCTestCase {
 
         XCTAssertNil(alertsFetcher.socketError)
 
-        alertsFetcher.channel!.trigger(event: ChannelEvent.error)
+        mockSocket.channels.first?.trigger(event: ChannelEvent.error)
         wait(for: [errorExpectation], timeout: 1)
         XCTAssertNotNil(alertsFetcher.socketError)
     }
@@ -110,12 +113,15 @@ final class AlertsFetcherTests: XCTestCase {
         XCTAssertEqual(alertsFetcher.alerts, nil)
         alertsFetcher.run()
 
-        alertsFetcher.channel!
-            .trigger(Message(ref: "1",
-                             topic: AlertsChannel.companion.topic,
-                             event: AlertsChannel.companion.newDataEvent,
-                             payload: ["jsonPayload": "{\"alerts\": {}, \"trips\": {}, \"vehicles\": {}}"],
-                             joinRef: "2"))
+        mockSocket.channels.first?.trigger(
+            Message(
+                ref: "1",
+                topic: AlertsChannel.companion.topic,
+                event: AlertsChannel.companion.newDataEvent,
+                payload: ["jsonPayload": "{\"alerts\": {}, \"trips\": {}, \"vehicles\": {}}"],
+                joinRef: "2"
+            )
+        )
 
         wait(for: [messageSuccessExpectation], timeout: 1)
 
