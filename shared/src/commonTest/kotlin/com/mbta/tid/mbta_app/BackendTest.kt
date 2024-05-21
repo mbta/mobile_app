@@ -24,6 +24,7 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
 class BackendTest {
@@ -179,6 +180,7 @@ class BackendTest {
                     sortOrder = 50520,
                     textColor = "000000"
                 )
+            assertTrue(false)
             assertEquals(
                 GlobalResponse(
                     stops =

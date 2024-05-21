@@ -38,6 +38,14 @@ cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
 pod install
 cd ..
 
+# Configure Mapbox token for installation
+cd $CI_PRIMARY_REPOSITORY_PATH
+touch ~/.netrc
+echo "machine api.mapbox.com" > ~/.netrc
+echo "login mapbox" >> ~/.netrc
+echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
+
+
 # Run tests from shared directory
 if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   echo "Running shared tests"
@@ -46,12 +54,6 @@ if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
 fi
 
 
-# Configure Mapbox token for installation
-touch ~/.netrc
-
-echo "machine api.mapbox.com" > ~/.netrc
-echo "login mapbox" >> ~/.netrc
-echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 
 # Skip adding mapbox API key when testing
 if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
