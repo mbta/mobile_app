@@ -1,0 +1,22 @@
+{
+  "images": [
+    {
+      "filename": "map-stop-dot-wide-Silver.svg",
+      "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "map-stop-dot-wide-Silver-dark.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}

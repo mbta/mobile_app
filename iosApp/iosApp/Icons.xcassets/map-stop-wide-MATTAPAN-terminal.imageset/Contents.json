@@ -1,0 +1,22 @@
+{
+  "images": [
+    {
+      "filename": "map-stop-wide-MATTAPAN-terminal.svg",
+      "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "map-stop-wide-MATTAPAN-terminal-dark.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
