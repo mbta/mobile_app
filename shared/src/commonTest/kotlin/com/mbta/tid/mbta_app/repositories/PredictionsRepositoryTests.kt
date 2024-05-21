@@ -27,6 +27,11 @@ class PredictionsRepositoryTests : KoinTest {
     @Test
     fun testSocketConnectCalledOnRun() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        val push = mock<PhoenixPush>(MockMode.autofill)
+        every { channel.attach() } returns push
+        every { push.receive(any(), any()) } returns push
+        every { socket.getChannel(any(), any()) } returns channel
         val predictionsRepo = PredictionsRepository(socket)
         predictionsRepo.connect(stopIds = listOf("1"), onReceive = { /* no-op */})
         verify { socket.attach() }
@@ -35,8 +40,12 @@ class PredictionsRepositoryTests : KoinTest {
     @Test
     fun testChannelSetOnRun() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        val push = mock<PhoenixPush>(MockMode.autofill)
         val predictionsRepo = PredictionsRepository(socket)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
+        every { channel.attach() } returns push
+        every { push.receive(any(), any()) } returns push
+        every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
         predictionsRepo.connect(stopIds = listOf("1"), onReceive = { /* no-op */})
         assertNotNull(predictionsRepo.channel)
@@ -97,6 +106,8 @@ class PredictionsRepositoryTests : KoinTest {
     fun testSetsErrorWhenErrorReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val predictionsRepo = PredictionsRepository(socket)
+        val push = mock<PhoenixPush>(MockMode.autofill)
+        every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
             override fun onEvent(event: String, callback: (PhoenixMessage) -> Unit) {
                 /* no-op */
@@ -111,11 +122,11 @@ class PredictionsRepositoryTests : KoinTest {
             }
 
             override fun attach(): PhoenixPush {
-                return mock<PhoenixPush>(MockMode.autofill)
+                return push
             }
 
             override fun detach(): PhoenixPush {
-                return mock<PhoenixPush>(MockMode.autofill)
+                return push
             }
         }
         every { socket.getChannel(any(), any()) } returns MockChannel()
