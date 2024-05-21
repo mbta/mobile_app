@@ -437,6 +437,11 @@ class TripDetailsStopListTest {
                 id = "Z"
                 sortOrder = 4
             }
+        val routeExcluded =
+            objects.route {
+                id = "116117"
+                sortOrder = 0
+            }
 
         val patternCurrent1 = pattern("V1", routeCurrent, RoutePattern.Typicality.Atypical)
         val patternCurrent2 = pattern("V2", routeCurrent)
@@ -445,6 +450,7 @@ class TripDetailsStopListTest {
         val patternX1 = pattern("X1", routeX)
         val patternY1 = pattern("Y1", routeY)
         val patternZ1 = pattern("Z1", routeZ)
+        val patternExcluded = pattern("116117", routeExcluded)
 
         val sched1 = schedule("A2", 10, routeCurrent.id)
         val sched2 = schedule("B1", 20, routeCurrent.id)
@@ -495,9 +501,9 @@ class TripDetailsStopListTest {
                     Pair(stopA1.id, listOf(patternCurrent1.id, patternW1.id)),
                     Pair(stopA2.id, listOf(patternZ1.id)),
                     Pair(stopA3.id, listOf(patternX1.id)),
-                    Pair(stopA4.id, listOf(patternY1.id)),
+                    Pair(stopA4.id, listOf(patternY1.id, patternExcluded.id)),
                     Pair(stopB1.id, listOf(patternZ1.id, patternCurrent2.id)),
-                    Pair(stopC.id, listOf(patternW2.id, patternY1.id)),
+                    Pair(stopC.id, listOf(patternW2.id, patternY1.id, patternExcluded.id)),
                     Pair(stopC1.id, listOf(patternY1.id, patternCurrent1.id, patternCurrent2.id))
                 )
             )

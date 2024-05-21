@@ -103,6 +103,24 @@ data class TripDetailsStopList(val stops: List<Entry>) {
     )
 
     companion object {
+
+        private var excludedRouteIds =
+            setOf(
+                "2427",
+                "3233",
+                "3738",
+                "4050",
+                "725",
+                "8993",
+                "116117",
+                "214216",
+                "441442",
+                "9701",
+                "9702",
+                "9703",
+                "Boat-F3"
+            )
+
         private fun MutableMap<Int, WorkingEntry>.putSchedule(schedule: Schedule) {
             put(
                 schedule.stopSequence,
@@ -241,12 +259,16 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         private fun getRoutesForStop(stopId: String, globalData: GlobalResponse): Set<Route> {
             return globalData.patternIdsByStop[stopId]
                 ?.map { globalData.routePatterns[it] }
-                ?.mapNotNull {
-                    if (it?.typicality != RoutePattern.Typicality.Typical) null
-                    else globalData.routes[it.routeId]
-                }
+                ?.mapNotNull { if (shouldExclude(it)) null else globalData.routes[it?.routeId] }
                 ?.toSet()
                 ?: emptySet()
+        }
+
+        private fun shouldExclude(pattern: RoutePattern?): Boolean {
+            return pattern == null ||
+                pattern.typicality != RoutePattern.Typicality.Typical ||
+                excludedRouteIds.contains(pattern.routeId) ||
+                pattern.routeId.startsWith("Logan-")
         }
 
         private class ScheduleStopSequenceAligner(
