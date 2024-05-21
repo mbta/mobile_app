@@ -16,7 +16,11 @@ class TripDetailsStopListTest {
         private val childStopId = Regex("""(?<parentStop>[A-Za-z]+)\d+""")
 
         // Generate stops dynamically based on ID, using a numeric suffix to indicate children.
-        fun stop(stopId: String): Stop {
+        fun stop(
+            stopId: String,
+            childStopIds: List<String> = listOf(),
+            connectingStopIds: List<String> = listOf()
+        ): Stop {
             objects.stops[stopId]?.let {
                 return it
             }
@@ -29,19 +33,33 @@ class TripDetailsStopListTest {
             return objects.stop {
                 id = stopId
                 this.parentStationId = parentStationId
+                this.childStopIds = childStopIds
+                this.connectingStopIds = connectingStopIds
             }
         }
 
-        fun schedule(stopId: String, stopSequence: Int) =
+        fun schedule(stopId: String, stopSequence: Int, routeId: String = "") =
             objects.schedule {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
+                this.routeId = routeId
             }
 
-        fun prediction(stopId: String, stopSequence: Int) =
+        fun prediction(stopId: String, stopSequence: Int, routeId: String = "") =
             objects.prediction {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
+                this.routeId = routeId
+            }
+
+        fun pattern(
+            patternId: String,
+            route: Route,
+            typicality: RoutePattern.Typicality = RoutePattern.Typicality.Typical
+        ) =
+            objects.routePattern(route) {
+                this.id = patternId
+                this.typicality = typicality
             }
 
         fun stopListOf(vararg stops: TripDetailsStopList.Entry) =
@@ -52,16 +70,33 @@ class TripDetailsStopListTest {
             stopSequence: Int,
             schedule: Schedule? = null,
             prediction: Prediction? = null,
-            vehicle: Vehicle? = null
-        ) = TripDetailsStopList.Entry(stop(stopId), stopSequence, schedule, prediction, vehicle)
+            vehicle: Vehicle? = null,
+            routes: List<Route> = listOf()
+        ) =
+            TripDetailsStopList.Entry(
+                stop(stopId),
+                stopSequence,
+                schedule,
+                prediction,
+                vehicle,
+                routes
+            )
 
-        fun globalData() = GlobalResponse(objects, emptyMap())
+        fun globalData(patternIdsByStop: Map<String, List<String>> = emptyMap()) =
+            GlobalResponse(objects, patternIdsByStop)
 
         fun fromPieces(
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
-            vehicle: Vehicle? = null
-        ) = TripDetailsStopList.fromPieces(tripSchedules, tripPredictions, vehicle, globalData())
+            vehicle: Vehicle? = null,
+            patternIdsByStop: Map<String, List<String>> = emptyMap()
+        ) =
+            TripDetailsStopList.fromPieces(
+                tripSchedules,
+                tripPredictions,
+                vehicle,
+                globalData(patternIdsByStop)
+            )
 
         fun schedulesResponseOf(vararg schedules: Schedule) =
             TripSchedulesResponse.Schedules(schedules.asList())
@@ -311,9 +346,9 @@ class TripDetailsStopListTest {
         assertEquals(
             TripDetailsStopList(
                 listOf(
-                    TripDetailsStopList.Entry(boylston, 590, null, null, null),
-                    TripDetailsStopList.Entry(parkStreet, 600, null, p1, null),
-                    TripDetailsStopList.Entry(governmentCenter, 610, null, p3, null),
+                    TripDetailsStopList.Entry(boylston, 590, null, null, null, listOf()),
+                    TripDetailsStopList.Entry(parkStreet, 600, null, p1, null, listOf()),
+                    TripDetailsStopList.Entry(governmentCenter, 610, null, p3, null, listOf()),
                 )
             ),
             list
@@ -360,12 +395,147 @@ class TripDetailsStopListTest {
         assertEquals(
             TripDetailsStopList(
                 listOf(
-                    TripDetailsStopList.Entry(stop1, 1, schedule1, prediction1, vehicle),
-                    TripDetailsStopList.Entry(stop2, 2, schedule2, prediction2, vehicle),
-                    TripDetailsStopList.Entry(stop3, 3, schedule3, prediction3, vehicle)
+                    TripDetailsStopList.Entry(stop1, 1, schedule1, prediction1, vehicle, listOf()),
+                    TripDetailsStopList.Entry(stop2, 2, schedule2, prediction2, vehicle, listOf()),
+                    TripDetailsStopList.Entry(stop3, 3, schedule3, prediction3, vehicle, listOf())
                 )
             ),
             list
+        )
+    }
+
+    @Test
+    fun `fromPieces includes all transfer routes`() = test {
+        stop("A", listOf("A1", "A2"), listOf("A4"))
+        stop("B", listOf("B1"))
+        val stopC = stop("C", listOf("C1"))
+        val stopA1 = stop("A1")
+        val stopA2 = stop("A2", connectingStopIds = listOf("A3"))
+        val stopA3 = stop("A3")
+        val stopA4 = stop("A4")
+        val stopB1 = stop("B1")
+        val stopC1 = stop("C1")
+
+        val routeCurrent = objects.route { id = "V" }
+        val routeW =
+            objects.route {
+                id = "W"
+                sortOrder = 1
+            }
+        val routeX =
+            objects.route {
+                id = "X"
+                sortOrder = 2
+            }
+        val routeY =
+            objects.route {
+                id = "Y"
+                sortOrder = 3
+            }
+        val routeZ =
+            objects.route {
+                id = "Z"
+                sortOrder = 4
+            }
+
+        val patternCurrent1 = pattern("V1", routeCurrent, RoutePattern.Typicality.Atypical)
+        val patternCurrent2 = pattern("V2", routeCurrent)
+        val patternW1 = pattern("W1", routeW)
+        val patternW2 = pattern("W2", routeW, RoutePattern.Typicality.CanonicalOnly)
+        val patternX1 = pattern("X1", routeX)
+        val patternY1 = pattern("Y1", routeY)
+        val patternZ1 = pattern("Z1", routeZ)
+
+        val sched1 = schedule("A2", 10, routeCurrent.id)
+        val sched2 = schedule("B1", 20, routeCurrent.id)
+        val sched3 = schedule("C1", 30, routeCurrent.id)
+
+        val pred1 = prediction("A1", 10, routeCurrent.id)
+        val pred2 = prediction("B1", 20, routeCurrent.id)
+        val pred3 = prediction("C1", 30, routeCurrent.id)
+
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                routeId = routeCurrent.id
+            }
+
+        assertEquals(
+            stopListOf(
+                entry(
+                    "A1",
+                    10,
+                    vehicle = vehicle,
+                    schedule = sched1,
+                    prediction = pred1,
+                    routes = listOf(routeW, routeX, routeY, routeZ)
+                ),
+                entry(
+                    "B1",
+                    20,
+                    vehicle = vehicle,
+                    schedule = sched2,
+                    prediction = pred2,
+                    routes = listOf(routeZ)
+                ),
+                entry(
+                    "C1",
+                    30,
+                    vehicle = vehicle,
+                    schedule = sched3,
+                    prediction = pred3,
+                    routes = listOf(routeY)
+                )
+            ),
+            fromPieces(
+                schedulesResponseOf(sched1, sched2, sched3),
+                predictions(),
+                vehicle,
+                mapOf(
+                    Pair(stopA1.id, listOf(patternCurrent1.id, patternW1.id)),
+                    Pair(stopA2.id, listOf(patternZ1.id)),
+                    Pair(stopA3.id, listOf(patternX1.id)),
+                    Pair(stopA4.id, listOf(patternY1.id)),
+                    Pair(stopB1.id, listOf(patternZ1.id, patternCurrent2.id)),
+                    Pair(stopC.id, listOf(patternW2.id, patternY1.id)),
+                    Pair(stopC1.id, listOf(patternY1.id, patternCurrent1.id, patternCurrent2.id))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `fromPieces resolves current route from available data`() = test {
+        val stopA = stop("A")
+        val stopB = stop("B")
+
+        val routeCurrent = objects.route { id = "X" }
+        val routeOther = objects.route { id = "Y" }
+
+        val patternCurrent = pattern("X1", routeCurrent)
+        val patternOther = pattern("Y1", routeOther)
+
+        val sched = schedule(stopA.id, 10, routeCurrent.id)
+        val pred = prediction(stopB.id, 20, routeCurrent.id)
+
+        assertEquals(
+            stopListOf(entry(stopA.id, 10, schedule = sched, routes = listOf(routeOther))),
+            fromPieces(
+                schedulesResponseOf(sched),
+                null,
+                null,
+                mapOf(Pair(stopA.id, listOf(patternCurrent.id, patternOther.id)))
+            )
+        )
+
+        assertEquals(
+            stopListOf(entry(stopB.id, 20, prediction = pred, routes = listOf(routeOther))),
+            fromPieces(
+                null,
+                predictions(),
+                null,
+                mapOf(Pair(stopB.id, listOf(patternCurrent.id, patternOther.id)))
+            )
         )
     }
 

@@ -221,9 +221,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             // Bail if stop is not a parent and parent stop can't be found
 
             val currentRoute =
-                globalData.routes[
-                        entry.prediction?.routeId
-                            ?: entry.schedule?.routeId ?: entry.vehicle?.routeId]
+                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]
                     ?: return emptyList() // Bail if no current route can be found
 
             val transferStopIds =
