@@ -21,18 +21,19 @@ struct StopDetailsFilteredRouteView: View {
         let formatted: PatternsByHeadsign.Format
         let navigationTarget: SheetNavigationStackEntry?
 
-        init?(trip: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
-            if trip.trip.directionId != expectedDirection {
+        init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
+            let trip = upcoming.trip
+            if trip.directionId != expectedDirection {
                 return nil
             }
 
-            tripId = trip.trip.id
-            headsign = trip.trip.headsign
+            tripId = trip.id
+            headsign = trip.headsign
             formatted = PatternsByHeadsign(
-                route: route, headsign: headsign, patterns: [], upcomingTrips: [trip], alertsHere: nil
+                route: route, headsign: headsign, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
             ).format(now: now)
 
-            if let vehicleId = trip.prediction?.vehicleId, let stopSequence = trip.stopSequence {
+            if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
                                                 target: .init(stopId: stopId, stopSequence: stopSequence.intValue))
             } else {
@@ -58,7 +59,7 @@ struct StopDetailsFilteredRouteView: View {
         if let patternsByStop {
             rows = patternsByStop.allUpcomingTrips().compactMap {
                 RowData(
-                    trip: $0,
+                    upcoming: $0,
                     route: patternsByStop.route,
                     stopId: patternsByStop.stop.id,
                     expectedDirection: expectedDirection,

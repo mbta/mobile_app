@@ -40,8 +40,8 @@ struct TripDetailsStopListView: View {
 
     return TripDetailsStopListView(
         stops: .init(stops: [
-            .init(stop: stop1, stopSequence: 1, schedule: nil, prediction: nil, vehicle: nil),
-            .init(stop: stop2, stopSequence: 2, schedule: sched2, prediction: pred2, vehicle: nil),
+            .init(stop: stop1, stopSequence: 1, schedule: nil, prediction: nil, vehicle: nil, routes: []),
+            .init(stop: stop2, stopSequence: 2, schedule: sched2, prediction: pred2, vehicle: nil, routes: []),
         ]),
         now: Date.now.toKotlinInstant()
     )

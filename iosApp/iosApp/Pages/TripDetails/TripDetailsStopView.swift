@@ -14,22 +14,52 @@ struct TripDetailsStopView: View {
     let now: Instant
 
     var body: some View {
-        HStack {
-            Text(stop.stop.name)
-            Spacer()
-            UpcomingTripView(prediction: .some(stop.format(now: now)))
+        VStack(alignment: .leading) {
+            HStack {
+                Text(stop.stop.name)
+                Spacer()
+                UpcomingTripView(prediction: .some(stop.format(now: now)))
+            }
+            scrollRoutes
         }
+    }
+
+    var scrollRoutes: some View {
+        let routeView = ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(stop.routes, id: \.id) { route in
+                    RoutePill(route: route)
+                }
+            }.padding(.horizontal, 20)
+        }.padding(.horizontal, -20)
+        if #available(iOS 16.4, *) {
+            return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+        }
+        return routeView
     }
 }
 
 #Preview {
-    TripDetailsStopView(
+    var objects = ObjectCollectionBuilder()
+    return TripDetailsStopView(
         stop: .init(
-            stop: ObjectCollectionBuilder.Single.shared.stop { $0.name = "ABC" },
+            stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
             schedule: nil,
             prediction: nil,
-            vehicle: nil
+            vehicle: nil,
+            routes: [
+                objects.route {
+                    $0.longName = "Red Line"
+                    $0.color = "#DA291C"
+                    $0.textColor = "#ffffff"
+                },
+                objects.route {
+                    $0.longName = "Green Line"
+                    $0.color = "#008400"
+                    $0.textColor = "#ffffff"
+                },
+            ]
         ),
         now: Date.now.toKotlinInstant()
     )

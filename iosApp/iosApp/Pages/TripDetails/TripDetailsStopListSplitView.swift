@@ -47,7 +47,8 @@ struct TripDetailsStopListSplitView: View {
             stopSequence: Int32(stopSequence),
             schedule: nil,
             prediction: prediction,
-            vehicle: nil
+            vehicle: nil,
+            routes: []
         )
     }
 

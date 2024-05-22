@@ -272,8 +272,9 @@ class ObjectCollectionBuilder {
         var locationType = LocationType.STOP
         var description: String? = null
         var platformName: String? = null
-        var parentStationId: String? = null
         var childStopIds: List<String> = emptyList()
+        var connectingStopIds: List<String> = emptyList()
+        var parentStationId: String? = null
 
         override fun built() =
             Stop(
@@ -284,8 +285,9 @@ class ObjectCollectionBuilder {
                 locationType,
                 description,
                 platformName,
-                parentStationId,
-                childStopIds
+                childStopIds,
+                connectingStopIds,
+                parentStationId
             )
     }
 

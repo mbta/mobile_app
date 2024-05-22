@@ -42,7 +42,7 @@ extension [SheetNavigationStackEntry] {
     var lastStopDetailsFilter: StopDetailsFilter? {
         get {
             switch self.last {
-            case let .stopDetails(stop, filter): filter
+            case let .stopDetails(_, filter): filter
             case _: nil
             }
         }

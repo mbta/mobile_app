@@ -14,6 +14,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         val schedule: Schedule?,
         val prediction: Prediction?,
         val vehicle: Vehicle?,
+        val routes: List<Route>
     ) {
         // we want very slightly different logic than the UpcomingTrip itself has
         // specifically, we want to still render predictions that are arrival-only
@@ -102,6 +103,26 @@ data class TripDetailsStopList(val stops: List<Entry>) {
     )
 
     companion object {
+
+        // TODO: Remove hardcoded IDs once the `listed_route` field is exposed by the API.
+        // https://mbta.slack.com/archives/C03K6NLKKD1/p1716220182028299
+        private var excludedRouteIds =
+            setOf(
+                "2427",
+                "3233",
+                "3738",
+                "4050",
+                "725",
+                "8993",
+                "116117",
+                "214216",
+                "441442",
+                "9701",
+                "9702",
+                "9703",
+                "Boat-F3"
+            )
+
         private fun MutableMap<Int, WorkingEntry>.putSchedule(schedule: Schedule) {
             put(
                 schedule.stopSequence,
@@ -175,6 +196,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                             it.value.schedule,
                             it.value.prediction,
                             it.value.vehicle,
+                            getTransferRoutes(it.value, globalData)
                         )
                     }
             )
@@ -207,6 +229,58 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 }
                 .values
                 .sortedBy { it.stopSequence }
+
+        /**
+         * This returns the list of routes a rider could transfer to at a stop entry on this trip.
+         * It includes any routes served by typical patterns on the entry's stop's parent, children,
+         * and/or sibling stops, along with any of the connecting stops.
+         */
+        private fun getTransferRoutes(
+            entry: WorkingEntry,
+            globalData: GlobalResponse
+        ): List<Route> {
+            val stop = globalData.stops.getValue(entry.stopId)
+            val selfOrParent =
+                if (stop.parentStationId == null) stop
+                else globalData.stops[stop.parentStationId] ?: return emptyList()
+            // Bail if stop is not a parent but its parent stop can't be found
+
+            val currentRoute =
+                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]
+
+            val transferStopIds =
+                listOf(selfOrParent.id) + selfOrParent.connectingStopIds + selfOrParent.childStopIds
+
+            val transferRoutes =
+                transferStopIds
+                    .flatMapTo(mutableSetOf()) { getFilteredRoutesForStop(it, globalData) }
+                    .sortedBy(Route::sortOrder)
+
+            return if (currentRoute != null) transferRoutes.minus(currentRoute) else transferRoutes
+        }
+
+        private fun getFilteredRoutesForStop(
+            stopId: String,
+            globalData: GlobalResponse
+        ): Set<Route> {
+            return globalData.patternIdsByStop[stopId]
+                ?.map { globalData.routePatterns[it] }
+                ?.mapNotNull { if (shouldExclude(it)) null else globalData.routes[it?.routeId] }
+                ?.toSet()
+                ?: emptySet()
+        }
+
+        /**
+         * Any routes that are only found on route patterns which are not typical are excluded,
+         * along with a set of hardcoded route IDs containing mostly combined bus routes which are
+         * meant to be hidden on rider facing touch points.
+         */
+        private fun shouldExclude(pattern: RoutePattern?): Boolean {
+            return pattern == null ||
+                pattern.typicality != RoutePattern.Typicality.Typical ||
+                excludedRouteIds.contains(pattern.routeId) ||
+                pattern.routeId.startsWith("Logan-")
+        }
 
         private class ScheduleStopSequenceAligner(
             val stopIds: List<String>,
