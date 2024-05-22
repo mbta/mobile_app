@@ -12,8 +12,8 @@ import UIKit
 public enum PartialSheetDetent: String, Comparable {
     @available(iOS 16, *)
     case small = "com.mbta.small"
-    case medium = "com.apple.UIKit.medium"
-    case large = "com.apple.UIKit.large"
+    case medium = "com.mbta.medium"
+    case large = "com.mbta.large"
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.ordinal < rhs.ordinal
@@ -22,18 +22,16 @@ public enum PartialSheetDetent: String, Comparable {
     public var uiKitDetent: UISheetPresentationController.Detent {
         switch self {
         case .small:
-            if #available(iOS 16, *) {
-                let smallDetentIdentifier = UISheetPresentationController.Detent.Identifier(Self.small.rawValue)
-                return UISheetPresentationController.Detent.custom(identifier: smallDetentIdentifier) { _ in
-                    200
-                }
-            } else {
-                return .medium()
-            }
+            customDetent(Self.small.rawValue) { _ in 195 }
         case .medium:
-            return .medium()
+            customDetent(Self.medium.rawValue) { context in
+                context.maximumDetentValue / 2
+            }
         case .large:
-            return .large()
+            customDetent(Self.large.rawValue) { context in
+                // Prevent the background content from shrinking underneath the expanded sheet
+                context.maximumDetentValue - 1
+            }
         }
     }
 
@@ -46,5 +44,13 @@ public enum PartialSheetDetent: String, Comparable {
         case .large:
             2
         }
+    }
+
+    private func customDetent(
+        _ identifier: String,
+        resolver: @escaping (_ context: any UISheetPresentationControllerDetentResolutionContext) -> CGFloat?
+    ) -> UISheetPresentationController.Detent {
+        let detentId = UISheetPresentationController.Detent.Identifier(identifier)
+        return UISheetPresentationController.Detent.custom(identifier: detentId, resolver: resolver)
     }
 }

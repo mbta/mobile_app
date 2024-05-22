@@ -49,7 +49,6 @@ struct HomeMapView: View {
         nearbyFetcher: NearbyFetcher,
         nearbyVM: NearbyViewModel,
         railRouteShapeFetcher: RailRouteShapeFetcher,
-
         vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
         stopRepository: IStopRepository = RepositoryDI().stop,
