@@ -23,6 +23,6 @@ struct PredictionText: View {
     }
 
     var body: some View {
-        Text(predictionString)
+        Text(predictionString).accessibilityLabel("in \(minutes) min")
     }
 }

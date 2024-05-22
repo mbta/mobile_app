@@ -19,6 +19,9 @@ extension UpcomingTrip.FormatOverridden {
 
 struct UpcomingTripView: View {
     let prediction: State
+    var isFirst: Bool = false
+
+    private let timeFormatter: DateFormatter = makeTimeFormatter()
 
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 16
@@ -31,7 +34,15 @@ struct UpcomingTripView: View {
     }
 
     var body: some View {
-        let predictionView: any View = switch prediction {
+        predictionView
+            .foregroundStyle(Color.text)
+            .frame(minWidth: 48, alignment: .trailing)
+            .padding(.trailing, 4)
+    }
+
+    @ViewBuilder
+    var predictionView: some View {
+        switch prediction {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
@@ -40,18 +51,21 @@ struct UpcomingTripView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
-                Text("BRD").font(.headline).bold()
+                Text("BRD").font(.headline).bold().accessibilityLabel(boardingAccessibilityLabel(isFirst: isFirst))
             case .arriving:
-                Text("ARR").font(.headline).bold()
+                Text("ARR").font(.headline).bold().accessibilityLabel(arrivingAccessibilityLabel(isFirst: isFirst))
             case .approaching:
                 PredictionText(minutes: 1)
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+                    .accessibilityLabel(distantFutureAccessibilityLabel(date: format.predictionTime.toNSDate(), isFirst: isFirst))
                     .font(.footnote)
                     .fontWeight(.semibold)
             case let .schedule(schedule):
                 HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
+                        .accessibilityLabel(scheduledAccessibilityLabel(date: schedule.scheduleTime.toNSDate(),
+                                                                        isFirst: isFirst))
                         .font(.footnote)
                         .fontWeight(.semibold)
                     Image(.faClock)
@@ -63,6 +77,7 @@ struct UpcomingTripView: View {
                 }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
+                    .accessibilityLabel(predictionMinutesAccessibilityLabel(minutes: format.minutes, isFirst: isFirst))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
@@ -71,11 +86,38 @@ struct UpcomingTripView: View {
         case .loading:
             ProgressView()
         }
-        AnyView(predictionView)
-            .foregroundStyle(Color.text)
-            .frame(minWidth: 48, alignment: .trailing)
-            .padding(.trailing, 4)
     }
+
+    func boardingAccessibilityLabel(isFirst: Bool) -> Text {
+        isFirst ? Text("boarding now") : Text("and boarding now")
+    }
+
+    func arrivingAccessibilityLabel(isFirst: Bool) -> Text {
+        isFirst ? Text("arriving now") : Text("and arriving now")
+    }
+
+    func distantFutureAccessibilityLabel(date: Date, isFirst: Bool) -> Text {
+        isFirst
+            ? Text("arriving at \(timeFormatter.string(from: date))")
+            : Text("and at \(timeFormatter.string(from: date))")
+    }
+
+    func scheduledAccessibilityLabel(date: Date, isFirst: Bool) -> Text {
+        isFirst
+            ? Text("arriving at \(timeFormatter.string(from: date)) scheduled")
+            : Text("and at \(timeFormatter.string(from: date)) scheduled")
+    }
+
+    func predictionMinutesAccessibilityLabel(minutes: Int32, isFirst: Bool) -> Text {
+        isFirst ? Text("arriving in \(minutes) minutes") : Text("and in \(minutes) minutes")
+    }
+}
+
+func makeTimeFormatter() -> DateFormatter {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .none
+    formatter.timeStyle = .short
+    return formatter
 }
 
 struct NoServiceView: View {

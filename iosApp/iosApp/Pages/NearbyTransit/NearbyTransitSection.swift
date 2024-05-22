@@ -56,6 +56,7 @@ struct NearbyTransitSection<Content: View>: View {
     private var routeHeader: some View {
         Label {
             routeName
+                .accessibilityHeading(.h2)
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(Color(hex: route.textColor))
                 .textCase(.none)

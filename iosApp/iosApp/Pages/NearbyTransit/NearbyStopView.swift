@@ -34,7 +34,8 @@ struct NearbyStopView: View {
                     HStack(spacing: 0) {
                         HeadsignRowView(
                             headsign: patternsByHeadsign.headsign,
-                            predictions: patternsByHeadsign.format(now: now)
+                            predictions: patternsByHeadsign.format(now: now),
+                            routeType: patternsByHeadsign.route.type
                         )
                         Image(.faChevronRight)
                             .resizable()
@@ -48,8 +49,8 @@ struct NearbyStopView: View {
                     if index < patternsAtStop.patternsByHeadsign.count - 1 {
                         Divider().background(Color.halo)
                     }
-                }
-            }
+                }.accessibilityElement(children: .contain)
+            }.accessibilityHint(Text("Open for more arrivals"))
         }
     }
 }
