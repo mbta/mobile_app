@@ -18,7 +18,6 @@ struct NearbyTransitPageView: View {
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     var schedulesRepository: ISchedulesRepository
-    @ObservedObject var predictionsFetcher: PredictionsFetcher
     @ObservedObject var viewportProvider: ViewportProvider
     @ObservedObject var alertsFetcher: AlertsFetcher
 
@@ -31,7 +30,6 @@ struct NearbyTransitPageView: View {
         nearbyFetcher: NearbyFetcher,
         nearbyVM: NearbyViewModel,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
-        predictionsFetcher: PredictionsFetcher,
         viewportProvider: ViewportProvider,
         alertsFetcher: AlertsFetcher
     ) {
@@ -39,7 +37,6 @@ struct NearbyTransitPageView: View {
         self.nearbyFetcher = nearbyFetcher
         self.nearbyVM = nearbyVM
         self.schedulesRepository = schedulesRepository
-        self.predictionsFetcher = predictionsFetcher
         self.viewportProvider = viewportProvider
         self.alertsFetcher = alertsFetcher
     }
@@ -52,7 +49,6 @@ struct NearbyTransitPageView: View {
                 globalFetcher: globalFetcher,
                 nearbyFetcher: nearbyFetcher,
                 schedulesRepository: schedulesRepository,
-                predictionsFetcher: predictionsFetcher,
                 alertsFetcher: alertsFetcher
             )
             .onReceive(

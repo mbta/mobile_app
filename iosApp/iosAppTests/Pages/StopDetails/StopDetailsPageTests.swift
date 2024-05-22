@@ -55,10 +55,10 @@ final class StopDetailsPageTests: XCTestCase {
             }
         }
 
-        var sut = StopDetailsPage(
-            socket: MockSocket(),
+        let sut = StopDetailsPage(
             globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: FakeSchedulesRepository(callback: callback),
+            predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
@@ -81,9 +81,9 @@ final class StopDetailsPageTests: XCTestCase {
         let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(routeId: route.id, directionId: routePattern.directionId))
 
         let sut = StopDetailsPage(
-            socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
+            predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
@@ -131,10 +131,10 @@ final class StopDetailsPageTests: XCTestCase {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
 
-        var sut = StopDetailsPage(
-            socket: MockSocket(),
+        let sut = StopDetailsPage(
             globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: fakeSchedulesRepository(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
+            predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
@@ -161,35 +161,36 @@ final class StopDetailsPageTests: XCTestCase {
 
         let leaveExpectation = expectation(description: "leaves predictions")
 
-        class FakePredictionsFetcher: PredictionsFetcher {
+        class FakePredictionsRepo: IPredictionsRepository {
             let joinExpectation: XCTestExpectation
             let leaveExpectation: XCTestExpectation
 
             init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
                 self.joinExpectation = joinExpectation
                 self.leaveExpectation = leaveExpectation
-                super.init(socket: MockSocket())
             }
 
-            override func run(stopIds _: [String]) {
+            func connect(
+                stopIds _: [String],
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+            ) {
                 joinExpectation.fulfill()
             }
 
-            override func leave() {
+            func disconnect() {
                 leaveExpectation.fulfill()
             }
         }
 
-        let predictionsFetcher = FakePredictionsFetcher(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let predictionsRepo = FakePredictionsRepo(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = StopDetailsPage(
-            socket: MockSocket(),
             globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
+            predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
-            nearbyVM: .init(),
-            predictionsFetcher: predictionsFetcher
+            nearbyVM: .init()
         )
 
         ViewHosting.host(view: sut)

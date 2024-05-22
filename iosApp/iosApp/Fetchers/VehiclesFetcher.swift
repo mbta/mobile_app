@@ -19,7 +19,7 @@ class VehiclesFetcher: ObservableObject {
     @Published var errorText: Text?
 
     let socket: PhoenixSocket
-    var channel: Channel?
+    var channel: PhoenixChannel?
     var onMessageSuccessCallback: (() -> Void)?
     var onErrorCallback: (() -> Void)?
 
@@ -36,16 +36,16 @@ class VehiclesFetcher: ObservableObject {
     }
 
     func run(routeId: String, directionId: Int) {
-        socket.connect()
+        socket.attach()
         let joinPayload = VehiclesOnRouteChannel.shared.joinPayload(routeId: routeId, directionId: Int32(directionId))
-        channel = socket.channel(VehiclesOnRouteChannel.shared.topic, params: joinPayload)
+        channel = socket.getChannel(topic: VehiclesOnRouteChannel.shared.topic, params: joinPayload)
 
-        channel?.on(VehiclesOnRouteChannel.shared.newDataEvent, callback: { message in
+        channel?.onEvent(event: VehiclesOnRouteChannel.shared.newDataEvent, callback: { message in
             self.handleNewDataMessage(message: message)
         })
-        channel?.onError { message in
+        channel?.onFailure { message in
             DispatchQueue.main.async {
-                self.socketError = PhoenixChannelError.channelError("A: \(message.payload)")
+                self.socketError = PhoenixChannelError.channelError("A: \(message.body)")
                 self.errorText = Text("Failed to load new vehicles, something went wrong")
                 if let callback = self.onErrorCallback {
                     callback()
@@ -53,15 +53,15 @@ class VehiclesFetcher: ObservableObject {
             }
         }
 
-        channel?.onClose { message in
-            Logger().debug("leaving channel \(message.topic)")
+        channel?.onDetach { message in
+            Logger().debug("leaving channel \(message.subject)")
         }
-        channel?.join().receive("ok") { message in
-            Logger().debug("joined channel \(message.topic)")
+        channel?.attach().receive(status: .ok) { message in
+            Logger().debug("joined channel \(message.subject)")
             self.handleNewDataMessage(message: message)
-        }.receive("error", callback: { message in
+        }.receive(status: .error, callback: { message in
             DispatchQueue.main.async {
-                self.socketError = PhoenixChannelError.channelError("B: \(message.payload)")
+                self.socketError = PhoenixChannelError.channelError("B: \(message.body)")
                 self.errorText = Text("Failed to load vehicles, could not connect to the server")
                 if let callback = self.onErrorCallback {
                     callback()
@@ -70,9 +70,9 @@ class VehiclesFetcher: ObservableObject {
         })
     }
 
-    private func handleNewDataMessage(message: SwiftPhoenixClient.Message) {
+    private func handleNewDataMessage(message: PhoenixMessage) {
         do {
-            let rawPayload: String? = message.jsonPayload()
+            let rawPayload: String? = message.jsonBody
 
             if let stringPayload = rawPayload {
                 let newVehicles = try VehiclesOnRouteChannel.shared
@@ -88,7 +88,7 @@ class VehiclesFetcher: ObservableObject {
                     }
                 }
             } else {
-                Logger().error("No jsonPayload found for message \(message.payload)")
+                Logger().error("No jsonPayload found for message \(message.body)")
                 if let callback = onErrorCallback {
                     callback()
                 }
@@ -96,7 +96,7 @@ class VehiclesFetcher: ObservableObject {
 
         } catch {
             DispatchQueue.main.async {
-                self.socketError = PhoenixChannelError.channelError("C: \(message.payload)")
+                self.socketError = PhoenixChannelError.channelError("C: \(message.body)")
                 self.errorText = Text("Failed to load new vehicles, something went wrong")
             }
             Logger().error("\(error)")
@@ -104,7 +104,7 @@ class VehiclesFetcher: ObservableObject {
     }
 
     func leave() {
-        channel?.leave()
+        channel?.detach()
         channel = nil
         vehicles = nil
         errorText = nil

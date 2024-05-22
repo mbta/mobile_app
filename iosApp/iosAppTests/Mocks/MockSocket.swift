@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import iosApp
+import shared
 @testable import SwiftPhoenixClient
 
 open class MockSocket: PhoenixSocket {
@@ -15,25 +16,21 @@ open class MockSocket: PhoenixSocket {
     // Channel.socket is weak, so we need to maintain a reference to the Socket
     private let socket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
 
-    public func channel(_ topic: String, params _: [String: Any]) -> Channel {
+    public func attach() {}
+
+    public func detach() {}
+
+    public func getChannel(topic: String, params _: [String: Any]) -> any PhoenixChannel {
         let channel = Channel(topic: topic, socket: socket)
         channels.append(channel)
         return channel
     }
 
-    public func onOpen(callback _: @escaping () -> Void) -> String {
+    public func onAttach(callback _: @escaping () -> Void) -> String {
         "Opened"
     }
 
-    public func onError(error _: Error, response _: URLResponse?) {}
-
-    public func onMessage(message _: String) {}
-
-    public func onClose(callback _: @escaping () -> Void) -> String {
+    public func onDetach(callback _: @escaping () -> Void) -> String {
         "Closed"
     }
-
-    public func connect() {}
-
-    public func disconnect(code _: SwiftPhoenixClient.Socket.CloseCode, reason _: String?, callback _: (() -> Void)?) {}
 }

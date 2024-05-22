@@ -1,5 +1,6 @@
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
+import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
@@ -7,6 +8,7 @@ import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripSchedulesRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
@@ -21,6 +23,7 @@ interface IRepositories {
     val settings: ISettingsRepository
     val stop: IStopRepository
     val tripSchedules: ITripSchedulesRepository
+    val predictions: IPredictionsRepository?
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -29,6 +32,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val settings: ISettingsRepository by inject()
     override val stop: IStopRepository by inject()
     override val tripSchedules: ITripSchedulesRepository by inject()
+    override val predictions: IPredictionsRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -37,6 +41,7 @@ class RealRepositories : IRepositories {
     override val settings = SettingsRepository()
     override val stop = StopRepository()
     override val tripSchedules = TripSchedulesRepository()
+    override val predictions = null
 }
 
 class MockRepositories(
@@ -45,6 +50,7 @@ class MockRepositories(
     override val settings: ISettingsRepository,
     override val stop: IStopRepository,
     override val tripSchedules: ITripSchedulesRepository,
+    override val predictions: IPredictionsRepository
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
@@ -54,6 +60,7 @@ class MockRepositories(
             settings: ISettingsRepository = SettingsRepository(),
             stop: IStopRepository = IdleStopRepository(),
             tripSchedules: ITripSchedulesRepository = IdleTripSchedulesRepository(),
+            predictions: IPredictionsRepository = MockPredictionsRepository()
         ): MockRepositories {
             return MockRepositories(
                 pinnedRoutesRepository = pinnedRoutesRepository,
@@ -61,6 +68,7 @@ class MockRepositories(
                 settings = settings,
                 stop = stop,
                 tripSchedules = tripSchedules,
+                predictions = predictions
             )
         }
     }
