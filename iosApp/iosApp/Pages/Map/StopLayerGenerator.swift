@@ -26,6 +26,7 @@ class StopLayerGenerator {
 
     static func createStopLayers(stopLayerTypes: [LocationType]) -> [SymbolLayer] {
         stopLayerTypes.map { Self.createStopLayer(locationType: $0) }
+            + createStopTransferLayers()
     }
 
     static func createStopLayer(locationType: LocationType) -> SymbolLayer {
@@ -53,5 +54,37 @@ class StopLayerGenerator {
         stopLayer.iconOpacityTransition = StyleTransition(duration: 1, delay: 0)
 
         return stopLayer
+    }
+
+    static func createStopTransferLayers() -> [SymbolLayer] {
+        let sourceId = StopSourceGenerator.getStopSourceId(.station)
+
+        var transferLayer1 = SymbolLayer(id: "stopTransfers1", source: sourceId)
+        transferLayer1.iconImage = .expression(Exp(.step) {
+            Exp(.get) { "routeCount" }
+            ""
+            2
+            Exp(.concat) {
+                "map-stop-pill-"
+                Exp(.at) { 0; Exp(.array) { Exp(.get) { "routes" } }}
+            }
+        })
+        transferLayer1.iconOffset = .constant([0, -12.5])
+        transferLayer1.iconAllowOverlap = .constant(true)
+
+        var transferLayer2 = SymbolLayer(id: "stopTransfers2", source: sourceId)
+        transferLayer2.iconImage = .expression(Exp(.step) {
+            Exp(.get) { "routeCount" }
+            ""
+            2
+            Exp(.concat) {
+                "map-stop-pill-"
+                Exp(.at) { 1; Exp(.array) { Exp(.get) { "routes" } } }
+            }
+        })
+        transferLayer2.iconOffset = .constant([0, 12.5])
+        transferLayer2.iconAllowOverlap = .constant(true)
+
+        return [transferLayer1, transferLayer2]
     }
 }

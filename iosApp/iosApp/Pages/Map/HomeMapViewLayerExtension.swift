@@ -24,7 +24,8 @@ extension HomeMapView {
             stops: globalFetcher.stops,
             selectedStop: lastNavEntry?.stop(),
             routeLines: routeSourceGenerator.routeLines,
-            alertsByStop: currentStopAlerts
+            alertsByStop: currentStopAlerts,
+            routesByStop: routesByStop
         )
 
         layerManager.addSources(
@@ -49,7 +50,8 @@ extension HomeMapView {
             stops: globalFetcher.stops,
             selectedStop: nil,
             routeLines: updatedRouteSources.routeLines,
-            alertsByStop: currentStopAlerts
+            alertsByStop: currentStopAlerts,
+            routesByStop: routesByStop
         )
         layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources,
                                        stopSourceGenerator: updatedStopSources)
@@ -112,7 +114,8 @@ extension HomeMapView {
             stops: globalFetcher.stops,
             selectedStop: lastNavEntry?.stop(),
             routeLines: layerManager?.routeSourceGenerator?.routeLines,
-            alertsByStop: alertsByStop
+            alertsByStop: alertsByStop,
+            routesByStop: routesByStop
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         // If routes are already being displayed, keep using those. Otherwise, use the rail shapes

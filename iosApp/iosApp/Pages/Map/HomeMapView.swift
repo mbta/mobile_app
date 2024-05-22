@@ -32,6 +32,7 @@ struct HomeMapView: View {
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State var currentStopAlerts: [String: AlertAssociatedStop] = [:]
+    @State var routesByStop: [String: [Route]] = [:]
     @State var lastNavEntry: SheetNavigationStackEntry?
 
     let inspection = Inspection<Self>()
@@ -105,6 +106,15 @@ struct HomeMapView: View {
                 alerts: alertsFetcher.alerts,
                 filterAtTime: now.toKotlinInstant()
             )
+            var routes: [Route] = []
+            if let red = globalFetcher.routes["Red"], let green = globalFetcher.routes["Green-C"] {
+                routes.append(red)
+                routes.append(green)
+                print(green)
+            }
+            routesByStop = [
+                "place-pktrm": routes,
+            ]
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
             guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }

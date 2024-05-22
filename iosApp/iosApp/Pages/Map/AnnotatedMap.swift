@@ -23,6 +23,7 @@ struct AnnotatedMap: View {
     @State var mapDebug = false
 
     @ObservedObject var viewportProvider: ViewportProvider
+    @Environment(\.colorScheme) var colorScheme
 
     var handleCameraChange: (CameraChanged) -> Void
     var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
@@ -33,7 +34,7 @@ struct AnnotatedMap: View {
     var body: some View {
         map
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-            .mapStyle(.light)
+            .mapStyle(colorScheme == .light ? .light : .dark)
             .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))

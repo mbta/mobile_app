@@ -24,19 +24,32 @@ enum StopIcons {
     static let all: [String] = [
         stationIconId, stationIconIssuesId, stationIconNoServiceId,
         stopIconId, stopIconIssuesId, stopIconNoServiceId, stopIconSmallId,
+        "map-stop-container-2", "map-stop-container-3",
+        "map-stop-pill-Red", "map-stop-pill-Orange", "map-stop-pill-Green",
+        "map-stop-pill-Blue",
     ]
 
     static func getStopLayerIcon(_ locationType: LocationType) -> Value<ResolvedImage> {
         switch locationType {
         case .station:
+//            .expression(
+//                Exp(.match) {
+//                    Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+//                    String(describing: StopServiceStatus.noService)
+//                    stationIconNoServiceId
+//                    String(describing: StopServiceStatus.partialService)
+//                    stationIconIssuesId
+//                    stationIconId
+//                }
+//            )
             .expression(
-                Exp(.match) {
-                    Exp(.get) { StopSourceGenerator.propServiceStatusKey }
-                    String(describing: StopServiceStatus.noService)
-                    stationIconNoServiceId
-                    String(describing: StopServiceStatus.partialService)
-                    stationIconIssuesId
+                Exp(.step) {
+                    Exp(.get) { "routeCount" }
                     stationIconId
+                    2
+                    "map-stop-container-2"
+                    3
+                    "map-stop-container-3"
                 }
             )
         case .stop:
