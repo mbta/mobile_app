@@ -1,4 +1,5 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
@@ -12,9 +13,9 @@ plugins {
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
-    androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
+    androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
 
     iosX64()
     iosArm64()
