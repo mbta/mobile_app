@@ -1025,7 +1025,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/opt/homebrew/bin/swiftlint\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo 'warning: SwiftLint not installed, `brew install swiftlint`'\nfi\n";
 		};
 		8E51C9A5DAABE639C0FD100E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
