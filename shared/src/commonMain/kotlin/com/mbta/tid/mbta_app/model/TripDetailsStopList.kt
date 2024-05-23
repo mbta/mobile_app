@@ -249,7 +249,12 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]
 
             val transferStopIds =
-                listOf(selfOrParent.id) + selfOrParent.connectingStopIds + selfOrParent.childStopIds
+                listOf(selfOrParent.id) +
+                    selfOrParent.childStopIds +
+                    selfOrParent.connectingStopIds +
+                    selfOrParent.connectingStopIds.flatMap {
+                        globalData.stops[it]?.childStopIds ?: emptyList()
+                    }
 
             val transferRoutes =
                 transferStopIds
