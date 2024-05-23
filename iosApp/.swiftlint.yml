@@ -3,5 +3,8 @@ disabled_rules:
   - trailing_comma
 excluded:
   - Pods
-  # When we were running SwiftLint as an Xcode plugin, we weren't running it on the tests, so they're not compliant.
-  - iosAppTests
+
+identifier_name:
+  excluded:
+    # allow implementing SKIE internal async methods from interfaces
+    - "__.*"

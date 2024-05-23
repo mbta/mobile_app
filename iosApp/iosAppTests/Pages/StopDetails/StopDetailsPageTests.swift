@@ -109,7 +109,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let schedulesLoadedPublisher = PassthroughSubject<Bool, Never>()
 
-        class fakeSchedulesRepository: ISchedulesRepository {
+        class FakeSchedulesRepository: ISchedulesRepository {
             let objects: ObjectCollectionBuilder
             let callback: (() -> Void)?
             init(objects: ObjectCollectionBuilder, callback: (() -> Void)?) {
@@ -133,7 +133,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let sut = StopDetailsPage(
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesRepository: fakeSchedulesRepository(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
+            schedulesRepository: FakeSchedulesRepository(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
             stop: stop,

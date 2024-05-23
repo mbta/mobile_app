@@ -16,6 +16,7 @@ import ViewInspector
 import XCTest
 @_spi(Experimental) import MapboxMaps
 
+// swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 

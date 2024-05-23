@@ -13,6 +13,7 @@ import shared
 import SwiftUI
 import XCTest
 
+// swiftlint:disable:next type_body_length
 final class HomeMapViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
