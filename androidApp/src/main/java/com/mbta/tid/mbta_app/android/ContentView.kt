@@ -51,11 +51,15 @@ fun ContentView(appVariant: AppVariant) {
             transitionToFollowPuckState()
         }
     }
+    val rawMapCenterFlow = snapshotFlow { mapViewportState.cameraState.center }
+    val mapCenterFlow =
+        remember(rawMapCenterFlow) {
+            rawMapCenterFlow.debounce(0.25.seconds).map { it.toPosition() }
+        }
     val mapCenter by
-        snapshotFlow { mapViewportState.cameraState.center }
-            .debounce(0.25.seconds)
-            .map { it.toPosition() }
-            .collectAsState(initial = Position(longitude = -71.062424, latitude = 42.356395))
+        mapCenterFlow.collectAsState(
+            initial = Position(longitude = -71.062424, latitude = 42.356395)
+        )
     var lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
