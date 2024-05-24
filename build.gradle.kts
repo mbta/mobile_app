@@ -11,11 +11,7 @@ plugins {
     id("com.diffplug.spotless").version("6.21.0")
 }
 
-spotless {
-    kotlinGradle {
-        ktlint()
-    }
-}
+spotless { kotlinGradle { ktlint() } }
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")
@@ -31,12 +27,13 @@ subprojects {
     tasks.withType<AbstractTestTask> {
         testLogging {
             // set options for log level LIFECYCLE
-            events = setOf(
-                TestLogEvent.FAILED,
-                TestLogEvent.PASSED,
-                TestLogEvent.SKIPPED,
-                TestLogEvent.STANDARD_OUT,
-            )
+            events =
+                setOf(
+                    TestLogEvent.FAILED,
+                    TestLogEvent.PASSED,
+                    TestLogEvent.SKIPPED,
+                    TestLogEvent.STANDARD_OUT,
+                )
 
             exceptionFormat = TestExceptionFormat.FULL
             showStandardStreams = true
@@ -47,6 +44,4 @@ subprojects {
     }
 }
 
-tasks.getByName("clean", Delete::class) {
-    delete(rootProject.buildDir)
-}
+tasks.getByName("clean", Delete::class) { delete(rootProject.layout.buildDirectory) }
