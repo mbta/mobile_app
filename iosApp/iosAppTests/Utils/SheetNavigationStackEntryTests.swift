@@ -48,7 +48,10 @@ final class SheetNavigationStackEntryTests: XCTestCase {
             .stopDetails(otherStop, .init(routeId: "C", directionId: 0)),
             .stopDetails(otherStop, .init(routeId: "D", directionId: 0)),
         ]
-        var stack: [SheetNavigationStackEntry] = previousEntries + [.stopDetails(stop, .init(routeId: "E", directionId: 0))]
+        var stack: [SheetNavigationStackEntry] = previousEntries + [.stopDetails(
+            stop,
+            .init(routeId: "E", directionId: 0)
+        )]
 
         XCTAssertEqual(stack.lastStopDetailsFilter, .init(routeId: "E", directionId: 0))
 

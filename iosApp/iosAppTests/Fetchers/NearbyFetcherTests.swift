@@ -20,10 +20,24 @@ final class NearbyFetcherTests: XCTestCase {
     func testErrorText() {
         let fetcher = NearbyFetcher(backend: IdleBackend())
 
-        let timeoutError = NSError(domain: "KotlinException", code: 1, userInfo: ["KotlinException": Ktor_client_coreHttpRequestTimeoutException(url: "a", timeoutMillis: 1)])
-        XCTAssertEqual(fetcher.getErrorText(error: timeoutError), Text("Couldn't load nearby transit, no response from the server"))
+        let timeoutError = NSError(
+            domain: "KotlinException",
+            code: 1,
+            userInfo: ["KotlinException": Ktor_client_coreHttpRequestTimeoutException(url: "a", timeoutMillis: 1)]
+        )
+        XCTAssertEqual(
+            fetcher.getErrorText(error: timeoutError),
+            Text("Couldn't load nearby transit, no response from the server")
+        )
 
-        let jsonError = NSError(domain: "KotlinException", code: 1, userInfo: ["KotlinException": Ktor_serializationJsonConvertException(message: "parse failure", cause: nil)])
-        XCTAssertEqual(fetcher.getErrorText(error: jsonError), Text("Couldn't load nearby transit, unable to parse response"))
+        let jsonError = NSError(
+            domain: "KotlinException",
+            code: 1,
+            userInfo: ["KotlinException": Ktor_serializationJsonConvertException(message: "parse failure", cause: nil)]
+        )
+        XCTAssertEqual(
+            fetcher.getErrorText(error: jsonError),
+            Text("Couldn't load nearby transit, unable to parse response")
+        )
     }
 }

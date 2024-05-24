@@ -1,10 +1,10 @@
 disabled_rules:
-  # SwiftFormat puts trailing commas in collection literals sometimes
+  # SwiftFormat disagrees with SwiftLint about some formatting choices
+  - statement_position
   - trailing_comma
 excluded:
   - Pods
 
 identifier_name:
   excluded:
-    # allow implementing SKIE internal async methods from interfaces
-    - "__.*"
+    - "id"

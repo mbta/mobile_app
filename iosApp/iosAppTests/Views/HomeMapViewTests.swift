@@ -108,7 +108,9 @@ final class HomeMapViewTests: XCTestCase {
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             nearbyVM: .init(),
-            railRouteShapeFetcher: FakeRailRouteShapeFetcher(getRailRouteShapeExpectation: getRailRouteShapeExpectation),
+            railRouteShapeFetcher: FakeRailRouteShapeFetcher(
+                getRailRouteShapeExpectation: getRailRouteShapeExpectation
+            ),
             vehiclesFetcher: VehiclesFetcher(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             sheetHeight: .constant(0)
@@ -214,10 +216,15 @@ final class HomeMapViewTests: XCTestCase {
     func testUpdatesRouteSourceWhenStopSelected() throws {
         class OLOnlyStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
-                StopMapResponse(routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes.filter { $0.routeId == MapTestDataHelper.routeOrange.id }, childStops: [:])
+                StopMapResponse(
+                    routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+                        .filter { $0.routeId == MapTestDataHelper.routeOrange.id },
+                    childStops: [:]
+                )
             }
         }
-        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: OLOnlyStopRepository()))
+        HelpersKt
+            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: OLOnlyStopRepository()))
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -436,7 +443,10 @@ final class HomeMapViewTests: XCTestCase {
                                               upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                                               alertsHere: nil)])]))
 
-        let initialNav: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: vehicle.routeId!, directionId: vehicle.directionId))
+        let initialNav: SheetNavigationStackEntry = .stopDetails(
+            stop,
+            .init(routeId: vehicle.routeId!, directionId: vehicle.directionId)
+        )
         nearbyVM.navigationStack = [initialNav]
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
@@ -473,11 +483,16 @@ final class HomeMapViewTests: XCTestCase {
     func testShowsAllRailShapesWhenSelectedStopCleared() throws {
         class OLOnlyStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
-                StopMapResponse(routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes.filter { $0.routeId == MapTestDataHelper.routeOrange.id }, childStops: [:])
+                StopMapResponse(
+                    routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+                        .filter { $0.routeId == MapTestDataHelper.routeOrange.id },
+                    childStops: [:]
+                )
             }
         }
 
-        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: OLOnlyStopRepository()))
+        HelpersKt
+            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: OLOnlyStopRepository()))
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -486,7 +501,8 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let allRailRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called with all rail sources")
+        let allRailRouteSourceUpdateExpectation =
+            XCTestExpectation(description: "updateRouteSource called with all rail sources")
         func allRailRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
             if routeGenerator.routeData == MapTestDataHelper.routeResponse.routesWithSegmentedShapes {
                 allRailRouteSourceUpdateExpectation.fulfill()
