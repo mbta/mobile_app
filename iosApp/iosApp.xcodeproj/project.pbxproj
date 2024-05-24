@@ -763,6 +763,7 @@
 			buildConfigurationList = 6EED5E942B3DC6A00052A1B8 /* Build configuration list for PBXNativeTarget "iosAppTests" */;
 			buildPhases = (
 				55D6C38F2F741CA4B427262A /* [CP] Check Pods Manifest.lock */,
+				8C7E227A2BFFA41300AE1053 /* SwiftLint */,
 				6EED5E882B3DC69F0052A1B8 /* Sources */,
 				6EED5E892B3DC69F0052A1B8 /* Frameworks */,
 				6EED5E8A2B3DC69F0052A1B8 /* Resources */,
@@ -814,7 +815,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */,
 			);
 			name = iosApp;
 			packageProductDependencies = (
@@ -863,7 +863,6 @@
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
-				8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */,
 				9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */,
 				6EE7457F2B965AEA0052227E /* XCRemoteSwiftPackageReference "SwiftPhoenixClient" */,
 				9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
@@ -990,6 +989,25 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		8C7E227A2BFFA41300AE1053 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo 'warning: SwiftLint not installed, `brew install swiftlint`'\nfi\n";
 		};
 		8E51C9A5DAABE639C0FD100E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1162,10 +1180,6 @@
 			target = 7555FF7A242A565900829871 /* iosApp */;
 			targetProxy = 6EED5E9F2B3DC6C10052A1B8 /* PBXContainerItemProxy */;
 		};
-		8C42F06E2B87BD1D00F9A77B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -1180,7 +1194,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = RP77QY87AD;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1210,7 +1224,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RP77QY87AD;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1574,7 +1588,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = RP77QY87AD;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1721,7 +1735,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RP77QY87AD;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1841,14 +1855,6 @@
 				minimumVersion = 0.9.11;
 			};
 		};
-		8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/SwiftLint.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.54.0;
-			};
-		};
 		9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/raphaelmor/Polyline.git";
@@ -1882,11 +1888,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
-		};
-		8C42F06D2B87BD1D00F9A77B /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8C42F06A2B87BCF700F9A77B /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
 		};
 		9A8B34AF2B892C810018412C /* Polyline */ = {
 			isa = XCSwiftPackageProductDependency;

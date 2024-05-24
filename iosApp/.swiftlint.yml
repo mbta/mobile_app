@@ -1,3 +1,7 @@
 disabled_rules:
   # SwiftFormat puts trailing commas in collection literals sometimes
   - trailing_comma
+excluded:
+  - Pods
+  # When we were running SwiftLint as an Xcode plugin, we weren't running it on the tests, so they're not compliant.
+  - iosAppTests
