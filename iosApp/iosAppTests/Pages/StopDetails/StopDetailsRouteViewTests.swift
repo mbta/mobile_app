@@ -24,9 +24,25 @@ final class StopDetailsRouteViewTests: XCTestCase {
 
         let northPattern = objects.routePattern(route: route) { $0.directionId = 0 }
         let southPattern = objects.routePattern(route: route) { $0.directionId = 1 }
-        let patternsByHeadsignNorth = PatternsByHeadsign(route: route, headsign: "North", patterns: [northPattern], upcomingTrips: nil, alertsHere: nil)
-        let patternsByHeadsignSouth = PatternsByHeadsign(route: route, headsign: "South", patterns: [southPattern], upcomingTrips: nil, alertsHere: nil)
-        let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth])
+        let patternsByHeadsignNorth = PatternsByHeadsign(
+            route: route,
+            headsign: "North",
+            patterns: [northPattern],
+            upcomingTrips: nil,
+            alertsHere: nil
+        )
+        let patternsByHeadsignSouth = PatternsByHeadsign(
+            route: route,
+            headsign: "South",
+            patterns: [southPattern],
+            upcomingTrips: nil,
+            alertsHere: nil
+        )
+        let patternsByStop = PatternsByStop(
+            route: route,
+            stop: stop,
+            patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth]
+        )
         let sut = StopDetailsRouteView(patternsByStop: patternsByStop, now: now, filter: filter)
 
         XCTAssertNil(filter.wrappedValue)

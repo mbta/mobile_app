@@ -62,15 +62,12 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect()
             .find(TripDetailsStopView.self, where: { try $0.actualView().stop.stop == stop1 })
-            .find(ViewType.DisclosureGroup.self, relation: .parent)
-        )
+            .find(ViewType.DisclosureGroup.self, relation: .parent))
         XCTAssertNotNil(try sut.inspect()
             .find(TripDetailsStopView.self, where: { try $0.actualView().stop.stop == stop2 })
-            .find(ViewType.DisclosureGroup.self, relation: .parent)
-        )
+            .find(ViewType.DisclosureGroup.self, relation: .parent))
         XCTAssertNil(try? sut.inspect()
             .find(TripDetailsStopView.self, where: { try $0.actualView().stop.stop == stop3 })
-            .find(ViewType.DisclosureGroup.self, relation: .parent)
-        )
+            .find(ViewType.DisclosureGroup.self, relation: .parent))
     }
 }

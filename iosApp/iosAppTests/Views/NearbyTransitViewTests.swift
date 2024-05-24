@@ -16,6 +16,7 @@ import ViewInspector
 import XCTest
 @_spi(Experimental) import MapboxMaps
 
+// swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
@@ -43,7 +44,13 @@ final class NearbyTransitViewTests: XCTestCase {
         class FakeGlobalFetcher: GlobalFetcher {
             init() {
                 super.init(backend: IdleBackend())
-                response = GlobalResponse(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+                response = GlobalResponse(
+                    patternIdsByStop: [:],
+                    routes: [:],
+                    routePatterns: [:],
+                    stops: [:],
+                    trips: [:]
+                )
             }
         }
 
@@ -244,11 +251,17 @@ final class NearbyTransitViewTests: XCTestCase {
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
-            XCTAssertEqual(try upcomingSchedule.actualView().prediction, .some(UpcomingTrip.FormatSchedule(scheduleTime: time1)))
+            XCTAssertEqual(
+                try upcomingSchedule.actualView().prediction,
+                .some(UpcomingTrip.FormatSchedule(scheduleTime: time1))
+            )
             XCTAssertEqual(try upcomingSchedule.find(ViewType.Image.self).actualImage().name(), "fa-clock")
 
             XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
-            XCTAssertEqual(try patterns[1].find(UpcomingTripView.self).actualView().prediction, .some(UpcomingTrip.FormatMinutes(minutes: 10)))
+            XCTAssertEqual(
+                try patterns[1].find(UpcomingTripView.self).actualView().prediction,
+                .some(UpcomingTrip.FormatMinutes(minutes: 10))
+            )
 
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
             XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
@@ -260,7 +273,8 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let distantInstant = Date.now.addingTimeInterval(TimeInterval(DISTANT_FUTURE_CUTOFF)).addingTimeInterval(5 * 60).toKotlinInstant()
+        let distantInstant = Date.now.addingTimeInterval(TimeInterval(DISTANT_FUTURE_CUTOFF)).addingTimeInterval(5 * 60)
+            .toKotlinInstant()
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let rp1 = objects.routePattern(route: route) { routePattern in
@@ -328,7 +342,8 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
                 .parent().find(text: "1 min"))
 
-            let expectedState = UpcomingTripView.State.some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
+            let expectedState = UpcomingTripView.State
+                .some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
             XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
                 .findAll(UpcomingTripView.self, where: { sut in
                     try debugPrint(sut.actualView())
@@ -354,7 +369,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                    -> Void
             ) {
                 if stopIds.sorted() == ["84791", "8552"] {
                     sawmillAtWalshExpectation.fulfill()
@@ -369,7 +385,10 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let nearbyFetcher = Route52NearbyFetcher()
-        let predictionsRepo = FakePredictionsRepository(sawmillAtWalshExpectation: sawmillAtWalshExpectation, lechmereExpectation: lechmereExpectation)
+        let predictionsRepo = FakePredictionsRepository(
+            sawmillAtWalshExpectation: sawmillAtWalshExpectation,
+            lechmereExpectation: lechmereExpectation
+        )
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -459,7 +478,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                    -> Void
             ) {
                 joinExpectation.fulfill()
             }
@@ -470,7 +490,10 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let nearbyFetcher = Route52NearbyFetcher()
-        let predictionsRepo = FakePredictionsRepository(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let predictionsRepo = FakePredictionsRepository(
+            joinExpectation: joinExpectation,
+            leaveExpectation: leaveExpectation
+        )
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -505,7 +528,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                    -> Void
             ) {
                 joinExpectation.fulfill()
             }
@@ -516,7 +540,10 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let nearbyFetcher = Route52NearbyFetcher()
-        let predictionsRepo = FakePredictionsRepository(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let predictionsRepo = FakePredictionsRepository(
+            joinExpectation: joinExpectation,
+            leaveExpectation: leaveExpectation
+        )
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -554,7 +581,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                    -> Void
             ) {
                 joinExpectation.fulfill()
             }
@@ -565,7 +593,10 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let nearbyFetcher = Route52NearbyFetcher()
-        let predictionsRepo = FakePredictionsRepository(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let predictionsRepo = FakePredictionsRepository(
+            joinExpectation: joinExpectation,
+            leaveExpectation: leaveExpectation
+        )
         let sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -626,7 +657,8 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
-        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self).find(text: "Failed to load nearby transit, test error"))
+        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self)
+            .find(text: "Failed to load nearby transit, test error"))
     }
 
     func testPredictionErrorMessage() throws {
@@ -783,7 +815,15 @@ final class NearbyTransitViewTests: XCTestCase {
         objects.alert { alert in
             alert.activePeriod(start: Date.now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
             alert.effect = .suspension
-            alert.informedEntity(activities: [.board], directionId: nil, facility: nil, route: "52", routeType: .bus, stop: "8552", trip: nil)
+            alert.informedEntity(
+                activities: [.board],
+                directionId: nil,
+                facility: nil,
+                route: "52",
+                routeType: .bus,
+                stop: "8552",
+                trip: nil
+            )
         }
         alertsFetcher.alerts = AlertsStreamDataResponse(objects: objects)
         var sut = NearbyTransitView(
@@ -813,7 +853,13 @@ final class NearbyTransitViewTests: XCTestCase {
         let stop = objects.stop { $0.name = "This Stop" }
         let sut = NearbyStopView(patternsAtStop: PatternsByStop(
             route: route, stop: stop,
-            patternsByHeadsign: [PatternsByHeadsign(route: route, headsign: "Place", patterns: [pattern], upcomingTrips: nil, alertsHere: nil)]
+            patternsByHeadsign: [PatternsByHeadsign(
+                route: route,
+                headsign: "Place",
+                patterns: [pattern],
+                upcomingTrips: nil,
+                alertsHere: nil
+            )]
         ), now: Date.now.toKotlinInstant())
 
         XCTAssertEqual(

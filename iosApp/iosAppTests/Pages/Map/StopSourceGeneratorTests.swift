@@ -63,7 +63,14 @@ final class StopSourceGeneratorTests: XCTestCase {
             stop.parentStationId = "place-andrw"
         }
 
-        let stopSourceGenerator = StopSourceGenerator(stops: [stop1.id: stop1, stop2.id: stop2, stop3.id: stop3, stop4.id: stop4, stop5.id: stop5, stop6.id: stop6])
+        let stopSourceGenerator = StopSourceGenerator(stops: [
+            stop1.id: stop1,
+            stop2.id: stop2,
+            stop3.id: stop3,
+            stop4.id: stop4,
+            stop5.id: stop5,
+            stop6.id: stop6,
+        ])
         let sources = stopSourceGenerator.stopSources
         XCTAssertEqual(sources.count, 2)
 
@@ -104,10 +111,12 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                                                        routesById: MapTestDataHelper.routesById,
-                                                        stopsById: stops,
-                                                        alertsByStop: [:])
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.routesById,
+            stopsById: stops,
+            alertsByStop: [:]
+        )
         let stopSourceGenerator = StopSourceGenerator(stops: stops,
                                                       routeLines: routeSourceGenerator.routeLines)
         let sources = stopSourceGenerator.stopSources
@@ -214,13 +223,29 @@ final class StopSourceGeneratorTests: XCTestCase {
             alert.id = "a1"
             alert.effect = .shuttle
             alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
-            alert.informedEntity(activities: [.board], directionId: nil, facility: nil, route: "Red", routeType: .heavyRail, stop: "70061", trip: nil)
+            alert.informedEntity(
+                activities: [.board],
+                directionId: nil,
+                facility: nil,
+                route: "Red",
+                routeType: .heavyRail,
+                stop: "70061",
+                trip: nil
+            )
         }
         let orangeAlert = objects.alert { alert in
             alert.id = "a2"
             alert.effect = .stationClosure
             alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
-            alert.informedEntity(activities: [.board], directionId: nil, facility: nil, route: "Orange", routeType: .heavyRail, stop: "place-astao", trip: nil)
+            alert.informedEntity(
+                activities: [.board],
+                directionId: nil,
+                facility: nil,
+                route: "Orange",
+                routeType: .heavyRail,
+                stop: "place-astao",
+                trip: nil
+            )
         }
 
         let alertsByStop = [
@@ -254,7 +279,8 @@ final class StopSourceGeneratorTests: XCTestCase {
             XCTAssertEqual(collection.features.count, 2)
 
             let alewifeFeature = collection.features.first { feat in
-                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-alfcl" } else { false }
+                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-alfcl" }
+                else { false }
             }
             XCTAssertNotNil(alewifeFeature)
             if case let .string(serviceStatus) = alewifeFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
@@ -264,10 +290,12 @@ final class StopSourceGeneratorTests: XCTestCase {
             }
 
             let assemblyFeature = collection.features.first { feat in
-                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-astao" } else { false }
+                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-astao" }
+                else { false }
             }
             XCTAssertNotNil(assemblyFeature)
-            if case let .string(serviceStatus) = assemblyFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
+            if case let .string(serviceStatus) = assemblyFeature!
+                .properties![StopSourceGenerator.propServiceStatusKey] {
                 XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.noService))
             } else {
                 XCTFail("No service source status property was not set correctly")

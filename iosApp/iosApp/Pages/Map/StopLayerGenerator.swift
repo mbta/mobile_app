@@ -44,8 +44,7 @@ class StopLayerGenerator {
             }
             1.25
             1
-        }
-        )
+        })
 
         stopLayer.iconAllowOverlap = .constant(true)
         stopLayer.minZoom = StopIcons.stopZoomThreshold - 1
