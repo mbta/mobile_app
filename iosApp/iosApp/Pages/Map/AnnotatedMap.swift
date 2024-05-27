@@ -59,10 +59,7 @@ struct AnnotatedMap: View {
             Puck2D().pulsing(.none)
             if let nearbyLocation {
                 MapViewAnnotation(coordinate: nearbyLocation) {
-                    Circle()
-                        .strokeBorder(.white, lineWidth: 2.5)
-                        .background(Circle().fill(.orange))
-                        .frame(width: 22, height: 22)
+                    Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)
                 }
             }
             if let filter, let vehicles {
