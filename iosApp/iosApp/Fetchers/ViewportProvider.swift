@@ -13,7 +13,7 @@ class ViewportProvider: ObservableObject {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
         static let center: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
-        static let zoom: CGFloat = StopLayerGenerator.midZoomThreshold
+        static let zoom: CGFloat = StopLayerGenerator.defaultZoomThreshold
     }
 
     @Published var viewport: Viewport

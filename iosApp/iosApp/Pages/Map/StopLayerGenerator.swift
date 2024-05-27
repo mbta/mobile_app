@@ -15,7 +15,8 @@ class StopLayerGenerator {
 
     static let stopZoomThreshold = 8.0
     static let midZoomThreshold = 11.0
-    static let closeZoomThreshold = 16.0
+    static let closeZoomThreshold = 15.0
+    static let defaultZoomThreshold = 16.0
 
     static let stopLayerId = "stop-layer"
     static func getTransferLayerId(_ index: Int) -> String {
@@ -27,10 +28,10 @@ class StopLayerGenerator {
     static let selectedExp = Exp(.boolean) { Exp(.get) { StopSourceGenerator.propIsSelectedKey } }
     static let selectedSizeExp: Expression =
         Exp(.interpolate) {
-            Exp(.exponential) { 2 }
+            Exp(.exponential) { 1.5 }
             Exp(.zoom)
-            midZoomThreshold; withMultipliers(0.2, modeResize: [0.5, 3, 2])
-            12; withMultipliers(0.5, modeResize: [0.75, 2, 2])
+            midZoomThreshold; withMultipliers(0.25, modeResize: [0.5, 2, 1.75])
+            13; withMultipliers(0.625, modeResize: [1, 1.5, 1.5])
             14; withMultipliers(1)
         }
 
