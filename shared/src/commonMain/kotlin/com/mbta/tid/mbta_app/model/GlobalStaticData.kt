@@ -18,7 +18,10 @@ data class GlobalStaticData(val globalData: GlobalResponse, val mapStops: Map<St
 
                 val allRoutes =
                     patterns
-                        .filter { it.typicality == RoutePattern.Typicality.Typical }
+                        .filter {
+                            it.typicality == RoutePattern.Typicality.Typical ||
+                                it.typicality == RoutePattern.Typicality.CanonicalOnly
+                        }
                         .mapNotNull { globalData.routes[it.routeId] }
                         .toSet()
                         .sortedBy { it.sortOrder }
