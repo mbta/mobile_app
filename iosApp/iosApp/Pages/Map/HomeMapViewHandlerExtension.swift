@@ -87,7 +87,7 @@ extension HomeMapView {
 
     func handleStopDetailsChange(_ stop: Stop, _ filter: StopDetailsFilter?) {
         let updatedStopSources = StopSourceGenerator(
-            stops: globalFetcher.stops,
+            stops: globalFetcher.globalStaticData?.mapStops ?? [:],
             selectedStop: stop,
             routeLines: layerManager?.routeSourceGenerator?.routeLines,
             alertsByStop: currentStopAlerts

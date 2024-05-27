@@ -38,8 +38,7 @@ struct AnnotatedMap: View {
             .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleTapStopLayer)
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.stopLayerId, perform: handleTapStopLayer)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
@@ -100,7 +99,7 @@ struct AnnotatedMap: View {
                         }
                         .allowHitTesting(false)
                         .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= StopIcons.tombstoneZoomThreshold)
+                        .visible(zoomLevel >= StopLayerGenerator.closeZoomThreshold)
                     case .boardingArea, .stop:
                         MapViewAnnotation(coordinate: child.coordinate) {
                             Circle()
@@ -117,7 +116,7 @@ struct AnnotatedMap: View {
                         }
                         .allowHitTesting(false)
                         .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= StopIcons.tombstoneZoomThreshold)
+                        .visible(zoomLevel >= StopLayerGenerator.closeZoomThreshold)
                     default:
                         MapViewAnnotation(coordinate: child.coordinate) {
                             EmptyView()
