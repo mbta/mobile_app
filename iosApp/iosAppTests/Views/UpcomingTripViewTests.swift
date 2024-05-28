@@ -80,12 +80,18 @@ final class UpcomingTripViewTests: XCTestCase {
     func testFirstPredictedAccessibilityLabel() throws {
         let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)), isFirst: true)
         let predictionView = try sut.inspect().find(PredictionText.self)
-        XCTAssertEqual("arriving in 5 minutes", try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en")))
+        XCTAssertEqual(
+            "arriving in 5 minutes",
+            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
     }
 
     func testPredictedAccessibilityLabel() throws {
         let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)), isFirst: false)
         let predictionView = try sut.inspect().find(PredictionText.self)
-        XCTAssertEqual("and in 5 minutes", try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en")))
+        XCTAssertEqual(
+            "and in 5 minutes",
+            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
     }
 }
