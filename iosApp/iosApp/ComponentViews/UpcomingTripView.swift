@@ -21,7 +21,7 @@ struct UpcomingTripView: View {
     let prediction: State
     var isFirst: Bool = false
 
-    private let timeFormatter: DateFormatter = makeTimeFormatter()
+    let accessibilityFormatters = UpcomingTripAccessibilityFormatters()
 
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 16
@@ -51,21 +51,24 @@ struct UpcomingTripView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
-                Text("BRD").font(.headline).bold().accessibilityLabel(boardingAccessibilityLabel(isFirst: isFirst))
+                Text("BRD").font(.headline).bold()
+                    .accessibilityLabel(accessibilityFormatters.boarding(isFirst: isFirst))
             case .arriving:
-                Text("ARR").font(.headline).bold().accessibilityLabel(arrivingAccessibilityLabel(isFirst: isFirst))
+                Text("ARR").font(.headline).bold()
+                    .accessibilityLabel(accessibilityFormatters.arriving(isFirst: isFirst))
             case .approaching:
                 PredictionText(minutes: 1)
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
-                    .accessibilityLabel(distantFutureAccessibilityLabel(date: format.predictionTime.toNSDate(), isFirst: isFirst))
+                    .accessibilityLabel(accessibilityFormatters.distantFuture(date: format.predictionTime.toNSDate(),
+                                                                              isFirst: isFirst))
                     .font(.footnote)
                     .fontWeight(.semibold)
             case let .schedule(schedule):
                 HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
-                        .accessibilityLabel(scheduledAccessibilityLabel(date: schedule.scheduleTime.toNSDate(),
-                                                                        isFirst: isFirst))
+                        .accessibilityLabel(accessibilityFormatters.scheduled(date: schedule.scheduleTime.toNSDate(),
+                                                                              isFirst: isFirst))
                         .font(.footnote)
                         .fontWeight(.semibold)
                     Image(.faClock)
@@ -77,7 +80,8 @@ struct UpcomingTripView: View {
                 }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
-                    .accessibilityLabel(predictionMinutesAccessibilityLabel(minutes: format.minutes, isFirst: isFirst))
+                    .accessibilityLabel(accessibilityFormatters.predictionMinutes(minutes: format.minutes,
+                                                                                  isFirst: isFirst))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
@@ -87,28 +91,31 @@ struct UpcomingTripView: View {
             ProgressView()
         }
     }
+}
 
-    func boardingAccessibilityLabel(isFirst: Bool) -> Text {
+class UpcomingTripAccessibilityFormatters {
+    private let timeFormatter: DateFormatter = makeTimeFormatter()
+    public func boarding(isFirst: Bool) -> Text {
         isFirst ? Text("boarding now") : Text("and boarding now")
     }
 
-    func arrivingAccessibilityLabel(isFirst: Bool) -> Text {
+    public func arriving(isFirst: Bool) -> Text {
         isFirst ? Text("arriving now") : Text("and arriving now")
     }
 
-    func distantFutureAccessibilityLabel(date: Date, isFirst: Bool) -> Text {
+    public func distantFuture(date: Date, isFirst: Bool) -> Text {
         isFirst
             ? Text("arriving at \(timeFormatter.string(from: date))")
             : Text("and at \(timeFormatter.string(from: date))")
     }
 
-    func scheduledAccessibilityLabel(date: Date, isFirst: Bool) -> Text {
+    public func scheduled(date: Date, isFirst: Bool) -> Text {
         isFirst
             ? Text("arriving at \(timeFormatter.string(from: date)) scheduled")
             : Text("and at \(timeFormatter.string(from: date)) scheduled")
     }
 
-    func predictionMinutesAccessibilityLabel(minutes: Int32, isFirst: Bool) -> Text {
+    public func predictionMinutes(minutes: Int32, isFirst: Bool) -> Text {
         isFirst ? Text("arriving in \(minutes) minutes") : Text("and in \(minutes) minutes")
     }
 }

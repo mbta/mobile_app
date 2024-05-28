@@ -33,6 +33,9 @@
         }
       }
     },
+    "and %@ minutes" : {
+
+    },
     "and arriving now" : {
 
     },
@@ -43,9 +46,6 @@
 
     },
     "and boarding now" : {
-
-    },
-    "and in %@ minutes" : {
 
     },
     "Approaching" : {
