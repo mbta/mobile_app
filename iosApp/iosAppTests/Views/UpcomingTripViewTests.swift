@@ -15,6 +15,7 @@ import XCTest
 final class UpcomingTripViewTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
+        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
     }
 
     func testFirstBoardingAccessibilityLabel() throws {
