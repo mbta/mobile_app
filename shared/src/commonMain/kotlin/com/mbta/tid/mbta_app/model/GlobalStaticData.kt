@@ -31,10 +31,22 @@ data class GlobalStaticData(val globalData: GlobalResponse, val mapStops: Map<St
 
                 for (route in allRoutes) {
                     val category = MapStopRoute.matching(route) ?: continue
+                    if (route.id.startsWith("Shuttle-")) {
+                        continue
+                    }
                     if (!mapRouteList.contains(category)) {
                         mapRouteList += category
                     }
                     categorizedRoutes[category] = (categorizedRoutes[category] ?: listOf()) + route
+                }
+
+                if (mapRouteList == listOf(MapStopRoute.SILVER, MapStopRoute.BUS)) {
+                    mapRouteList.remove(MapStopRoute.SILVER)
+                } else if (
+                    mapRouteList == listOf(MapStopRoute.SILVER) &&
+                        stop.locationType == LocationType.STOP
+                ) {
+                    mapRouteList[0] = MapStopRoute.BUS
                 }
 
                 return@map stop.id to
