@@ -95,4 +95,22 @@ final class UpcomingTripViewTests: XCTestCase {
             try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
+
+    func testShuttleAccessibilityLabel() throws {
+        let sut = UpcomingTripView(prediction: .noService(.shuttle), isFirst: false)
+        XCTAssertEqual(
+            "Shuttle buses replace service",
+            try sut.inspect().find(text: "Shuttle")
+                .accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
+    }
+
+    func testSuspensionAccessibilityLabel() throws {
+        let sut = UpcomingTripView(prediction: .noService(.suspension), isFirst: false)
+        XCTAssertEqual(
+            "Service suspended",
+            try sut.inspect().find(text: "Suspension")
+                .accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
+    }
 }
