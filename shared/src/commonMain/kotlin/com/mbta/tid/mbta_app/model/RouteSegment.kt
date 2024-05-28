@@ -39,7 +39,7 @@ data class RouteSegment(
     ): List<AlertAwareRouteSegment> {
         val stopsWithServiceAlerts = hasServiceAlertByStopId(alertsByStop)
 
-        val alertingSegments = RouteSegment.alertingSegments(stopIds, stopsWithServiceAlerts)
+        val alertingSegments = alertingSegments(stopIds, stopsWithServiceAlerts)
 
         return alertingSegments.mapIndexed { index, (isAlerting, segmentStops) ->
             val stopIdSet = segmentStops.toSet()
@@ -89,9 +89,8 @@ data class RouteSegment(
     }
 
     /**
-     * Split the list of stops into segments based on whether or not they are alerting. At a
-     * boundary where the segment switches from non-alerting to alerting or alerting to
-     * non-alerting, the alerting stop is included in both segments.
+     * Split the list of stops into segments based on whether or not they are alerting. Stops on
+     * boundaries are included in both segments.
      */
     companion object {
         fun alertingSegments(
@@ -103,41 +102,32 @@ data class RouteSegment(
                 return listOf()
             }
 
-            val firstStopId = stopIds[0]
+            val stopPairSegments =
+                stopIds
+                    .map { Pair(it, alertingStopIds.contains(it)) }
+                    .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
+                        val (firstStopId, firstStopAlerting) = firstStop
+                        val (secondStopId, secondStopAlerting) = secondStop
+                        val segmentAlerting = firstStopAlerting && secondStopAlerting
+                        Pair(segmentAlerting, listOf(firstStopId, secondStopId))
+                    }
 
-            var accSegments: MutableList<Pair<Boolean, List<String>>> = mutableListOf()
-            // Seed the first segment with the first stop
-            var inProgressSegment: Pair<Boolean, MutableList<String>> =
-                Pair(alertingStopIds.contains(firstStopId), mutableListOf(firstStopId))
-            // the first stop was seeded - skip it
-            stopIds.drop(1).forEach { stopId ->
-                val stopHasAlert = alertingStopIds.contains(stopId)
-                val inProgressSegmentHasAlert = inProgressSegment.first
-
-                if (stopHasAlert == inProgressSegmentHasAlert) {
-                    inProgressSegment.second.add(stopId)
+            return stopPairSegments.fold(emptyList()) { prevSegments, currSegment ->
+                if (prevSegments.isEmpty()) {
+                    return@fold listOf(currSegment)
+                }
+                val oldSegments = prevSegments.dropLast(1)
+                val lastSegment = prevSegments.last()
+                check(lastSegment.second.last() == currSegment.second.first())
+                if (lastSegment.first == currSegment.first) {
+                    oldSegments +
+                        listOf(
+                            Pair(lastSegment.first, lastSegment.second + currSegment.second.drop(1))
+                        )
                 } else {
-                    inProgressSegment =
-                        if (stopHasAlert && !inProgressSegmentHasAlert) {
-                            // add this stop as the last stop in the in progress segment, and move
-                            // that
-                            // segment to the accumulator
-                            inProgressSegment.second.add(stopId)
-                            accSegments.add(inProgressSegment)
-                            Pair(stopHasAlert, mutableListOf(stopId))
-                        } else {
-                            // this stop doesn't have an alert, the previous did one did.
-                            // move the in progress segment to the accumulator and start a new one
-                            // with the last alerting stop from the previous segment
-                            accSegments.add(inProgressSegment)
-                            Pair(
-                                stopHasAlert,
-                                mutableListOf(inProgressSegment.second.last(), stopId)
-                            )
-                        }
+                    prevSegments + listOf(currSegment)
                 }
             }
-            return accSegments.plus(inProgressSegment)
         }
     }
 }
