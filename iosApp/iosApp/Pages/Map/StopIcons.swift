@@ -15,9 +15,12 @@ enum StopIcons {
     static let stopZoomWidePrefix = "wide-"
 
     static let stopContainerPrefix = "\(stopIconPrefix)container-"
+    // This is a single transparent pixel, used to create a layer just for tap target padding
+    static let stopDummyIcon = "\(stopIconPrefix)dummy-tap-pixel"
 
     static let all: [String] = MapStopRoute.allCases.flatMap { routeType in atZooms(stopIconPrefix, routeType.name) }
         + ["2", "3"].flatMap { memberCount in atZooms(stopContainerPrefix, memberCount) }
+        + [stopDummyIcon]
 
     static func atZooms(_ pre: String, _ post: String) -> [String] {
         [stopZoomClosePrefix, stopZoomWidePrefix].map { zoom in "\(pre)\(zoom)\(post)" }

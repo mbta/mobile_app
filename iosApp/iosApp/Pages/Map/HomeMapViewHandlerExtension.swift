@@ -120,14 +120,14 @@ extension HomeMapView {
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop. sourceId=\(feature.source)
             """)
-            return true
+            return false
         }
         guard let stop = globalFetcher.stops[stopId] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.
             """)
-            return true
+            return false
         }
 
         nearbyVM.navigationStack.removeAll()

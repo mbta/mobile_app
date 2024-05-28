@@ -39,6 +39,7 @@ struct AnnotatedMap: View {
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.stopLayerId, perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.stopTouchTargetLayerId, perform: handleTapStopLayer)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in

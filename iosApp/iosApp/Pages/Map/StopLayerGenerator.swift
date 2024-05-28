@@ -19,6 +19,7 @@ class StopLayerGenerator {
     static let defaultZoomThreshold = 16.0
 
     static let stopLayerId = "stop-layer"
+    static let stopTouchTargetLayerId = "\(stopLayerId)-touch-target"
     static func getTransferLayerId(_ index: Int) -> String {
         "\(stopLayerId)-transfer-\(index.description)"
     }
@@ -49,6 +50,11 @@ class StopLayerGenerator {
         stopLayer.iconImage = StopIcons.getStopLayerIcon()
         includeSharedProps(on: &stopLayer)
 
+        var stopTouchTargetLayer = SymbolLayer(id: Self.stopTouchTargetLayerId, source: sourceId)
+        stopTouchTargetLayer.iconImage = .expression(Exp(.image) { StopIcons.stopDummyIcon })
+        stopTouchTargetLayer.iconPadding = .constant(22.0)
+        includeSharedProps(on: &stopTouchTargetLayer)
+
         let transferLayers = (0 ..< 3).map { index in
             var transferLayer = SymbolLayer(id: Self.getTransferLayerId(index), source: sourceId)
             transferLayer.iconImage = StopIcons.getTransferLayerIcon(index)
@@ -58,7 +64,7 @@ class StopLayerGenerator {
             return transferLayer
         }
 
-        return [stopLayer] + transferLayers
+        return [stopTouchTargetLayer, stopLayer] + transferLayers
     }
 
     static func includeSharedProps(on layer: inout SymbolLayer) {
