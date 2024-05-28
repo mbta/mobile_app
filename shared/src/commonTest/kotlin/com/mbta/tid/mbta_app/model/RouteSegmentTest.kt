@@ -105,8 +105,77 @@ class RouteSegmentTest {
             )
 
         assertEquals(
-            mapOf("place-davis" to RouteSegment.StopAlertState(hasAlert = true)),
+            mapOf(
+                "place-davis" to
+                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+            ),
             segment.alertStateByStopId(mapOf("place-davis" to alertsForStop))
+        )
+    }
+
+    @Test
+    fun `alertStateByStopId handles full spectrum of possible states`() {
+        val segment =
+            RouteSegment(
+                id = "id",
+                sourceRouteId = "sourceRoute",
+                sourceRoutePatternId = "sourceRoutePattern",
+                stopIds =
+                    listOf("place-neither", "place-shuttle", "place-suspension", "place-both"),
+                otherPatternsByStopId = emptyMap()
+            )
+
+        val alerts =
+            mapOf(
+                "place-shuttle" to
+                    serviceAlert("place-shuttle", "sourceRoute", Alert.Effect.Shuttle),
+                "place-suspension" to
+                    serviceAlert("place-suspension", "sourceRoute", Alert.Effect.Suspension),
+                "place-both" to
+                    AlertAssociatedStop(
+                        stop = stop { id = "place-both" },
+                        relevantAlerts =
+                            listOf(
+                                alert {
+                                    effect = Alert.Effect.Shuttle
+                                    informedEntity(
+                                        listOf(
+                                            Alert.InformedEntity.Activity.Board,
+                                            Alert.InformedEntity.Activity.Exit,
+                                            Alert.InformedEntity.Activity.Ride
+                                        ),
+                                        route = "sourceRoute",
+                                        routeType = RouteType.HEAVY_RAIL,
+                                        stop = "place-both"
+                                    )
+                                },
+                                alert {
+                                    effect = Alert.Effect.Suspension
+                                    informedEntity(
+                                        listOf(
+                                            Alert.InformedEntity.Activity.Board,
+                                            Alert.InformedEntity.Activity.Exit,
+                                            Alert.InformedEntity.Activity.Ride
+                                        ),
+                                        route = "sourceRoute",
+                                        routeType = RouteType.HEAVY_RAIL,
+                                        stop = "place-both"
+                                    )
+                                }
+                            ),
+                        serviceStatus = StopServiceStatus.PARTIAL_SERVICE
+                    )
+            )
+
+        assertEquals(
+            mapOf(
+                "place-shuttle" to
+                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
+                "place-suspension" to
+                    RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                "place-both" to RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true)
+            ),
+            segment.alertStateByStopId(alerts)
         )
     }
 
@@ -183,7 +252,10 @@ class RouteSegmentTest {
             )
 
         assertEquals(
-            mapOf("place-davis" to RouteSegment.StopAlertState(hasAlert = true)),
+            mapOf(
+                "place-davis" to
+                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+            ),
             segment.alertStateByStopId(mapOf("place-davis" to alertsForStop))
         )
     }
@@ -194,14 +266,16 @@ class RouteSegmentTest {
         assertEquals(
             listOf(
                 Pair(SegmentAlertState.Normal, listOf("alewife", "davis", "porter")),
-                Pair(SegmentAlertState.Alert, listOf("porter", "harvard")),
+                Pair(SegmentAlertState.Suspension, listOf("porter", "harvard")),
                 Pair(SegmentAlertState.Normal, listOf("harvard", "central"))
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(
-                    "porter" to RouteSegment.StopAlertState(hasAlert = true),
-                    "harvard" to RouteSegment.StopAlertState(hasAlert = true)
+                    "porter" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "harvard" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
                 )
             )
         )
@@ -212,15 +286,18 @@ class RouteSegmentTest {
 
         assertEquals(
             listOf(
-                Pair(SegmentAlertState.Alert, listOf("alewife", "davis")),
+                Pair(SegmentAlertState.Suspension, listOf("alewife", "davis")),
                 Pair(SegmentAlertState.Normal, listOf("davis", "porter", "harvard", "central"))
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(
-                    "alewife" to RouteSegment.StopAlertState(hasAlert = true),
-                    "davis" to RouteSegment.StopAlertState(hasAlert = true),
-                    "central" to RouteSegment.StopAlertState(hasAlert = true)
+                    "alewife" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "davis" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "central" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
                 )
             )
         )
@@ -232,18 +309,23 @@ class RouteSegmentTest {
         assertEquals(
             listOf(
                 Pair(
-                    SegmentAlertState.Alert,
+                    SegmentAlertState.Suspension,
                     listOf("alewife", "davis", "porter", "harvard", "central")
                 ),
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(
-                    "alewife" to RouteSegment.StopAlertState(hasAlert = true),
-                    "davis" to RouteSegment.StopAlertState(hasAlert = true),
-                    "porter" to RouteSegment.StopAlertState(hasAlert = true),
-                    "harvard" to RouteSegment.StopAlertState(hasAlert = true),
-                    "central" to RouteSegment.StopAlertState(hasAlert = true)
+                    "alewife" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "davis" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "porter" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "harvard" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "central" to
+                        RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
                 )
             )
         )
@@ -267,6 +349,28 @@ class RouteSegmentTest {
     }
 
     @Test
+    fun `alertingSegments handles transition from suspension to shuttle`() {
+        assertEquals(
+            listOf(
+                Pair(SegmentAlertState.Normal, listOf("a", "b", "c")),
+                Pair(SegmentAlertState.Suspension, listOf("c", "d", "e")),
+                Pair(SegmentAlertState.Shuttle, listOf("e", "f", "g")),
+                Pair(SegmentAlertState.Normal, listOf("g", "h", "i"))
+            ),
+            RouteSegment.alertingSegments(
+                listOf("a", "b", "c", "d", "e", "f", "g", "h", "i"),
+                mapOf(
+                    "c" to RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "d" to RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    "e" to RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true),
+                    "f" to RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
+                    "g" to RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                )
+            )
+        )
+    }
+
+    @Test
     fun `splitAlertingSegments when alerting segment in the middle splits so alert in each segment`() {
         var routeSegment =
             RouteSegment(
@@ -285,8 +389,10 @@ class RouteSegmentTest {
 
         val alertsForStop =
             mapOf(
-                "davis" to serviceAlert("davis", routeSegment.sourceRouteId),
-                "porter" to serviceAlert("porter", routeSegment.sourceRouteId)
+                "davis" to
+                    serviceAlert("davis", routeSegment.sourceRouteId, Alert.Effect.Suspension),
+                "porter" to
+                    serviceAlert("porter", routeSegment.sourceRouteId, Alert.Effect.Suspension)
             )
 
         assertEquals(
@@ -314,7 +420,7 @@ class RouteSegmentTest {
                     sourceRouteId = routeSegment.sourceRouteId,
                     stopIds = listOf("davis", "porter"),
                     otherPatternsByStopId = mapOf(),
-                    alertState = SegmentAlertState.Alert
+                    alertState = SegmentAlertState.Suspension
                 ),
                 AlertAwareRouteSegment(
                     id = "id-2",
@@ -348,9 +454,12 @@ class RouteSegmentTest {
 
         val alertsForStop =
             mapOf(
-                "alewife" to serviceAlert("alewife", routeSegment.sourceRouteId),
-                "davis" to serviceAlert("davis", routeSegment.sourceRouteId),
-                "porter" to serviceAlert("porter", routeSegment.sourceRouteId)
+                "alewife" to
+                    serviceAlert("alewife", routeSegment.sourceRouteId, Alert.Effect.Suspension),
+                "davis" to
+                    serviceAlert("davis", routeSegment.sourceRouteId, Alert.Effect.Suspension),
+                "porter" to
+                    serviceAlert("porter", routeSegment.sourceRouteId, Alert.Effect.Suspension)
             )
 
         assertEquals(
@@ -370,7 +479,7 @@ class RouteSegmentTest {
                                     )
                                 )
                         ),
-                    alertState = SegmentAlertState.Alert
+                    alertState = SegmentAlertState.Suspension
                 ),
             ),
             routeSegment.splitAlertingSegments(alertsForStop)
@@ -421,13 +530,17 @@ class RouteSegmentTest {
         )
     }
 
-    private fun serviceAlert(stopId: String, routeId: String): AlertAssociatedStop {
+    private fun serviceAlert(
+        stopId: String,
+        routeId: String,
+        effect: Alert.Effect
+    ): AlertAssociatedStop {
         return AlertAssociatedStop(
             stop = stop { id = stopId },
             relevantAlerts =
                 listOf(
                     alert {
-                        effect = Alert.Effect.Shuttle
+                        this.effect = effect
                         informedEntity(
                             listOf(
                                 Alert.InformedEntity.Activity.Board,

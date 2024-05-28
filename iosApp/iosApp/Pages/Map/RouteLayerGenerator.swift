@@ -39,9 +39,9 @@ class RouteLayerGenerator {
     static func createAlertingRouteLayers() -> [LineLayer] {
         var alertingLayer = baseRouteLayer(layerId: alertingRouteLayerId)
 
-        alertingLayer.filter = Exp(.eq) {
+        alertingLayer.filter = Exp(.inExpression) {
             Exp(.get) { RouteSourceGenerator.propAlertStateKey }
-            String(describing: SegmentAlertState.alert)
+            [String(describing: SegmentAlertState.suspension), String(describing: SegmentAlertState.shuttle)]
         }
         alertingLayer.lineDasharray = .constant([2.0, 3.0])
         alertingLayer.lineColor = .constant(StyleColor(UIColor.white))

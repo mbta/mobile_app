@@ -55,7 +55,7 @@ data class RouteSegment(
         }
     }
 
-    internal data class StopAlertState(val hasAlert: Boolean)
+    internal data class StopAlertState(val hasSuspension: Boolean, val hasShuttle: Boolean)
 
     /**
      * Checks if each stop ID has a service alert relevant to this route segment. A service alert
@@ -70,7 +70,7 @@ data class RouteSegment(
         return stopIds
             .associateWith { stopId ->
                 if (!alertsByStop.containsKey(stopId)) {
-                    StopAlertState(hasAlert = false)
+                    StopAlertState(hasSuspension = false, hasShuttle = false)
                 } else {
 
                     var routes: Set<String> =
@@ -91,10 +91,14 @@ data class RouteSegment(
                             }
                             .orEmpty()
 
-                    StopAlertState(hasAlert = serviceAlerts.isNotEmpty())
+                    // TODO determine effects that count
+                    StopAlertState(
+                        hasSuspension = serviceAlerts.any { it.effect == Alert.Effect.Suspension },
+                        hasShuttle = serviceAlerts.any { it.effect == Alert.Effect.Shuttle }
+                    )
                 }
             }
-            .filterValues { it.hasAlert }
+            .filterValues { it.hasSuspension || it.hasShuttle }
     }
 
     /**
@@ -114,14 +118,20 @@ data class RouteSegment(
             val stopPairSegments =
                 stopIds
                     .map {
-                        Pair(it, stopsAlertState.getOrElse(it) { StopAlertState(hasAlert = false) })
+                        Pair(it, stopsAlertState.getOrElse(it) { StopAlertState(hasSuspension = false, hasShuttle = false) })
                     }
                     .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
                         val (firstStopId, firstStopAlerting) = firstStop
                         val (secondStopId, secondStopAlerting) = secondStop
                         val segmentState =
-                            if (firstStopAlerting.hasAlert && secondStopAlerting.hasAlert) {
-                                SegmentAlertState.Alert
+                            if (
+                                firstStopAlerting.hasSuspension && secondStopAlerting.hasSuspension
+                            ) {
+                                SegmentAlertState.Suspension
+                            } else if (
+                                firstStopAlerting.hasShuttle && secondStopAlerting.hasShuttle
+                            ) {
+                                SegmentAlertState.Shuttle
                             } else {
                                 SegmentAlertState.Normal
                             }
@@ -163,6 +173,7 @@ data class AlertAwareRouteSegment(
 ) : IRouteSegment
 
 enum class SegmentAlertState {
-    Alert,
+    Suspension,
+    Shuttle,
     Normal,
 }
