@@ -211,13 +211,12 @@ class RouteSegmentTest {
     }
 
     @Test
-    fun `alertingSegments when alerting segment at the ends splits so alert in each segment`() {
+    fun `alertingSegments ignores alert that only touches terminal`() {
 
         assertEquals(
             listOf(
                 Pair(true, listOf("alewife", "davis")),
-                Pair(false, listOf("davis", "porter", "harvard", "central")),
-                Pair(true, listOf("central"))
+                Pair(false, listOf("davis", "porter", "harvard", "central"))
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
@@ -311,70 +310,6 @@ class RouteSegmentTest {
                     stopIds = listOf("porter", "harvard", "central"),
                     otherPatternsByStopId = mapOf(),
                     isAlerting = false
-                ),
-            ),
-            routeSegment.splitAlertingSegments(alertsForStop)
-        )
-    }
-
-    @Test
-    fun `splitAlertingSegments when alerting segment at the ends splits so alert in each segment`() {
-        var routeSegment =
-            RouteSegment(
-                id = "id",
-                sourceRouteId = "sourceRoute",
-                sourceRoutePatternId = "sourceRoutePattern",
-                stopIds = listOf("alewife", "davis", "porter", "harvard", "central"),
-                otherPatternsByStopId =
-                    mapOf(
-                        "alewife" to
-                            listOf(
-                                RoutePatternKey(routeId = "otherRoute", routePatternId = "otherRp")
-                            )
-                    )
-            )
-
-        val alertsForStop =
-            mapOf(
-                "alewife" to serviceAlert("alewife", routeSegment.sourceRouteId),
-                "davis" to serviceAlert("davis", routeSegment.sourceRouteId),
-                "central" to serviceAlert("alewife", routeSegment.sourceRouteId)
-            )
-
-        assertEquals(
-            listOf(
-                AlertAwareRouteSegment(
-                    id = "id-0",
-                    sourceRoutePatternId = routeSegment.sourceRoutePatternId,
-                    sourceRouteId = routeSegment.sourceRouteId,
-                    stopIds = listOf("alewife", "davis"),
-                    otherPatternsByStopId =
-                        mapOf(
-                            "alewife" to
-                                listOf(
-                                    RoutePatternKey(
-                                        routeId = "otherRoute",
-                                        routePatternId = "otherRp"
-                                    )
-                                )
-                        ),
-                    isAlerting = true
-                ),
-                AlertAwareRouteSegment(
-                    id = "id-1",
-                    sourceRoutePatternId = routeSegment.sourceRoutePatternId,
-                    sourceRouteId = routeSegment.sourceRouteId,
-                    stopIds = listOf("davis", "porter", "harvard", "central"),
-                    otherPatternsByStopId = mapOf(),
-                    isAlerting = false
-                ),
-                AlertAwareRouteSegment(
-                    id = "id-2",
-                    sourceRoutePatternId = routeSegment.sourceRoutePatternId,
-                    sourceRouteId = routeSegment.sourceRouteId,
-                    stopIds = listOf("central"),
-                    otherPatternsByStopId = mapOf(),
-                    isAlerting = true
                 ),
             ),
             routeSegment.splitAlertingSegments(alertsForStop)
