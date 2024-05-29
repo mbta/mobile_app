@@ -86,8 +86,9 @@ struct NearbyTransitSection<Content: View>: View {
                     .shadow(color: Color.fill1, radius: pinned ? 1 : 0)
                     .accessibilityLabel("pin route")
             }
-        ).accessibilityAddTraits(pinned ? [.isSelected] : [])
-            .frame(maxHeight: pinIconHeight)
-            .accessibilityIdentifier("pinButton")
+        )
+        .accessibilityIdentifier("pinButton")
+        .accessibilityAddTraits(pinned ? [.isSelected] : [])
+        .frame(maxHeight: pinIconHeight)
     }
 }

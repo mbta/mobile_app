@@ -40,7 +40,6 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testFirstDistantAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let formatters = UpcomingTripAccessibilityFormatters()
         let text: any View = UpcomingTripAccessibilityFormatters().distantFuture(date: date, isFirst: true)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
@@ -50,7 +49,6 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testDistantAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let formatters = UpcomingTripAccessibilityFormatters()
         let text: any View = UpcomingTripAccessibilityFormatters().distantFuture(date: date, isFirst: false)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
@@ -60,7 +58,6 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let formatters = UpcomingTripAccessibilityFormatters()
         let text: any View = UpcomingTripAccessibilityFormatters().scheduled(date: date, isFirst: true)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
@@ -70,7 +67,6 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let formatters = UpcomingTripAccessibilityFormatters()
         let text: any View = UpcomingTripAccessibilityFormatters().scheduled(date: date, isFirst: false)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))

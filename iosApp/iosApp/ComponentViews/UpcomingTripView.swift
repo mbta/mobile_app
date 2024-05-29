@@ -116,7 +116,7 @@ class UpcomingTripAccessibilityFormatters {
     }
 
     public func predictionMinutes(minutes: Int32, isFirst: Bool) -> Text {
-        isFirst ? Text("arriving in \(minutes) minutes") : Text("and in \(minutes) minutes")
+        isFirst ? Text("arriving in \(minutes) min") : Text("and in \(minutes) min")
     }
 }
 
@@ -167,9 +167,11 @@ struct NoServiceView: View {
     var rawText: Text {
         switch effect {
         case .detour: Text("Detour")
-        case .shuttle: Text("Shuttle").accessibilityLabel(Text("Shuttle buses replace service"))
+        case .shuttle: Text("Shuttle")
+            .accessibilityLabel(Text("Shuttle buses replace service"))
         case .stopClosed: Text("Stop Closed")
-        case .suspension: Text("Suspension").accessibilityLabel(Text("Service suspended"))
+        case .suspension: Text("Suspension")
+            .accessibilityLabel(Text("Service suspended"))
         case .unknown: Text("No Service")
         }
     }

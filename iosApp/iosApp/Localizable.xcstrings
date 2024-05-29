@@ -33,9 +33,6 @@
         }
       }
     },
-    "and %@ minutes" : {
-
-    },
     "and arriving now" : {
 
     },
@@ -46,6 +43,9 @@
 
     },
     "and boarding now" : {
+
+    },
+    "and in %@ min" : {
 
     },
     "Approaching" : {
@@ -60,7 +60,7 @@
     "arriving at %@ scheduled" : {
 
     },
-    "arriving in %@ minutes" : {
+    "arriving in %@ min" : {
 
     },
     "arriving now" : {
@@ -123,6 +123,9 @@
     "Failed to load vehicles, could not connect to the server" : {
 
     },
+    "Key" : {
+      "extractionState" : "manual"
+    },
     "last updated %.0fs ago" : {
 
     },
@@ -165,10 +168,16 @@
     "Scheduled departures" : {
 
     },
+    "Service suspended" : {
+
+    },
     "Settings" : {
 
     },
     "Shuttle" : {
+
+    },
+    "Shuttle buses replace service" : {
 
     },
     "Stop Closed" : {
