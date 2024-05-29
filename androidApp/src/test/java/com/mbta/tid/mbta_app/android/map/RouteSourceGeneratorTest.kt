@@ -130,7 +130,7 @@ class RouteSourceGeneratorTest {
         )
 
         assertEquals(
-            SegmentAlertState.Alert.name,
+            SegmentAlertState.Shuttle.name,
             redSource.features[1].getStringProperty(RouteSourceGenerator.propAlertStateKey)
         )
         assertEquals(

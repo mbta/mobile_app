@@ -49,9 +49,14 @@ class RouteLayerGenerator(
                         RouteSourceGenerator.getRouteSourceId(route.id)
                     )
                     .filter(
-                        Expression.eq {
+                        Expression.inExpression {
                             get(RouteSourceGenerator.propAlertStateKey)
-                            literal(SegmentAlertState.Alert.name)
+                            literal(
+                                listOf(
+                                    SegmentAlertState.Suspension.name,
+                                    SegmentAlertState.Shuttle.name
+                                )
+                            )
                         }
                     )
                     .routeStyle()

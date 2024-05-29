@@ -185,7 +185,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
 
             XCTAssertEqual(
                 redFeatures[1].properties![RouteSourceGenerator.propAlertStateKey]!,
-                JSONValue(String(describing: SegmentAlertState.alert))
+                JSONValue(String(describing: SegmentAlertState.shuttle))
             )
             XCTAssertEqual(
                 redFeatures[1].geometry,
