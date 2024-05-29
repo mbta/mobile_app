@@ -56,6 +56,7 @@ struct NearbyTransitSection<Content: View>: View {
     private var routeHeader: some View {
         Label {
             routeName
+                .accessibilityHeading(.h2)
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(Color(hex: route.textColor))
                 .textCase(.none)
@@ -83,9 +84,11 @@ struct NearbyTransitSection<Content: View>: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .shadow(color: Color.fill1, radius: pinned ? 1 : 0)
+                    .accessibilityLabel("pin route")
             }
         )
-        .frame(maxHeight: pinIconHeight)
         .accessibilityIdentifier("pinButton")
+        .accessibilityAddTraits(pinned ? [.isSelected] : [])
+        .frame(maxHeight: pinIconHeight)
     }
 }

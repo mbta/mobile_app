@@ -12,6 +12,7 @@ import SwiftUI
 struct HeadsignRowView: View {
     let headsign: String
     let predictions: PatternsByHeadsign.Format
+    let routeType: RouteType
 
     var body: some View {
         HStack(spacing: 0) {
@@ -23,8 +24,14 @@ struct HeadsignRowView: View {
             switch onEnum(of: predictions) {
             case let .some(trips):
                 VStack(alignment: .trailing, spacing: 4) {
-                    ForEach(trips.trips, id: \.id) { prediction in
-                        UpcomingTripView(prediction: .some(prediction.format))
+                    let firstTrip = trips.trips.first
+                    let restTrips = trips.trips.dropFirst()
+
+                    if let firstTrip {
+                        UpcomingTripView(prediction: .some(firstTrip.format), isFirst: true)
+                        ForEach(restTrips, id: \.id) { prediction in
+                            UpcomingTripView(prediction: .some(prediction.format))
+                        }
                     }
                 }
             case let .noService(alert):
@@ -34,7 +41,10 @@ struct HeadsignRowView: View {
             case .loading:
                 UpcomingTripView(prediction: .loading)
             }
-        }.background(Color.fill3).frame(maxWidth: .infinity)
+        }
+        .accessibilityInputLabels([headsign])
+        .background(Color.fill3)
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -49,16 +59,24 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
                 prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
             }
             List {
-                HeadsignRowView(headsign: "Some", predictions: PatternsByHeadsign.FormatSome(trips: [
-                    .init(trip: .init(trip: trip, prediction: prediction), now: now.toKotlinInstant()),
-                ]))
-                HeadsignRowView(headsign: "None", predictions: PatternsByHeadsign.FormatNone.shared)
-                HeadsignRowView(headsign: "Loading", predictions: PatternsByHeadsign.FormatLoading.shared)
-                HeadsignRowView(headsign: "No Service", predictions: PatternsByHeadsign.FormatNoService(
-                    alert: ObjectCollectionBuilder.Single.shared.alert { alert in
-                        alert.effect = .suspension
-                    }
-                ))
+                HeadsignRowView(headsign: "Some",
+                                predictions: PatternsByHeadsign.FormatSome(trips: [
+                                    .init(trip: .init(trip: trip, prediction: prediction), now: now.toKotlinInstant()),
+                                ]),
+                                routeType: .heavyRail)
+                HeadsignRowView(headsign: "None",
+                                predictions: PatternsByHeadsign.FormatNone.shared,
+                                routeType: .heavyRail)
+                HeadsignRowView(headsign: "Loading",
+                                predictions: PatternsByHeadsign.FormatLoading.shared,
+                                routeType: .heavyRail)
+                HeadsignRowView(headsign: "No Service",
+                                predictions: PatternsByHeadsign.FormatNoService(
+                                    alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                                        alert.effect = .suspension
+                                    }
+                                ),
+                                routeType: .heavyRail)
             }
         }
     }

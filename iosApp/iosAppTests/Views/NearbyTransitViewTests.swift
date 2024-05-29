@@ -273,10 +273,11 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let distantInstant = Date.now.addingTimeInterval(TimeInterval(DISTANT_FUTURE_CUTOFF)).addingTimeInterval(5 * 60)
-            .toKotlinInstant()
+        let distantInstant = Date.now.addingTimeInterval(5 * 60)
+            .toKotlinInstant().plus(duration: DISTANT_FUTURE_CUTOFF)
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
+
         let rp1 = objects.routePattern(route: route) { routePattern in
             routePattern.representativeTrip { representativeTrip in
                 representativeTrip.headsign = "Dedham Mall"

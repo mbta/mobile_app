@@ -83,7 +83,8 @@ struct StopDetailsFilteredRouteView: View {
                 ) {
                     ForEach(rows, id: \.tripId) { row in
                         OptionalNavigationLink(value: row.navigationTarget) {
-                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted)
+                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
+                                            routeType: patternsByStop.route.type)
                         }.listRowBackground(Color.fill3)
                     }
                 }

@@ -33,10 +33,40 @@
         }
       }
     },
+    "and arriving now" : {
+
+    },
+    "and at %@" : {
+
+    },
+    "and at %@ scheduled" : {
+
+    },
+    "and boarding now" : {
+
+    },
+    "and in %@ min" : {
+
+    },
     "Approaching" : {
 
     },
     "ARR" : {
+
+    },
+    "arriving at %@" : {
+
+    },
+    "arriving at %@ scheduled" : {
+
+    },
+    "arriving in %@ min" : {
+
+    },
+    "arriving now" : {
+
+    },
+    "boarding now" : {
 
     },
     "BRD" : {
@@ -81,7 +111,13 @@
     "Failed to load new alerts, something went wrong" : {
 
     },
+    "Failed to load new predictions, something went wrong" : {
+
+    },
     "Failed to load new vehicles, something went wrong" : {
+
+    },
+    "Failed to load predictions, could not connect to the server" : {
 
     },
     "Failed to load vehicles, could not connect to the server" : {
@@ -120,16 +156,25 @@
     "Now at" : {
 
     },
+    "Open for more arrivals" : {
+
+    },
     "Routes" : {
 
     },
     "Scheduled departures" : {
 
     },
+    "Service suspended" : {
+
+    },
     "Settings" : {
 
     },
     "Shuttle" : {
+
+    },
+    "Shuttle buses replace service" : {
 
     },
     "Stop Closed" : {
