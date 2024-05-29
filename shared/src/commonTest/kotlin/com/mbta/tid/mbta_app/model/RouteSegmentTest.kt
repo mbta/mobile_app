@@ -199,7 +199,7 @@ class RouteSegmentTest {
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
-                stopsAlertStateOf(
+                mapOf(
                     "porter" to RouteSegment.StopAlertState(hasAlert = true),
                     "harvard" to RouteSegment.StopAlertState(hasAlert = true)
                 )
@@ -217,7 +217,7 @@ class RouteSegmentTest {
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
-                stopsAlertStateOf(
+                mapOf(
                     "alewife" to RouteSegment.StopAlertState(hasAlert = true),
                     "davis" to RouteSegment.StopAlertState(hasAlert = true),
                     "central" to RouteSegment.StopAlertState(hasAlert = true)
@@ -238,7 +238,7 @@ class RouteSegmentTest {
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
-                stopsAlertStateOf(
+                mapOf(
                     "alewife" to RouteSegment.StopAlertState(hasAlert = true),
                     "davis" to RouteSegment.StopAlertState(hasAlert = true),
                     "porter" to RouteSegment.StopAlertState(hasAlert = true),
@@ -261,7 +261,7 @@ class RouteSegmentTest {
             ),
             RouteSegment.alertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
-                stopsAlertStateOf()
+                mapOf()
             )
         )
     }
@@ -420,9 +420,6 @@ class RouteSegmentTest {
             routeSegment.splitAlertingSegments(alertsForStop)
         )
     }
-
-    private fun stopsAlertStateOf(vararg pairs: Pair<String, RouteSegment.StopAlertState>) =
-        mapOf(*pairs).withDefault { RouteSegment.StopAlertState(hasAlert = false) }
 
     private fun serviceAlert(stopId: String, routeId: String): AlertAssociatedStop {
         return AlertAssociatedStop(

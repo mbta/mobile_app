@@ -62,8 +62,7 @@ data class RouteSegment(
      * for a stop is relevant if it applies to the `sourceRouteId` for the segment or any route
      * included in the `otherPatternsByStopId` for that stop.
      *
-     * Only contains keys for stops with an alert, but has a default of no alert set so that
-     * [Map.getValue] will work.
+     * Only contains keys for stops with an alert.
      */
     internal fun alertStateByStopId(
         alertsByStop: Map<String, AlertAssociatedStop>
@@ -96,7 +95,6 @@ data class RouteSegment(
                 }
             }
             .filterValues { it.hasAlert }
-            .withDefault { StopAlertState(hasAlert = false) }
     }
 
     /**
@@ -115,7 +113,9 @@ data class RouteSegment(
 
             val stopPairSegments =
                 stopIds
-                    .map { Pair(it, stopsAlertState.getValue(it)) }
+                    .map {
+                        Pair(it, stopsAlertState.getOrElse(it) { StopAlertState(hasAlert = false) })
+                    }
                     .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
                         val (firstStopId, firstStopAlerting) = firstStop
                         val (secondStopId, secondStopAlerting) = secondStop
