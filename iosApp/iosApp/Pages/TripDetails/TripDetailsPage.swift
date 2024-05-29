@@ -47,10 +47,11 @@ struct TripDetailsPage: View {
     var body: some View {
         VStack {
             if let globalData = globalFetcher.response {
+                let vehicle = vehicleFetcher.response?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictionsFetcher.predictions,
-                    vehicle: vehicleFetcher.response?.vehicle, globalData: globalData
+                    vehicle: vehicle, globalData: globalData
                 ) {
                     vehicleCardView
                     if let target, let splitStops = stops.splitForTarget(

@@ -28,18 +28,29 @@ struct HeadsignRowView: View {
                     let restTrips = trips.trips.dropFirst()
 
                     if let firstTrip {
-                        UpcomingTripView(prediction: .some(firstTrip.format), isFirst: true)
+                        UpcomingTripView(prediction: .some(firstTrip.format),
+                                         routeType: routeType,
+                                         isFirst: true,
+                                         isOnly: restTrips.isEmpty)
                         ForEach(restTrips, id: \.id) { prediction in
-                            UpcomingTripView(prediction: .some(prediction.format))
+                            UpcomingTripView(prediction: .some(prediction.format),
+                                             routeType: routeType,
+                                             isFirst: false,
+                                             isOnly: false)
                         }
                     }
                 }
             case let .noService(alert):
-                UpcomingTripView(prediction: .noService(alert.alert.effect))
+                UpcomingTripView(
+                    prediction: .noService(alert.alert.effect),
+                    routeType: routeType,
+                    isFirst: true,
+                    isOnly: true
+                )
             case .none:
-                UpcomingTripView(prediction: .none)
+                UpcomingTripView(prediction: .none, routeType: routeType, isFirst: true, isOnly: true)
             case .loading:
-                UpcomingTripView(prediction: .loading)
+                UpcomingTripView(prediction: .loading, routeType: routeType, isFirst: true, isOnly: true)
             }
         }
         .accessibilityInputLabels([headsign])
