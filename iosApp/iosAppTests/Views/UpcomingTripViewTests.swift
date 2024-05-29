@@ -78,7 +78,7 @@ final class UpcomingTripViewTests: XCTestCase {
         let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)), isFirst: true)
         let predictionView = try sut.inspect().find(PredictionText.self)
         XCTAssertEqual(
-            "arriving in 5 minutes",
+            "arriving in 5 min",
             try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
@@ -87,7 +87,7 @@ final class UpcomingTripViewTests: XCTestCase {
         let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)), isFirst: false)
         let predictionView = try sut.inspect().find(PredictionText.self)
         XCTAssertEqual(
-            "and in 5 minutes",
+            "and in 5 min",
             try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
