@@ -118,7 +118,12 @@ data class RouteSegment(
             val stopPairSegments =
                 stopIds
                     .map {
-                        Pair(it, stopsAlertState.getOrElse(it) { StopAlertState(hasSuspension = false, hasShuttle = false) })
+                        Pair(
+                            it,
+                            stopsAlertState.getOrElse(it) {
+                                StopAlertState(hasSuspension = false, hasShuttle = false)
+                            }
+                        )
                     }
                     .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
                         val (firstStopId, firstStopAlerting) = firstStop
