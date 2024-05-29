@@ -37,11 +37,11 @@ data class RouteSegment(
     fun splitAlertingSegments(
         alertsByStop: Map<String, AlertAssociatedStop>
     ): List<AlertAwareRouteSegment> {
-        val stopsWithServiceAlerts = hasServiceAlertByStopId(alertsByStop)
+        val stopsAlertState = alertStateByStopId(alertsByStop)
 
-        val alertingSegments = alertingSegments(stopIds, stopsWithServiceAlerts)
+        val alertingSegments = alertingSegments(stopIds, stopsAlertState)
 
-        return alertingSegments.mapIndexed { index, (isAlerting, segmentStops) ->
+        return alertingSegments.mapIndexed { index, (alertState, segmentStops) ->
             val stopIdSet = segmentStops.toSet()
 
             AlertAwareRouteSegment(
@@ -49,22 +49,28 @@ data class RouteSegment(
                 sourceRoutePatternId = sourceRoutePatternId,
                 sourceRouteId = sourceRouteId,
                 stopIds = segmentStops,
-                isAlerting = isAlerting,
+                alertState = alertState,
                 otherPatternsByStopId = otherPatternsByStopId.filter { stopIdSet.contains(it.key) }
             )
         }
     }
 
+    internal data class StopAlertState(val hasAlert: Boolean)
+
     /**
-     * Get the set of stop IDs that have a service alert relevant to this route segment. A service
-     * alert for a stop is relevant if it applies to the `sourceRouteId` for the segment or any
-     * route included in the `otherPatternsByStopId` for that stop.
+     * Checks if each stop ID has a service alert relevant to this route segment. A service alert
+     * for a stop is relevant if it applies to the `sourceRouteId` for the segment or any route
+     * included in the `otherPatternsByStopId` for that stop.
+     *
+     * Only contains keys for stops with an alert.
      */
-    fun hasServiceAlertByStopId(alertsByStop: Map<String, AlertAssociatedStop>): Set<String> {
+    internal fun alertStateByStopId(
+        alertsByStop: Map<String, AlertAssociatedStop>
+    ): Map<String, StopAlertState> {
         return stopIds
-            .filter { stopId ->
+            .associateWith { stopId ->
                 if (!alertsByStop.containsKey(stopId)) {
-                    false
+                    StopAlertState(hasAlert = false)
                 } else {
 
                     var routes: Set<String> =
@@ -74,18 +80,21 @@ data class RouteSegment(
                             .toSet()
                     routes = routes.plus(sourceRouteId)
 
-                    val hasServiceAlert: Boolean =
-                        alertsByStop[stopId]?.serviceAlerts?.any { alert ->
-                            alert.anyInformedEntity { informedEntity ->
-                                informedEntity.route != null &&
-                                    routes.contains(informedEntity.route)
+                    val serviceAlerts =
+                        alertsByStop[stopId]
+                            ?.serviceAlerts
+                            ?.filter { alert ->
+                                alert.anyInformedEntity { informedEntity ->
+                                    informedEntity.route != null &&
+                                        routes.contains(informedEntity.route)
+                                }
                             }
-                        }
-                            ?: false
-                    hasServiceAlert
+                            .orEmpty()
+
+                    StopAlertState(hasAlert = serviceAlerts.isNotEmpty())
                 }
             }
-            .toSet()
+            .filterValues { it.hasAlert }
     }
 
     /**
@@ -93,10 +102,10 @@ data class RouteSegment(
      * boundaries are included in both segments.
      */
     companion object {
-        fun alertingSegments(
+        internal fun alertingSegments(
             stopIds: List<String>,
-            alertingStopIds: Set<String>
-        ): List<Pair<Boolean, List<String>>> {
+            stopsAlertState: Map<String, StopAlertState>
+        ): List<Pair<SegmentAlertState, List<String>>> {
 
             if (stopIds.isEmpty()) {
                 return listOf()
@@ -104,12 +113,19 @@ data class RouteSegment(
 
             val stopPairSegments =
                 stopIds
-                    .map { Pair(it, alertingStopIds.contains(it)) }
+                    .map {
+                        Pair(it, stopsAlertState.getOrElse(it) { StopAlertState(hasAlert = false) })
+                    }
                     .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
                         val (firstStopId, firstStopAlerting) = firstStop
                         val (secondStopId, secondStopAlerting) = secondStop
-                        val segmentAlerting = firstStopAlerting && secondStopAlerting
-                        Pair(segmentAlerting, listOf(firstStopId, secondStopId))
+                        val segmentState =
+                            if (firstStopAlerting.hasAlert && secondStopAlerting.hasAlert) {
+                                SegmentAlertState.Alert
+                            } else {
+                                SegmentAlertState.Normal
+                            }
+                        Pair(segmentState, listOf(firstStopId, secondStopId))
                     }
 
             return stopPairSegments.fold(emptyList()) { prevSegments, currSegment ->
@@ -143,5 +159,10 @@ data class AlertAwareRouteSegment(
     override val sourceRouteId: String,
     override val stopIds: List<String>,
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
-    val isAlerting: Boolean
+    val alertState: SegmentAlertState
 ) : IRouteSegment
+
+enum class SegmentAlertState {
+    Alert,
+    Normal,
+}

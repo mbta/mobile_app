@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SegmentAlertState
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import org.junit.Assert.assertEquals
@@ -56,6 +57,7 @@ class RouteSourceGeneratorTest {
         )
     }
 
+    @Test
     fun testAlertingSourcesCreated() {
         val now = Clock.System.now()
 
@@ -115,8 +117,8 @@ class RouteSourceGeneratorTest {
         assertEquals(redSource.features.size, 3)
 
         assertEquals(
-            false,
-            redSource.features[0].getBooleanProperty(RouteSourceGenerator.propIsAlertingKey)
+            SegmentAlertState.Normal.name,
+            redSource.features[0].getStringProperty(RouteSourceGenerator.propAlertStateKey)
         )
         assertEquals(
             lineSlice(
@@ -128,8 +130,8 @@ class RouteSourceGeneratorTest {
         )
 
         assertEquals(
-            true,
-            redSource.features[1].getBooleanProperty(RouteSourceGenerator.propIsAlertingKey)
+            SegmentAlertState.Alert.name,
+            redSource.features[1].getStringProperty(RouteSourceGenerator.propAlertStateKey)
         )
         assertEquals(
             lineSlice(
@@ -141,8 +143,8 @@ class RouteSourceGeneratorTest {
         )
 
         assertEquals(
-            false,
-            redSource.features[2].getBooleanProperty(RouteSourceGenerator.propIsAlertingKey)
+            SegmentAlertState.Normal.name,
+            redSource.features[2].getStringProperty(RouteSourceGenerator.propAlertStateKey)
         )
         assertEquals(
             lineSlice(

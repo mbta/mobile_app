@@ -8,6 +8,7 @@ import com.mapbox.turf.TurfMisc.lineSlice
 import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.AlertAwareRouteSegment
+import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
@@ -17,7 +18,7 @@ data class RouteLineData(
     val sourceRoutePatternId: String,
     val line: LineString,
     val stopIds: List<String>,
-    val isAlerting: Boolean
+    val alertState: SegmentAlertState
 )
 
 data class RouteSourceData(
@@ -44,7 +45,7 @@ class RouteSourceGenerator(
 
         fun getRouteSourceId(routeId: String) = "$routeSourceId-$routeId"
 
-        val propIsAlertingKey = "isAlerting"
+        val propAlertStateKey = "alertState"
 
         fun generateRouteSources(
             routeData: MapFriendlyRouteResponse,
@@ -65,7 +66,7 @@ class RouteSourceGenerator(
             val features =
                 routeLines.map { lineData ->
                     val feature = Feature.fromGeometry(lineData.line)
-                    feature.addBooleanProperty(propIsAlertingKey, lineData.isAlerting)
+                    feature.addStringProperty(propAlertStateKey, lineData.alertState.name)
                     feature
                 }
             return RouteSourceData(routeId, routeLines, getRouteSourceId(routeId), features)
@@ -111,7 +112,7 @@ class RouteSourceGenerator(
                 segment.sourceRoutePatternId,
                 lineSegment,
                 segment.stopIds,
-                segment.isAlerting
+                segment.alertState
             )
         }
     }

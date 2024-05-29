@@ -170,7 +170,10 @@ final class RouteSourceGeneratorTests: XCTestCase {
             }
 
             XCTAssertEqual(redFeatures.count, 3)
-            XCTAssertEqual(redFeatures[0].properties![RouteSourceGenerator.propIsAlertingKey]!, JSONValue(Bool(false)))
+            XCTAssertEqual(
+                redFeatures[0].properties![RouteSourceGenerator.propAlertStateKey]!,
+                JSONValue(String(describing: SegmentAlertState.normal))
+            )
             XCTAssertEqual(
                 redFeatures[0].geometry,
                 .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC1.polyline!).coordinates!)
@@ -181,7 +184,8 @@ final class RouteSourceGeneratorTests: XCTestCase {
             )
 
             XCTAssertEqual(
-                redFeatures[1].properties![RouteSourceGenerator.propIsAlertingKey]!, JSONValue(Bool(true))
+                redFeatures[1].properties![RouteSourceGenerator.propAlertStateKey]!,
+                JSONValue(String(describing: SegmentAlertState.alert))
             )
             XCTAssertEqual(
                 redFeatures[1].geometry,
@@ -192,7 +196,8 @@ final class RouteSourceGeneratorTests: XCTestCase {
                     )!)
             )
             XCTAssertEqual(
-                redFeatures[2].properties![RouteSourceGenerator.propIsAlertingKey]!, JSONValue(Bool(false))
+                redFeatures[2].properties![RouteSourceGenerator.propAlertStateKey]!,
+                JSONValue(String(describing: SegmentAlertState.normal))
             )
             XCTAssertEqual(
                 redFeatures[2].geometry,
