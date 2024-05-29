@@ -45,7 +45,7 @@ class RouteSourceGenerator(
 
         fun getRouteSourceId(routeId: String) = "$routeSourceId-$routeId"
 
-        val propAlertStateKey = "isAlerting"
+        val propAlertStateKey = "alertState"
 
         fun generateRouteSources(
             routeData: MapFriendlyRouteResponse,
