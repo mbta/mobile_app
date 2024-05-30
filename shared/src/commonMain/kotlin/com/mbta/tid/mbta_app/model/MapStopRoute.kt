@@ -3,7 +3,12 @@ package com.mbta.tid.mbta_app.model
 enum class MapStopRoute {
     RED {
         override fun matches(route: Route): Boolean {
-            return route.id == "Red" || route.id == "Mattapan"
+            return route.id == "Red"
+        }
+    },
+    MATTAPAN {
+        override fun matches(route: Route): Boolean {
+            return route.id == "Mattapan"
         }
     },
     ORANGE {
