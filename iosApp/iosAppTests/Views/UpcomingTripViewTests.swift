@@ -19,37 +19,53 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testFirstBoardingAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatBoarding()), isFirst: true)
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "boarding now"))
+        let sut = UpcomingTripView(
+            prediction: .some(UpcomingTrip.FormatBoarding()),
+            routeType: .heavyRail,
+            isFirst: true
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train boarding now"))
     }
 
     func testBoardingAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatBoarding()), isFirst: false)
+        let sut = UpcomingTripView(
+            prediction: .some(UpcomingTrip.FormatBoarding()),
+            routeType: .heavyRail,
+            isFirst: false
+        )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and boarding now"))
     }
 
     func testFirstArrivingAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatArriving()), isFirst: true)
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "arriving now"))
+        let sut = UpcomingTripView(
+            prediction: .some(UpcomingTrip.FormatArriving()),
+            routeType: .heavyRail,
+            isFirst: true
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving now"))
     }
 
     func testArrivingAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatArriving()), isFirst: false)
+        let sut = UpcomingTripView(
+            prediction: .some(UpcomingTrip.FormatArriving()),
+            routeType: .heavyRail,
+            isFirst: false
+        )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and arriving now"))
     }
 
     func testFirstDistantAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().distantFuture(date: date, isFirst: true)
+        let text: any View = UpcomingTripAccessibilityFormatters().distantFutureFirst(date: date, vehicleText: "trains")
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
 
-        XCTAssertEqual("arriving at 4:00 PM", foundText)
+        XCTAssertEqual("trains arriving at 4:00 PM", foundText)
     }
 
     func testDistantAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().distantFuture(date: date, isFirst: false)
+        let text: any View = UpcomingTripAccessibilityFormatters().distantFutureOther(date: date)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
 
@@ -58,16 +74,16 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().scheduled(date: date, isFirst: true)
+        let text: any View = UpcomingTripAccessibilityFormatters().scheduledFirst(date: date, vehicleText: "buses")
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
 
-        XCTAssertEqual("arriving at 4:00 PM scheduled", foundText)
+        XCTAssertEqual("buses arriving at 4:00 PM scheduled", foundText)
     }
 
     func testScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().scheduled(date: date, isFirst: false)
+        let text: any View = UpcomingTripAccessibilityFormatters().scheduledOther(date: date)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
 
@@ -75,10 +91,13 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testFirstPredictedAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)), isFirst: true)
+        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)),
+                                   routeType: .heavyRail,
+                                   isFirst: true,
+                                   isOnly: false)
         let predictionView = try sut.inspect().find(PredictionText.self)
         XCTAssertEqual(
-            "arriving in 5 min",
+            "trains arriving in 5 min",
             try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
