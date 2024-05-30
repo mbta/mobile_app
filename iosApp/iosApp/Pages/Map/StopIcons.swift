@@ -15,10 +15,13 @@ enum StopIcons {
     static let stopZoomWidePrefix = "wide-"
 
     static let stopContainerPrefix = "\(stopIconPrefix)container-"
+    static let stopTransferSuffix = "-transfer"
+
     // This is a single transparent pixel, used to create a layer just for tap target padding
     static let stopDummyIcon = "\(stopIconPrefix)dummy-tap-pixel"
 
     static let all: [String] = MapStopRoute.allCases.flatMap { routeType in atZooms(stopIconPrefix, routeType.name) }
+        + atZooms(stopIconPrefix, MapStopRoute.bus.name + stopTransferSuffix)
         + ["2", "3"].flatMap { memberCount in atZooms(stopContainerPrefix, memberCount) }
         + [stopDummyIcon]
 
@@ -30,7 +33,7 @@ enum StopIcons {
         Exp(.concat) {
             stopIconPrefix
             zoomPrefix
-            Exp(.string) { Exp(.at) { index; Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
+            routeAt(index)
         }
     }
 
@@ -59,7 +62,17 @@ enum StopIcons {
             Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
             ""
             2
-            getRouteIconName(zoomPrefix, index)
+            Exp(.concat) {
+                getRouteIconName(zoomPrefix, index)
+                Exp(.switchCase) {
+                    // Regular non-transfer bus icons are different than the other modes,
+                    // and don't fit in the transfer stop containers, this adds a suffix
+                    // to use a different icon when a bus is included in a transfer stack.
+                    Exp(.eq) { routeAt(index); MapStopRoute.bus.name }
+                    stopTransferSuffix
+                    ""
+                }
+            }
         }
     }
 
@@ -70,5 +83,9 @@ enum StopIcons {
             StopLayerGenerator.closeZoomThreshold
             getTransferIconName(stopZoomClosePrefix, index)
         })
+    }
+
+    private static func routeAt(_ index: Int) -> Expression {
+        Exp(.string) { Exp(.at) { index; Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
     }
 }
