@@ -17,19 +17,19 @@ class RouteLineData {
     let routeType: String?
     let line: LineString
     let stopIds: [String]
-    let isAlerting: Bool
+    let alertState: SegmentAlertState
     let color: String?
     let sortKey: Int32
 
     init(id: String, routeId: String, route: Route?, routePatternId: String, line: LineString, stopIds: [String],
-         isAlerting: Bool) {
+         alertState: SegmentAlertState) {
         self.id = id
         self.routeId = routeId
         self.routePatternId = routePatternId
         routeType = route?.type.name
         self.line = line
         self.stopIds = stopIds
-        self.isAlerting = isAlerting
+        self.alertState = alertState
         let hexFormattedColor: String? = route?.color == nil ? nil : "#\(route!.color)"
         color = hexFormattedColor
 
@@ -55,7 +55,7 @@ class RouteSourceGenerator {
     static let propRouteType = "routeType"
     static let propRouteSortKey = "routeSortKey"
     static let propRouteColor = "routeColor"
-    static let propIsAlertingKey = "isAlerting"
+    static let propAlertStateKey = "alertState"
 
     init(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route],
          stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
@@ -83,7 +83,7 @@ class RouteSourceGenerator {
         }
         featureProps[Self.propRouteSortKey] = JSONValue(Int(routeLineData.sortKey))
 
-        featureProps[Self.propIsAlertingKey] = JSONValue(Bool(routeLineData.isAlerting))
+        featureProps[Self.propAlertStateKey] = JSONValue(String(describing: routeLineData.alertState))
         feature.properties = featureProps
         return feature
     }
@@ -139,7 +139,7 @@ class RouteSourceGenerator {
                              route: route,
                              routePatternId: segment.sourceRoutePatternId,
                              line: lineSegment,
-                             stopIds: segment.stopIds, isAlerting: segment.isAlerting)
+                             stopIds: segment.stopIds, alertState: segment.alertState)
     }
 
     static func forRailAtStop(_ stopShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],

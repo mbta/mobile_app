@@ -37,11 +37,11 @@ data class RouteSegment(
     fun splitAlertingSegments(
         alertsByStop: Map<String, AlertAssociatedStop>
     ): List<AlertAwareRouteSegment> {
-        val stopsWithServiceAlerts = hasServiceAlertByStopId(alertsByStop)
+        val stopsAlertState = alertStateByStopId(alertsByStop)
 
-        val alertingSegments = RouteSegment.alertingSegments(stopIds, stopsWithServiceAlerts)
+        val alertingSegments = alertingSegments(stopIds, stopsAlertState)
 
-        return alertingSegments.mapIndexed { index, (isAlerting, segmentStops) ->
+        return alertingSegments.mapIndexed { index, (alertState, segmentStops) ->
             val stopIdSet = segmentStops.toSet()
 
             AlertAwareRouteSegment(
@@ -49,22 +49,28 @@ data class RouteSegment(
                 sourceRoutePatternId = sourceRoutePatternId,
                 sourceRouteId = sourceRouteId,
                 stopIds = segmentStops,
-                isAlerting = isAlerting,
+                alertState = alertState,
                 otherPatternsByStopId = otherPatternsByStopId.filter { stopIdSet.contains(it.key) }
             )
         }
     }
 
+    internal data class StopAlertState(val hasSuspension: Boolean, val hasShuttle: Boolean)
+
     /**
-     * Get the set of stop IDs that have a service alert relevant to this route segment. A service
-     * alert for a stop is relevant if it applies to the `sourceRouteId` for the segment or any
-     * route included in the `otherPatternsByStopId` for that stop.
+     * Checks if each stop ID has a service alert relevant to this route segment. A service alert
+     * for a stop is relevant if it applies to the `sourceRouteId` for the segment or any route
+     * included in the `otherPatternsByStopId` for that stop.
+     *
+     * Only contains keys for stops with an alert.
      */
-    fun hasServiceAlertByStopId(alertsByStop: Map<String, AlertAssociatedStop>): Set<String> {
+    internal fun alertStateByStopId(
+        alertsByStop: Map<String, AlertAssociatedStop>
+    ): Map<String, StopAlertState> {
         return stopIds
-            .filter { stopId ->
+            .associateWith { stopId ->
                 if (!alertsByStop.containsKey(stopId)) {
-                    false
+                    StopAlertState(hasSuspension = false, hasShuttle = false)
                 } else {
 
                     var routes: Set<String> =
@@ -74,70 +80,85 @@ data class RouteSegment(
                             .toSet()
                     routes = routes.plus(sourceRouteId)
 
-                    val hasServiceAlert: Boolean =
-                        alertsByStop[stopId]?.serviceAlerts?.any { alert ->
-                            alert.anyInformedEntity { informedEntity ->
-                                informedEntity.route != null &&
-                                    routes.contains(informedEntity.route)
+                    val serviceAlerts =
+                        alertsByStop[stopId]
+                            ?.serviceAlerts
+                            ?.filter { alert ->
+                                alert.anyInformedEntity { informedEntity ->
+                                    informedEntity.route != null &&
+                                        routes.contains(informedEntity.route)
+                                }
                             }
-                        }
-                            ?: false
-                    hasServiceAlert
+                            .orEmpty()
+
+                    // TODO determine effects that count
+                    StopAlertState(
+                        hasSuspension = serviceAlerts.any { it.effect == Alert.Effect.Suspension },
+                        hasShuttle = serviceAlerts.any { it.effect == Alert.Effect.Shuttle }
+                    )
                 }
             }
-            .toSet()
+            .filterValues { it.hasSuspension || it.hasShuttle }
     }
 
     /**
-     * Split the list of stops into segments based on whether or not they are alerting. At a
-     * boundary where the segment switches from non-alerting to alerting or alerting to
-     * non-alerting, the alerting stop is included in both segments.
+     * Split the list of stops into segments based on whether or not they are alerting. Stops on
+     * boundaries are included in both segments.
      */
     companion object {
-        fun alertingSegments(
+        internal fun alertingSegments(
             stopIds: List<String>,
-            alertingStopIds: Set<String>
-        ): List<Pair<Boolean, List<String>>> {
+            stopsAlertState: Map<String, StopAlertState>
+        ): List<Pair<SegmentAlertState, List<String>>> {
 
             if (stopIds.isEmpty()) {
                 return listOf()
             }
 
-            val firstStopId = stopIds[0]
+            val stopPairSegments =
+                stopIds
+                    .map {
+                        Pair(
+                            it,
+                            stopsAlertState.getOrElse(it) {
+                                StopAlertState(hasSuspension = false, hasShuttle = false)
+                            }
+                        )
+                    }
+                    .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
+                        val (firstStopId, firstStopAlerting) = firstStop
+                        val (secondStopId, secondStopAlerting) = secondStop
+                        val segmentState =
+                            if (
+                                firstStopAlerting.hasSuspension && secondStopAlerting.hasSuspension
+                            ) {
+                                SegmentAlertState.Suspension
+                            } else if (
+                                firstStopAlerting.hasShuttle && secondStopAlerting.hasShuttle
+                            ) {
+                                SegmentAlertState.Shuttle
+                            } else {
+                                SegmentAlertState.Normal
+                            }
+                        Pair(segmentState, listOf(firstStopId, secondStopId))
+                    }
 
-            var accSegments: MutableList<Pair<Boolean, List<String>>> = mutableListOf()
-            // Seed the first segment with the first stop
-            var inProgressSegment: Pair<Boolean, MutableList<String>> =
-                Pair(alertingStopIds.contains(firstStopId), mutableListOf(firstStopId))
-            // the first stop was seeded - skip it
-            stopIds.drop(1).forEach { stopId ->
-                val stopHasAlert = alertingStopIds.contains(stopId)
-                val inProgressSegmentHasAlert = inProgressSegment.first
-
-                if (stopHasAlert == inProgressSegmentHasAlert) {
-                    inProgressSegment.second.add(stopId)
+            return stopPairSegments.fold(emptyList()) { prevSegments, currSegment ->
+                if (prevSegments.isEmpty()) {
+                    return@fold listOf(currSegment)
+                }
+                val oldSegments = prevSegments.dropLast(1)
+                val lastSegment = prevSegments.last()
+                check(lastSegment.second.last() == currSegment.second.first())
+                if (lastSegment.first == currSegment.first) {
+                    oldSegments +
+                        listOf(
+                            Pair(lastSegment.first, lastSegment.second + currSegment.second.drop(1))
+                        )
                 } else {
-                    inProgressSegment =
-                        if (stopHasAlert && !inProgressSegmentHasAlert) {
-                            // add this stop as the last stop in the in progress segment, and move
-                            // that
-                            // segment to the accumulator
-                            inProgressSegment.second.add(stopId)
-                            accSegments.add(inProgressSegment)
-                            Pair(stopHasAlert, mutableListOf(stopId))
-                        } else {
-                            // this stop doesn't have an alert, the previous did one did.
-                            // move the in progress segment to the accumulator and start a new one
-                            // with the last alerting stop from the previous segment
-                            accSegments.add(inProgressSegment)
-                            Pair(
-                                stopHasAlert,
-                                mutableListOf(inProgressSegment.second.last(), stopId)
-                            )
-                        }
+                    prevSegments + listOf(currSegment)
                 }
             }
-            return accSegments.plus(inProgressSegment)
         }
     }
 }
@@ -153,5 +174,11 @@ data class AlertAwareRouteSegment(
     override val sourceRouteId: String,
     override val stopIds: List<String>,
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
-    val isAlerting: Boolean
+    val alertState: SegmentAlertState
 ) : IRouteSegment
+
+enum class SegmentAlertState {
+    Suspension,
+    Shuttle,
+    Normal,
+}

@@ -46,7 +46,10 @@ final class DirectionPickerTests: XCTestCase {
     func testDirectionFilter() throws {
         let patternsByStop = testData()
 
-        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(routeId: patternsByStop.route.id, directionId: 0))
+        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
+            routeId: patternsByStop.route.id,
+            directionId: 0
+        ))
 
         let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter)
         XCTAssertEqual(0, filter.wrappedValue?.directionId)

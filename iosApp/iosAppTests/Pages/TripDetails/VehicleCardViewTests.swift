@@ -56,7 +56,10 @@ final class VehicleCardViewTests: XCTestCase {
         let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip, now: now)
         XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
         XCTAssertNotNil(try sut.inspect().find(text: "Red Line"))
-        let lastUpdated = try sut.inspect().find(ViewType.Text.self, where: { try $0.string().contains("last updated") })
+        let lastUpdated = try sut.inspect().find(
+            ViewType.Text.self,
+            where: { try $0.string().contains("last updated") }
+        )
         XCTAssertNotNil(lastUpdated)
         XCTAssertEqual("last updated 10s ago", try lastUpdated.string(locale: Locale(identifier: "en")))
     }

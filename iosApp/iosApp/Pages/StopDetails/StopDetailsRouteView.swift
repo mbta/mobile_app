@@ -23,7 +23,8 @@ struct StopDetailsRouteView: View {
                 }, label: {
                     HeadsignRowView(
                         headsign: patternsByHeadsign.headsign,
-                        predictions: patternsByHeadsign.format(now: now)
+                        predictions: patternsByHeadsign.format(now: now),
+                        routeType: patternsByHeadsign.route.type
                     )
                 }).listRowBackground(Color.fill3)
             }

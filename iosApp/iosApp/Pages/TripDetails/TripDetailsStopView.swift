@@ -18,7 +18,7 @@ struct TripDetailsStopView: View {
             HStack {
                 Text(stop.stop.name)
                 Spacer()
-                UpcomingTripView(prediction: .some(stop.format(now: now)))
+                UpcomingTripView(prediction: .some(stop.format(now: now)), routeType: nil)
             }
             scrollRoutes
         }

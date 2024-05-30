@@ -5,6 +5,7 @@ import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 
 class RouteLayerGenerator(
@@ -47,7 +48,17 @@ class RouteLayerGenerator(
                         getRouteLayerId("${route.id}-alerting"),
                         RouteSourceGenerator.getRouteSourceId(route.id)
                     )
-                    .filter(Expression.get(RouteSourceGenerator.propIsAlertingKey))
+                    .filter(
+                        Expression.inExpression {
+                            get(RouteSourceGenerator.propAlertStateKey)
+                            literal(
+                                listOf(
+                                    SegmentAlertState.Suspension.name,
+                                    SegmentAlertState.Shuttle.name
+                                )
+                            )
+                        }
+                    )
                     .routeStyle()
                     .lineDasharray(listOf(2.0, 3.0))
                     .lineColor("#FFFFFF")

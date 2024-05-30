@@ -76,7 +76,7 @@ final class TripDetailsPageTests: XCTestCase {
         }
 
         let trip = objects.trip { trip in
-            trip.routeId = "Red"
+            trip.routeId = route.id
         }
 
         let vehicle = objects.vehicle { vehicle in

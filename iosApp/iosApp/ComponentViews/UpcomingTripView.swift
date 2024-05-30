@@ -19,6 +19,11 @@ extension UpcomingTrip.FormatOverridden {
 
 struct UpcomingTripView: View {
     let prediction: State
+    var routeType: RouteType?
+    var isFirst: Bool = true
+    var isOnly: Bool = true
+
+    let accessibilityFormatters = UpcomingTripAccessibilityFormatters()
 
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 16
@@ -31,7 +36,31 @@ struct UpcomingTripView: View {
     }
 
     var body: some View {
-        let predictionView: any View = switch prediction {
+        predictionView
+            .foregroundStyle(Color.text)
+            .frame(minWidth: 48, alignment: .trailing)
+            .padding(.trailing, 4)
+    }
+
+    var vehicleTypeText: String {
+        // hardcoding plurals because pluralized strings that don't include the number are not supported
+        // https://developer.apple.com/forums/thread/737329#737329021
+        switch routeType {
+        case .bus:
+            isOnly ? NSLocalizedString("bus", comment: "bus") : NSLocalizedString("buses", comment: "buses")
+
+        case .commuterRail, .heavyRail, .lightRail:
+            isOnly ? NSLocalizedString("train", comment: "train") : NSLocalizedString("trains", comment: "trains")
+
+        case .ferry: isOnly ? NSLocalizedString("ferry", comment: "ferry")
+            : NSLocalizedString("ferries", comment: "ferries")
+        case nil: ""
+        }
+    }
+
+    @ViewBuilder
+    var predictionView: some View {
+        switch prediction {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
@@ -41,17 +70,35 @@ struct UpcomingTripView: View {
                 Text(verbatim: "")
             case .boarding:
                 Text("BRD").font(.headline).bold()
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.boardingFirst(vehicleText: vehicleTypeText)
+                        : accessibilityFormatters.boardingOther())
             case .arriving:
                 Text("ARR").font(.headline).bold()
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
+                        : accessibilityFormatters.arrivingOther())
             case .approaching:
                 PredictionText(minutes: 1)
             case let .distantFuture(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.distantFutureFirst(
+                            date: format.predictionTime.toNSDate(),
+                            vehicleText: vehicleTypeText
+                        )
+                        : accessibilityFormatters.distantFutureOther(date: format.predictionTime.toNSDate()))
                     .font(.footnote)
                     .fontWeight(.semibold)
             case let .schedule(schedule):
                 HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
+                        .accessibilityLabel(isFirst
+                            ? accessibilityFormatters.scheduledFirst(
+                                date: schedule.scheduleTime.toNSDate(),
+                                vehicleText: vehicleTypeText
+                            )
+                            : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
                         .font(.footnote)
                         .fontWeight(.semibold)
                     Image(.faClock)
@@ -63,6 +110,10 @@ struct UpcomingTripView: View {
                 }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
+                                                                         vehicleText: vehicleTypeText)
+                        : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
@@ -71,11 +122,58 @@ struct UpcomingTripView: View {
         case .loading:
             ProgressView()
         }
-        AnyView(predictionView)
-            .foregroundStyle(Color.text)
-            .frame(minWidth: 48, alignment: .trailing)
-            .padding(.trailing, 4)
     }
+}
+
+class UpcomingTripAccessibilityFormatters {
+    private let timeFormatter: DateFormatter = makeTimeFormatter()
+
+    public func boardingFirst(vehicleText: String) -> Text {
+        Text("\(vehicleText) boarding now")
+    }
+
+    public func boardingOther() -> Text {
+        Text("and boarding now")
+    }
+
+    public func arrivingFirst(vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving now")
+    }
+
+    public func arrivingOther() -> Text {
+        Text("and arriving now")
+    }
+
+    public func distantFutureFirst(date: Date, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))")
+    }
+
+    public func distantFutureOther(date: Date) -> Text {
+        Text("and at \(timeFormatter.string(from: date))")
+    }
+
+    public func scheduledFirst(date: Date, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) scheduled")
+    }
+
+    public func scheduledOther(date: Date) -> Text {
+        Text("and at \(timeFormatter.string(from: date)) scheduled")
+    }
+
+    public func predictionMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving in \(minutes) min")
+    }
+
+    public func predictionMinutesOther(minutes: Int32) -> Text {
+        Text("and in \(minutes) min")
+    }
+}
+
+func makeTimeFormatter() -> DateFormatter {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .none
+    formatter.timeStyle = .short
+    return formatter
 }
 
 struct NoServiceView: View {
@@ -119,8 +217,10 @@ struct NoServiceView: View {
         switch effect {
         case .detour: Text("Detour")
         case .shuttle: Text("Shuttle")
+            .accessibilityLabel(Text("Shuttle buses replace service"))
         case .stopClosed: Text("Stop Closed")
         case .suspension: Text("Suspension")
+            .accessibilityLabel(Text("Service suspended"))
         case .unknown: Text("No Service")
         }
     }
@@ -139,10 +239,10 @@ struct NoServiceView: View {
 struct UpcomingTripView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .trailing) {
-            UpcomingTripView(prediction: .noService(.suspension))
-            UpcomingTripView(prediction: .noService(.shuttle))
-            UpcomingTripView(prediction: .noService(.stopClosure))
-            UpcomingTripView(prediction: .noService(.detour))
+            UpcomingTripView(prediction: .noService(.suspension), routeType: .heavyRail)
+            UpcomingTripView(prediction: .noService(.shuttle), routeType: .heavyRail)
+            UpcomingTripView(prediction: .noService(.stopClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
         }
         .previewDisplayName("No Service")
     }

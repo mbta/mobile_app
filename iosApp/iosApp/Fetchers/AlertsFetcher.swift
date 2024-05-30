@@ -21,6 +21,9 @@ class AlertsFetcher: ObservableObject {
     @Published var socketError: Error?
     @Published var errorText: Text?
 
+    // TODO: remove after debugging mixed shuttle/suspension alerts
+    static let splitAlert566172 = true
+
     let socket: PhoenixSocket
     var channel: PhoenixChannel?
     var onMessageSuccessCallback: (() -> Void)?
@@ -76,7 +79,12 @@ class AlertsFetcher: ObservableObject {
                     .parseMessage(payload: stringPayload)
                 Logger().debug("Received \(newAlerts.alerts.count) alerts")
                 DispatchQueue.main.async {
-                    self.alerts = newAlerts
+                    let splitNewAlerts = if Self.splitAlert566172 {
+                        newAlerts.splitAlert566172()
+                    } else {
+                        newAlerts
+                    }
+                    self.alerts = splitNewAlerts
                     self.socketError = nil
                     self.errorText = nil
                     if let callback = self.onMessageSuccessCallback {

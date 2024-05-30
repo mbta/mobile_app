@@ -28,7 +28,10 @@ final class StopDetailsPageTests: XCTestCase {
         let routePattern = objects.routePattern(route: route) { _ in }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(
+            routeId: route.id,
+            directionId: routePattern.directionId
+        ))
 
         class FakeSchedulesRepository: ISchedulesRepository {
             let callback: (_ stopIds: [String]) -> Void
@@ -78,7 +81,10 @@ final class StopDetailsPageTests: XCTestCase {
         let routePattern = objects.routePattern(route: route) { _ in }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(routeId: route.id, directionId: routePattern.directionId))
+        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
+            routeId: route.id,
+            directionId: routePattern.directionId
+        ))
 
         let sut = StopDetailsPage(
             globalFetcher: .init(backend: IdleBackend()),
@@ -109,7 +115,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let schedulesLoadedPublisher = PassthroughSubject<Bool, Never>()
 
-        class fakeSchedulesRepository: ISchedulesRepository {
+        class FakeSchedulesRepository: ISchedulesRepository {
             let objects: ObjectCollectionBuilder
             let callback: (() -> Void)?
             init(objects: ObjectCollectionBuilder, callback: (() -> Void)?) {
@@ -129,11 +135,17 @@ final class StopDetailsPageTests: XCTestCase {
         }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: routePattern.directionId))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(
+            routeId: route.id,
+            directionId: routePattern.directionId
+        ))
 
         let sut = StopDetailsPage(
             globalFetcher: .init(backend: IdleBackend()),
-            schedulesRepository: fakeSchedulesRepository(objects: objects, callback: { schedulesLoadedPublisher.send(true) }),
+            schedulesRepository: FakeSchedulesRepository(
+                objects: objects,
+                callback: { schedulesLoadedPublisher.send(true) }
+            ),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
             stop: stop,
@@ -172,7 +184,8 @@ final class StopDetailsPageTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                    -> Void
             ) {
                 joinExpectation.fulfill()
             }

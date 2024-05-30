@@ -18,16 +18,24 @@ final class RouteSourceGeneratorTests: XCTestCase {
     }
 
     func testRouteSourceIsCreated() {
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                                                        routesById: MapTestDataHelper.routesById,
-                                                        stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
-                                                                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
-                                                                    MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter,
-                                                                    MapTestDataHelper.stopHarvard.id: MapTestDataHelper.stopHarvard,
-                                                                    MapTestDataHelper.stopCentral.id: MapTestDataHelper.stopCentral,
-                                                                    MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
-                                                                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan],
-                                                        alertsByStop: [:])
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.routesById,
+            stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                        MapTestDataHelper.stopDavis.id: MapTestDataHelper
+                            .stopDavis,
+                        MapTestDataHelper.stopPorter.id: MapTestDataHelper
+                            .stopPorter,
+                        MapTestDataHelper.stopHarvard.id: MapTestDataHelper
+                            .stopHarvard,
+                        MapTestDataHelper.stopCentral.id: MapTestDataHelper
+                            .stopCentral,
+                        MapTestDataHelper.stopAssembly.id: MapTestDataHelper
+                            .stopAssembly,
+                        MapTestDataHelper.stopSullivan.id: MapTestDataHelper
+                            .stopSullivan],
+            alertsByStop: [:]
+        )
 
         if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 3) // 2 red, 1 orange
@@ -43,15 +51,24 @@ final class RouteSourceGeneratorTests: XCTestCase {
                     $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
                 }!.geometry,
                 .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC2.polyline!).coordinates!)
-                    .sliced(from: MapTestDataHelper.stopAlewife.coordinate, to: MapTestDataHelper.stopDavis.coordinate)!)
+                    .sliced(
+                        from: MapTestDataHelper.stopAlewife.coordinate,
+                        to: MapTestDataHelper.stopDavis.coordinate
+                    )!)
             )
 
             XCTAssertEqual(
                 collection.features.first {
-                    $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeOrange.id))
+                    $0
+                        .properties![RouteSourceGenerator.propRouteId] ==
+                        JSONValue(String(MapTestDataHelper.routeOrange.id))
                 }!.geometry,
-                .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeOrangeC1.polyline!).coordinates!)
-                    .sliced(from: MapTestDataHelper.stopAssembly.coordinate, to: MapTestDataHelper.stopSullivan.coordinate)!)
+                .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeOrangeC1.polyline!)
+                        .coordinates!)
+                    .sliced(
+                        from: MapTestDataHelper.stopAssembly.coordinate,
+                        to: MapTestDataHelper.stopSullivan.coordinate
+                    )!)
             )
         } else {
             XCTFail("Route source had no features")
@@ -59,24 +76,38 @@ final class RouteSourceGeneratorTests: XCTestCase {
     }
 
     func testRouteSourcePreservesRouteProps() {
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                                                        routesById: MapTestDataHelper.routesById,
-                                                        stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
-                                                                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
-                                                                    MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter,
-                                                                    MapTestDataHelper.stopHarvard.id: MapTestDataHelper.stopHarvard,
-                                                                    MapTestDataHelper.stopCentral.id: MapTestDataHelper.stopCentral,
-                                                                    MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
-                                                                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan],
-                                                        alertsByStop: [:])
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.routesById,
+            stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                        MapTestDataHelper.stopDavis.id: MapTestDataHelper
+                            .stopDavis,
+                        MapTestDataHelper.stopPorter.id: MapTestDataHelper
+                            .stopPorter,
+                        MapTestDataHelper.stopHarvard.id: MapTestDataHelper
+                            .stopHarvard,
+                        MapTestDataHelper.stopCentral.id: MapTestDataHelper
+                            .stopCentral,
+                        MapTestDataHelper.stopAssembly.id: MapTestDataHelper
+                            .stopAssembly,
+                        MapTestDataHelper.stopSullivan.id: MapTestDataHelper
+                            .stopSullivan],
+            alertsByStop: [:]
+        )
 
         if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
             let firstRedFeature = collection.features.filter {
                 $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
             }[0]
 
-            XCTAssertEqual(firstRedFeature.properties![RouteSourceGenerator.propRouteColor], JSONValue(String("#DA291C")))
-            XCTAssertEqual(firstRedFeature.properties![RouteSourceGenerator.propRouteType], JSONValue(String("HEAVY_RAIL")))
+            XCTAssertEqual(
+                firstRedFeature.properties![RouteSourceGenerator.propRouteColor],
+                JSONValue(String("#DA291C"))
+            )
+            XCTAssertEqual(
+                firstRedFeature.properties![RouteSourceGenerator.propRouteType],
+                JSONValue(String("HEAVY_RAIL"))
+            )
             XCTAssertEqual(firstRedFeature.properties![RouteSourceGenerator.propRouteSortKey], JSONValue(Int(-10010)))
 
         } else {
@@ -117,15 +148,21 @@ final class RouteSourceGeneratorTests: XCTestCase {
             ),
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                                                        routesById: MapTestDataHelper.routesById,
-                                                        stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
-                                                                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
-                                                                    MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter,
-                                                                    MapTestDataHelper.stopHarvard.id: MapTestDataHelper.stopHarvard,
-                                                                    MapTestDataHelper.stopCentral.id: MapTestDataHelper.stopCentral],
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.routesById,
+            stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                        MapTestDataHelper.stopDavis.id: MapTestDataHelper
+                            .stopDavis,
+                        MapTestDataHelper.stopPorter.id: MapTestDataHelper
+                            .stopPorter,
+                        MapTestDataHelper.stopHarvard.id: MapTestDataHelper
+                            .stopHarvard,
+                        MapTestDataHelper.stopCentral.id: MapTestDataHelper
+                            .stopCentral],
 
-                                                        alertsByStop: alertsByStop)
+            alertsByStop: alertsByStop
+        )
 
         if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
             let redFeatures = collection.features.filter {
@@ -133,28 +170,42 @@ final class RouteSourceGeneratorTests: XCTestCase {
             }
 
             XCTAssertEqual(redFeatures.count, 3)
-            XCTAssertEqual(redFeatures[0].properties![RouteSourceGenerator.propIsAlertingKey]!, JSONValue(Bool(false)))
+            XCTAssertEqual(
+                redFeatures[0].properties![RouteSourceGenerator.propAlertStateKey]!,
+                JSONValue(String(describing: SegmentAlertState.normal))
+            )
             XCTAssertEqual(
                 redFeatures[0].geometry,
                 .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC1.polyline!).coordinates!)
-                    .sliced(from: MapTestDataHelper.stopAlewife.coordinate, to: MapTestDataHelper.stopDavis.coordinate)!)
+                    .sliced(
+                        from: MapTestDataHelper.stopAlewife.coordinate,
+                        to: MapTestDataHelper.stopDavis.coordinate
+                    )!)
             )
 
             XCTAssertEqual(
-                redFeatures[1].properties![RouteSourceGenerator.propIsAlertingKey]!, JSONValue(Bool(true))
+                redFeatures[1].properties![RouteSourceGenerator.propAlertStateKey]!,
+                JSONValue(String(describing: SegmentAlertState.shuttle))
             )
             XCTAssertEqual(
                 redFeatures[1].geometry,
                 .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC1.polyline!).coordinates!)
-                    .sliced(from: MapTestDataHelper.stopPorter.coordinate, to: MapTestDataHelper.stopHarvard.coordinate)!)
+                    .sliced(
+                        from: MapTestDataHelper.stopPorter.coordinate,
+                        to: MapTestDataHelper.stopHarvard.coordinate
+                    )!)
             )
             XCTAssertEqual(
-                redFeatures[2].properties![RouteSourceGenerator.propIsAlertingKey]!, JSONValue(Bool(false))
+                redFeatures[2].properties![RouteSourceGenerator.propAlertStateKey]!,
+                JSONValue(String(describing: SegmentAlertState.normal))
             )
             XCTAssertEqual(
                 redFeatures[2].geometry,
                 .lineString(LineString(Polyline(encodedPolyline: MapTestDataHelper.shapeRedC1.polyline!).coordinates!)
-                    .sliced(from: MapTestDataHelper.stopHarvard.coordinate, to: MapTestDataHelper.stopCentral.coordinate)!)
+                    .sliced(
+                        from: MapTestDataHelper.stopHarvard.coordinate,
+                        to: MapTestDataHelper.stopCentral.coordinate
+                    )!)
             )
 
         } else {

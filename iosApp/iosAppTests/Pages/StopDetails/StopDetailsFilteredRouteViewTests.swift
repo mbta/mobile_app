@@ -13,15 +13,17 @@ import ViewInspector
 import XCTest
 
 final class StopDetailsFilteredRouteViewTests: XCTestCase {
-    private func testData() -> (
-        departures: StopDetailsDepartures,
-        routeId: String,
-        tripNorthId: String,
-        stopId: String,
-        vehicleNorthId: String,
-        stopSequence: Int,
-        now: Instant
-    ) {
+    private struct TestData {
+        let departures: StopDetailsDepartures
+        let routeId: String
+        let tripNorthId: String
+        let stopId: String
+        let vehicleNorthId: String
+        let stopSequence: Int
+        let now: Instant
+    }
+
+    private func testData() -> TestData {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -56,13 +58,25 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         }
 
         let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [
-            .init(route: route, headsign: "North", patterns: [patternNorth], upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)], alertsHere: nil),
-            .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)], alertsHere: nil),
+            .init(
+                route: route,
+                headsign: "North",
+                patterns: [patternNorth],
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
+                alertsHere: nil
+            ),
+            .init(
+                route: route,
+                headsign: "South",
+                patterns: [patternSouth],
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
+                alertsHere: nil
+            ),
         ])
 
         let departures = StopDetailsDepartures(routes: [patternsByStop])
 
-        return (
+        return .init(
             departures: departures,
             routeId: route.id,
             tripNorthId: tripNorth.id,
