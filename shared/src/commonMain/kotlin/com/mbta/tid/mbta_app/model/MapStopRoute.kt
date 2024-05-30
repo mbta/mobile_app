@@ -31,6 +31,11 @@ enum class MapStopRoute {
             return route.type == RouteType.COMMUTER_RAIL
         }
     },
+    FERRY {
+        override fun matches(route: Route): Boolean {
+            return route.type == RouteType.FERRY
+        }
+    },
     BUS {
         override fun matches(route: Route): Boolean {
             return route.type == RouteType.BUS
