@@ -89,7 +89,7 @@ class RouteLayerGenerator {
             closeZoomCutoff
             10
         })
-        alertBackgroundLayer.lineColor = .constant(StyleColor(UIColor.white))
+        alertBackgroundLayer.lineColor = .constant(StyleColor(UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))))
 
         return [alertBackgroundLayer, shuttledLayer, suspendedLayer]
     }
