@@ -25,6 +25,13 @@ enum MapTestDataHelper {
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
 
+    static let route67 = objects.route { route in
+        route.id = "67"
+        route.color = "FFC72C"
+        route.type = .bus
+        route.routePatternIds = ["67-4-0"]
+    }
+
     static let routesById = [routeRed.id: routeRed, routeOrange.id: routeOrange]
 
     static let stopAlewife = objects.stop { stop in
@@ -36,8 +43,11 @@ enum MapTestDataHelper {
 
     static let mapStopAlewife: MapStop = .init(
         stop: stopAlewife,
-        routes: [MapStopRoute.red: [routeRed]],
-        routeTypes: [MapStopRoute.red]
+        routes: [
+            MapStopRoute.red: [routeRed],
+            MapStopRoute.bus: [route67],
+        ],
+        routeTypes: [MapStopRoute.red, MapStopRoute.bus]
     )
 
     static let stopDavis = objects.stop { stop in
@@ -142,6 +152,12 @@ enum MapTestDataHelper {
         pattern.representativeTripId = "61746557"
     }
 
+    static let pattern67 = objects.routePattern(route: route67) { pattern in
+        pattern.id = "67-4-0"
+        pattern.typicality = .typical
+        pattern.representativeTripId = "61846289"
+    }
+
     static let tripRedC1 = objects.trip(routePattern: patternRed30) { trip in
         trip.id = "canonical-Red-C1-0"
         trip.shapeId = "canonical-933_0009"
@@ -161,6 +177,11 @@ enum MapTestDataHelper {
     static let tripOrangeAtypical = objects.trip(routePattern: patternOrange30) { trip in
         trip.id = "61746557"
         trip.shapeId = "40460002"
+    }
+
+    static let trip67 = objects.trip(routePattern: pattern67) { trip in
+        trip.id = "61846289"
+        trip.stopIds = [stopAlewife.id]
     }
 
     static let shapeRedC1 = objects.shape { shape in
