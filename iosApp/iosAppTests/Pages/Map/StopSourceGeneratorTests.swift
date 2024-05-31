@@ -328,7 +328,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             guard let assemblyFeature = collection.features.first(where: { feat in
                 propId(from: feat) == MapTestDataHelper.stopAssembly.id
             }) else {
-                XCTFail("Assembly route property was not present in the source")
+                XCTFail("Assembly stop feature was not present in the source")
                 return
             }
 
@@ -341,7 +341,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             guard let alewifeFeature = collection.features.first(where: { feat in
                 propId(from: feat) == MapTestDataHelper.stopAlewife.id
             }) else {
-                XCTFail("Alewife route property was not present in the source")
+                XCTFail("Alewife stop feature was not present in the source")
                 return
             }
 
@@ -349,6 +349,47 @@ final class StopSourceGeneratorTests: XCTestCase {
                 XCTAssertEqual(alewifeRoutes, [MapStopRoute.red, MapStopRoute.bus])
             } else {
                 XCTFail("Alewife route property was not set correctly")
+            }
+        } else {
+            XCTFail("Station source had no features")
+        }
+    }
+
+    func testStopFeaturesHaveNames() {
+        let stops = [
+            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopAssembly,
+            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
+        ]
+
+        let stopSourceGenerator = StopSourceGenerator(stops: stops)
+
+        let source = stopSourceGenerator.stopSource
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 2)
+            guard let assemblyFeature = collection.features.first(where: { feat in
+                propId(from: feat) == MapTestDataHelper.stopAssembly.id
+            }) else {
+                XCTFail("Assembly stop feature was not present in the source")
+                return
+            }
+
+            if let assemblyName = propString(prop: StopSourceGenerator.propNameKey, from: assemblyFeature) {
+                XCTAssertEqual(assemblyName, MapTestDataHelper.stopAssembly.name)
+            } else {
+                XCTFail("Assembly name property was not set correctly")
+            }
+
+            guard let alewifeFeature = collection.features.first(where: { feat in
+                propId(from: feat) == MapTestDataHelper.stopAlewife.id
+            }) else {
+                XCTFail("Alewife stop feature was not present in the source")
+                return
+            }
+
+            if let alewifeName = propString(prop: StopSourceGenerator.propNameKey, from: alewifeFeature) {
+                XCTAssertEqual(alewifeName, MapTestDataHelper.stopAlewife.name)
+            } else {
+                XCTFail("Alewife name property was not set correctly")
             }
         } else {
             XCTFail("Station source had no features")
