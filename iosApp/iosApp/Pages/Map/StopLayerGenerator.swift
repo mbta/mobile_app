@@ -11,11 +11,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 class StopLayerGenerator {
-    let stopLayers: [SymbolLayer]
-
-    init(theme: ColorScheme = .light) {
-        stopLayers = Self.createStopLayers(for: theme)
-    }
+    let stopLayers: [SymbolLayer] = createStopLayers()
 
     static let stopZoomThreshold = 8.0
 
@@ -45,7 +41,7 @@ class StopLayerGenerator {
         }
     }
 
-    static func createStopLayers(for theme: ColorScheme) -> [SymbolLayer] {
+    static func createStopLayers() -> [SymbolLayer] {
         let sourceId = StopSourceGenerator.stopSourceId
         var stopLayer = SymbolLayer(id: Self.stopLayerId, source: sourceId)
         stopLayer.iconImage = StopIcons.getStopLayerIcon()
@@ -53,7 +49,7 @@ class StopLayerGenerator {
             Exp(.step) {
                 Exp(.zoom)
                 ""
-                closeZoomThreshold
+                MapDefaults.closeZoomThreshold
                 Exp(.switchCase) {
                     Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
                     ""
@@ -62,13 +58,12 @@ class StopLayerGenerator {
             }
         )
 
-        // The built in color scheme switching doesn't work here, so this is a workaround
+        // The built in color scheme switching doesn't work with `Color` in layer styles,
+        // using name strings in UIColor does pick up theme changes properly though.
         // The named colors should always exist unless they're removed from Colors.xcassets,
         // but if they're removed, the fallback using Color will not be responsive to theme.
-        let textColor = UIColor(named: "Text") ?? UIColor(Color(.text))
-        stopLayer.textColor = .constant(.init(theme == .light ? textColor.light : textColor.dark))
-        let textHaloColor = UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))
-        stopLayer.textHaloColor = .constant(.init(theme == .light ? textHaloColor.light : textHaloColor.dark))
+        stopLayer.textColor = .constant(.init(UIColor(named: "Text") ?? UIColor(Color(.text))))
+        stopLayer.textHaloColor = .constant(.init(UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))))
         stopLayer.textHaloWidth = .constant(2.0)
         stopLayer.textSize = .constant(13)
         stopLayer.textVariableAnchor = .constant([.right, .bottom, .top, .left])
