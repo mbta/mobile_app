@@ -45,7 +45,7 @@ class RouteLayerGenerator {
      Styling applied only to the portions of the lines that are alerting
 
      Creates separate layers for shuttle and suspension segments because `LineLayer.lineDasharray`
-     doesn't allow `.get`s for some reason.
+     [doesn't support data-driven styling](https://docs.mapbox.com/style-spec/reference/layers/#paint-line-line-dasharray)
      */
     static func createAlertingRouteLayers() -> [LineLayer] {
         var shuttledLayer = baseRouteLayer(layerId: shuttledRouteLayerId)
@@ -60,12 +60,7 @@ class RouteLayerGenerator {
             closeZoomCutoff
             6
         })
-        shuttledLayer.lineDasharray = .expression(Exp(.step) {
-            Exp(.zoom)
-            [12.0 / 4.0, 8.0 / 4.0]
-            closeZoomCutoff
-            [12.0 / 6.0, 8.0 / 6.0]
-        })
+        shuttledLayer.lineDasharray = .constant([2.0, 1.33])
 
         var suspendedLayer = baseRouteLayer(layerId: suspendedRouteLayerId)
 
@@ -79,13 +74,8 @@ class RouteLayerGenerator {
             closeZoomCutoff
             6
         })
-        suspendedLayer.lineDasharray = .expression(Exp(.step) {
-            Exp(.zoom)
-            [8.0 / 4.0, 12.0 / 4.0]
-            closeZoomCutoff
-            [8.0 / 6.0, 12.0 / 6.0]
-        })
-        suspendedLayer.lineColor = .constant("rgba(189, 191, 193, 1)")
+        suspendedLayer.lineDasharray = .constant([1.33, 2.0])
+        suspendedLayer.lineColor = .constant(StyleColor(UIColor(Color.deemphasized)))
 
         var alertBackgroundLayer = baseRouteLayer(layerId: alertingBgRouteLayerId)
 
