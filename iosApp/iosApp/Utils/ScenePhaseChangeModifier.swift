@@ -29,9 +29,11 @@ struct ScenePhaseChangeModifier: ViewModifier {
 }
 
 public extension View {
-    func withScenePhaseHandlers(onActive: @escaping () -> Void,
-                                onInactive: @escaping () -> Void,
-                                onBackground: @escaping () -> Void) -> some View {
+    func withScenePhaseHandlers(
+        onActive: @escaping () -> Void = {},
+        onInactive: @escaping () -> Void = {},
+        onBackground: @escaping () -> Void = {}
+    ) -> some View {
         modifier(ScenePhaseChangeModifier(onActive: onActive, onInactive: onInactive, onBackground: onBackground))
     }
 }

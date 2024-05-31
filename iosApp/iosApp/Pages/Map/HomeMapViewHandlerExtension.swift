@@ -16,21 +16,17 @@ import SwiftUI
 extension HomeMapView {
     func handleTryLayerInit(map: MapboxMap?) {
         guard let map,
-              let globalResponse = globalFetcher.response,
-              let routeResponse = railRouteShapeFetcher.response
+              let _ = globalFetcher.response,
+              let _ = railRouteShapeFetcher.response,
+              let _ = globalMapData?.mapStops
         else {
             return
         }
 
-        handleLayerInit(map, globalResponse.stops, globalResponse.routes, routeResponse)
+        handleLayerInit(map)
     }
 
-    func handleLayerInit(
-        _ map: MapboxMap,
-        _: [String: Stop],
-        _: [String: Route],
-        _: MapFriendlyRouteResponse
-    ) {
+    func handleLayerInit(_ map: MapboxMap) {
         let layerManager = MapLayerManager(map: map)
         initializeLayers(layerManager)
         layerManager.updateStopLayerZoom(map.cameraState.zoom)
@@ -87,7 +83,7 @@ extension HomeMapView {
 
     func handleStopDetailsChange(_ stop: Stop, _ filter: StopDetailsFilter?) {
         let updatedStopSources = StopSourceGenerator(
-            stops: globalFetcher.globalStaticData?.mapStops ?? [:],
+            stops: globalMapData?.mapStops ?? [:],
             selectedStop: stop,
             routeLines: layerManager?.routeSourceGenerator?.routeLines,
             alertsByStop: currentStopAlerts
