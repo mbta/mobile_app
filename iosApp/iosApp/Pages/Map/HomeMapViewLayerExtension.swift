@@ -34,7 +34,7 @@ extension HomeMapView {
 
         layerManager.addLayers(
             routeLayerGenerator: RouteLayerGenerator(),
-            stopLayerGenerator: StopLayerGenerator()
+            stopLayerGenerator: StopLayerGenerator(theme: colorScheme)
         )
     }
 

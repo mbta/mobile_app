@@ -34,6 +34,8 @@ struct HomeMapView: View {
     @State var currentStopAlerts: [String: AlertAssociatedStop] = [:]
     @State var lastNavEntry: SheetNavigationStackEntry?
 
+    @Environment(\.colorScheme) var colorScheme
+
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
     let log = Logger()
