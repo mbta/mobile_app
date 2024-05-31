@@ -52,7 +52,7 @@ enum StopIcons {
         .expression(Exp(.step) {
             Exp(.zoom)
             getStopIconName(stopZoomWidePrefix)
-            StopLayerGenerator.closeZoomThreshold
+            MapDefaults.closeZoomThreshold
             getStopIconName(stopZoomClosePrefix)
         })
     }
@@ -80,7 +80,7 @@ enum StopIcons {
         .expression(Exp(.step) {
             Exp(.zoom)
             getTransferIconName(stopZoomWidePrefix, index)
-            StopLayerGenerator.closeZoomThreshold
+            MapDefaults.closeZoomThreshold
             getTransferIconName(stopZoomClosePrefix, index)
         })
     }
