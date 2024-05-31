@@ -97,7 +97,7 @@ struct AnnotatedMap: View {
                         }
                         .allowHitTesting(false)
                         .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= StopLayerGenerator.closeZoomThreshold)
+                        .visible(zoomLevel >= MapDefaults.closeZoomThreshold)
                     case .boardingArea, .stop:
                         MapViewAnnotation(coordinate: child.coordinate) {
                             Circle()
@@ -114,7 +114,7 @@ struct AnnotatedMap: View {
                         }
                         .allowHitTesting(false)
                         .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= StopLayerGenerator.closeZoomThreshold)
+                        .visible(zoomLevel >= MapDefaults.closeZoomThreshold)
                     default:
                         MapViewAnnotation(coordinate: child.coordinate) {
                             EmptyView()

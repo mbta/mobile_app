@@ -134,16 +134,15 @@ class StopSourceGenerator {
             serviceStatus(at: mapStop, from: stopData.alertsByStop).name
         )
 
-        // The symbolSortKey must be ascending, so higher priority icons need higher values. This takes the total number
-        // of types in the MapStopRoute enum, then subtracts the ordinal of the highest ranked route type for this stop.
-        let allTypeCount = Double(MapStopRoute.AllCases().count)
+        // The symbolSortKey must be ascending, so higher priority icons need higher values. This takes the
+        // ordinal of the top route and makes it negative. If there are no routes it's set to the total number
+        // of route types so that the weird routeless stop is below everything else, and if it has multiple
+        // route types, it's set to positive 1 to put the route container above everything else.
         let topRouteOrdinal = mapStop.routeTypes.isEmpty
-            ? allTypeCount + 1
+            ? Double(MapStopRoute.AllCases().count)
             : Double(mapStop.routeTypes[0].ordinal)
         featureProps[Self.propSortOrderKey] = JSONValue.number(
-            mapStop.routeTypes.count > 1
-                ? allTypeCount + 1
-                : allTypeCount - topRouteOrdinal
+            mapStop.routeTypes.count > 1 ? 1 : -topRouteOrdinal
         )
 
         return featureProps

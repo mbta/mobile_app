@@ -4,57 +4,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
-data class GlobalStaticData(val globalData: GlobalResponse, val mapStops: Map<String, MapStop>) {
-    constructor(
-        globalData: GlobalResponse
-    ) : this(
-        globalData,
-        globalData.stops.values
-            .map { stop ->
-                val patterns =
-                    (listOf(stop.id) + stop.childStopIds)
-                        .flatMap { stopId -> globalData.patternIdsByStop[stopId] ?: listOf() }
-                        .mapNotNull { globalData.routePatterns[it] }
-
-                val allRoutes =
-                    patterns
-                        .filter {
-                            it.typicality == RoutePattern.Typicality.Typical ||
-                                it.typicality == RoutePattern.Typicality.CanonicalOnly
-                        }
-                        .mapNotNull { globalData.routes[it.routeId] }
-                        .toSet()
-                        .sortedBy { it.sortOrder }
-
-                val mapRouteList = mutableListOf<MapStopRoute>()
-                val categorizedRoutes = mutableMapOf<MapStopRoute, List<Route>>()
-
-                for (route in allRoutes) {
-                    val category = MapStopRoute.matching(route) ?: continue
-                    if (route.id.startsWith("Shuttle-")) {
-                        continue
-                    }
-                    if (!mapRouteList.contains(category)) {
-                        mapRouteList += category
-                    }
-                    categorizedRoutes[category] = (categorizedRoutes[category] ?: listOf()) + route
-                }
-
-                if (mapRouteList == listOf(MapStopRoute.SILVER, MapStopRoute.BUS)) {
-                    mapRouteList.remove(MapStopRoute.SILVER)
-                } else if (
-                    mapRouteList == listOf(MapStopRoute.SILVER) &&
-                        stop.locationType == LocationType.STOP
-                ) {
-                    mapRouteList[0] = MapStopRoute.BUS
-                }
-
-                return@map stop.id to
-                    MapStop(stop = stop, routes = categorizedRoutes, routeTypes = mapRouteList)
-            }
-            .toMap()
-    )
-
+data class GlobalStaticData(val globalData: GlobalResponse) {
     /*
     Only stops that don't have a parent stop (stations and isolated stops) are returned in the map.
     Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on

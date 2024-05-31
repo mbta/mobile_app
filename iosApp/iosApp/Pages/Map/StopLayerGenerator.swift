@@ -18,9 +18,6 @@ class StopLayerGenerator {
     }
 
     static let stopZoomThreshold = 8.0
-    static let midZoomThreshold = 11.0
-    static let closeZoomThreshold = 15.0
-    static let defaultZoomThreshold = 16.0
 
     static let stopLayerId = "stop-layer"
     static let stopTouchTargetLayerId = "\(stopLayerId)-touch-target"
@@ -35,7 +32,7 @@ class StopLayerGenerator {
         Exp(.interpolate) {
             Exp(.exponential) { 1.5 }
             Exp(.zoom)
-            midZoomThreshold; withMultipliers(0.25, modeResize: [0.5, 2, 1.75])
+            MapDefaults.midZoomThreshold; withMultipliers(0.25, modeResize: [0.5, 2, 1.75])
             13; withMultipliers(0.625, modeResize: [1, 1.5, 1.5])
             14; withMultipliers(1)
         }
@@ -136,7 +133,7 @@ class StopLayerGenerator {
         .expression(Exp(.step) {
             Exp(.zoom)
             transferOffsetExp(closeZoom: false, index)
-            closeZoomThreshold
+            MapDefaults.closeZoomThreshold
             transferOffsetExp(closeZoom: true, index)
         })
     }
