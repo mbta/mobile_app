@@ -58,12 +58,8 @@ class StopLayerGenerator {
             }
         )
 
-        // The built in color scheme switching doesn't work with `Color` in layer styles,
-        // using name strings in UIColor does pick up theme changes properly though.
-        // The named colors should always exist unless they're removed from Colors.xcassets,
-        // but if they're removed, the fallback using Color will not be responsive to theme.
-        stopLayer.textColor = .constant(.init(UIColor(named: "Text") ?? UIColor(Color(.text))))
-        stopLayer.textHaloColor = .constant(.init(UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))))
+        stopLayer.textColor = .constant(.init(.text))
+        stopLayer.textHaloColor = .constant(.init(.fill3))
         stopLayer.textHaloWidth = .constant(2.0)
         stopLayer.textSize = .constant(13)
         stopLayer.textVariableAnchor = .constant([.right, .bottom, .top, .left])

@@ -18,7 +18,7 @@ class RouteLayerGenerator {
     static let suspendedRouteLayerId = "route-layer-suspended"
     static let alertingBgRouteLayerId = "route-layer-alerting-bg"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
-    private static let closeZoomCutoff = 16.0
+    private static let closeZoomCutoff = MapDefaults.closeZoomThreshold
 
     init() {
         routeLayers = Self.createAllRouteLayers()

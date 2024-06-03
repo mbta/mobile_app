@@ -19,6 +19,10 @@ extension Color {
 }
 
 extension UIColor {
+    // The built in color scheme switching doesn't work with `Color` in layer styles,
+    // using name strings in UIColor does pick up theme changes properly though.
+    // The named colors should always exist unless they're removed from Colors.xcassets,
+    // but if they're removed, the fallback using Color will not be responsive to theme.
     static let deemphasized = UIColor(named: "Deemphasized") ?? UIColor(Color(.deemphasized))
     static let fill1 = UIColor(named: "Fill 1") ?? UIColor(Color(.fill1))
     static let fill2 = UIColor(named: "Fill 2") ?? UIColor(Color(.fill2))
