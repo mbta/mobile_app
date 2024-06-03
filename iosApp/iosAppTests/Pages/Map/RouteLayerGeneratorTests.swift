@@ -20,28 +20,36 @@ final class RouteLayerGeneratorTests: XCTestCase {
         let routeLayerGenerator = RouteLayerGenerator()
         let routeLayers = routeLayerGenerator.routeLayers
 
-        XCTAssertEqual(routeLayers.count, 3)
+        XCTAssertEqual(routeLayers.count, 4)
         let baseRouteLayer = routeLayers[0]
         XCTAssertEqual(baseRouteLayer.id, RouteLayerGenerator.routeLayerId)
         let alertingBgLayer = routeLayers[1]
         XCTAssertEqual(alertingBgLayer.id, RouteLayerGenerator.alertingBgRouteLayerId)
-        let alertingLayer = routeLayers[2]
-        XCTAssertEqual(alertingLayer.id, RouteLayerGenerator.alertingRouteLayerId)
+        let shuttledLayer = routeLayers[2]
+        XCTAssertEqual(shuttledLayer.id, RouteLayerGenerator.shuttledRouteLayerId)
+        let suspendedLayer = routeLayers[3]
+        XCTAssertEqual(suspendedLayer.id, RouteLayerGenerator.suspendedRouteLayerId)
 
-        XCTAssertNotNil(alertingLayer.lineDasharray)
+        XCTAssertNotNil(shuttledLayer.lineDasharray)
+        XCTAssertNotNil(suspendedLayer.lineDasharray)
     }
 
     func testLayersHaveOffset() {
         let routeLayerGenerator = RouteLayerGenerator()
         let routeLayers = routeLayerGenerator.routeLayers
 
-        XCTAssertEqual(routeLayers.count, 3)
+        XCTAssertEqual(routeLayers.count, 4)
         let baseRouteLayer = routeLayers[0]
-        XCTAssertNotNil(baseRouteLayer.lineOffset)
+        XCTAssertEqual(baseRouteLayer.id, RouteLayerGenerator.routeLayerId)
         let alertingBgLayer = routeLayers[1]
-        XCTAssertNotNil(alertingBgLayer.lineOffset)
-        let alertingLayer = routeLayers[1]
-        XCTAssertNotNil(alertingLayer.lineOffset)
+        XCTAssertEqual(alertingBgLayer.id, RouteLayerGenerator.alertingBgRouteLayerId)
+        let shuttledLayer = routeLayers[2]
+        XCTAssertEqual(shuttledLayer.id, RouteLayerGenerator.shuttledRouteLayerId)
+        let suspendedLayer = routeLayers[3]
+        XCTAssertEqual(suspendedLayer.id, RouteLayerGenerator.suspendedRouteLayerId)
+
+        XCTAssertNotNil(shuttledLayer.lineOffset)
+        XCTAssertNotNil(suspendedLayer.lineOffset)
     }
 
     func testBaseLayerColorFromData() {

@@ -14,10 +14,11 @@ class RouteLayerGenerator {
     let routeLayers: [LineLayer]
 
     static let routeLayerId = "route-layer"
-    static let alertingRouteLayerId = "route-layer-alerting"
+    static let shuttledRouteLayerId = "route-layer-shuttled"
+    static let suspendedRouteLayerId = "route-layer-suspended"
     static let alertingBgRouteLayerId = "route-layer-alerting-bg"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
-    private static let lineWidth = 4.0
+    private static let closeZoomCutoff = MapDefaults.closeZoomThreshold
 
     init() {
         routeLayers = Self.createAllRouteLayers()
@@ -30,30 +31,67 @@ class RouteLayerGenerator {
     }
 
     static func createRouteLayer() -> LineLayer {
-        baseRouteLayer(layerId: routeLayerId)
+        var layer = baseRouteLayer(layerId: routeLayerId)
+        layer.lineWidth = .expression(Exp(.step) {
+            Exp(.zoom)
+            3
+            closeZoomCutoff
+            4
+        })
+        return layer
     }
 
     /**
      Styling applied only to the portions of the lines that are alerting
+
+     Creates separate layers for shuttle and suspension segments because `LineLayer.lineDasharray`
+     [doesn't support data-driven styling](https://docs.mapbox.com/style-spec/reference/layers/#paint-line-line-dasharray)
      */
     static func createAlertingRouteLayers() -> [LineLayer] {
-        var alertingLayer = baseRouteLayer(layerId: alertingRouteLayerId)
+        var shuttledLayer = baseRouteLayer(layerId: shuttledRouteLayerId)
 
-        alertingLayer.filter = Exp(.inExpression) {
+        shuttledLayer.filter = Exp(.eq) {
             Exp(.get) { RouteSourceGenerator.propAlertStateKey }
-            [String(describing: SegmentAlertState.suspension), String(describing: SegmentAlertState.shuttle)]
+            String(describing: SegmentAlertState.shuttle)
         }
-        alertingLayer.lineDasharray = .constant([2.0, 3.0])
-        alertingLayer.lineColor = .constant(StyleColor(UIColor.white))
-        alertingLayer.lineOpacity = .constant(0.7)
+        shuttledLayer.lineWidth = .expression(Exp(.step) {
+            Exp(.zoom)
+            4
+            closeZoomCutoff
+            6
+        })
+        shuttledLayer.lineDasharray = .constant([2.0, 1.33])
+
+        var suspendedLayer = baseRouteLayer(layerId: suspendedRouteLayerId)
+
+        suspendedLayer.filter = Exp(.eq) {
+            Exp(.get) { RouteSourceGenerator.propAlertStateKey }
+            String(describing: SegmentAlertState.suspension)
+        }
+        suspendedLayer.lineWidth = .expression(Exp(.step) {
+            Exp(.zoom)
+            4
+            closeZoomCutoff
+            6
+        })
+        suspendedLayer.lineDasharray = .constant([1.33, 2.0])
+        suspendedLayer.lineColor = .constant(StyleColor(.deemphasized))
 
         var alertBackgroundLayer = baseRouteLayer(layerId: alertingBgRouteLayerId)
 
-        alertBackgroundLayer.lineColor = .expression(Exp(.get) {
-            RouteSourceGenerator.propRouteColor
+        alertBackgroundLayer.filter = Exp(.inExpression) {
+            Exp(.get) { RouteSourceGenerator.propAlertStateKey }
+            [String(describing: SegmentAlertState.suspension), String(describing: SegmentAlertState.shuttle)]
+        }
+        alertBackgroundLayer.lineWidth = .expression(Exp(.step) {
+            Exp(.zoom)
+            8
+            closeZoomCutoff
+            10
         })
+        alertBackgroundLayer.lineColor = .constant(StyleColor(.fill3))
 
-        return [alertBackgroundLayer, alertingLayer]
+        return [alertBackgroundLayer, shuttledLayer, suspendedLayer]
     }
 
     private static func baseRouteLayer(layerId: String) -> LineLayer {
@@ -61,14 +99,10 @@ class RouteLayerGenerator {
             id: layerId,
             source: RouteSourceGenerator.routeSourceId
         )
-        layer.lineWidth = .constant(lineWidth)
         layer.lineColor = .expression(Exp(.get) {
             RouteSourceGenerator.propRouteColor
         })
-        layer.lineBorderWidth = .constant(1.0)
-        layer.lineBorderColor = .constant(StyleColor(.white))
         layer.lineJoin = .constant(.round)
-        layer.lineCap = .constant(.round)
         layer.lineOffset = .expression(lineOffsetExpression())
         layer.lineSortKey = .expression(Exp(.get) {
             RouteSourceGenerator.propRouteSortKey
@@ -82,7 +116,9 @@ class RouteLayerGenerator {
      when drawn on the map
      */
     private static func lineOffsetExpression() -> Exp {
-        Expression(.switchCase) {
+        let maxLineWidth = 6.0
+
+        return Expression(.switchCase) {
             Expression(.inExpression) {
                 Exp(.get) {
                     "routeId"
@@ -102,7 +138,7 @@ class RouteLayerGenerator {
                 }
             }
             // These overlap with RL, shift West
-            RouteLayerGenerator.lineWidth * 1.5
+            maxLineWidth * 1.5
             Expression(.eq) {
                 Exp(.get) {
                     "routeType"
@@ -113,7 +149,7 @@ class RouteLayerGenerator {
             }
             // Some overlap with OL and should shift East.
             // Shift the rest east too so they scale porportionally
-            -RouteLayerGenerator.lineWidth
+            -maxLineWidth
             Expression(.inExpression) {
                 Exp(.literal) {
                     "Green"
@@ -124,7 +160,7 @@ class RouteLayerGenerator {
             }
             // Account for overlapping North Station - Haymarket
             // Offset to the East
-            RouteLayerGenerator.lineWidth
+            maxLineWidth
             // Default to no offset
             0
         }
