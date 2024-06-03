@@ -45,6 +45,33 @@ class StopLayerGenerator {
         let sourceId = StopSourceGenerator.stopSourceId
         var stopLayer = SymbolLayer(id: Self.stopLayerId, source: sourceId)
         stopLayer.iconImage = StopIcons.getStopLayerIcon()
+        stopLayer.textField = .expression(
+            Exp(.step) {
+                Exp(.zoom)
+                ""
+                MapDefaults.closeZoomThreshold
+                Exp(.switchCase) {
+                    Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
+                    ""
+                    Exp(.get) { StopSourceGenerator.propNameKey }
+                }
+            }
+        )
+
+        // The built in color scheme switching doesn't work with `Color` in layer styles,
+        // using name strings in UIColor does pick up theme changes properly though.
+        // The named colors should always exist unless they're removed from Colors.xcassets,
+        // but if they're removed, the fallback using Color will not be responsive to theme.
+        stopLayer.textColor = .constant(.init(UIColor(named: "Text") ?? UIColor(Color(.text))))
+        stopLayer.textHaloColor = .constant(.init(UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))))
+        stopLayer.textHaloWidth = .constant(2.0)
+        stopLayer.textSize = .constant(13)
+        stopLayer.textVariableAnchor = .constant([.right, .bottom, .top, .left])
+        stopLayer.textJustify = .constant(.auto)
+        stopLayer.textAllowOverlap = .constant(true)
+        stopLayer.textOptional = .constant(true)
+        stopLayer.textOffset = .constant([2, 1.5])
+
         includeSharedProps(on: &stopLayer)
 
         var stopTouchTargetLayer = SymbolLayer(id: Self.stopTouchTargetLayerId, source: sourceId)
@@ -72,7 +99,6 @@ class StopLayerGenerator {
         layer.iconOpacityTransition = StyleTransition(duration: 1, delay: 0)
         layer.minZoom = stopZoomThreshold - 1
         layer.symbolSortKey = .expression(Exp(.get) { StopSourceGenerator.propSortOrderKey })
-        layer.textAllowOverlap = .constant(true)
     }
 
     static func modeSizeMultiplierExp(resizeWith: [Double]) -> Expression {
