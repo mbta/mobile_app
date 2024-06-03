@@ -17,13 +17,14 @@ final class StopLayerGeneratorTests: XCTestCase {
     }
 
     func testStopLayersAreCreated() {
-        let stopLayerGenerator = StopLayerGenerator(stopLayerTypes: [.stop, .station])
+        let stopLayerGenerator = StopLayerGenerator()
         let stopLayers = stopLayerGenerator.stopLayers
 
-        XCTAssertEqual(stopLayers.count, 2)
-        let stationLayer = stopLayers.first { $0.id == StopLayerGenerator.getStopLayerId(.station) }
-        XCTAssertNotNil(stationLayer)
-        guard let stationLayer else { return }
-        XCTAssertEqual(stationLayer.iconImage, StopIcons.getStopLayerIcon(.station))
+        XCTAssertEqual(stopLayers.count, 5)
+        XCTAssertEqual(stopLayers[0].id, StopLayerGenerator.stopTouchTargetLayerId)
+        XCTAssertEqual(stopLayers[1].id, StopLayerGenerator.stopLayerId)
+        XCTAssertEqual(stopLayers[2].id, StopLayerGenerator.getTransferLayerId(0))
+        XCTAssertEqual(stopLayers[3].id, StopLayerGenerator.getTransferLayerId(1))
+        XCTAssertEqual(stopLayers[4].id, StopLayerGenerator.getTransferLayerId(2))
     }
 }

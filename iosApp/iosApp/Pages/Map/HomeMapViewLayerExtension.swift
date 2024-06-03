@@ -21,7 +21,7 @@ extension HomeMapView {
             alertsByStop: currentStopAlerts
         )
         let stopSourceGenerator = StopSourceGenerator(
-            stops: globalFetcher.stops,
+            stops: globalMapData?.mapStops ?? [:],
             selectedStop: lastNavEntry?.stop(),
             routeLines: routeSourceGenerator.routeLines,
             alertsByStop: currentStopAlerts
@@ -34,7 +34,7 @@ extension HomeMapView {
 
         layerManager.addLayers(
             routeLayerGenerator: RouteLayerGenerator(),
-            stopLayerGenerator: StopLayerGenerator(stopLayerTypes: MapLayerManager.stopLayerTypes)
+            stopLayerGenerator: StopLayerGenerator()
         )
     }
 
@@ -46,7 +46,7 @@ extension HomeMapView {
             alertsByStop: currentStopAlerts
         )
         let updatedStopSources = StopSourceGenerator(
-            stops: globalFetcher.stops,
+            stops: globalMapData?.mapStops ?? [:],
             selectedStop: nil,
             routeLines: updatedRouteSources.routeLines,
             alertsByStop: currentStopAlerts
@@ -109,7 +109,7 @@ extension HomeMapView {
 
     func handleStopAlertChange(alertsByStop: [String: AlertAssociatedStop]) {
         let updatedStopSources = StopSourceGenerator(
-            stops: globalFetcher.stops,
+            stops: globalMapData?.mapStops ?? [:],
             selectedStop: lastNavEntry?.stop(),
             routeLines: layerManager?.routeSourceGenerator?.routeLines,
             alertsByStop: alertsByStop

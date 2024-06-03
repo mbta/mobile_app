@@ -23,6 +23,7 @@ struct AnnotatedMap: View {
     @State var mapDebug = false
 
     @ObservedObject var viewportProvider: ViewportProvider
+    @Environment(\.colorScheme) var colorScheme
 
     var handleCameraChange: (CameraChanged) -> Void
     var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
@@ -33,12 +34,12 @@ struct AnnotatedMap: View {
     var body: some View {
         map
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-            .mapStyle(.light)
+            .mapStyle(colorScheme == .light ? .light : .dark)
             .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.stop), perform: handleTapStopLayer)
-            .onLayerTapGesture(StopLayerGenerator.getStopLayerId(.station), perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.stopLayerId, perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.stopTouchTargetLayerId, perform: handleTapStopLayer)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
@@ -59,10 +60,7 @@ struct AnnotatedMap: View {
             Puck2D().pulsing(.none)
             if let nearbyLocation {
                 MapViewAnnotation(coordinate: nearbyLocation) {
-                    Circle()
-                        .strokeBorder(.white, lineWidth: 2.5)
-                        .background(Circle().fill(.orange))
-                        .frame(width: 22, height: 22)
+                    Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)
                 }
             }
             if let filter, let vehicles {
@@ -99,7 +97,7 @@ struct AnnotatedMap: View {
                         }
                         .allowHitTesting(false)
                         .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= StopIcons.tombstoneZoomThreshold)
+                        .visible(zoomLevel >= MapDefaults.closeZoomThreshold)
                     case .boardingArea, .stop:
                         MapViewAnnotation(coordinate: child.coordinate) {
                             Circle()
@@ -116,7 +114,7 @@ struct AnnotatedMap: View {
                         }
                         .allowHitTesting(false)
                         .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= StopIcons.tombstoneZoomThreshold)
+                        .visible(zoomLevel >= MapDefaults.closeZoomThreshold)
                     default:
                         MapViewAnnotation(coordinate: child.coordinate) {
                             EmptyView()

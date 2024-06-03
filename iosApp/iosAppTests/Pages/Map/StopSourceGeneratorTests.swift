@@ -64,72 +64,56 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
 
         let stopSourceGenerator = StopSourceGenerator(stops: [
-            stop1.id: stop1,
-            stop2.id: stop2,
-            stop3.id: stop3,
-            stop4.id: stop4,
-            stop5.id: stop5,
-            stop6.id: stop6,
+            stop1.id: .init(stop: stop1, routes: [:], routeTypes: [MapStopRoute.blue]),
+            stop2.id: .init(stop: stop2, routes: [:], routeTypes: [MapStopRoute.green]),
+            stop3.id: .init(
+                stop: stop3,
+                routes: [:],
+                routeTypes: [MapStopRoute.red, MapStopRoute.mattapan, MapStopRoute.bus]
+            ),
+            stop4.id: .init(stop: stop4, routes: [:], routeTypes: [MapStopRoute.bus]),
+            stop5.id: .init(stop: stop5, routes: [:], routeTypes: [MapStopRoute.bus]),
+            stop6.id: .init(stop: stop6, routes: [:], routeTypes: [MapStopRoute.bus]),
         ])
-        let sources = stopSourceGenerator.stopSources
-        XCTAssertEqual(sources.count, 2)
+        let source = stopSourceGenerator.stopSource
 
-        let sourceIds = sources.map(\.id)
-        XCTAssert(sourceIds.contains(StopSourceGenerator.getStopSourceId(.station)))
-        XCTAssert(sourceIds.contains(StopSourceGenerator.getStopSourceId(.stop)))
+        XCTAssertEqual(source.id, StopSourceGenerator.stopSourceId)
 
-        let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }
-        XCTAssertNotNil(stationSource)
-        if case let .featureCollection(collection) = stationSource!.data.unsafelyUnwrapped {
-            XCTAssertEqual(collection.features.count, 3)
+        XCTAssertNotNil(source)
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 5)
             XCTAssertTrue(collection.features.contains(where: { $0.geometry == .point(Point(stop1.coordinate)) }))
         } else {
             XCTFail("Station source had no features")
-        }
-
-        let stopSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.stop) }
-        XCTAssertNotNil(stopSource)
-        if case let .featureCollection(collection) = stopSource!.data.unsafelyUnwrapped {
-            XCTAssertEqual(collection.features.count, 2)
-            if case let .string(serviceStatus) = collection.features[0]
-                .properties![StopSourceGenerator.propServiceStatusKey] {
-                XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.normal))
-            } else {
-                XCTFail("Source status property was not set correctly")
-            }
-            XCTAssertTrue(collection.features.contains(where: { $0.geometry == .point(Point(stop4.coordinate)) }))
-        } else {
-            XCTFail("Stop source had no features")
         }
     }
 
     func testStopsAreSnappedToRoutes() {
         let stops = [
-            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
-            MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
-            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
-            MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis,
+            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopAssembly,
+            MapTestDataHelper.stopSullivan.id: MapTestDataHelper.mapStopSullivan,
+            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
+            MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
         ]
 
         let routeSourceGenerator = RouteSourceGenerator(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
-            stopsById: stops,
+            stopsById: stops.mapValues { mapStop in mapStop.stop },
             alertsByStop: [:]
         )
-        let stopSourceGenerator = StopSourceGenerator(stops: stops,
-                                                      routeLines: routeSourceGenerator.routeLines)
-        let sources = stopSourceGenerator.stopSources
+        let stopSourceGenerator = StopSourceGenerator(
+            stops: stops,
+            routeLines: routeSourceGenerator.routeLines
+        )
+        let source = stopSourceGenerator.stopSource
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.3961623851223, longitude: -71.14129664101432)
 
-        let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }
-        XCTAssertNotNil(stationSource)
-        if case let .featureCollection(collection) = stationSource!.data.unsafelyUnwrapped {
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 4)
-            if case let .point(point) = collection.features.first(where: { $0.identifier ==
-                    FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
-            })!
-                .geometry {
+            if case let .point(point) = collection.features.first(where: {
+                $0.identifier == FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
+            })!.geometry {
                 XCTAssertEqual(point.coordinates, snappedStopCoordinates)
             } else {
                 XCTFail("Source feature was not a point")
@@ -157,12 +141,16 @@ final class StopSourceGeneratorTests: XCTestCase {
             stop.childStopIds = []
         }
 
-        let stopSourceGenerator = StopSourceGenerator(stops: [selectedStop.id: selectedStop, otherStop.id: otherStop],
-                                                      selectedStop: selectedStop, routeLines: [])
+        let stopSourceGenerator = StopSourceGenerator(
+            stops: [selectedStop.id: selectedStop, otherStop.id: otherStop].mapValues { stop in
+                MapStop(stop: stop, routes: [.red: [MapTestDataHelper.routeRed]], routeTypes: [.red])
+            },
+            selectedStop: selectedStop,
+            routeLines: []
+        )
 
-        let sources = stopSourceGenerator.stopSources
-        let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }!
-        if case let .featureCollection(collection) = stationSource.data.unsafelyUnwrapped {
+        let source = stopSourceGenerator.stopSource
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
 
             let selectedFeature = collection.features.first { feat in
@@ -270,38 +258,123 @@ final class StopSourceGeneratorTests: XCTestCase {
                 childAlerts: [:]
             ),
         ]
-        let stopSourceGenerator = StopSourceGenerator(stops: stops, alertsByStop: alertsByStop)
-        let sources = stopSourceGenerator.stopSources
+        let stopSourceGenerator = StopSourceGenerator(
+            stops: [
+                "70061": .init(
+                    stop: stops["70061"]!,
+                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routeTypes: [.red]
+                ),
+                "place-alfcl": .init(
+                    stop: stops["place-alfcl"]!,
+                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routeTypes: [.red]
+                ),
+                "place-astao": .init(
+                    stop: stops["place-astao"]!,
+                    routes: [.orange: [MapTestDataHelper.routeOrange]],
+                    routeTypes: [.orange]
+                ),
+            ],
+            alertsByStop: alertsByStop
+        )
+        let source = stopSourceGenerator.stopSource
 
-        let stationSource = sources.first { $0.id == StopSourceGenerator.getStopSourceId(.station) }
-        XCTAssertNotNil(stationSource)
-        if case let .featureCollection(collection) = stationSource!.data.unsafelyUnwrapped {
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
 
-            let alewifeFeature = collection.features.first { feat in
-                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-alfcl" }
-                else { false }
-            }
+            let alewifeFeature = collection.features.first { feat in propId(from: feat) == "place-alfcl" }
             XCTAssertNotNil(alewifeFeature)
-            if case let .string(serviceStatus) = alewifeFeature!.properties![StopSourceGenerator.propServiceStatusKey] {
-                XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.partialService))
+            if let serviceStatus = propString(prop: StopSourceGenerator.propServiceStatusKey, from: alewifeFeature!) {
+                XCTAssertEqual(serviceStatus, StopServiceStatus.partialService.name)
             } else {
                 XCTFail("Disrupted source status property was not set correctly")
             }
 
-            let assemblyFeature = collection.features.first { feat in
-                if case let .string(id) = feat.properties![StopSourceGenerator.propIdKey] { id == "place-astao" }
-                else { false }
-            }
+            let assemblyFeature = collection.features.first { feat in propId(from: feat) == "place-astao" }
             XCTAssertNotNil(assemblyFeature)
-            if case let .string(serviceStatus) = assemblyFeature!
-                .properties![StopSourceGenerator.propServiceStatusKey] {
-                XCTAssertEqual(serviceStatus, String(describing: StopServiceStatus.noService))
+            if let serviceStatus = propString(prop: StopSourceGenerator.propServiceStatusKey, from: assemblyFeature!) {
+                XCTAssertEqual(serviceStatus, StopServiceStatus.noService.name)
             } else {
                 XCTFail("No service source status property was not set correctly")
             }
         } else {
             XCTFail("Station source had no features")
         }
+    }
+
+    func testStopFeaturesHaveRoutes() {
+        let stops = [
+            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopAssembly,
+            MapTestDataHelper.stopSullivan.id: MapTestDataHelper.mapStopSullivan,
+            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
+            MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
+        ]
+
+        let routeSourceGenerator = RouteSourceGenerator(
+            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.routesById,
+            stopsById: stops.mapValues { mapStop in mapStop.stop },
+            alertsByStop: [:]
+        )
+        let stopSourceGenerator = StopSourceGenerator(
+            stops: stops,
+            routeLines: routeSourceGenerator.routeLines
+        )
+
+        let source = stopSourceGenerator.stopSource
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 4)
+            guard let assemblyFeature = collection.features.first(where: { feat in
+                propId(from: feat) == MapTestDataHelper.stopAssembly.id
+            }) else {
+                XCTFail("Assembly route property was not present in the source")
+                return
+            }
+
+            if let assemblyRoutes = propRoutesArray(from: assemblyFeature) {
+                XCTAssertEqual(assemblyRoutes, [MapStopRoute.orange])
+            } else {
+                XCTFail("Assembly route property was not set correctly")
+            }
+
+            guard let alewifeFeature = collection.features.first(where: { feat in
+                propId(from: feat) == MapTestDataHelper.stopAlewife.id
+            }) else {
+                XCTFail("Alewife route property was not present in the source")
+                return
+            }
+
+            if let alewifeRoutes = propRoutesArray(from: alewifeFeature) {
+                XCTAssertEqual(alewifeRoutes, [MapStopRoute.red, MapStopRoute.bus])
+            } else {
+                XCTFail("Alewife route property was not set correctly")
+            }
+        } else {
+            XCTFail("Station source had no features")
+        }
+    }
+
+    private func asString(_ wrapped: JSONValue) -> String? {
+        if case let .string(value) = wrapped { value } else { nil }
+    }
+
+    private func propId(from feat: Feature) -> String? {
+        propString(prop: StopSourceGenerator.propIdKey, from: feat)
+    }
+
+    private func propRoutesArray(
+        prop: String = StopSourceGenerator.propMapRoutesKey,
+        from feat: Feature
+    ) -> [MapStopRoute]? {
+        guard case let .array(routes) = feat.properties![prop] else { return nil }
+        return routes.compactMap { wrappedValue in
+            MapStopRoute.allCases.first { enumCase in enumCase.name == asString(wrappedValue ?? "") }
+        }
+    }
+
+    private func propString(prop: String, from feat: Feature) -> String? {
+        guard let value: JSONValue = feat.properties?[prop] ?? nil else { return nil }
+        return asString(value)
     }
 }

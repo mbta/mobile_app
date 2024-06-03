@@ -11,46 +11,115 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 class StopLayerGenerator {
-    let stopLayerTypes: [LocationType]
-    let stopLayers: [SymbolLayer]
+    let stopLayers: [SymbolLayer] = createStopLayers()
+
+    static let stopZoomThreshold = 8.0
 
     static let stopLayerId = "stop-layer"
-    static func getStopLayerId(_ locationType: LocationType) -> String {
-        "\(stopLayerId)-\(locationType.name)"
+    static let stopTouchTargetLayerId = "\(stopLayerId)-touch-target"
+    static func getTransferLayerId(_ index: Int) -> String {
+        "\(stopLayerId)-transfer-\(index.description)"
     }
 
-    init(stopLayerTypes: [LocationType]) {
-        self.stopLayerTypes = stopLayerTypes
-        stopLayers = Self.createStopLayers(stopLayerTypes: stopLayerTypes)
+    static let routesExp = Exp(.get) { StopSourceGenerator.propMapRoutesKey }
+
+    static let selectedExp = Exp(.boolean) { Exp(.get) { StopSourceGenerator.propIsSelectedKey } }
+    static let selectedSizeExp: Expression =
+        Exp(.interpolate) {
+            Exp(.exponential) { 1.5 }
+            Exp(.zoom)
+            MapDefaults.midZoomThreshold; withMultipliers(0.25, modeResize: [0.5, 2, 1.75])
+            13; withMultipliers(0.625, modeResize: [1, 1.5, 1.5])
+            14; withMultipliers(1)
+        }
+
+    static let topRouteExp = Exp(.string) {
+        Exp(.switchCase) {
+            Exp(.eq) { Exp(.length) { routesExp }; 0 }
+            ""
+            Exp(.at) { 0; routesExp }
+        }
     }
 
-    static func createStopLayers(stopLayerTypes: [LocationType]) -> [SymbolLayer] {
-        stopLayerTypes.map { Self.createStopLayer(locationType: $0) }
+    static func createStopLayers() -> [SymbolLayer] {
+        let sourceId = StopSourceGenerator.stopSourceId
+        var stopLayer = SymbolLayer(id: Self.stopLayerId, source: sourceId)
+        stopLayer.iconImage = StopIcons.getStopLayerIcon()
+        includeSharedProps(on: &stopLayer)
+
+        var stopTouchTargetLayer = SymbolLayer(id: Self.stopTouchTargetLayerId, source: sourceId)
+        stopTouchTargetLayer.iconImage = .expression(Exp(.image) { StopIcons.stopDummyIcon })
+        stopTouchTargetLayer.iconPadding = .constant(22.0)
+        includeSharedProps(on: &stopTouchTargetLayer)
+
+        let transferLayers = (0 ..< 3).map { index in
+            var transferLayer = SymbolLayer(id: Self.getTransferLayerId(index), source: sourceId)
+            transferLayer.iconImage = StopIcons.getTransferLayerIcon(index)
+            transferLayer.iconOffset = transferOffsetValue(index: index)
+            includeSharedProps(on: &transferLayer)
+
+            return transferLayer
+        }
+
+        return [stopTouchTargetLayer, stopLayer] + transferLayers
     }
 
-    static func createStopLayer(locationType: LocationType) -> SymbolLayer {
-        let layerId = Self.getStopLayerId(locationType)
-        let sourceId = StopSourceGenerator.getStopSourceId(locationType)
-        var stopLayer = SymbolLayer(id: layerId, source: sourceId)
-        stopLayer.iconImage = StopIcons.getStopLayerIcon(locationType)
+    static func includeSharedProps(on layer: inout SymbolLayer) {
+        layer.iconSize = .expression(selectedSizeExp)
 
-        // TODO: We actually want to give the icon a halo, but that is only supported for SDFs,
-        // which can only be one color.
-        // Alternates of stop icon SVGs with halo applied?
-        stopLayer.iconSize = .expression(Exp(.switchCase) {
-            Exp(.eq) {
-                Exp(.get) { StopSourceGenerator.propIsSelectedKey }
-                true
-            }
-            1.25
-            1
+        layer.iconAllowOverlap = .constant(true)
+        layer.iconOpacity = .constant(0)
+        layer.iconOpacityTransition = StyleTransition(duration: 1, delay: 0)
+        layer.minZoom = stopZoomThreshold - 1
+        layer.symbolSortKey = .expression(Exp(.get) { StopSourceGenerator.propSortOrderKey })
+        layer.textAllowOverlap = .constant(true)
+    }
+
+    static func modeSizeMultiplierExp(resizeWith: [Double]) -> Expression {
+        Exp(.switchCase) {
+            Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
+            resizeWith[0]
+            Exp(.eq) { topRouteExp; MapStopRoute.commuter.name }
+            resizeWith[1]
+            resizeWith[2]
+        }
+    }
+
+    static func transferOffsetExp(closeZoom: Bool, _ index: Int) -> Expression {
+        let doubleRouteOffset: Double = closeZoom ? 13 : 8
+        let tripleRouteOffset: Double = closeZoom ? 26 : 16
+        return Exp(.step) {
+            Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } }
+            xyExp([0, 0])
+            2
+            xyExp([[0, -doubleRouteOffset], [0, doubleRouteOffset], [0, 0]][index])
+            3
+            xyExp([[0, -tripleRouteOffset], [0, 0], [0, tripleRouteOffset]][index])
+        }
+    }
+
+    static func transferOffsetValue(index: Int) -> Value<[Double]> {
+        .expression(Exp(.step) {
+            Exp(.zoom)
+            transferOffsetExp(closeZoom: false, index)
+            MapDefaults.closeZoomThreshold
+            transferOffsetExp(closeZoom: true, index)
         })
+    }
 
-        stopLayer.iconAllowOverlap = .constant(true)
-        stopLayer.minZoom = StopIcons.stopZoomThreshold - 1
-        stopLayer.iconOpacity = .constant(0)
-        stopLayer.iconOpacityTransition = StyleTransition(duration: 1, delay: 0)
+    // The modeResize array must contain 3 entries for [BUS, COMMUTER, fallback]
+    static func withMultipliers(_ base: Double, modeResize: [Double] = [1, 1, 1]) -> Expression {
+        Exp(.product) {
+            base
+            modeSizeMultiplierExp(resizeWith: modeResize)
+            // TODO: We actually want to give the icon a halo rather than resize,
+            // but that is only supported for SDFs, which can only be one color.
+            // Alternates of stop icon SVGs with halo applied?
+            Exp(.switchCase) { selectedExp; 1.25; 1 }
+        }
+    }
 
-        return stopLayer
+    static func xyExp(_ pair: [Double]) -> Expression {
+        Exp(.array) { "number"; 2; pair }
     }
 }

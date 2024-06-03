@@ -13,7 +13,7 @@ class ViewportProvider: ObservableObject {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
         static let center: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
-        static let zoom: CGFloat = StopIcons.stopZoomThreshold + 0.25
+        static let zoom: CGFloat = MapDefaults.defaultZoomThreshold
     }
 
     @Published var viewport: Viewport
@@ -43,7 +43,7 @@ class ViewportProvider: ObservableObject {
 
     func follow(animation: ViewportAnimation = Defaults.animation) {
         withViewportAnimation(animation) {
-            self.viewport = .followPuck(zoom: self.viewport.camera?.zoom ?? Defaults.zoom)
+            self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
     }
 

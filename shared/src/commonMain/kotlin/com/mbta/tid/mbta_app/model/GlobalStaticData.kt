@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 
 data class GlobalStaticData(val globalData: GlobalResponse) {
-
     /*
     Only stops that don't have a parent stop (stations and isolated stops) are returned in the map.
     Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on

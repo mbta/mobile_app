@@ -25,6 +25,13 @@ enum MapTestDataHelper {
         route.routePatternIds = ["Orange-3-0", "Orange-7-0"]
     }
 
+    static let route67 = objects.route { route in
+        route.id = "67"
+        route.color = "FFC72C"
+        route.type = .bus
+        route.routePatternIds = ["67-4-0"]
+    }
+
     static let routesById = [routeRed.id: routeRed, routeOrange.id: routeOrange]
 
     static let stopAlewife = objects.stop { stop in
@@ -34,12 +41,27 @@ enum MapTestDataHelper {
         stop.locationType = LocationType.station
     }
 
+    static let mapStopAlewife: MapStop = .init(
+        stop: stopAlewife,
+        routes: [
+            MapStopRoute.red: [routeRed],
+            MapStopRoute.bus: [route67],
+        ],
+        routeTypes: [MapStopRoute.red, MapStopRoute.bus]
+    )
+
     static let stopDavis = objects.stop { stop in
         stop.id = "place-davis"
         stop.latitude = 42.39674
         stop.longitude = -71.121815
         stop.locationType = LocationType.station
     }
+
+    static let mapStopDavis: MapStop = .init(
+        stop: stopDavis,
+        routes: [MapStopRoute.red: [routeRed]],
+        routeTypes: [MapStopRoute.red]
+    )
 
     static let stopPorter = objects.stop { stop in
         stop.id = "place-porter"
@@ -48,12 +70,24 @@ enum MapTestDataHelper {
         stop.locationType = LocationType.station
     }
 
+    static let mapStopPorter: MapStop = .init(
+        stop: stopPorter,
+        routes: [MapStopRoute.red: [routeRed]],
+        routeTypes: [MapStopRoute.red]
+    )
+
     static let stopHarvard = objects.stop { stop in
         stop.id = "place-harsq"
         stop.latitude = 42.373362
         stop.longitude = -71.118956
         stop.locationType = LocationType.station
     }
+
+    static let mapStopHarvard: MapStop = .init(
+        stop: stopHarvard,
+        routes: [MapStopRoute.red: [routeRed]],
+        routeTypes: [MapStopRoute.red]
+    )
 
     static let stopCentral = objects.stop { stop in
         stop.id = "place-cntsq"
@@ -62,6 +96,12 @@ enum MapTestDataHelper {
         stop.locationType = LocationType.station
     }
 
+    static let mapStopCentral: MapStop = .init(
+        stop: stopCentral,
+        routes: [MapStopRoute.red: [routeRed]],
+        routeTypes: [MapStopRoute.red]
+    )
+
     static let stopAssembly = objects.stop { stop in
         stop.id = "place-astao"
         stop.latitude = 42.392811
@@ -69,12 +109,24 @@ enum MapTestDataHelper {
         stop.locationType = LocationType.station
     }
 
+    static let mapStopAssembly: MapStop = .init(
+        stop: stopAssembly,
+        routes: [MapStopRoute.orange: [routeOrange]],
+        routeTypes: [MapStopRoute.orange]
+    )
+
     static let stopSullivan = objects.stop { stop in
         stop.id = "place-sull"
         stop.latitude = 42.383975
         stop.longitude = -71.076994
         stop.locationType = LocationType.station
     }
+
+    static let mapStopSullivan: MapStop = .init(
+        stop: stopSullivan,
+        routes: [MapStopRoute.orange: [routeOrange]],
+        routeTypes: [MapStopRoute.orange]
+    )
 
     static let patternRed10 = objects.routePattern(route: routeRed) { pattern in
         pattern.id = "Red-1-0"
@@ -100,6 +152,12 @@ enum MapTestDataHelper {
         pattern.representativeTripId = "61746557"
     }
 
+    static let pattern67 = objects.routePattern(route: route67) { pattern in
+        pattern.id = "67-4-0"
+        pattern.typicality = .typical
+        pattern.representativeTripId = "61846289"
+    }
+
     static let tripRedC1 = objects.trip(routePattern: patternRed30) { trip in
         trip.id = "canonical-Red-C1-0"
         trip.shapeId = "canonical-933_0009"
@@ -119,6 +177,11 @@ enum MapTestDataHelper {
     static let tripOrangeAtypical = objects.trip(routePattern: patternOrange30) { trip in
         trip.id = "61746557"
         trip.shapeId = "40460002"
+    }
+
+    static let trip67 = objects.trip(routePattern: pattern67) { trip in
+        trip.id = "61846289"
+        trip.stopIds = [stopAlewife.id]
     }
 
     static let shapeRedC1 = objects.shape { shape in

@@ -32,8 +32,6 @@ class MapLayerManager: IMapLayerManager {
     var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
 
-    static let stopLayerTypes: [LocationType] = [.stop, .station]
-
     init(map: MapboxMap) {
         self.map = map
 
@@ -51,10 +49,7 @@ class MapLayerManager: IMapLayerManager {
         self.stopSourceGenerator = stopSourceGenerator
 
         addSource(source: routeSourceGenerator.routeSource)
-
-        for source in stopSourceGenerator.stopSources {
-            addSource(source: source)
-        }
+        addSource(source: stopSourceGenerator.stopSource)
     }
 
     private func addSource(source: GeoJSONSource) {
@@ -83,29 +78,23 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
+    func updateSourceData(source: GeoJSONSource) {
+        if map.sourceExists(withId: source.id) {
+            guard let actualData = source.data else { return }
+            map.updateGeoJSONSource(withId: source.id, data: actualData)
+        } else {
+            addSource(source: source)
+        }
+    }
+
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
         self.routeSourceGenerator = routeSourceGenerator
-        let routeSource = routeSourceGenerator.routeSource
-
-        if map.sourceExists(withId: routeSource.id) {
-            guard let actualData = routeSource.data else { return }
-            map.updateGeoJSONSource(withId: routeSource.id, data: actualData)
-        } else {
-            addSource(source: routeSource)
-        }
+        updateSourceData(source: routeSourceGenerator.routeSource)
     }
 
     func updateSourceData(stopSourceGenerator: StopSourceGenerator) {
         self.stopSourceGenerator = stopSourceGenerator
-
-        stopSourceGenerator.stopSources.forEach { stopSource in
-            if map.sourceExists(withId: stopSource.id) {
-                guard let actualData = stopSource.data else { return }
-                map.updateGeoJSONSource(withId: stopSource.id, data: actualData)
-            } else {
-                addSource(source: stopSource)
-            }
-        }
+        updateSourceData(source: stopSourceGenerator.stopSource)
     }
 
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
@@ -114,9 +103,10 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateStopLayerZoom(_ zoomLevel: CGFloat) {
-        let opacity = zoomLevel > StopIcons.stopZoomThreshold ? 1.0 : 0.0
-        for layerType: LocationType in Self.stopLayerTypes {
-            let layerId = StopLayerGenerator.getStopLayerId(layerType)
+        let opacity = zoomLevel > StopLayerGenerator.stopZoomThreshold ? 1.0 : 0.0
+        for layerId in (0 ..< 3).map({
+            StopLayerGenerator.getTransferLayerId($0)
+        }) + [StopLayerGenerator.stopLayerId] {
             do {
                 try map.updateLayer(withId: layerId, type: SymbolLayer.self) { layer in
                     if layer.iconOpacity != .constant(opacity) {

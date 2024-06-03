@@ -10,51 +10,82 @@ import shared
 @_spi(Experimental) import MapboxMaps
 
 enum StopIcons {
-    static let stopZoomThreshold: Double = 13.0
-    static let tombstoneZoomThreshold: Double = 16.0
+    static let stopIconPrefix = "map-stop-"
+    static let stopZoomClosePrefix = "close-"
+    static let stopZoomWidePrefix = "wide-"
 
-    static let stationIconId = "t-station"
-    static let stationIconIssuesId = "t-station-issues"
-    static let stationIconNoServiceId = "t-station-no-service"
-    static let stopIconId = "bus-stop"
-    static let stopIconIssuesId = "bus-stop-issues"
-    static let stopIconNoServiceId = "bus-stop-no-service"
-    static let stopIconSmallId = "bus-stop-small"
+    static let stopContainerPrefix = "\(stopIconPrefix)container-"
+    static let stopTransferSuffix = "-transfer"
 
-    static let all: [String] = [
-        stationIconId, stationIconIssuesId, stationIconNoServiceId,
-        stopIconId, stopIconIssuesId, stopIconNoServiceId, stopIconSmallId,
-    ]
+    // This is a single transparent pixel, used to create a layer just for tap target padding
+    static let stopDummyIcon = "\(stopIconPrefix)dummy-tap-pixel"
 
-    static func getStopLayerIcon(_ locationType: LocationType) -> Value<ResolvedImage> {
-        switch locationType {
-        case .station:
-            .expression(
-                Exp(.match) {
-                    Exp(.get) { StopSourceGenerator.propServiceStatusKey }
-                    String(describing: StopServiceStatus.noService)
-                    stationIconNoServiceId
-                    String(describing: StopServiceStatus.partialService)
-                    stationIconIssuesId
-                    stationIconId
-                }
-            )
-        case .stop:
-            .expression(Exp(.step) {
-                Exp(.zoom)
-                stopIconSmallId
-                tombstoneZoomThreshold
-                Exp(.match) {
-                    Exp(.get) { StopSourceGenerator.propServiceStatusKey }
-                    String(describing: StopServiceStatus.noService)
-                    stopIconNoServiceId
-                    String(describing: StopServiceStatus.partialService)
-                    stopIconIssuesId
-                    stopIconId
-                }
-            })
-        default:
-            .constant(.name(""))
+    static let all: [String] = MapStopRoute.allCases.flatMap { routeType in atZooms(stopIconPrefix, routeType.name) }
+        + atZooms(stopIconPrefix, MapStopRoute.bus.name + stopTransferSuffix)
+        + ["2", "3"].flatMap { memberCount in atZooms(stopContainerPrefix, memberCount) }
+        + [stopDummyIcon]
+
+    static func atZooms(_ pre: String, _ post: String) -> [String] {
+        [stopZoomClosePrefix, stopZoomWidePrefix].map { zoom in "\(pre)\(zoom)\(post)" }
+    }
+
+    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> Expression {
+        Exp(.concat) {
+            stopIconPrefix
+            zoomPrefix
+            routeAt(index)
         }
+    }
+
+    static func getStopIconName(_ zoomPrefix: String) -> Expression {
+        Exp(.step) {
+            Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
+            getRouteIconName(zoomPrefix, 0)
+            2
+            Exp(.concat) { stopContainerPrefix; zoomPrefix; "2" }
+            3
+            Exp(.concat) { stopContainerPrefix; zoomPrefix; "3" }
+        }
+    }
+
+    static func getStopLayerIcon() -> Value<ResolvedImage> {
+        .expression(Exp(.step) {
+            Exp(.zoom)
+            getStopIconName(stopZoomWidePrefix)
+            MapDefaults.closeZoomThreshold
+            getStopIconName(stopZoomClosePrefix)
+        })
+    }
+
+    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> Expression {
+        Exp(.step) {
+            Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
+            ""
+            2
+            Exp(.concat) {
+                getRouteIconName(zoomPrefix, index)
+                Exp(.switchCase) {
+                    // Regular non-transfer bus icons are different than the other modes,
+                    // and don't fit in the transfer stop containers, this adds a suffix
+                    // to use a different icon when a bus is included in a transfer stack.
+                    Exp(.eq) { routeAt(index); MapStopRoute.bus.name }
+                    stopTransferSuffix
+                    ""
+                }
+            }
+        }
+    }
+
+    static func getTransferLayerIcon(_ index: Int) -> Value<ResolvedImage> {
+        .expression(Exp(.step) {
+            Exp(.zoom)
+            getTransferIconName(stopZoomWidePrefix, index)
+            MapDefaults.closeZoomThreshold
+            getTransferIconName(stopZoomClosePrefix, index)
+        })
+    }
+
+    private static func routeAt(_ index: Int) -> Expression {
+        Exp(.string) { Exp(.at) { index; Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
     }
 }

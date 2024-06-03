@@ -22,6 +22,7 @@ struct HomeMapView: View {
     @ObservedObject var viewportProvider: ViewportProvider
 
     var stopRepository: IStopRepository
+    @State var globalMapData: GlobalMapData?
     @State var stopMapData: StopMapResponse?
     @State var upcomingRoutePatterns: Set<String> = .init()
 
@@ -70,41 +71,63 @@ struct HomeMapView: View {
     }
 
     var body: some View {
-        modifiedMap.overlay(alignment: .topTrailing) {
+        realtimeResponsiveMap.overlay(alignment: .topTrailing) {
             if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
                 RecenterButton { Task { viewportProvider.follow() } }
             }
         }
+        .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
+            handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder
-    var modifiedMap: some View {
+    var realtimeResponsiveMap: some View {
+        staticResponsiveMap
+            .onChange(of: alertsFetcher.alerts) { nextAlerts in
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: nextAlerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
+            }
+            .onChange(of: nearbyVM.departures) { _ in
+                if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
+                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+                }
+            }
+            .onChange(of: currentStopAlerts) { nextStopAlerts in
+                handleStopAlertChange(alertsByStop: nextStopAlerts)
+            }
+            .onDisappear {
+                vehiclesFetcher.leave()
+            }
+            .onReceive(timer) { input in
+                now = input
+                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                    alerts: alertsFetcher.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
+            }
+    }
+
+    @ViewBuilder
+    var staticResponsiveMap: some View {
         ProxyModifiedMap(
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
             globalFetcher: globalFetcher,
-            railRouteShapeFetcher: railRouteShapeFetcher
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            globalMapData: globalMapData
         )
-        .onChange(of: alertsFetcher.alerts) { nextAlerts in
-            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                alerts: nextAlerts,
-                filterAtTime: now.toKotlinInstant()
-            )
-        }
-        .onChange(of: nearbyVM.departures) { _ in
-            if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
-                updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
-            }
-        }
-        .onChange(of: currentStopAlerts) { nextStopAlerts in
-            handleStopAlertChange(alertsByStop: nextStopAlerts)
-        }
         .onChange(of: globalFetcher.response) { _ in
             currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
                 alerts: alertsFetcher.alerts,
                 filterAtTime: now.toKotlinInstant()
             )
+            guard let globalStaticData = globalFetcher.globalStaticData else { return }
+            globalMapData = GlobalMapData(globalStatic: globalStaticData)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
             guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
@@ -112,20 +135,6 @@ struct HomeMapView: View {
         }
         .onChange(of: nearbyVM.navigationStack) { nextNavStack in
             handleNavStackChange(navigationStack: nextNavStack)
-        }
-        .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
-            handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
-        }
-        .onDisappear {
-            vehiclesFetcher.leave()
-        }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .onReceive(timer) { input in
-            now = input
-            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                alerts: alertsFetcher.alerts,
-                filterAtTime: now.toKotlinInstant()
-            )
         }
     }
 
@@ -153,6 +162,7 @@ struct ProxyModifiedMap: View {
     var handleTryLayerInit: (_ map: MapboxMap?) -> Void
     var globalFetcher: GlobalFetcher
     var railRouteShapeFetcher: RailRouteShapeFetcher
+    var globalMapData: GlobalMapData?
 
     var body: some View {
         MapReader { proxy in
@@ -166,6 +176,12 @@ struct ProxyModifiedMap: View {
                 .onChange(of: railRouteShapeFetcher.response) { _ in
                     handleTryLayerInit(proxy.map)
                 }
+                .onChange(of: globalMapData) { _ in
+                    handleTryLayerInit(proxy.map)
+                }
+                .withScenePhaseHandlers(onActive: {
+                    handleTryLayerInit(proxy.map)
+                })
         }
     }
 }
