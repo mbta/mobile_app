@@ -1,0 +1,22 @@
+{
+  "images": [
+    {
+      "filename": "map-stop-wide-SILVER-terminal-743.svg",
+      "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "map-stop-wide-SILVER-terminal-743-dark.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
