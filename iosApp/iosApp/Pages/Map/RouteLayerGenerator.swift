@@ -75,7 +75,7 @@ class RouteLayerGenerator {
             6
         })
         suspendedLayer.lineDasharray = .constant([1.33, 2.0])
-        suspendedLayer.lineColor = .constant(StyleColor(UIColor(Color.deemphasized)))
+        suspendedLayer.lineColor = .constant(StyleColor(.deemphasized))
 
         var alertBackgroundLayer = baseRouteLayer(layerId: alertingBgRouteLayerId)
 
@@ -89,7 +89,7 @@ class RouteLayerGenerator {
             closeZoomCutoff
             10
         })
-        alertBackgroundLayer.lineColor = .constant(StyleColor(UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))))
+        alertBackgroundLayer.lineColor = .constant(StyleColor(.fill3))
 
         return [alertBackgroundLayer, shuttledLayer, suspendedLayer]
     }
