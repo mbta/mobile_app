@@ -17,7 +17,7 @@ mapbox = "11.3.0"
 mapboxTurf = "6.15.0"
 okhttp = "4.12.0"
 sentry = "0.5.0"
-skie = "0.8.0"
+skie = "0.8.1"
 spatialk = "0.3.0"
 mokkery = "2.0.0-RC1"
 
