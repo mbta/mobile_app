@@ -15,7 +15,6 @@ import SwiftUI
 
 struct NearbyTransitPageView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
-    @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -25,12 +24,10 @@ struct NearbyTransitPageView: View {
 
     init(
         globalFetcher: GlobalFetcher,
-        nearbyFetcher: NearbyFetcher,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider
     ) {
         self.globalFetcher = globalFetcher
-        self.nearbyFetcher = nearbyFetcher
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
     }
@@ -39,10 +36,13 @@ struct NearbyTransitPageView: View {
         ZStack {
             Color.fill1.ignoresSafeArea(.all)
             NearbyTransitView(
-                location: location,
+                getNearby: { global, location in
+                    nearbyVM.getNearby(global: global, location: location)
+                },
+                state: $nearbyVM.nearbyState,
+                location: $location,
                 alerts: nearbyVM.alerts,
-                globalFetcher: globalFetcher,
-                nearbyFetcher: nearbyFetcher
+                globalFetcher: globalFetcher
             )
             .onReceive(
                 viewportProvider.cameraStatePublisher

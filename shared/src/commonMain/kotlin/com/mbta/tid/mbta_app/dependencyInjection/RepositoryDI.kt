@@ -1,16 +1,19 @@
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
+import com.mbta.tid.mbta_app.repositories.IdleNearbyRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripSchedulesRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
@@ -27,6 +30,7 @@ interface IRepositories {
     val tripSchedules: ITripSchedulesRepository
     val predictions: IPredictionsRepository?
     val alerts: IAlertsRepository?
+    val nearby: INearbyRepository
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -37,6 +41,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val tripSchedules: ITripSchedulesRepository by inject()
     override val predictions: IPredictionsRepository by inject()
     override val alerts: IAlertsRepository by inject()
+    override val nearby: INearbyRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -47,6 +52,7 @@ class RealRepositories : IRepositories {
     override val tripSchedules = TripSchedulesRepository()
     override val predictions = null
     override val alerts = null
+    override val nearby = NearbyRepository()
 }
 
 class MockRepositories(
@@ -56,7 +62,8 @@ class MockRepositories(
     override val stop: IStopRepository,
     override val tripSchedules: ITripSchedulesRepository,
     override val predictions: IPredictionsRepository,
-    override val alerts: IAlertsRepository
+    override val alerts: IAlertsRepository,
+    override val nearby: INearbyRepository
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
@@ -67,7 +74,8 @@ class MockRepositories(
             stop: IStopRepository = IdleStopRepository(),
             tripSchedules: ITripSchedulesRepository = IdleTripSchedulesRepository(),
             predictions: IPredictionsRepository = MockPredictionsRepository(),
-            alerts: IAlertsRepository = MockAlertsRepository()
+            alerts: IAlertsRepository = MockAlertsRepository(),
+            nearby: INearbyRepository = IdleNearbyRepository()
         ): MockRepositories {
             return MockRepositories(
                 pinnedRoutes = pinnedRoutes,
@@ -76,7 +84,8 @@ class MockRepositories(
                 stop = stop,
                 tripSchedules = tripSchedules,
                 predictions = predictions,
-                alerts = alerts
+                alerts = alerts,
+                nearby = nearby
             )
         }
     }

@@ -25,7 +25,6 @@ final class HomeMapViewTest: XCTestCase {
 
         let sut = HomeMapView(
             globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
