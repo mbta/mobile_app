@@ -10,15 +10,17 @@ import shared
 @_spi(Experimental) import MapboxMaps
 
 enum MapExp {
-    static let branchingRouteSuffixExp = Exp(.switchCase) {
-        Exp(.all) {
-            Exp(.any) {
-                Exp(.eq) { topRouteExp; MapStopRoute.green.name }
-                Exp(.eq) { topRouteExp; MapStopRoute.silver.name }
-            }
-            singleRouteTypeExp
-            singleBranchRouteExp
+    static let branchedRouteExp = Exp(.all) {
+        Exp(.any) {
+            Exp(.eq) { topRouteExp; MapStopRoute.green.name }
+            Exp(.eq) { topRouteExp; MapStopRoute.silver.name }
         }
+        singleRouteTypeExp
+        singleBranchRouteExp
+    }
+
+    static let branchingRouteSuffixExp = Exp(.switchCase) {
+        branchedRouteExp
         Exp(.concat) {
             "-"
             Exp(.at) {
@@ -112,6 +114,8 @@ enum MapExp {
             Exp(.step) {
                 Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } }
                 Exp(.switchCase) {
+                    branchedRouteExp
+                    xyExp([1.15, 0.75])
                     Exp(.get) { StopSourceGenerator.propIsTerminalKey }
                     xyExp([1, 0.75])
                     xyExp([0.75, 0.5])
@@ -124,7 +128,11 @@ enum MapExp {
             MapDefaults.closeZoomThreshold
             Exp(.step) {
                 Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } }
-                xyExp([2, 1.5])
+                Exp(.switchCase) {
+                    branchedRouteExp
+                    xyExp([2.5, 1.5])
+                    xyExp([2, 1.5])
+                }
                 2
                 xyExp([2, 2])
                 3
