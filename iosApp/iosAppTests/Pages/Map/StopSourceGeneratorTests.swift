@@ -64,16 +64,17 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
 
         let stopSourceGenerator = StopSourceGenerator(stops: [
-            stop1.id: .init(stop: stop1, routes: [:], routeTypes: [MapStopRoute.blue]),
-            stop2.id: .init(stop: stop2, routes: [:], routeTypes: [MapStopRoute.green]),
+            stop1.id: .init(stop: stop1, routes: [:], routeTypes: [MapStopRoute.blue], isTerminal: false),
+            stop2.id: .init(stop: stop2, routes: [:], routeTypes: [MapStopRoute.green], isTerminal: false),
             stop3.id: .init(
                 stop: stop3,
                 routes: [:],
-                routeTypes: [MapStopRoute.red, MapStopRoute.mattapan, MapStopRoute.bus]
+                routeTypes: [MapStopRoute.red, MapStopRoute.mattapan, MapStopRoute.bus],
+                isTerminal: false
             ),
-            stop4.id: .init(stop: stop4, routes: [:], routeTypes: [MapStopRoute.bus]),
-            stop5.id: .init(stop: stop5, routes: [:], routeTypes: [MapStopRoute.bus]),
-            stop6.id: .init(stop: stop6, routes: [:], routeTypes: [MapStopRoute.bus]),
+            stop4.id: .init(stop: stop4, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false),
+            stop5.id: .init(stop: stop5, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false),
+            stop6.id: .init(stop: stop6, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false),
         ])
         let source = stopSourceGenerator.stopSource
 
@@ -143,7 +144,7 @@ final class StopSourceGeneratorTests: XCTestCase {
 
         let stopSourceGenerator = StopSourceGenerator(
             stops: [selectedStop.id: selectedStop, otherStop.id: otherStop].mapValues { stop in
-                MapStop(stop: stop, routes: [.red: [MapTestDataHelper.routeRed]], routeTypes: [.red])
+                MapStop(stop: stop, routes: [.red: [MapTestDataHelper.routeRed]], routeTypes: [.red], isTerminal: false)
             },
             selectedStop: selectedStop,
             routeLines: []
@@ -263,17 +264,20 @@ final class StopSourceGeneratorTests: XCTestCase {
                 "70061": .init(
                     stop: stops["70061"]!,
                     routes: [.red: [MapTestDataHelper.routeRed]],
-                    routeTypes: [.red]
+                    routeTypes: [.red],
+                    isTerminal: true
                 ),
                 "place-alfcl": .init(
                     stop: stops["place-alfcl"]!,
                     routes: [.red: [MapTestDataHelper.routeRed]],
-                    routeTypes: [.red]
+                    routeTypes: [.red],
+                    isTerminal: true
                 ),
                 "place-astao": .init(
                     stop: stops["place-astao"]!,
                     routes: [.orange: [MapTestDataHelper.routeOrange]],
-                    routeTypes: [.orange]
+                    routeTypes: [.orange],
+                    isTerminal: false
                 ),
             ],
             alertsByStop: alertsByStop
@@ -350,6 +354,15 @@ final class StopSourceGeneratorTests: XCTestCase {
             } else {
                 XCTFail("Alewife route property was not set correctly")
             }
+
+            if let alewifeRouteIds = propRouteIdObject(from: alewifeFeature) {
+                XCTAssertEqual(alewifeRouteIds, [
+                    MapStopRoute.red: [MapTestDataHelper.routeRed.id],
+                    MapStopRoute.bus: [MapTestDataHelper.route67.id],
+                ])
+            } else {
+                XCTFail("Alewife route ID map property was not set correctly")
+            }
         } else {
             XCTFail("Station source had no features")
         }
@@ -396,8 +409,61 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
     }
 
+    func testStopFeaturesHaveTerminals() {
+        let stops = [
+            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
+            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopDavis,
+        ]
+
+        let stopSourceGenerator = StopSourceGenerator(stops: stops)
+
+        let source = stopSourceGenerator.stopSource
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 2)
+            guard let alewifeFeature = collection.features.first(where: { feat in
+                propId(from: feat) == MapTestDataHelper.stopAlewife.id
+            }) else {
+                XCTFail("Alewife stop feature was not present in the source")
+                return
+            }
+
+            if let alewifeIsTerminal = propBool(prop: StopSourceGenerator.propIsTerminalKey, from: alewifeFeature) {
+                XCTAssertEqual(alewifeIsTerminal, MapTestDataHelper.mapStopAlewife.isTerminal)
+            } else {
+                XCTFail("Alewife isTerminal property was not set correctly")
+            }
+
+            guard let davisFeature = collection.features.first(where: { feat in
+                propId(from: feat) == MapTestDataHelper.stopDavis.id
+            }) else {
+                XCTFail("Davis stop feature was not present in the source")
+                return
+            }
+
+            if let davisIsTerminal = propBool(prop: StopSourceGenerator.propIsTerminalKey, from: davisFeature) {
+                XCTAssertEqual(davisIsTerminal, MapTestDataHelper.mapStopDavis.isTerminal)
+            } else {
+                XCTFail("Davis isTerminal property was not set correctly")
+            }
+        } else {
+            XCTFail("Station source had no features")
+        }
+    }
+
     private func asString(_ wrapped: JSONValue) -> String? {
         if case let .string(value) = wrapped { value } else { nil }
+    }
+
+    private func asStringArray(_ wrapped: JSONValue) -> [String?]? {
+        guard case let .array(values) = wrapped else { return nil }
+        return values.compactMap { wrappedValue in
+            asString(wrappedValue ?? "")
+        }
+    }
+
+    private func propBool(prop: String, from feat: Feature) -> Bool? {
+        guard let wrapped: JSONValue = feat.properties?[prop] ?? nil else { return nil }
+        return if case let .boolean(value) = wrapped { value } else { nil }
     }
 
     private func propId(from feat: Feature) -> String? {
@@ -408,10 +474,31 @@ final class StopSourceGeneratorTests: XCTestCase {
         prop: String = StopSourceGenerator.propMapRoutesKey,
         from feat: Feature
     ) -> [MapStopRoute]? {
-        guard case let .array(routes) = feat.properties![prop] else { return nil }
-        return routes.compactMap { wrappedValue in
-            MapStopRoute.allCases.first { enumCase in enumCase.name == asString(wrappedValue ?? "") }
+        guard let wrapped = feat.properties![prop] ?? nil else { return nil }
+        guard let routes = asStringArray(wrapped) else { return nil }
+        return routes.compactMap { value in
+            MapStopRoute.allCases.first { enumCase in enumCase.name == value }
         }
+    }
+
+    private func propRouteIdObject(
+        prop: String = StopSourceGenerator.propRouteIdsKey,
+        from feat: Feature
+    ) -> [MapStopRoute: [String?]?]? {
+        guard case let .object(routeMap) = feat.properties![prop] else { return nil }
+        var resultDict: [MapStopRoute: [String?]?] = [:]
+        for (stringKey, routeArray) in routeMap {
+            guard let key = (MapStopRoute.allCases.first { enumCase in enumCase.name == stringKey }) else {
+                XCTFail("Got unexpected MapStopRoute key value '\(stringKey)'")
+                continue
+            }
+            guard let routeArray else {
+                XCTFail("Got unexpected route array value for key '\(stringKey)'")
+                continue
+            }
+            resultDict[key] = asStringArray(routeArray)
+        }
+        return resultDict
     }
 
     private func propString(prop: String, from feat: Feature) -> String? {
