@@ -70,7 +70,8 @@ struct ContentView: View {
                     viewportProvider: viewportProvider,
                     sheetHeight: $sheetHeight
                 )
-                .sheet(isPresented: .constant(selectedTab == .nearby)) { sheet }
+                .sheet(isPresented: .constant(nearbyVM.isNearbyVisible() == true)) { sheet }
+                .sheet(isPresented: .constant(nearbyVM.isNearbyVisible() == false), onDismiss: { nearbyVM.navigationStack = [] }) { Text("Stop details placeholder") }
             }
         }
         .searchable(
@@ -118,49 +119,85 @@ struct ContentView: View {
         .modifier(AllowsBackgroundInteraction())
     }
 
+    @ViewBuilder
+    var nearbySheetInnerView: some View {
+        NearbyTransitPageView(
+            globalFetcher: globalFetcher,
+            nearbyFetcher: nearbyFetcher,
+            nearbyVM: nearbyVM,
+            viewportProvider: viewportProvider,
+            alertsFetcher: alertsFetcher
+        ).environmentObject(nearbyVM)
+    }
+
     var nearbySheet: some View {
         GeometryReader { proxy in
-            NavigationStack(path: $nearbyVM.navigationStack) {
-                NearbyTransitPageView(
-                    globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
-                    nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    alertsFetcher: alertsFetcher
-                )
-                .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
-                    switch entry {
-                    case let .stopDetails(stop, _):
-                        StopDetailsPage(
-                            globalFetcher: globalFetcher,
-                            viewportProvider: viewportProvider,
-                            stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                            nearbyVM: nearbyVM
-                        )
-                    case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
-                        TripDetailsPage(
-                            tripId: tripId,
-                            vehicleId: vehicleId,
-                            target: target,
-                            globalFetcher: globalFetcher,
-                            tripPredictionsFetcher: tripPredictionsFetcher,
-                            vehicleFetcher: vehicleFetcher
-                        )
-                    }
+            switch $nearbyVM.navigationStack.last?.wrappedValue {
+            case let .stopDetails(stop, filter):
+
+                nearbySheetInnerView.sheet(isPresented: .constant(true), onDismiss: { nearbyVM.navigationStack = [] }) {
+                    StopDetailsPage(
+                        globalFetcher: globalFetcher,
+                        viewportProvider: viewportProvider,
+                        stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                        nearbyVM: nearbyVM
+                    ).environmentObject(nearbyVM)
+                }.onChange(of: proxy.size.height) { newValue in
+                    /*
+                     Only update this if we're less than half way up the users screen
+                     to mitigate undesired behavior
+                     */
+                    guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                    sheetHeight = newValue
+                }.presentationDetents([.medium, .large], selection: .constant(.medium))
+
+            case let .tripDetails(tripId, vehicleId, target):
+                nearbySheetInnerView.sheet(isPresented: .constant(true), onDismiss: { nearbyVM.navigationStack = [] }) {
+                    TripDetailsPage(
+                        tripId: tripId,
+                        vehicleId: vehicleId,
+                        target: target,
+                        globalFetcher: globalFetcher,
+                        tripPredictionsFetcher: tripPredictionsFetcher,
+                        vehicleFetcher: vehicleFetcher
+                    )
+                }.onChange(of: proxy.size.height) { newValue in
+                    /*
+                     Only update this if we're less than half way up the users screen
+                     to mitigate undesired behavior
+                     */
+                    guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                    sheetHeight = newValue
                 }
-            }
-            .onChange(of: proxy.size.height) { newValue in
-                /*
-                 Only update this if we're less than half way up the users screen
-                 to mitigate undesired behavior
-                 */
-                guard newValue < (UIScreen.main.bounds.height / 2) else { return }
-                sheetHeight = newValue
-            }
-            .partialSheetDetents(
-                [.small, .medium, .large],
-                largestUndimmedDetent: .medium
-            )
+                .partialSheetDetents(
+                    [.small, .medium, .large],
+                    largestUndimmedDetent: .medium
+                )
+
+            case _: nearbySheetInnerView
+            } /*
+             NavigationStack(path: $nearbyVM.navigationStack) {
+                 nearbySheetInnerView
+                     .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
+                         switch entry {
+                         case let .stopDetails(stop, _):
+                         }
+                     case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
+                         nearbySheetInnerView.sheet(isPresented: .constant(true), onDismiss: { nearbyVM.navigationStack = [] }) {
+                             TripDetailsPage(
+                                 tripId: tripId,
+                                 vehicleId: vehicleId,
+                                 target: target,
+                                 globalFetcher: globalFetcher,
+                                 tripPredictionsFetcher: tripPredictionsFetcher,
+                                 vehicleFetcher: vehicleFetcher
+                             )
+                         }
+                     }
+             }*/
         }
+        /*
+
+         }*/
     }
 }

@@ -15,6 +15,7 @@ struct NearbyStopView: View {
 
     @ScaledMetric private var chevronHeight: CGFloat = 14
     @ScaledMetric private var chevronWidth: CGFloat = 8
+    @EnvironmentObject var nearbyVM: NearbyViewModel
 
     var body: some View {
         Text(patternsAtStop.stop.name)
@@ -26,10 +27,10 @@ struct NearbyStopView: View {
             .background(Color.fill2)
 
         ForEach(Array(patternsAtStop.patternsByHeadsign.enumerated()), id: \.offset) { index, patternsByHeadsign in
-            NavigationLink(value: SheetNavigationStackEntry.stopDetails(
+            Button(action: { nearbyVM.navigationStack.append(SheetNavigationStackEntry.stopDetails(
                 patternsAtStop.stop,
                 .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
-            )) {
+            )) }) {
                 VStack(spacing: 0) {
                     HStack(spacing: 0) {
                         HeadsignRowView(

@@ -19,6 +19,10 @@ struct TripDetailsTarget: Hashable {
     let stopSequence: Int
 }
 
+enum NearbyPageType {
+    case overview, stop, trip
+}
+
 enum SheetNavigationStackEntry: Hashable {
     case stopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?)
@@ -27,6 +31,14 @@ enum SheetNavigationStackEntry: Hashable {
         switch self {
         case let .stopDetails(stop, _): stop
         case _: nil
+        }
+    }
+
+    func pageType() -> NearbyPageType {
+        switch self {
+        case .stopDetails: NearbyPageType.stop
+        case .tripDetails: NearbyPageType.trip
+        case _: NearbyPageType.overview
         }
     }
 }
