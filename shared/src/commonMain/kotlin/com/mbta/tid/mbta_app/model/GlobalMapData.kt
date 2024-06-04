@@ -3,7 +3,8 @@ package com.mbta.tid.mbta_app.model
 data class MapStop(
     val stop: Stop,
     val routes: Map<MapStopRoute, List<Route>>,
-    val routeTypes: List<MapStopRoute>
+    val routeTypes: List<MapStopRoute>,
+    val isTerminal: Boolean
 )
 
 data class GlobalMapData(val mapStops: Map<String, MapStop>) {
@@ -13,17 +14,38 @@ data class GlobalMapData(val mapStops: Map<String, MapStop>) {
         globalStatic.globalData.stops.values
             .map { stop ->
                 val globalData = globalStatic.globalData
+                val stopIdSet = (setOf(stop.id) + stop.childStopIds)
                 val patterns =
-                    (listOf(stop.id) + stop.childStopIds)
+                    stopIdSet
                         .flatMap { stopId -> globalData.patternIdsByStop[stopId] ?: listOf() }
                         .mapNotNull { globalData.routePatterns[it] }
+                val typicalPatterns =
+                    patterns.filter {
+                        !it.routeId.startsWith("Shuttle-") &&
+                            (it.typicality == RoutePattern.Typicality.Typical ||
+                                it.typicality == RoutePattern.Typicality.CanonicalOnly)
+                    }
+
+                val isTerminal =
+                    typicalPatterns.any { pattern ->
+                        val route = globalData.routes[pattern.routeId]
+                        if (route == null || route.type == RouteType.BUS) {
+                            // Don't mark bus terminals, only rail and ferry
+                            return@any false
+                        }
+                        val trip =
+                            globalData.trips[pattern.representativeTripId] ?: return@any false
+                        val tripIds = trip.stopIds ?: listOf()
+                        if (tripIds.size < 2) {
+                            return@any false
+                        }
+                        return@any setOf(tripIds.first(), tripIds.last())
+                            .intersect(stopIdSet)
+                            .isNotEmpty()
+                    }
 
                 val allRoutes =
-                    patterns
-                        .filter {
-                            it.typicality == RoutePattern.Typicality.Typical ||
-                                it.typicality == RoutePattern.Typicality.CanonicalOnly
-                        }
+                    typicalPatterns
                         .mapNotNull { globalData.routes[it.routeId] }
                         .toSet()
                         .sortedBy { it.sortOrder }
@@ -33,9 +55,6 @@ data class GlobalMapData(val mapStops: Map<String, MapStop>) {
 
                 for (route in allRoutes) {
                     val category = MapStopRoute.matching(route) ?: continue
-                    if (route.id.startsWith("Shuttle-")) {
-                        continue
-                    }
                     if (!mapRouteList.contains(category)) {
                         mapRouteList += category
                     }
@@ -52,7 +71,12 @@ data class GlobalMapData(val mapStops: Map<String, MapStop>) {
                 }
 
                 return@map stop.id to
-                    MapStop(stop = stop, routes = categorizedRoutes, routeTypes = mapRouteList)
+                    MapStop(
+                        stop = stop,
+                        routes = categorizedRoutes,
+                        routeTypes = mapRouteList,
+                        isTerminal = isTerminal
+                    )
             }
             .toMap()
     )

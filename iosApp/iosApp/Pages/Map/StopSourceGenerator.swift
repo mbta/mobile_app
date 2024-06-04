@@ -32,6 +32,7 @@ class StopSourceGenerator {
 
     static let propIdKey = "id"
     static let propIsSelectedKey = "isSelected"
+    static let propIsTerminalKey = "isTerminal"
     // Map routes is an array of MapStopRoute enum names
     static let propMapRoutesKey = "mapRoutes"
     static let propNameKey = "name"
@@ -126,10 +127,18 @@ class StopSourceGenerator {
         let stop = mapStop.stop
         featureProps[Self.propIdKey] = JSONValue(String(describing: stop.id))
         featureProps[Self.propNameKey] = JSONValue(stop.name)
-        featureProps[Self.propIsSelectedKey] = JSONValue(stop.id == stopData.selectedStop?.id)
+        featureProps[Self.propIsSelectedKey] = JSONValue.boolean(stop.id == stopData.selectedStop?.id)
+        featureProps[Self.propIsTerminalKey] = JSONValue.boolean(mapStop.isTerminal)
         featureProps[Self.propMapRoutesKey] = JSONValue.array(JSONArray(
             mapStop.routeTypes.map { route in JSONValue(route.name) }
         ))
+        var routeIds = JSONObject()
+        for (routeType, routes) in mapStop.routes {
+            routeIds[routeType.name] = JSONValue.array(JSONArray(
+                routes.map { route in JSONValue(route.id) }
+            ))
+        }
+        featureProps[Self.propRouteIdsKey] = JSONValue.object(routeIds)
         featureProps[Self.propServiceStatusKey] = JSONValue(
             serviceStatus(at: mapStop, from: stopData.alertsByStop).name
         )
