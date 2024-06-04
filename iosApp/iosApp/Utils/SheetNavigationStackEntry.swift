@@ -19,9 +19,12 @@ struct TripDetailsTarget: Hashable {
     let stopSequence: Int
 }
 
-enum SheetNavigationStackEntry: Hashable {
+enum SheetNavigationStackEntry: Hashable, Identifiable {
     case stopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?)
+    var id: Int {
+        hashValue
+    }
 
     func stop() -> Stop? {
         switch self {

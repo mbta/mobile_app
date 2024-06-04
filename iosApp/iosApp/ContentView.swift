@@ -70,7 +70,7 @@ struct ContentView: View {
                     viewportProvider: viewportProvider,
                     sheetHeight: $sheetHeight
                 )
-                .sheet(isPresented: .constant(selectedTab == .nearby)) { sheet }
+                .sheet(isPresented: .constant(selectedTab == .nearby)) { sheet.presentationDetents([.medium]) }
             }
         }
         .searchable(
@@ -120,34 +120,31 @@ struct ContentView: View {
 
     var nearbySheet: some View {
         GeometryReader { proxy in
-            NavigationStack(path: $nearbyVM.navigationStack) {
-                NearbyTransitPageView(
-                    globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
-                    nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    alertsFetcher: alertsFetcher
-                )
-                .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
-                    switch entry {
-                    case let .stopDetails(stop, _):
-                        StopDetailsPage(
-                            globalFetcher: globalFetcher,
-                            viewportProvider: viewportProvider,
-                            stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                            nearbyVM: nearbyVM
-                        )
-                    case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
-                        TripDetailsPage(
-                            tripId: tripId,
-                            vehicleId: vehicleId,
-                            target: target,
-                            globalFetcher: globalFetcher,
-                            tripPredictionsFetcher: tripPredictionsFetcher,
-                            vehicleFetcher: vehicleFetcher
-                        )
-                    }
-                }
+            NearbyTransitPageView(
+                globalFetcher: globalFetcher,
+                nearbyFetcher: nearbyFetcher,
+                nearbyVM: nearbyVM,
+                viewportProvider: viewportProvider,
+                alertsFetcher: alertsFetcher
+            ).sheet(item: .constant(nearbyVM.navigationStack.last), onDismiss: { nearbyVM.navigationStack = [] }) { entry in
+                VStack { switch entry {
+                case let .stopDetails(stop, _):
+                    StopDetailsPage(
+                        globalFetcher: globalFetcher,
+                        viewportProvider: viewportProvider,
+                        stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                        nearbyVM: nearbyVM
+                    )
+                case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
+                    TripDetailsPage(
+                        tripId: tripId,
+                        vehicleId: vehicleId,
+                        target: target,
+                        globalFetcher: globalFetcher,
+                        tripPredictionsFetcher: tripPredictionsFetcher,
+                        vehicleFetcher: vehicleFetcher
+                    )
+                }}.partialSheetDetents([.medium], largestUndimmedDetent: .medium)
             }
             .onChange(of: proxy.size.height) { newValue in
                 /*
@@ -157,10 +154,6 @@ struct ContentView: View {
                 guard newValue < (UIScreen.main.bounds.height / 2) else { return }
                 sheetHeight = newValue
             }
-            .partialSheetDetents(
-                [.small, .medium, .large],
-                largestUndimmedDetent: .medium
-            )
         }
     }
 }
