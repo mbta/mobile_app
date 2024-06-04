@@ -32,10 +32,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: NearbyFetcher(backend: IdleBackend())
         )
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
@@ -74,10 +74,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: FakeGlobalFetcher(),
-            nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: FakeGlobalFetcher(),
+            nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation)
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
@@ -164,10 +164,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: Route52NearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: Route52NearbyFetcher()
         )
         let exp = sut.on(\.didAppear) { view in
             let routes = view.findAll(NearbyRouteView.self)
@@ -237,11 +237,11 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: IdleScheduleRepository(),
+            alerts: nil,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
-            schedulesRepository: IdleScheduleRepository(),
-            scheduleResponse: .init(objects: objects),
-            alertsFetcher: .init(socket: MockSocket())
+            scheduleResponse: .init(objects: objects)
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -323,10 +323,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: Route52NearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: Route52NearbyFetcher()
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -370,7 +370,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
                     -> Void
             ) {
                 if stopIds.sorted() == ["84791", "8552"] {
@@ -395,10 +395,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: nearbyFetcher,
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: nearbyFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -434,10 +434,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: Route52NearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: Route52NearbyFetcher()
         )
 
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
@@ -479,7 +479,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
                     -> Void
             ) {
                 joinExpectation.fulfill()
@@ -500,10 +500,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: nearbyFetcher,
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: nearbyFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -529,7 +529,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
                     -> Void
             ) {
                 joinExpectation.fulfill()
@@ -550,10 +550,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: nearbyFetcher,
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: nearbyFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -582,7 +582,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
                     -> Void
             ) {
                 joinExpectation.fulfill()
@@ -603,10 +603,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: nearbyFetcher,
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: nearbyFetcher
         )
 
         ViewHosting.host(view: sut)
@@ -627,10 +627,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: Route52NearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: Route52NearbyFetcher()
         )
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNil(try view.actualView().scrollPosition)
@@ -653,10 +653,10 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: FakeNearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: FakeNearbyFetcher()
         )
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self)
             .find(text: "Failed to load nearby transit, test error"))
@@ -680,10 +680,11 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>) -> Void
+                onReceive: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
+                    -> Void
             ) {
                 callback?()
-                onReceive(Outcome(data: nil, error: PredictionsError.unknown.toKotlinEnum()))
+                onReceive(Outcome(data: nil, error: SocketError.unknown.toKotlinEnum()))
             }
 
             func disconnect() { /* no-op */ }
@@ -696,13 +697,13 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: FakeNearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: .init(socket: MockSocket())
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: FakeNearbyFetcher()
         )
         let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 0.2) { view in
-            XCTAssertEqual(try view.actualView().predictionsError, PredictionsError.unknown)
+            XCTAssertEqual(try view.actualView().predictionsError, SocketError.unknown)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)
@@ -733,9 +734,7 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             nearbyVM: .init(),
-            schedulesRepository: MockScheduleRepository(),
-            viewportProvider: viewportProvider,
-            alertsFetcher: .init(socket: MockSocket())
+            viewportProvider: viewportProvider
         )
 
         let newCameraState = CameraState(
@@ -788,9 +787,7 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyFetcher: nearbyFetcher,
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
-            schedulesRepository: MockScheduleRepository(),
-            viewportProvider: viewportProvider,
-            alertsFetcher: .init(socket: MockSocket())
+            viewportProvider: viewportProvider
         )
 
         let newCameraState = CameraState(
@@ -811,7 +808,6 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testNoService() throws {
-        let alertsFetcher = AlertsFetcher(socket: MockSocket())
         let objects = ObjectCollectionBuilder()
         objects.alert { alert in
             alert.activePeriod(start: Date.now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
@@ -826,16 +822,15 @@ final class NearbyTransitViewTests: XCTestCase {
                 trip: nil
             )
         }
-        alertsFetcher.alerts = AlertsStreamDataResponse(objects: objects)
         var sut = NearbyTransitView(
             location: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
-            globalFetcher: .init(backend: IdleBackend()),
-            nearbyFetcher: Route52NearbyFetcher(),
             schedulesRepository: MockScheduleRepository(),
-            alertsFetcher: alertsFetcher
+            alerts: AlertsStreamDataResponse(objects: objects),
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyFetcher: Route52NearbyFetcher()
         )
 
         let exp = sut.on(\.didAppear) { view in

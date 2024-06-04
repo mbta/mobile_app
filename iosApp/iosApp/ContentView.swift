@@ -9,7 +9,6 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var alertsFetcher: AlertsFetcher
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var nearbyFetcher: NearbyFetcher
@@ -61,7 +60,6 @@ struct ContentView: View {
                     Text("Location access state unknown")
                 }
                 HomeMapView(
-                    alertsFetcher: alertsFetcher,
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
@@ -89,7 +87,7 @@ struct ContentView: View {
             } else if newPhase == .background {
                 socketProvider.socket.detach()
             }
-        }.task { alertsFetcher.run() }
+        }
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {
@@ -125,8 +123,7 @@ struct ContentView: View {
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    alertsFetcher: alertsFetcher
+                    viewportProvider: viewportProvider
                 )
                 .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
                     switch entry {
