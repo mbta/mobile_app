@@ -1,0 +1,22 @@
+{
+  "images": [
+    {
+      "filename": "alert-small-orange-suspension.svg",
+      "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "alert-small-orange-suspension-dark.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}

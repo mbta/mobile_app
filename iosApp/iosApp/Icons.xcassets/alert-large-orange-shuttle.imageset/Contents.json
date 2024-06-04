@@ -1,0 +1,22 @@
+{
+  "images": [
+    {
+      "filename": "alert-large-orange-shuttle.svg",
+      "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "alert-large-orange-shuttle-dark.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
