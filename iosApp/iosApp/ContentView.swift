@@ -132,6 +132,8 @@ struct ContentView: View {
                             guard newValue < (UIScreen.main.bounds.height / 2) else { return }
                             sheetHeight = newValue
                         }
+                        // Adding id here prevents the next sheet from opening at the large detent.
+                        // https://stackoverflow.com/a/77429540
                         .id(entry)
                         .presentationDetents([.medium, .large], selection: $selectedDetent)
                         .interactiveDismissDisabled()
@@ -260,8 +262,7 @@ struct ContentView: View {
     var tripSheet: some View {
         GeometryReader { proxy in
             VStack {
-                if case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target) = nearbyVM
-                    .navigationStack.last {
+                if case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target) = nearbyVM.navigationStack.last {
                     TripDetailsPage(
                         tripId: tripId,
                         vehicleId: vehicleId,
