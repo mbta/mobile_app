@@ -1,6 +1,12 @@
 package com.mbta.tid.mbta_app.model
 
-enum class MapStopRoute {
+val silverRoutes = setOf("741", "742", "743", "751", "749", "746")
+val greenRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E")
+
+enum class MapStopRoute(
+    val hasBranchingTerminals: Boolean = false,
+    val branchingRoutes: Set<String> = setOf()
+) {
     RED {
         override fun matches(route: Route): Boolean {
             return route.id == "Red"
@@ -16,7 +22,7 @@ enum class MapStopRoute {
             return route.id == "Orange"
         }
     },
-    GREEN {
+    GREEN(hasBranchingTerminals = true, branchingRoutes = greenRoutes) {
         override fun matches(route: Route): Boolean {
             return route.id.startsWith("Green")
         }
@@ -26,9 +32,9 @@ enum class MapStopRoute {
             return route.id == "Blue"
         }
     },
-    SILVER {
+    SILVER(hasBranchingTerminals = true, branchingRoutes = silverRoutes) {
         override fun matches(route: Route): Boolean {
-            return MapStopRoute.slRoutes.contains(route.id)
+            return branchingRoutes.contains(route.id)
         }
     },
     COMMUTER {
@@ -50,8 +56,6 @@ enum class MapStopRoute {
     abstract fun matches(route: Route): Boolean
 
     companion object {
-        val slRoutes = setOf("741", "742", "743", "751", "749", "746")
-
         fun matching(route: Route): MapStopRoute? {
             return MapStopRoute.entries.firstOrNull() { it.matches(route) }
         }

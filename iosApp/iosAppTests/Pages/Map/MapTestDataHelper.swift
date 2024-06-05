@@ -39,6 +39,15 @@ enum MapTestDataHelper {
         stop.latitude = 42.39583
         stop.longitude = -71.141287
         stop.locationType = LocationType.station
+        stop.childStopIds = ["70061"]
+    }
+
+    static let stopAlewifeChild = objects.stop { stop in
+        stop.id = "70061"
+        stop.latitude = 42.39583
+        stop.longitude = -71.141287
+        stop.locationType = LocationType.station
+        stop.parentStationId = stopAlewife.id
     }
 
     static let mapStopAlewife: MapStop = .init(
@@ -47,7 +56,8 @@ enum MapTestDataHelper {
             MapStopRoute.red: [routeRed],
             MapStopRoute.bus: [route67],
         ],
-        routeTypes: [MapStopRoute.red, MapStopRoute.bus]
+        routeTypes: [MapStopRoute.red, MapStopRoute.bus],
+        isTerminal: true
     )
 
     static let stopDavis = objects.stop { stop in
@@ -60,7 +70,8 @@ enum MapTestDataHelper {
     static let mapStopDavis: MapStop = .init(
         stop: stopDavis,
         routes: [MapStopRoute.red: [routeRed]],
-        routeTypes: [MapStopRoute.red]
+        routeTypes: [MapStopRoute.red],
+        isTerminal: false
     )
 
     static let stopPorter = objects.stop { stop in
@@ -73,7 +84,8 @@ enum MapTestDataHelper {
     static let mapStopPorter: MapStop = .init(
         stop: stopPorter,
         routes: [MapStopRoute.red: [routeRed]],
-        routeTypes: [MapStopRoute.red]
+        routeTypes: [MapStopRoute.red],
+        isTerminal: false
     )
 
     static let stopHarvard = objects.stop { stop in
@@ -86,7 +98,8 @@ enum MapTestDataHelper {
     static let mapStopHarvard: MapStop = .init(
         stop: stopHarvard,
         routes: [MapStopRoute.red: [routeRed]],
-        routeTypes: [MapStopRoute.red]
+        routeTypes: [MapStopRoute.red],
+        isTerminal: false
     )
 
     static let stopCentral = objects.stop { stop in
@@ -99,7 +112,8 @@ enum MapTestDataHelper {
     static let mapStopCentral: MapStop = .init(
         stop: stopCentral,
         routes: [MapStopRoute.red: [routeRed]],
-        routeTypes: [MapStopRoute.red]
+        routeTypes: [MapStopRoute.red],
+        isTerminal: false
     )
 
     static let stopAssembly = objects.stop { stop in
@@ -112,7 +126,8 @@ enum MapTestDataHelper {
     static let mapStopAssembly: MapStop = .init(
         stop: stopAssembly,
         routes: [MapStopRoute.orange: [routeOrange]],
-        routeTypes: [MapStopRoute.orange]
+        routeTypes: [MapStopRoute.orange],
+        isTerminal: false
     )
 
     static let stopSullivan = objects.stop { stop in
@@ -125,7 +140,8 @@ enum MapTestDataHelper {
     static let mapStopSullivan: MapStop = .init(
         stop: stopSullivan,
         routes: [MapStopRoute.orange: [routeOrange]],
-        routeTypes: [MapStopRoute.orange]
+        routeTypes: [MapStopRoute.orange],
+        isTerminal: false
     )
 
     static let patternRed10 = objects.routePattern(route: routeRed) { pattern in
@@ -166,7 +182,7 @@ enum MapTestDataHelper {
     static let tripRedC2 = objects.trip(routePattern: patternRed10) { trip in
         trip.id = "canonical-Red-C2-0"
         trip.shapeId = "canonical-931_0009"
-        trip.stopIds = ["70061"]
+        trip.stopIds = [stopAlewifeChild.id, stopDavis.id, stopPorter.id, stopHarvard.id, stopCentral.id]
     }
 
     static let tripOrangeC1 = objects.trip(routePattern: patternOrange30) { trip in
