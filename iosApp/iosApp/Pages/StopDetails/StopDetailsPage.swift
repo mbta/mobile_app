@@ -11,7 +11,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsPage: View {
-    @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var globalData = GlobalData.shared
     @ObservedObject var viewportProvider: ViewportProvider
     let schedulesRepository: ISchedulesRepository
     @State var schedulesResponse: ScheduleResponse?
@@ -27,7 +27,6 @@ struct StopDetailsPage: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        globalFetcher: GlobalFetcher,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         viewportProvider: ViewportProvider,
@@ -35,7 +34,6 @@ struct StopDetailsPage: View {
         filter: Binding<StopDetailsFilter?>,
         nearbyVM: NearbyViewModel
     ) {
-        self.globalFetcher = globalFetcher
         self.schedulesRepository = schedulesRepository
         self.predictionsRepository = predictionsRepository
         self.viewportProvider = viewportProvider
@@ -63,7 +61,7 @@ struct StopDetailsPage: View {
         }
         .onAppear { changeStop(stop) }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
-        .onChange(of: globalFetcher.response) { _ in updateDepartures() }
+        .onChange(of: globalData.response) { _ in updateDepartures() }
         .onChange(of: predictions) { _ in updateDepartures() }
         .onChange(of: schedulesResponse) { _ in updateDepartures() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -140,7 +138,7 @@ struct StopDetailsPage: View {
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
         servedRoutes = []
-        let newDepartures: StopDetailsDepartures? = if let globalResponse = globalFetcher.response {
+        let newDepartures: StopDetailsDepartures? = if let globalResponse = globalData.response {
             StopDetailsDepartures(
                 stop: stop,
                 global: globalResponse,

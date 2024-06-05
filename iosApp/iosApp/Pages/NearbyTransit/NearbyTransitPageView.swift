@@ -14,7 +14,6 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitPageView: View {
-    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -23,11 +22,9 @@ struct NearbyTransitPageView: View {
     let inspection = Inspection<Self>()
 
     init(
-        globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider
     ) {
-        self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
     }
@@ -44,7 +41,6 @@ struct NearbyTransitPageView: View {
                     state: $nearbyVM.nearbyState,
                     location: $location,
                     alerts: nearbyVM.alerts,
-                    globalFetcher: globalFetcher,
                     nearbyVM: nearbyVM
                 )
                 .onReceive(

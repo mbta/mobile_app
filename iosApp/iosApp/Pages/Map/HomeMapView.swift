@@ -13,7 +13,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-    @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var globalData: GlobalData
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
@@ -43,7 +43,7 @@ struct HomeMapView: View {
     }
 
     init(
-        globalFetcher: GlobalFetcher,
+        globalData: GlobalData = .shared,
         nearbyVM: NearbyViewModel,
         railRouteShapeFetcher: RailRouteShapeFetcher,
         vehiclesFetcher: VehiclesFetcher,
@@ -53,7 +53,7 @@ struct HomeMapView: View {
         sheetHeight: Binding<CGFloat>,
         layerManager: IMapLayerManager? = nil
     ) {
-        self.globalFetcher = globalFetcher
+        self.globalData = globalData
         self.nearbyVM = nearbyVM
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.vehiclesFetcher = vehiclesFetcher
@@ -80,7 +80,7 @@ struct HomeMapView: View {
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
             .onChange(of: nearbyVM.alerts) { nextAlerts in
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                currentStopAlerts = getRealtimeAlertsByStop(
                     alerts: nextAlerts,
                     filterAtTime: now.toKotlinInstant()
                 )
@@ -98,7 +98,7 @@ struct HomeMapView: View {
             }
             .onReceive(timer) { input in
                 now = input
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+                currentStopAlerts = getRealtimeAlertsByStop(
                     alerts: nearbyVM.alerts,
                     filterAtTime: now.toKotlinInstant()
                 )
@@ -111,16 +111,16 @@ struct HomeMapView: View {
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
-            globalFetcher: globalFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
             globalMapData: globalMapData
         )
-        .onChange(of: globalFetcher.response) { _ in
-            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
+        .onChange(of: globalData.response) { _ in
+            currentStopAlerts = getRealtimeAlertsByStop(
                 alerts: nearbyVM.alerts,
                 filterAtTime: now.toKotlinInstant()
             )
-            guard let globalStaticData = globalFetcher.globalStaticData else { return }
+            guard let globalData = globalData.response else { return }
+            let globalStaticData = GlobalStaticData(globalData: globalData)
             globalMapData = GlobalMapData(globalStatic: globalStaticData)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
@@ -148,13 +148,22 @@ struct HomeMapView: View {
     }
 
     var didAppear: ((Self) -> Void)?
+
+    private func getRealtimeAlertsByStop(
+        alerts: AlertsStreamDataResponse?,
+        filterAtTime: Instant
+    ) -> [String: AlertAssociatedStop] {
+        guard let globalData = globalData.response else { return [:] }
+        return GlobalStaticData(globalData: globalData)
+            .withRealtimeAlertsByStop(alerts: alerts, filterAtTime: filterAtTime) ?? [:]
+    }
 }
 
 struct ProxyModifiedMap: View {
+    @ObservedObject var globalData = GlobalData.shared
     var mapContent: AnyView
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
     var handleTryLayerInit: (_ map: MapboxMap?) -> Void
-    var globalFetcher: GlobalFetcher
     var railRouteShapeFetcher: RailRouteShapeFetcher
     var globalMapData: GlobalMapData?
 
@@ -164,7 +173,7 @@ struct ProxyModifiedMap: View {
                 .onAppear {
                     handleAppear(proxy.location, proxy.map)
                 }
-                .onChange(of: globalFetcher.response) { _ in
+                .onChange(of: globalData.response) { _ in
                     handleTryLayerInit(proxy.map)
                 }
                 .onChange(of: railRouteShapeFetcher.response) { _ in

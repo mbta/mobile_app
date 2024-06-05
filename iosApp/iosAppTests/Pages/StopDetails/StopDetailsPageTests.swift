@@ -59,7 +59,6 @@ final class StopDetailsPageTests: XCTestCase {
         }
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: FakeSchedulesRepository(callback: callback),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
@@ -87,7 +86,6 @@ final class StopDetailsPageTests: XCTestCase {
         ))
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
@@ -141,7 +139,6 @@ final class StopDetailsPageTests: XCTestCase {
         ))
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: FakeSchedulesRepository(
                 objects: objects,
                 callback: { schedulesLoadedPublisher.send(true) }
@@ -179,7 +176,6 @@ final class StopDetailsPageTests: XCTestCase {
         let backExp = XCTestExpectation(description: "goBack called")
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: .init(),
@@ -230,7 +226,6 @@ final class StopDetailsPageTests: XCTestCase {
 
         let predictionsRepo = FakePredictionsRepo(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,

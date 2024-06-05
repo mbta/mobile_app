@@ -22,7 +22,7 @@ struct NearbyTransitView: View {
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
     let alerts: AlertsStreamDataResponse?
-    @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var globalData = GlobalData.shared
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
@@ -52,7 +52,7 @@ struct NearbyTransitView: View {
             updatePinnedRoutes()
             didAppear?(self)
         }
-        .onChange(of: globalFetcher.response) { _ in
+        .onChange(of: globalData.response) { _ in
             getNearby(location: location)
         }
         .onChange(of: location) { newLocation in
@@ -127,7 +127,7 @@ struct NearbyTransitView: View {
     var didAppear: ((Self) -> Void)?
 
     func getNearby(location: CLLocationCoordinate2D?) {
-        guard let location, let globalData = globalFetcher.response else { return }
+        guard let location, let globalData = globalData.response else { return }
         getNearby(globalData, location)
     }
 

@@ -7,9 +7,9 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let platform = Platform_iosKt.getPlatform().name
+    var globalRepository = RepositoryDI().global
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
-    @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var tripPredictionsFetcher: TripPredictionsFetcher
@@ -50,7 +50,6 @@ struct ContentView: View {
         VStack {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
-                    globalFetcher: globalFetcher,
                     nearbyVM: nearbyVM,
                     viewportProvider: viewportProvider
                 )
@@ -61,6 +60,11 @@ struct ContentView: View {
                 VStack {}
                     .tag(SelectedTab.settings)
                     .tabItem { Label("Settings", systemImage: "gear") }
+            }
+        }
+        .onAppear {
+            Task.detached {
+                try? await getGlobalData()
             }
         }
     }
@@ -80,7 +84,6 @@ struct ContentView: View {
                 Text("Location access state unknown")
             }
             HomeMapView(
-                globalFetcher: globalFetcher,
                 nearbyVM: nearbyVM,
                 railRouteShapeFetcher: railRouteShapeFetcher,
                 vehiclesFetcher: vehiclesFetcher,
@@ -104,7 +107,6 @@ struct ContentView: View {
                         switch entry {
                         case let .stopDetails(stop, _):
                             StopDetailsPage(
-                                globalFetcher: globalFetcher,
                                 viewportProvider: viewportProvider,
                                 stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                                 nearbyVM: nearbyVM
@@ -117,7 +119,6 @@ struct ContentView: View {
                                 tripId: tripId,
                                 vehicleId: vehicleId,
                                 target: target,
-                                globalFetcher: globalFetcher,
                                 nearbyVM: nearbyVM,
                                 tripPredictionsFetcher: tripPredictionsFetcher,
                                 vehicleFetcher: vehicleFetcher
@@ -151,15 +152,23 @@ struct ContentView: View {
         }
         .onAppear {
             socketProvider.socket.attach()
-            Task {
-                try await globalFetcher.getGlobalData()
-            }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.attach()
             } else if newPhase == .background {
                 socketProvider.socket.detach()
+            }
+        }
+    }
+
+    private func getGlobalData() async throws {
+        do {
+            let response = try? await globalRepository.getGlobalData()
+            if let response {
+                DispatchQueue.main.async { GlobalData.shared.response = response }
+            } else {
+                print("Failed to load global data")
             }
         }
     }

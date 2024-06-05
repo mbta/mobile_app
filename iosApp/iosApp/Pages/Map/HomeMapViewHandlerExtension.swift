@@ -16,7 +16,7 @@ import SwiftUI
 extension HomeMapView {
     func handleTryLayerInit(map: MapboxMap?) {
         guard let map,
-              let _ = globalFetcher.response,
+              let _ = globalData.response,
               let _ = railRouteShapeFetcher.response,
               let _ = globalMapData?.mapStops
         else {
@@ -124,7 +124,7 @@ extension HomeMapView {
             """)
             return false
         }
-        guard let stop = globalFetcher.stops[stopId] else {
+        guard let stop = globalData.stops[stopId] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.

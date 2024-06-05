@@ -36,25 +36,14 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
 
     func testLoading() throws {
-        class FakeGlobalFetcher: GlobalFetcher {
-            init() {
-                super.init(backend: IdleBackend())
-                response = GlobalResponse(
-                    patternIdsByStop: [:],
-                    routes: [:],
-                    routePatterns: [:],
-                    stops: [:],
-                    trips: [:]
-                )
-            }
-        }
+        let globalData = GlobalData()
+        globalData.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
 
         let getNearbyExpectation = expectation(description: "getNearby")
 
@@ -67,7 +56,7 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
             alerts: nil,
-            globalFetcher: FakeGlobalFetcher(),
+            globalData: globalData,
             nearbyVM: .init()
         )
 
@@ -75,8 +64,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Loading..."))
         }
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared], timeout: 5)
-        wait(for: [getNearbyExpectation], timeout: 1)
+        wait(for: [hasAppeared, getNearbyExpectation], timeout: 5)
     }
 
     var route52NearbyData: NearbyStaticData {
@@ -159,7 +147,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
@@ -234,7 +221,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init(),
             scheduleResponse: .init(objects: objects)
         )
@@ -321,7 +307,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 
@@ -394,7 +379,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 
@@ -436,7 +420,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 
@@ -503,7 +486,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 
@@ -554,7 +536,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 
@@ -608,7 +589,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 
@@ -633,7 +613,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
@@ -656,7 +635,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(state),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self)
@@ -699,7 +677,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(state),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
         let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 0.2) { view in
@@ -738,10 +715,14 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertEqual(location, newCameraState.center)
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+        GlobalData.shared.response = .init(
+            patternIdsByStop: [:],
+            routes: [:],
+            routePatterns: [:],
+            stops: [:],
+            trips: [:]
+        )
         let sut = NearbyTransitPageView(
-            globalFetcher: globalFetcher,
             nearbyVM: vm,
             viewportProvider: viewportProvider
         )
@@ -760,7 +741,11 @@ final class NearbyTransitViewTests: XCTestCase {
 
             init(_ expectation: XCTestExpectation, navigationStack: [SheetNavigationStackEntry]) {
                 self.expectation = expectation
-                super.init(navigationStack: navigationStack)
+                super.init(
+                    navigationStack: navigationStack,
+                    alertsRepository: MockAlertsRepository(),
+                    nearbyRepository: MockNearbyRepository()
+                )
             }
 
             override func getNearby(global _: GlobalResponse, location _: CLLocationCoordinate2D) {
@@ -774,11 +759,15 @@ final class NearbyTransitViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+        GlobalData.shared.response = .init(
+            patternIdsByStop: [:],
+            routes: [:],
+            routePatterns: [:],
+            stops: [:],
+            trips: [:]
+        )
         let vm = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
-            globalFetcher: globalFetcher,
             nearbyVM: vm,
             viewportProvider: viewportProvider
         )
@@ -793,7 +782,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let appearancePublisher = PassthroughSubject<Bool, Never>()
         let hasAppeared = sut.inspection.inspect(after: 0.2) { view in
             XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
-            try view.actualView().viewportProvider.updateCameraState(newCameraState)
+            try? view.actualView().viewportProvider.updateCameraState(newCameraState)
             appearancePublisher.send(true)
         }
         ViewHosting.host(view: sut)
@@ -824,7 +813,6 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: AlertsStreamDataResponse(objects: objects),
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
 

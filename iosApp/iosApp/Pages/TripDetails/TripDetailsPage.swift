@@ -17,7 +17,7 @@ struct TripDetailsPage: View {
     let target: TripDetailsTarget?
 
     @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
-    @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var globalData: GlobalData
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var vehicleFetcher: VehicleFetcher
     var tripSchedulesRepository: ITripSchedulesRepository
@@ -31,18 +31,18 @@ struct TripDetailsPage: View {
         tripId: String,
         vehicleId: String,
         target: TripDetailsTarget?,
-        globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
         tripPredictionsFetcher: TripPredictionsFetcher,
+        globalData: GlobalData = .shared,
         tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
         vehicleFetcher: VehicleFetcher
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
         self.target = target
-        self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
         self.tripPredictionsFetcher = tripPredictionsFetcher
+        self.globalData = globalData
         self.tripSchedulesRepository = tripSchedulesRepository
         self.vehicleFetcher = vehicleFetcher
     }
@@ -51,7 +51,7 @@ struct TripDetailsPage: View {
         VStack {
             SheetHeader(onClose: { nearbyVM.goBack() })
 
-            if let globalData = globalFetcher.response {
+            if let globalData = globalData.response {
                 let vehicle = vehicleFetcher.response?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
@@ -132,12 +132,12 @@ struct TripDetailsPage: View {
         let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
         let vehicle: Vehicle? = vehicleFetcher.response?.vehicle
         let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
-            globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
+            globalData.stops[stopId]?.resolveParent(stops: globalData.stops)
         } else {
             nil
         }
         let route: Route? = if let routeId = trip?.routeId {
-            globalFetcher.routes[routeId]
+            globalData.routes[routeId]
         } else {
             nil
         }
