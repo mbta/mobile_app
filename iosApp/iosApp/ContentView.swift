@@ -31,15 +31,21 @@ struct ContentView: View {
     @State private var selectedTab = SelectedTab.nearby
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        if selectedTab == .settings {
+            TabView(selection: $selectedTab) {
+                nearbyTab
+                    .tag(SelectedTab.nearby)
+                    .tabItem { Label("Nearby", systemImage: "mappin") }
+                SettingsPage()
+                    .tag(SelectedTab.settings)
+                    .tabItem { Label("Settings", systemImage: "gear") }
+            }
+        } else {
             nearbyTab
-                .tag(SelectedTab.nearby)
-                .tabItem { Label("Nearby", systemImage: "mappin") }
-            SettingsPage()
-                .tag(SelectedTab.settings)
-                .tabItem { Label("Settings", systemImage: "gear") }
         }
     }
+
+    @State var selectedDetent: PresentationDetent = .medium
 
     var nearbyTab: some View {
         NavigationStack {
@@ -70,7 +76,68 @@ struct ContentView: View {
                     viewportProvider: viewportProvider,
                     sheetHeight: $sheetHeight
                 )
-                .sheet(isPresented: .constant(selectedTab == .nearby)) { sheet }
+                .sheet(item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe())) { entry in
+
+                    GeometryReader { proxy in
+                        NavigationStack {
+                            switch entry {
+                            case let .stopDetails(stop, _):
+
+                                // If I change this to nearby transit, it pops at the small detent
+                                // as expected, but only the first time
+
+                                StopDetailsPage(
+                                    globalFetcher: globalFetcher,
+                                    viewportProvider: viewportProvider,
+                                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                                    nearbyVM: nearbyVM
+                                )
+
+                                // .presentationDetents([.medium, .large], selection: .constant(.medium))
+
+                            case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
+
+                                TripDetailsPage(
+                                    tripId: tripId,
+                                    vehicleId: vehicleId,
+                                    target: target,
+                                    globalFetcher: globalFetcher,
+                                    tripPredictionsFetcher: tripPredictionsFetcher,
+                                    vehicleFetcher: vehicleFetcher
+                                )
+
+                            case .nearby:
+                                TabView(selection: $selectedTab) {
+                                    NearbyTransitPageView(
+                                        globalFetcher: globalFetcher,
+                                        nearbyFetcher: nearbyFetcher,
+                                        nearbyVM: nearbyVM,
+                                        viewportProvider: viewportProvider,
+                                        alertsFetcher: alertsFetcher
+                                    ).tag(SelectedTab.nearby)
+                                        .tabItem { Label("Nearby", systemImage: "mappin") }
+                                    // we want to show nothing in the sheet when the settings tab is open,
+                                    // but an EmptyView here causes the tab to not be listed
+                                    VStack {}
+                                        .tag(SelectedTab.settings)
+                                        .tabItem { Label("Settings", systemImage: "gear") }
+                                }
+                            }
+                        }
+                        .onChange(of: proxy.size.height) { newValue in
+                            /*
+                             Only update this if we're less than half way up the users screen
+                             to mitigate undesired behavior
+                             */
+                            guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                            sheetHeight = newValue
+                        }
+                        .id(entry)
+                        .presentationDetents([.medium, .large], selection: $selectedDetent)
+                        .interactiveDismissDisabled()
+                        .modifier(AllowsBackgroundInteraction())
+                    }
+                }
             }
         }
         .searchable(
@@ -104,11 +171,58 @@ struct ContentView: View {
         }
     }
 
-    var sheet: some View {
+    var stopStandIn: some View {
         TabView(selection: $selectedTab) {
-            nearbySheet
-                .tag(SelectedTab.nearby)
-                .tabItem { Label("Nearby", systemImage: "mappin") }
+            GeometryReader { proxy in
+
+                VStack {
+                    if case let .stopDetails(stop, filter) = nearbyVM.navigationStack.last {
+                        StopDetailsPage(
+                            globalFetcher: globalFetcher,
+                            viewportProvider: viewportProvider,
+                            stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                            nearbyVM: nearbyVM
+                        )
+                    }
+                }
+                .onChange(of: proxy.size.height) { newValue in
+                    /*
+                     Only update this if we're less than half way up the users screen
+                     to mitigate undesired behavior
+                     */
+                    guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                    sheetHeight = newValue
+                }.partialSheetDetents([.small, .medium, .large], largestUndimmedDetent: .medium)
+            }
+        }
+        .modifier(AllowsBackgroundInteraction())
+    }
+
+    func nearbySheet(text: String) -> some View {
+        TabView(selection: $selectedTab) {
+            GeometryReader { proxy in
+
+                VStack {
+                    Text(text)
+                    NearbyTransitPageView(
+                        globalFetcher: globalFetcher,
+                        nearbyFetcher: nearbyFetcher,
+                        nearbyVM: nearbyVM,
+                        viewportProvider: viewportProvider,
+                        alertsFetcher: alertsFetcher
+                    )
+                }
+                .onChange(of: proxy.size.height) { newValue in
+                    /*
+                     Only update this if we're less than half way up the users screen
+                     to mitigate undesired behavior
+                     */
+                    guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                    sheetHeight = newValue
+                }.partialSheetDetents([.small, .medium, .large], largestUndimmedDetent: .medium)
+            }
+            .tag(SelectedTab.nearby)
+            .tabItem { Label("Nearby", systemImage: "mappin") }
             // we want to show nothing in the sheet when the settings tab is open,
             // but an EmptyView here causes the tab to not be listed
             VStack {}
@@ -118,37 +232,47 @@ struct ContentView: View {
         .modifier(AllowsBackgroundInteraction())
     }
 
-    var nearbySheet: some View {
-        GeometryReader { proxy in
-            NavigationStack(path: $nearbyVM.navigationStack) {
-                NearbyTransitPageView(
-                    globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
-                    nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    alertsFetcher: alertsFetcher
-                )
-                .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
-                    switch entry {
-                    case let .stopDetails(stop, _):
+    var stopSheet: some View {
+        VStack {
+            GeometryReader { proxy in
+                VStack {
+                    if case let .stopDetails(stop, filter) = nearbyVM.navigationStack.last {
                         StopDetailsPage(
                             globalFetcher: globalFetcher,
                             viewportProvider: viewportProvider,
                             stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                             nearbyVM: nearbyVM
                         )
-                    case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
-                        TripDetailsPage(
-                            tripId: tripId,
-                            vehicleId: vehicleId,
-                            target: target,
-                            globalFetcher: globalFetcher,
-                            tripPredictionsFetcher: tripPredictionsFetcher,
-                            vehicleFetcher: vehicleFetcher
-                        )
                     }
                 }
+                .onChange(of: proxy.size.height) { newValue in
+                    /*
+                     Only update this if we're less than half way up the users screen
+                     to mitigate undesired behavior
+                     */
+                    guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                    sheetHeight = newValue
+                }.partialSheetDetents([.small, .medium, .large], largestUndimmedDetent: .medium)
             }
+        }.modifier(AllowsBackgroundInteraction())
+    }
+
+    var tripSheet: some View {
+        GeometryReader { proxy in
+            VStack {
+                if case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target) = nearbyVM
+                    .navigationStack.last {
+                    TripDetailsPage(
+                        tripId: tripId,
+                        vehicleId: vehicleId,
+                        target: target,
+                        globalFetcher: globalFetcher,
+                        tripPredictionsFetcher: tripPredictionsFetcher,
+                        vehicleFetcher: vehicleFetcher
+                    )
+                }
+            }
+            .partialSheetDetents([.medium, .large], largestUndimmedDetent: .medium)
             .onChange(of: proxy.size.height) { newValue in
                 /*
                  Only update this if we're less than half way up the users screen
@@ -157,10 +281,6 @@ struct ContentView: View {
                 guard newValue < (UIScreen.main.bounds.height / 2) else { return }
                 sheetHeight = newValue
             }
-            .partialSheetDetents(
-                [.small, .medium, .large],
-                largestUndimmedDetent: .medium
-            )
         }
     }
 }

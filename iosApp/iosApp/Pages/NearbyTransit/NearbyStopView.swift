@@ -26,10 +26,11 @@ struct NearbyStopView: View {
             .background(Color.fill2)
 
         ForEach(Array(patternsAtStop.patternsByHeadsign.enumerated()), id: \.offset) { index, patternsByHeadsign in
-            NavigationLink(value: SheetNavigationStackEntry.stopDetails(
-                patternsAtStop.stop,
-                .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
-            )) {
+            Button(action: { /* TODO: update nav stack
+                              value: SheetNavigationStackEntry.stopDetails(
+             patternsAtStop.stop,
+             .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
+             ) */ }) {
                 VStack(spacing: 0) {
                     HStack(spacing: 0) {
                         HeadsignRowView(
