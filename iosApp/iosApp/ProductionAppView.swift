@@ -28,7 +28,6 @@ struct ProductionAppView: View {
     // ignore updates less than 0.1km
     @StateObject var locationDataManager: LocationDataManager
 
-    @StateObject var alertsFetcher: AlertsFetcher
     @StateObject var backendProvider: BackendProvider
     @StateObject var globalFetcher: GlobalFetcher
     @StateObject var nearbyFetcher: NearbyFetcher
@@ -50,8 +49,6 @@ struct ProductionAppView: View {
     init(socket: PhoenixSocket) {
         let backend = backend
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
-
-        _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
         _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
@@ -67,7 +64,6 @@ struct ProductionAppView: View {
     var body: some View {
         ContentView()
             .environmentObject(locationDataManager)
-            .environmentObject(alertsFetcher)
             .environmentObject(backendProvider)
             .environmentObject(globalFetcher)
             .environmentObject(nearbyFetcher)

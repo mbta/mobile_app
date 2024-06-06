@@ -23,14 +23,13 @@ final class HomeMapViewTest: XCTestCase {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
-        var sut = HomeMapView(
-            alertsFetcher: .init(socket: MockSocket()),
+        let sut = HomeMapView(
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
-            viewportProvider: ViewportProvider(),
+            viewportProvider: viewportProvider,
             sheetHeight: sheetHeight
         )
 

@@ -37,7 +37,6 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
@@ -67,7 +66,6 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))
@@ -118,7 +116,6 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: FakeGlobalFetcherBackend(expectation: fetchesGlobalData)))
             .environmentObject(NearbyFetcher(backend: IdleBackend()))

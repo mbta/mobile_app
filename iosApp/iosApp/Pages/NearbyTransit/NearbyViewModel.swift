@@ -13,10 +13,19 @@ import SwiftUI
 class NearbyViewModel: ObservableObject {
     @Published var departures: StopDetailsDepartures?
     @Published var navigationStack: [SheetNavigationStackEntry] = []
+    @Published var alerts: AlertsStreamDataResponse?
 
-    init(departures: StopDetailsDepartures? = nil, navigationStack: [SheetNavigationStackEntry] = []) {
+    private let alertsRepository: IAlertsRepository
+
+    init(
+        departures: StopDetailsDepartures? = nil,
+        navigationStack: [SheetNavigationStackEntry] = [],
+        alertsRepository: IAlertsRepository = RepositoryDI().alerts
+    ) {
         self.departures = departures
         self.navigationStack = navigationStack
+        self.alertsRepository = alertsRepository
+        setUpSubscriptions()
     }
 
     func setDepartures(_ newDepartures: StopDetailsDepartures?) {
@@ -25,5 +34,15 @@ class NearbyViewModel: ObservableObject {
 
     func isNearbyVisible() -> Bool {
         navigationStack.isEmpty
+    }
+
+    private func setUpSubscriptions() {
+        alertsRepository.connect { outcome in
+            DispatchQueue.main.async { [weak self] in
+                if let data = outcome.data {
+                    self?.alerts = data
+                }
+            }
+        }
     }
 }

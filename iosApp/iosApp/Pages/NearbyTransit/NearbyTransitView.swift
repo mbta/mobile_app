@@ -16,19 +16,19 @@ import SwiftUI
 struct NearbyTransitView: View {
     var location: CLLocationCoordinate2D?
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
-    var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
+    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     var predictionsRepository = RepositoryDI().predictions
+    var schedulesRepository = RepositoryDI().schedules
+    let alerts: AlertsStreamDataResponse?
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
-    var schedulesRepository: ISchedulesRepository
     @State var scheduleResponse: ScheduleResponse?
-    @ObservedObject var alertsFetcher: AlertsFetcher
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
     @State var now = Date.now
     @State var scrollPosition: String?
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
-    @State var predictionsError: PredictionsError?
+    @State var predictionsError: SocketError?
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
@@ -68,7 +68,7 @@ struct NearbyTransitView: View {
         .onChange(of: predictions) { predictions in
             updateNearbyRoutes(predictions: predictions)
         }
-        .onChange(of: alertsFetcher.alerts) { alerts in
+        .onChange(of: alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
         .onReceive(timer) { input in
@@ -107,7 +107,7 @@ struct NearbyTransitView: View {
                 }
             }
             .putAboveWhen(predictionsError) { error in
-                IconCard(iconName: "network.slash", details: Text(error.text))
+                IconCard(iconName: "network.slash", details: Text(error.predictionsErrorText))
             }
         }
     }
@@ -167,7 +167,7 @@ struct NearbyTransitView: View {
         nearbyWithRealtimeInfo = nearbyFetcher.withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
             predictions: predictions ?? self.predictions,
-            alerts: alerts ?? alertsFetcher.alerts,
+            alerts: alerts ?? self.alerts,
             filterAtTime: now.toKotlinInstant(),
             pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
         )

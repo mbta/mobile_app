@@ -17,9 +17,7 @@ struct NearbyTransitPageView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
-    var schedulesRepository: ISchedulesRepository
     @ObservedObject var viewportProvider: ViewportProvider
-    @ObservedObject var alertsFetcher: AlertsFetcher
 
     @State var location: CLLocationCoordinate2D?
 
@@ -29,16 +27,12 @@ struct NearbyTransitPageView: View {
         globalFetcher: GlobalFetcher,
         nearbyFetcher: NearbyFetcher,
         nearbyVM: NearbyViewModel,
-        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
-        viewportProvider: ViewportProvider,
-        alertsFetcher: AlertsFetcher
+        viewportProvider: ViewportProvider
     ) {
         self.globalFetcher = globalFetcher
         self.nearbyFetcher = nearbyFetcher
         self.nearbyVM = nearbyVM
-        self.schedulesRepository = schedulesRepository
         self.viewportProvider = viewportProvider
-        self.alertsFetcher = alertsFetcher
     }
 
     var body: some View {
@@ -46,10 +40,9 @@ struct NearbyTransitPageView: View {
             Color.fill1.ignoresSafeArea(.all)
             NearbyTransitView(
                 location: location,
+                alerts: nearbyVM.alerts,
                 globalFetcher: globalFetcher,
-                nearbyFetcher: nearbyFetcher,
-                schedulesRepository: schedulesRepository,
-                alertsFetcher: alertsFetcher
+                nearbyFetcher: nearbyFetcher
             )
             .onReceive(
                 viewportProvider.cameraStatePublisher
