@@ -14,6 +14,7 @@ struct StopDetailsFilteredRouteView: View {
     let patternsByStop: PatternsByStop?
     let now: Instant
     @Binding var filter: StopDetailsFilter?
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
     struct RowData {
         let tripId: String
@@ -48,12 +49,14 @@ struct StopDetailsFilteredRouteView: View {
 
     let rows: [RowData]
 
-    init(departures: StopDetailsDepartures, now: Instant, filter filterBinding: Binding<StopDetailsFilter?>) {
+    init(departures: StopDetailsDepartures, now: Instant, filter filterBinding: Binding<StopDetailsFilter?>,
+         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void) {
         _filter = filterBinding
         let filter = filterBinding.wrappedValue
         let patternsByStop = departures.routes.first(where: { $0.route.id == filter?.routeId })
         self.patternsByStop = patternsByStop
         self.now = now
+        self.pushNavEntry = pushNavEntry
 
         let expectedDirection: Int32? = filter?.directionId
         if let patternsByStop {
@@ -82,7 +85,7 @@ struct StopDetailsFilteredRouteView: View {
                     )
                 ) {
                     ForEach(rows, id: \.tripId) { row in
-                        OptionalNavigationLink(value: row.navigationTarget) {
+                        OptionalNavigationLink(value: row.navigationTarget, action: pushNavEntry) {
                             HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
                                             routeType: patternsByStop.route.type)
                         }.listRowBackground(Color.fill3)

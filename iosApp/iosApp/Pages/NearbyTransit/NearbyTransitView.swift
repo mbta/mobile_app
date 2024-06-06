@@ -20,6 +20,7 @@ struct NearbyTransitView: View {
     var predictionsRepository = RepositoryDI().predictions
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyFetcher: NearbyFetcher
+    @ObservedObject var nearbyVM: NearbyViewModel
     var schedulesRepository: ISchedulesRepository
     @State var scheduleResponse: ScheduleResponse?
     @ObservedObject var alertsFetcher: AlertsFetcher
@@ -94,6 +95,7 @@ struct NearbyTransitView: View {
                             nearbyRoute: nearbyRoute,
                             pinned: pinnedRoutes.contains(nearbyRoute.route.id),
                             onPin: { id in toggledPinnedRoute(id) },
+                            pushNavEntry: nearbyVM.pushNavEntry,
                             now: now.toKotlinInstant()
                         )
                     }
@@ -363,6 +365,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 ),
                 pinned: false,
                 onPin: { _ in },
+                pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
@@ -389,6 +392,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 ),
                 pinned: true,
                 onPin: { _ in },
+                pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant()
             )
         }.previewDisplayName("NearbyRouteView")

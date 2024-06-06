@@ -861,7 +861,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 upcomingTrips: nil,
                 alertsHere: nil
             )]
-        ), now: Date.now.toKotlinInstant())
+
+        ), pushNavEntry: { _ in } now: Date.now.toKotlinInstant())
 
         XCTAssertEqual(
             try sut.inspect().find(navigationLink: "Place").value(SheetNavigationStackEntry.self),

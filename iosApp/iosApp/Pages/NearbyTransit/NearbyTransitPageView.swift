@@ -48,6 +48,7 @@ struct NearbyTransitPageView: View {
                 location: location,
                 globalFetcher: globalFetcher,
                 nearbyFetcher: nearbyFetcher,
+                nearbyVM: nearbyVM,
                 schedulesRepository: schedulesRepository,
                 alertsFetcher: alertsFetcher
             )

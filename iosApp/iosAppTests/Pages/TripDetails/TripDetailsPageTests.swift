@@ -48,6 +48,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: .init(socket: MockSocket())
@@ -113,6 +114,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
@@ -154,6 +156,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: .init(stopId: stop1.id, stopSequence: 998),
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: FakeTripPredictionsFetcher(response: .init(objects: objects)),
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: nil)
@@ -257,6 +260,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))

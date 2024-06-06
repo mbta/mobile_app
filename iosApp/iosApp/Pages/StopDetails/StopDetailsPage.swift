@@ -46,16 +46,25 @@ struct StopDetailsPage: View {
 
     var body: some View {
         VStack {
+            HStack {
+                // TODO: This is breaking type checking
+                //      BackButton(onPress: { nearbyVM.goBack() })
+                Text(stop.name)
+            }
             StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
             clearFilterButton
             departureHeader
             if let departures = nearbyVM.departures {
-                StopDetailsRoutesView(departures: departures, now: now.toKotlinInstant(), filter: $filter)
+                StopDetailsRoutesView(
+                    departures: departures,
+                    now: now.toKotlinInstant(),
+                    filter: $filter,
+                    pusNavEntry: nearbyVM.pushNavEntry
+                )
             } else {
                 ProgressView()
             }
         }
-        .navigationTitle(stop.name)
         .onAppear { changeStop(stop) }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }

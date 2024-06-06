@@ -18,6 +18,7 @@ struct TripDetailsPage: View {
 
     @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var vehicleFetcher: VehicleFetcher
     var tripSchedulesRepository: ITripSchedulesRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
@@ -31,6 +32,7 @@ struct TripDetailsPage: View {
         vehicleId: String,
         target: TripDetailsTarget?,
         globalFetcher: GlobalFetcher,
+        nearbyVM: NearbyViewModel,
         tripPredictionsFetcher: TripPredictionsFetcher,
         tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
         vehicleFetcher: VehicleFetcher
@@ -39,6 +41,7 @@ struct TripDetailsPage: View {
         self.vehicleId = vehicleId
         self.target = target
         self.globalFetcher = globalFetcher
+        self.nearbyVM = nearbyVM
         self.tripPredictionsFetcher = tripPredictionsFetcher
         self.tripSchedulesRepository = tripSchedulesRepository
         self.vehicleFetcher = vehicleFetcher
@@ -46,6 +49,9 @@ struct TripDetailsPage: View {
 
     var body: some View {
         VStack {
+            HStack {
+                //     BackButton(onPress: { nearbyVM.goBack() })
+            }
             if let globalData = globalFetcher.response {
                 let vehicle = vehicleFetcher.response?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
