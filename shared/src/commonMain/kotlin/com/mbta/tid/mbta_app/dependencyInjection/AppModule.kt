@@ -5,6 +5,7 @@ import RealRepositories
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
@@ -34,6 +35,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
             factory<IPredictionsRepository> { predictionsRepo }
         }
         repositories.alerts?.let { alertsRepo -> factory<IAlertsRepository> { alertsRepo } }
+        single<INearbyRepository> { repositories.nearby }
         single { TogglePinnedRouteUsecase(get()) }
     }
 }

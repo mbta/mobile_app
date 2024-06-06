@@ -14,7 +14,6 @@ import SwiftUI
 
 struct HomeMapView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
-    @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
@@ -45,7 +44,6 @@ struct HomeMapView: View {
 
     init(
         globalFetcher: GlobalFetcher,
-        nearbyFetcher: NearbyFetcher,
         nearbyVM: NearbyViewModel,
         railRouteShapeFetcher: RailRouteShapeFetcher,
         vehiclesFetcher: VehiclesFetcher,
@@ -56,7 +54,6 @@ struct HomeMapView: View {
         layerManager: IMapLayerManager? = nil
     ) {
         self.globalFetcher = globalFetcher
-        self.nearbyFetcher = nearbyFetcher
         self.nearbyVM = nearbyVM
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.vehiclesFetcher = vehiclesFetcher
@@ -140,7 +137,7 @@ struct HomeMapView: View {
         AnnotatedMap(
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
-            nearbyLocation: isNearbyNotFollowing ? nearbyFetcher.loadedLocation : nil,
+            nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
             sheetHeight: sheetHeight,
             vehicles: vehiclesFetcher.vehicles,
             viewportProvider: viewportProvider,

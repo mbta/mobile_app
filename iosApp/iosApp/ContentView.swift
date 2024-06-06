@@ -11,7 +11,6 @@ struct ContentView: View {
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var globalFetcher: GlobalFetcher
-    @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
@@ -61,7 +60,6 @@ struct ContentView: View {
                 }
                 HomeMapView(
                     globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
                     railRouteShapeFetcher: railRouteShapeFetcher,
                     vehiclesFetcher: vehiclesFetcher,
@@ -121,7 +119,6 @@ struct ContentView: View {
             NavigationStack(path: $nearbyVM.navigationStack) {
                 NearbyTransitPageView(
                     globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
                     viewportProvider: viewportProvider
                 )
