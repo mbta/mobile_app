@@ -135,16 +135,12 @@ final class RouteSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopPorter.id: AlertAssociatedStop(
                 stop: MapTestDataHelper.stopPorter,
                 relevantAlerts: [redAlert],
-                routePatterns: [MapTestDataHelper.patternRed30],
-                childStops: [:],
-                childAlerts: [:]
+                serviceStatus: [.red: .shuttle]
             ),
             MapTestDataHelper.stopHarvard.id: AlertAssociatedStop(
                 stop: MapTestDataHelper.stopHarvard,
                 relevantAlerts: [redAlert],
-                routePatterns: [MapTestDataHelper.patternRed30],
-                childStops: [:],
-                childAlerts: [:]
+                serviceStatus: [.red: .shuttle]
             ),
         ]
 
@@ -160,7 +156,6 @@ final class RouteSourceGeneratorTests: XCTestCase {
                             .stopHarvard,
                         MapTestDataHelper.stopCentral.id: MapTestDataHelper
                             .stopCentral],
-
             alertsByStop: alertsByStop
         )
 

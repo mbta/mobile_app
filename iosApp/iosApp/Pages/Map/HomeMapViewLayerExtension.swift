@@ -18,13 +18,12 @@ extension HomeMapView {
             routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
             routesById: globalFetcher.routes,
             stopsById: globalFetcher.stops,
-            alertsByStop: currentStopAlerts
+            alertsByStop: globalMapData?.alertsByStop ?? [:]
         )
         let stopSourceGenerator = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: lastNavEntry?.stop(),
-            routeLines: routeSourceGenerator.routeLines,
-            alertsByStop: currentStopAlerts
+            routeLines: routeSourceGenerator.routeLines
         )
 
         layerManager.addSources(
@@ -43,16 +42,17 @@ extension HomeMapView {
             routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
             routesById: globalFetcher.routes,
             stopsById: globalFetcher.stops,
-            alertsByStop: currentStopAlerts
+            alertsByStop: globalMapData?.alertsByStop ?? [:]
         )
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: nil,
-            routeLines: updatedRouteSources.routeLines,
-            alertsByStop: currentStopAlerts
+            routeLines: updatedRouteSources.routeLines
         )
-        layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources,
-                                       stopSourceGenerator: updatedStopSources)
+        layerManager?.updateSourceData(
+            routeSourceGenerator: updatedRouteSources,
+            stopSourceGenerator: updatedStopSources
+        )
     }
 
     func updateStopDetailsLayers(
@@ -61,22 +61,27 @@ extension HomeMapView {
         _ departures: StopDetailsDepartures?
     ) {
         if let filter {
-            let filteredRouteWithShapes = filteredRouteShapesForStop(stopMapData: stopMapData,
-                                                                     filter: filter,
-                                                                     departures: departures)
-            let filteredSource = RouteSourceGenerator(routeData: [filteredRouteWithShapes],
-                                                      routesById: globalFetcher.routes,
-                                                      stopsById: globalFetcher.stops,
-                                                      alertsByStop: currentStopAlerts)
+            let filteredRouteWithShapes = filteredRouteShapesForStop(
+                stopMapData: stopMapData,
+                filter: filter,
+                departures: departures
+            )
+            let filteredSource = RouteSourceGenerator(
+                routeData: [filteredRouteWithShapes],
+                routesById: globalFetcher.routes,
+                stopsById: globalFetcher.stops,
+                alertsByStop: globalMapData?.alertsByStop ?? [:]
+            )
             layerManager?.updateSourceData(routeSourceGenerator: filteredSource)
 
         } else {
-            let railRouteSource = RouteSourceGenerator.forRailAtStop(stopMapData.routeShapes,
-                                                                     railRouteShapeFetcher.response?
-                                                                         .routesWithSegmentedShapes ?? [],
-                                                                     globalFetcher.routes,
-                                                                     globalFetcher.stops,
-                                                                     currentStopAlerts)
+            let railRouteSource = RouteSourceGenerator.forRailAtStop(
+                stopMapData.routeShapes,
+                railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
+                globalFetcher.routes,
+                globalFetcher.stops,
+                globalMapData?.alertsByStop ?? [:]
+            )
             layerManager?.updateSourceData(routeSourceGenerator: railRouteSource)
         }
     }
@@ -107,22 +112,23 @@ extension HomeMapView {
         return .init(routeId: filter.routeId, segmentedShapes: [])
     }
 
-    func handleStopAlertChange(alertsByStop: [String: AlertAssociatedStop]) {
+    func updateGlobalMapDataSources() {
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: lastNavEntry?.stop(),
-            routeLines: layerManager?.routeSourceGenerator?.routeLines,
-            alertsByStop: alertsByStop
+            routeLines: layerManager?.routeSourceGenerator?.routeLines
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         // If routes are already being displayed, keep using those. Otherwise, use the rail shapes
         let routeData = layerManager?.routeSourceGenerator?.routeData ??
             railRouteShapeFetcher.response?.routesWithSegmentedShapes ??
             []
-        let updatedRouteSources = RouteSourceGenerator(routeData: routeData,
-                                                       routesById: globalFetcher.routes,
-                                                       stopsById: globalFetcher.stops,
-                                                       alertsByStop: alertsByStop)
+        let updatedRouteSources = RouteSourceGenerator(
+            routeData: routeData,
+            routesById: globalFetcher.routes,
+            stopsById: globalFetcher.stops,
+            alertsByStop: globalMapData?.alertsByStop ?? [:]
+        )
         layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
     }
 }

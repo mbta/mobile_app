@@ -58,11 +58,6 @@ fun HomeMapView(
 
     val now = timer(updateInterval = 10.seconds)
 
-    val alertsByStop =
-        remember(globalData, alertsData, alertsData, now) {
-            globalData.globalStaticData?.withRealtimeAlertsByStop(alertsData, now)
-        }
-
     Box(modifier) {
         MapboxMap(
             Modifier.fillMaxSize(),

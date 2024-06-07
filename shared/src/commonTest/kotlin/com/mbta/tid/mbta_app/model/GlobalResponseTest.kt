@@ -16,6 +16,7 @@ class GlobalResponseTest {
         val stop = objects.stop { id = "1" }
         val route = objects.route()
         val routePattern = objects.routePattern(route) { id = "rp1" }
+        val routeType = MapStopRoute.matching(route)
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
@@ -43,14 +44,13 @@ class GlobalResponseTest {
                 objects = objects,
                 patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id)))
             )
-        val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
 
         val alertingStop = alertsByStop?.get(stop.id)
         assertNotNull(alertingStop)
         assertEquals(listOf(alert), alertingStop.serviceAlerts)
-        assertEquals(StopAlertState.Suspension, alertingStop.serviceStatus)
+        assertEquals(StopAlertState.Suspension, alertingStop.serviceStatus[routeType])
     }
 
     @Test
@@ -85,9 +85,8 @@ class GlobalResponseTest {
                 objects = objects,
                 patternIdsByStop = mapOf(Pair(stop.id, listOf(routePattern.id)))
             )
-        val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
 
         assertNull(alertsByStop?.get(stop.id))
     }
@@ -107,6 +106,7 @@ class GlobalResponseTest {
             }
         val route = objects.route { id = "route" }
         val routePattern = objects.routePattern(route) { id = "rp1" }
+        val routeType = MapStopRoute.matching(route)
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
@@ -134,18 +134,17 @@ class GlobalResponseTest {
                 objects = objects,
                 patternIdsByStop = mapOf(Pair(childStop.id, listOf(routePattern.id)))
             )
-        val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
 
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopAlertState.NO_SERVICE, alertingParent.serviceStatus)
+        assertEquals(StopAlertState.Suspension, alertingParent.serviceStatus[routeType])
 
         val childAlert = alertingParent.childAlerts[childStop.id]
         assertNotNull(childAlert)
-        assertEquals(StopAlertState.NO_SERVICE, childAlert.serviceStatus)
+        assertEquals(StopAlertState.Suspension, childAlert.serviceStatus[routeType])
         assertEquals(listOf(alert), childAlert.serviceAlerts)
     }
 
@@ -170,6 +169,7 @@ class GlobalResponseTest {
         val route = objects.route { id = "route" }
         val routePattern1 = objects.routePattern(route) { id = "rp1" }
         val routePattern2 = objects.routePattern(route) { id = "rp2" }
+        val routeType = MapStopRoute.matching(route)
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
@@ -215,23 +215,22 @@ class GlobalResponseTest {
                         Pair(childStop2.id, listOf(routePattern2.id))
                     )
             )
-        val staticData = GlobalStaticData(globalData = globalResponse)
         val alertsByStop =
-            staticData.withRealtimeAlertsByStop(AlertsStreamDataResponse(objects), time)
+            GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
 
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopAlertState.PARTIAL_SERVICE, alertingParent.serviceStatus)
+        assertEquals(StopAlertState.Issue, alertingParent.serviceStatus[routeType])
 
         val child1Alert = alertingParent.childAlerts[childStop1.id]
         assertNotNull(child1Alert)
-        assertEquals(StopAlertState.NO_SERVICE, child1Alert.serviceStatus)
+        assertEquals(StopAlertState.Suspension, child1Alert.serviceStatus[routeType])
         assertEquals(listOf(alert1), child1Alert.serviceAlerts)
 
         val child2Alert = alertingParent.childAlerts[childStop2.id]
         assertNotNull(child2Alert)
-        assertEquals(StopAlertState.Normal, child2Alert.serviceStatus)
+        assertEquals(StopAlertState.Normal, child2Alert.serviceStatus[routeType])
         assertEquals(emptyList(), child2Alert.serviceAlerts)
         assertEquals(listOf(alert2), child2Alert.relevantAlerts)
     }

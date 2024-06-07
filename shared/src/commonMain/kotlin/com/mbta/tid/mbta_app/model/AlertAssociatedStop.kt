@@ -61,6 +61,18 @@ class AlertAssociatedStop(val stop: Stop) {
         this.childAlerts = mapOf()
         this.serviceStatus = serviceStatus
     }
+
+    constructor(
+        stop: Stop,
+        relevantAlerts: List<Alert>,
+        childAlerts: Map<String, AlertAssociatedStop>,
+        serviceStatus: Map<MapStopRoute, StopAlertState>
+    ) : this(stop) {
+        this.relevantAlerts = relevantAlerts
+        this.serviceAlerts = getServiceAlerts(relevantAlerts)
+        this.childAlerts = childAlerts
+        this.serviceStatus = serviceStatus
+    }
 }
 
 enum class StopAlertState {

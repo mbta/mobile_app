@@ -51,8 +51,8 @@ class MapLayerManager: IMapLayerManager {
         self.routeSourceGenerator = routeSourceGenerator
         self.stopSourceGenerator = stopSourceGenerator
 
-        addSource(source: routeSourceGenerator.routeSource)
-        addSource(source: stopSourceGenerator.stopSource)
+        updateSourceData(source: routeSourceGenerator.routeSource)
+        updateSourceData(source: stopSourceGenerator.stopSource)
     }
 
     private func addSource(source: GeoJSONSource) {
@@ -70,6 +70,10 @@ class MapLayerManager: IMapLayerManager {
         let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator.stopLayers
         for layer in layers {
             do {
+                if map.layerExists(withId: layer.id) {
+                    // Skip attempting to add layer if it already exists
+                    continue
+                }
                 if map.layerExists(withId: "puck") {
                     try map.addLayer(layer, layerPosition: .below("puck"))
                 } else {

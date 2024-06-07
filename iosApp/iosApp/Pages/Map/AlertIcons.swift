@@ -26,9 +26,27 @@ enum AlertIcons {
             }
         }
 
+    private static func alertEmpty(_ index: Int) -> Exp {
+        Exp(.not) { Exp(.has) {
+            MapExp.routeAt(index)
+            Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+        }}
+    }
+
+    private static func alertStatus(_ index: Int) -> Exp {
+        Exp(.get) {
+            MapExp.routeAt(index)
+            Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+        }
+    }
+
     private static func getAlertIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
         Exp(.switchCase) {
-            Exp(.gte) { index; Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
+            Exp(.any) {
+                Exp(.gte) { index; Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
+                alertEmpty(index)
+                Exp(.eq) { alertStatus(index); StopAlertState.normal.name }
+            }
             ""
             Exp(.concat) {
                 alertIconPrefix
