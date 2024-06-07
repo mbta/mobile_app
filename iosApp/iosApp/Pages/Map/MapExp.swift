@@ -15,8 +15,7 @@ enum MapExp {
             Exp(.eq) { topRouteExp; MapStopRoute.green.name }
             Exp(.eq) { topRouteExp; MapStopRoute.silver.name }
         }
-        singleRouteTypeExp
-        singleBranchRouteExp
+        singleRouteExp
     }
 
     static let branchingRouteSuffixExp = Exp(.switchCase) {
@@ -51,10 +50,13 @@ enum MapExp {
         }
 
     static let singleRouteTypeExp = Exp(.eq) { 1; Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
-    static let singleBranchRouteExp = Exp(.eq) { 1; Exp(.length) { Exp(.get) {
-        topRouteExp
-        Exp(.get) { StopSourceGenerator.propRouteIdsKey }
-    } } }
+    static let singleRouteExp = Exp(.all) {
+        singleRouteTypeExp
+        Exp(.eq) { 1; Exp(.length) { Exp(.get) {
+            topRouteExp
+            Exp(.get) { StopSourceGenerator.propRouteIdsKey }
+        } } }
+    }
 
     static let stopLabelTextExp = Exp(.step) {
         Exp(.zoom)
@@ -93,11 +95,69 @@ enum MapExp {
         }
     }
 
-    static func transferOffsetExp(closeZoom: Bool, _ index: Int) -> Exp {
+    static func negExp(_ numberExp: Exp) -> Exp {
+        Exp(.subtract) { numberExp }
+    }
+
+    static func numExp(_ num: Double) -> Exp {
+        Exp(.number) { num }
+    }
+
+    // MapBox _requires_ that the value ultimately returned by the expression here is specifically
+    // length 2 array containing doubles. This means that you're not allowed to have an array of two
+    // expressions, or a number and an expression, each possible return value must be expressed with
+    // a pair of doubles. And the zoom expression must always be the top level one. So, that's why
+    // this is implemented in such a convoluted way, thank you MapBox gods.
+    static func offsetAlertExp(closeZoom: Bool, _ index: Int) -> Exp {
+        let doubleRouteHeight: Double = closeZoom ? 13 : 8
+        let tripleRouteHeight: Double = closeZoom ? 26 : 16
+        return Exp(.step) {
+            Exp(.length) { routesExp }
+            offsetAlertPairExp(closeZoom: closeZoom, height: 0)
+            2
+            [
+                offsetAlertPairExp(closeZoom: closeZoom, height: -doubleRouteHeight),
+                offsetAlertPairExp(closeZoom: closeZoom, height: doubleRouteHeight),
+                offsetAlertPairExp(closeZoom: closeZoom, height: 0),
+            ][index]
+            3
+            [
+                offsetAlertPairExp(closeZoom: closeZoom, height: -tripleRouteHeight),
+                offsetAlertPairExp(closeZoom: closeZoom, height: 0),
+                offsetAlertPairExp(closeZoom: closeZoom, height: tripleRouteHeight),
+            ][index]
+        }
+    }
+
+    static func offsetAlertPairExp(closeZoom: Bool, height: Double) -> Exp {
+        Exp(.step) {
+            Exp(.length) { routesExp }
+            Exp(.switchCase) {
+                branchedRouteExp
+                Exp(.switchCase) {
+                    Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                    closeZoom ? xyExp([35, height]) : xyExp([26, height])
+                    closeZoom ? xyExp([35, height]) : xyExp([13, height])
+                }
+                Exp(.all) {
+                    Exp(.eq) { topRouteExp; MapStopRoute.ferry.name }
+                    Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                }
+                closeZoom ? xyExp([26, height]) : xyExp([15, height])
+                Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
+                closeZoom ? xyExp([18, height - 2]) : xyExp([12, height])
+                closeZoom ? xyExp([26, height]) : xyExp([12, height])
+            }
+            2
+            closeZoom ? xyExp([26, height]) : xyExp([12, height])
+        }
+    }
+
+    static func offsetTransferExp(closeZoom: Bool, _ index: Int) -> Exp {
         let doubleRouteOffset: Double = closeZoom ? 13 : 8
         let tripleRouteOffset: Double = closeZoom ? 26 : 16
         return Exp(.step) {
-            Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } }
+            Exp(.length) { routesExp }
             xyExp([0, 0])
             2
             xyExp([[0, -doubleRouteOffset], [0, doubleRouteOffset], [0, 0]][index])
@@ -153,10 +213,6 @@ enum MapExp {
     }
 
     static func xyExp(_ pair: [Double]) -> Exp {
-        Exp(.array) { "number"; 2; pair }
-    }
-
-    static func xyExp(_ pair: [Exp]) -> Exp {
         Exp(.array) { "number"; 2; pair }
     }
 }

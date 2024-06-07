@@ -5,7 +5,7 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.step
 import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.LocationType
-import com.mbta.tid.mbta_app.model.StopServiceStatus
+import com.mbta.tid.mbta_app.model.StopAlertState
 
 enum class StopIcons(val drawableId: Int) {
     Station(R.drawable.t_station),
@@ -23,11 +23,11 @@ enum class StopIcons(val drawableId: Int) {
                     match {
                         get(StopSourceGenerator.propServiceStatusKey)
                         stop {
-                            literal(StopServiceStatus.NO_SERVICE.name)
+                            literal(StopAlertState.Suspension.name)
                             image { literal(StationNoService.name) }
                         }
                         stop {
-                            literal(StopServiceStatus.PARTIAL_SERVICE.name)
+                            literal(StopAlertState.Issue.name)
                             image { literal(StationIssues.name) }
                         }
                         image { literal(Station.name) }
@@ -42,11 +42,11 @@ enum class StopIcons(val drawableId: Int) {
                         match {
                             get(StopSourceGenerator.propServiceStatusKey)
                             stop {
-                                literal(StopServiceStatus.NO_SERVICE.name)
+                                literal(StopAlertState.Suspension.name)
                                 image { literal(StopNoService.name) }
                             }
                             stop {
-                                literal(StopServiceStatus.PARTIAL_SERVICE.name)
+                                literal(StopAlertState.Issue.name)
                                 image { literal(StopIssues.name) }
                             }
                             image { literal(Stop.name) }

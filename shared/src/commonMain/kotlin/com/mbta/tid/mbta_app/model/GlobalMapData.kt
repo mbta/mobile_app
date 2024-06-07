@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+
 data class MapStop(
     val stop: Stop,
     val routes: Map<MapStopRoute, List<Route>>,
@@ -9,11 +11,10 @@ data class MapStop(
 
 data class GlobalMapData(val mapStops: Map<String, MapStop>) {
     constructor(
-        globalStatic: GlobalStaticData
+        globalData: GlobalResponse
     ) : this(
-        globalStatic.globalData.stops.values
+        globalData.stops.values
             .map { stop ->
-                val globalData = globalStatic.globalData
                 val stopIdSet = (setOf(stop.id) + stop.childStopIds)
                 val patterns =
                     stopIdSet

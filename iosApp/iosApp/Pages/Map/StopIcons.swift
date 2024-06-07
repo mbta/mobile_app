@@ -48,7 +48,7 @@ enum StopIcons {
         [stopZoomClosePrefix, stopZoomWidePrefix].map { zoom in "\(pre)\(zoom)\(post)" }
     }
 
-    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> Expression {
+    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
         Exp(.concat) {
             stopIconPrefix
             zoomPrefix
@@ -69,7 +69,7 @@ enum StopIcons {
         }
     }
 
-    static func getStopIconName(_ zoomPrefix: String) -> Expression {
+    static func getStopIconName(_ zoomPrefix: String) -> Exp {
         Exp(.step) {
             Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
             getRouteIconName(zoomPrefix, 0)
@@ -89,7 +89,7 @@ enum StopIcons {
         })
     }
 
-    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> Expression {
+    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
         Exp(.step) {
             Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
             ""

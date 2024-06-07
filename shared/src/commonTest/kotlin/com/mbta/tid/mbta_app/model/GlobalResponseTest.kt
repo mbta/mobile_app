@@ -50,7 +50,7 @@ class GlobalResponseTest {
         val alertingStop = alertsByStop?.get(stop.id)
         assertNotNull(alertingStop)
         assertEquals(listOf(alert), alertingStop.serviceAlerts)
-        assertEquals(StopServiceStatus.NO_SERVICE, alertingStop.serviceStatus)
+        assertEquals(StopAlertState.Suspension, alertingStop.serviceStatus)
     }
 
     @Test
@@ -141,11 +141,11 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopServiceStatus.NO_SERVICE, alertingParent.serviceStatus)
+        assertEquals(StopAlertState.NO_SERVICE, alertingParent.serviceStatus)
 
         val childAlert = alertingParent.childAlerts[childStop.id]
         assertNotNull(childAlert)
-        assertEquals(StopServiceStatus.NO_SERVICE, childAlert.serviceStatus)
+        assertEquals(StopAlertState.NO_SERVICE, childAlert.serviceStatus)
         assertEquals(listOf(alert), childAlert.serviceAlerts)
     }
 
@@ -222,16 +222,16 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopServiceStatus.PARTIAL_SERVICE, alertingParent.serviceStatus)
+        assertEquals(StopAlertState.PARTIAL_SERVICE, alertingParent.serviceStatus)
 
         val child1Alert = alertingParent.childAlerts[childStop1.id]
         assertNotNull(child1Alert)
-        assertEquals(StopServiceStatus.NO_SERVICE, child1Alert.serviceStatus)
+        assertEquals(StopAlertState.NO_SERVICE, child1Alert.serviceStatus)
         assertEquals(listOf(alert1), child1Alert.serviceAlerts)
 
         val child2Alert = alertingParent.childAlerts[childStop2.id]
         assertNotNull(child2Alert)
-        assertEquals(StopServiceStatus.NORMAL, child2Alert.serviceStatus)
+        assertEquals(StopAlertState.Normal, child2Alert.serviceStatus)
         assertEquals(emptyList(), child2Alert.serviceAlerts)
         assertEquals(listOf(alert2), child2Alert.relevantAlerts)
     }

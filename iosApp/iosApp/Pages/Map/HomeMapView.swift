@@ -120,8 +120,8 @@ struct HomeMapView: View {
                 alerts: nearbyVM.alerts,
                 filterAtTime: now.toKotlinInstant()
             )
-            guard let globalStaticData = globalFetcher.globalStaticData else { return }
-            globalMapData = GlobalMapData(globalStatic: globalStaticData)
+            guard let globalData = globalFetcher.globalStaticData?.globalData else { return }
+            globalMapData = GlobalMapData(globalData: globalData)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
             guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }

@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopServiceStatus
+import com.mbta.tid.mbta_app.model.StopAlertState
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import org.junit.Assert.assertEquals
@@ -103,7 +103,7 @@ class StopSourceGeneratorTest {
         assertNotNull(stopSource)
         assertEquals(2, stopSource.features.size)
         assertEquals(
-            StopServiceStatus.NORMAL.name,
+            StopAlertState.Normal.name,
             stopSource.features[0].getStringProperty(StopSourceGenerator.propServiceStatusKey)
         )
         assertTrue(stopSource.features.any { it.geometry() == stop4.position.toPoint() })
@@ -245,7 +245,7 @@ class StopSourceGeneratorTest {
             }
         assertNotNull(alewifeFeature)
         assertEquals(
-            StopServiceStatus.PARTIAL_SERVICE.name,
+            StopAlertState.PARTIAL_SERVICE.name,
             alewifeFeature.getStringProperty(StopSourceGenerator.propServiceStatusKey)
         )
 
@@ -255,7 +255,7 @@ class StopSourceGeneratorTest {
             }
         assertNotNull(assemblyFeature)
         assertEquals(
-            StopServiceStatus.NO_SERVICE.name,
+            StopAlertState.NO_SERVICE.name,
             assemblyFeature.getStringProperty(StopSourceGenerator.propServiceStatusKey)
         )
     }

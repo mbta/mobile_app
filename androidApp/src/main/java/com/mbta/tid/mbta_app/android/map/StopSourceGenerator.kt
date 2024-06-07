@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopServiceStatus
+import com.mbta.tid.mbta_app.model.StopAlertState
 
 data class StopFeatureData(val stop: Stop, val feature: Feature)
 
@@ -104,7 +104,7 @@ class StopSourceGenerator(
                 addStringProperty(propIdKey, stop.id)
                 addStringProperty(
                     propServiceStatusKey,
-                    (alertsByStop?.get(stop.id)?.serviceStatus ?: StopServiceStatus.NORMAL).name
+                    (alertsByStop?.get(stop.id)?.serviceStatus ?: StopAlertState.Normal).name
                 )
             }
 

@@ -25,6 +25,8 @@ protocol IMapLayerManager {
     func updateStopLayerZoom(_ zoomLevel: CGFloat)
 }
 
+struct MapImageError: Error {}
+
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
     var routeSourceGenerator: RouteSourceGenerator?
@@ -35,11 +37,12 @@ class MapLayerManager: IMapLayerManager {
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in StopIcons.all {
+        for iconId in StopIcons.all + AlertIcons.all {
             do {
-                try map.addImage(UIImage(named: iconId)!, id: iconId)
+                guard let image = UIImage(named: iconId) else { throw MapImageError() }
+                try map.addImage(image, id: iconId)
             } catch {
-                Logger().error("Failed to add map stop icon image \(iconId)")
+                Logger().error("Failed to add map icon image \(iconId)")
             }
         }
     }

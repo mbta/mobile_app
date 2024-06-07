@@ -13,7 +13,7 @@ data class GlobalStaticData(val globalData: GlobalResponse) {
     fun withRealtimeAlertsByStop(
         alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant
-    ): Map<String, AlertAssociatedStop>? {
+    ): Map<String, AlertAssociatedStop> {
         val activeAlerts =
             alerts?.alerts?.values?.filter { it.isActive(filterAtTime) } ?: return emptyMap()
         val alertsByStop: MutableMap<String, MutableSet<Alert>> = mutableMapOf()
@@ -48,32 +48,12 @@ data class GlobalStaticData(val globalData: GlobalResponse) {
         val stop = possibleStop ?: return null
 
         val alertingStop =
-            AlertAssociatedStop(
-                stop = stop,
-                relevantAlerts = alertsByStop[stop.id]?.toList() ?: emptyList(),
-                routePatterns = getRoutePatternsFor(stop.id),
-                childStops =
-                    stop.childStopIds
-                        .mapNotNull { childId -> globalData.stops[childId] }
-                        .associateBy { it.id },
-                childAlerts =
-                    stop.childStopIds
-                        .mapNotNull { childId ->
-                            generateAlertingStopFor(globalData.stops[childId], alertsByStop)
-                        }
-                        .associateBy { it.stop.id }
-            )
+            AlertAssociatedStop(stop = stop, alertsByStop = alertsByStop, global = globalData)
 
         // Return null for any stops without alerts or child alerts
         if (alertingStop.relevantAlerts.isEmpty() && alertingStop.childAlerts.isEmpty()) {
             return null
         }
         return alertingStop
-    }
-
-    private fun getRoutePatternsFor(stopId: String): List<RoutePattern> {
-        return globalData.patternIdsByStop
-            .getOrElse(stopId) { listOf() }
-            .mapNotNull { globalData.routePatterns[it] }
     }
 }

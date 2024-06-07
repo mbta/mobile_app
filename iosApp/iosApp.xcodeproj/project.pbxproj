@@ -71,6 +71,7 @@
 		9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A15DA3E2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift */; };
 		9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */; };
 		9A17D42C2C0A4F8100F4A745 /* MapDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A17D42B2C0A4F8100F4A745 /* MapDefaults.swift */; };
+		9A19CDDE2C10DFBC006F1059 /* AlertIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A19CDDD2C10DFBC006F1059 /* AlertIcons.swift */; };
 		9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */; };
 		9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C62B97B63300F562E1 /* NearbyStopView.swift */; };
 		9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */; };
@@ -254,6 +255,7 @@
 		9A15DA3E2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewHandlerExtension.swift; sourceTree = "<group>"; };
 		9A1631E52B76CAB400F667F4 /* GlobalFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFetcher.swift; sourceTree = "<group>"; };
 		9A17D42B2C0A4F8100F4A745 /* MapDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDefaults.swift; sourceTree = "<group>"; };
+		9A19CDDD2C10DFBC006F1059 /* AlertIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertIcons.swift; sourceTree = "<group>"; };
 		9A2005C42B97B5EA00F562E1 /* NearbyRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyRouteView.swift; sourceTree = "<group>"; };
 		9A2005C62B97B63300F562E1 /* NearbyStopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyStopView.swift; sourceTree = "<group>"; };
 		9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadsignRowView.swift; sourceTree = "<group>"; };
@@ -646,6 +648,7 @@
 				9A5B27512BB1EF45009A6FC6 /* StopSourceGenerator.swift */,
 				9A17D42B2C0A4F8100F4A745 /* MapDefaults.swift */,
 				9A71D9592C0E54CC0059AA35 /* MapExp.swift */,
+				9A19CDDD2C10DFBC006F1059 /* AlertIcons.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1156,6 +1159,7 @@
 				9A1631E62B76CAB400F667F4 /* GlobalFetcher.swift in Sources */,
 				ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */,
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
+				9A19CDDE2C10DFBC006F1059 /* AlertIcons.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
