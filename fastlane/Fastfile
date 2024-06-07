@@ -21,6 +21,8 @@ platform :android do
     last_version_code = version_codes.max
     next_version_code =
       if options[:validate_only]
+        # Add at least 10 to skip over any concurrent full deployments,
+        # add up to 100 to not collide with any concurrent validations
         last_version_code + Random.rand(10..100)
       else
         last_version_code + 1
