@@ -70,6 +70,9 @@ extension HomeMapView {
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
+        if oldNavEntry == nil {
+            viewportProvider.saveNearbyTransitViewport()
+        }
         if case let .stopDetails(stop, filter) = nextNavEntry {
             if oldNavEntry?.stop()?.id == stop.id {
                 handleRouteFilterChange(filter)
@@ -78,6 +81,9 @@ extension HomeMapView {
             }
         } else {
             clearSelectedStop()
+        }
+        if nextNavEntry == nil {
+            viewportProvider.restoreNearbyTransitViewport()
         }
     }
 
