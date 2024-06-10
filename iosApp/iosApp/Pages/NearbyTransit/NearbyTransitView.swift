@@ -14,21 +14,22 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
-    var location: CLLocationCoordinate2D?
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
-    var pinnedRouteRepository = RepositoryDI().pinnedRoutesRepository
+    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     var predictionsRepository = RepositoryDI().predictions
+    var schedulesRepository = RepositoryDI().schedules
+    var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
+    @Binding var state: NearbyViewModel.NearbyTransitState
+    @Binding var location: CLLocationCoordinate2D?
+    let alerts: AlertsStreamDataResponse?
     @ObservedObject var globalFetcher: GlobalFetcher
-    @ObservedObject var nearbyFetcher: NearbyFetcher
-    var schedulesRepository: ISchedulesRepository
     @State var scheduleResponse: ScheduleResponse?
-    @ObservedObject var alertsFetcher: AlertsFetcher
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
     @State var now = Date.now
     @State var scrollPosition: String?
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
-    @State var predictionsError: PredictionsError?
+    @State var predictionsError: SocketError?
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
@@ -45,7 +46,7 @@ struct NearbyTransitView: View {
         }
         .onAppear {
             getNearby(location: location)
-            joinPredictions()
+            joinPredictions(state.nearbyByRouteAndStop?.stopIds())
             updateNearbyRoutes()
             updatePinnedRoutes()
             didAppear?(self)
@@ -56,10 +57,10 @@ struct NearbyTransitView: View {
         .onChange(of: location) { newLocation in
             getNearby(location: newLocation)
         }
-        .onChange(of: nearbyFetcher.nearbyByRouteAndStop) { _ in
+        .onChange(of: state.nearbyByRouteAndStop) { nearbyByRouteAndStop in
             updateNearbyRoutes()
             getSchedule()
-            joinPredictions()
+            joinPredictions(nearbyByRouteAndStop?.stopIds())
             scrollToTop()
         }
         .onChange(of: scheduleResponse) { response in
@@ -68,7 +69,7 @@ struct NearbyTransitView: View {
         .onChange(of: predictions) { predictions in
             updateNearbyRoutes(predictions: predictions)
         }
-        .onChange(of: alertsFetcher.alerts) { alerts in
+        .onChange(of: alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
         .onReceive(timer) { input in
@@ -79,8 +80,12 @@ struct NearbyTransitView: View {
         .onDisappear {
             leavePredictions()
         }
-        .withScenePhaseHandlers(onActive: joinPredictions, onInactive: leavePredictions, onBackground: leavePredictions)
-        .replaceWhen(nearbyFetcher.errorText) { errorText in
+        .withScenePhaseHandlers(
+            onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
+            onInactive: leavePredictions,
+            onBackground: leavePredictions
+        )
+        .replaceWhen(state.error) { errorText in
             errorCard(errorText)
         }
     }
@@ -107,36 +112,34 @@ struct NearbyTransitView: View {
                 }
             }
             .putAboveWhen(predictionsError) { error in
-                IconCard(iconName: "network.slash", details: Text(error.text))
+                IconCard(iconName: "network.slash", details: Text(error.predictionsErrorText))
             }
         }
     }
 
-    private func errorCard(_ errorText: Text) -> some View {
-        IconCard(iconName: "network.slash", details: errorText)
-            .refreshable(nearbyFetcher.loading) { getNearby(location: location) }
+    private func errorCard(_ errorText: String) -> some View {
+        IconCard(iconName: "network.slash", details: Text(errorText))
+            .refreshable(state.loading) { getNearby(location: location) }
     }
 
     var didAppear: ((Self) -> Void)?
 
     func getNearby(location: CLLocationCoordinate2D?) {
-        Task {
-            guard let location, let globalData = globalFetcher.response else { return }
-            await nearbyFetcher.getNearby(global: globalData, location: location)
-        }
+        guard let location, let globalData = globalFetcher.response else { return }
+        getNearby(globalData, location)
     }
 
     func getSchedule() {
         Task {
-            guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?
+            guard let stopIds = state.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
             scheduleResponse = try await schedulesRepository.getSchedule(stopIds: stopIdList)
         }
     }
 
-    func joinPredictions() {
-        guard let stopIds = nearbyFetcher.nearbyByRouteAndStop?.stopIds() else { return }
+    func joinPredictions(_ stopIds: Set<String>?) {
+        guard let stopIds else { return }
         predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
@@ -151,26 +154,6 @@ struct NearbyTransitView: View {
 
     func leavePredictions() {
         predictionsRepository.disconnect()
-    }
-
-    private func scrollToTop() {
-        guard let id = nearbyWithRealtimeInfo?.first?.route.id else { return }
-        scrollPosition = id
-    }
-
-    private func updateNearbyRoutes(
-        scheduleResponse: ScheduleResponse? = nil,
-        predictions: PredictionsStreamDataResponse? = nil,
-        alerts: AlertsStreamDataResponse? = nil,
-        pinnedRoutes: Set<String>? = nil
-    ) {
-        nearbyWithRealtimeInfo = nearbyFetcher.withRealtimeInfo(
-            schedules: scheduleResponse ?? self.scheduleResponse,
-            predictions: predictions ?? self.predictions,
-            alerts: alerts ?? alertsFetcher.alerts,
-            filterAtTime: now.toKotlinInstant(),
-            pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
-        )
     }
 
     func updatePinnedRoutes() {
@@ -193,6 +176,44 @@ struct NearbyTransitView: View {
                 debugPrint(error)
             }
         }
+    }
+
+    private func scrollToTop() {
+        guard let id = nearbyWithRealtimeInfo?.first?.route.id else { return }
+        scrollPosition = id
+    }
+
+    private func updateNearbyRoutes(
+        scheduleResponse: ScheduleResponse? = nil,
+        predictions: PredictionsStreamDataResponse? = nil,
+        alerts: AlertsStreamDataResponse? = nil,
+        pinnedRoutes: Set<String>? = nil
+    ) {
+        nearbyWithRealtimeInfo = withRealtimeInfo(
+            schedules: scheduleResponse ?? self.scheduleResponse,
+            predictions: predictions ?? self.predictions,
+            alerts: alerts ?? self.alerts,
+            filterAtTime: now.toKotlinInstant(),
+            pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
+        )
+    }
+
+    private func withRealtimeInfo(
+        schedules: ScheduleResponse?,
+        predictions: PredictionsStreamDataResponse?,
+        alerts: AlertsStreamDataResponse?,
+        filterAtTime: Instant,
+        pinnedRoutes: Set<String>
+    ) -> [StopAssociatedRoute]? {
+        guard let loadedLocation = state.loadedLocation else { return nil }
+        return state.nearbyByRouteAndStop?.withRealtimeInfo(
+            sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
+            schedules: schedules,
+            predictions: predictions,
+            alerts: alerts,
+            filterAtTime: filterAtTime,
+            pinnedRoutes: pinnedRoutes
+        )
     }
 }
 

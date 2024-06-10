@@ -37,10 +37,8 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
-            .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
@@ -67,10 +65,8 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: IdleBackend()))
-            .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
@@ -118,10 +114,8 @@ final class ContentViewTests: XCTestCase {
 
         let sut = ContentView()
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(AlertsFetcher(socket: FakeSocket()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(GlobalFetcher(backend: FakeGlobalFetcherBackend(expectation: fetchesGlobalData)))
-            .environmentObject(NearbyFetcher(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: FakeSocket()))
