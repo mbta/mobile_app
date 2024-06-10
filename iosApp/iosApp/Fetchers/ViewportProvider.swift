@@ -17,6 +17,7 @@ class ViewportProvider: ObservableObject {
     }
 
     @Published var viewport: Viewport
+    private var savedNearbyTransitViewport: Viewport?
     var cameraStatePublisher: AnyPublisher<CameraState, Never> {
         cameraStateSubject
             .removeDuplicates(by: { lhs, rhs in
@@ -62,5 +63,24 @@ class ViewportProvider: ObservableObject {
 
     func updateCameraState(_ state: CameraState) {
         cameraStateSubject.send(state)
+    }
+
+    func saveNearbyTransitViewport() {
+        savedNearbyTransitViewport = viewport
+        // When the user is panning the map, the viewport is idle,
+        // and to actually restore anything, we need to save the values from the most recent camera state.
+        if savedNearbyTransitViewport == .idle {
+            let cameraState = cameraStateSubject.value
+            savedNearbyTransitViewport = .camera(center: cameraState.center, zoom: cameraState.zoom)
+        }
+    }
+
+    func restoreNearbyTransitViewport() {
+        if let savedNearbyTransitViewport {
+            withViewportAnimation(Defaults.animation) {
+                self.viewport = savedNearbyTransitViewport
+            }
+        }
+        savedNearbyTransitViewport = nil
     }
 }
