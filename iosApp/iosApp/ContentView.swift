@@ -103,10 +103,6 @@ struct ContentView: View {
                     NavigationStack {
                         switch entry {
                         case let .stopDetails(stop, _):
-
-                            // If I change this to nearby transit, it pops at the small detent
-                            // as expected, but only the first time
-
                             StopDetailsPage(
                                 globalFetcher: globalFetcher,
                                 viewportProvider: viewportProvider,
@@ -117,7 +113,6 @@ struct ContentView: View {
                             }
 
                         case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
-
                             TripDetailsPage(
                                 tripId: tripId,
                                 vehicleId: vehicleId,
