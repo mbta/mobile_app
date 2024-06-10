@@ -18,7 +18,7 @@ struct OptionalNavigationLink<Label>: View where Label: View {
 
     var body: some View {
         if let value {
-            Button(action: { action(value) }, label: label)
+            SheetNavigationLink(value: value, action: action, label: label)
         } else {
             label()
         }
