@@ -280,6 +280,41 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [routeExp], timeout: 1)
     }
 
+    func testBackButton() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        class FakeNearbyVM: NearbyViewModel {
+            let backExp: XCTestExpectation
+            init(_ backExp: XCTestExpectation) {
+                self.backExp = backExp
+                super.init()
+            }
+
+            override func goBack() {
+                backExp.fulfill()
+            }
+        }
+
+        let backExp = XCTestExpectation(description: "goBack called")
+
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "veicleId",
+            target: nil,
+            globalFetcher: GlobalFetcher(backend: IdleBackend()),
+            nearbyVM: FakeNearbyVM(backExp),
+            tripPredictionsFetcher: .init(socket: MockSocket()),
+            tripSchedulesRepository: FakeTripSchedulesRepository(response: TripSchedulesResponse
+                .StopIds(stopIds: ["stop1"])),
+            vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: nil))
+        )
+
+        try sut.inspect().find(BackButton.self).button().tap()
+
+        wait(for: [backExp], timeout: 2)
+    }
+
     class FakeTripSchedulesRepository: ITripSchedulesRepository {
         let response: TripSchedulesResponse
         let onGetTripSchedules: (() -> Void)?
