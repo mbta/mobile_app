@@ -40,7 +40,7 @@ struct NearbyTransitView: View {
                 nearbyList(nearbyWithRealtimeInfo)
             } else {
                 Text("Loading...")
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, 24)
             }
         }

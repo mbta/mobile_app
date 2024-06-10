@@ -44,24 +44,26 @@ struct NearbyTransitPageView: View {
     var body: some View {
         ZStack {
             Color.fill1.ignoresSafeArea(.all)
-            NearbyTransitView(
-                location: location,
-                globalFetcher: globalFetcher,
-                nearbyFetcher: nearbyFetcher,
-                nearbyVM: nearbyVM,
-                schedulesRepository: schedulesRepository,
-                alertsFetcher: alertsFetcher
-            )
-            .onReceive(
-                viewportProvider.cameraStatePublisher
-                    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            ) { newCameraState in
-                guard nearbyVM.isNearbyVisible() else { return }
-                location = newCameraState.center
+            VStack {
+                SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
+                NearbyTransitView(
+                    location: location,
+                    globalFetcher: globalFetcher,
+                    nearbyFetcher: nearbyFetcher,
+                    nearbyVM: nearbyVM,
+                    schedulesRepository: schedulesRepository,
+                    alertsFetcher: alertsFetcher
+                )
+                .onReceive(
+                    viewportProvider.cameraStatePublisher
+                        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+                ) { newCameraState in
+                    guard nearbyVM.isNearbyVisible() else { return }
+                    location = newCameraState.center
+                }
+                .onReceive(inspection.notice) { inspection.visit(self, $0) }
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .navigationTitle("Nearby Transit")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

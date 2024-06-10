@@ -48,113 +48,126 @@ struct ContentView: View {
     @State var selectedDetent: PresentationDetent = .medium
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
 
-    var nearbyTab: some View {
-        NavigationStack {
-            VStack {
-                SearchView(
-                    query: searchObserver.debouncedText,
-                    fetcher: searchResultFetcher
-                )
-                switch locationDataManager.authorizationStatus {
-                case .notDetermined:
-                    Button("Allow Location", action: {
-                        locationDataManager.locationFetcher.requestWhenInUseAuthorization()
-                    })
-                case .authorizedAlways, .authorizedWhenInUse:
-                    EmptyView()
-                case .denied, .restricted:
-                    Text("Location access denied or restricted")
-                @unknown default:
-                    Text("Location access state unknown")
-                }
-                HomeMapView(
-                    alertsFetcher: alertsFetcher,
+    @ViewBuilder var nearbySheetContents: some View {
+        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
+        // when re-opening nearby transit
+        VStack {
+            TabView(selection: $selectedTab) {
+                NearbyTransitPageView(
                     globalFetcher: globalFetcher,
                     nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
-                    railRouteShapeFetcher: railRouteShapeFetcher,
-                    vehiclesFetcher: vehiclesFetcher,
                     viewportProvider: viewportProvider,
-                    sheetHeight: $sheetHeight
+                    alertsFetcher: alertsFetcher
                 )
-                // TODO: move sheet contents into own view
-                .sheet(item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()), onDismiss: {
-                    if visibleNearbySheet == nearbyVM.navigationStack.last {
-                        // When the visible sheet matches the last nav entry, then a dismissal indicates
-                        // an intentional action remove the sheet and replace it with the previous one.
+                .tag(SelectedTab.nearby)
+                .tabItem { Label("Nearby", systemImage: "mappin") }
+                // we want to show nothing in the sheet when the settings tab is open,
+                // but an EmptyView here causes the tab to not be listed
+                VStack {}
+                    .tag(SelectedTab.settings)
+                    .tabItem { Label("Settings", systemImage: "gear") }
+            }
+        }
+    }
 
-                        // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                        // being dismissed so that it can be automatically replaced with the new one.
-                        nearbyVM.goBack()
-                    } else {}
-                }) { entry in
+    var nearbyTab: some View {
+        VStack {
+            SearchView(
+                query: searchObserver.debouncedText,
+                fetcher: searchResultFetcher
+            )
+            switch locationDataManager.authorizationStatus {
+            case .notDetermined:
+                Button("Allow Location", action: {
+                    locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+                })
+            case .authorizedAlways, .authorizedWhenInUse:
+                EmptyView()
+            case .denied, .restricted:
+                Text("Location access denied or restricted")
+            @unknown default:
+                Text("Location access state unknown")
+            }
+            HomeMapView(
+                alertsFetcher: alertsFetcher,
+                globalFetcher: globalFetcher,
+                nearbyFetcher: nearbyFetcher,
+                nearbyVM: nearbyVM,
+                railRouteShapeFetcher: railRouteShapeFetcher,
+                vehiclesFetcher: vehiclesFetcher,
+                viewportProvider: viewportProvider,
+                sheetHeight: $sheetHeight
+            )
+            // TODO: move sheet contents into own view
+            .sheet(item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()), onDismiss: {
+                selectedDetent = .medium
 
-                    GeometryReader { proxy in
-                        NavigationStack {
-                            switch entry {
-                            case let .stopDetails(stop, _):
+                if visibleNearbySheet == nearbyVM.navigationStack.last {
+                    // When the visible sheet matches the last nav entry, then a dismissal indicates
+                    // an intentional action remove the sheet and replace it with the previous one.
 
-                                // If I change this to nearby transit, it pops at the small detent
-                                // as expected, but only the first time
+                    // When the visible sheet *doesn't* match the latest item in the nav stack, it is
+                    // being dismissed so that it can be automatically replaced with the new one.
+                    nearbyVM.goBack()
+                } else {}
+            }) { entry in
+                let _ = print("Selected detent \(selectedDetent)")
+                let _ = print("entry \(entry)")
+                let _ = print("visible entry\(visibleNearbySheet)")
 
-                                StopDetailsPage(
-                                    globalFetcher: globalFetcher,
-                                    viewportProvider: viewportProvider,
-                                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                                    nearbyVM: nearbyVM
-                                ).onAppear {
-                                    visibleNearbySheet = entry
-                                }
+                GeometryReader { proxy in
+                    NavigationStack {
+                        switch entry {
+                        case let .stopDetails(stop, _):
 
-                            case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
+                            // If I change this to nearby transit, it pops at the small detent
+                            // as expected, but only the first time
 
-                                TripDetailsPage(
-                                    tripId: tripId,
-                                    vehicleId: vehicleId,
-                                    target: target,
-                                    globalFetcher: globalFetcher,
-                                    nearbyVM: nearbyVM,
-                                    tripPredictionsFetcher: tripPredictionsFetcher,
-                                    vehicleFetcher: vehicleFetcher
-                                ).onAppear {
-                                    visibleNearbySheet = entry
-                                }
-
-                            case .nearby:
-                                TabView(selection: $selectedTab) {
-                                    NearbyTransitPageView(
-                                        globalFetcher: globalFetcher,
-                                        nearbyFetcher: nearbyFetcher,
-                                        nearbyVM: nearbyVM,
-                                        viewportProvider: viewportProvider,
-                                        alertsFetcher: alertsFetcher
-                                    ).tag(SelectedTab.nearby)
-                                        .tabItem { Label("Nearby", systemImage: "mappin") }
-                                    // we want to show nothing in the sheet when the settings tab is open,
-                                    // but an EmptyView here causes the tab to not be listed
-                                    VStack {}
-                                        .tag(SelectedTab.settings)
-                                        .tabItem { Label("Settings", systemImage: "gear") }
-                                }.onAppear {
-                                    visibleNearbySheet = entry
-                                }
+                            StopDetailsPage(
+                                globalFetcher: globalFetcher,
+                                viewportProvider: viewportProvider,
+                                stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                                nearbyVM: nearbyVM
+                            ).onAppear {
+                                visibleNearbySheet = entry
                             }
+
+                        case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
+
+                            TripDetailsPage(
+                                tripId: tripId,
+                                vehicleId: vehicleId,
+                                target: target,
+                                globalFetcher: globalFetcher,
+                                nearbyVM: nearbyVM,
+                                tripPredictionsFetcher: tripPredictionsFetcher,
+                                vehicleFetcher: vehicleFetcher
+                            ).onAppear {
+                                visibleNearbySheet = entry
+                            }
+
+                        case .nearby:
+                            nearbySheetContents
+                                .onAppear {
+                                    visibleNearbySheet = entry
+                                }
                         }
-                        .onChange(of: proxy.size.height) { newValue in
-                            /*
-                             Only update this if we're less than half way up the users screen
-                             to mitigate undesired behavior
-                             */
-                            guard newValue < (UIScreen.main.bounds.height / 2) else { return }
-                            sheetHeight = newValue
-                        }
-                        // Adding id here prevents the next sheet from opening at the large detent.
-                        // https://stackoverflow.com/a/77429540
-                        .id(entry)
-                        .presentationDetents([.medium, .large], selection: $selectedDetent)
-                        .interactiveDismissDisabled(visibleNearbySheet == .nearby)
-                        .modifier(AllowsBackgroundInteraction())
                     }
+                    .onChange(of: proxy.size.height) { newValue in
+                        /*
+                         Only update this if we're less than half way up the users screen
+                         to mitigate undesired behavior
+                         */
+                        guard newValue < (UIScreen.main.bounds.height / 2) else { return }
+                        sheetHeight = newValue
+                    }
+                    // Adding id here prevents the next sheet from opening at the large detent.
+                    // https://stackoverflow.com/a/77429540
+                    .id(entry)
+                    .presentationDetents([.medium, .large], selection: $selectedDetent)
+                    .interactiveDismissDisabled(visibleNearbySheet == .nearby)
+                    .modifier(AllowsBackgroundInteraction())
                 }
             }
         }

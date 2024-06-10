@@ -46,11 +46,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         VStack {
-            HStack {
-                // TODO: This is breaking type checking
-                //      BackButton(onPress: { nearbyVM.goBack() })
-                Text(stop.name)
-            }
+            SheetHeader(onBackPress: { nearbyVM.goBack() }, title: stop.name)
             StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
             clearFilterButton
             departureHeader
@@ -59,7 +55,7 @@ struct StopDetailsPage: View {
                     departures: departures,
                     now: now.toKotlinInstant(),
                     filter: $filter,
-                    pusNavEntry: nearbyVM.pushNavEntry
+                    pushNavEntry: nearbyVM.pushNavEntry
                 )
             } else {
                 ProgressView()

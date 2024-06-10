@@ -49,9 +49,8 @@ struct TripDetailsPage: View {
 
     var body: some View {
         VStack {
-            HStack {
-                //     BackButton(onPress: { nearbyVM.goBack() })
-            }
+            SheetHeader(onBackPress: { nearbyVM.goBack() })
+
             if let globalData = globalFetcher.response {
                 let vehicle = vehicleFetcher.response?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
