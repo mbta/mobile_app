@@ -28,12 +28,9 @@ struct ProductionAppView: View {
     // ignore updates less than 0.1km
     @StateObject var locationDataManager: LocationDataManager
 
-    @StateObject var alertsFetcher: AlertsFetcher
     @StateObject var backendProvider: BackendProvider
     @StateObject var globalFetcher: GlobalFetcher
-    @StateObject var nearbyFetcher: NearbyFetcher
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
     @StateObject var tripPredictionsFetcher: TripPredictionsFetcher
     @StateObject var vehicleFetcher: VehicleFetcher
@@ -50,13 +47,9 @@ struct ProductionAppView: View {
     init(socket: PhoenixSocket) {
         let backend = backend
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
-
-        _alertsFetcher = StateObject(wrappedValue: AlertsFetcher(socket: socket))
         _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
-        _nearbyFetcher = StateObject(wrappedValue: NearbyFetcher(backend: backend))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
-        _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _tripPredictionsFetcher = StateObject(wrappedValue: TripPredictionsFetcher(socket: socket))
         _vehicleFetcher = StateObject(wrappedValue: VehicleFetcher(socket: socket))
@@ -67,12 +60,9 @@ struct ProductionAppView: View {
     var body: some View {
         ContentView()
             .environmentObject(locationDataManager)
-            .environmentObject(alertsFetcher)
             .environmentObject(backendProvider)
             .environmentObject(globalFetcher)
-            .environmentObject(nearbyFetcher)
             .environmentObject(railRouteShapeFetcher)
-            .environmentObject(searchResultFetcher)
             .environmentObject(socketProvider)
             .environmentObject(tripPredictionsFetcher)
             .environmentObject(vehicleFetcher)

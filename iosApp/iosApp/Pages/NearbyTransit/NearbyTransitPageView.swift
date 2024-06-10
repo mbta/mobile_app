@@ -15,11 +15,8 @@ import SwiftUI
 
 struct NearbyTransitPageView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
-    @ObservedObject var nearbyFetcher: NearbyFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
-    var schedulesRepository: ISchedulesRepository
     @ObservedObject var viewportProvider: ViewportProvider
-    @ObservedObject var alertsFetcher: AlertsFetcher
 
     @State var location: CLLocationCoordinate2D?
 
@@ -27,18 +24,12 @@ struct NearbyTransitPageView: View {
 
     init(
         globalFetcher: GlobalFetcher,
-        nearbyFetcher: NearbyFetcher,
         nearbyVM: NearbyViewModel,
-        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
-        viewportProvider: ViewportProvider,
-        alertsFetcher: AlertsFetcher
+        viewportProvider: ViewportProvider
     ) {
         self.globalFetcher = globalFetcher
-        self.nearbyFetcher = nearbyFetcher
         self.nearbyVM = nearbyVM
-        self.schedulesRepository = schedulesRepository
         self.viewportProvider = viewportProvider
-        self.alertsFetcher = alertsFetcher
     }
 
     var body: some View {
@@ -47,12 +38,14 @@ struct NearbyTransitPageView: View {
             VStack {
                 SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
                 NearbyTransitView(
-                    location: location,
+                    getNearby: { global, location in
+                        nearbyVM.getNearby(global: global, location: location)
+                    },
+                    state: $nearbyVM.nearbyState,
+                    location: $location,
+                    alerts: nearbyVM.alerts,
                     globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
-                    nearbyVM: nearbyVM,
-                    schedulesRepository: schedulesRepository,
-                    alertsFetcher: alertsFetcher
+                    nearbyVM: nearbyVM
                 )
                 .onReceive(
                     viewportProvider.cameraStatePublisher
@@ -62,7 +55,6 @@ struct NearbyTransitPageView: View {
                     location = newCameraState.center
                 }
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
-                .navigationBarTitleDisplayMode(.inline)
             }
         }
     }

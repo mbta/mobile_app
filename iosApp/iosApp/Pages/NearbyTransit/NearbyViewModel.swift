@@ -6,17 +6,38 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import CoreLocation
 import Foundation
 import shared
 import SwiftUI
 
 class NearbyViewModel: ObservableObject {
+    struct NearbyTransitState: Equatable {
+        var error: String?
+        var loadedLocation: CLLocationCoordinate2D?
+        var loading: Bool = false
+        var nearbyByRouteAndStop: NearbyStaticData?
+    }
+
     @Published var departures: StopDetailsDepartures?
     @Published var navigationStack: [SheetNavigationStackEntry] = []
+    @Published var alerts: AlertsStreamDataResponse?
+    @Published var nearbyState = NearbyTransitState()
+    private let alertsRepository: IAlertsRepository
+    private let nearbyRepository: INearbyRepository
+    private var fetchNearbyTask: Task<Void, Never>?
 
-    init(departures: StopDetailsDepartures? = nil, navigationStack: [SheetNavigationStackEntry] = []) {
+    init(
+        departures: StopDetailsDepartures? = nil,
+        navigationStack: [SheetNavigationStackEntry] = [],
+        alertsRepository: IAlertsRepository = RepositoryDI().alerts,
+        nearbyRepository: INearbyRepository = RepositoryDI().nearby
+    ) {
         self.departures = departures
         self.navigationStack = navigationStack
+        self.alertsRepository = alertsRepository
+        self.nearbyRepository = nearbyRepository
+        setUpSubscriptions()
     }
 
     func setDepartures(_ newDepartures: StopDetailsDepartures?) {
@@ -33,6 +54,63 @@ class NearbyViewModel: ObservableObject {
 
     func goBack() {
         navigationStack.removeLast()
+    }
+
+    func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
+        guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else { return }
+        if nearbyState.loading, let fetchNearbyTask, !fetchNearbyTask.isCancelled {
+            fetchNearbyTask.cancel()
+        }
+        fetchNearbyTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            self.nearbyState.loading = true
+            defer { self.nearbyState.loading = false }
+            do {
+                let response = try await self.nearbyRepository.getNearby(
+                    global: global,
+                    location: location.coordinateKt
+                )
+                try Task.checkCancellation()
+                self.nearbyState.nearbyByRouteAndStop = response
+                self.nearbyState.loadedLocation = location
+                self.nearbyState.error = nil
+            } catch is CancellationError {
+                // Do nothing when cancelled
+                return
+            } catch let error as NSError {
+                withUnsafeCurrentTask { thisTask in
+                    if self.fetchNearbyTask?.hashValue == thisTask?.hashValue {
+                        self.nearbyState.error = self.nearbyErrorText(error: error)
+                    }
+                }
+            }
+        }
+    }
+
+    func nearbyErrorText(error: NSError) -> String {
+        switch error.kotlinException {
+        case is Ktor_client_coreHttpRequestTimeoutException:
+            "Couldn't load nearby transit, no response from the server"
+        case is Ktor_ioIOException:
+            "Couldn't load nearby transit, connection was interrupted"
+        case is Ktor_serializationJsonConvertException:
+            "Couldn't load nearby transit, unable to parse response"
+        case is Ktor_client_coreResponseException:
+            "Couldn't load nearby transit, invalid response"
+        default:
+            "Couldn't load nearby transit, something went wrong"
+        }
+    }
+
+    private func setUpSubscriptions() {
+        alertsRepository.connect { outcome in
+            DispatchQueue.main.async { [weak self] in
+                if let data = outcome.data {
+                    self?.alerts = data
+                }
+            }
+        }
     }
 }
 

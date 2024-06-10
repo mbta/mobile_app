@@ -102,21 +102,6 @@
     "Clear Filter" : {
 
     },
-    "Couldn't load nearby transit, connection was interrupted" : {
-
-    },
-    "Couldn't load nearby transit, invalid response" : {
-
-    },
-    "Couldn't load nearby transit, no response from the server" : {
-
-    },
-    "Couldn't load nearby transit, something went wrong" : {
-
-    },
-    "Couldn't load nearby transit, unable to parse response" : {
-
-    },
     "Couldn't load stop list" : {
 
     },
@@ -129,13 +114,7 @@
     "Dummy app for launching unit tests" : {
 
     },
-    "Failed to load alerts, could not connect to the server" : {
-
-    },
     "Failed to load data for vehicle %@, something went wrong" : {
-
-    },
-    "Failed to load new alerts, something went wrong" : {
 
     },
     "Failed to load new predictions, something went wrong" : {

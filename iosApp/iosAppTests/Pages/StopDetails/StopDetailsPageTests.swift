@@ -184,7 +184,7 @@ final class StopDetailsPageTests: XCTestCase {
 
             func connect(
                 stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, PredictionsError._ObjectiveCType>)
+                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
                     -> Void
             ) {
                 joinExpectation.fulfill()

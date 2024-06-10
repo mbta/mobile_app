@@ -7,14 +7,10 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let platform = Platform_iosKt.getPlatform().name
-    @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var alertsFetcher: AlertsFetcher
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var globalFetcher: GlobalFetcher
-    @EnvironmentObject var nearbyFetcher: NearbyFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var tripPredictionsFetcher: TripPredictionsFetcher
     @EnvironmentObject var vehicleFetcher: VehicleFetcher
@@ -55,10 +51,8 @@ struct ContentView: View {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
                     globalFetcher: globalFetcher,
-                    nearbyFetcher: nearbyFetcher,
                     nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider,
-                    alertsFetcher: alertsFetcher
+                    viewportProvider: viewportProvider
                 )
                 .tag(SelectedTab.nearby)
                 .tabItem { Label("Nearby", systemImage: "mappin") }
@@ -73,10 +67,6 @@ struct ContentView: View {
 
     var nearbyTab: some View {
         VStack {
-            SearchView(
-                query: searchObserver.debouncedText,
-                fetcher: searchResultFetcher
-            )
             switch locationDataManager.authorizationStatus {
             case .notDetermined:
                 Button("Allow Location", action: {
@@ -90,16 +80,13 @@ struct ContentView: View {
                 Text("Location access state unknown")
             }
             HomeMapView(
-                alertsFetcher: alertsFetcher,
                 globalFetcher: globalFetcher,
-                nearbyFetcher: nearbyFetcher,
                 nearbyVM: nearbyVM,
                 railRouteShapeFetcher: railRouteShapeFetcher,
                 vehiclesFetcher: vehiclesFetcher,
                 viewportProvider: viewportProvider,
                 sheetHeight: $sheetHeight
             )
-            // TODO: move sheet contents into own view
             .sheet(item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()), onDismiss: {
                 selectedDetent = .medium
 
@@ -112,10 +99,6 @@ struct ContentView: View {
                     nearbyVM.goBack()
                 } else {}
             }) { entry in
-                let _ = print("Selected detent \(selectedDetent)")
-                let _ = print("entry \(entry)")
-                let _ = print("visible entry\(visibleNearbySheet)")
-
                 GeometryReader { proxy in
                     NavigationStack {
                         switch entry {
@@ -171,11 +154,7 @@ struct ContentView: View {
                 }
             }
         }
-        .searchable(
-            text: $searchObserver.searchText,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Find nearby transit"
-        ).onAppear {
+        .onAppear {
             socketProvider.socket.attach()
             Task {
                 try await globalFetcher.getGlobalData()
@@ -187,7 +166,7 @@ struct ContentView: View {
             } else if newPhase == .background {
                 socketProvider.socket.detach()
             }
-        }.task { alertsFetcher.run() }
+        }
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {
