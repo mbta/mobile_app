@@ -98,9 +98,6 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    concurrency:
-      group: deploy-android
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - name: Read asdf versions

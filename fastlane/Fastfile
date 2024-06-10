@@ -18,6 +18,15 @@ platform :android do
     version_codes = google_play_track_version_codes(
       track: "internal",
     )
+    last_version_code = version_codes.max
+    next_version_code =
+      if options[:validate_only]
+        # Add at least 10 to skip over any concurrent full deployments,
+        # add up to 100 to not collide with any concurrent validations
+        last_version_code + Random.rand(10..100)
+      else
+        last_version_code + 1
+      end
     gradle(
       task: 'bundle',
       build_type: 'Release',
@@ -26,7 +35,7 @@ platform :android do
         "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
         "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
         "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
-        "android.injected.version.code" => (version_codes.max + 1),
+        "android.injected.version.code" => next_version_code,
         # TODO: Define the version name once and share it between iOS and Android
         "android.injected.version.name" => "0.1.0",
       }
