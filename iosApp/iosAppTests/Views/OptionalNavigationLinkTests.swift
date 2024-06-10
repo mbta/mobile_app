@@ -14,15 +14,27 @@ import XCTest
 final class OptionalNavigationLinkTests: XCTestCase {
     func testIsLink() throws {
         let target = SheetNavigationStackEntry.tripDetails(tripId: "1", vehicleId: "a", target: nil)
-        let sut = OptionalNavigationLink(value: target) { Text("This is a link") }
 
-        XCTAssertEqual(try sut.inspect().find(navigationLink: "This is a link").value(), target)
-        XCTAssertTrue(try sut.inspect().find(text: "This is a link").pathToRoot.contains("navigationLink"))
+        let tappedExp = XCTestExpectation(description: "Nav link button tapped with target")
+
+        func action(val: SheetNavigationStackEntry) {
+            if val == target {
+                tappedExp.fulfill()
+            }
+        }
+        let sut = OptionalNavigationLink(value: target, action: action) {
+            Text("This is a link")
+        }
+
+        try sut.inspect().find(button: "This is a link").tap()
+
+        wait(for: [tappedExp], timeout: 1)
     }
 
     func testIsNotLink() throws {
-        let sut = OptionalNavigationLink(value: nil) { Text("Ceci n'est pas un lien") }
+        let sut = OptionalNavigationLink(value: nil, action: { _ in }) { Text("Ceci n'est pas un lien") }
 
-        XCTAssertFalse(try sut.inspect().find(text: "Ceci n'est pas un lien").pathToRoot.contains("navigationLink"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Ceci n'est pas un lien"))
+        XCTAssertThrowsError(try sut.inspect().find(button: "Ceci n'est pas un lien"))
     }
 }

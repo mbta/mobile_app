@@ -34,6 +34,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: NearbyFetcher(backend: IdleBackend()),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -76,6 +77,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: FakeGlobalFetcher(),
             nearbyFetcher: FakeNearbyFetcher(getNearbyExpectation: getNearbyExpectation),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -166,6 +168,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -239,6 +242,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: IdleScheduleRepository(),
             scheduleResponse: .init(objects: objects),
             alertsFetcher: .init(socket: MockSocket())
@@ -246,8 +250,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didAppear) { view in
             try view.vStack().callOnChange(newValue: PredictionsStreamDataResponse(objects: objects))
-            let patterns = try view.findAll(ViewType.NavigationLink.self, where: { _ in true })
-                .map { try $0.find(HeadsignRowView.self) }
+            let patterns = try view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
@@ -325,6 +328,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -397,6 +401,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -436,6 +441,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -502,6 +508,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -552,6 +559,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -605,6 +613,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: nearbyFetcher,
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -629,6 +638,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -655,6 +665,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -698,6 +709,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: FakeNearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: .init(socket: MockSocket())
         )
@@ -834,6 +846,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             globalFetcher: .init(backend: IdleBackend()),
             nearbyFetcher: Route52NearbyFetcher(),
+            nearbyVM: .init(),
             schedulesRepository: MockScheduleRepository(),
             alertsFetcher: alertsFetcher
         )
@@ -852,6 +865,18 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.directionId = 1
         }
         let stop = objects.stop { $0.name = "This Stop" }
+
+        let stopEntryPushedExp = XCTestExpectation(description: "pushNavEntry called with stop details")
+
+        func pushNavEntry(navEntry: SheetNavigationStackEntry) {
+            if case let .stopDetails(matchedStop, matchedFilter) = navEntry {
+                if stop.id == matchedStop.id, matchedFilter?.routeId == route.id,
+                   matchedFilter?.directionId == pattern.directionId {
+                    stopEntryPushedExp.fulfill()
+                }
+            }
+        }
+
         let sut = NearbyStopView(patternsAtStop: PatternsByStop(
             route: route, stop: stop,
             patternsByHeadsign: [PatternsByHeadsign(
@@ -862,11 +887,11 @@ final class NearbyTransitViewTests: XCTestCase {
                 alertsHere: nil
             )]
 
-        ), pushNavEntry: { _ in } now: Date.now.toKotlinInstant())
+        ), pushNavEntry: pushNavEntry,
+        now: Date.now.toKotlinInstant())
 
-        XCTAssertEqual(
-            try sut.inspect().find(navigationLink: "Place").value(SheetNavigationStackEntry.self),
-            .stopDetails(stop, .init(routeId: route.id, directionId: 1))
-        )
+        try sut.inspect().find(HeadsignRowView.self).parent().parent().parent().parent().button().tap()
+
+        wait(for: [stopEntryPushedExp], timeout: 2)
     }
 }

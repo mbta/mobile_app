@@ -52,7 +52,7 @@ final class ContentViewTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [connectedExpectation], timeout: 1)
-        try sut.inspect().tabView().navigationStack(0).callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
 
@@ -81,9 +81,9 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().tabView().navigationStack(0).callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().tabView().navigationStack(0).callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 
