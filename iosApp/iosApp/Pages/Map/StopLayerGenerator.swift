@@ -64,7 +64,6 @@ class StopLayerGenerator {
             alertLayer.iconOffset = offsetAlertValue(index: index)
             alertLayer.iconAllowOverlap = .constant(true)
             includeSharedProps(on: &alertLayer)
-            alertLayer.iconOpacity = .constant(1)
 
             return alertLayer
         }

@@ -18,8 +18,7 @@ enum AlertIcons {
         [alertZoomClosePrefix, alertZoomWidePrefix].flatMap { zoomPrefix in
             MapStopRoute.allCases.flatMap { routeType in
                 StopAlertState.allCases
-                    // .filter { state in state != StopAlertState.normal }
-                    .filter { state in state == StopAlertState.issue }
+                    .filter { state in state != StopAlertState.normal }
                     .map { state in
                         "\(alertIconPrefix)\(zoomPrefix)\(routeType.name.lowercased())-\(state.name.lowercased())"
                     }
@@ -53,7 +52,7 @@ enum AlertIcons {
                 zoomPrefix
                 Exp(.downcase) { MapExp.routeAt(index) }
                 "-"
-                "issue"
+                Exp(.downcase) { alertStatus(index) }
             }
         }
     }

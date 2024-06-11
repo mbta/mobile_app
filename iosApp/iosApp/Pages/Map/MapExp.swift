@@ -146,6 +146,8 @@ enum MapExp {
                 closeZoom ? xyExp([26, height]) : xyExp([15, height])
                 Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
                 closeZoom ? xyExp([18, height - 2]) : xyExp([12, height])
+                Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                closeZoom ? xyExp([26, height]) : xyExp([20, height])
                 closeZoom ? xyExp([26, height]) : xyExp([12, height])
             }
             2
