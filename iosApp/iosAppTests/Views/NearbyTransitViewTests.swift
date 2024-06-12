@@ -36,7 +36,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
         XCTAssertEqual(try sut.inspect().view(NearbyTransitView.self).vStack()[0].text().string(), "Loading...")
     }
@@ -66,7 +67,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
             alerts: nil,
-            globalFetcher: FakeGlobalFetcher()
+            globalFetcher: FakeGlobalFetcher(),
+            nearbyVM: .init()
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
@@ -157,7 +159,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
             let routes = view.findAll(NearbyRouteView.self)
@@ -232,13 +235,13 @@ final class NearbyTransitViewTests: XCTestCase {
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
             globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init(),
             scheduleResponse: .init(objects: objects)
         )
 
         let exp = sut.on(\.didAppear) { view in
             try view.vStack().callOnChange(newValue: PredictionsStreamDataResponse(objects: objects))
-            let patterns = try view.findAll(ViewType.NavigationLink.self, where: { _ in true })
-                .map { try $0.find(HeadsignRowView.self) }
+            let patterns = try view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
@@ -318,7 +321,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -390,7 +394,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -431,7 +436,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
@@ -497,7 +503,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -547,7 +554,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -600,7 +608,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -624,7 +633,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
             XCTAssertNil(try view.actualView().scrollPosition)
@@ -646,7 +656,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(state),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
         XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self)
             .find(text: "Failed to load nearby transit, test error"))
@@ -688,7 +699,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(state),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: nil,
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
         let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 0.2) { view in
             XCTAssertEqual(try view.actualView().predictionsError, shared.SocketError.unknown)
@@ -812,7 +824,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             alerts: AlertsStreamDataResponse(objects: objects),
-            globalFetcher: .init(backend: IdleBackend())
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init()
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -829,6 +842,18 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.directionId = 1
         }
         let stop = objects.stop { $0.name = "This Stop" }
+
+        let stopEntryPushedExp = XCTestExpectation(description: "pushNavEntry called with stop details")
+
+        func pushNavEntry(navEntry: SheetNavigationStackEntry) {
+            if case let .stopDetails(matchedStop, matchedFilter) = navEntry {
+                if stop.id == matchedStop.id, matchedFilter?.routeId == route.id,
+                   matchedFilter?.directionId == pattern.directionId {
+                    stopEntryPushedExp.fulfill()
+                }
+            }
+        }
+
         let sut = NearbyStopView(patternsAtStop: PatternsByStop(
             route: route, stop: stop,
             patternsByHeadsign: [PatternsByHeadsign(
@@ -838,11 +863,12 @@ final class NearbyTransitViewTests: XCTestCase {
                 upcomingTrips: nil,
                 alertsHere: nil
             )]
-        ), now: Date.now.toKotlinInstant())
 
-        XCTAssertEqual(
-            try sut.inspect().find(navigationLink: "Place").value(SheetNavigationStackEntry.self),
-            .stopDetails(stop, .init(routeId: route.id, directionId: 1))
-        )
+        ), pushNavEntry: pushNavEntry,
+        now: Date.now.toKotlinInstant())
+
+        try sut.inspect().find(HeadsignRowView.self).parent().parent().parent().button().tap()
+
+        wait(for: [stopEntryPushedExp], timeout: 2)
     }
 }

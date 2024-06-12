@@ -46,16 +46,21 @@ struct StopDetailsPage: View {
 
     var body: some View {
         VStack {
+            SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
             StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
             clearFilterButton
             departureHeader
             if let departures = nearbyVM.departures {
-                StopDetailsRoutesView(departures: departures, now: now.toKotlinInstant(), filter: $filter)
+                StopDetailsRoutesView(
+                    departures: departures,
+                    now: now.toKotlinInstant(),
+                    filter: $filter,
+                    pushNavEntry: nearbyVM.pushNavEntry
+                )
             } else {
                 ProgressView()
             }
         }
-        .navigationTitle(stop.name)
         .onAppear { changeStop(stop) }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }

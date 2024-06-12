@@ -9,6 +9,7 @@
 import SwiftUI
 
 extension Color {
+    static let contrast = Color("Contrast")
     static let deemphasized = Color("Deemphasized")
     static let fill1 = Color("Fill 1")
     static let fill2 = Color("Fill 2")
@@ -23,6 +24,7 @@ extension UIColor {
     // using name strings in UIColor does pick up theme changes properly though.
     // The named colors should always exist unless they're removed from Colors.xcassets,
     // but if they're removed, the fallback using Color will not be responsive to theme.
+    static let contrast = UIColor(named: "Contrast") ?? UIColor(Color(.contrast))
     static let deemphasized = UIColor(named: "Deemphasized") ?? UIColor(Color(.deemphasized))
     static let fill1 = UIColor(named: "Fill 1") ?? UIColor(Color(.fill1))
     static let fill2 = UIColor(named: "Fill 2") ?? UIColor(Color(.fill2))

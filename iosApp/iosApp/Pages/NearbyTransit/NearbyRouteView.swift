@@ -13,13 +13,14 @@ struct NearbyRouteView: View {
     let nearbyRoute: StopAssociatedRoute
     let pinned: Bool
     let onPin: (String) -> Void
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
 
     var body: some View {
         NearbyTransitSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
             ForEach(Array(nearbyRoute.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
-                    NearbyStopView(patternsAtStop: patternsAtStop, now: now)
+                    NearbyStopView(patternsAtStop: patternsAtStop, pushNavEntry: pushNavEntry, now: now)
                     if index < nearbyRoute.patternsByStop.count - 1 {
                         Divider().background(Color.halo)
                     }

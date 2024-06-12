@@ -48,6 +48,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: .init(socket: MockSocket())
@@ -113,6 +114,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
@@ -154,6 +156,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: .init(stopId: stop1.id, stopSequence: 998),
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: FakeTripPredictionsFetcher(response: .init(objects: objects)),
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: nil)
@@ -257,6 +260,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleId: vehicleId,
             target: nil,
             globalFetcher: globalFetcher,
+            nearbyVM: .init(),
             tripPredictionsFetcher: tripPredictionsFetcher,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
@@ -274,6 +278,41 @@ final class TripDetailsPageTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [routeExp], timeout: 1)
+    }
+
+    func testCloseButton() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        class FakeNearbyVM: NearbyViewModel {
+            let backExp: XCTestExpectation
+            init(_ backExp: XCTestExpectation) {
+                self.backExp = backExp
+                super.init()
+            }
+
+            override func goBack() {
+                backExp.fulfill()
+            }
+        }
+
+        let backExp = XCTestExpectation(description: "goBack called")
+
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "veicleId",
+            target: nil,
+            globalFetcher: GlobalFetcher(backend: IdleBackend()),
+            nearbyVM: FakeNearbyVM(backExp),
+            tripPredictionsFetcher: .init(socket: MockSocket()),
+            tripSchedulesRepository: FakeTripSchedulesRepository(response: TripSchedulesResponse
+                .StopIds(stopIds: ["stop1"])),
+            vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: nil))
+        )
+
+        try sut.inspect().find(CloseButton.self).button().tap()
+
+        wait(for: [backExp], timeout: 2)
     }
 
     class FakeTripSchedulesRepository: ITripSchedulesRepository {

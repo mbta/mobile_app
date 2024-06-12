@@ -23,6 +23,7 @@ struct NearbyTransitView: View {
     @Binding var location: CLLocationCoordinate2D?
     let alerts: AlertsStreamDataResponse?
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
     @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
     @State var now = Date.now
@@ -40,7 +41,7 @@ struct NearbyTransitView: View {
                 nearbyList(nearbyWithRealtimeInfo)
             } else {
                 Text("Loading...")
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, 24)
             }
         }
@@ -99,6 +100,7 @@ struct NearbyTransitView: View {
                             nearbyRoute: nearbyRoute,
                             pinned: pinnedRoutes.contains(nearbyRoute.route.id),
                             onPin: { id in toggledPinnedRoute(id) },
+                            pushNavEntry: nearbyVM.pushNavEntry,
                             now: now.toKotlinInstant()
                         )
                     }
@@ -384,6 +386,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 ),
                 pinned: false,
                 onPin: { _ in },
+                pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
@@ -410,6 +413,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 ),
                 pinned: true,
                 onPin: { _ in },
+                pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant()
             )
         }.previewDisplayName("NearbyRouteView")

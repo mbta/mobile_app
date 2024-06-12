@@ -93,7 +93,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let sut = StopDetailsFilteredRouteView(
             departures: data.departures,
             now: data.now,
-            filter: .constant(.init(routeId: data.routeId, directionId: 0))
+            filter: .constant(.init(routeId: data.routeId, directionId: 0)),
+            pushNavEntry: { _ in }
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "North"))
@@ -103,17 +104,29 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
     func testLinks() throws {
         let data = testData()
 
-        let sut = StopDetailsFilteredRouteView(
-            departures: data.departures,
-            now: data.now,
-            filter: .constant(.init(routeId: data.routeId, directionId: 0))
-        )
+        let pushExp = XCTestExpectation(description: "pushNavEntry called with expected trip details")
 
         let expected = SheetNavigationStackEntry.tripDetails(
             tripId: data.tripNorthId,
             vehicleId: data.vehicleNorthId,
             target: .init(stopId: data.stopId, stopSequence: data.stopSequence)
         )
-        XCTAssertEqual(try sut.inspect().find(navigationLink: "North").value(), expected)
+
+        func pushNavEntry(entry: SheetNavigationStackEntry) {
+            if entry == expected {
+                pushExp.fulfill()
+            }
+        }
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: data.departures,
+            now: data.now,
+            filter: .constant(.init(routeId: data.routeId, directionId: 0)),
+            pushNavEntry: pushNavEntry
+        )
+
+        try sut.inspect().find(button: "North").tap()
+
+        wait(for: [pushExp], timeout: 1)
     }
 }

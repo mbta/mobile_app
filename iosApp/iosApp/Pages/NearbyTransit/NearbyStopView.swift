@@ -11,10 +11,8 @@ import SwiftUI
 
 struct NearbyStopView: View {
     let patternsAtStop: PatternsByStop
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
-
-    @ScaledMetric private var chevronHeight: CGFloat = 14
-    @ScaledMetric private var chevronWidth: CGFloat = 8
 
     var body: some View {
         Text(patternsAtStop.stop.name)
@@ -26,31 +24,27 @@ struct NearbyStopView: View {
             .background(Color.fill2)
 
         ForEach(Array(patternsAtStop.patternsByHeadsign.enumerated()), id: \.offset) { index, patternsByHeadsign in
-            NavigationLink(value: SheetNavigationStackEntry.stopDetails(
-                patternsAtStop.stop,
-                .init(routeId: patternsAtStop.route.id, directionId: patternsByHeadsign.directionId())
-            )) {
-                VStack(spacing: 0) {
-                    HStack(spacing: 0) {
-                        HeadsignRowView(
-                            headsign: patternsByHeadsign.headsign,
-                            predictions: patternsByHeadsign.format(now: now),
-                            routeType: patternsByHeadsign.route.type
-                        )
-                        Image(.faChevronRight)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: chevronWidth, height: chevronHeight)
-                            .padding(5)
-                            .foregroundStyle(Color.deemphasized)
-                    }
-                    .padding(8)
-                    .padding(.leading, 8)
-                    if index < patternsAtStop.patternsByHeadsign.count - 1 {
-                        Divider().background(Color.halo)
-                    }
-                }.accessibilityElement(children: .contain)
-            }.accessibilityHint(Text("Open for more arrivals"))
+
+            VStack(spacing: 0) {
+                SheetNavigationLink(value: .stopDetails(patternsAtStop.stop,
+                                                        .init(routeId: patternsAtStop.route.id,
+                                                              directionId: patternsByHeadsign.directionId())),
+                                    action: pushNavEntry) {
+                    HeadsignRowView(
+                        headsign: patternsByHeadsign.headsign,
+                        predictions: patternsByHeadsign.format(now: now),
+                        routeType: patternsByHeadsign.route.type
+                    )
+                }
+                .padding(8)
+                .padding(.leading, 8)
+
+                if index < patternsAtStop.patternsByHeadsign.count - 1 {
+                    Divider().background(Color.halo)
+                }
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityHint(Text("Open for more arrivals"))
         }
     }
 }
