@@ -60,7 +60,6 @@ final class StopDetailsRouteViewTests: XCTestCase {
 
         let sut = StopDetailsRouteView(patternsByStop: patternsByStop,
                                        now: now,
-                                       filter: filter,
                                        pushNavEntry: pushExpFullfill)
 
         XCTAssertNil(filter.wrappedValue)

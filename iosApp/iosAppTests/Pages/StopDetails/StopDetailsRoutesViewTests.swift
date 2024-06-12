@@ -35,7 +35,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
                                         filter: .constant(nil),
                                         pushNavEntry: { _ in })
 
-        XCTAssertNotNil(try sut.inspect().list())
+        XCTAssertNotNil(try sut.inspect().find(StopDeparturesSummaryList.self))
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilteredRouteView.self))
     }
 

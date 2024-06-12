@@ -20,13 +20,14 @@ struct StopDetailsRoutesView: View {
         if filter != nil {
             StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter, pushNavEntry: pushNavEntry)
         } else {
-            List(departures.routes, id: \.route.id) { patternsByStop in
-                StopDetailsRouteView(
-                    patternsByStop: patternsByStop,
-                    now: now,
-                    filter: $filter,
-                    pushNavEntry: pushNavEntry
-                )
+            ScrollView {
+                ForEach(departures.routes, id: \.route.id) { patternsByStop in
+                    StopDetailsRouteView(
+                        patternsByStop: patternsByStop,
+                        now: now,
+                        pushNavEntry: pushNavEntry
+                    )
+                }
             }
         }
     }
