@@ -41,7 +41,7 @@ struct ContentView: View {
         }
     }
 
-    @State var selectedDetent: PresentationDetent = .medium
+    @State var selectedDetent: PresentationDetent = .halfScreen
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
 
     @ViewBuilder var nearbySheetContents: some View {
@@ -88,7 +88,7 @@ struct ContentView: View {
                 sheetHeight: $sheetHeight
             )
             .sheet(item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()), onDismiss: {
-                selectedDetent = .medium
+                selectedDetent = .halfScreen
 
                 if visibleNearbySheet == nearbyVM.navigationStack.last {
                     // When the visible sheet matches the last nav entry, then a dismissal indicates
@@ -143,7 +143,7 @@ struct ContentView: View {
                     // Adding id here prevents the next sheet from opening at the large detent.
                     // https://stackoverflow.com/a/77429540
                     .id(entry)
-                    .presentationDetents([.medium, .large], selection: $selectedDetent)
+                    .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
                     .interactiveDismissDisabled(visibleNearbySheet == .nearby)
                     .modifier(AllowsBackgroundInteraction())
                 }
@@ -167,7 +167,7 @@ struct ContentView: View {
     struct AllowsBackgroundInteraction: ViewModifier {
         func body(content: Content) -> some View {
             if #available(iOS 16.4, *) {
-                content.presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
             } else {
                 // This is actually a purely cosmetic issue - the interaction still works, things are just greyed out
                 // We might need to fix that later if it looks too bad to even ship, but for now, it's probably fine

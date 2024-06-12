@@ -1,5 +1,5 @@
 //
-//  BackButtonTests.swift
+//  CloseButtonTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/10/24.
@@ -14,17 +14,17 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class BackButtonTests: XCTestCase {
+final class CloseButtonTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
 
-    func testBackButtonTap() throws {
-        let exp = XCTestExpectation(description: "Back button pressed")
-        let sut = BackButton {
+    func testCloseButtonTap() throws {
+        let exp = XCTestExpectation(description: "Close button pressed")
+        let sut = CloseButton {
             exp.fulfill()
         }
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Back"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Close"))
         try sut.inspect().button().tap()
         wait(for: [exp], timeout: 1)
     }

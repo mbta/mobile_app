@@ -49,7 +49,7 @@ struct TripDetailsPage: View {
 
     var body: some View {
         VStack {
-            SheetHeader(onBackPress: { nearbyVM.goBack() })
+            SheetHeader(onClose: { nearbyVM.goBack() })
 
             if let globalData = globalFetcher.response {
                 let vehicle = vehicleFetcher.response?.vehicle

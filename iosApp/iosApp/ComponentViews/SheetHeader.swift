@@ -10,17 +10,18 @@ import Foundation
 import SwiftUI
 
 struct SheetHeader: View {
-    var onBackPress: (() -> Void)?
+    var onClose: (() -> Void)?
     var title: String?
 
     var body: some View {
-        HStack(alignment: .top) {
-            if let onBackPress {
-                BackButton(onPress: { onBackPress() })
+        HStack(alignment: .top, spacing: 16) {
+            if let onClose {
+                CloseButton(action: { onClose() })
             }
             if let title {
                 Text(title)
                     .font(.title2)
+                    .padding([.top], 1)
                     .fontWeight(.semibold)
                     .accessibilityHeading(.h1)
             }
@@ -30,11 +31,11 @@ struct SheetHeader: View {
     }
 }
 
-struct SheetHeaer_Previews: PreviewProvider {
+struct SheetHeader_Previews: PreviewProvider {
     static var previews: some View {
         List {
-            SheetHeader(onBackPress: { print("Pressed") }, title: "This is a very long sheet title it should wrap")
-            SheetHeader(onBackPress: { print("Pressed") }, title: "short")
+            SheetHeader(onClose: { print("Pressed") }, title: "This is a very long sheet title it should wrap")
+            SheetHeader(onClose: { print("Pressed") }, title: "short")
             SheetHeader(title: "no back button")
         }
     }

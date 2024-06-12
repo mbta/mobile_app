@@ -46,7 +46,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         VStack {
-            SheetHeader(onBackPress: { nearbyVM.goBack() }, title: stop.name)
+            SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
             StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
             clearFilterButton
             departureHeader

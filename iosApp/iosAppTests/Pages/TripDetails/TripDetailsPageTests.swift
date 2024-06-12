@@ -280,7 +280,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [routeExp], timeout: 1)
     }
 
-    func testBackButton() throws {
+    func testCloseButton() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
@@ -310,7 +310,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: nil))
         )
 
-        try sut.inspect().find(BackButton.self).button().tap()
+        try sut.inspect().find(CloseButton.self).button().tap()
 
         wait(for: [backExp], timeout: 2)
     }
