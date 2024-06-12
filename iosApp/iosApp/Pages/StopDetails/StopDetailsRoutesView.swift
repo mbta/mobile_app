@@ -15,18 +15,30 @@ struct StopDetailsRoutesView: View {
     let now: Instant
     @Binding var filter: StopDetailsFilter?
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let pinRoute: (String) -> Void
+    var pinnedRoutes: Set<String> = []
+
+    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
+    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
 
     var body: some View {
         if filter != nil {
             StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter, pushNavEntry: pushNavEntry)
         } else {
-            ScrollView {
-                ForEach(departures.routes, id: \.route.id) { patternsByStop in
-                    StopDetailsRouteView(
-                        patternsByStop: patternsByStop,
-                        now: now,
-                        pushNavEntry: pushNavEntry
-                    )
+            ZStack {
+                Color.fill1.ignoresSafeArea(.all)
+                ScrollView {
+                    LazyVStack {
+                        ForEach(departures.routes, id: \.route.id) { patternsByStop in
+                            StopDetailsRouteView(
+                                patternsByStop: patternsByStop,
+                                now: now,
+                                pushNavEntry: pushNavEntry,
+                                pinned: pinnedRoutes.contains(patternsByStop.route.id),
+                                onPin: pinRoute
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -78,5 +90,6 @@ struct StopDetailsRoutesView: View {
                   upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                   alertsHere: nil),
         ]),
-    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in })
+    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
+    pinRoute: { routeId in print("Pinned route \(routeId)") })
 }

@@ -14,12 +14,11 @@ struct StopDetailsRouteView: View {
     let patternsByStop: PatternsByStop
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let pinned: Bool
+    let onPin: (String) -> Void
 
     var body: some View {
-        // TODO: pull in pin
-        RouteSection(route: patternsByStop.route, pinned: false, onPin: { _ in
-
-        }) {
+        RouteSection(route: patternsByStop.route, pinned: pinned, onPin: onPin) {
             StopDeparturesSummaryList(patternsByStop: patternsByStop, now: now, pushNavEntry: pushNavEntry)
         }
     }

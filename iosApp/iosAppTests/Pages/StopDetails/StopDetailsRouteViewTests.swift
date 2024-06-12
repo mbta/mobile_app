@@ -60,7 +60,9 @@ final class StopDetailsRouteViewTests: XCTestCase {
 
         let sut = StopDetailsRouteView(patternsByStop: patternsByStop,
                                        now: now,
-                                       pushNavEntry: pushExpFullfill)
+                                       pushNavEntry: pushExpFullfill,
+                                       pinned: false,
+                                       onPin: { _ in })
 
         XCTAssertNil(filter.wrappedValue)
         try sut.inspect().find(button: "North").tap()
