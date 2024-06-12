@@ -14,8 +14,6 @@ data class GlobalData(
 ) {
     val stops = response?.stops ?: emptyMap()
     val routes = response?.routes ?: emptyMap()
-
-    constructor(response: GlobalResponse) : this(response)
 }
 
 @Composable

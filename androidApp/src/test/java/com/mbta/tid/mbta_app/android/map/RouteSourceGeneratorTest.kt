@@ -85,21 +85,9 @@ class RouteSourceGeneratorTest {
         val alertsByStop =
             mapOf(
                 MapTestDataHelper.stopPorter.id to
-                    AlertAssociatedStop(
-                        MapTestDataHelper.stopPorter,
-                        listOf(redAlert),
-                        listOf(MapTestDataHelper.patternRed30),
-                        emptyMap(),
-                        emptyMap()
-                    ),
+                    AlertAssociatedStop(MapTestDataHelper.stopPorter, listOf(redAlert), emptyMap()),
                 MapTestDataHelper.stopHarvard.id to
-                    AlertAssociatedStop(
-                        MapTestDataHelper.stopHarvard,
-                        listOf(redAlert),
-                        listOf(MapTestDataHelper.patternRed30),
-                        emptyMap(),
-                        emptyMap()
-                    )
+                    AlertAssociatedStop(MapTestDataHelper.stopHarvard, listOf(redAlert), emptyMap())
             )
 
         val routeSourceGenerator =

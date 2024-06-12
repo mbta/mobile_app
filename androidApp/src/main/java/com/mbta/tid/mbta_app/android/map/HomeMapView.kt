@@ -34,6 +34,7 @@ import com.mbta.tid.mbta_app.android.util.followPuck
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
+import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
@@ -57,6 +58,18 @@ fun HomeMapView(
     val railRouteShapes = getRailRouteShapes(backend)
 
     val now = timer(updateInterval = 10.seconds)
+    val alertsByStop =
+        remember(globalData, alertsData, alertsData, now) {
+            if (globalData.response != null) {
+                GlobalMapData(
+                        globalData.response,
+                        GlobalMapData.getAlertsByStop(globalData.response, alertsData, now)
+                    )
+                    .alertsByStop
+            } else {
+                null
+            }
+        }
 
     Box(modifier) {
         MapboxMap(
@@ -102,11 +115,7 @@ fun HomeMapView(
 
                 layerManager!!.addSources(
                     routeSourceGenerator,
-                    StopSourceGenerator(
-                        globalData.stops,
-                        routeSourceGenerator.routeSourceDetails,
-                        alertsByStop
-                    )
+                    StopSourceGenerator(globalData.stops, routeSourceGenerator.routeSourceDetails)
                 )
 
                 layerManager!!.addLayers(
@@ -124,8 +133,7 @@ fun HomeMapView(
                     manager.updateSourceData(
                         StopSourceGenerator(
                             globalData.stops,
-                            manager.routeSourceGenerator?.routeSourceDetails,
-                            alertsByStop
+                            manager.routeSourceGenerator?.routeSourceDetails
                         )
                     )
                 }
