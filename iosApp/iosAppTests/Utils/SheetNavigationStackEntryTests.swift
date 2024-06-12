@@ -76,4 +76,16 @@ final class SheetNavigationStackEntryTests: XCTestCase {
 
         XCTAssertEqual(stack, prevStack)
     }
+
+    func testNearbySheetItemIdentifable() throws {
+        let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
+        let stopEntry: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: "A", directionId: 1))
+        let tripEntry: SheetNavigationStackEntry = .tripDetails(tripId: "tripId", vehicleId: "vehicleId", target: nil)
+
+        let nearbyEntry: SheetNavigationStackEntry = .nearby
+
+        XCTAssertEqual(stopEntry.sheetItemIdentifiable().id, stop.id)
+        XCTAssertEqual(tripEntry.sheetItemIdentifiable().id, "tripId")
+        XCTAssertEqual(nearbyEntry.sheetItemIdentifiable().id, "nearby")
+    }
 }
