@@ -234,4 +234,138 @@ class GlobalResponseTest {
         assertEquals(emptyList(), child2Alert.serviceAlerts)
         assertEquals(listOf(alert2), child2Alert.relevantAlerts)
     }
+
+    @Test
+    fun `withRealtimeAlertsByStop properly maps boundary stops`() {
+        val objects = ObjectCollectionBuilder()
+        val parent1Stop =
+            objects.stop {
+                id = "parent1"
+                childStopIds = listOf("child1")
+            }
+        val child1Stop =
+            objects.stop {
+                id = "child1"
+                parentStationId = parent1Stop.id
+            }
+        val parent2Stop =
+            objects.stop {
+                id = "parent2"
+                childStopIds = listOf("child2")
+            }
+        val child2Stop =
+            objects.stop {
+                id = "child2"
+                parentStationId = parent2Stop.id
+            }
+        val parent3Stop =
+            objects.stop {
+                id = "parent3"
+                childStopIds = listOf("child3")
+            }
+        val child3Stop =
+            objects.stop {
+                id = "child3"
+                parentStationId = parent3Stop.id
+            }
+        val route = objects.route { id = "Blue" }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "rp1"
+                typicality = RoutePattern.Typicality.Typical
+                representativeTripId = "trip"
+            }
+        objects.trip(routePattern) {
+            id = "trip"
+            stopIds = listOf(child1Stop.id, child2Stop.id, child3Stop.id, "child4")
+        }
+        val routeType = MapStopRoute.matching(route)
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        objects.alert {
+            activePeriod(
+                Instant.parse("2024-03-18T04:30:00-04:00"),
+                Instant.parse("2024-03-22T02:30:00-04:00")
+            )
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                route = route.id,
+                routeType = route.type,
+                stop = child1Stop.id
+            )
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride
+                ),
+                route = route.id,
+                routeType = route.type,
+                stop = parent1Stop.id
+            )
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride
+                ),
+                route = route.id,
+                routeType = route.type,
+                stop = parent2Stop.id
+            )
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride
+                ),
+                route = route.id,
+                routeType = route.type,
+                stop = child2Stop.id
+            )
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride
+                ),
+                route = route.id,
+                routeType = route.type,
+                stop = parent3Stop.id
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id,
+                routeType = route.type,
+                stop = child3Stop.id
+            )
+        }
+
+        val globalResponse =
+            GlobalResponse(
+                objects = objects,
+                patternIdsByStop =
+                    mapOf(
+                        Pair(child1Stop.id, listOf(routePattern.id)),
+                        Pair(child2Stop.id, listOf(routePattern.id)),
+                        Pair(child3Stop.id, listOf(routePattern.id)),
+                    )
+            )
+        val alertsByStop =
+            GlobalMapData.getAlertsByStop(globalResponse, AlertsStreamDataResponse(objects), time)
+
+        val terminalParent = alertsByStop?.get(parent1Stop.id)
+        assertNotNull(terminalParent)
+        assertEquals(StopAlertState.Suspension, terminalParent.stateByRoute[routeType])
+
+        val regularParent = alertsByStop[parent2Stop.id]
+        assertNotNull(regularParent)
+        assertEquals(StopAlertState.Suspension, regularParent.stateByRoute[routeType])
+
+        val boundaryParent = alertsByStop[parent3Stop.id]
+        assertNotNull(boundaryParent)
+        assertEquals(StopAlertState.Issue, boundaryParent.stateByRoute[routeType])
+    }
 }
