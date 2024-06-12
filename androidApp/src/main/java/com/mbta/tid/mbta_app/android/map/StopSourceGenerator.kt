@@ -104,7 +104,7 @@ class StopSourceGenerator(
                 addStringProperty(propIdKey, stop.id)
                 addStringProperty(
                     propServiceStatusKey,
-                    (alertsByStop?.get(stop.id)?.serviceStatus ?: StopAlertState.Normal).name
+                    (alertsByStop?.get(stop.id)?.stateByRoute ?: StopAlertState.Normal).name
                 )
             }
 

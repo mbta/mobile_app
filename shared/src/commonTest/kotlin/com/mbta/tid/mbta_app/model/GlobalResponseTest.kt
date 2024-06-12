@@ -14,7 +14,7 @@ class GlobalResponseTest {
     fun `withRealtimeAlertsByStop properly maps alerts`() {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "1" }
-        val route = objects.route()
+        val route = objects.route { id = "Blue" }
         val routePattern = objects.routePattern(route) { id = "rp1" }
         val routeType = MapStopRoute.matching(route)
 
@@ -50,7 +50,7 @@ class GlobalResponseTest {
         val alertingStop = alertsByStop?.get(stop.id)
         assertNotNull(alertingStop)
         assertEquals(listOf(alert), alertingStop.serviceAlerts)
-        assertEquals(StopAlertState.Suspension, alertingStop.serviceStatus[routeType])
+        assertEquals(StopAlertState.Suspension, alertingStop.stateByRoute[routeType])
     }
 
     @Test
@@ -104,7 +104,7 @@ class GlobalResponseTest {
                 id = "child"
                 parentStationId = parentStop.id
             }
-        val route = objects.route { id = "route" }
+        val route = objects.route { id = "Red" }
         val routePattern = objects.routePattern(route) { id = "rp1" }
         val routeType = MapStopRoute.matching(route)
 
@@ -140,11 +140,11 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopAlertState.Suspension, alertingParent.serviceStatus[routeType])
+        assertEquals(StopAlertState.Suspension, alertingParent.stateByRoute[routeType])
 
         val childAlert = alertingParent.childAlerts[childStop.id]
         assertNotNull(childAlert)
-        assertEquals(StopAlertState.Suspension, childAlert.serviceStatus[routeType])
+        assertEquals(StopAlertState.Suspension, childAlert.stateByRoute[routeType])
         assertEquals(listOf(alert), childAlert.serviceAlerts)
     }
 
@@ -166,7 +166,7 @@ class GlobalResponseTest {
                 id = "child2"
                 parentStationId = parentStop.id
             }
-        val route = objects.route { id = "route" }
+        val route = objects.route { id = "Orange" }
         val routePattern1 = objects.routePattern(route) { id = "rp1" }
         val routePattern2 = objects.routePattern(route) { id = "rp2" }
         val routeType = MapStopRoute.matching(route)
@@ -221,16 +221,16 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopAlertState.Issue, alertingParent.serviceStatus[routeType])
+        assertEquals(StopAlertState.Issue, alertingParent.stateByRoute[routeType])
 
         val child1Alert = alertingParent.childAlerts[childStop1.id]
         assertNotNull(child1Alert)
-        assertEquals(StopAlertState.Suspension, child1Alert.serviceStatus[routeType])
+        assertEquals(StopAlertState.Suspension, child1Alert.stateByRoute[routeType])
         assertEquals(listOf(alert1), child1Alert.serviceAlerts)
 
         val child2Alert = alertingParent.childAlerts[childStop2.id]
         assertNotNull(child2Alert)
-        assertEquals(StopAlertState.Normal, child2Alert.serviceStatus[routeType])
+        assertEquals(StopAlertState.Normal, child2Alert.stateByRoute[routeType])
         assertEquals(emptyList(), child2Alert.serviceAlerts)
         assertEquals(listOf(alert2), child2Alert.relevantAlerts)
     }

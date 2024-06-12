@@ -20,9 +20,7 @@ data class Alert(
                 Alert.Effect.Shuttle,
                 Alert.Effect.Suspension,
                 Alert.Effect.Detour,
-                Alert.Effect.StopClosure,
-                Alert.Effect.StopMove,
-                Alert.Effect.StopMoved
+                Alert.Effect.StopClosure
             )
     }
 

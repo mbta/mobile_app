@@ -45,12 +45,8 @@ data class GlobalMapData(
             // Only parent stations with alerts (including on any of their children) are returned
             val alertingStopsById: Map<String, AlertAssociatedStop> =
                 globalData.stops.values
-                    .mapNotNull { stop ->
-                        if (stop.parentStationId == null) {
-                            generateAlertingStopFor(stop, alertsByStop, nullStopAlerts, globalData)
-                        } else {
-                            null
-                        }
+                    .mapNotNull {
+                        generateAlertingStopFor(it, alertsByStop, nullStopAlerts, globalData)
                     }
                     .associateBy { it.stop.id }
 
@@ -63,6 +59,9 @@ data class GlobalMapData(
             nullStopAlerts: Set<Alert>,
             globalData: GlobalResponse
         ): AlertAssociatedStop? {
+            if (stop.parentStationId != null) {
+                return null
+            }
             val alertingStop =
                 AlertAssociatedStop(
                     stop = stop,
@@ -135,7 +134,7 @@ data class GlobalMapData(
                 var categorizedAlerts: Map<MapStopRoute, StopAlertState>? = null
                 if (alertsByStop != null) {
                     val alertsHere = alertsByStop[stop.id]
-                    categorizedAlerts = alertsHere?.serviceStatus ?: emptyMap()
+                    categorizedAlerts = alertsHere?.stateByRoute ?: emptyMap()
                 }
 
                 if (mapRouteList == listOf(MapStopRoute.SILVER, MapStopRoute.BUS)) {

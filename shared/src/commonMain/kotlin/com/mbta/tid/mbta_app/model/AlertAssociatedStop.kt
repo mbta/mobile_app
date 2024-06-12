@@ -6,7 +6,7 @@ class AlertAssociatedStop(val stop: Stop) {
     var relevantAlerts: List<Alert> = mutableListOf()
     var serviceAlerts: List<Alert> = mutableListOf()
     var childAlerts: Map<String, AlertAssociatedStop> = mutableMapOf()
-    var serviceStatus: Map<MapStopRoute, StopAlertState> = mutableMapOf()
+    var stateByRoute: Map<MapStopRoute, StopAlertState> = mutableMapOf()
 
     constructor(
         stop: Stop,
@@ -33,51 +33,40 @@ class AlertAssociatedStop(val stop: Stop) {
                     }
                     .toMap()
 
-            val patternsByMapRoute = mutableMapOf<MapStopRoute, List<RoutePattern>>()
-            for (patternId in patternIdsByStop.getOrElse(stop.id) { listOf() }) {
-                val pattern = routePatterns[patternId] ?: continue
-                val route = routes[pattern.routeId] ?: continue
-                val mapRoute = MapStopRoute.matching(route) ?: continue
-
+            for (patternId in global.patternIdsByStop.getOrElse(stop.id) { listOf() }) {
+                val pattern = global.routePatterns[patternId] ?: continue
                 relevantAlerts =
                     nullStopAlerts.filter { alert ->
                         alert.anyInformedEntity { entityMatcher(it, null, pattern) }
                     } + relevantAlerts
-                patternsByMapRoute[mapRoute] =
-                    patternsByMapRoute.getOrElse(mapRoute) { listOf() } + pattern
             }
 
-            serviceStatus =
-                getServiceStatus(
-                    stop,
-                    getServiceAlerts(relevantAlerts),
-                    patternsByMapRoute,
-                    childAlerts
-                )
+            stateByRoute =
+                getAlertStateByRoute(stop, getServiceAlerts(relevantAlerts), childAlerts, global)
         }
     }
 
     constructor(
         stop: Stop,
         relevantAlerts: List<Alert>,
-        serviceStatus: Map<MapStopRoute, StopAlertState>
+        stateByRoute: Map<MapStopRoute, StopAlertState>
     ) : this(stop) {
         this.relevantAlerts = relevantAlerts
         this.serviceAlerts = getServiceAlerts(relevantAlerts)
         this.childAlerts = mapOf()
-        this.serviceStatus = serviceStatus
+        this.stateByRoute = stateByRoute
     }
 
     constructor(
         stop: Stop,
         relevantAlerts: List<Alert>,
         childAlerts: Map<String, AlertAssociatedStop>,
-        serviceStatus: Map<MapStopRoute, StopAlertState>
+        stateByRoute: Map<MapStopRoute, StopAlertState>
     ) : this(stop) {
         this.relevantAlerts = relevantAlerts
         this.serviceAlerts = getServiceAlerts(relevantAlerts)
         this.childAlerts = childAlerts
-        this.serviceStatus = serviceStatus
+        this.stateByRoute = stateByRoute
     }
 }
 
@@ -104,60 +93,67 @@ private fun getServiceAlerts(alerts: List<Alert>): List<Alert> {
     return alerts.filter { Alert.serviceDisruptionEffects.contains(it.effect) }
 }
 
-private fun getServiceStatus(
+private fun getAlertStateByRoute(
     stop: Stop,
     serviceAlerts: List<Alert>,
-    patternsByMapRoute: Map<MapStopRoute, List<RoutePattern>>,
-    childAlerts: Map<String, AlertAssociatedStop>
+    childAlerts: Map<String, AlertAssociatedStop>,
+    global: GlobalResponse
 ): Map<MapStopRoute, StopAlertState> {
-    val result =
-        MapStopRoute.entries
-            .mapNotNull { mapRoute ->
-                val patterns = patternsByMapRoute[mapRoute]
-                if (stop.parentStationId != null && patterns == null) {
-                    // If this is a child stop and has no patterns in this route category,
-                    // don't add an entry for it to the result map.
-                    return@mapNotNull null
+    val patternsByMapRoute = mutableMapOf<MapStopRoute, List<RoutePattern>>()
+    for (patternId in global.patternIdsByStop.getOrElse(stop.id) { listOf() }) {
+        val pattern = global.routePatterns[patternId] ?: continue
+        val route = global.routes[pattern.routeId] ?: continue
+        val mapRoute = MapStopRoute.matching(route) ?: continue
+
+        patternsByMapRoute[mapRoute] = patternsByMapRoute.getOrElse(mapRoute) { listOf() } + pattern
+    }
+
+    return MapStopRoute.entries
+        .mapNotNull { mapRoute ->
+            val patterns = patternsByMapRoute[mapRoute]
+            // If this is a child stop without any relevant patterns, don't add an entry for it
+            // to the result map. A parent stop usually doesn't have any relevant patterns, they're
+            // only attached to child stops, so parents always need to be checked further.
+            if (stop.parentStationId != null && patterns == null) {
+                return@mapNotNull null
+            }
+
+            val childStates =
+                childAlerts.values.mapNotNull childState@{
+                    stopState(it.stop, mapRoute, childAlerts)
                 }
 
-                val childStates =
-                    childAlerts.values
-                        .mapNotNull childState@{
-                            val state = stopState(it.stop, mapRoute, childAlerts)
-                            return@childState if (state != null) {
-                                it.stop.id to state
-                            } else {
-                                null
-                            }
-                        }
-                        .toMap()
+            val patternStates =
+                (patterns ?: emptyList()).map { statesForPattern(it, stop, serviceAlerts) }
 
-                val patternStates =
-                    (patterns ?: emptyList()).map { statusForPattern(it, stop, serviceAlerts) }
+            // Children will always have a Normal StopAlertState if they have any service for the
+            // given MapStopRoute, so patterns and child states being empty here means that the
+            // station doesn't serve any matching routes, and we don't need to set a state for it.
+            if (patternStates.isEmpty() && childStates.isEmpty()) {
+                return@mapNotNull null
+            }
 
-                if (patternStates.isEmpty() && childStates.isEmpty()) {
-                    return@mapNotNull null
-                }
+            // Check if the stop is at the boundary of any of the alerts, meaning that the alert
+            // causes it to have service in one direction but not the other.
+            if (
+                patternStates.isEmpty() &&
+                    serviceAlerts.any { alert -> isBoundaryParent(stop, alert, mapRoute, global) }
+            ) {
+                return@mapNotNull mapRoute to StopAlertState.Issue
+            }
 
-                if (
-                    patternStates.isEmpty() &&
-                        serviceAlerts.any { alert -> isBoundaryParent(stop, alert, childStates) }
-                ) {
+            // Check if all the parent and child alert states are the same, if they are, return
+            // that state, otherwise return a more generic Issue state.
+            val representativeState = patternStates.getOrNull(0) ?: childStates.first()
+            val finalState =
+                if ((patternStates + childStates).all { it == representativeState }) {
+                    representativeState
+                } else {
                     return@mapNotNull mapRoute to StopAlertState.Issue
                 }
-
-                val representativeState = patternStates.getOrNull(0) ?: childStates.values.first()
-                val finalState =
-                    if ((patternStates + childStates.values).all { it == representativeState }) {
-                        representativeState
-                    } else {
-                        return@mapNotNull mapRoute to StopAlertState.Issue
-                    }
-
-                return@mapNotNull mapRoute to finalState
-            }
-            .toMap()
-    return result
+            return@mapNotNull mapRoute to finalState
+        }
+        .toMap()
 }
 
 private fun stopState(
@@ -165,10 +161,10 @@ private fun stopState(
     on: MapStopRoute,
     alerts: Map<String, AlertAssociatedStop>
 ): StopAlertState? {
-    return alerts[stop.id]?.serviceStatus?.get(on)
+    return alerts[stop.id]?.stateByRoute?.get(on)
 }
 
-private fun statusForPattern(
+private fun statesForPattern(
     pattern: RoutePattern,
     stop: Stop,
     serviceAlerts: List<Alert>
@@ -190,39 +186,90 @@ private fun statusForPattern(
 }
 
 // For stations at the boundary of a disruption, with service in one direction but not the other,
-// they will always have informed entities for each child platform with a different set of
-// activities depending on that platform's service. So either "Board" or "Ride" will always be
-// missing on the respective child platforms at every parent stop on the boundary of an alert.
+// they generally have informed entities for each child platform with a different set of activities
+// depending on that platform's service. So either "Board" or "Ride" will be missing on respective
+// child platforms at every parent stop on the boundary of an alert.
 private fun isBoundaryParent(
     stop: Stop,
     alert: Alert,
-    childStates: Map<String, StopAlertState>
+    mapRoute: MapStopRoute,
+    global: GlobalResponse
 ): Boolean {
     if (stop.parentStationId != null) {
         return false
     }
-    return alert
-        .matchingEntities { it.appliesTo(stopId = stop.id) }
-        .all { parentAlert ->
-            val childEntities =
-                stop.childStopIds.associateWith { childId ->
-                    alert.informedEntity.find {
-                        it.appliesTo(routeId = parentAlert.route, stopId = childId)
-                    }
-                }
 
-            return childStates.isNotEmpty() &&
-                childStates.keys.all { relevantChild ->
-                    childStates[relevantChild] != StopAlertState.Normal &&
-                        childEntities[relevantChild]
-                            ?.activities
-                            ?.containsAll(
-                                setOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride
-                                )
-                            ) == false
-                }
+    // We only want to check for a specific MapStopRoute, so this gets all the informed entities
+    // on the provided alert which have a route matching that MapStopRoute.
+    val entitiesAtStopAndRoute =
+        alert.matchingEntities {
+            val entityRoute = global.routes[it.route] ?: return@matchingEntities false
+            it.appliesTo(stopId = stop.id) && MapStopRoute.matching(entityRoute) == mapRoute
         }
+
+    if (entitiesAtStopAndRoute.isEmpty()) {
+        return false
+    }
+
+    // Then we need to associate each child stop with all their patterns on routes matching the
+    // provided MapStopRoute that are typical or canonical
+    val patternsByStop =
+        (stop.childStopIds + stop.id)
+            .map { stopId ->
+                stopId to
+                    (global.patternIdsByStop[stopId] ?: emptyList())
+                        .mapNotNull { patternId -> global.routePatterns[patternId] }
+                        .filter { pattern ->
+                            val route = global.routes[pattern.routeId] ?: return@filter false
+                            return@filter setOf(
+                                    RoutePattern.Typicality.Typical,
+                                    RoutePattern.Typicality.CanonicalOnly
+                                )
+                                .contains(pattern.typicality) &&
+                                mapRoute == MapStopRoute.matching(route)
+                        }
+            }
+            .filter { (_, patterns) -> patterns.isNotEmpty() }
+            .toMap()
+
+    // If this stop is the terminal at all patterns found above, we don't want to consider it as
+    // being on the alert boundary. If we don't return separately, it will fulfill the entity check.
+    val isTerminal =
+        patternsByStop.all { (stopId, patterns) ->
+            patterns.all terminalCheck@{ pattern ->
+                val trip = global.trips[pattern.representativeTripId] ?: return@terminalCheck false
+                val stopIds = trip.stopIds ?: return@terminalCheck false
+                if (stopIds.isEmpty()) {
+                    return@terminalCheck false
+                }
+                return@terminalCheck stopIds.first() == stopId || stopIds.last() == stopId
+            }
+        }
+
+    if (isTerminal) {
+        return false
+    }
+
+    // If the alert has an entity at the parent stop, it should also have entities for any child
+    // stops on the same route, and if that child has service in one direction but not the other,
+    // it should be missing either the Board or Exit activity depending which direction its for.
+    // There do seem to be some poorly understood edge cases where even if a child has service in
+    // one direction, it will have both Board and Exit activities (for example, alerts at Kenmore).
+    return entitiesAtStopAndRoute.any { entity ->
+        val childEntities =
+            stop.childStopIds.associateWith { childId ->
+                alert.informedEntity.find { it.appliesTo(routeId = entity.route, stopId = childId) }
+            }
+        return@any patternsByStop.keys.any { stopId ->
+            stopId == stop.id ||
+                childEntities[stopId]
+                    ?.activities
+                    ?.containsAll(
+                        setOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit
+                        )
+                    ) == false
+        }
+    }
 }
