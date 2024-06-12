@@ -87,18 +87,22 @@ struct ContentView: View {
                 viewportProvider: viewportProvider,
                 sheetHeight: $sheetHeight
             )
-            .sheet(item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()), onDismiss: {
-                selectedDetent = .halfScreen
+            .sheet(
+                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
+                onDismiss: {
+                    selectedDetent = .halfScreen
 
-                if visibleNearbySheet == nearbyVM.navigationStack.last {
-                    // When the visible sheet matches the last nav entry, then a dismissal indicates
-                    // an intentional action remove the sheet and replace it with the previous one.
+                    if visibleNearbySheet == nearbyVM.navigationStack.last {
+                        // When the visible sheet matches the last nav entry, then a dismissal indicates
+                        // an intentional action remove the sheet and replace it with the previous one.
 
-                    // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                    // being dismissed so that it can be automatically replaced with the new one.
-                    nearbyVM.goBack()
-                } else {}
-            }) { entry in
+                        // When the visible sheet *doesn't* match the latest item in the nav stack, it is
+                        // being dismissed so that it can be automatically replaced with the new one.
+                        nearbyVM.goBack()
+                    } else {}
+                }
+            ) { sheetIdentityEntry in
+                let entry = sheetIdentityEntry.stackEntry
                 GeometryReader { proxy in
                     NavigationStack {
                         switch entry {
