@@ -160,6 +160,39 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
+    func testCloseButton() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        class FakeNearbyVM: NearbyViewModel {
+            let backExp: XCTestExpectation
+            init(_ backExp: XCTestExpectation) {
+                self.backExp = backExp
+                super.init()
+            }
+
+            override func goBack() {
+                backExp.fulfill()
+            }
+        }
+
+        let backExp = XCTestExpectation(description: "goBack called")
+
+        let sut = StopDetailsPage(
+            globalFetcher: .init(backend: IdleBackend()),
+            schedulesRepository: MockScheduleRepository(),
+            predictionsRepository: MockPredictionsRepository(),
+            viewportProvider: .init(),
+            stop: stop,
+            filter: .constant(nil),
+            nearbyVM: FakeNearbyVM(backExp)
+        )
+
+        try sut.inspect().find(CloseButton.self).button().tap()
+
+        wait(for: [backExp], timeout: 2)
+    }
+
     func testRejoinsPredictionsAfterBackgrounding() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()

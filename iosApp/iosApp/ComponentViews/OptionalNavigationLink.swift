@@ -8,16 +8,17 @@
 
 import SwiftUI
 
-/// `NavigationLink` takes an optional `value` but renders as a disabled link when the `value` is `nil`.
-/// In the filtered stop details state, non-vehicle-based upcoming trips should not render as disabled links.
-/// This will instead render its label directly if the `value` is `nil`, bypassing the link completely.
+/// In the filtered stop details state, non-vehicle-based upcoming trips should not link to the trip details page.
+/// This will render a button if there there is a SheetNavigationStackEntry to navigate to, otherwise it renders a
+/// regular label.
 struct OptionalNavigationLink<Label>: View where Label: View {
     let value: SheetNavigationStackEntry?
+    let action: (SheetNavigationStackEntry) -> Void
     let label: () -> Label
 
     var body: some View {
         if let value {
-            NavigationLink(value: value, label: label)
+            SheetNavigationLink(value: value, action: action, label: label)
         } else {
             label()
         }

@@ -45,7 +45,15 @@ class NearbyViewModel: ObservableObject {
     }
 
     func isNearbyVisible() -> Bool {
-        navigationStack.isEmpty
+        navigationStack.lastSafe() == .nearby
+    }
+
+    func pushNavEntry(_ entry: SheetNavigationStackEntry) {
+        navigationStack.append(entry)
+    }
+
+    func goBack() {
+        navigationStack.removeLast()
     }
 
     func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
@@ -105,3 +113,5 @@ class NearbyViewModel: ObservableObject {
         }
     }
 }
+
+class NearbyNavigationStack: ObservableObject {}
