@@ -21,7 +21,12 @@ struct StopDetailsRoutesView: View {
             StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter, pushNavEntry: pushNavEntry)
         } else {
             List(departures.routes, id: \.route.id) { patternsByStop in
-                StopDetailsRouteView(patternsByStop: patternsByStop, now: now, filter: $filter)
+                StopDetailsRouteView(
+                    patternsByStop: patternsByStop,
+                    now: now,
+                    filter: $filter,
+                    pushNavEntry: pushNavEntry
+                )
             }
         }
     }
