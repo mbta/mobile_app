@@ -20,7 +20,7 @@ final class SheetHeaderTests: XCTestCase {
 
     func testIncludesCloseButtonWhenGivenAction() throws {
         let exp = XCTestExpectation(description: "Back button pressed")
-        let sut = SheetHeader(onBackPress: { exp.fulfill() }, title: "Header Text")
+        let sut = SheetHeader(onClose: { exp.fulfill() }, title: "Header Text")
 
         XCTAssertNotNil(try sut.inspect().find(text: "Header Text"))
         try sut.inspect().find(CloseButton.self).button().tap()
