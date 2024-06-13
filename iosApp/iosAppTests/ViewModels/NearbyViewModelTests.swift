@@ -12,13 +12,42 @@ import shared
 import XCTest
 
 final class NearbyViewModelTests: XCTestCase {
-    func isNearbyVisibleWhenNoStack() {
+    func testIsNearbyVisibleWhenNoStack() {
         XCTAssert(NearbyViewModel(navigationStack: []).isNearbyVisible())
     }
 
-    func isNearbyVisibleFalseWhenStack() {
+    func testIsNearbyVisibleFalseWhenStack() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
-        XCTAssert(NearbyViewModel(navigationStack: [.stopDetails(stop, nil)]).isNearbyVisible())
+        XCTAssertFalse(NearbyViewModel(navigationStack: [.stopDetails(stop, nil)]).isNearbyVisible())
+    }
+
+    func testPushEntryAddsToStackWhenDifferentStops() {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { _ in }
+        let stop2 = objects.stop { _ in }
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [])
+
+        let entry1: SheetNavigationStackEntry = .stopDetails(stop1, .init(routeId: "Route1", directionId: 0))
+        let entry2: SheetNavigationStackEntry = .stopDetails(stop2, .init(routeId: "Route2", directionId: 1))
+
+        nearbyVM.pushNavEntry(entry1)
+        XCTAssertEqual(nearbyVM.navigationStack, [entry1])
+        nearbyVM.pushNavEntry(entry2)
+        XCTAssertEqual(nearbyVM.navigationStack, [entry1, entry2])
+    }
+
+    func testPushEntrySetsLastStopWhenSameStop() {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { _ in }
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [])
+
+        let entry1: SheetNavigationStackEntry = .stopDetails(stop1, .init(routeId: "Route1", directionId: 0))
+        let entry2: SheetNavigationStackEntry = .stopDetails(stop1, .init(routeId: "Route2", directionId: 1))
+
+        nearbyVM.pushNavEntry(entry1)
+        XCTAssertEqual(nearbyVM.navigationStack, [entry1])
+        nearbyVM.pushNavEntry(entry2)
+        XCTAssertEqual(nearbyVM.navigationStack, [entry2])
     }
 }

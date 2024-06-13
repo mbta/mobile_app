@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class StopDetailsRouteViewTests: XCTestCase {
-    func testSetFilter() throws {
+    func testCallsPushNavEntry() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -43,12 +43,32 @@ final class StopDetailsRouteViewTests: XCTestCase {
             stop: stop,
             patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth]
         )
-        let sut = StopDetailsRouteView(patternsByStop: patternsByStop, now: now, filter: filter)
+
+        let pushExpNorth = XCTestExpectation(description: "Push Nav Entry called for north")
+
+        let pushExpSouth = XCTestExpectation(description: "Push Nav Entry called for south")
+
+        func pushExpFullfill(entry: SheetNavigationStackEntry) {
+            if entry == .stopDetails(stop, .init(routeId: route.id, directionId: 0)) {
+                pushExpNorth.fulfill()
+            }
+
+            if entry == .stopDetails(stop, .init(routeId: route.id, directionId: 1)) {
+                pushExpSouth.fulfill()
+            }
+        }
+
+        let sut = StopDetailsRouteView(patternsByStop: patternsByStop,
+                                       now: now,
+                                       filter: filter,
+                                       pushNavEntry: pushExpFullfill)
 
         XCTAssertNil(filter.wrappedValue)
         try sut.inspect().find(button: "North").tap()
-        XCTAssertEqual(filter.wrappedValue, .init(routeId: route.id, directionId: 0))
+
+        wait(for: [pushExpNorth], timeout: 1)
+
         try sut.inspect().find(button: "South").tap()
-        XCTAssertEqual(filter.wrappedValue, .init(routeId: route.id, directionId: 1))
+        wait(for: [pushExpSouth], timeout: 1)
     }
 }
