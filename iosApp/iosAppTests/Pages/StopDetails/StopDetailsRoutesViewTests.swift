@@ -41,8 +41,6 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilteredRouteView.self))
     }
 
-    // TODO: test pinning
-
     func testShowsFilteredWithFilter() throws {
         let (departures: departures, routeId: routeId) = testData()
 

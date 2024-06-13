@@ -49,12 +49,12 @@ struct DirectionPicker: View {
                     }
                     .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
                     .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
-                    .clipShape(.rect(cornerRadius: 10))
+                    .clipShape(.rect(cornerRadius: 6))
                 }
             }
-            .padding(3)
+            .padding(2)
             .background(deselectedBackroundColor)
-            .clipShape(.rect(cornerRadius: 10))
+            .clipShape(.rect(cornerRadius: 6))
         }
     }
 

@@ -72,4 +72,55 @@ final class StopDetailsRouteViewTests: XCTestCase {
         try sut.inspect().find(button: "South").tap()
         wait(for: [pushExpSouth], timeout: 1)
     }
+
+    func testCanPinRoute() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let now = Date.now.toKotlinInstant()
+
+        let filter = Binding<StopDetailsFilter?>(wrappedValue: nil)
+
+        let northPattern = objects.routePattern(route: route) { $0.directionId = 0 }
+        let southPattern = objects.routePattern(route: route) { $0.directionId = 1 }
+        let patternsByHeadsignNorth = PatternsByHeadsign(
+            route: route,
+            headsign: "North",
+            patterns: [northPattern],
+            upcomingTrips: nil,
+            alertsHere: nil
+        )
+        let patternsByHeadsignSouth = PatternsByHeadsign(
+            route: route,
+            headsign: "South",
+            patterns: [southPattern],
+            upcomingTrips: nil,
+            alertsHere: nil
+        )
+        let patternsByStop = PatternsByStop(
+            route: route,
+            stop: stop,
+            patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth]
+        )
+
+        let onPinCalledExp = XCTestExpectation(description: "On pin called")
+
+        func pinExpFulfill(_ routeId: String) {
+            if routeId == route.id {
+                onPinCalledExp.fulfill()
+            }
+        }
+
+        let sut = StopDetailsRouteView(patternsByStop: patternsByStop,
+                                       now: now,
+                                       pushNavEntry: { _ in },
+                                       pinned: false,
+                                       onPin: pinExpFulfill)
+
+        XCTAssertNil(filter.wrappedValue)
+        try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton").button().tap()
+
+        wait(for: [onPinCalledExp], timeout: 1)
+    }
 }

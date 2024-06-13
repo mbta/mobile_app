@@ -58,7 +58,7 @@ struct StopDetailsPage: View {
                     clearFilterButton
                 }
                 .padding([.bottom], 8)
-                .border(Color.halo.opacity(0.1), width: 2)
+                .border(Color.halo.opacity(0.15), width: 2)
 
                 if let departures = nearbyVM.departures {
                     StopDetailsRoutesView(
