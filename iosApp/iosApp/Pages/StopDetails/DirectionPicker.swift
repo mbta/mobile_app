@@ -53,7 +53,6 @@ struct DirectionPicker: View {
             .padding(3)
             .background(.white)
             .clipShape(.rect(cornerRadius: 10))
-            .padding(.horizontal, -20)
         }
     }
 }

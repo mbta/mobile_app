@@ -11,6 +11,7 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* IOSApp.swift */; };
 		6E04D4302C1A17340055FD99 /* StopDeparturesSummaryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */; };
+		6E04D4322C1B50230055FD99 /* RouteHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04D4312C1B50230055FD99 /* RouteHeader.swift */; };
 		6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */; };
 		6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278D2BD989630037554F /* DummyTestAppView.swift */; };
 		6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278F2BD989AC0037554F /* ProductionAppView.swift */; };
@@ -190,6 +191,7 @@
 		5D90749ECA9D2A48F600A230 /* Pods-iosAppTests.prod release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.prod release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.prod release.xcconfig"; sourceTree = "<group>"; };
 		6C6BFDA87BC771B9484C9447 /* Pods-iosAppTests.stagingrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.stagingrelease.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.stagingrelease.xcconfig"; sourceTree = "<group>"; };
 		6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDeparturesSummaryList.swift; sourceTree = "<group>"; };
+		6E04D4312C1B50230055FD99 /* RouteHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHeader.swift; sourceTree = "<group>"; };
 		6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyViewModel.swift; sourceTree = "<group>"; };
 		6E20278D2BD989630037554F /* DummyTestAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyTestAppView.swift; sourceTree = "<group>"; };
 		6E20278F2BD989AC0037554F /* ProductionAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductionAppView.swift; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 				6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */,
 				6E973DA42C17384C00CBF341 /* SheetHeader.swift */,
 				6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */,
+				6E04D4312C1B50230055FD99 /* RouteHeader.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1141,6 +1144,7 @@
 				6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */,
 				9A88AAC12BD0680C00A5BF88 /* StopDetailsRoutePills.swift in Sources */,
 				8CD58ECF2BEC336B0004E031 /* TripPredictionsFetcher.swift in Sources */,
+				6E04D4322C1B50230055FD99 /* RouteHeader.swift in Sources */,
 				9A71D95A2C0E54CC0059AA35 /* MapExp.swift in Sources */,
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */,

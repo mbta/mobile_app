@@ -76,22 +76,46 @@ struct StopDetailsFilteredRouteView: View {
 
     var body: some View {
         if let patternsByStop {
-            List {
-                RoutePillSection(
-                    route: patternsByStop.route,
-                    headerContent: DirectionPicker(
+            let routeHex: String? = patternsByStop.route.color
+            ZStack {
+                if let routeHex {
+                    Color(hex: routeHex)
+                }
+                VStack {
+                    RouteHeader(route: patternsByStop.route)
+                    DirectionPicker(
                         patternsByStop: patternsByStop,
                         filter: $filter
-                    )
-                ) {
-                    ForEach(rows, id: \.tripId) { row in
-                        OptionalNavigationLink(value: row.navigationTarget, action: pushNavEntry) {
-                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
-                                            routeType: patternsByStop.route.type)
-                        }.listRowBackground(Color.fill3)
+                    ).fixedSize(horizontal: false, vertical: true)
+
+                    ScrollView {
+                        ZStack {
+                            Color.fill3.ignoresSafeArea(.all)
+                            VStack {
+                                ForEach(Array(rows.enumerated()), id: \.element.tripId) { index, row in
+
+                                    VStack(spacing: 0) {
+                                        OptionalNavigationLink(value: row.navigationTarget, action: pushNavEntry) {
+                                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
+                                                            routeType: patternsByStop.route.type)
+                                        }
+                                        .padding(8)
+                                        .padding(.leading, 8)
+
+                                        if index < rows.count - 1 {
+                                            Divider().background(Color.halo)
+                                        }
+                                    }
+                                }
+                            }
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .clipShape(.rect(cornerRadius: 8))
+                        .border(Color.halo.opacity(0.1), width: 1)
                     }
-                }
-            }
+                }.padding([.top, .horizontal], 8)
+            }.ignoresSafeArea(.all)
+
         } else {
             EmptyView()
         }

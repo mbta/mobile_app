@@ -75,7 +75,9 @@ struct StopDetailsPage: View {
             }
         }
 
-        .onAppear { changeStop(stop) }
+        .onAppear { changeStop(stop)
+            loadPinnedRoutes()
+        }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }
         .onChange(of: predictions) { _ in updateDepartures() }

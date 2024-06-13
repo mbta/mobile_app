@@ -18,12 +18,10 @@ struct StopDetailsRoutesView: View {
     let pinRoute: (String) -> Void
     var pinnedRoutes: Set<String> = []
 
-    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
-    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
-
     var body: some View {
-        if filter != nil {
+        if let filter {
             StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter, pushNavEntry: pushNavEntry)
+
         } else {
             ZStack {
                 Color.fill1.ignoresSafeArea(.all)
@@ -39,7 +37,7 @@ struct StopDetailsRoutesView: View {
                             )
                         }
                     }
-                }
+                }.padding([.top], 16)
             }
         }
     }

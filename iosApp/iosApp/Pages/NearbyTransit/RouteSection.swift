@@ -20,7 +20,9 @@ struct RouteSection<Content: View>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            routeHeader
+            RouteHeader(route: route) {
+                pinButton
+            }
             content()
         }
         .background(Color.fill3)
@@ -32,38 +34,6 @@ struct RouteSection<Content: View>: View {
         )
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
-    }
-
-    private var routeName: Text {
-        switch route.type {
-        case .bus:
-            Text(route.shortName)
-        case .commuterRail:
-            Text(route.longName.replacingOccurrences(of: "/", with: " / ")).font(.body).bold()
-        default:
-            Text(route.longName).font(.body).bold()
-        }
-    }
-
-    private var routeHeader: some View {
-        Label {
-            routeName
-                .accessibilityHeading(.h2)
-                .multilineTextAlignment(.leading)
-                .foregroundStyle(Color(hex: route.textColor))
-                .textCase(.none)
-                .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
-            pinButton
-        } icon: {
-            routeIcon(route)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .scaledToFit()
-                .frame(maxHeight: modeIconHeight, alignment: .topLeading)
-                .foregroundStyle(Color(hex: route.textColor))
-        }
-        .padding(8)
-        .background(Color(hex: route.color))
     }
 
     private var pinButton: some View {
