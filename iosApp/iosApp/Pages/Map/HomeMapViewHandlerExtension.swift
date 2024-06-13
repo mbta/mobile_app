@@ -131,7 +131,7 @@ extension HomeMapView {
             """)
             return false
         }
-
+        analytics.tappedOnStop(stopId: stop.id)
         nearbyVM.navigationStack.removeAll()
         nearbyVM.navigationStack.append(.stopDetails(stop, nil))
         return true

@@ -5,13 +5,16 @@ import org.koin.core.component.KoinComponent
 
 class TogglePinnedRouteUsecase(private val repository: IPinnedRoutesRepository) : KoinComponent {
 
-    suspend fun execute(route: String) {
+    // Boolean return value indicates pinned or unpinned state
+    suspend fun execute(route: String): Boolean {
         val currentRoutes = repository.getPinnedRoutes().toMutableSet()
-        if (currentRoutes.contains(route)) {
+        val containsRoute = currentRoutes.contains(route)
+        if (containsRoute) {
             currentRoutes.remove(route)
         } else {
             currentRoutes.add(route)
         }
         repository.setPinnedRoutes(currentRoutes)
+        return !containsRoute
     }
 }
