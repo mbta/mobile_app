@@ -111,7 +111,7 @@ class MapLayerManager: IMapLayerManager {
 
     func updateStopLayerZoom(_ zoomLevel: CGFloat) {
         let opacity = zoomLevel > StopLayerGenerator.stopZoomThreshold ? 1.0 : 0.0
-        for layerId in (0 ..< 3).flatMap({
+        for layerId in (0 ..< StopLayerGenerator.maxTransferLayers).flatMap({
             [StopLayerGenerator.getTransferLayerId($0), StopLayerGenerator.getAlertLayerId($0)]
         }) + [StopLayerGenerator.stopLayerId] {
             do {
