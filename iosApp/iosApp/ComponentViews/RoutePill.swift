@@ -250,6 +250,18 @@ struct RoutePill_Previews: PreviewProvider {
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
+                id: "627",
+                type: .bus,
+                color: "FFC72C",
+                directionNames: ["Outbound", "Inbound"],
+                directionDestinations: ["Bedford VA Hospital", "Alewife Station"],
+                longName: "Bedford VA Hospital - Alewife Station via Hanscom Airport",
+                shortName: "62/76",
+                sortOrder: 50621,
+                textColor: "000000",
+                routePatternIds: nil
+            ))
+            RoutePillPreview(route: Route(
                 id: "741",
                 type: .bus,
                 color: "7C878E",
@@ -271,6 +283,18 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 30002,
                 textColor: "FFFFFF",
+                routePatternIds: nil
+            ))
+            RoutePillPreview(route: Route(
+                id: "Shuttle-BroadwayKendall",
+                type: .bus,
+                color: "FFC72C",
+                directionNames: ["South", "North"],
+                directionDestinations: ["Ashmont/Braintree", "Alewife"],
+                longName: "Kendall/MIT - Broadway via Downtown Crossing",
+                shortName: "Red Line Shuttle",
+                sortOrder: 61050,
+                textColor: "000000",
                 routePatternIds: nil
             ))
         }
