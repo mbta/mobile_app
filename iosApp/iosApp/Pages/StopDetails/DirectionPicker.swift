@@ -36,11 +36,11 @@ struct DirectionPicker: View {
 
                     Button(action: action) {
                         VStack(alignment: .leading) {
-                            Text("\(directions[Int(direction)].name.uppercased()) to")
+                            Text("\(directionNameFormatted(directions[Int(direction)])) to")
                                 .font(.footnote)
                                 .textCase(.none)
                             Text(directions[Int(direction)].destination)
-                                .font(.subheadline)
+                                .font(.body)
                                 .fontWeight(.bold)
                                 .textCase(.none)
                         }
@@ -56,6 +56,13 @@ struct DirectionPicker: View {
             .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 6))
         }
+    }
+
+    private func directionNameFormatted(_ direction: Direction) -> String {
+        if direction.name == "North" || direction.name == "South" {
+            return "\(direction.name)bound"
+        }
+        return direction.name
     }
 
     private func deselectedBackgroundColor(_ route: Route) -> Color {
