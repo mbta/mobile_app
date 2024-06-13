@@ -137,7 +137,9 @@ private fun getAlertStateByRoute(
             // causes it to have service in one direction but not the other.
             if (
                 patternStates.isEmpty() &&
-                    serviceAlerts.any { alert -> isBoundaryParent(stop, alert, mapRoute, global) }
+                    serviceAlerts.any { alert ->
+                        isServingBothDirections(stop, alert, mapRoute, global)
+                    }
             ) {
                 return@mapNotNull mapRoute to StopAlertState.Issue
             }
@@ -189,7 +191,7 @@ private fun statesForPattern(
 // they generally have informed entities for each child platform with a different set of activities
 // depending on that platform's service. So either "Board" or "Ride" will be missing on respective
 // child platforms at every parent stop on the boundary of an alert.
-private fun isBoundaryParent(
+private fun isServingBothDirections(
     stop: Stop,
     alert: Alert,
     mapRoute: MapStopRoute,
