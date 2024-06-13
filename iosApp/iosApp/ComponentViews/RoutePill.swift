@@ -50,6 +50,8 @@ struct RoutePill: View {
                 } else {
                     return .text(route.shortName)
                 }
+            } else if route.longName == "Mattapan Trolley", type == .fixed {
+                return .text("M")
             }
         }
         if route.type == .commuterRail {
@@ -160,6 +162,18 @@ struct RoutePill_Previews: PreviewProvider {
                 longName: "Blue Line",
                 shortName: "",
                 sortOrder: 10040,
+                textColor: "FFFFFF",
+                routePatternIds: nil
+            ))
+            RoutePillPreview(route: Route(
+                id: "Mattapan",
+                type: .lightRail,
+                color: "DA291C",
+                directionNames: ["Outbound", "Inbound"],
+                directionDestinations: ["Mattapan", "Ashmont"],
+                longName: "Mattapan Trolley",
+                shortName: "",
+                sortOrder: 10011,
                 textColor: "FFFFFF",
                 routePatternIds: nil
             ))

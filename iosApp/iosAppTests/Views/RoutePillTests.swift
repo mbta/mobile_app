@@ -115,7 +115,7 @@ final class RoutePillTests: XCTestCase {
 
         XCTAssertEqual(try greenLineCFixed.inspect().view(RoutePill.self).text().string(), "GL C")
         XCTAssertEqual(try greenLineCFlex.inspect().view(RoutePill.self).text().string(), "C")
-        XCTAssertEqual(try mattapanFixed.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
+        XCTAssertEqual(try mattapanFixed.inspect().view(RoutePill.self).text().string(), "M")
         XCTAssertEqual(try mattapanFlex.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
     }
 
