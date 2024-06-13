@@ -33,6 +33,17 @@ enum MapExp {
         ""
     }
 
+    static func busSwitchExp(forBus: Bool, _ resultExpression: Exp) -> Exp {
+        Exp(.switchCase) {
+            Exp(.all) {
+                MapExp.singleRouteTypeExp
+                Exp(.eq) { MapExp.topRouteExp; MapStopRoute.bus.name }
+            }
+            forBus ? resultExpression : Exp(.string) { "" }
+            !forBus ? resultExpression : Exp(.string) { "" }
+        }
+    }
+
     static func routeAt(_ index: Int) -> Exp {
         Exp(.string) { Exp(.at) { index; Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
     }
@@ -58,22 +69,24 @@ enum MapExp {
         } } }
     }
 
-    static let stopLabelTextExp = Exp(.step) {
-        Exp(.zoom)
-        ""
-        MapDefaults.midZoomThreshold
-        Exp(.switchCase) {
-            Exp(.eq) { topRouteExp; MapStopRoute.ferry.name }
+    static func stopLabelTextExp(forBus: Bool = false) -> Exp {
+        Exp(.step) {
+            Exp(.zoom)
             ""
-            Exp(.get) { StopSourceGenerator.propIsTerminalKey }
-            Exp(.get) { StopSourceGenerator.propNameKey }
-            ""
-        }
-        MapDefaults.closeZoomThreshold
-        Exp(.switchCase) {
-            Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
-            ""
-            Exp(.get) { StopSourceGenerator.propNameKey }
+            MapDefaults.midZoomThreshold
+            Exp(.switchCase) {
+                Exp(.eq) { topRouteExp; MapStopRoute.ferry.name }
+                ""
+                Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                busSwitchExp(forBus: forBus, Exp(.get) { StopSourceGenerator.propNameKey })
+                ""
+            }
+            MapDefaults.closeZoomThreshold
+            Exp(.switchCase) {
+                Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
+                ""
+                busSwitchExp(forBus: forBus, Exp(.get) { StopSourceGenerator.propNameKey })
+            }
         }
     }
 

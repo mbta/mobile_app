@@ -29,7 +29,6 @@ extension HomeMapView {
     func handleLayerInit(_ map: MapboxMap) {
         let layerManager = MapLayerManager(map: map)
         initializeLayers(layerManager)
-        layerManager.updateStopLayerZoom(map.cameraState.zoom)
         self.layerManager = layerManager
     }
 
@@ -68,7 +67,6 @@ extension HomeMapView {
 
     func handleCameraChange(_ change: CameraChanged) {
         viewportProvider.updateCameraState(change.cameraState)
-        layerManager?.updateStopLayerZoom(change.cameraState.zoom)
     }
 
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {

@@ -69,23 +69,23 @@ enum StopIcons {
         }
     }
 
-    static func getStopIconName(_ zoomPrefix: String) -> Exp {
-        Exp(.step) {
+    static func getStopIconName(_ zoomPrefix: String, forBus: Bool) -> Exp {
+        MapExp.busSwitchExp(forBus: forBus, Exp(.step) {
             Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
             getRouteIconName(zoomPrefix, 0)
             2
             Exp(.concat) { stopContainerPrefix; zoomPrefix; "2" }
             3
             Exp(.concat) { stopContainerPrefix; zoomPrefix; "3" }
-        }
+        })
     }
 
-    static func getStopLayerIcon() -> Value<ResolvedImage> {
+    static func getStopLayerIcon(forBus: Bool = false) -> Value<ResolvedImage> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            getStopIconName(stopZoomWidePrefix)
+            getStopIconName(stopZoomWidePrefix, forBus: forBus)
             MapDefaults.closeZoomThreshold
-            getStopIconName(stopZoomClosePrefix)
+            getStopIconName(stopZoomClosePrefix, forBus: forBus)
         })
     }
 
