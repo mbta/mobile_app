@@ -28,8 +28,10 @@ struct DirectionPicker: View {
 
     var body: some View {
         if availableDirections.count > 1 {
+            let deselectedBackroundColor = deselectedBackgroundColor(route)
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
+                    let isSelected = filter?.directionId == direction
                     let action = { $filter.wrappedValue = .init(routeId: route.id, directionId: direction) }
 
                     Button(action: action) {
@@ -45,14 +47,22 @@ struct DirectionPicker: View {
                         .padding(8)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
-                    .background(filter?.directionId == direction ? Color(hex: route.color) : .clear)
-                    .foregroundStyle(filter?.directionId == direction ? Color(hex: route.textColor) : .black)
+                    .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
+                    .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 10))
                 }
             }
             .padding(3)
-            .background(.white)
+            .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 10))
         }
+    }
+
+    private func deselectedBackgroundColor(_ route: Route) -> Color {
+        // Exceptions for contrast
+        if route.type == RouteType.commuterRail || route.id == "Blue" {
+            return Color.deselectedToggle2
+        }
+        return Color.deselectedToggle1
     }
 }
