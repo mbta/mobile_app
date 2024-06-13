@@ -24,7 +24,7 @@ struct RoutePillSection<Content: View>: View {
     var body: some View {
         Section(content: content, header: {
             VStack(alignment: .leading) {
-                RoutePill(route: route).padding(.leading, -20)
+                RoutePill(route: route, type: .flex).padding(.leading, -20)
                 AnyView(headerContent)
             }
         })

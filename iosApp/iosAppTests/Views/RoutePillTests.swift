@@ -30,7 +30,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 50621,
             textColor: "000000",
             routePatternIds: nil
-        ))
+        ), type: .flex)
         XCTAssertEqual(try bus.inspect().view(RoutePill.self).text().string(), "62/76")
     }
 
@@ -46,7 +46,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10010,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
         let blue = RoutePill(route: Route(
             id: "Blue",
             type: .heavyRail,
@@ -58,7 +58,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10040,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
 
         XCTAssertEqual(try red.inspect().view(RoutePill.self).text().string(), "Red Line")
         XCTAssertEqual(try blue.inspect().view(RoutePill.self).text().string(), "Blue Line")
@@ -76,7 +76,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10033,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
 
         let mattapan = RoutePill(route: Route(
             id: "Mattapan",
@@ -96,9 +96,9 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10011,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
 
-        XCTAssertEqual(try green.inspect().view(RoutePill.self).text().string(), "Green Line C")
+        XCTAssertEqual(try green.inspect().view(RoutePill.self).text().string(), "C")
         XCTAssertEqual(try mattapan.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
     }
 
@@ -114,7 +114,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 20009,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
         let providence = RoutePill(route: Route(
             id: "CR-Providence",
             type: .commuterRail,
@@ -126,7 +126,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 20012,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
 
         XCTAssertEqual(try middleborough.inspect().view(RoutePill.self).text().string(), "Middleborough/Lakeville Line")
         XCTAssertEqual(try providence.inspect().view(RoutePill.self).text().string(), "Providence/Stoughton Line")
@@ -144,7 +144,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 30002,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        ), type: .flex)
 
         XCTAssertEqual(try ferry.inspect().view(RoutePill.self).text().string(), "Hingham/Hull Ferry")
     }
@@ -161,7 +161,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 61050,
             textColor: "000000",
             routePatternIds: nil
-        ))
+        ), type: .flex)
         let glShuttle = RoutePill(route: Route(
             id: "Shuttle-BrooklineHillsKenmore",
             type: .bus,
@@ -173,7 +173,7 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 61100,
             textColor: "000000",
             routePatternIds: nil
-        ))
+        ), type: .flex)
         XCTAssertEqual(try rlShuttle.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
         XCTAssertEqual(try glShuttle.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
     }
