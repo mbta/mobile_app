@@ -99,7 +99,7 @@ struct RoutePill: View {
             getPillBase()
                 .textCase(.uppercase)
                 .font(.custom("Helvetica Neue", size: 16).bold())
-                .tracking(1.0)
+                .tracking(0.5)
                 .modifier(PillModifier(pill: self))
                 .lineLimit(1)
                 .foregroundColor(isActive ? textColor : Self.inactiveTextColor)
