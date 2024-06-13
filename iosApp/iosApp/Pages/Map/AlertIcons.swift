@@ -25,6 +25,7 @@ enum AlertIcons {
             }
         }
 
+    // Expression that's true if the specified route index has no service status set
     private static func alertEmpty(_ index: Int) -> Exp {
         Exp(.not) { Exp(.has) {
             MapExp.routeAt(index)
@@ -32,6 +33,7 @@ enum AlertIcons {
         }}
     }
 
+    // Expression that returns the alert status string for the given route index
     private static func alertStatus(_ index: Int) -> Exp {
         Exp(.get) {
             MapExp.routeAt(index)
@@ -42,11 +44,16 @@ enum AlertIcons {
     private static func getAlertIconName(_ zoomPrefix: String, _ index: Int, _ forBus: Bool) -> Exp {
         MapExp.busSwitchExp(forBus: forBus, Exp(.switchCase) {
             Exp(.any) {
-                Exp(.gte) { index; Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey } } }
+                // Check if the index is greater than the number of routes at this stop
+                Exp(.gte) { index; Exp(.length) { MapExp.routesExp } }
+                // Or if the alert status at this index is empty
                 alertEmpty(index)
+                // Or if it's normal
                 Exp(.eq) { alertStatus(index); StopAlertState.normal.name }
             }
+            // If any of the above are true, don't display an alert icon
             ""
+            // Otherwise, use the non-normal alert status and route to get its icon name
             Exp(.concat) {
                 alertIconPrefix
                 zoomPrefix

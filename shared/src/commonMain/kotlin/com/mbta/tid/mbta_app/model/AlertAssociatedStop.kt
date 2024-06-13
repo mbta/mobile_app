@@ -133,11 +133,12 @@ private fun getAlertStateByRoute(
                 return@mapNotNull null
             }
 
-            // Check if the stop is at the boundary of any of the alerts, meaning that the alert
-            // causes it to have service in one direction but not the other.
+            // Check if the stop is disrupted but still has service running in one direction
             if (
                 patternStates.isEmpty() &&
-                    serviceAlerts.any { alert -> isBoundaryParent(stop, alert, mapRoute, global) }
+                    serviceAlerts.any { alert ->
+                        isPartiallyDisrupted(stop, alert, mapRoute, global)
+                    }
             ) {
                 return@mapNotNull mapRoute to StopAlertState.Issue
             }
@@ -185,11 +186,10 @@ private fun statesForPattern(
     return StopAlertState.Suspension
 }
 
-// For stations at the boundary of a disruption, with service in one direction but not the other,
-// they generally have informed entities for each child platform with a different set of activities
-// depending on that platform's service. So either "Board" or "Ride" will be missing on respective
-// child platforms at every parent stop on the boundary of an alert.
-private fun isBoundaryParent(
+// This function returns true if the alert applies to the stop for the given mapRoute in one
+// direction but not the other. Terminal stops will always return false, but if a stop is in the
+// middle of a route and at the boundary of the alert, it will return true.
+private fun isPartiallyDisrupted(
     stop: Stop,
     alert: Alert,
     mapRoute: MapStopRoute,
@@ -234,27 +234,24 @@ private fun isBoundaryParent(
 
     // If this stop is the terminal at all patterns found above, we don't want to consider it as
     // being on the alert boundary. If we don't return separately, it will fulfill the entity check.
-    val isTerminal =
-        patternsByStop.all { (stopId, patterns) ->
-            patterns.all terminalCheck@{ pattern ->
-                val trip = global.trips[pattern.representativeTripId] ?: return@terminalCheck false
-                val stopIds = trip.stopIds ?: return@terminalCheck false
-                if (stopIds.isEmpty()) {
-                    return@terminalCheck false
-                }
-                return@terminalCheck stopIds.first() == stopId || stopIds.last() == stopId
-            }
-        }
-
-    if (isTerminal) {
+    if (isTerminalStop(patternsByStop, global)) {
         return false
     }
 
-    // If the alert has an entity at the parent stop, it should also have entities for any child
-    // stops on the same route, and if that child has service in one direction but not the other,
-    // it should be missing either the Board or Exit activity depending which direction its for.
-    // There do seem to be some poorly understood edge cases where even if a child has service in
-    // one direction, it will have both Board and Exit activities (for example, alerts at Kenmore).
+    return isServingBothDirections(stop, alert, entitiesAtStopAndRoute, patternsByStop)
+}
+
+// If the alert has an entity at the parent stop, it should also have entities for any child stops
+// on the same route, and if those children have service in one direction but not the other, it
+// should be missing either the Board or Exit activity depending which direction its for.
+// There do seem to be some poorly understood edge cases where even if a child has service in one
+// direction, it will still have both Board and Exit activities (for example, alerts at Kenmore).
+private fun isServingBothDirections(
+    stop: Stop,
+    alert: Alert,
+    entitiesAtStopAndRoute: List<Alert.InformedEntity>,
+    patternsByStop: Map<String, List<RoutePattern>>
+): Boolean {
     return entitiesAtStopAndRoute.any { entity ->
         val childEntities =
             stop.childStopIds.associateWith { childId ->
@@ -270,6 +267,24 @@ private fun isBoundaryParent(
                             Alert.InformedEntity.Activity.Exit
                         )
                     ) == false
+        }
+    }
+}
+
+// Check if a stop is a terminal if all the provided patterns, associated with their stop IDs,
+// have that stop ID as either the first or last item in the representative trip stop list
+private fun isTerminalStop(
+    patternsByStop: Map<String, List<RoutePattern>>,
+    global: GlobalResponse
+): Boolean {
+    return patternsByStop.all { (stopId, patterns) ->
+        patterns.all terminalCheck@{ pattern ->
+            val trip = global.trips[pattern.representativeTripId] ?: return@terminalCheck false
+            val stopIds = trip.stopIds ?: return@terminalCheck false
+            if (stopIds.isEmpty()) {
+                return@terminalCheck false
+            }
+            return@terminalCheck stopIds.first() == stopId || stopIds.last() == stopId
         }
     }
 }

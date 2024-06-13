@@ -13,6 +13,7 @@ import SwiftUI
 class StopLayerGenerator {
     let stopLayers: [SymbolLayer] = createStopLayers()
 
+    static let maxTransferLayers = 3
     static let stopZoomThreshold = 8.0
 
     static let stopLayerId = "stop-layer"
@@ -39,7 +40,7 @@ class StopLayerGenerator {
         stopTouchTargetLayer.iconPadding = .constant(22.0)
         includeSharedProps(on: &stopTouchTargetLayer)
 
-        let transferLayers = (0 ..< 3).map { index in
+        let transferLayers = (0 ..< Self.maxTransferLayers).map { index in
             var transferLayer = SymbolLayer(id: Self.getTransferLayerId(index), source: sourceId)
             transferLayer.iconImage = StopIcons.getTransferLayerIcon(index)
             transferLayer.iconOffset = offsetTransferValue(index: index)
@@ -48,7 +49,7 @@ class StopLayerGenerator {
             return transferLayer
         }
 
-        let alertLayers = (0 ..< 3).map { index in
+        let alertLayers = (0 ..< Self.maxTransferLayers).map { index in
             createAlertLayer(id: Self.getAlertLayerId(index), index: index)
         }
 
