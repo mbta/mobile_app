@@ -90,7 +90,10 @@ struct StopDetailsFilteredRouteView: View {
                             value: row.navigationTarget,
                             action: { entry in
                                 pushNavEntry(entry)
-                                analytics.tappedDepartureRow(routeId: patternsByStop.route.id, stopId: patternsByStop.stop.id)
+                                analytics.tappedDepartureRow(
+                                    routeId: patternsByStop.route.id,
+                                    stopId: patternsByStop.stop.id
+                                )
                             }
                         ) {
                             HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
