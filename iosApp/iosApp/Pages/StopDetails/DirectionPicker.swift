@@ -59,7 +59,10 @@ struct DirectionPicker: View {
     }
 
     private func directionNameFormatted(_ direction: Direction) -> String {
-        if direction.name == "North" || direction.name == "South" {
+        if direction.name == "North" ||
+            direction.name == "South" ||
+            direction.name == "East" ||
+            direction.name == "West" {
             return "\(direction.name)bound"
         }
         return direction.name

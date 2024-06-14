@@ -75,8 +75,8 @@ struct StopDetailsPage: View {
                 }
             }
         }
-
-        .onAppear { changeStop(stop)
+        .onAppear {
+            changeStop(stop)
             loadPinnedRoutes()
         }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
