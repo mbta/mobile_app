@@ -6,10 +6,8 @@ import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.turf.TurfMisc
 import com.mbta.tid.mbta_app.android.util.toPoint
-import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopServiceStatus
 
 data class StopFeatureData(val stop: Stop, val feature: Feature)
 
@@ -27,18 +25,13 @@ data class StopSourceData(
 class StopSourceGenerator(
     val stops: Map<String, Stop>,
     val routeSourceDetails: List<RouteSourceData>?,
-    val alertsByStop: Map<String, AlertAssociatedStop>?
 ) {
     val stopSources =
         kotlin.run {
             val touchedStopIds = mutableSetOf<String>()
             val stopFeatures =
-                generateRouteAssociatedStops(
-                    stops,
-                    routeSourceDetails,
-                    alertsByStop,
-                    touchedStopIds
-                ) + generateRemainingStops(stops, alertsByStop, touchedStopIds)
+                generateRouteAssociatedStops(stops, routeSourceDetails, touchedStopIds) +
+                    generateRemainingStops(stops, touchedStopIds)
             generateStopSources(stopFeatures)
         }
 
@@ -48,12 +41,10 @@ class StopSourceGenerator(
         fun getStopSourceId(locationType: LocationType) = "$stopSourceId-${locationType.name}"
 
         val propIdKey = "id"
-        val propServiceStatusKey = "serviceStatus"
 
         fun generateRouteAssociatedStops(
             stops: Map<String, Stop>,
             routeSourceDetails: List<RouteSourceData>?,
-            alertsByStop: Map<String, AlertAssociatedStop>?,
             touchedStopIds: MutableSet<String>
         ) =
             routeSourceDetails?.flatMap { routeSource ->
@@ -70,42 +61,30 @@ class StopSourceGenerator(
                                     lineData.line.coordinates()
                                 )
                             touchedStopIds.add(stop.id)
-                            return StopFeatureData(
-                                stop,
-                                generateStopFeature(stop, alertsByStop, snappedCoord)
-                            )
+                            return StopFeatureData(stop, generateStopFeature(stop, snappedCoord))
                         }
                     )
                 }
             }
                 ?: emptyList()
 
-        fun generateRemainingStops(
-            stops: Map<String, Stop>,
-            alertsByStop: Map<String, AlertAssociatedStop>?,
-            touchedStopIds: MutableSet<String>
-        ) =
+        fun generateRemainingStops(stops: Map<String, Stop>, touchedStopIds: MutableSet<String>) =
             stops.values.mapNotNull(
                 fun(stop: Stop): StopFeatureData? {
                     if (touchedStopIds.contains(stop.id)) return null
                     if (stop.parentStationId != null) return null
 
                     touchedStopIds.add(stop.id)
-                    return StopFeatureData(stop, generateStopFeature(stop, alertsByStop))
+                    return StopFeatureData(stop, generateStopFeature(stop))
                 }
             )
 
         private fun generateStopFeature(
             stop: Stop,
-            alertsByStop: Map<String, AlertAssociatedStop>?,
             location: Feature = Feature.fromGeometry(stop.position.toPoint()),
         ): Feature =
             Feature.fromGeometry(location.geometry(), JsonObject(), stop.id).apply {
                 addStringProperty(propIdKey, stop.id)
-                addStringProperty(
-                    propServiceStatusKey,
-                    (alertsByStop?.get(stop.id)?.serviceStatus ?: StopServiceStatus.NORMAL).name
-                )
             }
 
         fun generateStopSources(stopFeatures: List<StopFeatureData>): List<StopSourceData> =

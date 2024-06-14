@@ -8,12 +8,14 @@
 
 import Combine
 import CoreLocation
+import FirebaseAnalytics
 import os
 import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     var predictionsRepository = RepositoryDI().predictions
@@ -172,7 +174,8 @@ struct NearbyTransitView: View {
     func toggledPinnedRoute(_ routeId: String) {
         Task {
             do {
-                try await togglePinnedUsecase.execute(route: routeId)
+                let pinned = try await togglePinnedUsecase.execute(route: routeId).boolValue
+                analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 updatePinnedRoutes()
             } catch {
                 debugPrint(error)

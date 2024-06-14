@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.map
 
-import com.mapbox.maps.extension.style.expressions.dsl.generated.match
+import com.mapbox.maps.extension.style.expressions.dsl.generated.image
+import com.mapbox.maps.extension.style.expressions.dsl.generated.literal
 import com.mapbox.maps.extension.style.expressions.dsl.generated.step
 import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.LocationType
-import com.mbta.tid.mbta_app.model.StopServiceStatus
 
 enum class StopIcons(val drawableId: Int) {
     Station(R.drawable.t_station),
@@ -19,19 +19,7 @@ enum class StopIcons(val drawableId: Int) {
     companion object {
         fun getStopLayerIcon(locationType: LocationType): Expression =
             when (locationType) {
-                LocationType.STATION ->
-                    match {
-                        get(StopSourceGenerator.propServiceStatusKey)
-                        stop {
-                            literal(StopServiceStatus.NO_SERVICE.name)
-                            image { literal(StationNoService.name) }
-                        }
-                        stop {
-                            literal(StopServiceStatus.PARTIAL_SERVICE.name)
-                            image { literal(StationIssues.name) }
-                        }
-                        image { literal(Station.name) }
-                    }
+                LocationType.STATION -> image { literal(Station.name) }
                 LocationType.STOP ->
                     step {
                         zoom()
@@ -39,18 +27,7 @@ enum class StopIcons(val drawableId: Int) {
                             image { literal(StopSmall.name) }
                             literal(tombstoneZoomThreshold)
                         }
-                        match {
-                            get(StopSourceGenerator.propServiceStatusKey)
-                            stop {
-                                literal(StopServiceStatus.NO_SERVICE.name)
-                                image { literal(StopNoService.name) }
-                            }
-                            stop {
-                                literal(StopServiceStatus.PARTIAL_SERVICE.name)
-                                image { literal(StopIssues.name) }
-                            }
-                            image { literal(Stop.name) }
-                        }
+                        image { literal(Stop.name) }
                     }
                 else -> Expression.literal("")
             }

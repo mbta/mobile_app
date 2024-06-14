@@ -13,6 +13,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
@@ -30,7 +31,6 @@ struct HomeMapView: View {
     @State var layerManager: IMapLayerManager?
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
-    @State var currentStopAlerts: [String: AlertAssociatedStop] = [:]
     @State var lastNavEntry: SheetNavigationStackEntry?
 
     let inspection = Inspection<Self>()
@@ -79,29 +79,23 @@ struct HomeMapView: View {
     @ViewBuilder
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
-            .onChange(of: nearbyVM.alerts) { nextAlerts in
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: nextAlerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
+            .onChange(of: nearbyVM.alerts) { _ in
+                handleGlobalMapDataChange(now: now)
             }
             .onChange(of: nearbyVM.departures) { _ in
                 if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
             }
-            .onChange(of: currentStopAlerts) { nextStopAlerts in
-                handleStopAlertChange(alertsByStop: nextStopAlerts)
+            .onChange(of: globalMapData) { _ in
+                updateGlobalMapDataSources()
             }
             .onDisappear {
                 vehiclesFetcher.leave()
             }
             .onReceive(timer) { input in
                 now = input
-                currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                    alerts: nearbyVM.alerts,
-                    filterAtTime: now.toKotlinInstant()
-                )
+                handleGlobalMapDataChange(now: now)
             }
     }
 
@@ -116,12 +110,7 @@ struct HomeMapView: View {
             globalMapData: globalMapData
         )
         .onChange(of: globalFetcher.response) { _ in
-            currentStopAlerts = globalFetcher.getRealtimeAlertsByStop(
-                alerts: nearbyVM.alerts,
-                filterAtTime: now.toKotlinInstant()
-            )
-            guard let globalStaticData = globalFetcher.globalStaticData else { return }
-            globalMapData = GlobalMapData(globalStatic: globalStaticData)
+            handleGlobalMapDataChange(now: now)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
             guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }

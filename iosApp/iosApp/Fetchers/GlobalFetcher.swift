@@ -11,7 +11,6 @@ import shared
 
 class GlobalFetcher: ObservableObject {
     var response: GlobalResponse?
-    var globalStaticData: GlobalStaticData?
     @Published var stops: [String: Stop]
     @Published var routes: [String: Route]
     let backend: any BackendProtocol
@@ -28,16 +27,8 @@ class GlobalFetcher: ObservableObject {
             self.response = response
             stops = response.stops
             routes = response.routes
-            globalStaticData = GlobalStaticData(globalData: response)
         } catch {
             print("Failed to load global data: \(error)")
         }
-    }
-
-    func getRealtimeAlertsByStop(
-        alerts: AlertsStreamDataResponse?,
-        filterAtTime: Instant
-    ) -> [String: AlertAssociatedStop] {
-        globalStaticData?.withRealtimeAlertsByStop(alerts: alerts, filterAtTime: filterAtTime) ?? [:]
     }
 }

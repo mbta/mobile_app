@@ -1,19 +1,90 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import kotlinx.datetime.Instant
+
 data class MapStop(
     val stop: Stop,
     val routes: Map<MapStopRoute, List<Route>>,
     val routeTypes: List<MapStopRoute>,
-    val isTerminal: Boolean
+    val isTerminal: Boolean,
+    val alerts: Map<MapStopRoute, StopAlertState>?
 )
 
-data class GlobalMapData(val mapStops: Map<String, MapStop>) {
+data class GlobalMapData(
+    val mapStops: Map<String, MapStop>,
+    val alertsByStop: Map<String, AlertAssociatedStop>?
+) {
+    companion object {
+        /*
+        Only stops without a parent stop (stations and isolated stops) are returned in the result.
+        Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on
+        their children, but those child alerts aren't included in the map returned by this function.
+         */
+        fun getAlertsByStop(
+            globalData: GlobalResponse,
+            alerts: AlertsStreamDataResponse?,
+            filterAtTime: Instant
+        ): Map<String, AlertAssociatedStop>? {
+            val activeAlerts =
+                alerts?.alerts?.values?.filter { it.isActive(filterAtTime) } ?: return null
+            val alertsByStop: MutableMap<String, MutableSet<Alert>> = mutableMapOf()
+            val nullStopAlerts: MutableSet<Alert> = mutableSetOf()
+            activeAlerts.forEach { alert ->
+                alert.informedEntity.forEach {
+                    if (it.stop != null) {
+                        val alertSet = alertsByStop.getOrPut(it.stop) { mutableSetOf() }
+                        alertSet.add(alert)
+                    } else {
+                        nullStopAlerts.add(alert)
+                    }
+                }
+            }
+
+            // Only parent stations with alerts (including on any of their children) are returned
+            val alertingStopsById: Map<String, AlertAssociatedStop> =
+                globalData.stops.values
+                    .mapNotNull {
+                        return@mapNotNull if (it.parentStationId != null) {
+                            null
+                        } else {
+                            generateAlertingStopFor(it, alertsByStop, nullStopAlerts, globalData)
+                        }
+                    }
+                    .associateBy { it.stop.id }
+
+            return alertingStopsById
+        }
+
+        private fun generateAlertingStopFor(
+            stop: Stop,
+            alertsByStop: Map<String, Set<Alert>>,
+            nullStopAlerts: Set<Alert>,
+            globalData: GlobalResponse
+        ): AlertAssociatedStop? {
+            val alertingStop =
+                AlertAssociatedStop(
+                    stop = stop,
+                    alertsByStop = alertsByStop,
+                    nullStopAlerts = nullStopAlerts,
+                    global = globalData
+                )
+
+            // Return null for any stops without alerts or child alerts
+            if (alertingStop.relevantAlerts.isEmpty() && alertingStop.childAlerts.isEmpty()) {
+                return null
+            }
+            return alertingStop
+        }
+    }
+
     constructor(
-        globalStatic: GlobalStaticData
+        globalData: GlobalResponse,
+        alertsByStop: Map<String, AlertAssociatedStop>?
     ) : this(
-        globalStatic.globalData.stops.values
+        globalData.stops.values
             .map { stop ->
-                val globalData = globalStatic.globalData
                 val stopIdSet = (setOf(stop.id) + stop.childStopIds)
                 val patterns =
                     stopIdSet
@@ -61,6 +132,12 @@ data class GlobalMapData(val mapStops: Map<String, MapStop>) {
                     categorizedRoutes[category] = (categorizedRoutes[category] ?: listOf()) + route
                 }
 
+                var categorizedAlerts: Map<MapStopRoute, StopAlertState>? = null
+                if (alertsByStop != null) {
+                    val alertsHere = alertsByStop[stop.id]
+                    categorizedAlerts = alertsHere?.stateByRoute ?: emptyMap()
+                }
+
                 if (mapRouteList == listOf(MapStopRoute.SILVER, MapStopRoute.BUS)) {
                     mapRouteList.remove(MapStopRoute.SILVER)
                 } else if (
@@ -75,9 +152,11 @@ data class GlobalMapData(val mapStops: Map<String, MapStop>) {
                         stop = stop,
                         routes = categorizedRoutes,
                         routeTypes = mapRouteList,
-                        isTerminal = isTerminal
+                        isTerminal = isTerminal,
+                        alerts = categorizedAlerts
                     )
             }
-            .toMap()
+            .toMap(),
+        alertsByStop
     )
 }

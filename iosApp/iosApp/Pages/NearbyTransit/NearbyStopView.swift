@@ -10,6 +10,7 @@ import shared
 import SwiftUI
 
 struct NearbyStopView: View {
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     let patternsAtStop: PatternsByStop
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
@@ -22,6 +23,9 @@ struct NearbyStopView: View {
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.fill2)
-        StopDeparturesSummaryList(patternsByStop: patternsAtStop, now: now, pushNavEntry: pushNavEntry)
+        StopDeparturesSummaryList(patternsByStop: patternsAtStop, now: now, pushNavEntry: { entry in
+            pushNavEntry(entry)
+            analytics.tappedDeparture(routeId: patternsAtStop.route.id, stopId: patternsAtStop.stop.id)
+        })
     }
 }

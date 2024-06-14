@@ -11,6 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsRouteView: View {
+    var analytics: StopDetailsAnalytics = AnalyticsProvider()
     let patternsByStop: PatternsByStop
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
@@ -19,7 +20,9 @@ struct StopDetailsRouteView: View {
 
     var body: some View {
         RouteSection(route: patternsByStop.route, pinned: pinned, onPin: onPin) {
-            StopDeparturesSummaryList(patternsByStop: patternsByStop, now: now, pushNavEntry: pushNavEntry)
+            StopDeparturesSummaryList(patternsByStop: patternsByStop,
+                                      now: now,
+                                      pushNavEntry: { entry in pushNavEntry(entry) })
         }
     }
 }

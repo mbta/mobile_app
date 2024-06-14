@@ -26,17 +26,20 @@ class NearbyViewModel: ObservableObject {
     private let alertsRepository: IAlertsRepository
     private let nearbyRepository: INearbyRepository
     private var fetchNearbyTask: Task<Void, Never>?
+    private var analytics: NearbyTransitAnalytics
 
     init(
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
-        nearbyRepository: INearbyRepository = RepositoryDI().nearby
+        nearbyRepository: INearbyRepository = RepositoryDI().nearby,
+        analytics: NearbyTransitAnalytics = AnalyticsProvider()
     ) {
         self.departures = departures
         self.navigationStack = navigationStack
         self.alertsRepository = alertsRepository
         self.nearbyRepository = nearbyRepository
+        self.analytics = analytics
         setUpSubscriptions()
     }
 
@@ -70,7 +73,9 @@ class NearbyViewModel: ObservableObject {
         }
         fetchNearbyTask = Task { @MainActor [weak self] in
             guard let self else { return }
-
+            if nearbyState.loadedLocation != nil {
+                self.analytics.refetchedNearbyTransit()
+            }
             self.nearbyState.loading = true
             defer { self.nearbyState.loading = false }
             do {

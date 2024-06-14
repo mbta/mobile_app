@@ -19,7 +19,6 @@ struct StopSourceData {
     let stops: [String: MapStop]
     let selectedStop: Stop?
     let routeLines: [RouteLineData]?
-    let alertsByStop: [String: AlertAssociatedStop]
 }
 
 class StopSourceGenerator {
@@ -44,14 +43,12 @@ class StopSourceGenerator {
     init(
         stops: [String: MapStop],
         selectedStop: Stop? = nil,
-        routeLines: [RouteLineData]? = nil,
-        alertsByStop: [String: AlertAssociatedStop] = [:]
+        routeLines: [RouteLineData]? = nil
     ) {
         stopSourceData = StopSourceData(
             stops: stops,
             selectedStop: selectedStop,
-            routeLines: routeLines,
-            alertsByStop: alertsByStop
+            routeLines: routeLines
         )
 
         stopFeatures = Self.generateStopFeatures(stopSourceData)
@@ -139,9 +136,7 @@ class StopSourceGenerator {
             ))
         }
         featureProps[Self.propRouteIdsKey] = JSONValue.object(routeIds)
-        featureProps[Self.propServiceStatusKey] = JSONValue(
-            serviceStatus(at: mapStop, from: stopData.alertsByStop).name
-        )
+        featureProps[Self.propServiceStatusKey] = serviceStatusValue(at: mapStop)
 
         // The symbolSortKey must be ascending, so higher priority icons need higher values. This takes the
         // ordinal of the top route and makes it negative. If there are no routes it's set to the total number
@@ -163,7 +158,11 @@ class StopSourceGenerator {
         return stopSource
     }
 
-    static func serviceStatus(at mapStop: MapStop, from alerts: [String: AlertAssociatedStop]) -> StopServiceStatus {
-        alerts[mapStop.stop.id]?.serviceStatus ?? StopServiceStatus.normal
+    static func serviceStatusValue(at mapStop: MapStop) -> JSONValue {
+        var alertStatus = JSONObject()
+        for (routeType, status) in mapStop.alerts ?? [:] {
+            alertStatus[routeType.name] = JSONValue(status.name)
+        }
+        return JSONValue.object(alertStatus)
     }
 }

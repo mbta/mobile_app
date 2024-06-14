@@ -64,17 +64,18 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
 
         let stopSourceGenerator = StopSourceGenerator(stops: [
-            stop1.id: .init(stop: stop1, routes: [:], routeTypes: [MapStopRoute.blue], isTerminal: false),
-            stop2.id: .init(stop: stop2, routes: [:], routeTypes: [MapStopRoute.green], isTerminal: false),
+            stop1.id: .init(stop: stop1, routes: [:], routeTypes: [MapStopRoute.blue], isTerminal: false, alerts: nil),
+            stop2.id: .init(stop: stop2, routes: [:], routeTypes: [MapStopRoute.green], isTerminal: false, alerts: nil),
             stop3.id: .init(
                 stop: stop3,
                 routes: [:],
                 routeTypes: [MapStopRoute.red, MapStopRoute.mattapan, MapStopRoute.bus],
-                isTerminal: false
+                isTerminal: false,
+                alerts: nil
             ),
-            stop4.id: .init(stop: stop4, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false),
-            stop5.id: .init(stop: stop5, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false),
-            stop6.id: .init(stop: stop6, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false),
+            stop4.id: .init(stop: stop4, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false, alerts: nil),
+            stop5.id: .init(stop: stop5, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false, alerts: nil),
+            stop6.id: .init(stop: stop6, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false, alerts: nil),
         ])
         let source = stopSourceGenerator.stopSource
 
@@ -144,7 +145,13 @@ final class StopSourceGeneratorTests: XCTestCase {
 
         let stopSourceGenerator = StopSourceGenerator(
             stops: [selectedStop.id: selectedStop, otherStop.id: otherStop].mapValues { stop in
-                MapStop(stop: stop, routes: [.red: [MapTestDataHelper.routeRed]], routeTypes: [.red], isTerminal: false)
+                MapStop(
+                    stop: stop,
+                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routeTypes: [.red],
+                    isTerminal: false,
+                    alerts: nil
+                )
             },
             selectedStop: selectedStop,
             routeLines: []
@@ -206,81 +213,30 @@ final class StopSourceGeneratorTests: XCTestCase {
             },
         ]
 
-        let now = Date.now
-
-        let redAlert = objects.alert { alert in
-            alert.id = "a1"
-            alert.effect = .shuttle
-            alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
-            alert.informedEntity(
-                activities: [.board],
-                directionId: nil,
-                facility: nil,
-                route: "Red",
-                routeType: .heavyRail,
-                stop: "70061",
-                trip: nil
-            )
-        }
-        let orangeAlert = objects.alert { alert in
-            alert.id = "a2"
-            alert.effect = .stationClosure
-            alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
-            alert.informedEntity(
-                activities: [.board],
-                directionId: nil,
-                facility: nil,
-                route: "Orange",
-                routeType: .heavyRail,
-                stop: "place-astao",
-                trip: nil
-            )
-        }
-
-        let alertsByStop = [
-            "place-alfcl": AlertAssociatedStop(
-                stop: stops["place-alfcl"]!,
-                relevantAlerts: [],
-                routePatterns: [MapTestDataHelper.patternRed30],
-                childStops: ["70061": stops["70061"]!],
-                childAlerts: ["70061": AlertAssociatedStop(
-                    stop: stops["70061"]!,
-                    relevantAlerts: [redAlert],
-                    routePatterns: [MapTestDataHelper.patternRed10],
-                    childStops: [:],
-                    childAlerts: [:]
-                )]
-            ),
-            "place-astao": AlertAssociatedStop(
-                stop: stops["place-astao"]!,
-                relevantAlerts: [orangeAlert],
-                routePatterns: [MapTestDataHelper.patternOrange30],
-                childStops: [:],
-                childAlerts: [:]
-            ),
-        ]
         let stopSourceGenerator = StopSourceGenerator(
             stops: [
                 "70061": .init(
                     stop: stops["70061"]!,
                     routes: [.red: [MapTestDataHelper.routeRed]],
                     routeTypes: [.red],
-                    isTerminal: true
+                    isTerminal: true,
+                    alerts: nil
                 ),
                 "place-alfcl": .init(
                     stop: stops["place-alfcl"]!,
                     routes: [.red: [MapTestDataHelper.routeRed]],
                     routeTypes: [.red],
-                    isTerminal: true
+                    isTerminal: true,
+                    alerts: [.red: .shuttle]
                 ),
                 "place-astao": .init(
                     stop: stops["place-astao"]!,
                     routes: [.orange: [MapTestDataHelper.routeOrange]],
                     routeTypes: [.orange],
-                    isTerminal: false
+                    isTerminal: false,
+                    alerts: [.orange: .suspension]
                 ),
-            ],
-            alertsByStop: alertsByStop
+            ]
         )
         let source = stopSourceGenerator.stopSource
 
@@ -289,16 +245,16 @@ final class StopSourceGeneratorTests: XCTestCase {
 
             let alewifeFeature = collection.features.first { feat in propId(from: feat) == "place-alfcl" }
             XCTAssertNotNil(alewifeFeature)
-            if let serviceStatus = propString(prop: StopSourceGenerator.propServiceStatusKey, from: alewifeFeature!) {
-                XCTAssertEqual(serviceStatus, StopServiceStatus.partialService.name)
+            if let serviceStatus = propServiceStatusObject(from: alewifeFeature!) {
+                XCTAssertEqual(serviceStatus[.red], StopAlertState.shuttle)
             } else {
                 XCTFail("Disrupted source status property was not set correctly")
             }
 
             let assemblyFeature = collection.features.first { feat in propId(from: feat) == "place-astao" }
             XCTAssertNotNil(assemblyFeature)
-            if let serviceStatus = propString(prop: StopSourceGenerator.propServiceStatusKey, from: assemblyFeature!) {
-                XCTAssertEqual(serviceStatus, StopServiceStatus.noService.name)
+            if let serviceStatus = propServiceStatusObject(from: assemblyFeature!) {
+                XCTAssertEqual(serviceStatus[.orange], StopAlertState.suspension)
             } else {
                 XCTFail("No service source status property was not set correctly")
             }
@@ -497,6 +453,28 @@ final class StopSourceGeneratorTests: XCTestCase {
                 continue
             }
             resultDict[key] = asStringArray(routeArray)
+        }
+        return resultDict
+    }
+
+    private func propServiceStatusObject(
+        prop: String = StopSourceGenerator.propServiceStatusKey,
+        from feat: Feature
+    ) -> [MapStopRoute: StopAlertState]? {
+        guard case let .object(alertMap) = feat.properties![prop] else { return nil }
+        var resultDict: [MapStopRoute: StopAlertState] = [:]
+        for (stringKey, alertString) in alertMap {
+            guard let key = (MapStopRoute.allCases.first { enumCase in enumCase.name == stringKey }) else {
+                XCTFail("Got unexpected MapStopRoute key value '\(stringKey)'")
+                continue
+            }
+            guard let alertString, let alertState = (StopAlertState.allCases.first { enumCase in
+                enumCase.name == asString(alertString)
+            }) else {
+                XCTFail("Got unexpected StopAlertState value for key '\(stringKey)'")
+                continue
+            }
+            resultDict[key] = alertState
         }
         return resultDict
     }

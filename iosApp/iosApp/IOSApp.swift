@@ -9,7 +9,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        FirebaseApp.configure()
+        // Don't configure GA/Firebase for debug builds to reduce pollution of events
+        #if !DEBUG
+            FirebaseApp.configure()
+        #endif
         return true
     }
 }

@@ -22,8 +22,9 @@ protocol IMapLayerManager {
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator)
     func updateSourceData(stopSourceGenerator: StopSourceGenerator)
-    func updateStopLayerZoom(_ zoomLevel: CGFloat)
 }
+
+struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
@@ -35,11 +36,12 @@ class MapLayerManager: IMapLayerManager {
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in StopIcons.all {
+        for iconId in StopIcons.all + AlertIcons.all {
             do {
-                try map.addImage(UIImage(named: iconId)!, id: iconId)
+                guard let image = UIImage(named: iconId) else { throw MapImageError() }
+                try map.addImage(image, id: iconId)
             } catch {
-                Logger().error("Failed to add map stop icon image \(iconId)")
+                Logger().error("Failed to add map icon image \(iconId)")
             }
         }
     }
@@ -48,8 +50,8 @@ class MapLayerManager: IMapLayerManager {
         self.routeSourceGenerator = routeSourceGenerator
         self.stopSourceGenerator = stopSourceGenerator
 
-        addSource(source: routeSourceGenerator.routeSource)
-        addSource(source: stopSourceGenerator.stopSource)
+        updateSourceData(source: routeSourceGenerator.routeSource)
+        updateSourceData(source: stopSourceGenerator.stopSource)
     }
 
     private func addSource(source: GeoJSONSource) {
@@ -67,6 +69,10 @@ class MapLayerManager: IMapLayerManager {
         let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator.stopLayers
         for layer in layers {
             do {
+                if map.layerExists(withId: layer.id) {
+                    // Skip attempting to add layer if it already exists
+                    continue
+                }
                 if map.layerExists(withId: "puck") {
                     try map.addLayer(layer, layerPosition: .below("puck"))
                 } else {
@@ -100,22 +106,5 @@ class MapLayerManager: IMapLayerManager {
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
         updateSourceData(routeSourceGenerator: routeSourceGenerator)
         updateSourceData(stopSourceGenerator: stopSourceGenerator)
-    }
-
-    func updateStopLayerZoom(_ zoomLevel: CGFloat) {
-        let opacity = zoomLevel > StopLayerGenerator.stopZoomThreshold ? 1.0 : 0.0
-        for layerId in (0 ..< 3).map({
-            StopLayerGenerator.getTransferLayerId($0)
-        }) + [StopLayerGenerator.stopLayerId] {
-            do {
-                try map.updateLayer(withId: layerId, type: SymbolLayer.self) { layer in
-                    if layer.iconOpacity != .constant(opacity) {
-                        layer.iconOpacity = .constant(opacity)
-                    }
-                }
-            } catch {
-                Logger().error("Failed to update layer \(layerId)\n\(error)")
-            }
-        }
     }
 }
