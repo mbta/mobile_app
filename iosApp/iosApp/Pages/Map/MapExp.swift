@@ -20,6 +20,20 @@ enum MapExp {
         singleRouteExp
     }
 
+    // For the separate bus only stop and alert layers, this takes any arbitrary
+    // string expression, and returns the expression or an empty string, depending
+    // whether or not the stop is a bus stop and this is on the bus layer
+    static func busSwitchExp(forBus: Bool, _ resultExpression: Exp) -> Exp {
+        Exp(.switchCase) {
+            Exp(.all) {
+                MapExp.singleRouteTypeExp
+                Exp(.eq) { MapExp.topRouteExp; MapStopRoute.bus.name }
+            }
+            forBus ? resultExpression : Exp(.string) { "" }
+            !forBus ? resultExpression : Exp(.string) { "" }
+        }
+    }
+
     // Get the route string in the stop feature's route array at the provided index
     static func routeAt(_ index: Int) -> Exp {
         Exp(.string) { Exp(.at) { index; routesExp } }
@@ -55,25 +69,27 @@ enum MapExp {
     }
 
     // Get the label to display for this stop
-    static let stopLabelTextExp = Exp(.step) {
-        Exp(.zoom)
-        // Above mid zoom, never display any labels
-        ""
-        // At mid zoom, only display labels for terminal rail stops
-        MapDefaults.midZoomThreshold
-        Exp(.switchCase) {
-            Exp(.eq) { topRouteExp; MapStopRoute.ferry.name }
+    static func stopLabelTextExp(forBus: Bool = false) -> Exp {
+        Exp(.step) {
+            Exp(.zoom)
+            // Above mid zoom, never display any labels
             ""
-            Exp(.get) { StopSourceGenerator.propIsTerminalKey }
-            Exp(.get) { StopSourceGenerator.propNameKey }
-            ""
-        }
-        // At close zoom, display labels for all non-bus stops
-        MapDefaults.closeZoomThreshold
-        Exp(.switchCase) {
-            Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
-            ""
-            Exp(.get) { StopSourceGenerator.propNameKey }
+            // At mid zoom, only display labels for terminal rail stops
+            MapDefaults.midZoomThreshold
+            Exp(.switchCase) {
+                Exp(.eq) { topRouteExp; MapStopRoute.ferry.name }
+                ""
+                Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                busSwitchExp(forBus: forBus, Exp(.get) { StopSourceGenerator.propNameKey })
+                ""
+            }
+            // At close zoom, display labels for all non-bus stops
+            MapDefaults.closeZoomThreshold
+            Exp(.switchCase) {
+                Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
+                ""
+                busSwitchExp(forBus: forBus, Exp(.get) { StopSourceGenerator.propNameKey })
+            }
         }
     }
 

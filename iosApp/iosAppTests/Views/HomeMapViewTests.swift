@@ -190,8 +190,6 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         func updateSourceData(stopSourceGenerator _: StopSourceGenerator) {}
-
-        func updateStopLayerZoom(_: CGFloat) {}
     }
 
     func testUpdatesRouteSourceWhenStopSelected() throws {

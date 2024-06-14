@@ -89,23 +89,23 @@ enum StopIcons {
     // If the stop serves a single type of route, display a regular stop icon,
     // if it serves 2 or 3, display a container icon, and the stop icons in it
     // will be displayed by the transfer layers.
-    static func getStopIconName(_ zoomPrefix: String) -> Exp {
-        Exp(.step) {
+    static func getStopIconName(_ zoomPrefix: String, forBus: Bool) -> Exp {
+        MapExp.busSwitchExp(forBus: forBus, Exp(.step) {
             Exp(.length) { MapExp.routesExp }
             getRouteIconName(zoomPrefix, 0)
             2
             Exp(.concat) { stopContainerPrefix; zoomPrefix; "2" }
             3
             Exp(.concat) { stopContainerPrefix; zoomPrefix; "3" }
-        }
+        })
     }
 
-    static func getStopLayerIcon() -> Value<ResolvedImage> {
+    static func getStopLayerIcon(forBus: Bool = false) -> Value<ResolvedImage> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            getStopIconName(stopZoomWidePrefix)
+            getStopIconName(stopZoomWidePrefix, forBus: forBus)
             MapDefaults.closeZoomThreshold
-            getStopIconName(stopZoomClosePrefix)
+            getStopIconName(stopZoomClosePrefix, forBus: forBus)
         })
     }
 

@@ -41,8 +41,8 @@ enum AlertIcons {
         }
     }
 
-    private static func getAlertIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
-        Exp(.switchCase) {
+    private static func getAlertIconName(_ zoomPrefix: String, _ index: Int, _ forBus: Bool) -> Exp {
+        MapExp.busSwitchExp(forBus: forBus, Exp(.switchCase) {
             Exp(.any) {
                 // Check if the index is greater than the number of routes at this stop
                 Exp(.gte) { index; Exp(.length) { MapExp.routesExp } }
@@ -61,15 +61,15 @@ enum AlertIcons {
                 "-"
                 Exp(.downcase) { alertStatus(index) }
             }
-        }
+        })
     }
 
-    static func getAlertLayerIcon(_ index: Int) -> Value<ResolvedImage> {
+    static func getAlertLayerIcon(_ index: Int, forBus: Bool = false) -> Value<ResolvedImage> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            getAlertIconName(alertZoomWidePrefix, index)
+            getAlertIconName(alertZoomWidePrefix, index, forBus)
             MapDefaults.closeZoomThreshold
-            getAlertIconName(alertZoomClosePrefix, index)
+            getAlertIconName(alertZoomClosePrefix, index, forBus)
         })
     }
 }
