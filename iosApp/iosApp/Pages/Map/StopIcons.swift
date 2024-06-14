@@ -44,34 +44,54 @@ enum StopIcons {
         }
     }
 
+    // If this is a branching route, return a suffix to specify a distinct icon for it
+    private static let branchingRouteSuffixExp = Exp(.switchCase) {
+        MapExp.branchedRouteExp
+        Exp(.concat) {
+            "-"
+            Exp(.at) {
+                0
+                Exp(.get) {
+                    MapExp.topRouteExp
+                    Exp(.get) { StopSourceGenerator.propRouteIdsKey }
+                }
+            }
+        }
+        ""
+    }
+
     static func atZooms(_ pre: String, _ post: String) -> [String] {
         [stopZoomClosePrefix, stopZoomWidePrefix].map { zoom in "\(pre)\(zoom)\(post)" }
     }
 
-    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> Expression {
+    // Combine prefix and suffix strings to get the icon to display for the given zoom and index
+    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
         Exp(.concat) {
             stopIconPrefix
             zoomPrefix
             MapExp.routeAt(index)
             Exp(.switchCase) {
-                // If at wide zoom, give terminal stops with no connections distinct icons
+                // If at wide zoom, give terminal stops with no transfers distinct icons
                 Exp(.all) {
                     Exp(.get) { StopSourceGenerator.propIsTerminalKey }
                     MapExp.singleRouteTypeExp
                     Exp(.boolean) { zoomPrefix == stopZoomWidePrefix }
                 }
-                Exp(.concat) { stopTerminalSuffix; MapExp.branchingRouteSuffixExp }
+                Exp(.concat) { stopTerminalSuffix; branchingRouteSuffixExp }
                 // If at close zoom, give stops on a branch their own distinct icons
                 Exp(.boolean) { zoomPrefix == stopZoomClosePrefix }
-                MapExp.branchingRouteSuffixExp
+                branchingRouteSuffixExp
                 ""
             }
         }
     }
 
-    static func getStopIconName(_ zoomPrefix: String) -> Expression {
+    // If the stop serves a single type of route, display a regular stop icon,
+    // if it serves 2 or 3, display a container icon, and the stop icons in it
+    // will be displayed by the transfer layers.
+    static func getStopIconName(_ zoomPrefix: String) -> Exp {
         Exp(.step) {
-            Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
+            Exp(.length) { MapExp.routesExp }
             getRouteIconName(zoomPrefix, 0)
             2
             Exp(.concat) { stopContainerPrefix; zoomPrefix; "2" }
@@ -89,9 +109,9 @@ enum StopIcons {
         })
     }
 
-    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> Expression {
+    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
         Exp(.step) {
-            Exp(.length) { Exp(.get) { StopSourceGenerator.propMapRoutesKey }}
+            Exp(.length) { MapExp.routesExp }
             ""
             2
             Exp(.concat) {

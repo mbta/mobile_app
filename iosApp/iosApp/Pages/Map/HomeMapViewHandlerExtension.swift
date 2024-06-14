@@ -54,6 +54,18 @@ extension HomeMapView {
         didAppear?(self)
     }
 
+    func handleGlobalMapDataChange(now: Date) {
+        guard let globalData = globalFetcher.response else { return }
+        globalMapData = GlobalMapData(
+            globalData: globalData,
+            alertsByStop: GlobalMapData.companion.getAlertsByStop(
+                globalData: globalData,
+                alerts: nearbyVM.alerts,
+                filterAtTime: now.toKotlinInstant()
+            )
+        )
+    }
+
     func handleCameraChange(_ change: CameraChanged) {
         viewportProvider.updateCameraState(change.cameraState)
         layerManager?.updateStopLayerZoom(change.cameraState.zoom)
@@ -91,8 +103,7 @@ extension HomeMapView {
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: stop,
-            routeLines: layerManager?.routeSourceGenerator?.routeLines,
-            alertsByStop: currentStopAlerts
+            routeLines: layerManager?.routeSourceGenerator?.routeLines
         )
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         viewportProvider.animateTo(coordinates: stop.coordinate, zoom: 17.0)

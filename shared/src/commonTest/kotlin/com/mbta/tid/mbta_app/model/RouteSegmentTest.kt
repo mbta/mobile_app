@@ -52,7 +52,7 @@ class RouteSegmentTest {
                             )
                         }
                     ),
-                serviceStatus = StopServiceStatus.NORMAL
+                stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal))
             )
 
         assertEquals(mapOf(), segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)))
@@ -101,7 +101,7 @@ class RouteSegmentTest {
                             )
                         }
                     ),
-                serviceStatus = StopServiceStatus.NORMAL
+                stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal))
             )
 
         assertEquals(
@@ -163,7 +163,7 @@ class RouteSegmentTest {
                                     )
                                 }
                             ),
-                        serviceStatus = StopServiceStatus.PARTIAL_SERVICE
+                        stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Issue))
                     )
             )
 
@@ -209,7 +209,7 @@ class RouteSegmentTest {
                             )
                         }
                     ),
-                serviceStatus = StopServiceStatus.NORMAL
+                stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal))
             )
 
         assertEquals(mapOf(), segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)))
@@ -248,7 +248,7 @@ class RouteSegmentTest {
                             )
                         }
                     ),
-                serviceStatus = StopServiceStatus.NORMAL
+                stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal))
             )
 
         assertEquals(
@@ -553,7 +553,7 @@ class RouteSegmentTest {
                         )
                     },
                 ),
-            serviceStatus = StopServiceStatus.NORMAL
+            stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal))
         )
     }
 }

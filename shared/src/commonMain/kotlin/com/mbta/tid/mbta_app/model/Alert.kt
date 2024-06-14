@@ -116,4 +116,6 @@ data class Alert(
         activePeriod.any { it.start <= time && (it.end == null || it.end >= time) }
 
     fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
+
+    fun matchingEntities(predicate: (InformedEntity) -> Boolean) = informedEntity.filter(predicate)
 }

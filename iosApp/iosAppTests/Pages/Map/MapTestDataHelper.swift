@@ -57,7 +57,8 @@ enum MapTestDataHelper {
             MapStopRoute.bus: [route67],
         ],
         routeTypes: [MapStopRoute.red, MapStopRoute.bus],
-        isTerminal: true
+        isTerminal: true,
+        alerts: nil
     )
 
     static let stopDavis = objects.stop { stop in
@@ -71,7 +72,8 @@ enum MapTestDataHelper {
         stop: stopDavis,
         routes: [MapStopRoute.red: [routeRed]],
         routeTypes: [MapStopRoute.red],
-        isTerminal: false
+        isTerminal: false,
+        alerts: nil
     )
 
     static let stopPorter = objects.stop { stop in
@@ -85,7 +87,8 @@ enum MapTestDataHelper {
         stop: stopPorter,
         routes: [MapStopRoute.red: [routeRed]],
         routeTypes: [MapStopRoute.red],
-        isTerminal: false
+        isTerminal: false,
+        alerts: nil
     )
 
     static let stopHarvard = objects.stop { stop in
@@ -99,7 +102,8 @@ enum MapTestDataHelper {
         stop: stopHarvard,
         routes: [MapStopRoute.red: [routeRed]],
         routeTypes: [MapStopRoute.red],
-        isTerminal: false
+        isTerminal: false,
+        alerts: nil
     )
 
     static let stopCentral = objects.stop { stop in
@@ -113,7 +117,8 @@ enum MapTestDataHelper {
         stop: stopCentral,
         routes: [MapStopRoute.red: [routeRed]],
         routeTypes: [MapStopRoute.red],
-        isTerminal: false
+        isTerminal: false,
+        alerts: nil
     )
 
     static let stopAssembly = objects.stop { stop in
@@ -127,7 +132,8 @@ enum MapTestDataHelper {
         stop: stopAssembly,
         routes: [MapStopRoute.orange: [routeOrange]],
         routeTypes: [MapStopRoute.orange],
-        isTerminal: false
+        isTerminal: false,
+        alerts: nil
     )
 
     static let stopSullivan = objects.stop { stop in
@@ -141,7 +147,8 @@ enum MapTestDataHelper {
         stop: stopSullivan,
         routes: [MapStopRoute.orange: [routeOrange]],
         routeTypes: [MapStopRoute.orange],
-        isTerminal: false
+        isTerminal: false,
+        alerts: nil
     )
 
     static let patternRed10 = objects.routePattern(route: routeRed) { pattern in

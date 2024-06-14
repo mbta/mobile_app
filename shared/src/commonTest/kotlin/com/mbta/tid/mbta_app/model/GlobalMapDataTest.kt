@@ -131,7 +131,7 @@ class GlobalMapDataTest {
         val (objects, response) = createData()
         val routeSilver = objects.routes["742"]!!
 
-        val mapData = GlobalMapData(globalStatic = GlobalStaticData(globalData = response))
+        val mapData = GlobalMapData(globalData = response, mapOf())
 
         assertContains(
             mapData.mapStops["A"]!!.routeTypes,
@@ -184,7 +184,7 @@ class GlobalMapDataTest {
     fun `mapStop data includes terminal stops`() {
         val (_, response) = createData()
 
-        val mapData = GlobalMapData(globalStatic = GlobalStaticData(globalData = response))
+        val mapData = GlobalMapData(globalData = response, mapOf())
 
         assertTrue(mapData.mapStops["A"]!!.isTerminal)
         assertFalse(mapData.mapStops["C"]!!.isTerminal)

@@ -20,11 +20,14 @@ final class StopLayerGeneratorTests: XCTestCase {
         let stopLayerGenerator = StopLayerGenerator()
         let stopLayers = stopLayerGenerator.stopLayers
 
-        XCTAssertEqual(stopLayers.count, 5)
+        XCTAssertEqual(stopLayers.count, 8)
         XCTAssertEqual(stopLayers[0].id, StopLayerGenerator.stopTouchTargetLayerId)
         XCTAssertEqual(stopLayers[1].id, StopLayerGenerator.stopLayerId)
         XCTAssertEqual(stopLayers[2].id, StopLayerGenerator.getTransferLayerId(0))
         XCTAssertEqual(stopLayers[3].id, StopLayerGenerator.getTransferLayerId(1))
         XCTAssertEqual(stopLayers[4].id, StopLayerGenerator.getTransferLayerId(2))
+        XCTAssertEqual(stopLayers[5].id, StopLayerGenerator.getAlertLayerId(0))
+        XCTAssertEqual(stopLayers[6].id, StopLayerGenerator.getAlertLayerId(1))
+        XCTAssertEqual(stopLayers[7].id, StopLayerGenerator.getAlertLayerId(2))
     }
 }

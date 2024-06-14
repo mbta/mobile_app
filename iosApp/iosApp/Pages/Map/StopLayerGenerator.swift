@@ -13,10 +13,16 @@ import SwiftUI
 class StopLayerGenerator {
     let stopLayers: [SymbolLayer] = createStopLayers()
 
+    static let maxTransferLayers = 3
     static let stopZoomThreshold = 8.0
 
     static let stopLayerId = "stop-layer"
     static let stopTouchTargetLayerId = "\(stopLayerId)-touch-target"
+
+    static func getAlertLayerId(_ index: Int) -> String {
+        "\(stopLayerId)-alert-\(index.description)"
+    }
+
     static func getTransferLayerId(_ index: Int) -> String {
         "\(stopLayerId)-transfer-\(index.description)"
     }
@@ -44,16 +50,26 @@ class StopLayerGenerator {
         stopTouchTargetLayer.iconPadding = .constant(22.0)
         includeSharedProps(on: &stopTouchTargetLayer)
 
-        let transferLayers = (0 ..< 3).map { index in
+        let transferLayers = (0 ..< Self.maxTransferLayers).map { index in
             var transferLayer = SymbolLayer(id: Self.getTransferLayerId(index), source: sourceId)
             transferLayer.iconImage = StopIcons.getTransferLayerIcon(index)
-            transferLayer.iconOffset = transferOffsetValue(index: index)
+            transferLayer.iconOffset = offsetTransferValue(index: index)
             includeSharedProps(on: &transferLayer)
 
             return transferLayer
         }
 
-        return [stopTouchTargetLayer, stopLayer] + transferLayers
+        let alertLayers = (0 ..< Self.maxTransferLayers).map { index in
+            var alertLayer = SymbolLayer(id: Self.getAlertLayerId(index), source: sourceId)
+            alertLayer.iconImage = AlertIcons.getAlertLayerIcon(index)
+            alertLayer.iconOffset = offsetAlertValue(index: index)
+            alertLayer.iconAllowOverlap = .constant(true)
+            includeSharedProps(on: &alertLayer)
+
+            return alertLayer
+        }
+
+        return [stopTouchTargetLayer, stopLayer] + transferLayers + alertLayers
     }
 
     static func includeSharedProps(on layer: inout SymbolLayer) {
@@ -66,12 +82,21 @@ class StopLayerGenerator {
         layer.symbolSortKey = .expression(Exp(.get) { StopSourceGenerator.propSortOrderKey })
     }
 
-    static func transferOffsetValue(index: Int) -> Value<[Double]> {
+    static func offsetAlertValue(index: Int) -> Value<[Double]> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            MapExp.transferOffsetExp(closeZoom: false, index)
+            MapExp.offsetAlertExp(closeZoom: false, index)
             MapDefaults.closeZoomThreshold
-            MapExp.transferOffsetExp(closeZoom: true, index)
+            MapExp.offsetAlertExp(closeZoom: true, index)
+        })
+    }
+
+    static func offsetTransferValue(index: Int) -> Value<[Double]> {
+        .expression(Exp(.step) {
+            Exp(.zoom)
+            MapExp.offsetTransferExp(closeZoom: false, index)
+            MapDefaults.closeZoomThreshold
+            MapExp.offsetTransferExp(closeZoom: true, index)
         })
     }
 }

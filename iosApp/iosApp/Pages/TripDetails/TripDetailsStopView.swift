@@ -40,7 +40,7 @@ struct TripDetailsStopView: View {
 }
 
 #Preview {
-    var objects = ObjectCollectionBuilder()
+    let objects = ObjectCollectionBuilder()
     return TripDetailsStopView(
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
