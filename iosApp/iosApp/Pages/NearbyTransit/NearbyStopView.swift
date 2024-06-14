@@ -10,6 +10,7 @@ import shared
 import SwiftUI
 
 struct NearbyStopView: View {
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     let patternsAtStop: PatternsByStop
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let now: Instant
@@ -26,10 +27,19 @@ struct NearbyStopView: View {
         ForEach(Array(patternsAtStop.patternsByHeadsign.enumerated()), id: \.offset) { index, patternsByHeadsign in
 
             VStack(spacing: 0) {
-                SheetNavigationLink(value: .stopDetails(patternsAtStop.stop,
-                                                        .init(routeId: patternsAtStop.route.id,
-                                                              directionId: patternsByHeadsign.directionId())),
-                                    action: pushNavEntry) {
+                SheetNavigationLink(
+                    value: .stopDetails(
+                        patternsAtStop.stop,
+                        .init(
+                            routeId: patternsAtStop.route.id,
+                            directionId: patternsByHeadsign.directionId()
+                        )
+                    ),
+                    action: { entry in
+                        pushNavEntry(entry)
+                        analytics.tappedDeparture(routeId: patternsAtStop.route.id, stopId: patternsAtStop.stop.id)
+                    }
+                ) {
                     HeadsignRowView(
                         headsign: patternsByHeadsign.headsign,
                         predictions: patternsByHeadsign.format(now: now),

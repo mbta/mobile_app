@@ -11,6 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsRouteView: View {
+    var analytics: StopDetailsAnalytics = AnalyticsProvider()
     let patternsByStop: PatternsByStop
     let now: Instant
     @Binding var filter: StopDetailsFilter?
@@ -25,7 +26,13 @@ struct StopDetailsRouteView: View {
                                                                             directionId: patternsByHeadsign
                                                                                 .directionId()
                                                                         ))
-                SheetNavigationLink(value: navTarget, action: pushNavEntry) {
+                SheetNavigationLink(
+                    value: navTarget,
+                    action: { entry in
+                        pushNavEntry(entry)
+                        analytics.tappedDepartureRow(routeId: patternsByStop.route.id, stopId: patternsByStop.stop.id)
+                    }
+                ) {
                     HeadsignRowView(
                         headsign: patternsByHeadsign.headsign,
                         predictions: patternsByHeadsign.format(now: now),

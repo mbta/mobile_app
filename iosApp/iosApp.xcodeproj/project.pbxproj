@@ -135,6 +135,9 @@
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
 		A430D45FE0676C73075AB85B /* Pods_iosAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */; };
 		A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */; };
+		ED24EAD82C1A941E00A7BE4D /* NearbyTransitAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EAD72C1A941E00A7BE4D /* NearbyTransitAnalytics.swift */; };
+		ED24EADC2C1A95A900A7BE4D /* StopDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */; };
+		ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */; };
 		ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */; };
 		ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */; };
 		ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */; };
@@ -324,6 +327,9 @@
 		D1B30C8C9F419DC14D8EFE9E /* Pods-iosAppTests.prod debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.prod debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.prod debug.xcconfig"; sourceTree = "<group>"; };
 		D67CE13D30C9CBC403262442 /* Pods-iosApp.staging release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.staging release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.staging release.xcconfig"; sourceTree = "<group>"; };
 		ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED24EAD72C1A941E00A7BE4D /* NearbyTransitAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitAnalytics.swift; sourceTree = "<group>"; };
+		ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsAnalytics.swift; sourceTree = "<group>"; };
+		ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProvider.swift; sourceTree = "<group>"; };
 		ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationDetentExtension.swift; sourceTree = "<group>"; };
 		ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoenixProtocolConformance.swift; sourceTree = "<group>"; };
 		ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoenixChannelError.swift; sourceTree = "<group>"; };
@@ -495,6 +501,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				ED24EAD62C1A940700A7BE4D /* Analytics */,
 				9A2005C02B97B56100F562E1 /* Pages */,
 				6EE7457C2B965AD40052227E /* Phoenix */,
 				9AC10BD82B80060E00EA4605 /* Utils */,
@@ -764,6 +771,16 @@
 				6EFEE42E2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		ED24EAD62C1A940700A7BE4D /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				ED24EAD72C1A941E00A7BE4D /* NearbyTransitAnalytics.swift */,
+				ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */,
+				ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */,
+			);
+			path = Analytics;
 			sourceTree = "<group>";
 		};
 		EDB1F3DC2BB227160017D8F0 /* Backport */ = {
@@ -1117,6 +1134,7 @@
 				9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */,
 				9A5B27542BB1EF53009A6FC6 /* RouteSourceGenerator.swift in Sources */,
 				6EE76D1B2BF532010051D608 /* RouteIcon.swift in Sources */,
+				ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */,
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,
 				9A5B27582BB22BF9009A6FC6 /* MapLayerManager.swift in Sources */,
 				9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */,
@@ -1130,6 +1148,7 @@
 				8CA485B82BDC679A00E84E1F /* VehicleExtension.swift in Sources */,
 				6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */,
 				9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */,
+				ED24EADC2C1A95A900A7BE4D /* StopDetailsAnalytics.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */,
 				8CE014142BBDBE5200918FAE /* BackendProvider.swift in Sources */,
@@ -1145,6 +1164,7 @@
 				9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */,
 				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
 				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,
+				ED24EAD82C1A941E00A7BE4D /* NearbyTransitAnalytics.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */,
 				9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */,
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,

@@ -11,6 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsFilteredRouteView: View {
+    var analytics: StopDetailsAnalytics = AnalyticsProvider()
     let patternsByStop: PatternsByStop?
     let now: Instant
     @Binding var filter: StopDetailsFilter?
@@ -85,10 +86,20 @@ struct StopDetailsFilteredRouteView: View {
                     )
                 ) {
                     ForEach(rows, id: \.tripId) { row in
-                        OptionalNavigationLink(value: row.navigationTarget, action: pushNavEntry) {
+                        OptionalNavigationLink(
+                            value: row.navigationTarget,
+                            action: { entry in
+                                pushNavEntry(entry)
+                                analytics.tappedDepartureRow(
+                                    routeId: patternsByStop.route.id,
+                                    stopId: patternsByStop.stop.id
+                                )
+                            }
+                        ) {
                             HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
                                             routeType: patternsByStop.route.type)
-                        }.listRowBackground(Color.fill3)
+                        }
+                        .listRowBackground(Color.fill3)
                     }
                 }
             }

@@ -13,6 +13,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher

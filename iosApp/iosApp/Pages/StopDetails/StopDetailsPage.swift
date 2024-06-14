@@ -11,6 +11,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsPage: View {
+    var analytics: StopDetailsAnalytics = AnalyticsProvider()
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var viewportProvider: ViewportProvider
     let schedulesRepository: ISchedulesRepository
@@ -129,9 +130,10 @@ struct StopDetailsPage: View {
     func tapRoutePill(_ route: Route) {
         if filter?.routeId == route.id { return }
         guard let departures = nearbyVM.departures else { return }
-        let patterns = departures.routes.first { patterns in patterns.route.id == route.id }
-        if patterns == nil { return }
-        let defaultDirectionId = patterns?.patternsByHeadsign.flatMap { headsign in
+        guard let patterns = departures.routes.first(where: { patterns in patterns.route.id == route.id })
+        else { return }
+        analytics.tappedRouteFilter(routeId: patterns.route.id, stopId: stop.id)
+        let defaultDirectionId = patterns.patternsByHeadsign.flatMap { headsign in
             headsign.patterns.map { pattern in pattern.directionId }
         }.min() ?? 0
         filter = .init(routeId: route.id, directionId: defaultDirectionId)
