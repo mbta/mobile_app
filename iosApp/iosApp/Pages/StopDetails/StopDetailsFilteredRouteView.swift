@@ -92,7 +92,7 @@ struct StopDetailsFilteredRouteView: View {
                     ScrollView {
                         ZStack {
                             Color.fill3.ignoresSafeArea(.all)
-                            VStack {
+                            VStack(spacing: 0) {
                                 ForEach(Array(rows.enumerated()), id: \.element.tripId) { index, row in
 
                                     VStack(spacing: 0) {
@@ -106,8 +106,8 @@ struct StopDetailsFilteredRouteView: View {
                                             HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
                                                             routeType: patternsByStop.route.type)
                                         }
-                                        .padding(8)
-                                        .padding(.leading, 8)
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal, 16)
 
                                         if index < rows.count - 1 {
                                             Divider().background(Color.halo)
@@ -115,12 +115,13 @@ struct StopDetailsFilteredRouteView: View {
                                     }
                                 }
                             }
-                            .fixedSize(horizontal: false, vertical: true)
                         }
                         .clipShape(.rect(cornerRadius: 8))
                         .border(Color.halo.opacity(0.1), width: 1)
                     }
-                }.padding([.top, .horizontal], 8)
+                }
+                .padding([.top, .horizontal], 8)
+                .padding([.bottom], 16)
             }.ignoresSafeArea(.all)
 
         } else {
