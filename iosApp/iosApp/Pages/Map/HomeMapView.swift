@@ -127,6 +127,7 @@ struct HomeMapView: View {
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
+            routes: globalFetcher.routes,
             sheetHeight: sheetHeight,
             vehicles: vehiclesFetcher.vehicles,
             viewportProvider: viewportProvider,
