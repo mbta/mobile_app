@@ -144,9 +144,6 @@ struct ContentView: View {
                         guard newValue < (UIScreen.main.bounds.height / 2) else { return }
                         sheetHeight = newValue
                     }
-                    // Adding id here prevents the next sheet from opening at the large detent.
-                    // https://stackoverflow.com/a/77429540
-                    .id(entry)
                     .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
                     .interactiveDismissDisabled(visibleNearbySheet == .nearby)
                     .modifier(AllowsBackgroundInteraction())

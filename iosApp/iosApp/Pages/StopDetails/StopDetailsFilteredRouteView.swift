@@ -79,14 +79,11 @@ struct StopDetailsFilteredRouteView: View {
         if let patternsByStop {
             let routeHex: String? = patternsByStop.route.color
             ZStack {
-                // TODO: bring route color flood back here
+                if let routeHex {
+                    Color(hex: routeHex)
+                }
                 VStack {
-                    ZStack {
-                        if let routeHex {
-                            Color(hex: routeHex)
-                        }
-                        RouteHeader(route: patternsByStop.route)
-                    }.fixedSize(horizontal: false, vertical: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    RouteHeader(route: patternsByStop.route)
                     DirectionPicker(
                         patternsByStop: patternsByStop,
                         filter: $filter
