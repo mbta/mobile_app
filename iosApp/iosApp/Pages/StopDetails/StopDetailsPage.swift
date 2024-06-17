@@ -56,7 +56,6 @@ struct StopDetailsPage: View {
                 VStack {
                     SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
                     StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
-                    clearFilterButton
                 }
                 .padding([.bottom], 8)
                 .border(Color.halo.opacity(0.15), width: 2)
@@ -112,13 +111,6 @@ struct StopDetailsPage: View {
             } catch {
                 debugPrint(error)
             }
-        }
-    }
-
-    @ViewBuilder
-    private var clearFilterButton: some View {
-        if filter != nil {
-            Button(action: { filter = nil }, label: { Text("Clear Filter") })
         }
     }
 
