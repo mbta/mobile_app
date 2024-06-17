@@ -44,15 +44,7 @@ struct RoutePill: View {
             return .text(String(route.longName.split(separator: " ").compactMap(\.first)))
         }
         if route.type == .lightRail {
-            if route.longName.starts(with: "Green Line ") {
-                if type == .fixed {
-                    return .text(route.longName.replacing("Green Line ", with: "GL "))
-                } else {
-                    return .text(route.shortName)
-                }
-            } else if route.longName == "Mattapan Trolley", type == .fixed {
-                return .text("M")
-            }
+            return Self.lightRailPillContent(route: route, type: type)
         }
         if route.type == .commuterRail {
             if type == .fixed {
@@ -68,6 +60,20 @@ struct RoutePill: View {
         case .bus:
             .text(route.shortName)
         default:
+            .text(route.longName)
+        }
+    }
+
+    private static func lightRailPillContent(route: Route, type: Type) -> PillContent {
+        if route.longName.starts(with: "Green Line ") {
+            if type == .fixed {
+                .text(route.longName.replacing("Green Line ", with: "GL "))
+            } else {
+                .text(route.shortName)
+            }
+        } else if route.longName == "Mattapan Trolley", type == .fixed {
+            .text("M")
+        } else {
             .text(route.longName)
         }
     }
