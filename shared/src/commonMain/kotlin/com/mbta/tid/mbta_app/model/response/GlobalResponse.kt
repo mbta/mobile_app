@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GlobalResponse(
+    val lines: Map<String, Line>,
     @SerialName("pattern_ids_by_stop") val patternIdsByStop: Map<String, List<String>>,
     val routes: Map<String, Route>,
     @SerialName("route_patterns") val routePatterns: Map<String, RoutePattern>,
@@ -19,5 +21,12 @@ data class GlobalResponse(
     constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
-    ) : this(patternIdsByStop, objects.routes, objects.routePatterns, objects.stops, objects.trips)
+    ) : this(
+        objects.lines,
+        patternIdsByStop,
+        objects.routes,
+        objects.routePatterns,
+        objects.stops,
+        objects.trips
+    )
 }

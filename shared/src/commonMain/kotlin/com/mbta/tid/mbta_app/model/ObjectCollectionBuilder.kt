@@ -21,6 +21,7 @@ import kotlinx.datetime.Instant
  */
 class ObjectCollectionBuilder {
     val alerts = mutableMapOf<String, Alert>()
+    val lines = mutableMapOf<String, Line>()
     val predictions = mutableMapOf<String, Prediction>()
     val routes = mutableMapOf<String, Route>()
     val routePatterns = mutableMapOf<String, RoutePattern>()
@@ -73,6 +74,19 @@ class ObjectCollectionBuilder {
     }
 
     fun alert(block: AlertBuilder.() -> Unit) = build(alerts, AlertBuilder(), block)
+
+    class LineBuilder : ObjectBuilder<Line> {
+        var id = uuid()
+        var color = ""
+        var longName = ""
+        var shortName = ""
+        var sortOrder = 0
+        var textColor = ""
+
+        override fun built() = Line(id, color, longName, shortName, sortOrder, textColor)
+    }
+
+    fun line(block: LineBuilder.() -> Unit) = build(lines, LineBuilder(), block)
 
     inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
@@ -137,6 +151,7 @@ class ObjectCollectionBuilder {
         var shortName = ""
         var sortOrder = 0
         var textColor = ""
+        var lineId: String? = null
         var routePatternIds = mutableListOf<String>()
 
         override fun built() =
@@ -150,6 +165,7 @@ class ObjectCollectionBuilder {
                 shortName,
                 sortOrder,
                 textColor,
+                lineId,
                 routePatternIds,
             )
     }

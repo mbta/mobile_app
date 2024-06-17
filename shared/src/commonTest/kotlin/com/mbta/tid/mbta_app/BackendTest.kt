@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app
 
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -115,6 +116,7 @@ class BackendTest {
                                   "Dedham Mall",
                                   "Watertown Yard"
                                 ],
+                                "line_id": "line-5259",
                                 "long_name": "Dedham Mall - Watertown Yard",
                                 "short_name": "52",
                                 "sort_order": 50520,
@@ -154,6 +156,16 @@ class BackendTest {
                               "route_pattern_id": "52-5-1",
                               "shape_id": "520211"
                             }
+                          },
+                          "lines": {
+                            "line-5259": {
+                              "id": "line-5259",
+                              "color": "FFC72C",
+                              "long_name": "Needham Junction or Dedham Mall - Watertown",
+                              "short_name": "52/59",
+                              "sort_order": 50520,
+                              "text_color": "000000"
+                            }
                           }
                         }
                     """
@@ -177,7 +189,8 @@ class BackendTest {
                     longName = "Dedham Mall - Watertown Yard",
                     shortName = "52",
                     sortOrder = 50520,
-                    textColor = "000000"
+                    textColor = "000000",
+                    lineId = "line-5259"
                 )
             assertEquals(
                 GlobalResponse(
@@ -286,6 +299,18 @@ class BackendTest {
                                     routeId = "52",
                                     routePatternId = "52-5-1",
                                     shapeId = "520211"
+                                )
+                        ),
+                    lines =
+                        mapOf(
+                            "line-5259" to
+                                Line(
+                                    id = "line-5259",
+                                    color = "FFC72C",
+                                    longName = "Needham Junction or Dedham Mall - Watertown",
+                                    shortName = "52/59",
+                                    sortOrder = 50520,
+                                    textColor = "000000"
                                 )
                         )
                 ),

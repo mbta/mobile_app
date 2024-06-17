@@ -234,6 +234,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             shortName: "216",
             sortOrder: 52160,
             textColor: "000000",
+            lineId: "line-214216",
             routePatternIds: ["216-_-1"]
         )
         let busStop = Stop(
@@ -304,6 +305,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             shortName: "",
             sortOrder: 20012,
             textColor: "FFFFFF",
+            lineId: "line-Providence",
             routePatternIds: nil
         )
         let crStop = Stop(
