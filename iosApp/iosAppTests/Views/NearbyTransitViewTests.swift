@@ -47,6 +47,7 @@ final class NearbyTransitViewTests: XCTestCase {
             init() {
                 super.init(backend: IdleBackend())
                 response = GlobalResponse(
+                    lines: [:],
                     patternIdsByStop: [:],
                     routes: [:],
                     routePatterns: [:],
@@ -739,7 +740,14 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+        globalFetcher.response = .init(
+            lines: [:],
+            patternIdsByStop: [:],
+            routes: [:],
+            routePatterns: [:],
+            stops: [:],
+            trips: [:]
+        )
         let sut = NearbyTransitPageView(
             globalFetcher: globalFetcher,
             nearbyVM: vm,
@@ -775,7 +783,14 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(patternIdsByStop: [:], routes: [:], routePatterns: [:], stops: [:], trips: [:])
+        globalFetcher.response = .init(
+            lines: [:],
+            patternIdsByStop: [:],
+            routes: [:],
+            routePatterns: [:],
+            stops: [:],
+            trips: [:]
+        )
         let vm = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
             globalFetcher: globalFetcher,

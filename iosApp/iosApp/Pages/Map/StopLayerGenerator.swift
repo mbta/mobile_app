@@ -91,7 +91,7 @@ class StopLayerGenerator {
         layer.iconSize = .expression(MapExp.selectedSizeExp)
 
         layer.iconAllowOverlap = .constant(true)
-        layer.minZoom = stopZoomThreshold - 1
+        layer.minZoom = stopZoomThreshold
         layer.symbolSortKey = .expression(Exp(.get) { StopSourceGenerator.propSortOrderKey })
     }
 

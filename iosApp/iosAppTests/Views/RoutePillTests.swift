@@ -29,6 +29,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "62/76",
             sortOrder: 50621,
             textColor: "000000",
+            lineId: "line-6276",
             routePatternIds: nil
         )
         let fixedPill = RoutePill(route: busRoute, type: .fixed)
@@ -48,6 +49,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10010,
             textColor: "FFFFFF",
+            lineId: "line-Red",
             routePatternIds: nil
         )
         let blueLine = Route(
@@ -60,6 +62,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10040,
             textColor: "FFFFFF",
+            lineId: "line-Blue",
             routePatternIds: nil
         )
 
@@ -85,6 +88,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "C",
             sortOrder: 10033,
             textColor: "FFFFFF",
+            lineId: "line-Green",
             routePatternIds: nil
         )
 
@@ -105,6 +109,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10011,
             textColor: "FFFFFF",
+            lineId: "line-Mattapan",
             routePatternIds: nil
         )
 
@@ -130,6 +135,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 20009,
             textColor: "FFFFFF",
+            lineId: "line-Middleborough",
             routePatternIds: nil
         )
         let providence = Route(
@@ -142,6 +148,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 20012,
             textColor: "FFFFFF",
+            lineId: "line-Providence",
             routePatternIds: nil
         )
 
@@ -167,6 +174,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 30002,
             textColor: "FFFFFF",
+            lineId: "line-Boat-F1",
             routePatternIds: nil
         )
 
@@ -188,6 +196,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "Red Line Shuttle",
             sortOrder: 61050,
             textColor: "000000",
+            lineId: "line-Red",
             routePatternIds: nil
         )
         let glShuttle = Route(
@@ -200,6 +209,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "Green Line D Shuttle",
             sortOrder: 61100,
             textColor: "000000",
+            lineId: "line-Green",
             routePatternIds: nil
         )
 

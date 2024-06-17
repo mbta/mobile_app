@@ -180,6 +180,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10010,
                 textColor: "FFFFFF",
+                lineId: "line-Red",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: .init(
@@ -192,6 +193,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10020,
                 textColor: "FFFFFF",
+                lineId: "line-Orange",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -204,6 +206,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10040,
                 textColor: "FFFFFF",
+                lineId: "line-Blue",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -216,6 +219,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10011,
                 textColor: "FFFFFF",
+                lineId: "line-Mattapan",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -228,6 +232,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "B",
                 sortOrder: 10032,
                 textColor: "FFFFFF",
+                lineId: "line-Green",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -240,6 +245,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "C",
                 sortOrder: 10033,
                 textColor: "FFFFFF",
+                lineId: "line-Green",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -252,6 +258,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "D",
                 sortOrder: 10034,
                 textColor: "FFFFFF",
+                lineId: "line-Green",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -264,6 +271,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "E",
                 sortOrder: 10035,
                 textColor: "FFFFFF",
+                lineId: "line-Green",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -276,6 +284,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 20012,
                 textColor: "FFFFFF",
+                lineId: "line-Fitchburg",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -288,6 +297,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "216",
                 sortOrder: 52160,
                 textColor: "000000",
+                lineId: "line-214216",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -300,6 +310,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "62/76",
                 sortOrder: 50621,
                 textColor: "000000",
+                lineId: "line-6276",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -312,6 +323,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "SL1",
                 sortOrder: 10051,
                 textColor: "FFFFFF",
+                lineId: "line-SLWaterfront",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -324,6 +336,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 30002,
                 textColor: "FFFFFF",
+                lineId: "line-Boat-F1",
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
@@ -336,6 +349,7 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "Red Line Shuttle",
                 sortOrder: 61050,
                 textColor: "000000",
+                lineId: "line-Red",
                 routePatternIds: nil
             ))
         }
