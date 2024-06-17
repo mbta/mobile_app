@@ -56,7 +56,6 @@ struct StopDetailsPage: View {
                 VStack {
                     SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
                     StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
-                    clearFilterButton
                 }
                 .padding([.bottom], 8)
                 .border(Color.halo.opacity(0.15), width: 2)
@@ -115,13 +114,6 @@ struct StopDetailsPage: View {
         }
     }
 
-    @ViewBuilder
-    private var clearFilterButton: some View {
-        if filter != nil {
-            Button(action: { filter = nil }, label: { Text("Clear Filter") })
-        }
-    }
-
     func changeStop(_ stop: Stop) {
         getSchedule(stop)
         joinPredictions(stop)
@@ -155,7 +147,7 @@ struct StopDetailsPage: View {
     }
 
     func tapRoutePill(_ route: Route) {
-        if filter?.routeId == route.id { return }
+        if filter?.routeId == route.id { filter = nil; return }
         guard let departures = nearbyVM.departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.route.id == route.id })
         else { return }

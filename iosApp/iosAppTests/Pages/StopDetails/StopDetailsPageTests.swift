@@ -96,7 +96,7 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        try sut.inspect().find(button: "Clear Filter").tap()
+        try sut.inspect().find(button: "All").tap()
         XCTAssertNil(filter.wrappedValue)
     }
 

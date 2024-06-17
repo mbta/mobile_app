@@ -158,12 +158,9 @@ final class RoutePillTests: XCTestCase {
         let providenceFlex = RoutePill(route: providence, type: .flex)
 
         XCTAssertEqual(try middleboroughFixed.inspect().view(RoutePill.self).text().string(), "CR")
-        XCTAssertEqual(
-            try middleboroughFlex.inspect().view(RoutePill.self).text().string(),
-            "Middleborough/Lakeville Line"
-        )
+        XCTAssertEqual(try middleboroughFlex.inspect().view(RoutePill.self).text().string(), "Middleborough/Lakeville")
         XCTAssertEqual(try providenceFixed.inspect().view(RoutePill.self).text().string(), "CR")
-        XCTAssertEqual(try providenceFlex.inspect().view(RoutePill.self).text().string(), "Providence/Stoughton Line")
+        XCTAssertEqual(try providenceFlex.inspect().view(RoutePill.self).text().string(), "Providence/Stoughton")
     }
 
     @MainActor func testFerry() throws {

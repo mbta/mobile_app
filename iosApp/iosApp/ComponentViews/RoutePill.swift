@@ -49,6 +49,8 @@ struct RoutePill: View {
         if route.type == .commuterRail {
             if type == .fixed {
                 return .text("CR")
+            } else {
+                return .text(route.longName.replacing(" Line", with: ""))
             }
         }
         if route.type == .ferry {
@@ -100,6 +102,26 @@ struct RoutePill: View {
         }
     }
 
+    private struct ColorModifier: ViewModifier {
+        let pill: RoutePill
+
+        func body(content: Content) -> some View {
+            if pill.isActive {
+                content
+                    .foregroundColor(pill.textColor)
+                    .background(pill.routeColor)
+            } else if pill.route?.type == .bus {
+                content.overlay(
+                    Rectangle().stroke(pill.routeColor ?? .deemphasized, lineWidth: 1).padding(1)
+                )
+            } else {
+                content.overlay(
+                    Capsule().stroke(pill.routeColor ?? .deemphasized, lineWidth: 1).padding(1)
+                )
+            }
+        }
+    }
+
     private struct ClipShapeModifier: ViewModifier {
         let pill: RoutePill
 
@@ -122,8 +144,7 @@ struct RoutePill: View {
                 .tracking(0.5)
                 .modifier(FramePaddingModifier(pill: self))
                 .lineLimit(1)
-                .foregroundColor(isActive ? textColor : Self.inactiveTextColor)
-                .background(isActive ? routeColor : Self.inactiveColor)
+                .modifier(ColorModifier(pill: self))
                 .modifier(ClipShapeModifier(pill: self))
         }
     }
@@ -135,6 +156,7 @@ struct RoutePill_Previews: PreviewProvider {
 
         var body: some View {
             GridRow {
+                RoutePill(route: route, type: .fixed, isActive: false)
                 RoutePill(route: route, type: .fixed)
                 RoutePill(route: route, type: .flex)
             }
@@ -144,6 +166,7 @@ struct RoutePill_Previews: PreviewProvider {
     static var previews: some View {
         Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 24) {
             GridRow {
+                Text(verbatim: "")
                 Text(verbatim: "Fixed")
                 Text(verbatim: "Flex")
             }

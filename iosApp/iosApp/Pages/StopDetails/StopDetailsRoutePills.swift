@@ -15,14 +15,43 @@ struct StopDetailsRoutePills: View {
     @Binding var filter: StopDetailsFilter?
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(servedRoutes, id: \.id) { route in
-                    RoutePill(route: route, type: .flex, isActive: filter == nil || filter?.routeId == route.id)
-                        .onTapGesture { tapRoutePill(route) }
+        HStack(spacing: 0) {
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(servedRoutes, id: \.id) { route in
+                            RoutePill(route: route, type: .flex, isActive: filter == nil || filter?.routeId == route.id)
+                                .frame(minWidth: 44, minHeight: 44, alignment: .center)
+                                .onTapGesture { tapRoutePill(route) }
+                        }
+                    }
+                    .padding(.horizontal, 15)
+                }
+                .task {
+                    // no way to run code after appear, so instead, launch task before and wait
+                    try? await Task.sleep(for: .milliseconds(10))
+                    if let filteredRoute = filter?.routeId {
+                        proxy.scrollTo(filteredRoute, anchor: .center)
+                    }
+                }
+                .onChange(of: filter) { newFilter in
+                    if let filteredRoute = newFilter?.routeId {
+                        proxy.scrollTo(filteredRoute, anchor: .center)
+                    }
                 }
             }
-            .padding(.horizontal, 15)
+            if filter != nil {
+                Button(action: { filter = nil }) {
+                    Text("All")
+                        .foregroundStyle(Color.fill1)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 7)
+                        .background(Color.contrast)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
+                .padding(.trailing, 16)
+            }
         }
     }
 }
