@@ -29,7 +29,7 @@ struct CloseButton: View {
                     .scaledToFit()
                     .frame(width: xSize, height: xSize)
                     .padding(5)
-                    .foregroundStyle(Color.fill1)
+                    .foregroundStyle(Color.fill2)
             }
         }
         .frame(width: circleSize, height: circleSize)

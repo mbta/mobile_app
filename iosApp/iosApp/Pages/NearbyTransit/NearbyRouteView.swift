@@ -17,7 +17,7 @@ struct NearbyRouteView: View {
     let now: Instant
 
     var body: some View {
-        NearbyTransitSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
+        RouteSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
             ForEach(Array(nearbyRoute.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
                     NearbyStopView(patternsAtStop: patternsAtStop, pushNavEntry: pushNavEntry, now: now)

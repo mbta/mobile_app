@@ -16,12 +16,16 @@ struct StopDetailsPage: View {
     @ObservedObject var viewportProvider: ViewportProvider
     let schedulesRepository: ISchedulesRepository
     @State var schedulesResponse: ScheduleResponse?
+    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
+    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
+
     let predictionsRepository: IPredictionsRepository
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
     @State var servedRoutes: [Route] = []
     @ObservedObject var nearbyVM: NearbyViewModel
+    @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
 
     let inspection = Inspection<Self>()
@@ -46,23 +50,35 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        VStack {
-            SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
-            StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
-            clearFilterButton
-            departureHeader
-            if let departures = nearbyVM.departures {
-                StopDetailsRoutesView(
-                    departures: departures,
-                    now: now.toKotlinInstant(),
-                    filter: $filter,
-                    pushNavEntry: nearbyVM.pushNavEntry
-                )
-            } else {
-                ProgressView()
+        ZStack {
+            Color.fill2.ignoresSafeArea(.all)
+            VStack(spacing: 0) {
+                VStack {
+                    SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
+                    StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
+                    clearFilterButton
+                }
+                .padding([.bottom], 8)
+                .border(Color.halo.opacity(0.15), width: 2)
+
+                if let departures = nearbyVM.departures {
+                    StopDetailsRoutesView(
+                        departures: departures,
+                        now: now.toKotlinInstant(),
+                        filter: $filter,
+                        pushNavEntry: nearbyVM.pushNavEntry,
+                        pinRoute: togglePinnedRoute,
+                        pinnedRoutes: pinnedRoutes
+                    ).frame(maxHeight: .infinity)
+                } else {
+                    ProgressView()
+                }
             }
         }
-        .onAppear { changeStop(stop) }
+        .onAppear {
+            changeStop(stop)
+            loadPinnedRoutes()
+        }
         .onChange(of: stop) { nextStop in changeStop(nextStop) }
         .onChange(of: globalFetcher.response) { _ in updateDepartures() }
         .onChange(of: predictions) { _ in updateDepartures() }
@@ -78,20 +94,31 @@ struct StopDetailsPage: View {
                                 onBackground: leavePredictions)
     }
 
+    func loadPinnedRoutes() {
+        Task {
+            do {
+                pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
+
+    func togglePinnedRoute(_ routeId: String) {
+        Task {
+            do {
+                try await togglePinnedUsecase.execute(route: routeId)
+                loadPinnedRoutes()
+            } catch {
+                debugPrint(error)
+            }
+        }
+    }
+
     @ViewBuilder
     private var clearFilterButton: some View {
         if filter != nil {
             Button(action: { filter = nil }, label: { Text("Clear Filter") })
-        }
-    }
-
-    private var departureHeader: some View {
-        if predictions != nil {
-            Text("Live departures")
-        } else if schedulesResponse != nil {
-            Text("Scheduled departures")
-        } else {
-            Text("Departures")
         }
     }
 
@@ -142,6 +169,7 @@ struct StopDetailsPage: View {
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
         servedRoutes = []
+
         let newDepartures: StopDetailsDepartures? = if let globalResponse = globalFetcher.response {
             StopDetailsDepartures(
                 stop: stop,

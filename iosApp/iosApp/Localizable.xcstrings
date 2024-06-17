@@ -105,9 +105,6 @@
     "Couldn't load stop list" : {
 
     },
-    "Departures" : {
-
-    },
     "Detour" : {
 
     },
@@ -141,9 +138,6 @@
     "Live" : {
 
     },
-    "Live departures" : {
-
-    },
     "Loading..." : {
 
     },
@@ -172,9 +166,6 @@
 
     },
     "Routes" : {
-
-    },
-    "Scheduled departures" : {
 
     },
     "Service suspended" : {

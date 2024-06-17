@@ -146,7 +146,7 @@ struct ContentView: View {
                     }
                     // Adding id here prevents the next sheet from opening at the large detent.
                     // https://stackoverflow.com/a/77429540
-                    .id(entry)
+                    .id(sheetIdentityEntry.id)
                     .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
                     .interactiveDismissDisabled(visibleNearbySheet == .nearby)
                     .modifier(AllowsBackgroundInteraction())
