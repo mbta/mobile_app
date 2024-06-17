@@ -147,7 +147,7 @@ struct StopDetailsPage: View {
     }
 
     func tapRoutePill(_ route: Route) {
-        if filter?.routeId == route.id { return }
+        if filter?.routeId == route.id { filter = nil; return }
         guard let departures = nearbyVM.departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.route.id == route.id })
         else { return }
