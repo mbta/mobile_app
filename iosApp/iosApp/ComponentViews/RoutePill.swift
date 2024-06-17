@@ -49,6 +49,8 @@ struct RoutePill: View {
         if route.type == .commuterRail {
             if type == .fixed {
                 return .text("CR")
+            } else {
+                return .text(route.longName.replacing(" Line", with: ""))
             }
         }
         if route.type == .ferry {
