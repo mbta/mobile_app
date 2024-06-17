@@ -116,8 +116,7 @@ struct StopDetailsFilteredRouteView: View {
                                 }
                             }
                         }
-                        .clipShape(.rect(cornerRadius: 8))
-                        .border(Color.halo.opacity(0.1), width: 1)
+                        .withRoundedBorder()
                     }
                     .padding([.top, .horizontal], 8)
                     .padding([.bottom], 32)

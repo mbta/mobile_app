@@ -16,13 +16,13 @@ class ViewportProvider: ObservableObject {
         static let zoom: CGFloat = MapDefaults.defaultZoomThreshold
     }
 
+    @Published private(set) var isManuallyCentering: Bool
+
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
     var cameraStatePublisher: AnyPublisher<CameraState, Never> {
         cameraStateSubject
-            .removeDuplicates(by: { lhs, rhs in
-                lhs.center.isRoughlyEqualTo(rhs.center)
-            })
+            .removeDuplicates(by: { lhs, rhs in lhs.center.isRoughlyEqualTo(rhs.center) })
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -40,6 +40,7 @@ class ViewportProvider: ObservableObject {
             pitch: viewportCamera?.pitch ?? 0.0
         )
         cameraStateSubject = .init(initialCameraState)
+        isManuallyCentering = false
     }
 
     func follow(animation: ViewportAnimation = Defaults.animation) {
@@ -82,5 +83,9 @@ class ViewportProvider: ObservableObject {
             }
         }
         savedNearbyTransitViewport = nil
+    }
+
+    func setIsManuallyCentering(_ isManuallyCentering: Bool) {
+        self.isManuallyCentering = isManuallyCentering
     }
 }

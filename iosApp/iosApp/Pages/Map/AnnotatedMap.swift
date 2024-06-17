@@ -13,6 +13,8 @@ import SwiftUI
 struct AnnotatedMap: View {
     static let annotationTextZoomThreshold = 19.0
 
+    private let centerMovingGestures: Set<GestureType> = [.pan, .doubleTapToZoomIn]
+
     var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
@@ -145,5 +147,21 @@ struct AnnotatedMap: View {
                 }
             }
         }
+        .gestureHandlers(.init(onBegin: { gestureType in
+                                   if centerMovingGestures.contains(gestureType) {
+                                       viewportProvider.setIsManuallyCentering(true)
+                                   }
+                               },
+                               onEnd: { gestureType, willAnimate in
+                                   if centerMovingGestures.contains(gestureType), !willAnimate {
+                                       viewportProvider.setIsManuallyCentering(false)
+                                   }
+                               },
+                               onEndAnimation: { gestureType in
+
+                                   if centerMovingGestures.contains(gestureType) {
+                                       viewportProvider.setIsManuallyCentering(false)
+                                   }
+                               }))
     }
 }

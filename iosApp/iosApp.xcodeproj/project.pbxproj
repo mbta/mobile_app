@@ -27,6 +27,8 @@
 		6E973DAB2C178C0200CBF341 /* SheetHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DAA2C178C0200CBF341 /* SheetHeaderTests.swift */; };
 		6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E99CBB62B9892C80047E78D /* SocketProvider.swift */; };
 		6E9F4D382BFE851D00BFB3DA /* UpcomingTripViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F4D372BFE851D00BFB3DA /* UpcomingTripViewTests.swift */; };
+		6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA2316E2C21BEB100789173 /* LoadingCard.swift */; };
+		6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */; };
 		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
 		6EE745842B965B9C0052227E /* SocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745832B965B9C0052227E /* SocketTests.swift */; };
@@ -213,6 +215,8 @@
 		6E99CBB62B9892C80047E78D /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
 		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
 		6E9F4D372BFE851D00BFB3DA /* UpcomingTripViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTripViewTests.swift; sourceTree = "<group>"; };
+		6EA2316E2C21BEB100789173 /* LoadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCard.swift; sourceTree = "<group>"; };
+		6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		6EE745832B965B9C0052227E /* SocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTests.swift; sourceTree = "<group>"; };
 		6EE745872B965C2B0052227E /* MessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTests.swift; sourceTree = "<group>"; };
@@ -711,6 +715,7 @@
 				6E973DA42C17384C00CBF341 /* SheetHeader.swift */,
 				6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */,
 				6E04D4312C1B50230055FD99 /* RouteHeader.swift */,
+				6EA2316E2C21BEB100789173 /* LoadingCard.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -779,6 +784,7 @@
 				EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */,
 				6EFEE42C2BED0FA800810319 /* ScenePhaseChangeModifier.swift */,
 				ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */,
+				6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1163,6 +1169,7 @@
 				8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */,
 				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,
 				9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */,
+				6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
 				6EFEE42D2BED0FA800810319 /* ScenePhaseChangeModifier.swift in Sources */,
 				EDC768C72BCF6FD6008BAE58 /* RouteSection.swift in Sources */,
@@ -1219,6 +1226,7 @@
 				ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */,
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
 				9A19CDDE2C10DFBC006F1059 /* AlertIcons.swift in Sources */,
+				6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
