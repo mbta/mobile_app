@@ -16,6 +16,8 @@ struct DirectionPicker: View {
     let directions: [Direction]
     let route: Route
 
+    private let reformatDirectionNames: Set<String> = ["North", "South", "East", "West"]
+
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
         availableDirections = Set(patternsByStop.patternsByHeadsign.map { pattern in
             pattern.directionId()
@@ -59,10 +61,7 @@ struct DirectionPicker: View {
     }
 
     private func directionNameFormatted(_ direction: Direction) -> String {
-        if direction.name == "North" ||
-            direction.name == "South" ||
-            direction.name == "East" ||
-            direction.name == "West" {
+        if reformatDirectionNames.contains(direction.name) {
             return "\(direction.name)bound"
         }
         return direction.name

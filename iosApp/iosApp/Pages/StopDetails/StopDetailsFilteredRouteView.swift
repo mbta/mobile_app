@@ -82,14 +82,14 @@ struct StopDetailsFilteredRouteView: View {
                 if let routeHex {
                     Color(hex: routeHex)
                 }
-                VStack {
-                    RouteHeader(route: patternsByStop.route)
-                    DirectionPicker(
-                        patternsByStop: patternsByStop,
-                        filter: $filter
-                    ).fixedSize(horizontal: false, vertical: true)
+                ScrollView {
+                    VStack {
+                        RouteHeader(route: patternsByStop.route)
+                        DirectionPicker(
+                            patternsByStop: patternsByStop,
+                            filter: $filter
+                        ).fixedSize(horizontal: false, vertical: true)
 
-                    ScrollView {
                         ZStack {
                             Color.fill3.ignoresSafeArea(.all)
                             VStack(spacing: 0) {
@@ -119,9 +119,10 @@ struct StopDetailsFilteredRouteView: View {
                         .clipShape(.rect(cornerRadius: 8))
                         .border(Color.halo.opacity(0.1), width: 1)
                     }
+                    .padding([.top, .horizontal], 8)
+                    .padding([.bottom], 32)
                 }
-                .padding([.top, .horizontal], 8)
-                .padding([.bottom], 16)
+
             }.ignoresSafeArea(.all)
 
         } else {
