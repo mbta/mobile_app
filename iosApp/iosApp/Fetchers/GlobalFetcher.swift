@@ -31,4 +31,10 @@ class GlobalFetcher: ObservableObject {
             print("Failed to load global data: \(error)")
         }
     }
+
+    func lookUpLine(lineId: String?) -> Line? {
+        if let lineId {
+            response?.lines[lineId]
+        } else { nil }
+    }
 }

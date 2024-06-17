@@ -18,7 +18,7 @@ final class StopDetailsRoutePillsTests: XCTestCase {
         let route1 = objects.route()
         let route2 = objects.route()
         let sut = StopDetailsRoutePills(
-            servedRoutes: [route1, route2],
+            servedRoutes: [(route: route1, line: nil), (route: route2, line: nil)],
             tapRoutePill: { _ in },
             filter: .constant(nil)
         )
@@ -33,7 +33,7 @@ final class StopDetailsRoutePillsTests: XCTestCase {
         let route1 = objects.route()
         let route2 = objects.route()
         let sut = StopDetailsRoutePills(
-            servedRoutes: [route1, route2],
+            servedRoutes: [(route: route1, line: nil), (route: route2, line: nil)],
             tapRoutePill: { _ in },
             filter: .constant(.init(routeId: route1.id, directionId: 0))
         )
@@ -49,7 +49,7 @@ final class StopDetailsRoutePillsTests: XCTestCase {
         let route2 = objects.route()
         let tapExpectation = XCTestExpectation()
         let sut = StopDetailsRoutePills(
-            servedRoutes: [route1, route2],
+            servedRoutes: [(route: route1, line: nil), (route: route2, line: nil)],
             tapRoutePill: { route in
                 tapExpectation.fulfill()
                 XCTAssertEqual(route, route2)

@@ -199,6 +199,14 @@ final class RoutePillTests: XCTestCase {
             lineId: "line-Red",
             routePatternIds: nil
         )
+        let redLine = Line(
+            id: "line-Red",
+            color: "DA291C",
+            longName: "Red Line",
+            shortName: "",
+            sortOrder: 10010,
+            textColor: "FFFFFF"
+        )
         let glShuttle = Route(
             id: "Shuttle-BrooklineHillsKenmore",
             type: .bus,
@@ -212,15 +220,28 @@ final class RoutePillTests: XCTestCase {
             lineId: "line-Green",
             routePatternIds: nil
         )
+        let greenLine = Line(
+            id: "line-Green",
+            color: "00843D",
+            longName: "Green Line",
+            shortName: "",
+            sortOrder: 10032,
+            textColor: "FFFFFF"
+        )
 
-        let rlShuttleFixed = RoutePill(route: rlShuttle, type: .fixed)
-        let rlShuttleFlex = RoutePill(route: rlShuttle, type: .flex)
-        let glShuttleFixed = RoutePill(route: glShuttle, type: .fixed)
-        let glShuttleFlex = RoutePill(route: glShuttle, type: .flex)
+        let rlShuttleFixed = RoutePill(route: rlShuttle, line: redLine, type: .fixed)
+        let rlShuttleFlex = RoutePill(route: rlShuttle, line: redLine, type: .flex)
+        let glShuttleFixed = RoutePill(route: glShuttle, line: greenLine, type: .fixed)
+        let glShuttleFlex = RoutePill(route: glShuttle, line: greenLine, type: .flex)
 
-        XCTAssertEqual(try rlShuttleFixed.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
+        XCTAssertEqual(try rlShuttleFixed.inspect().view(RoutePill.self).image().actualImage().name(), "mode-bus")
         XCTAssertEqual(try rlShuttleFlex.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
-        XCTAssertEqual(try glShuttleFixed.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
+        XCTAssertEqual(try glShuttleFixed.inspect().view(RoutePill.self).image().actualImage().name(), "mode-bus")
         XCTAssertEqual(try glShuttleFlex.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
+
+        XCTAssertEqual(rlShuttleFixed.routeColor, Color(hex: "DA291C"))
+        XCTAssertEqual(rlShuttleFlex.routeColor, Color(hex: "DA291C"))
+        XCTAssertEqual(glShuttleFixed.routeColor, Color(hex: "00843D"))
+        XCTAssertEqual(glShuttleFlex.routeColor, Color(hex: "00843D"))
     }
 }

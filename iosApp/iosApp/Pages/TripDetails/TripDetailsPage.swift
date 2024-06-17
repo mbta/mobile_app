@@ -143,6 +143,7 @@ struct TripDetailsPage: View {
         }
         VehicleCardView(vehicle: vehicle,
                         route: route,
+                        line: globalFetcher.lookUpLine(lineId: route?.lineId),
                         stop: vehicleStop,
                         trip: trip,
                         now: now.toNSDate())
