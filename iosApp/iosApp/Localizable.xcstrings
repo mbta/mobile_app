@@ -69,6 +69,9 @@
         }
       }
     },
+    "All" : {
+
+    },
     "and arriving now" : {
 
     },
@@ -98,9 +101,6 @@
     },
     "buses" : {
       "comment" : "buses"
-    },
-    "Clear Filter" : {
-
     },
     "Couldn't load stop list" : {
 
