@@ -33,8 +33,7 @@ class GlobalFetcher: ObservableObject {
     }
 
     func lookUpLine(lineId: String?) -> Line? {
-        if let lineId {
-            response?.lines[lineId]
-        } else { nil }
+        guard let response, let lineId else { return nil }
+        return response.lines[lineId]
     }
 }
