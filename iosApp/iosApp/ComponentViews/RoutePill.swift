@@ -80,7 +80,7 @@ struct RoutePill: View {
         }
     }
 
-    private struct PillModifier: ViewModifier {
+    private struct FramePaddingModifier: ViewModifier {
         let pill: RoutePill
 
         func body(content: Content) -> some View {
@@ -94,6 +94,18 @@ struct RoutePill: View {
         }
     }
 
+    private struct ClipShapeModifier: ViewModifier {
+        let pill: RoutePill
+
+        func body(content: Content) -> some View {
+            if pill.route?.type == .bus {
+                content.clipShape(Rectangle())
+            } else {
+                content.clipShape(Capsule())
+            }
+        }
+    }
+
     var body: some View {
         if route == nil {
             EmptyView()
@@ -102,11 +114,11 @@ struct RoutePill: View {
                 .textCase(.uppercase)
                 .font(.custom("Helvetica Neue", size: 16).bold())
                 .tracking(0.5)
-                .modifier(PillModifier(pill: self))
+                .modifier(FramePaddingModifier(pill: self))
                 .lineLimit(1)
                 .foregroundColor(isActive ? textColor : Self.inactiveTextColor)
                 .background(isActive ? routeColor : Self.inactiveColor)
-                .clipShape(Capsule())
+                .modifier(ClipShapeModifier(pill: self))
         }
     }
 }
