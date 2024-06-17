@@ -19,7 +19,7 @@ final class RoutePillTests: XCTestCase {
     }
 
     @MainActor func testBus() throws {
-        let bus = RoutePill(route: Route(
+        let busRoute = Route(
             id: "627",
             type: .bus,
             color: "FFC72C",
@@ -30,12 +30,15 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 50621,
             textColor: "000000",
             routePatternIds: nil
-        ))
-        XCTAssertEqual(try bus.inspect().view(RoutePill.self).text().string(), "62/76")
+        )
+        let fixedPill = RoutePill(route: busRoute, type: .fixed)
+        XCTAssertEqual(try fixedPill.inspect().view(RoutePill.self).text().string(), "62/76")
+        let flexPill = RoutePill(route: busRoute, type: .flex)
+        XCTAssertEqual(try flexPill.inspect().view(RoutePill.self).text().string(), "62/76")
     }
 
     @MainActor func testHeavyRail() throws {
-        let red = RoutePill(route: Route(
+        let redLine = Route(
             id: "Red",
             type: .heavyRail,
             color: "DA291C",
@@ -46,8 +49,8 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10010,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
-        let blue = RoutePill(route: Route(
+        )
+        let blueLine = Route(
             id: "Blue",
             type: .heavyRail,
             color: "003DA5",
@@ -58,14 +61,21 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10040,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        )
 
-        XCTAssertEqual(try red.inspect().view(RoutePill.self).text().string(), "Red Line")
-        XCTAssertEqual(try blue.inspect().view(RoutePill.self).text().string(), "Blue Line")
+        let redLineFixed = RoutePill(route: redLine, type: .fixed)
+        let redLineFlex = RoutePill(route: redLine, type: .flex)
+        let blueLineFixed = RoutePill(route: blueLine, type: .fixed)
+        let blueLineFlex = RoutePill(route: blueLine, type: .flex)
+
+        XCTAssertEqual(try redLineFixed.inspect().view(RoutePill.self).text().string(), "RL")
+        XCTAssertEqual(try redLineFlex.inspect().view(RoutePill.self).text().string(), "Red Line")
+        XCTAssertEqual(try blueLineFixed.inspect().view(RoutePill.self).text().string(), "BL")
+        XCTAssertEqual(try blueLineFlex.inspect().view(RoutePill.self).text().string(), "Blue Line")
     }
 
     @MainActor func testLightRail() throws {
-        let green = RoutePill(route: Route(
+        let greenLineC = Route(
             id: "Green-C",
             type: .lightRail,
             color: "00843D",
@@ -76,9 +86,9 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10033,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        )
 
-        let mattapan = RoutePill(route: Route(
+        let mattapan = Route(
             id: "Mattapan",
             type: .lightRail,
             color: "DA291C",
@@ -96,14 +106,21 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 10011,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        )
 
-        XCTAssertEqual(try green.inspect().view(RoutePill.self).text().string(), "Green Line C")
-        XCTAssertEqual(try mattapan.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
+        let greenLineCFixed = RoutePill(route: greenLineC, type: .fixed)
+        let greenLineCFlex = RoutePill(route: greenLineC, type: .flex)
+        let mattapanFixed = RoutePill(route: mattapan, type: .fixed)
+        let mattapanFlex = RoutePill(route: mattapan, type: .flex)
+
+        XCTAssertEqual(try greenLineCFixed.inspect().view(RoutePill.self).text().string(), "GL C")
+        XCTAssertEqual(try greenLineCFlex.inspect().view(RoutePill.self).text().string(), "C")
+        XCTAssertEqual(try mattapanFixed.inspect().view(RoutePill.self).text().string(), "M")
+        XCTAssertEqual(try mattapanFlex.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
     }
 
     @MainActor func testCommuterRail() throws {
-        let middleborough = RoutePill(route: Route(
+        let middleborough = Route(
             id: "CR-Middleborough",
             type: .commuterRail,
             color: "80276C",
@@ -114,8 +131,8 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 20009,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
-        let providence = RoutePill(route: Route(
+        )
+        let providence = Route(
             id: "CR-Providence",
             type: .commuterRail,
             color: "80276C",
@@ -126,14 +143,24 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 20012,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        )
 
-        XCTAssertEqual(try middleborough.inspect().view(RoutePill.self).text().string(), "Middleborough/Lakeville Line")
-        XCTAssertEqual(try providence.inspect().view(RoutePill.self).text().string(), "Providence/Stoughton Line")
+        let middleboroughFixed = RoutePill(route: middleborough, type: .fixed)
+        let middleboroughFlex = RoutePill(route: middleborough, type: .flex)
+        let providenceFixed = RoutePill(route: providence, type: .fixed)
+        let providenceFlex = RoutePill(route: providence, type: .flex)
+
+        XCTAssertEqual(try middleboroughFixed.inspect().view(RoutePill.self).text().string(), "CR")
+        XCTAssertEqual(
+            try middleboroughFlex.inspect().view(RoutePill.self).text().string(),
+            "Middleborough/Lakeville Line"
+        )
+        XCTAssertEqual(try providenceFixed.inspect().view(RoutePill.self).text().string(), "CR")
+        XCTAssertEqual(try providenceFlex.inspect().view(RoutePill.self).text().string(), "Providence/Stoughton Line")
     }
 
     @MainActor func testFerry() throws {
-        let ferry = RoutePill(route: Route(
+        let ferry = Route(
             id: "Boat-F1",
             type: .ferry,
             color: "008EAA",
@@ -144,13 +171,17 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 30002,
             textColor: "FFFFFF",
             routePatternIds: nil
-        ))
+        )
 
-        XCTAssertEqual(try ferry.inspect().view(RoutePill.self).text().string(), "Hingham/Hull Ferry")
+        let ferryFixed = RoutePill(route: ferry, type: .fixed)
+        let ferryFlex = RoutePill(route: ferry, type: .flex)
+
+        XCTAssertEqual(try ferryFixed.inspect().view(RoutePill.self).image().actualImage().name(), "mode-ferry")
+        XCTAssertEqual(try ferryFlex.inspect().view(RoutePill.self).text().string(), "Hingham/Hull Ferry")
     }
 
     @MainActor func testShuttle() throws {
-        let rlShuttle = RoutePill(route: Route(
+        let rlShuttle = Route(
             id: "Shuttle-BroadwayKendall",
             type: .bus,
             color: "FFC72C",
@@ -161,8 +192,8 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 61050,
             textColor: "000000",
             routePatternIds: nil
-        ))
-        let glShuttle = RoutePill(route: Route(
+        )
+        let glShuttle = Route(
             id: "Shuttle-BrooklineHillsKenmore",
             type: .bus,
             color: "FFC72C",
@@ -173,8 +204,16 @@ final class RoutePillTests: XCTestCase {
             sortOrder: 61100,
             textColor: "000000",
             routePatternIds: nil
-        ))
-        XCTAssertEqual(try rlShuttle.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
-        XCTAssertEqual(try glShuttle.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
+        )
+
+        let rlShuttleFixed = RoutePill(route: rlShuttle, type: .fixed)
+        let rlShuttleFlex = RoutePill(route: rlShuttle, type: .flex)
+        let glShuttleFixed = RoutePill(route: glShuttle, type: .fixed)
+        let glShuttleFlex = RoutePill(route: glShuttle, type: .flex)
+
+        XCTAssertEqual(try rlShuttleFixed.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
+        XCTAssertEqual(try rlShuttleFlex.inspect().view(RoutePill.self).text().string(), "Red Line Shuttle")
+        XCTAssertEqual(try glShuttleFixed.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
+        XCTAssertEqual(try glShuttleFlex.inspect().view(RoutePill.self).text().string(), "Green Line D Shuttle")
     }
 }

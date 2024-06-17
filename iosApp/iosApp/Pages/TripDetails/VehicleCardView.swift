@@ -40,7 +40,7 @@ struct VehicleOnTripView: View {
         VStack {
             HStack {
                 VStack {
-                    RoutePill(route: route)
+                    RoutePill(route: route, type: .flex)
                     routeIcon(route)
                 }.padding([.trailing], 8)
                 VStack {
