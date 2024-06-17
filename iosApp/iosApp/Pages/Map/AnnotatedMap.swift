@@ -16,6 +16,7 @@ struct AnnotatedMap: View {
     var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
+    var routes: [String: Route]
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
@@ -65,14 +66,29 @@ struct AnnotatedMap: View {
             }
             if let filter, let vehicles {
                 ForEvery(vehicles, id: \.id) { vehicle in
-                    if vehicle.routeId == filter.routeId, vehicle.directionId == filter.directionId {
+                    if let routeId = vehicle.routeId,
+                       let route = routes[routeId],
+                       routeId == filter.routeId,
+                       vehicle.directionId == filter.directionId {
                         MapViewAnnotation(coordinate: vehicle.coordinate) {
-                            Circle()
-                                .strokeBorder(.white, lineWidth: 2.5)
-                                .background(Circle().fill(.black))
-                                .frame(width: 16, height: 16)
-                                .onTapGesture { handleTapVehicle(vehicle) }
+                            ZStack {
+                                ZStack {
+                                    Image(.vehicleHalo)
+                                    Image(.vehiclePuck).foregroundStyle(Color(hex: route.color))
+                                }
+                                .frame(width: 32, height: 32)
+                                .rotationEffect(.degrees(45))
+                                .rotationEffect(.degrees(vehicle.bearing?.doubleValue ?? 0))
+                                routeIcon(route)
+                                    .foregroundStyle(Color(hex: route.textColor))
+                                    .frame(height: 18)
+                            }
+                            .padding(6)
+                            .onTapGesture { handleTapVehicle(vehicle) }
                         }
+                        .allowOverlap(true)
+                        .allowOverlapWithPuck(true)
+                        .visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)
                     }
                 }
             }
