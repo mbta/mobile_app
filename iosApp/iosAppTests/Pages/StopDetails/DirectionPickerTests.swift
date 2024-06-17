@@ -60,4 +60,17 @@ final class DirectionPickerTests: XCTestCase {
         try sut.inspect().find(button: "Selected Destination").tap()
         XCTAssertEqual(0, filter.wrappedValue?.directionId)
     }
+
+    func testFormatsNorthSouth() throws {
+        let patternsByStop = testData()
+
+        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
+            routeId: patternsByStop.route.id,
+            directionId: 0
+        ))
+
+        let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter)
+        XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
+        XCTAssertNotNil(try? sut.inspect().find(text: "Southbound to"))
+    }
 }

@@ -69,7 +69,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
-        try sut.inspect().vStack().callOnChange(newValue: nextStop)
+        try sut.inspect().zStack().callOnChange(newValue: nextStop)
 
         wait(for: [newStopSchedulesFetchedExpectation], timeout: 5)
     }
@@ -140,8 +140,11 @@ final class StopDetailsPageTests: XCTestCase {
             directionId: routePattern.directionId
         ))
 
+        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
+        globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
+
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
+            globalFetcher: globalFetcher,
             schedulesRepository: FakeSchedulesRepository(
                 objects: objects,
                 callback: { schedulesLoadedPublisher.send(true) }
@@ -154,7 +157,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 0.2) { view in
-            XCTAssertNotNil(try view.find(text: "Scheduled departures"))
+            XCTAssertNotNil(try view.find(StopDetailsRoutesView.self))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)
@@ -241,11 +244,11 @@ final class StopDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().zStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().zStack().callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
     }

@@ -33,9 +33,11 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let sut = StopDetailsRoutesView(departures: departures,
                                         now: Date.now.toKotlinInstant(),
                                         filter: .constant(nil),
-                                        pushNavEntry: { _ in })
+                                        pushNavEntry: { _ in },
+                                        pinRoute: { _ in },
+                                        pinnedRoutes: [])
 
-        XCTAssertNotNil(try sut.inspect().list())
+        XCTAssertNotNil(try sut.inspect().find(StopDeparturesSummaryList.self))
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilteredRouteView.self))
     }
 
@@ -47,7 +49,9 @@ final class StopDetailsRoutesViewTests: XCTestCase {
             departures: departures,
             now: Date.now.toKotlinInstant(),
             filter: .constant(filter),
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            pinRoute: { _ in },
+            pinnedRoutes: []
         )
 
         let actualView = try sut.inspect().find(StopDetailsFilteredRouteView.self).actualView()

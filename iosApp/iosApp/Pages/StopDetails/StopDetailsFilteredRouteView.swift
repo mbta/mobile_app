@@ -77,32 +77,54 @@ struct StopDetailsFilteredRouteView: View {
 
     var body: some View {
         if let patternsByStop {
-            List {
-                RoutePillSection(
-                    route: patternsByStop.route,
-                    headerContent: DirectionPicker(
-                        patternsByStop: patternsByStop,
-                        filter: $filter
-                    )
-                ) {
-                    ForEach(rows, id: \.tripId) { row in
-                        OptionalNavigationLink(
-                            value: row.navigationTarget,
-                            action: { entry in
-                                pushNavEntry(entry)
-                                analytics.tappedDepartureRow(
-                                    routeId: patternsByStop.route.id,
-                                    stopId: patternsByStop.stop.id
-                                )
-                            }
-                        ) {
-                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
-                                            routeType: patternsByStop.route.type)
-                        }
-                        .listRowBackground(Color.fill3)
-                    }
+            let routeHex: String? = patternsByStop.route.color
+            ZStack {
+                if let routeHex {
+                    Color(hex: routeHex)
                 }
-            }
+                ScrollView {
+                    VStack {
+                        RouteHeader(route: patternsByStop.route)
+                        DirectionPicker(
+                            patternsByStop: patternsByStop,
+                            filter: $filter
+                        ).fixedSize(horizontal: false, vertical: true)
+
+                        ZStack {
+                            Color.fill3.ignoresSafeArea(.all)
+                            VStack(spacing: 0) {
+                                ForEach(Array(rows.enumerated()), id: \.element.tripId) { index, row in
+
+                                    VStack(spacing: 0) {
+                                        OptionalNavigationLink(value: row.navigationTarget, action: { entry in
+                                            pushNavEntry(entry)
+                                            analytics.tappedDepartureRow(
+                                                routeId: patternsByStop.route.id,
+                                                stopId: patternsByStop.stop.id
+                                            )
+                                        }) {
+                                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
+                                                            routeType: patternsByStop.route.type)
+                                        }
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal, 16)
+
+                                        if index < rows.count - 1 {
+                                            Divider().background(Color.halo)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .clipShape(.rect(cornerRadius: 8))
+                        .border(Color.halo.opacity(0.1), width: 1)
+                    }
+                    .padding([.top, .horizontal], 8)
+                    .padding([.bottom], 32)
+                }
+
+            }.ignoresSafeArea(.all)
+
         } else {
             EmptyView()
         }

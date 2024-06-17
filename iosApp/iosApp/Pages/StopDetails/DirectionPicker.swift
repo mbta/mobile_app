@@ -16,6 +16,8 @@ struct DirectionPicker: View {
     let directions: [Direction]
     let route: Route
 
+    private let reformatDirectionNames: Set<String> = ["North", "South", "East", "West"]
+
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
         availableDirections = Set(patternsByStop.patternsByHeadsign.map { pattern in
             pattern.directionId()
@@ -28,32 +30,48 @@ struct DirectionPicker: View {
 
     var body: some View {
         if availableDirections.count > 1 {
+            let deselectedBackroundColor = deselectedBackgroundColor(route)
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
+                    let isSelected = filter?.directionId == direction
                     let action = { $filter.wrappedValue = .init(routeId: route.id, directionId: direction) }
 
                     Button(action: action) {
                         VStack(alignment: .leading) {
-                            Text("\(directions[Int(direction)].name.uppercased()) to")
+                            Text("\(directionNameFormatted(directions[Int(direction)])) to")
                                 .font(.footnote)
                                 .textCase(.none)
                             Text(directions[Int(direction)].destination)
-                                .font(.subheadline)
+                                .font(.body)
                                 .fontWeight(.bold)
                                 .textCase(.none)
                         }
                         .padding(8)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
-                    .background(filter?.directionId == direction ? Color(hex: route.color) : .clear)
-                    .foregroundStyle(filter?.directionId == direction ? Color(hex: route.textColor) : .black)
-                    .clipShape(.rect(cornerRadius: 10))
+                    .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
+                    .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
+                    .clipShape(.rect(cornerRadius: 6))
                 }
             }
-            .padding(3)
-            .background(.white)
-            .clipShape(.rect(cornerRadius: 10))
-            .padding(.horizontal, -20)
+            .padding(2)
+            .background(deselectedBackroundColor)
+            .clipShape(.rect(cornerRadius: 6))
         }
+    }
+
+    private func directionNameFormatted(_ direction: Direction) -> String {
+        if reformatDirectionNames.contains(direction.name) {
+            return "\(direction.name)bound"
+        }
+        return direction.name
+    }
+
+    private func deselectedBackgroundColor(_ route: Route) -> Color {
+        // Exceptions for contrast
+        if route.type == RouteType.commuterRail || route.id == "Blue" {
+            return Color.deselectedToggle2
+        }
+        return Color.deselectedToggle1
     }
 }
