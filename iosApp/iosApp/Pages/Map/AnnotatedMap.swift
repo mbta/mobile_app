@@ -58,7 +58,13 @@ struct AnnotatedMap: View {
     @ViewBuilder
     var map: Map {
         Map(viewport: $viewportProvider.viewport) {
-            Puck2D().pulsing(.none)
+            Puck2D()
+                .topImage(.init(resource: .locationDot))
+                .shadowImage(.init(resource: .locationHalo))
+                .pulsing(.init(color: .keyInverse, radius: .constant(24)))
+                .showsAccuracyRing(true)
+                .accuracyRingColor(.deemphasized.withAlphaComponent(0.1))
+                .accuracyRingBorderColor(.halo)
             if let nearbyLocation {
                 MapViewAnnotation(coordinate: nearbyLocation) {
                     Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)
