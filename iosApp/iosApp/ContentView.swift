@@ -136,13 +136,11 @@ struct ContentView: View {
                                 }
                         }
                     }
+                    .onAppear {
+                        recordSheetHeight(proxy.size.height)
+                    }
                     .onChange(of: proxy.size.height) { newValue in
-                        /*
-                         Only update this if we're less than half way up the users screen
-                         to mitigate undesired behavior
-                         */
-                        guard newValue < (UIScreen.main.bounds.height / 2) else { return }
-                        sheetHeight = newValue
+                        recordSheetHeight(newValue)
                     }
                     // Adding id here prevents the next sheet from opening at the large detent.
                     // https://stackoverflow.com/a/77429540
@@ -166,6 +164,15 @@ struct ContentView: View {
                 socketProvider.socket.detach()
             }
         }
+    }
+
+    private func recordSheetHeight(_ newSheetHeight: CGFloat) {
+        /*
+         Only update this if we're less than half way up the users screen. Otherwise,
+         the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
+         */
+        guard newSheetHeight < (UIScreen.main.bounds.height / 2) else { return }
+        sheetHeight = newSheetHeight
     }
 
     struct AllowsBackgroundInteraction: ViewModifier {
