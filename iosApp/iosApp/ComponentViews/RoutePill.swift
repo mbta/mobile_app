@@ -49,34 +49,12 @@ struct RoutePill: View {
 
     private func getPillContent() -> PillContent {
         guard let route else { return .empty }
-        if route.type == .heavyRail, type == .fixed {
-            return .text(String(route.longName.split(separator: " ").compactMap(\.first)))
-        }
-        if route.type == .lightRail {
-            return Self.lightRailPillContent(route: route, type: type)
-        }
-        if route.type == .commuterRail {
-            if type == .fixed {
-                return .text("CR")
-            } else {
-                return .text(route.longName.replacing(" Line", with: ""))
-            }
-        }
-        if route.type == .ferry {
-            if type == .fixed {
-                return .image(.modeFerry)
-            }
-        }
-        if route.type == .bus, route.id.starts(with: "Shuttle") {
-            if type == .fixed {
-                return .image(.modeBus)
-            }
-        }
         return switch route.type {
-        case .bus:
-            .text(route.shortName)
-        default:
-            .text(route.longName)
+        case .lightRail: Self.lightRailPillContent(route: route, type: type)
+        case .heavyRail: Self.heavyRailPillContent(route: route, type: type)
+        case .commuterRail: Self.commuterRailPillContent(route: route, type: type)
+        case .bus: Self.busPillContent(route: route, type: type)
+        case .ferry: Self.ferryPillContent(route: route, type: type)
         }
     }
 
@@ -89,6 +67,38 @@ struct RoutePill: View {
             }
         } else if route.longName == "Mattapan Trolley", type == .fixed {
             .text("M")
+        } else {
+            .text(route.longName)
+        }
+    }
+
+    private static func heavyRailPillContent(route: Route, type: Type) -> PillContent {
+        if type == .fixed {
+            .text(String(route.longName.split(separator: " ").compactMap(\.first)))
+        } else {
+            .text(route.longName)
+        }
+    }
+
+    private static func commuterRailPillContent(route: Route, type: Type) -> PillContent {
+        if type == .fixed {
+            .text("CR")
+        } else {
+            .text(route.longName.replacing(" Line", with: ""))
+        }
+    }
+
+    private static func busPillContent(route: Route, type: Type) -> PillContent {
+        if route.id.starts(with: "Shuttle"), type == .fixed {
+            .image(.modeBus)
+        } else {
+            .text(route.shortName)
+        }
+    }
+
+    private static func ferryPillContent(route: Route, type: Type) -> PillContent {
+        if type == .fixed {
+            .image(.modeFerry)
         } else {
             .text(route.longName)
         }
