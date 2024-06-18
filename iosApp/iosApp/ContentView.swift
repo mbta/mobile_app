@@ -16,7 +16,7 @@ struct ContentView: View {
     @EnvironmentObject var vehicleFetcher: VehicleFetcher
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
-    @State private var sheetHeight: CGFloat = .zero
+    @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var nearbyVM: NearbyViewModel = .init()
 
     private enum SelectedTab: Hashable {

@@ -19,6 +19,7 @@ extension Color {
     static let fill3 = Color("Fill 3")
     static let halo = Color("Halo")
     static let key = Color("Key")
+    static let keyInverse = Color("Key Inverse")
     static let text = Color("Text")
 }
 
@@ -37,5 +38,6 @@ extension UIColor {
     static let fill3 = UIColor(named: "Fill 3") ?? UIColor(Color(.fill3))
     static let halo = UIColor(named: "Halo") ?? UIColor(Color(.halo))
     static let key = UIColor(named: "Key") ?? UIColor(Color(.key))
+    static let keyInverse = UIColor(named: "Key Inverse") ?? UIColor(Color(.keyInverse))
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
 }
