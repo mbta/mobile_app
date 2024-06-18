@@ -239,7 +239,7 @@ struct NoServiceView: View {
 
     var rawImage: Image {
         switch effect {
-        case .detour: Image(systemName: "circle.fill")
+        case .detour: Image(systemName: "exclamationmark.triangle.fill")
         case .shuttle: Image(.modeBus)
         case .stopClosed: Image(systemName: "xmark.octagon.fill")
         case .suspension: Image(systemName: "exclamationmark.triangle.fill")
