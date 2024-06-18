@@ -212,16 +212,21 @@ struct NoServiceView: View {
     }
 
     var body: some View {
-        HStack {
-            rawText
-                .font(.footnote)
-                .textCase(.uppercase)
-            rawImage
-                .resizable()
-                .scaledToFill()
-                .foregroundStyle(Color.deemphasized)
-                .frame(width: iconSize, height: iconSize)
-                .padding(2)
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                fullText
+                    .lineLimit(1)
+                fullImage
+            }
+            VStack(alignment: .trailing) {
+                fullText
+                    .lineLimit(1)
+                fullImage
+            }
+            HStack {
+                fullText
+                fullImage
+            }
         }
     }
 
@@ -246,6 +251,21 @@ struct NoServiceView: View {
         case .unknown: Image(systemName: "questionmark.circle.fill")
         }
     }
+
+    var fullText: some View {
+        rawText
+            .font(.footnote)
+            .textCase(.uppercase)
+    }
+
+    var fullImage: some View {
+        rawImage
+            .resizable()
+            .scaledToFill()
+            .foregroundStyle(Color.deemphasized)
+            .frame(width: iconSize, height: iconSize)
+            .padding(2)
+    }
 }
 
 struct UpcomingTripView_Previews: PreviewProvider {
@@ -256,6 +276,9 @@ struct UpcomingTripView_Previews: PreviewProvider {
             UpcomingTripView(prediction: .noService(.stopClosure), routeType: .heavyRail)
             UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
         }
+        .padding(8)
+        .frame(maxWidth: 150)
+        .background(Color.fill1)
         .previewDisplayName("No Service")
     }
 }
