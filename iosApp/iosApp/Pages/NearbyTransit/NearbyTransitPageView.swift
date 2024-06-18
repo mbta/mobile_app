@@ -65,7 +65,8 @@ struct NearbyTransitPageView: View {
             }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 if isManuallyCentering {
-                    // The user is manually moving the map. Forget their location
+                    // The user is manually moving the map, clear the nearby state and
+                    // reload it once the've stopped manipulating the map
                     nearbyVM.nearbyState = .init()
                     location = nil
                 }

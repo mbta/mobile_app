@@ -29,7 +29,7 @@ class ViewportProvider: ObservableObject {
 
     private let cameraStateSubject: CurrentValueSubject<CameraState, Never>
 
-    init(viewport: Viewport? = nil) {
+    init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
         self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
         let viewportCamera = viewport?.camera
         let initialCameraState = CameraState(
@@ -40,7 +40,7 @@ class ViewportProvider: ObservableObject {
             pitch: viewportCamera?.pitch ?? 0.0
         )
         cameraStateSubject = .init(initialCameraState)
-        isManuallyCentering = false
+        self.isManuallyCentering = isManuallyCentering
     }
 
     func follow(animation: ViewportAnimation = Defaults.animation) {
