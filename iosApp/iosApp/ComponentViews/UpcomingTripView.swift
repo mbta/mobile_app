@@ -69,12 +69,12 @@ struct UpcomingTripView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
-                Text("BRD").font(.headline).bold()
+                Text("BRD").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.boardingFirst(vehicleText: vehicleTypeText)
                         : accessibilityFormatters.boardingOther())
             case .arriving:
-                Text("ARR").font(.headline).bold()
+                Text("ARR").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
                         : accessibilityFormatters.arrivingOther())
@@ -88,8 +88,7 @@ struct UpcomingTripView: View {
                             vehicleText: vehicleTypeText
                         )
                         : accessibilityFormatters.distantFutureOther(date: format.predictionTime.toNSDate()))
-                    .font(.footnote)
-                    .fontWeight(.semibold)
+                    .font(Typography.footnoteSemibold)
             case let .schedule(schedule):
                 HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
@@ -99,8 +98,7 @@ struct UpcomingTripView: View {
                                 vehicleText: vehicleTypeText
                             )
                             : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(.footnote)
-                        .fontWeight(.semibold)
+                        .font(Typography.footnoteSemibold)
                     Image(.faClock)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -202,7 +200,7 @@ struct NoServiceView: View {
     var body: some View {
         HStack {
             rawText
-                .font(.footnote)
+                .font(Typography.footnote)
                 .textCase(.uppercase)
             rawImage
                 .resizable()

@@ -47,9 +47,9 @@ struct RouteHeader<Content: View>: View {
         case .bus:
             Text(route.shortName)
         case .commuterRail:
-            Text(route.longName.replacingOccurrences(of: "/", with: " / ")).font(.body).bold()
+            Text(route.longName.replacingOccurrences(of: "/", with: " / ")).font(Typography.bodySemibold)
         default:
-            Text(route.longName).font(.body).bold()
+            Text(route.longName).font(Typography.bodySemibold)
         }
     }
 }

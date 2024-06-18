@@ -18,7 +18,7 @@ struct HeadsignRowView: View {
         HStack(spacing: 0) {
             Text(headsign)
                 .foregroundStyle(Color.text)
-                .fontWeight(.semibold)
+                .font(Typography.bodySemibold)
                 .multilineTextAlignment(.leading)
             Spacer(minLength: 8)
             switch onEnum(of: predictions) {
