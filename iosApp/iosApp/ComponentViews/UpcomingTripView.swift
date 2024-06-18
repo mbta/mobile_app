@@ -91,7 +91,7 @@ struct UpcomingTripView: View {
                     .font(.footnote)
                     .fontWeight(.semibold)
             case let .schedule(schedule):
-                HStack(spacing: Self.subjectSpacing) {
+                if routeType == .commuterRail {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
                         .accessibilityLabel(isFirst
                             ? accessibilityFormatters.scheduledFirst(
@@ -99,14 +99,26 @@ struct UpcomingTripView: View {
                                 vehicleText: vehicleTypeText
                             )
                             : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                    Image(.faClock)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: iconSize, height: iconSize)
-                        .padding(4)
-                        .foregroundStyle(Color.deemphasized)
+                        .font(.headline.weight(.regular))
+                } else {
+                    HStack(spacing: Self.subjectSpacing) {
+                        Text(schedule.scheduleTime.toNSDate(), style: .time)
+                            .accessibilityLabel(isFirst
+                                ? accessibilityFormatters.scheduledFirst(
+                                    date: schedule.scheduleTime.toNSDate(),
+                                    vehicleText: vehicleTypeText
+                                )
+                                : accessibilityFormatters
+                                .scheduledOther(date: schedule.scheduleTime.toNSDate()))
+                            .font(.footnote)
+                            .fontWeight(.semibold)
+                        Image(.faClock)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: iconSize, height: iconSize)
+                            .padding(4)
+                            .foregroundStyle(Color.deemphasized)
+                    }
                 }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
