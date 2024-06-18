@@ -168,6 +168,7 @@ struct StopDetailsPage: View {
                 global: globalResponse,
                 schedules: schedulesResponse,
                 predictions: predictions,
+                pinnedRoutes: pinnedRoutes,
                 filterAtTime: now.toKotlinInstant()
             )
         } else {

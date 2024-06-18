@@ -12,6 +12,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         global: GlobalResponse,
         schedules: ScheduleResponse?,
         predictions: PredictionsStreamDataResponse?,
+        pinnedRoutes: Set<String>,
         filterAtTime: Instant
     ) : this(
         global.run {
@@ -78,10 +79,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     )
                 }
                 .filterNot { it.patternsByHeadsign.isEmpty() }
-                .sortedWith(
-                    (compareBy<PatternsByStop, Route>(Route.subwayFirstComparator) { it.route })
-                        .then(compareBy { it.route })
-                )
+                .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.route })
         }
     )
 }

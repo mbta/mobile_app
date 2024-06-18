@@ -73,6 +73,7 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
+                setOf(),
                 filterAtTime = time1
             )
         )
@@ -155,6 +156,7 @@ class StopDetailsDeparturesTest {
                 GlobalResponse(objects, mapOf(stop.id to objects.routePatterns.keys.toList())),
                 ScheduleResponse(objects).takeIf { includeSchedules },
                 PredictionsStreamDataResponse(objects).takeIf { includePredictions },
+                setOf(),
                 filterAtTime = time
             )
 
@@ -201,6 +203,66 @@ class StopDetailsDeparturesTest {
                 unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip))
             ),
             actual(includeSchedules = true, includePredictions = true)
+        )
+    }
+
+    @Test
+    fun `StopDetailsDepartures sorts by route preference order`() {
+        val objects = ObjectCollectionBuilder()
+
+        val routePinned = objects.route { sortOrder = 100 }
+        val routePattern1 =
+            objects.routePattern(routePinned) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+
+        val routeNotPinned = objects.route { sortOrder = 1 }
+        val routePattern2 =
+            objects.routePattern(routeNotPinned) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val stop = objects.stop()
+
+        val time1 = Instant.parse("2024-04-02T16:29:22Z")
+
+        assertEquals(
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        routePinned,
+                        stop,
+                        listOf(
+                            PatternsByHeadsign(routePinned, "A", listOf(routePattern1), listOf()),
+                        )
+                    ),
+                    PatternsByStop(
+                        routeNotPinned,
+                        stop,
+                        listOf(
+                            PatternsByHeadsign(
+                                routeNotPinned,
+                                "B",
+                                listOf(routePattern2),
+                                listOf()
+                            ),
+                        )
+                    )
+                )
+            ),
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(
+                    objects,
+                    mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                ),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                setOf(routePinned.id),
+                filterAtTime = time1
+            )
         )
     }
 }
