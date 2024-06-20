@@ -39,7 +39,7 @@ final class NearbyTransitViewTests: XCTestCase {
             globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init()
         )
-        XCTAssertNotNil(try sut.inspect().find(LoadingCard.self))
+        XCTAssertNotNil(try sut.inspect().find(LoadingCard<Text>.self))
     }
 
     func testLoading() throws {
@@ -73,7 +73,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            XCTAssertNotNil(try view.find(LoadingCard.self))
+            XCTAssertNotNil(try view.find(LoadingCard<Text>.self))
         }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)

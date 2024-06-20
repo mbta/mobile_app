@@ -9,15 +9,20 @@
 import Foundation
 import SwiftUI
 
-struct LoadingCard: View {
-    var message: String = .init(localized: "loading", comment: "Loading message")
+struct LoadingCard<Message: View>: View {
+    var message: () -> Message?
+
+    init(message: @escaping () -> Message? = { Text("loading") }) {
+        self.message = message
+    }
+
     var body: some View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack {
                 ProgressView()
                     .padding([.bottom], 8)
-                Text(message)
+                message()
             }
         }
         .withRoundedBorder()
@@ -28,6 +33,6 @@ struct LoadingCard: View {
 #Preview {
     List {
         LoadingCard()
-        LoadingCard(message: "Custom message")
+        LoadingCard { Text("Custom message") }
     }
 }

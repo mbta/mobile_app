@@ -38,7 +38,7 @@ struct NearbyTransitPageView: View {
             VStack {
                 SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
                 if viewportProvider.isManuallyCentering {
-                    LoadingCard(message: "select location")
+                    LoadingCard { Text("select location") }
                 } else {
                     NearbyTransitView(
                         getNearby: { global, location in

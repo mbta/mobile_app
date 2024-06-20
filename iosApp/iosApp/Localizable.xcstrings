@@ -105,6 +105,9 @@
     "Couldn't load stop list" : {
 
     },
+    "Custom message" : {
+
+    },
     "Detour" : {
 
     },
@@ -138,6 +141,9 @@
     "Live" : {
 
     },
+    "loading" : {
+
+    },
     "Loading..." : {
 
     },
@@ -166,6 +172,9 @@
 
     },
     "Routes" : {
+
+    },
+    "select location" : {
 
     },
     "Service suspended" : {

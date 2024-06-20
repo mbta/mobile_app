@@ -82,7 +82,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
             bearing: 0.0,
             pitch: 0.0
         )
-        let vm = FakeNearbyVM(getNearbyExpectation) { location in
+        let fakeVM = FakeNearbyVM(getNearbyExpectation) { location in
             XCTAssertEqual(location, newCameraState.center)
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
@@ -97,7 +97,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         )
         let sut = NearbyTransitPageView(
             globalFetcher: globalFetcher,
-            nearbyVM: vm,
+            nearbyVM: fakeVM,
             viewportProvider: viewportProvider
         )
         let hasAppeared = sut.inspection.inspect { view in
@@ -138,10 +138,10 @@ final class NearbyTransitPageViewTests: XCTestCase {
             stops: [:],
             trips: [:]
         )
-        let vm = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
+        let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
             globalFetcher: globalFetcher,
-            nearbyVM: vm,
+            nearbyVM: fakeVM,
             viewportProvider: viewportProvider
         )
 

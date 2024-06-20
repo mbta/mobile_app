@@ -20,7 +20,7 @@ final class LoadingCardTests: XCTestCase {
     }
 
     func testCustomMessage() throws {
-        let sut = LoadingCard(message: "custom")
+        let sut = LoadingCard { Text("custom") }
         XCTAssertNotNil(try sut.inspect().find(ViewType.ProgressView.self))
         XCTAssertNotNil(try sut.inspect().find(text: "custom"))
     }
