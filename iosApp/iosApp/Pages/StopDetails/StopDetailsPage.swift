@@ -55,7 +55,9 @@ struct StopDetailsPage: View {
             VStack(spacing: 0) {
                 VStack {
                     SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
-                    StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
+                    StopDetailsRoutePills(servedRoutes: servedRoutes,
+                                          tapRoutePill: tapRoutePill,
+                                          filter: $filter)
                 }
                 .padding([.bottom], 8)
                 .border(Color.halo.opacity(0.15), width: 2)
@@ -158,6 +160,12 @@ struct StopDetailsPage: View {
         filter = .init(routeId: route.id, directionId: defaultDirectionId)
     }
 
+    func compareRouteRelevance(_ route1: Route, _ route2: Route) -> Bool {
+        let comparator: KotlinComparator = Route.companion.relevanceComparator(pinnedRoutes: pinnedRoutes)
+
+        return comparator.compare(a: route1.route, b: route2.route) < 0
+    }
+
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
         servedRoutes = []
@@ -178,7 +186,7 @@ struct StopDetailsPage: View {
         nearbyVM.setDepartures(newDepartures)
         if let departures = nearbyVM.departures {
             servedRoutes = Set(departures.routes.map { pattern in pattern.route })
-                .sorted { $0.sortOrder < $1.sortOrder }
+                .sort(compareRouteRelevance)
                 .map { (route: $0, line: globalFetcher.lookUpLine(lineId: $0.lineId)) }
         }
     }
