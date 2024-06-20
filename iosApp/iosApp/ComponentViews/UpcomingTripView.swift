@@ -98,7 +98,7 @@ struct UpcomingTripView: View {
                                 vehicleText: vehicleTypeText
                             )
                             : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(Typography.headline)
+                        .font(Typography.headlineBold)
                 } else {
                     HStack(spacing: Self.subjectSpacing) {
                         Text(schedule.scheduleTime.toNSDate(), style: .time)
