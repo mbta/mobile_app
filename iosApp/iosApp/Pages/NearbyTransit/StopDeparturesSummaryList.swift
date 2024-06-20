@@ -31,6 +31,7 @@ struct StopDeparturesSummaryList: View {
                     )
                 }
                 .padding(8)
+                .frame(minHeight: 44)
                 .padding(.leading, 8)
 
                 if index < patternsByStop.patternsByHeadsign.count - 1 {

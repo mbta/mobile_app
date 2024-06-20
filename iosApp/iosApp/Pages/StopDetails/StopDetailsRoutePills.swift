@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsRoutePills: View {
-    let servedRoutes: [Route]
+    let servedRoutes: [(route: Route, line: Line?)]
     let tapRoutePill: (Route) -> Void
     @Binding var filter: StopDetailsFilter?
 
@@ -19,10 +19,15 @@ struct StopDetailsRoutePills: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(servedRoutes, id: \.id) { route in
-                            RoutePill(route: route, type: .flex, isActive: filter == nil || filter?.routeId == route.id)
-                                .frame(minWidth: 44, minHeight: 44, alignment: .center)
-                                .onTapGesture { tapRoutePill(route) }
+                        ForEach(servedRoutes, id: \.route.id) { route in
+                            RoutePill(
+                                route: route.route,
+                                line: route.line,
+                                type: .flex,
+                                isActive: filter == nil || filter?.routeId == route.route.id
+                            )
+                            .frame(minWidth: 44, minHeight: 44, alignment: .center)
+                            .onTapGesture { tapRoutePill(route.route) }
                         }
                     }
                     .padding(.horizontal, 15)

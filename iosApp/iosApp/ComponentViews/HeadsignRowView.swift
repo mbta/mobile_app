@@ -23,7 +23,7 @@ struct HeadsignRowView: View {
             Spacer(minLength: 8)
             switch onEnum(of: predictions) {
             case let .some(trips):
-                VStack(alignment: .trailing, spacing: 4) {
+                VStack(alignment: .trailing, spacing: 10) {
                     let firstTrip = trips.trips.first
                     let restTrips = trips.trips.dropFirst()
 
@@ -40,6 +40,7 @@ struct HeadsignRowView: View {
                         }
                     }
                 }
+                .padding(.vertical, 4)
             case let .noService(alert):
                 UpcomingTripView(
                     prediction: .noService(alert.alert.effect),
@@ -64,15 +65,27 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
         VStack(alignment: .trailing) {
             let now = Date.now
             let objects = ObjectCollectionBuilder()
-            let trip = objects.trip { _ in }
-            let prediction = objects.prediction { prediction in
-                prediction.trip = trip
+            let trip1 = objects.trip { _ in }
+            let prediction1 = objects.prediction { prediction in
+                prediction.trip = trip1
                 prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            }
+            let trip2 = objects.trip { _ in }
+            let prediction2 = objects.prediction { prediction in
+                prediction.trip = trip2
+                prediction.departureTime = now.addingTimeInterval(12 * 60).toKotlinInstant()
             }
             List {
                 HeadsignRowView(headsign: "Some",
                                 predictions: PatternsByHeadsign.FormatSome(trips: [
-                                    .init(trip: .init(trip: trip, prediction: prediction), now: now.toKotlinInstant()),
+                                    .init(
+                                        trip: .init(trip: trip1, prediction: prediction1),
+                                        now: now.toKotlinInstant()
+                                    ),
+                                    .init(
+                                        trip: .init(trip: trip2, prediction: prediction2),
+                                        now: now.toKotlinInstant()
+                                    ),
                                 ]),
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "None",

@@ -20,7 +20,7 @@ struct SheetHeader: View {
             }
             if let title {
                 Text(title)
-                    .font(Typography.title2Bold)
+                    .font(Typography.title3Semibold)
                     .padding([.top], 1)
                     .accessibilityHeading(.h1)
             }

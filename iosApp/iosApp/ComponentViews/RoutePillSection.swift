@@ -12,11 +12,13 @@ import SwiftUI
 
 struct RoutePillSection<Content: View>: View {
     let route: Route
+    let line: Line?
     let headerContent: any View
     let content: () -> Content
 
-    init(route: Route, headerContent: (any View)? = nil, content: @escaping () -> Content) {
+    init(route: Route, line: Line?, headerContent: (any View)? = nil, content: @escaping () -> Content) {
         self.route = route
+        self.line = line
         self.headerContent = headerContent ?? EmptyView()
         self.content = content
     }
@@ -24,7 +26,7 @@ struct RoutePillSection<Content: View>: View {
     var body: some View {
         Section(content: content, header: {
             VStack(alignment: .leading) {
-                RoutePill(route: route, type: .flex).padding(.leading, -20)
+                RoutePill(route: route, line: line, type: .flex).padding(.leading, -20)
                 AnyView(headerContent)
             }
         })

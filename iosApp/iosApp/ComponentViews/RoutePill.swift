@@ -16,53 +16,45 @@ struct RoutePill: View {
     }
 
     let route: Route?
+    let line: Line?
     let type: `Type`
     let isActive: Bool
     let textColor: Color?
     let routeColor: Color?
 
-    static let inactiveTextColor: Color = .white
-    static let inactiveColor: Color = .gray.opacity(0.5)
-
-    init(route: Route?, type: Type, isActive: Bool = true) {
+    init(route: Route?, line: Line? = nil, type: Type, isActive: Bool = true) {
         self.route = route
+        self.line = line
         self.type = type
         self.isActive = isActive
-        textColor = route?.textColor != nil ? Color(hex: route!.textColor) : nil
-        routeColor = route?.color != nil ? Color(hex: route!.color) : nil
+        guard let route else {
+            textColor = nil
+            routeColor = nil
+            return
+        }
+        if route.id.starts(with: "Shuttle"), let line {
+            textColor = Color(hex: line.textColor)
+            routeColor = Color(hex: line.color)
+        } else {
+            textColor = Color(hex: route.textColor)
+            routeColor = Color(hex: route.color)
+        }
     }
 
-    enum PillContent {
+    private enum PillContent {
         case empty
         case text(String)
         case image(ImageResource)
     }
 
-    func getPillContent() -> PillContent {
+    private func getPillContent() -> PillContent {
         guard let route else { return .empty }
-        if route.type == .heavyRail, type == .fixed {
-            return .text(String(route.longName.split(separator: " ").compactMap(\.first)))
-        }
-        if route.type == .lightRail {
-            return Self.lightRailPillContent(route: route, type: type)
-        }
-        if route.type == .commuterRail {
-            if type == .fixed {
-                return .text("CR")
-            } else {
-                return .text(route.longName.replacing(" Line", with: ""))
-            }
-        }
-        if route.type == .ferry {
-            if type == .fixed {
-                return .image(.modeFerry)
-            }
-        }
         return switch route.type {
-        case .bus:
-            .text(route.shortName)
-        default:
-            .text(route.longName)
+        case .lightRail: Self.lightRailPillContent(route: route, type: type)
+        case .heavyRail: Self.heavyRailPillContent(route: route, type: type)
+        case .commuterRail: Self.commuterRailPillContent(route: route, type: type)
+        case .bus: Self.busPillContent(route: route, type: type)
+        case .ferry: Self.ferryPillContent(route: route, type: type)
         }
     }
 
@@ -80,12 +72,48 @@ struct RoutePill: View {
         }
     }
 
+    private static func heavyRailPillContent(route: Route, type: Type) -> PillContent {
+        if type == .fixed {
+            .text(String(route.longName.split(separator: " ").compactMap(\.first)))
+        } else {
+            .text(route.longName)
+        }
+    }
+
+    private static func commuterRailPillContent(route: Route, type: Type) -> PillContent {
+        if type == .fixed {
+            .text("CR")
+        } else {
+            .text(route.longName.replacing(" Line", with: ""))
+        }
+    }
+
+    private static func busPillContent(route: Route, type: Type) -> PillContent {
+        if route.id.starts(with: "Shuttle"), type == .fixed {
+            .image(.modeBus)
+        } else {
+            .text(route.shortName)
+        }
+    }
+
+    private static func ferryPillContent(route: Route, type: Type) -> PillContent {
+        if type == .fixed {
+            .image(.modeFerry)
+        } else {
+            .text(route.longName)
+        }
+    }
+
     @ViewBuilder func getPillBase() -> some View {
         switch getPillContent() {
         case .empty: EmptyView()
         case let .text(text): Text(text)
         case let .image(image): Image(image)
         }
+    }
+
+    private static func isRectangle(route: Route) -> Bool {
+        route.type == .bus && !route.id.starts(with: "Shuttle")
     }
 
     private struct FramePaddingModifier: ViewModifier {
@@ -110,7 +138,7 @@ struct RoutePill: View {
                 content
                     .foregroundColor(pill.textColor)
                     .background(pill.routeColor)
-            } else if pill.route?.type == .bus {
+            } else if let route = pill.route, RoutePill.isRectangle(route: route) {
                 content.overlay(
                     Rectangle().stroke(pill.routeColor ?? .deemphasized, lineWidth: 1).padding(1)
                 )
@@ -126,7 +154,7 @@ struct RoutePill: View {
         let pill: RoutePill
 
         func body(content: Content) -> some View {
-            if pill.route?.type == .bus {
+            if let route = pill.route, RoutePill.isRectangle(route: route) {
                 content.clipShape(Rectangle())
             } else {
                 content.clipShape(Capsule())
@@ -153,12 +181,18 @@ struct RoutePill: View {
 struct RoutePill_Previews: PreviewProvider {
     struct RoutePillPreview: View {
         let route: Route
+        let line: Line?
+
+        init(route: Route, line: Line? = nil) {
+            self.route = route
+            self.line = line
+        }
 
         var body: some View {
             GridRow {
-                RoutePill(route: route, type: .fixed, isActive: false)
-                RoutePill(route: route, type: .fixed)
-                RoutePill(route: route, type: .flex)
+                RoutePill(route: route, line: line, type: .fixed, isActive: false)
+                RoutePill(route: route, line: line, type: .fixed)
+                RoutePill(route: route, line: line, type: .flex)
             }
         }
     }
@@ -351,6 +385,13 @@ struct RoutePill_Previews: PreviewProvider {
                 textColor: "000000",
                 lineId: "line-Red",
                 routePatternIds: nil
+            ), line: Line(
+                id: "line-Red",
+                color: "DA291C",
+                longName: "Red Line",
+                shortName: "",
+                sortOrder: 10010,
+                textColor: "FFFFFF"
             ))
         }
     }

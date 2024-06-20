@@ -23,7 +23,7 @@ struct StopDetailsPage: View {
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
-    @State var servedRoutes: [Route] = []
+    @State var servedRoutes: [(route: Route, line: Line?)] = []
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
@@ -178,6 +178,7 @@ struct StopDetailsPage: View {
         if let departures = nearbyVM.departures {
             servedRoutes = Set(departures.routes.map { pattern in pattern.route })
                 .sorted { $0.sortOrder < $1.sortOrder }
+                .map { (route: $0, line: globalFetcher.lookUpLine(lineId: $0.lineId)) }
         }
     }
 }
