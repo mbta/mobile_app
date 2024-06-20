@@ -128,7 +128,7 @@ struct UpcomingTripView: View {
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
-            Text("No real-time data").font(.footnote)
+            Text("No real-time data").font(Typography.footnote)
         case .loading:
             ProgressView()
         }

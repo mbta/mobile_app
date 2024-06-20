@@ -21,7 +21,8 @@ enum Typography {
     static let title3 = Font.custom("Inter", size: 20, relativeTo: .title3).monospacedDigit()
     static let title3Semibold = title3.weight(.semibold)
 
-    static let headlineBold = Font.custom("Inter", size: 17, relativeTo: .headline).monospacedDigit().bold()
+    static let headline = Font.custom("Inter", size: 17, relativeTo: .headline).monospacedDigit()
+    static let headlineBold = headline.bold()
     static let headlineBoldItalic = headlineBold.italic()
 
     static let body = Font.custom("Inter", size: 17, relativeTo: .body).monospacedDigit()
