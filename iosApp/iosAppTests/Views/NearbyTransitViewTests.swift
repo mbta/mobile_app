@@ -330,7 +330,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictions)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().find(text: "No Predictions"))
+                .parent().find(text: "No real-time data"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().find(text: "10 min"))
