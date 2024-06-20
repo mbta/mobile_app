@@ -59,5 +59,5 @@ struct TripDetailsStopListSplitView: View {
             followingStops: [entry(stop3, 30, pred3)]
         ),
         now: Date.now.toKotlinInstant()
-    )
+    ).font(Typography.body)
 }

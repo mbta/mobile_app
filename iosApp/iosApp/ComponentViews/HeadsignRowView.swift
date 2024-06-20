@@ -102,6 +102,6 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
                                 ),
                                 routeType: .heavyRail)
             }
-        }
+        }.font(Typography.body)
     }
 }
