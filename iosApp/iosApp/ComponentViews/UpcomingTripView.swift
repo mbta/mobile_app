@@ -91,7 +91,7 @@ struct UpcomingTripView: View {
                     .font(.footnote)
                     .fontWeight(.semibold)
             case let .schedule(schedule):
-                HStack(spacing: Self.subjectSpacing) {
+                if routeType == .commuterRail {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
                         .accessibilityLabel(isFirst
                             ? accessibilityFormatters.scheduledFirst(
@@ -99,14 +99,26 @@ struct UpcomingTripView: View {
                                 vehicleText: vehicleTypeText
                             )
                             : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                    Image(.faClock)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: iconSize, height: iconSize)
-                        .padding(4)
-                        .foregroundStyle(Color.deemphasized)
+                        .font(.headline.weight(.regular))
+                } else {
+                    HStack(spacing: Self.subjectSpacing) {
+                        Text(schedule.scheduleTime.toNSDate(), style: .time)
+                            .accessibilityLabel(isFirst
+                                ? accessibilityFormatters.scheduledFirst(
+                                    date: schedule.scheduleTime.toNSDate(),
+                                    vehicleText: vehicleTypeText
+                                )
+                                : accessibilityFormatters
+                                .scheduledOther(date: schedule.scheduleTime.toNSDate()))
+                            .font(.footnote)
+                            .fontWeight(.semibold)
+                        Image(.faClock)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: iconSize, height: iconSize)
+                            .padding(4)
+                            .foregroundStyle(Color.deemphasized)
+                    }
                 }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
@@ -118,7 +130,7 @@ struct UpcomingTripView: View {
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
-            Text("No Predictions")
+            Text("No real-time data").font(.footnote)
         case .loading:
             ProgressView()
         }
@@ -200,16 +212,21 @@ struct NoServiceView: View {
     }
 
     var body: some View {
-        HStack {
-            rawText
-                .font(.footnote)
-                .textCase(.uppercase)
-            rawImage
-                .resizable()
-                .scaledToFill()
-                .foregroundStyle(Color.deemphasized)
-                .frame(width: iconSize, height: iconSize)
-                .padding(2)
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                fullText
+                    .lineLimit(1)
+                fullImage
+            }
+            VStack(alignment: .trailing) {
+                fullText
+                    .lineLimit(1)
+                fullImage
+            }
+            HStack {
+                fullText
+                fullImage
+            }
         }
     }
 
@@ -227,12 +244,27 @@ struct NoServiceView: View {
 
     var rawImage: Image {
         switch effect {
-        case .detour: Image(systemName: "circle.fill")
+        case .detour: Image(systemName: "exclamationmark.triangle.fill")
         case .shuttle: Image(.modeBus)
         case .stopClosed: Image(systemName: "xmark.octagon.fill")
         case .suspension: Image(systemName: "exclamationmark.triangle.fill")
         case .unknown: Image(systemName: "questionmark.circle.fill")
         }
+    }
+
+    var fullText: some View {
+        rawText
+            .font(.footnote)
+            .textCase(.uppercase)
+    }
+
+    var fullImage: some View {
+        rawImage
+            .resizable()
+            .scaledToFill()
+            .foregroundStyle(Color.deemphasized)
+            .frame(width: iconSize, height: iconSize)
+            .padding(2)
     }
 }
 
@@ -244,6 +276,9 @@ struct UpcomingTripView_Previews: PreviewProvider {
             UpcomingTripView(prediction: .noService(.stopClosure), routeType: .heavyRail)
             UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
         }
+        .padding(8)
+        .frame(maxWidth: 150)
+        .background(Color.fill1)
         .previewDisplayName("No Service")
     }
 }
