@@ -148,6 +148,6 @@ struct SearchResultView_Previews: PreviewProvider {
                     ),
                 ]
             )
-        ).previewDisplayName("SearchResultView")
+        ).font(Typography.body).previewDisplayName("SearchResultView")
     }
 }

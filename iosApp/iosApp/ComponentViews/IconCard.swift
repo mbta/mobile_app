@@ -84,6 +84,6 @@ struct IconCard_Previews: PreviewProvider {
                 icon: Image(systemName: "tram"),
                 details: Text(verbatim: "Failed to load trains, sorry")
             )
-        }
+        }.font(Typography.body)
     }
 }

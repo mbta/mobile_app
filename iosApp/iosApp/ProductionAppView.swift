@@ -59,6 +59,7 @@ struct ProductionAppView: View {
 
     var body: some View {
         ContentView()
+            .font(Typography.body)
             .environmentObject(locationDataManager)
             .environmentObject(backendProvider)
             .environmentObject(globalFetcher)

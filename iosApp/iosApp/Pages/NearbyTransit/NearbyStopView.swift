@@ -17,7 +17,7 @@ struct NearbyStopView: View {
 
     var body: some View {
         Text(patternsAtStop.stop.name)
-            .font(.callout)
+            .font(Typography.callout)
             .foregroundStyle(Color.text)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)

@@ -69,12 +69,12 @@ struct UpcomingTripView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
-                Text("BRD").font(.headline).bold()
+                Text("BRD").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.boardingFirst(vehicleText: vehicleTypeText)
                         : accessibilityFormatters.boardingOther())
             case .arriving:
-                Text("ARR").font(.headline).bold()
+                Text("ARR").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
                         : accessibilityFormatters.arrivingOther())
@@ -88,8 +88,7 @@ struct UpcomingTripView: View {
                             vehicleText: vehicleTypeText
                         )
                         : accessibilityFormatters.distantFutureOther(date: format.predictionTime.toNSDate()))
-                    .font(.footnote)
-                    .fontWeight(.semibold)
+                    .font(Typography.footnoteSemibold)
             case let .schedule(schedule):
                 if routeType == .commuterRail {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
@@ -99,7 +98,7 @@ struct UpcomingTripView: View {
                                 vehicleText: vehicleTypeText
                             )
                             : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(.headline.weight(.regular))
+                        .font(Typography.headlineBold)
                 } else {
                     HStack(spacing: Self.subjectSpacing) {
                         Text(schedule.scheduleTime.toNSDate(), style: .time)
@@ -110,8 +109,7 @@ struct UpcomingTripView: View {
                                 )
                                 : accessibilityFormatters
                                 .scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                            .font(.footnote)
-                            .fontWeight(.semibold)
+                            .font(Typography.footnoteSemibold)
                         Image(.faClock)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -130,7 +128,7 @@ struct UpcomingTripView: View {
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
-            Text("No real-time data").font(.footnote)
+            Text("No real-time data").font(Typography.footnote)
         case .loading:
             ProgressView()
         }
@@ -254,7 +252,7 @@ struct NoServiceView: View {
 
     var fullText: some View {
         rawText
-            .font(.footnote)
+            .font(Typography.footnote)
             .textCase(.uppercase)
     }
 

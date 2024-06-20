@@ -62,5 +62,5 @@ struct TripDetailsStopView: View {
             ]
         ),
         now: Date.now.toKotlinInstant()
-    )
+    ).font(Typography.body)
 }
