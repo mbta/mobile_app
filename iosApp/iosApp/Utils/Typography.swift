@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+/// Presets for all fonts in the design system of the app. Any style not included here is not present in the design
+/// system and is probably not supposed to be used.
 enum Typography {
     static let largeTitle = Font.custom("Inter", size: 36, relativeTo: .largeTitle).monospacedDigit()
     static let largeTitleBold = largeTitle.bold()
