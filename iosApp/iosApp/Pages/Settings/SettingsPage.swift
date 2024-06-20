@@ -23,7 +23,7 @@ struct SettingsPage: View {
     var body: some View {
         VStack {
             Text("Settings")
-                .font(.title)
+                .font(Typography.title1)
 
             List {
                 Toggle(isOn: $mapDebug) { Label("Map Debug", systemImage: "location.magnifyingglass") }
@@ -52,4 +52,5 @@ struct SettingsPage: View {
 
 #Preview {
     SettingsPage()
+        .font(Typography.body)
 }

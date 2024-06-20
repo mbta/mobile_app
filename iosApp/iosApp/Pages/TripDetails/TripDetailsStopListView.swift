@@ -44,5 +44,5 @@ struct TripDetailsStopListView: View {
             .init(stop: stop2, stopSequence: 2, schedule: sched2, prediction: pred2, vehicle: nil, routes: []),
         ]),
         now: Date.now.toKotlinInstant()
-    )
+    ).font(Typography.body)
 }

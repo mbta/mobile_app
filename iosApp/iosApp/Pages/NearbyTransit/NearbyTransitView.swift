@@ -419,6 +419,6 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 pushNavEntry: { _ in },
                 now: Date.now.toKotlinInstant()
             )
-        }.previewDisplayName("NearbyRouteView")
+        }.font(Typography.body).previewDisplayName("NearbyRouteView")
     }
 }

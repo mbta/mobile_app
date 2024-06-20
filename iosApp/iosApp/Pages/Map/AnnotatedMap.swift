@@ -113,8 +113,7 @@ struct AnnotatedMap: View {
                         MapViewAnnotation(coordinate: child.coordinate) {
                             Image(systemName: "door.left.hand.open").annotationLabel(
                                 Text(child.name.split(separator: " - ").last ?? "")
-                                    .font(.caption)
-                                    .italic()
+                                    .font(Typography.captionItalic)
                                     .foregroundStyle(.gray)
                                     .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
                             )
@@ -130,8 +129,7 @@ struct AnnotatedMap: View {
                                 .frame(width: 12, height: 12)
                                 .annotationLabel(
                                     Text(child.platformName ?? child.name)
-                                        .font(.caption)
-                                        .italic()
+                                        .font(Typography.captionItalic)
                                         .foregroundStyle(.gray)
                                         .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
                                 )

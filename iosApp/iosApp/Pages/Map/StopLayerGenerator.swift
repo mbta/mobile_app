@@ -74,6 +74,7 @@ class StopLayerGenerator {
         stopLayer.textField = .expression(MapExp.stopLabelTextExp(forBus: forBus))
 
         stopLayer.textColor = .constant(.init(.text))
+        stopLayer.textFont = .constant(["Inter Regular"])
         stopLayer.textHaloColor = .constant(.init(.fill3))
         stopLayer.textHaloWidth = .constant(2.0)
         stopLayer.textSize = .constant(13)

@@ -55,15 +55,15 @@ struct VehicleOnTripView: View {
 
                     VStack(alignment: .leading) {
                         vehicleStatusDescription(vehicle.currentStatus)
-                            .font(.caption)
-                        Text(stop.name).bold()
+                            .font(Typography.caption)
+                        Text(stop.name).font(Typography.bodySemibold)
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
 
             HStack {
                 Text("last updated \(lastUpdatedSeconds(), specifier: "%.0f")s ago")
-                    .font(.caption2)
+                    .font(Typography.caption2)
 
             }.frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -113,6 +113,7 @@ struct VehicleCardView_Previews: PreviewProvider {
 
         List {
             VehicleCardView(vehicle: vehicle, route: red, line: nil, stop: stop, trip: trip)
-        }.previewDisplayName("VehicleCard")
+        }.font(Typography.body)
+            .previewDisplayName("VehicleCard")
     }
 }
