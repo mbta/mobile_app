@@ -13,7 +13,7 @@ import SwiftUI
 struct AnnotatedMap: View {
     static let annotationTextZoomThreshold = 19.0
 
-    private let centerMovingGestures: Set<GestureType> = [.pan, .doubleTapToZoomIn]
+    private let centerMovingGestures: Set<GestureType> = [.pan, .pinch, .doubleTapToZoomIn, .quickZoom]
 
     var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
