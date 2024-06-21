@@ -28,7 +28,7 @@ struct TripDetailsStopView: View {
         let routeView = ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(stop.routes, id: \.id) { route in
-                    RoutePill(route: route, type: .flex)
+                    RoutePill(route: route, line: nil, type: .flex)
                 }
             }.padding(.horizontal, 20)
         }.padding(.horizontal, -20)
@@ -62,5 +62,5 @@ struct TripDetailsStopView: View {
             ]
         ),
         now: Date.now.toKotlinInstant()
-    )
+    ).font(Typography.body)
 }

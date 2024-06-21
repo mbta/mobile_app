@@ -42,9 +42,7 @@ struct NearbyTransitView: View {
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
             } else {
-                Text("Loading...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.top, 24)
+                LoadingCard()
             }
         }
         .onAppear {
@@ -381,7 +379,7 @@ struct NearbyTransitView: View {
 //        )
 //        List {
 //            NearbyRouteView(
-//                nearbyRoute: StopsAssociated.WithRoute(
+//                nearbyRoute: StopAssociatedRoute(
 //                    route: busRoute,
 //                    patternsByStop: [
 //                        PatternsByStop(
@@ -408,7 +406,7 @@ struct NearbyTransitView: View {
 //                now: Date.now.toKotlinInstant()
 //            )
 //            NearbyRouteView(
-//                nearbyRoute: StopsAssociated.WithRoute(
+//                nearbyRoute: StopAssociatedRoute(
 //                    route: crRoute,
 //                    patternsByStop: [
 //                        PatternsByStop(
@@ -434,6 +432,6 @@ struct NearbyTransitView: View {
 //                pushNavEntry: { _ in },
 //                now: Date.now.toKotlinInstant()
 //            )
-//        }.previewDisplayName("NearbyRouteView")
+//        }.font(Typography.body).previewDisplayName("NearbyRouteView")
 //    }
 // }

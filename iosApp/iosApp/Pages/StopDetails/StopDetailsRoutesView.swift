@@ -43,7 +43,6 @@ struct StopDetailsRoutesView: View {
     }
 }
 
-//
 // #Preview {
 //    let objects = ObjectCollectionBuilder()
 //    let route1 = objects.route { route in
@@ -90,5 +89,5 @@ struct StopDetailsRoutesView: View {
 //                  alertsHere: nil),
 //        ]),
 //    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
-//    pinRoute: { routeId in print("Pinned route \(routeId)") })
+//    pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)
 // }

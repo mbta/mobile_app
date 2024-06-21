@@ -13,6 +13,8 @@ import SwiftUI
 struct AnnotatedMap: View {
     static let annotationTextZoomThreshold = 19.0
 
+    private let centerMovingGestures: Set<GestureType> = [.pan, .pinch, .doubleTapToZoomIn, .quickZoom]
+
     var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
@@ -58,7 +60,13 @@ struct AnnotatedMap: View {
     @ViewBuilder
     var map: Map {
         Map(viewport: $viewportProvider.viewport) {
-            Puck2D().pulsing(.none)
+            Puck2D()
+                .topImage(.init(resource: .locationDot))
+                .shadowImage(.init(resource: .locationHalo))
+                .pulsing(.init(color: .keyInverse, radius: .constant(24)))
+                .showsAccuracyRing(true)
+                .accuracyRingColor(.deemphasized.withAlphaComponent(0.1))
+                .accuracyRingBorderColor(.halo)
             if let nearbyLocation {
                 MapViewAnnotation(coordinate: nearbyLocation) {
                     Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)
@@ -105,8 +113,7 @@ struct AnnotatedMap: View {
                         MapViewAnnotation(coordinate: child.coordinate) {
                             Image(systemName: "door.left.hand.open").annotationLabel(
                                 Text(child.name.split(separator: " - ").last ?? "")
-                                    .font(.caption)
-                                    .italic()
+                                    .font(Typography.captionItalic)
                                     .foregroundStyle(.gray)
                                     .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
                             )
@@ -122,8 +129,7 @@ struct AnnotatedMap: View {
                                 .frame(width: 12, height: 12)
                                 .annotationLabel(
                                     Text(child.platformName ?? child.name)
-                                        .font(.caption)
-                                        .italic()
+                                        .font(Typography.captionItalic)
                                         .foregroundStyle(.gray)
                                         .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
                                 )
@@ -139,5 +145,21 @@ struct AnnotatedMap: View {
                 }
             }
         }
+        .gestureHandlers(.init(onBegin: { gestureType in
+                                   if centerMovingGestures.contains(gestureType) {
+                                       viewportProvider.setIsManuallyCentering(true)
+                                   }
+                               },
+                               onEnd: { gestureType, willAnimate in
+                                   if centerMovingGestures.contains(gestureType), !willAnimate {
+                                       viewportProvider.setIsManuallyCentering(false)
+                                   }
+                               },
+                               onEndAnimation: { gestureType in
+
+                                   if centerMovingGestures.contains(gestureType) {
+                                       viewportProvider.setIsManuallyCentering(false)
+                                   }
+                               }))
     }
 }

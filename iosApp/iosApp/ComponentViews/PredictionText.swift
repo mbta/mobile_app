@@ -14,9 +14,9 @@ struct PredictionText: View {
         var prediction = AttributedString(localized: "\(minutes, specifier: "%ld") min")
         for run in prediction.runs {
             if run.localizedNumericArgument != nil {
-                prediction[run.range].font = .headline.bold()
+                prediction[run.range].font = Typography.headlineBold
             } else {
-                prediction[run.range].font = .body
+                prediction[run.range].font = Typography.body
             }
         }
         return prediction

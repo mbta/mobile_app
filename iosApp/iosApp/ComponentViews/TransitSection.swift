@@ -21,12 +21,7 @@ struct TransitSection<Header: View, Content: View>: View {
             content()
         }
         .background(Color.fill3)
-        .clipShape(.rect(cornerRadius: 8.0))
-        .overlay(
-            // SwiftUI doesn't let you use a border and a corner radius at the same time
-            RoundedRectangle(cornerRadius: 8.0)
-                .stroke(Color.halo, lineWidth: 1)
-        )
+        .withRoundedBorder()
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
     }

@@ -435,8 +435,7 @@ fun NearbyStaticData.withRealtimeInfo(
         .filterNot { it.isEmpty() }
         .toList()
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
-        .sortedWith(compareBy(Route.subwayFirstComparator) { it.sortRoute() })
-        .sortedWith(compareBy { !pinnedRoutes.contains(it.id) })
+        .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
 }
 
 class NearbyStaticDataBuilder {

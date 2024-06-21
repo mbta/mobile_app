@@ -69,7 +69,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
-        try sut.inspect().zStack().callOnChange(newValue: nextStop)
+        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: nextStop)
 
         wait(for: [newStopSchedulesFetchedExpectation], timeout: 5)
     }
@@ -96,7 +96,7 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        try sut.inspect().find(button: "Clear Filter").tap()
+        try sut.inspect().find(button: "All").tap()
         XCTAssertNil(filter.wrappedValue)
     }
 
@@ -244,11 +244,11 @@ final class StopDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().zStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().zStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
     }

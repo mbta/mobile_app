@@ -86,4 +86,13 @@ final class ViewportProviderTest: XCTestCase {
 
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
+
+    func testSetIsManuallyCentering() throws {
+        let provider = ViewportProvider()
+
+        XCTAssertFalse(provider.isManuallyCentering)
+        provider.setIsManuallyCentering(true)
+
+        XCTAssertTrue(provider.isManuallyCentering)
+    }
 }

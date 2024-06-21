@@ -23,7 +23,7 @@ struct StopDetailsPage: View {
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
-    @State var servedRoutes: [Route] = []
+    @State var servedRoutes: [(route: Route, line: Line?)] = []
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
@@ -50,48 +50,31 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.fill2.ignoresSafeArea(.all)
-            VStack(spacing: 0) {
-                VStack {
-                    SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
-                    StopDetailsRoutePills(servedRoutes: servedRoutes, tapRoutePill: tapRoutePill, filter: $filter)
-                    clearFilterButton
-                }
-                .padding([.bottom], 8)
-                .border(Color.halo.opacity(0.15), width: 2)
-
-                if let departures = nearbyVM.departures {
-                    StopDetailsRoutesView(
-                        departures: departures,
-                        now: now.toKotlinInstant(),
+        StopDetailsView(globalFetcher: globalFetcher,
+                        stop: stop,
                         filter: $filter,
-                        pushNavEntry: nearbyVM.pushNavEntry,
-                        pinRoute: togglePinnedRoute,
-                        pinnedRoutes: pinnedRoutes
-                    ).frame(maxHeight: .infinity)
-                } else {
-                    ProgressView()
-                }
+                        nearbyVM: nearbyVM,
+                        pinnedRoutes: pinnedRoutes,
+                        togglePinnedRoute: togglePinnedRoute)
+            .onAppear {
+                changeStop(stop)
+                loadPinnedRoutes()
             }
-        }
-        .onAppear {
-            changeStop(stop)
-            loadPinnedRoutes()
-        }
-        .onChange(of: stop) { nextStop in changeStop(nextStop) }
-        .onChange(of: globalFetcher.response) { _ in updateDepartures() }
-        .onChange(of: predictions) { _ in updateDepartures() }
-        .onChange(of: schedulesResponse) { _ in updateDepartures() }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .onReceive(timer) { input in
-            now = input
-            updateDepartures()
-        }
-        .onDisappear { leavePredictions() }
-        .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
-                                onInactive: leavePredictions,
-                                onBackground: leavePredictions)
+
+            .onChange(of: stop) { nextStop in changeStop(nextStop) }
+            .onChange(of: globalFetcher.response) { _ in updateDepartures() }
+            .onChange(of: pinnedRoutes) { _ in updateDepartures() }
+            .onChange(of: predictions) { _ in updateDepartures() }
+            .onChange(of: schedulesResponse) { _ in updateDepartures() }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .onReceive(timer) { input in
+                now = input
+                updateDepartures()
+            }
+            .onDisappear { leavePredictions() }
+            .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
+                                    onInactive: leavePredictions,
+                                    onBackground: leavePredictions)
     }
 
     func loadPinnedRoutes() {
@@ -107,18 +90,11 @@ struct StopDetailsPage: View {
     func togglePinnedRoute(_ routeId: String) {
         Task {
             do {
-                try await togglePinnedUsecase.execute(route: routeId)
+                _ = try await togglePinnedUsecase.execute(route: routeId)
                 loadPinnedRoutes()
             } catch {
                 debugPrint(error)
             }
-        }
-    }
-
-    @ViewBuilder
-    private var clearFilterButton: some View {
-        if filter != nil {
-            Button(action: { filter = nil }, label: { Text("Clear Filter") })
         }
     }
 
@@ -154,19 +130,6 @@ struct StopDetailsPage: View {
         predictionsRepository.disconnect()
     }
 
-    func tapRoutePill(_ route: Route) {
-        if filter?.routeId == route.id { return }
-        guard let departures = nearbyVM.departures else { return }
-        guard let patterns = departures.routes
-            .first(where: { patterns in patterns.routes.contains { $0.id == route.id }})
-        else { return }
-        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
-        let defaultDirectionId = patterns.patterns.flatMap { headsign in
-            headsign.patterns.map { pattern in pattern.directionId }
-        }.min() ?? 0
-        filter = .init(routeId: route.id, directionId: defaultDirectionId)
-    }
-
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
         servedRoutes = []
@@ -177,6 +140,7 @@ struct StopDetailsPage: View {
                 global: globalResponse,
                 schedules: schedulesResponse,
                 predictions: predictions,
+                pinnedRoutes: pinnedRoutes,
                 filterAtTime: now.toKotlinInstant()
             )
         } else {
@@ -184,11 +148,5 @@ struct StopDetailsPage: View {
         }
 
         nearbyVM.setDepartures(newDepartures)
-        if let departures = nearbyVM.departures {
-            servedRoutes = Set(departures.routes.compactMap { pattern in
-                pattern.routes.min { $0.sortOrder < $1.sortOrder }
-            })
-            .sorted { $0.sortOrder < $1.sortOrder }
-        }
     }
 }

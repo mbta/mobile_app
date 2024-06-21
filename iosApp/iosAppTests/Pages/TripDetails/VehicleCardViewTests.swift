@@ -30,7 +30,7 @@ final class VehicleCardViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
+        let sut = VehicleCardView(vehicle: vehicle, route: route, line: nil, stop: stop, trip: trip)
         XCTAssertNotNil(try sut.inspect().find(text: "This vehicle is completing another trip."))
     }
 
@@ -53,7 +53,7 @@ final class VehicleCardViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip, now: now)
+        let sut = VehicleCardView(vehicle: vehicle, route: route, line: nil, stop: stop, trip: trip, now: now)
         XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
         XCTAssertNotNil(try sut.inspect().find(text: "Red Line"))
         let lastUpdated = try sut.inspect().find(
@@ -79,7 +79,7 @@ final class VehicleCardViewTests: XCTestCase {
             stop.name = "Davis"
         }
 
-        let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
+        let sut = VehicleCardView(vehicle: vehicle, route: route, line: nil, stop: stop, trip: trip)
         XCTAssertNotNil(try sut.inspect().find(text: "Approaching"))
         XCTAssertNotNil(try sut.inspect().find(text: "Davis"))
     }
@@ -97,7 +97,7 @@ final class VehicleCardViewTests: XCTestCase {
         let route = objects.route { _ in }
         let stop = objects.stop { _ in }
 
-        let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
+        let sut = VehicleCardView(vehicle: vehicle, route: route, line: nil, stop: stop, trip: trip)
         XCTAssertNotNil(try sut.inspect().find(text: "Next stop"))
     }
 
@@ -114,7 +114,7 @@ final class VehicleCardViewTests: XCTestCase {
         let route = objects.route { _ in }
         let stop = objects.stop { _ in }
 
-        let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
+        let sut = VehicleCardView(vehicle: vehicle, route: route, line: nil, stop: stop, trip: trip)
         XCTAssertNotNil(try sut.inspect().find(text: "Now at"))
     }
 
@@ -125,7 +125,7 @@ final class VehicleCardViewTests: XCTestCase {
             trip.headsign = "Alewife"
         }
 
-        let sut = VehicleCardView(vehicle: nil, route: nil, stop: nil, trip: trip)
+        let sut = VehicleCardView(vehicle: nil, route: nil, line: nil, stop: nil, trip: trip)
         XCTAssertNotNil(try sut.inspect().find(text: "Loading..."))
     }
 }

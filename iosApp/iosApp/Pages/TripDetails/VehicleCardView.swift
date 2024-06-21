@@ -13,6 +13,7 @@ import SwiftUI
 struct VehicleCardView: View {
     let vehicle: Vehicle?
     let route: Route?
+    let line: Line?
     let stop: Stop?
     let trip: Trip?
     var now: Date = .now
@@ -20,7 +21,7 @@ struct VehicleCardView: View {
     var body: some View {
         if let vehicle, let route, let stop, let trip {
             if vehicle.tripId == trip.id {
-                VehicleOnTripView(vehicle: vehicle, route: route, stop: stop, trip: trip, now: now)
+                VehicleOnTripView(vehicle: vehicle, route: route, line: line, stop: stop, trip: trip, now: now)
             } else {
                 Text("This vehicle is completing another trip.")
             }
@@ -33,6 +34,7 @@ struct VehicleCardView: View {
 struct VehicleOnTripView: View {
     let vehicle: Vehicle
     let route: Route
+    let line: Line?
     let stop: Stop
     let trip: Trip
     let now: Date
@@ -40,7 +42,7 @@ struct VehicleOnTripView: View {
         VStack {
             HStack {
                 VStack {
-                    RoutePill(route: route, type: .flex)
+                    RoutePill(route: route, line: line, type: .flex)
                     routeIcon(route)
                 }.padding([.trailing], 8)
                 VStack {
@@ -53,15 +55,15 @@ struct VehicleOnTripView: View {
 
                     VStack(alignment: .leading) {
                         vehicleStatusDescription(vehicle.currentStatus)
-                            .font(.caption)
-                        Text(stop.name).bold()
+                            .font(Typography.caption)
+                        Text(stop.name).font(Typography.bodySemibold)
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
 
             HStack {
                 Text("last updated \(lastUpdatedSeconds(), specifier: "%.0f")s ago")
-                    .font(.caption2)
+                    .font(Typography.caption2)
 
             }.frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -110,7 +112,8 @@ struct VehicleCardView_Previews: PreviewProvider {
         }
 
         List {
-            VehicleCardView(vehicle: vehicle, route: red, stop: stop, trip: trip)
-        }.previewDisplayName("VehicleCard")
+            VehicleCardView(vehicle: vehicle, route: red, line: nil, stop: stop, trip: trip)
+        }.font(Typography.body)
+            .previewDisplayName("VehicleCard")
     }
 }

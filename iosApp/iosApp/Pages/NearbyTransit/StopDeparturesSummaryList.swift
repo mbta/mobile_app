@@ -38,6 +38,7 @@ struct StopDeparturesSummaryList: View {
                         )
                     }
                     .padding(8)
+                    .frame(minHeight: 44)
                     .padding(.leading, 8)
 
                     if index < patternsByStop.patterns.count - 1 {
@@ -63,6 +64,7 @@ struct StopDeparturesSummaryList: View {
                         )
                     }
                     .padding(8)
+                    .frame(minHeight: 44)
                     .padding(.leading, 8)
 
                     if index < patternsByStop.patterns.count - 1 {

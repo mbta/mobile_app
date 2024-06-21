@@ -39,11 +39,10 @@ struct DirectionPicker: View {
                     Button(action: action) {
                         VStack(alignment: .leading) {
                             Text("\(directionNameFormatted(directions[Int(direction)])) to")
-                                .font(.footnote)
+                                .font(Typography.footnote)
                                 .textCase(.none)
                             Text(directions[Int(direction)].destination)
-                                .font(.body)
-                                .fontWeight(.bold)
+                                .font(Typography.bodySemibold)
                                 .textCase(.none)
                         }
                         .padding(8)

@@ -22,7 +22,7 @@ struct TransitHeader<Content: View>: View {
     var body: some View {
         Label {
             Text(name)
-                .font(.body).bold()
+                .font(Typography.bodySemibold)
                 .accessibilityHeading(.h2)
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(textColor)
