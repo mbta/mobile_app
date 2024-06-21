@@ -67,7 +67,9 @@ class NearbyViewModel: ObservableObject {
     }
 
     func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
-        guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else { return }
+        guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
+            return
+        }
         if nearbyState.loading, let fetchNearbyTask, !fetchNearbyTask.isCancelled {
             fetchNearbyTask.cancel()
         }

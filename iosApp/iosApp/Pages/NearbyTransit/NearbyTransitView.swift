@@ -42,9 +42,7 @@ struct NearbyTransitView: View {
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
             } else {
-                Text("Loading...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.top, 24)
+                LoadingCard()
             }
         }
         .onAppear {
