@@ -6,7 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Foundation
 import shared
 import SwiftUI
 
@@ -22,34 +21,23 @@ struct RouteHeader<Content: View>: View {
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
-        Label {
-            routeName
-                .accessibilityHeading(.h2)
-                .multilineTextAlignment(.leading)
-                .foregroundStyle(Color(hex: route.textColor))
-                .textCase(.none)
-                .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
-            rightContent()
-        } icon: {
-            routeIcon(route)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .scaledToFit()
-                .frame(maxHeight: modeIconHeight, alignment: .topLeading)
-                .foregroundStyle(Color(hex: route.textColor))
-        }
-        .padding(8)
-        .background(Color(hex: route.color))
+        TransitHeader(
+            name: routeName,
+            backgroundColor: Color(hex: route.color),
+            textColor: Color(hex: route.textColor),
+            modeIcon: routeIcon(route),
+            rightContent: rightContent
+        )
     }
 
-    private var routeName: Text {
+    private var routeName: String {
         switch route.type {
         case .bus:
-            Text(route.shortName)
+            route.shortName
         case .commuterRail:
-            Text(route.longName.replacingOccurrences(of: "/", with: " / ")).font(.body).bold()
+            route.longName.replacingOccurrences(of: "/", with: " / ")
         default:
-            Text(route.longName).font(.body).bold()
+            route.longName
         }
     }
 }

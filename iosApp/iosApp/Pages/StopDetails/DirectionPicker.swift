@@ -14,22 +14,22 @@ struct DirectionPicker: View {
 
     let availableDirections: [Int32]
     let directions: [Direction]
-    let route: Route
+    let route: Route?
 
     private let reformatDirectionNames: Set<String> = ["North", "South", "East", "West"]
 
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
-        availableDirections = Set(patternsByStop.patternsByHeadsign.map { pattern in
+        availableDirections = Set(patternsByStop.patterns.map { pattern in
             pattern.directionId()
         }).sorted()
         directions = patternsByStop.directions
-        route = patternsByStop.route
+        route = patternsByStop.routes.first
 
         _filter = filter
     }
 
     var body: some View {
-        if availableDirections.count > 1 {
+        if let route, availableDirections.count > 1 {
             let deselectedBackroundColor = deselectedBackgroundColor(route)
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in

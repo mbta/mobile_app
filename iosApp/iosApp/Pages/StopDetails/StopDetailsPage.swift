@@ -157,10 +157,11 @@ struct StopDetailsPage: View {
     func tapRoutePill(_ route: Route) {
         if filter?.routeId == route.id { return }
         guard let departures = nearbyVM.departures else { return }
-        guard let patterns = departures.routes.first(where: { patterns in patterns.route.id == route.id })
+        guard let patterns = departures.routes
+            .first(where: { patterns in patterns.routes.contains { $0.id == route.id }})
         else { return }
-        analytics.tappedRouteFilter(routeId: patterns.route.id, stopId: stop.id)
-        let defaultDirectionId = patterns.patternsByHeadsign.flatMap { headsign in
+        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
+        let defaultDirectionId = patterns.patterns.flatMap { headsign in
             headsign.patterns.map { pattern in pattern.directionId }
         }.min() ?? 0
         filter = .init(routeId: route.id, directionId: defaultDirectionId)
@@ -184,8 +185,10 @@ struct StopDetailsPage: View {
 
         nearbyVM.setDepartures(newDepartures)
         if let departures = nearbyVM.departures {
-            servedRoutes = Set(departures.routes.map { pattern in pattern.route })
-                .sorted { $0.sortOrder < $1.sortOrder }
+            servedRoutes = Set(departures.routes.compactMap { pattern in
+                pattern.routes.min { $0.sortOrder < $1.sortOrder }
+            })
+            .sorted { $0.sortOrder < $1.sortOrder }
         }
     }
 }

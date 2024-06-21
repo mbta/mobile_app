@@ -16,26 +16,61 @@ struct StopDeparturesSummaryList: View {
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
     var body: some View {
-        ForEach(Array(patternsByStop.patternsByHeadsign.enumerated()),
-                id: \.element.headsign) { index, patternsByHeadsign in
+        ForEach(Array(patternsByStop.patterns.enumerated()),
+                id: \.element.id) { index, patterns in
+            switch patterns as AnyObject {
+            case let patternsByHeadsign as Patterns.ByHeadsign:
+                VStack(spacing: 0) {
+                    SheetNavigationLink(
+                        value: .stopDetails(
+                            patternsByStop.stop,
+                            .init(
+                                routeId: patternsByStop.routeIdentifier,
+                                directionId: patternsByHeadsign.directionId()
+                            )
+                        ),
+                        action: pushNavEntry
+                    ) {
+                        HeadsignRowView(
+                            headsign: patternsByHeadsign.headsign,
+                            predictions: patternsByHeadsign.format(now: now),
+                            routeType: patternsByHeadsign.route.type
+                        )
+                    }
+                    .padding(8)
+                    .padding(.leading, 8)
 
-            VStack(spacing: 0) {
-                SheetNavigationLink(value: .stopDetails(patternsByStop.stop,
-                                                        .init(routeId: patternsByStop.route.id,
-                                                              directionId: patternsByHeadsign.directionId())),
-                                    action: pushNavEntry) {
-                    HeadsignRowView(
-                        headsign: patternsByHeadsign.headsign,
-                        predictions: patternsByHeadsign.format(now: now),
-                        routeType: patternsByHeadsign.route.type
-                    )
+                    if index < patternsByStop.patterns.count - 1 {
+                        Divider().background(Color.halo)
+                    }
                 }
-                .padding(8)
-                .padding(.leading, 8)
+            case let patternsByDirection as Patterns.ByDirection:
+                VStack(spacing: 0) {
+                    SheetNavigationLink(
+                        value: .stopDetails(
+                            patternsByStop.stop,
+                            .init(
+                                routeId: patternsByStop.routeIdentifier,
+                                directionId: patternsByDirection.directionId()
+                            )
+                        ),
+                        action: pushNavEntry
+                    ) {
+                        HeadsignRowView(
+                            headsign: patternsByDirection.direction.destination,
+                            predictions: patternsByDirection.format(now: now),
+                            routeType: patternsByDirection.representativeRoute.type
+                        )
+                    }
+                    .padding(8)
+                    .padding(.leading, 8)
 
-                if index < patternsByStop.patternsByHeadsign.count - 1 {
-                    Divider().background(Color.halo)
+                    if index < patternsByStop.patterns.count - 1 {
+                        Divider().background(Color.halo)
+                    }
                 }
+            default:
+                EmptyView()
             }
         }.accessibilityElement(children: .contain)
             .accessibilityHint(Text("Open for more arrivals"))

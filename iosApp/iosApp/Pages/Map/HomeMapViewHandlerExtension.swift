@@ -156,7 +156,7 @@ extension HomeMapView {
 
         guard let departures = nearbyVM.departures,
               let patterns = departures.routes.first(where: { patterns in
-                  patterns.route.id == vehicle.routeId
+                  patterns.routes.contains { $0.id == vehicle.routeId }
               }),
               let trip = patterns.allUpcomingTrips().first(where: { upcoming in
                   upcoming.trip.id == tripId

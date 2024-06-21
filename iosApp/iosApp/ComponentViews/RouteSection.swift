@@ -1,0 +1,27 @@
+//
+//  RouteSection.swift
+//  iosApp
+//
+//  Created by Brandon Rodriguez on 4/16/24.
+//  Copyright © 2024 MBTA. All rights reserved.
+//
+
+import shared
+import SwiftUI
+
+struct RouteSection<Content: View>: View {
+    let route: Route
+    let pinned: Bool
+    let onPin: (String) -> Void
+    let content: () -> Content
+
+    @ScaledMetric private var modeIconHeight: CGFloat = 24
+
+    var body: some View {
+        TransitSection(header: {
+            RouteHeader(route: route) {
+                PinButton(pinned: pinned, action: { onPin(route.id) })
+            }
+        }, content: content)
+    }
+}

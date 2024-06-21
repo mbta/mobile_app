@@ -1,50 +1,124 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import io.github.dellisd.spatialk.geojson.Position
+import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.Instant
 
 /**
  * Aggregates stops and the patterns that serve them by route. The list of routes is ordered with
  * subway routes first, then sorted by distance. Ties are broken by the sort order of the first
  * route pattern.
  */
-data class NearbyStaticData(val data: List<RouteWithStops>) {
-    data class HeadsignWithPatterns(
-        val route: Route,
-        val headsign: String,
-        val patterns: List<RoutePattern>
-    ) : Comparable<HeadsignWithPatterns> {
-        override fun compareTo(other: HeadsignWithPatterns): Int =
+data class NearbyStaticData(val data: List<TransitWithStops>) {
+
+    sealed class StaticPatterns(val label: String) : Comparable<StaticPatterns> {
+        abstract val patterns: List<RoutePattern>
+
+        data class ByHeadsign(
+            val route: Route,
+            val headsign: String,
+            override val patterns: List<RoutePattern>
+        ) : StaticPatterns(headsign)
+
+        data class ByDirection(
+            val line: Line,
+            val routes: List<Route>,
+            val direction: Direction,
+            override val patterns: List<RoutePattern>
+        ) : StaticPatterns(direction.destination)
+
+        override fun compareTo(other: StaticPatterns): Int =
             patterns.first().compareTo(other.patterns.first())
     }
 
-    data class StopWithPatterns(
-        val route: Route,
-        val stop: Stop,
-        /** Includes both parent and child stop IDs if present */
-        val allStopIds: Set<String>,
-        val patternsByHeadsign: List<HeadsignWithPatterns>,
-        val directions: List<Direction>
-    ) {
-        constructor(
-            route: Route,
-            stop: Stop,
-            allStopIds: Set<String>,
-            patternsByHeadsign: List<HeadsignWithPatterns>
-        ) : this(
-            route,
-            stop,
-            allStopIds,
-            patternsByHeadsign,
-            listOf(Direction(0, route), Direction(1, route))
-        )
+    sealed class StopPatterns() {
+        abstract val stop: Stop
+        abstract val allStopIds: Set<String>
+        abstract val patterns: List<StaticPatterns>
+        abstract val directions: List<Direction>
+
+        data class ForRoute(
+            val route: Route,
+            override val stop: Stop,
+            /** Includes both parent and child stop IDs if present */
+            override val allStopIds: Set<String>,
+            override val patterns: List<StaticPatterns>,
+            override val directions: List<Direction>
+        ) : StopPatterns() {
+            constructor(
+                route: Route,
+                stop: Stop,
+                allStopIds: Set<String>,
+                patterns: List<StaticPatterns>,
+            ) : this(
+                route,
+                stop,
+                allStopIds,
+                patterns,
+                listOf(Direction(0, route), Direction(1, route))
+            )
+        }
+
+        data class ForLine(
+            val line: Line,
+            val routes: List<Route>,
+            override val stop: Stop,
+            /** Includes both parent and child stop IDs if present */
+            override val allStopIds: Set<String>,
+            override val patterns: List<StaticPatterns>,
+            override val directions: List<Direction>
+        ) : StopPatterns() {
+            constructor(
+                line: Line,
+                routes: List<Route>,
+                stop: Stop,
+                patterns: List<StaticPatterns>,
+                allStopIds: Set<String>,
+            ) : this(
+                line,
+                routes,
+                stop,
+                allStopIds,
+                patterns,
+                listOf(Direction(0, routes.first()), Direction(1, routes.first()))
+            )
+        }
     }
 
-    data class RouteWithStops(val route: Route, val patternsByStop: List<StopWithPatterns>)
+    sealed class TransitWithStops() {
+        fun sortRoute(): Route =
+            when (this) {
+                is ByRoute -> this.route
+                is ByLine -> this.routes.max()
+            }
+
+        data class ByLine(
+            val line: Line,
+            val routes: List<Route>,
+            val patternsByStop: List<StopPatterns>
+        ) : TransitWithStops()
+
+        data class ByRoute(val route: Route, val patternsByStop: List<StopPatterns>) :
+            TransitWithStops()
+    }
 
     fun stopIds(): Set<String> =
-        data.flatMapTo(mutableSetOf()) { (_, patternsByStop) -> patternsByStop.map { it.stop.id } }
+        data.flatMapTo(mutableSetOf()) { transit ->
+            when (transit) {
+                is TransitWithStops.ByRoute -> {
+                    transit.patternsByStop.map { it.stop.id }
+                }
+                is TransitWithStops.ByLine -> {
+                    transit.patternsByStop.map { it.stop.id }
+                }
+            }
+        }
 
     constructor(
         global: GlobalResponse,
@@ -90,42 +164,165 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
                 }
             }
 
+            val byLine = patternsByRouteAndStop.entries.groupBy { it.key.lineId }
+
+            val touchedLines = mutableSetOf<Line>()
+
             patternsByRouteAndStop
-                .map { (route, patternsByStop) ->
-                    RouteWithStops(
-                        route = route,
-                        patternsByStop =
-                            patternsByStop.map { (stop, patterns) ->
-                                StopWithPatterns(
-                                    route = route,
-                                    stop = stop,
-                                    allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) },
-                                    patternsByHeadsign =
-                                        patterns
-                                            .groupBy {
-                                                val representativeTrip =
-                                                    trips.getValue(it.representativeTripId)
-                                                representativeTrip.headsign
-                                            }
-                                            .map { (headsign, routePatterns) ->
-                                                HeadsignWithPatterns(
-                                                    route,
-                                                    headsign,
-                                                    routePatterns.sorted()
-                                                )
-                                            }
-                                            .sorted(),
-                                    directions =
-                                        Direction.getDirections(global, stop, route, patterns)
-                                )
-                            }
-                    )
+                .mapNotNull { (route, patternsByStop) ->
+                    val line = global.lines[route.lineId]
+                    val isGrouped = groupedLines.contains(route.lineId) && line != null
+                    val lineRoutes = byLine[line?.id]?.map { (route, _) -> route } ?: emptyList()
+
+                    if (isGrouped && touchedLines.contains(line)) {
+                        null
+                    } else if (line != null && isGrouped && lineRoutes.size > 1) {
+                        touchedLines.add(line)
+                        val sortedRoutes = lineRoutes.sorted()
+                        val stopPatternsByRoute =
+                            byLine[line.id]?.associate { entry -> Pair(entry.key, entry.value) }
+                                ?: emptyMap()
+                        buildTransitForLine(
+                            line,
+                            sortedRoutes,
+                            stopPatternsByRoute,
+                            fullStopIds,
+                            global,
+                        )
+                    } else {
+                        TransitWithStops.ByRoute(
+                            route = route,
+                            patternsByStop =
+                                patternsByStop.map { (stop, patterns) ->
+                                    buildStopPatternsForRoute(
+                                        stop,
+                                        patterns,
+                                        route,
+                                        fullStopIds.getOrElse(stop.id) { setOf(stop.id) },
+                                        global
+                                    )
+                                }
+                        )
+                    }
                 }
-                .sortedWith(compareBy(Route.subwayFirstComparator) { it.route })
+                .sortedWith(compareBy(Route.subwayFirstComparator) { it.sortRoute() })
         }
     )
 
     companion object {
+        val groupedLines = listOf("line-Green")
+
+        fun buildStopPatternsForRoute(
+            stop: Stop,
+            patterns: List<RoutePattern>,
+            route: Route,
+            allStopIds: Set<String>,
+            global: GlobalResponse
+        ): StopPatterns.ForRoute {
+            val patternsByHeadsign =
+                patterns.groupBy {
+                    val representativeTrip = global.trips.getValue(it.representativeTripId)
+                    representativeTrip.headsign
+                }
+            println("PFR - ${route.id}@${stop.id} ${patternsByHeadsign.keys}")
+            return StopPatterns.ForRoute(
+                route = route,
+                stop = stop,
+                allStopIds = allStopIds,
+                patterns =
+                    patternsByHeadsign
+                        .map { (headsign, routePatterns) ->
+                            StaticPatterns.ByHeadsign(route, headsign, routePatterns.sorted())
+                        }
+                        .sorted(),
+                directions = Direction.getDirections(global, stop, route, patterns)
+            )
+        }
+
+        fun buildStopPatternsForLine(
+            stop: Stop,
+            patterns: Map<Route, List<RoutePattern>>,
+            line: Line,
+            allStopIds: Set<String>,
+            global: GlobalResponse,
+        ): StopPatterns.ForLine {
+            val routes = patterns.keys.sorted()
+            val routeDirections =
+                patterns
+                    .map { (route, patterns) ->
+                        Pair(route.id, Direction.getDirections(global, stop, route, patterns))
+                    }
+                    .toMap()
+            val patternsByDirection =
+                patterns.values.flatten().groupBy {
+                    routeDirections[it.routeId]?.get(it.directionId)
+                }
+            val linePatterns =
+                patternsByDirection.mapNotNull { (direction, directionPatterns) ->
+                    if (direction == null) {
+                        return@mapNotNull null
+                    }
+                    val directionRoutes =
+                        directionPatterns.mapNotNull { global.routes[it.routeId] }.toSet().sorted()
+                    StaticPatterns.ByDirection(
+                        line = line,
+                        routes = directionRoutes,
+                        direction = direction,
+                        patterns = directionPatterns.sorted(),
+                    )
+                }
+
+            println(
+                "PFL - ${line.id}@${stop.id} (routes: ${routes.map {it.id}} ${patternsByDirection.keys}"
+            )
+            return StopPatterns.ForLine(
+                line = line,
+                routes = routes,
+                stop = stop,
+                allStopIds = allStopIds,
+                patterns = linePatterns,
+            )
+        }
+
+        fun buildTransitForLine(
+            line: Line,
+            routes: List<Route>,
+            stopPatternsByRoute: Map<Route, Map<Stop, List<RoutePattern>>>,
+            fullStopIds: Map<String, Set<String>>,
+            global: GlobalResponse,
+        ): TransitWithStops.ByLine {
+            // We have a map of maps, but need to flip the stops to be the top level keys
+            val patternsByRouteAndStop =
+                stopPatternsByRoute.entries.flatMap { routeEntry ->
+                    routeEntry.value.entries.map { stopEntry ->
+                        Triple(routeEntry.key, stopEntry.key, stopEntry.value)
+                    }
+                }
+            val groupedPatterns = patternsByRouteAndStop.groupBy { it.second }
+
+            return TransitWithStops.ByLine(
+                line = line,
+                routes = routes,
+                patternsByStop =
+                    groupedPatterns.map { (stop, patternsByRoute) ->
+                        val allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) }
+                        // If only one route in the line is served at the stop, don't use ForLine
+                        if (patternsByRoute.size == 1) {
+                            val (route, _, patterns) = patternsByRoute.first()
+                            buildStopPatternsForRoute(stop, patterns, route, allStopIds, global)
+                        } else {
+                            buildStopPatternsForLine(
+                                stop,
+                                patternsByRoute.associate { Pair(it.first, it.third) },
+                                line,
+                                allStopIds,
+                                global,
+                            )
+                        }
+                    },
+            )
+        }
+
         fun build(block: NearbyStaticDataBuilder.() -> Unit): NearbyStaticData {
             val builder = NearbyStaticDataBuilder()
             builder.block()
@@ -134,25 +331,133 @@ data class NearbyStaticData(val data: List<RouteWithStops>) {
     }
 }
 
+/**
+ * Attaches [schedules] and [predictions] to the route, stop, and headsign to which they apply.
+ * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
+ * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
+ * sort order.
+ */
+fun NearbyStaticData.withRealtimeInfo(
+    sortByDistanceFrom: Position,
+    schedules: ScheduleResponse?,
+    predictions: PredictionsStreamDataResponse?,
+    alerts: AlertsStreamDataResponse?,
+    filterAtTime: Instant,
+    pinnedRoutes: Set<String>
+): List<StopsAssociated> {
+    // add predictions and apply filtering
+    val upcomingTripsByHeadsignAndStop =
+        UpcomingTrip.tripsMappedBy(
+            schedules,
+            predictions,
+            scheduleKey = { schedule, scheduleData ->
+                val trip = scheduleData.trips.getValue(schedule.tripId)
+                UpcomingTripKey.ByHeadsign(schedule.routeId, trip.headsign, schedule.stopId)
+            },
+            predictionKey = { prediction, streamData ->
+                val trip = streamData.trips.getValue(prediction.tripId)
+                UpcomingTripKey.ByHeadsign(prediction.routeId, trip.headsign, prediction.stopId)
+            }
+        )
+            ?: emptyMap()
+
+    val upcomingTripsByDirectionAndStop =
+        UpcomingTrip.tripsMappedBy(
+            schedules,
+            predictions,
+            scheduleKey = { schedule, scheduleData ->
+                val trip = scheduleData.trips.getValue(schedule.tripId)
+                UpcomingTripKey.ByDirection(schedule.routeId, trip.directionId, schedule.stopId)
+            },
+            predictionKey = { prediction, streamData ->
+                val trip = streamData.trips.getValue(prediction.tripId)
+                UpcomingTripKey.ByDirection(prediction.routeId, trip.directionId, prediction.stopId)
+            }
+        )
+            ?: emptyMap()
+
+    val cutoffTime = filterAtTime.plus(90.minutes)
+
+    val activeRelevantAlerts =
+        alerts?.alerts?.values?.filter {
+            it.isActive(filterAtTime) && Alert.serviceDisruptionEffects.contains(it.effect)
+        }
+
+    return data
+        .asSequence()
+        .map { transit ->
+            when (transit) {
+                is NearbyStaticData.TransitWithStops.ByRoute ->
+                    StopsAssociated.WithRoute(
+                        transit.route,
+                        transit.patternsByStop
+                            .map {
+                                PatternsByStop(
+                                    it,
+                                    upcomingTripsByHeadsignAndStop +
+                                        upcomingTripsByDirectionAndStop,
+                                    cutoffTime,
+                                    activeRelevantAlerts
+                                )
+                            }
+                            .filterNot { it.patterns.isEmpty() }
+                            .sortedWith(
+                                compareBy(
+                                    { it.distanceFrom(sortByDistanceFrom) },
+                                    { it.patterns.first() }
+                                )
+                            )
+                    )
+                is NearbyStaticData.TransitWithStops.ByLine ->
+                    StopsAssociated.WithLine(
+                        transit.line,
+                        transit.routes,
+                        transit.patternsByStop
+                            .map {
+                                PatternsByStop(
+                                    it,
+                                    upcomingTripsByHeadsignAndStop +
+                                        upcomingTripsByDirectionAndStop,
+                                    cutoffTime,
+                                    activeRelevantAlerts
+                                )
+                            }
+                            .filterNot { it.patterns.isEmpty() }
+                            .sortedWith(
+                                compareBy(
+                                    { it.distanceFrom(sortByDistanceFrom) },
+                                    { it.patterns.first() }
+                                )
+                            )
+                    )
+            }
+        }
+        .filterNot { it.isEmpty() }
+        .toList()
+        .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
+        .sortedWith(compareBy(Route.subwayFirstComparator) { it.sortRoute() })
+        .sortedWith(compareBy { !pinnedRoutes.contains(it.id) })
+}
+
 class NearbyStaticDataBuilder {
-    val data = mutableListOf<NearbyStaticData.RouteWithStops>()
+    val data = mutableListOf<NearbyStaticData.TransitWithStops>()
 
     fun route(route: Route, block: PatternsByStopBuilder.() -> Unit) {
         val builder = PatternsByStopBuilder(route)
         builder.block()
-        data.add(NearbyStaticData.RouteWithStops(route, builder.data))
+        data.add(NearbyStaticData.TransitWithStops.ByRoute(route, builder.data))
     }
 
     class PatternsByHeadsignBuilder(val route: Route) {
-        val data = mutableListOf<NearbyStaticData.HeadsignWithPatterns>()
+        val data = mutableListOf<NearbyStaticData.StaticPatterns.ByHeadsign>()
 
         fun headsign(headsign: String, patterns: List<RoutePattern>) {
-            data.add(NearbyStaticData.HeadsignWithPatterns(route, headsign, patterns))
+            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, patterns))
         }
     }
 
     class PatternsByStopBuilder(val route: Route) {
-        val data = mutableListOf<NearbyStaticData.StopWithPatterns>()
+        val data = mutableListOf<NearbyStaticData.StopPatterns>()
 
         @DefaultArgumentInterop.Enabled
         fun stop(
@@ -163,7 +468,7 @@ class NearbyStaticDataBuilder {
             val builder = PatternsByHeadsignBuilder(route)
             builder.block()
             data.add(
-                NearbyStaticData.StopWithPatterns(
+                NearbyStaticData.StopPatterns.ForRoute(
                     route,
                     stop,
                     setOf(stop.id).plus(childStopIds),

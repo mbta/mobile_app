@@ -25,7 +25,7 @@ struct NearbyStopView: View {
             .background(Color.fill2)
         StopDeparturesSummaryList(patternsByStop: patternsAtStop, now: now, pushNavEntry: { entry in
             pushNavEntry(entry)
-            analytics.tappedDeparture(routeId: patternsAtStop.route.id, stopId: patternsAtStop.stop.id)
+            analytics.tappedDeparture(routeId: patternsAtStop.routeIdentifier, stopId: patternsAtStop.stop.id)
         })
     }
 }

@@ -55,7 +55,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         }
 
                     PatternsByStop(
-                        route,
+                        listOf(route),
+                        null,
                         stop,
                         patternsByHeadsign
                             .map { (headsign, patterns) ->
@@ -66,7 +67,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                     } else {
                                         null
                                     }
-                                PatternsByHeadsign(route, headsign, patterns, upcomingTrips)
+                                Patterns.ByHeadsign(route, headsign, patterns, upcomingTrips)
                             }
                             .filter {
                                 loading ||
@@ -77,10 +78,12 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         Direction.getDirections(global, stop, route, routePatterns)
                     )
                 }
-                .filterNot { it.patternsByHeadsign.isEmpty() }
+                .filterNot { it.patterns.isEmpty() }
                 .sortedWith(
-                    (compareBy<PatternsByStop, Route>(Route.subwayFirstComparator) { it.route })
-                        .then(compareBy { it.route })
+                    (compareBy<PatternsByStop, Route>(Route.subwayFirstComparator) {
+                            it.routes.min()
+                        })
+                        .then(compareBy { it.routes.min() })
                 )
         }
     )
