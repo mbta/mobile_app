@@ -65,8 +65,8 @@ class StopLayerGenerator {
 
         let busAlertLayer = createAlertLayer(id: busAlertLayerId, forBus: true)
 
-        return [stopSelectedPinLayer, stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer] + transferLayers +
-            alertLayers
+        return [stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer] + transferLayers +
+            alertLayers + [stopSelectedPinLayer]
     }
 
     static func createAlertLayer(id: String, index: Int = 0, forBus: Bool = false) -> SymbolLayer {
