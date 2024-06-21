@@ -21,7 +21,9 @@ enum StopIcons {
     // This is a single transparent pixel, used to create a layer just for tap target padding
     static let stopDummyIcon = "\(stopIconPrefix)dummy-tap-pixel"
 
-    static let all: [String] = basicStopIcons + specialCaseStopIcons + stopContainerIcons + [stopDummyIcon]
+    static let stopPinIcon = "\(stopIconPrefix)pin"
+
+    static let all: [String] = basicStopIcons + specialCaseStopIcons + stopContainerIcons + [stopDummyIcon, stopPinIcon]
 
     static let basicStopIcons = MapStopRoute.allCases.flatMap { routeType in atZooms(stopIconPrefix, routeType.name) }
     static let specialCaseStopIcons = terminalIcons + branchIcons + atZooms(

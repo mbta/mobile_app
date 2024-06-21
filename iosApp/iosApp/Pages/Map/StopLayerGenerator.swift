@@ -18,6 +18,7 @@ class StopLayerGenerator {
 
     static let stopLayerId = "stop-layer"
     static let stopTouchTargetLayerId = "\(stopLayerId)-touch-target"
+    static let stopLayerSelectedPinId = "\(stopLayerId)-selected-pin"
 
     static let busLayerId = "\(stopLayerId)-bus"
     static let busAlertLayerId = "\(stopLayerId)-bus-alert"
@@ -40,6 +41,15 @@ class StopLayerGenerator {
         stopTouchTargetLayer.iconPadding = .constant(22.0)
         includeSharedProps(on: &stopTouchTargetLayer)
 
+        var stopSelectedPinLayer = SymbolLayer(id: Self.stopLayerSelectedPinId, source: sourceId)
+        stopSelectedPinLayer.iconImage = .expression(Exp(.switchCase) {
+            MapExp.selectedExp
+            Exp(.image) { StopIcons.stopPinIcon }
+            Exp(.image) { "" }
+        })
+        stopSelectedPinLayer.iconOffset = offsetPinValue()
+        includeSharedProps(on: &stopSelectedPinLayer)
+
         let transferLayers = (0 ..< Self.maxTransferLayers).map { index in
             var transferLayer = SymbolLayer(id: Self.getTransferLayerId(index), source: sourceId)
             transferLayer.iconImage = StopIcons.getTransferLayerIcon(index)
@@ -55,7 +65,8 @@ class StopLayerGenerator {
 
         let busAlertLayer = createAlertLayer(id: busAlertLayerId, forBus: true)
 
-        return [stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer] + transferLayers + alertLayers
+        return [stopSelectedPinLayer, stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer] + transferLayers +
+            alertLayers
     }
 
     static func createAlertLayer(id: String, index: Int = 0, forBus: Bool = false) -> SymbolLayer {
@@ -111,6 +122,15 @@ class StopLayerGenerator {
             MapExp.offsetTransferExp(closeZoom: false, index)
             MapDefaults.closeZoomThreshold
             MapExp.offsetTransferExp(closeZoom: true, index)
+        })
+    }
+
+    static func offsetPinValue() -> Value<[Double]> {
+        .expression(Exp(.step) {
+            Exp(.zoom)
+            MapExp.offsetPinExp(closeZoom: false)
+            MapDefaults.closeZoomThreshold
+            MapExp.offsetPinExp(closeZoom: true)
         })
     }
 }
