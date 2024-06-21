@@ -265,6 +265,32 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    func testSchedulesFetchedOnAppear() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { _ in }
+        let stop = objects.stop { _ in }
+
+        let schedulesFetchedExp = XCTestExpectation(description: "Schedules fetched")
+
+        var sut = NearbyTransitView(
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
+            predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects),
+                                                        callback: { _ in schedulesFetchedExp.fulfill() }),
+            getNearby: { _, _ in },
+            state: .constant(route52State),
+            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            alerts: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init(),
+            scheduleResponse: .init(objects: objects)
+        )
+
+        ViewHosting.host(view: sut)
+        wait(for: [schedulesFetchedExp], timeout: 1)
+    }
+
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 

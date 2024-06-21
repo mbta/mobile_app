@@ -50,6 +50,7 @@ struct NearbyTransitView: View {
             joinPredictions(state.nearbyByRouteAndStop?.stopIds())
             updateNearbyRoutes()
             updatePinnedRoutes()
+            getSchedule()
             didAppear?(self)
         }
         .onChange(of: globalFetcher.response) { _ in
@@ -58,7 +59,9 @@ struct NearbyTransitView: View {
         .onChange(of: location) { newLocation in
             getNearby(location: newLocation)
         }
-        .onChange(of: state.nearbyByRouteAndStop) { nearbyByRouteAndStop in
+        .onChange(of: state.nearbyByRouteAndStop) {
+            nearbyByRouteAndStop in
+            let _ = print("nearbyByRouteAndStopChanged")
             updateNearbyRoutes()
             getSchedule()
             joinPredictions(nearbyByRouteAndStop?.stopIds())
