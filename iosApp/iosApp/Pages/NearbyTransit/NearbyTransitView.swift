@@ -61,7 +61,6 @@ struct NearbyTransitView: View {
         }
         .onChange(of: state.nearbyByRouteAndStop) {
             nearbyByRouteAndStop in
-            let _ = print("nearbyByRouteAndStopChanged")
             updateNearbyRoutes()
             getSchedule()
             joinPredictions(nearbyByRouteAndStop?.stopIds())
