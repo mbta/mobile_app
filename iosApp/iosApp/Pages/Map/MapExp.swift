@@ -204,6 +204,37 @@ enum MapExp {
         }
     }
 
+    static func offsetPinExp(closeZoom: Bool) -> Exp {
+        let singleRouteOffset: Double = closeZoom ? 38 : 33
+        let doubleRouteOffset: Double = closeZoom ? 52 : 42
+        let tripleRouteOffset: Double = closeZoom ? 65 : 50
+        return Exp(.step) {
+            Exp(.length) { routesExp }
+            Exp(.switchCase) {
+                // Ferry terminals have a special larger icon at the wide zoom level
+                Exp(.all) {
+                    Exp(.eq) { topRouteExp; MapStopRoute.ferry.name }
+                    Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                }
+                xyExp([0, -singleRouteOffset - (closeZoom ? 0 : 2)])
+                // Buses have an extra small dot at wide zoom, and at close zoom, the height
+                // is slightly repositioned to center the alert on the tombstone, ignoring the
+                // small pole rectangle at the bottom
+                Exp(.eq) { topRouteExp; MapStopRoute.bus.name }
+                xyExp([0, -singleRouteOffset - (closeZoom ? 2 : 0)])
+                // Rail terminals at wide zoom have a special pill icon rather than the usual dot
+                Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                xyExp([0, -singleRouteOffset - (closeZoom ? 0 : 2)])
+                // Regular rail stops, have a basic pill at close zoom and a dot at wide
+                xyExp([0, -singleRouteOffset])
+            }
+            2
+            xyExp([0, -doubleRouteOffset])
+            3
+            xyExp([0, -tripleRouteOffset])
+        }
+    }
+
     // Similar to offsetAlertExp, the labels are set to different height and width offsets
     // based on the type of icon that they're next to. I'm not certain what units these values
     // are in though, they definitely aren't pixels, and the docs don't specify.

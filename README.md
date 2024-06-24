@@ -128,4 +128,8 @@ aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key-pa
 
 ### Production Deploys
 
-todo
+Pushing a new tag will automatically deploy to the internal testing group (on iOS), and then release notes can be added and the build can be more widely published manually.
+
+The tag should match the version exactly - no `v` prefix - and the version needs to be set beforehand in `iosApp/iosApp/Info.plist`.
+
+Android production deploys aren't set up yet.

@@ -218,10 +218,17 @@ class StopDetailsDeparturesTest {
             }
 
         val routeNotPinned = objects.route { sortOrder = 1 }
-        val routePattern2 =
+        val routeNotPinnedPattern =
             objects.routePattern(routeNotPinned) {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "B" }
+            }
+
+        val routeNotPinned2 = objects.route { sortOrder = 2 }
+        val routeNotPinnedPattern2 =
+            objects.routePattern(routeNotPinned2) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "C" }
             }
 
         val stop = objects.stop()
@@ -245,7 +252,19 @@ class StopDetailsDeparturesTest {
                             PatternsByHeadsign(
                                 routeNotPinned,
                                 "B",
-                                listOf(routePattern2),
+                                listOf(routeNotPinnedPattern),
+                                listOf()
+                            ),
+                        )
+                    ),
+                    PatternsByStop(
+                        routeNotPinned2,
+                        stop,
+                        listOf(
+                            PatternsByHeadsign(
+                                routeNotPinned2,
+                                "C",
+                                listOf(routeNotPinnedPattern2),
                                 listOf()
                             ),
                         )
@@ -256,7 +275,14 @@ class StopDetailsDeparturesTest {
                 stop,
                 GlobalResponse(
                     objects,
-                    mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                    mapOf(
+                        stop.id to
+                            listOf(
+                                routePattern1.id,
+                                routeNotPinnedPattern2.id,
+                                routeNotPinnedPattern.id
+                            )
+                    )
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),

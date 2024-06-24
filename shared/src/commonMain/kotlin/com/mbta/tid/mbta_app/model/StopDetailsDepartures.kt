@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.RealtimePatterns
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -87,7 +86,12 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     )
                 }
                 .filterNot { it.patterns.isEmpty() }
-                .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.routes.min() })
+                .sortedWith(
+                    compareBy<PatternsByStop, Route>(Route.relevanceComparator(pinnedRoutes)) {
+                            it.representativeRoute
+                        }
+                        .thenBy { it.representativeRoute }
+                )
         }
     )
 }

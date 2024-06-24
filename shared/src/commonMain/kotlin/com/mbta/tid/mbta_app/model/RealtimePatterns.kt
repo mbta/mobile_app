@@ -1,14 +1,5 @@
-package com.mbta.tid.mbta_app.model.response
+package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.Line
-import com.mbta.tid.mbta_app.model.NearbyStaticData
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.RoutePattern
-import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlinx.datetime.Instant
 
 typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>

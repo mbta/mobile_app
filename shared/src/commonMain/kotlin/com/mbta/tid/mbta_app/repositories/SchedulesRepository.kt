@@ -55,13 +55,24 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
     }
 }
 
-class MockScheduleRepository : ISchedulesRepository {
+class MockScheduleRepository(
+    private val scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
+    private val callback: (stopIds: List<String>) -> Unit = {}
+) : ISchedulesRepository {
+    constructor() :
+        this(
+            scheduleResponse = ScheduleResponse(schedules = listOf(), trips = mapOf()),
+            callback = {}
+        )
+
     override suspend fun getSchedule(stopIds: List<String>, now: Instant): ScheduleResponse {
-        return ScheduleResponse(schedules = listOf(), trips = mapOf())
+        callback(stopIds)
+        return scheduleResponse
     }
 
     override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
-        return ScheduleResponse(schedules = listOf(), trips = mapOf())
+        callback(stopIds)
+        return scheduleResponse
     }
 }
 
