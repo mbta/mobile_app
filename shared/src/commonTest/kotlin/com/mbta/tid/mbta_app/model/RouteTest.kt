@@ -43,33 +43,28 @@ class RouteTest {
     }
 
     @Test
-    fun `relevanceComparator sorts pinned then subway then rest`() {
+    fun `relevanceComparator sorts pinned then subway then rest in original order`() {
         val pinnedSubway: Route = route {
             type = RouteType.HEAVY_RAIL
             id = "pinned_subway"
-            sortOrder = 5
         }
         val subway = route {
             type = RouteType.HEAVY_RAIL
             id = "subway"
-            sortOrder = 4
         }
 
         val pinnedBus = route {
             type = RouteType.BUS
             id = "pinned_bus"
-            sortOrder = 3
         }
         val bus = route {
             type = RouteType.BUS
             id = "bus"
-            sortOrder = 2
         }
 
         val cr = route {
             type = RouteType.COMMUTER_RAIL
             id = "cr"
-            sortOrder = 1
         }
 
         assertEquals(
