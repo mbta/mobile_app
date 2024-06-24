@@ -173,15 +173,29 @@ final class HomeMapViewTests: XCTestCase {
         var routeLayerGenerator: RouteLayerGenerator?
         var stopSourceGenerator: StopSourceGenerator?
         var stopLayerGenerator: StopLayerGenerator?
+        var childStopSourceGenerator: ChildStopSourceGenerator?
+        var childStopLayerGenerator: ChildStopLayerGenerator?
         private let updateRouteSourceCallback: (RouteSourceGenerator) -> Void
 
         init(updateRouteSourceCallback: @escaping (RouteSourceGenerator) -> Void) {
             self.updateRouteSourceCallback = updateRouteSourceCallback
         }
 
-        func addSources(routeSourceGenerator _: RouteSourceGenerator, stopSourceGenerator _: StopSourceGenerator) {}
-        func addLayers(routeLayerGenerator _: RouteLayerGenerator, stopLayerGenerator _: StopLayerGenerator) {}
-        func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator _: StopSourceGenerator) {
+        func addSources(
+            routeSourceGenerator _: RouteSourceGenerator,
+            stopSourceGenerator _: StopSourceGenerator,
+            childStopSourceGenerator _: ChildStopSourceGenerator
+        ) {}
+        func addLayers(
+            routeLayerGenerator _: RouteLayerGenerator,
+            stopLayerGenerator _: StopLayerGenerator,
+            childStopLayerGenerator _: ChildStopLayerGenerator
+        ) {}
+        func updateSourceData(
+            routeSourceGenerator: RouteSourceGenerator,
+            stopSourceGenerator _: StopSourceGenerator,
+            childStopSourceGenerator _: ChildStopSourceGenerator
+        ) {
             updateRouteSourceCallback(routeSourceGenerator)
         }
 
@@ -190,6 +204,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         func updateSourceData(stopSourceGenerator _: StopSourceGenerator) {}
+        func updateSourceData(childStopSourceGenerator _: ChildStopSourceGenerator) {}
     }
 
     func testUpdatesRouteSourceWhenStopSelected() throws {
