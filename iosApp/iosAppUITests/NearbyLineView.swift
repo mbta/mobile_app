@@ -20,7 +20,12 @@ struct NearbyLineView: View {
         LineSection(line: nearbyLine.line, routes: nearbyLine.routes, pinned: pinned, onPin: onPin) {
             ForEach(Array(nearbyLine.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
-                    NearbyStopView(patternsAtStop: patternsAtStop, pushNavEntry: pushNavEntry, now: now)
+                    NearbyStopView(
+                        patternsAtStop: patternsAtStop,
+                        condenseHeadsignPredictions: nearbyLine.condensePredictions,
+                        now: now,
+                        pushNavEntry: pushNavEntry
+                    )
                     if index < nearbyLine.patternsByStop.count - 1 {
                         Divider().background(Color.halo)
                     }

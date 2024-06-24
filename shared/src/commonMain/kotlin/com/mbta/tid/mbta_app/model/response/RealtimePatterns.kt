@@ -1,23 +1,29 @@
-package com.mbta.tid.mbta_app.model
+package com.mbta.tid.mbta_app.model.response
 
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.distance
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.NearbyStaticData
+import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlinx.datetime.Instant
 
-sealed class UpcomingTripKey() {
-    data class ByHeadsign(val routeId: String, val headsign: String, val stopId: String) :
-        UpcomingTripKey()
+typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>
 
-    data class ByDirection(val routeId: String, val direction: Int, val stopId: String) :
-        UpcomingTripKey()
-}
-
-typealias UpcomingTripsMap = Map<UpcomingTripKey, List<UpcomingTrip>>
-
-sealed class Patterns(
+sealed class RealtimePatterns(
     val label: String,
-) : Comparable<Patterns> {
+) : Comparable<RealtimePatterns> {
+    sealed class UpcomingTripKey() {
+        data class ByHeadsign(val routeId: String, val headsign: String, val stopId: String) :
+            UpcomingTripKey()
+
+        data class ByDirection(val routeId: String, val direction: Int, val stopId: String) :
+            UpcomingTripKey()
+    }
+
     abstract val patterns: List<RoutePattern>
     abstract val upcomingTrips: List<UpcomingTrip>?
     abstract val alertsHere: List<Alert>?
@@ -31,10 +37,11 @@ sealed class Patterns(
     data class ByHeadsign(
         val route: Route,
         val headsign: String,
+        val line: Line?,
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
-    ) : Patterns(headsign) {
+    ) : RealtimePatterns(headsign) {
         override val id = headsign
 
         constructor(
@@ -45,6 +52,7 @@ sealed class Patterns(
         ) : this(
             staticData.route,
             staticData.headsign,
+            staticData.line,
             staticData.patterns,
             if (upcomingTripsMap != null) {
                 stopIds
@@ -75,10 +83,10 @@ sealed class Patterns(
             }
         )
 
-        override fun compareTo(other: Patterns): Int =
+        override fun compareTo(other: RealtimePatterns): Int =
             patterns.first().compareTo(other.patterns.first())
 
-        fun format(now: Instant): Format {
+        fun format(now: Instant, count: Int = 2): Format {
             val alert = alertsHere?.firstOrNull()
             if (alert != null) return Format.NoService(alert)
             if (this.upcomingTrips == null) return Format.Loading
@@ -92,7 +100,7 @@ sealed class Patterns(
                             (this.route.type.isSubway() &&
                                 it.format is UpcomingTrip.Format.Schedule)
                     }
-                    .take(2)
+                    .take(count)
             if (tripsToShow.isEmpty()) return Format.None
             return Format.Some(tripsToShow)
         }
@@ -110,9 +118,20 @@ sealed class Patterns(
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
-    ) : Patterns(direction.destination) {
+    ) : RealtimePatterns(direction.destination) {
+
         override val id = direction.destination
         val representativeRoute = routes.min()
+        val routesByTrip =
+            upcomingTrips
+                ?.mapNotNull {
+                    val route =
+                        routes.firstOrNull { route -> route.id == it.trip.routeId }
+                            ?: return@mapNotNull null
+                    Pair(it.trip.id, route)
+                }
+                ?.toMap()
+                ?: emptyMap()
 
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
@@ -156,15 +175,24 @@ sealed class Patterns(
             }
         )
 
-        override fun compareTo(other: Patterns): Int =
-            patterns.first().compareTo(other.patterns.first())
+        override fun compareTo(other: RealtimePatterns): Int =
+            compareValuesBy(
+                this,
+                other,
+                { it.patterns.first().directionId },
+                {
+                    when (it) {
+                        is ByDirection -> -1
+                        is ByHeadsign -> 1
+                    }
+                },
+                { it.patterns.first() }
+            )
 
         fun format(now: Instant): Format {
             val alert = alertsHere?.firstOrNull()
             if (alert != null) return Format.NoService(alert)
             if (this.upcomingTrips == null) return Format.Loading
-            //            println("${this.id} - ${upcomingTrips.size} upcoming,
-            // ${upcomingTrips.first().trip.id}...")
             val tripsToShow =
                 upcomingTrips
                     .map { Format.Some.FormatWithId(it, now) }
@@ -247,105 +275,5 @@ sealed class Patterns(
         }
 
         data class NoService(val alert: Alert) : Format()
-    }
-}
-
-/**
- * @property patternsByHeadsign [RoutePattern]s serving the stop grouped by headsign. The headsigns
- *   are listed in ascending order based on [RoutePattern.sortOrder]
- */
-data class PatternsByStop(
-    val routes: List<Route>,
-    val line: Line?,
-    val stop: Stop,
-    val patterns: List<Patterns>,
-    val directions: List<Direction>
-) {
-    val representativeRoute = routes.min()
-    val routeIdentifier = line?.id ?: representativeRoute.id
-    val position = Position(longitude = stop.longitude, latitude = stop.latitude)
-
-    constructor(
-        staticData: NearbyStaticData.StopPatterns,
-        upcomingTripsMap: UpcomingTripsMap?,
-        cutoffTime: Instant,
-        alerts: Collection<Alert>?,
-    ) : this(
-        when (staticData) {
-            is NearbyStaticData.StopPatterns.ForRoute -> listOf(staticData.route)
-            is NearbyStaticData.StopPatterns.ForLine -> staticData.routes
-        },
-        when (staticData) {
-            is NearbyStaticData.StopPatterns.ForRoute -> null
-            is NearbyStaticData.StopPatterns.ForLine -> staticData.line
-        },
-        staticData.stop,
-        staticData.patterns
-            .map {
-                when (it) {
-                    is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                        Patterns.ByHeadsign(it, upcomingTripsMap, staticData.allStopIds, alerts)
-                    is NearbyStaticData.StaticPatterns.ByDirection ->
-                        Patterns.ByDirection(it, upcomingTripsMap, staticData.allStopIds, alerts)
-                }
-            }
-            .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
-            .sorted(),
-        staticData.directions
-    )
-
-    constructor(
-        route: Route,
-        stop: Stop,
-        patterns: List<Patterns>
-    ) : this(listOf(route), null, stop, patterns, listOf(Direction(0, route), Direction(1, route)))
-
-    @OptIn(ExperimentalTurfApi::class)
-    fun distanceFrom(position: Position) = distance(position, this.position)
-
-    fun allUpcomingTrips(): List<UpcomingTrip> =
-        this.patterns.flatMap { it.upcomingTrips ?: emptyList() }.sorted()
-}
-
-sealed class StopsAssociated(val id: String) {
-    fun distanceFrom(position: Position): Double =
-        when (this) {
-            is WithRoute -> this.distance(position)
-            is WithLine -> this.distance(position)
-        }
-
-    fun isEmpty(): Boolean =
-        when (this) {
-            is WithRoute -> this.patternsByStop.isEmpty()
-            is WithLine -> this.patternsByStop.isEmpty()
-        }
-
-    fun sortRoute(): Route =
-        when (this) {
-            is WithRoute -> this.route
-            is WithLine -> this.routes.min()
-        }
-
-    /**
-     * @property patternsByStop A list of route patterns grouped by the station or stop that they
-     *   serve.
-     */
-    data class WithRoute(
-        val route: Route,
-        val patternsByStop: List<PatternsByStop>,
-    ) : StopsAssociated("route-${route.id}") {
-        @OptIn(ExperimentalTurfApi::class)
-        fun distance(position: Position): Double =
-            distance(position, patternsByStop.first().position)
-    }
-
-    data class WithLine(
-        val line: Line,
-        val routes: List<Route>,
-        val patternsByStop: List<PatternsByStop>,
-    ) : StopsAssociated("line-${line.id}") {
-        @OptIn(ExperimentalTurfApi::class)
-        fun distance(position: Position): Double =
-            distance(position, patternsByStop.first().position)
     }
 }

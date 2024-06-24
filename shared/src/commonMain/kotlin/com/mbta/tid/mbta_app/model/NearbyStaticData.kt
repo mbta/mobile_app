@@ -5,7 +5,9 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.RealtimePatterns
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.StopsAssociated
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -23,6 +25,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         data class ByHeadsign(
             val route: Route,
             val headsign: String,
+            val line: Line?,
             override val patterns: List<RoutePattern>
         ) : StaticPatterns(headsign)
 
@@ -34,7 +37,18 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         ) : StaticPatterns(direction.destination)
 
         override fun compareTo(other: StaticPatterns): Int =
-            patterns.first().compareTo(other.patterns.first())
+            compareValuesBy(
+                this,
+                other,
+                { it.patterns.first().directionId },
+                {
+                    when (it) {
+                        is ByDirection -> -1
+                        is ByHeadsign -> 1
+                    }
+                },
+                { it.patterns.first() }
+            )
     }
 
     sealed class StopPatterns() {
@@ -176,7 +190,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
                     if (isGrouped && touchedLines.contains(line)) {
                         null
-                    } else if (line != null && isGrouped && lineRoutes.size > 1) {
+                    } else if (line != null && isGrouped) {
                         touchedLines.add(line)
                         val sortedRoutes = lineRoutes.sorted()
                         val stopPatternsByRoute =
@@ -224,7 +238,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     val representativeTrip = global.trips.getValue(it.representativeTripId)
                     representativeTrip.headsign
                 }
-            println("PFR - ${route.id}@${stop.id} ${patternsByHeadsign.keys}")
+
             return StopPatterns.ForRoute(
                 route = route,
                 stop = stop,
@@ -232,14 +246,14 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 patterns =
                     patternsByHeadsign
                         .map { (headsign, routePatterns) ->
-                            StaticPatterns.ByHeadsign(route, headsign, routePatterns.sorted())
+                            StaticPatterns.ByHeadsign(route, headsign, null, routePatterns.sorted())
                         }
                         .sorted(),
                 directions = Direction.getDirections(global, stop, route, patterns)
             )
         }
 
-        fun buildStopPatternsForLine(
+        private fun buildStopPatternsForLine(
             stop: Stop,
             patterns: Map<Route, List<RoutePattern>>,
             line: Line,
@@ -258,23 +272,34 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     routeDirections[it.routeId]?.get(it.directionId)
                 }
             val linePatterns =
-                patternsByDirection.mapNotNull { (direction, directionPatterns) ->
+                patternsByDirection.flatMap { (direction, directionPatterns) ->
                     if (direction == null) {
-                        return@mapNotNull null
+                        return@flatMap emptyList()
                     }
                     val directionRoutes =
                         directionPatterns.mapNotNull { global.routes[it.routeId] }.toSet().sorted()
-                    StaticPatterns.ByDirection(
-                        line = line,
-                        routes = directionRoutes,
-                        direction = direction,
-                        patterns = directionPatterns.sorted(),
+                    if (directionRoutes.filter { !it.id.startsWith("Shuttle-") }.size == 1) {
+                        val route = directionRoutes.first()
+                        val patternsByHeadsign =
+                            directionPatterns.groupBy {
+                                val representativeTrip =
+                                    global.trips.getValue(it.representativeTripId)
+                                representativeTrip.headsign
+                            }
+                        return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
+                            StaticPatterns.ByHeadsign(route, headsign, line, patterns.sorted())
+                        }
+                    }
+                    listOf(
+                        StaticPatterns.ByDirection(
+                            line = line,
+                            routes = directionRoutes,
+                            direction = direction,
+                            patterns = directionPatterns.sorted(),
+                        )
                     )
                 }
 
-            println(
-                "PFL - ${line.id}@${stop.id} (routes: ${routes.map {it.id}} ${patternsByDirection.keys}"
-            )
             return StopPatterns.ForLine(
                 line = line,
                 routes = routes,
@@ -306,19 +331,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 patternsByStop =
                     groupedPatterns.map { (stop, patternsByRoute) ->
                         val allStopIds = fullStopIds.getOrElse(stop.id) { setOf(stop.id) }
-                        // If only one route in the line is served at the stop, don't use ForLine
-                        if (patternsByRoute.size == 1) {
-                            val (route, _, patterns) = patternsByRoute.first()
-                            buildStopPatternsForRoute(stop, patterns, route, allStopIds, global)
-                        } else {
-                            buildStopPatternsForLine(
-                                stop,
-                                patternsByRoute.associate { Pair(it.first, it.third) },
-                                line,
-                                allStopIds,
-                                global,
-                            )
-                        }
+                        buildStopPatternsForLine(
+                            stop,
+                            patternsByRoute.associate { Pair(it.first, it.third) },
+                            line,
+                            allStopIds,
+                            global,
+                        )
                     },
             )
         }
@@ -352,11 +371,19 @@ fun NearbyStaticData.withRealtimeInfo(
             predictions,
             scheduleKey = { schedule, scheduleData ->
                 val trip = scheduleData.trips.getValue(schedule.tripId)
-                UpcomingTripKey.ByHeadsign(schedule.routeId, trip.headsign, schedule.stopId)
+                RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                    schedule.routeId,
+                    trip.headsign,
+                    schedule.stopId
+                )
             },
             predictionKey = { prediction, streamData ->
                 val trip = streamData.trips.getValue(prediction.tripId)
-                UpcomingTripKey.ByHeadsign(prediction.routeId, trip.headsign, prediction.stopId)
+                RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                    prediction.routeId,
+                    trip.headsign,
+                    prediction.stopId
+                )
             }
         )
             ?: emptyMap()
@@ -367,11 +394,19 @@ fun NearbyStaticData.withRealtimeInfo(
             predictions,
             scheduleKey = { schedule, scheduleData ->
                 val trip = scheduleData.trips.getValue(schedule.tripId)
-                UpcomingTripKey.ByDirection(schedule.routeId, trip.directionId, schedule.stopId)
+                RealtimePatterns.UpcomingTripKey.ByDirection(
+                    schedule.routeId,
+                    trip.directionId,
+                    schedule.stopId
+                )
             },
             predictionKey = { prediction, streamData ->
                 val trip = streamData.trips.getValue(prediction.tripId)
-                UpcomingTripKey.ByDirection(prediction.routeId, trip.directionId, prediction.stopId)
+                RealtimePatterns.UpcomingTripKey.ByDirection(
+                    prediction.routeId,
+                    trip.directionId,
+                    prediction.stopId
+                )
             }
         )
             ?: emptyMap()
@@ -451,7 +486,7 @@ class NearbyStaticDataBuilder {
         val data = mutableListOf<NearbyStaticData.StaticPatterns.ByHeadsign>()
 
         fun headsign(headsign: String, patterns: List<RoutePattern>) {
-            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, patterns))
+            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, null, patterns))
         }
     }
 

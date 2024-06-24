@@ -10,12 +10,34 @@ import shared
 import SwiftUI
 
 struct HeadsignRowView: View {
+    enum PillDecoration {
+        case none
+        case onRow(route: Route)
+        case onPrediction(routesByTrip: [String: Route])
+    }
+
     let headsign: String
-    let predictions: Patterns.Format
+    let predictions: RealtimePatterns.Format
     let routeType: RouteType
+    let pillDecoration: PillDecoration
+
+    init(
+        headsign: String,
+        predictions: RealtimePatterns.Format,
+        routeType: RouteType,
+        pillDecoration: PillDecoration = .none
+    ) {
+        self.headsign = headsign
+        self.predictions = predictions
+        self.routeType = routeType
+        self.pillDecoration = pillDecoration
+    }
 
     var body: some View {
         HStack(spacing: 0) {
+            if case let .onRow(route) = pillDecoration {
+                RoutePill(route: route, type: .flex).padding(.trailing, 8)
+            }
             Text(headsign)
                 .foregroundStyle(Color.text)
                 .font(Typography.bodySemibold)
@@ -24,19 +46,15 @@ struct HeadsignRowView: View {
             switch onEnum(of: predictions) {
             case let .some(trips):
                 VStack(alignment: .trailing, spacing: 10) {
-                    let firstTrip = trips.trips.first
-                    let restTrips = trips.trips.dropFirst()
-
-                    if let firstTrip {
-                        UpcomingTripView(prediction: .some(firstTrip.format),
-                                         routeType: routeType,
-                                         isFirst: true,
-                                         isOnly: restTrips.isEmpty)
-                        ForEach(restTrips, id: \.id) { prediction in
-                            UpcomingTripView(prediction: .some(prediction.format),
-                                             routeType: routeType,
-                                             isFirst: false,
-                                             isOnly: false)
+                    ForEach(Array(trips.trips.enumerated()), id: \.1.id) { index, trip in
+                        HStack(spacing: 0) {
+                            UpcomingTripView(
+                                prediction: .some(trip.format),
+                                routeType: routeType,
+                                isFirst: index == 0,
+                                isOnly: index == 0 && trips.trips.count == 1
+                            )
+                            TripPill(tripId: trip.id, pillDecoration: pillDecoration)
                         }
                     }
                 }
@@ -58,6 +76,23 @@ struct HeadsignRowView: View {
         .background(Color.fill3)
         .frame(maxWidth: .infinity)
     }
+
+    struct TripPill: View {
+        let tripId: String
+        let pillDecoration: PillDecoration
+
+        var body: some View {
+            guard case let .onPrediction(routesByTrip) = pillDecoration else {
+                return AnyView(EmptyView())
+            }
+
+            guard let route = routesByTrip[tripId] else {
+                return AnyView(EmptyView())
+            }
+
+            return AnyView(RoutePill(route: route, type: .flex).scaleEffect(0.75).padding(.leading, 6))
+        }
+    }
 }
 
 struct NearbyStopRoutePatternView_Previews: PreviewProvider {
@@ -77,7 +112,7 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
             }
             List {
                 HeadsignRowView(headsign: "Some",
-                                predictions: Patterns.FormatSome(trips: [
+                                predictions: RealtimePatterns.FormatSome(trips: [
                                     .init(
                                         trip: .init(trip: trip1, prediction: prediction1),
                                         now: now.toKotlinInstant()
@@ -89,13 +124,13 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
                                 ]),
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "None",
-                                predictions: Patterns.FormatNone.shared,
+                                predictions: RealtimePatterns.FormatNone.shared,
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "Loading",
-                                predictions: Patterns.FormatLoading.shared,
+                                predictions: RealtimePatterns.FormatLoading.shared,
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "No Service",
-                                predictions: Patterns.FormatNoService(
+                                predictions: RealtimePatterns.FormatNoService(
                                     alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                                         alert.effect = .suspension
                                     }

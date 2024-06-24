@@ -21,9 +21,12 @@ struct StopDetailsRouteView: View {
     var body: some View {
         if let route = patternsByStop.routes.first {
             RouteSection(route: route, pinned: pinned, onPin: onPin) {
-                StopDeparturesSummaryList(patternsByStop: patternsByStop,
-                                          now: now,
-                                          pushNavEntry: { entry in pushNavEntry(entry) })
+                StopDeparturesSummaryList(
+                    patternsByStop: patternsByStop,
+                    condenseHeadsignPredictions: false,
+                    now: now,
+                    pushNavEntry: { entry in pushNavEntry(entry) }
+                )
             }
         } else {
             EmptyView()

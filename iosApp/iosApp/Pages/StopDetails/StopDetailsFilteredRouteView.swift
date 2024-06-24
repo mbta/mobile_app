@@ -20,7 +20,7 @@ struct StopDetailsFilteredRouteView: View {
     struct RowData {
         let tripId: String
         let headsign: String
-        let formatted: Patterns.Format
+        let formatted: RealtimePatterns.Format
         let navigationTarget: SheetNavigationStackEntry?
 
         init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
@@ -31,9 +31,9 @@ struct StopDetailsFilteredRouteView: View {
 
             tripId = trip.id
             headsign = trip.headsign
-            formatted = Patterns.ByHeadsign(
-                route: route, headsign: headsign, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
-            ).format(now: now)
+            formatted = RealtimePatterns.ByHeadsign(
+                route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
+            ).format(now: now, count: 2)
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
@@ -42,7 +42,7 @@ struct StopDetailsFilteredRouteView: View {
                 navigationTarget = nil
             }
 
-            if !(formatted is Patterns.FormatSome) {
+            if !(formatted is RealtimePatterns.FormatSome) {
                 return nil
             }
         }

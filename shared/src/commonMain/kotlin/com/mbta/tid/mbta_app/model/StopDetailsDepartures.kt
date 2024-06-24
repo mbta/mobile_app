@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.RealtimePatterns
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -68,7 +69,13 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                     } else {
                                         null
                                     }
-                                Patterns.ByHeadsign(route, headsign, patterns, upcomingTrips)
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    headsign,
+                                    null,
+                                    patterns,
+                                    upcomingTrips
+                                )
                             }
                             .filter {
                                 loading ||

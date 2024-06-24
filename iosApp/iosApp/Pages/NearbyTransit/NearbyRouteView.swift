@@ -20,7 +20,7 @@ struct NearbyRouteView: View {
         RouteSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
             ForEach(Array(nearbyRoute.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
-                    NearbyStopView(patternsAtStop: patternsAtStop, pushNavEntry: pushNavEntry, now: now)
+                    NearbyStopView(patternsAtStop: patternsAtStop, now: now, pushNavEntry: pushNavEntry)
                     if index < nearbyRoute.patternsByStop.count - 1 {
                         Divider().background(Color.halo)
                     }
