@@ -824,31 +824,35 @@ class NearbyResponseTest {
                 longitude = closeBusStop.longitude + 0.3
             }
 
-        val closeBusRoute = objects.route { type = RouteType.BUS }
-        val farBusRoute = objects.route { type = RouteType.BUS }
-        val closeSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
-        val farSubwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
+        val closeBusRoute =
+            objects.route {
+                type = RouteType.BUS
+                sortOrder = 4
+            }
+        val farBusRoute =
+            objects.route {
+                type = RouteType.BUS
+                sortOrder = 3
+            }
+        val closeSubwayRoute =
+            objects.route {
+                type = RouteType.LIGHT_RAIL
+                sortOrder = 2
+            }
+        val farSubwayRoute =
+            objects.route {
+                type = RouteType.LIGHT_RAIL
+                sortOrder = 1
+            }
 
         val closeSubwayPattern =
-            objects.routePattern(closeSubwayRoute) {
-                sortOrder = 1
-                representativeTrip { headsign = "Alewife" }
-            }
+            objects.routePattern(closeSubwayRoute) { representativeTrip { headsign = "Alewife" } }
         val farSubwayPattern =
-            objects.routePattern(farSubwayRoute) {
-                sortOrder = 1
-                representativeTrip { headsign = "Oak Grove" }
-            }
+            objects.routePattern(farSubwayRoute) { representativeTrip { headsign = "Oak Grove" } }
         val closeBusPattern =
-            objects.routePattern(closeBusRoute) {
-                sortOrder = 1
-                representativeTrip { headsign = "Nubian" }
-            }
+            objects.routePattern(closeBusRoute) { representativeTrip { headsign = "Nubian" } }
         val farBusPattern =
-            objects.routePattern(farBusRoute) {
-                sortOrder = 1
-                representativeTrip { headsign = "Malden Center" }
-            }
+            objects.routePattern(farBusRoute) { representativeTrip { headsign = "Malden Center" } }
 
         val staticData =
             NearbyStaticData.build {

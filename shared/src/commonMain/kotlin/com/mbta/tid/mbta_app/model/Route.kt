@@ -32,12 +32,10 @@ data class Route(
             }
 
         /*
-        Sort by pinned status first, then subway first, defaulting to route sort order.
+        Sort by pinned status first, then subway first, then given sort order.
          */
         fun relevanceComparator(pinnedRoutes: Set<String>): Comparator<Route> {
-            return compareBy<Route> { !pinnedRoutes.contains(it.id) }
-                .then(subwayFirstComparator)
-                .thenBy { it.sortOrder }
+            return compareBy<Route> { !pinnedRoutes.contains(it.id) }.then(subwayFirstComparator)
         }
     }
 }

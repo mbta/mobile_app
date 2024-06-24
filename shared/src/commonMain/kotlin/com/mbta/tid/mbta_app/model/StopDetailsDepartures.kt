@@ -79,7 +79,12 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     )
                 }
                 .filterNot { it.patternsByHeadsign.isEmpty() }
-                .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.route })
+                .sortedWith(
+                    compareBy<PatternsByStop, Route>(Route.relevanceComparator(pinnedRoutes)) {
+                            it.route
+                        }
+                        .thenBy { it.route }
+                )
         }
     )
 }
