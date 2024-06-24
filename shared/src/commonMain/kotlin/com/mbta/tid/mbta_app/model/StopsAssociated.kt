@@ -1,8 +1,5 @@
-package com.mbta.tid.mbta_app.model.response
+package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.Line
-import com.mbta.tid.mbta_app.model.PatternsByStop
-import com.mbta.tid.mbta_app.model.Route
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 

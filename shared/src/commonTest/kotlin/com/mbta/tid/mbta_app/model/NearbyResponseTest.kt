@@ -498,16 +498,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop1,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Harvard",
+                                    null,
                                     listOf(pattern1, pattern2),
                                     listOf(
                                         objects.upcomingTrip(stop1Pattern2Prediction),
@@ -520,9 +521,10 @@ class NearbyResponseTest {
                             route1,
                             stop2,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Nubian",
+                                    null,
                                     listOf(pattern3),
                                     listOf(objects.upcomingTrip(stop2Pattern3Prediction))
                                 )
@@ -646,34 +648,38 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop1,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical Out",
+                                    null,
                                     listOf(typicalOutbound),
                                     listOf(objects.upcomingTrip(typicalOutboundPrediction))
                                 ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical In",
+                                    null,
                                     listOf(typicalInbound),
                                     emptyList()
                                 ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Deviation Out",
+                                    null,
                                     listOf(deviationOutbound),
                                     listOf(objects.upcomingTrip(deviationOutboundPrediction))
                                 ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Atypical In",
+                                    null,
                                     listOf(atypicalInbound),
                                     listOf(objects.upcomingTrip(atypicalInboundPrediction))
                                 )
@@ -768,24 +774,26 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop1,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical Out",
+                                    null,
                                     listOf(typicalOutbound),
-                                    null
+                                    emptyList()
                                 ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical In",
+                                    null,
                                     listOf(typicalInbound),
-                                    null
+                                    emptyList()
                                 ),
                             )
                         )
@@ -919,7 +927,12 @@ class NearbyResponseTest {
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
-            realtimeRoutesSorted.map { it.route }
+            realtimeRoutesSorted.flatMap {
+                when (it) {
+                    is StopsAssociated.WithRoute -> listOf(it.route)
+                    is StopsAssociated.WithLine -> it.routes
+                }
+            }
         )
     }
 
@@ -1035,7 +1048,12 @@ class NearbyResponseTest {
             )
         assertEquals(
             listOf(farSubwayRoute, farBusRoute, closeSubwayRoute, closeBusRoute),
-            realtimeRoutesSorted.map { it.route }
+            realtimeRoutesSorted.flatMap {
+                when (it) {
+                    is StopsAssociated.WithRoute -> listOf(it.route)
+                    is StopsAssociated.WithLine -> it.routes
+                }
+            }
         )
     }
 
@@ -1066,16 +1084,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             parentStop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Harvard",
+                                    null,
                                     listOf(pattern1),
                                     listOf(objects.upcomingTrip(prediction1))
                                 )
@@ -1131,16 +1150,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route,
                     listOf(
                         PatternsByStop(
                             route,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route,
                                     "A",
+                                    null,
                                     listOf(routePattern),
                                     listOf(
                                         objects.upcomingTrip(sched1, pred1),
@@ -1203,16 +1223,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "A",
+                                    null,
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1, pred1))
                                 )
@@ -1220,16 +1241,17 @@ class NearbyResponseTest {
                         )
                     )
                 ),
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route2,
                     listOf(
                         PatternsByStop(
                             route2,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route2,
                                     "A",
+                                    null,
                                     listOf(routePattern2),
                                     listOf(objects.upcomingTrip(sched2, pred2))
                                 )
@@ -1288,16 +1310,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route,
                     listOf(
                         PatternsByStop(
                             route,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route,
                                     "A",
+                                    null,
                                     listOf(routePattern),
                                     emptyList(),
                                     alertsHere = listOf(alert)
@@ -1360,16 +1383,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route,
                     listOf(
                         PatternsByStop(
                             route,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route,
                                     "A",
+                                    null,
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1))
                                 )

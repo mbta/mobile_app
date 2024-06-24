@@ -6,7 +6,7 @@ import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
-class PatternsByHeadsignTest {
+class RealtimePatternsByHeadsignTest {
     @Test
     fun `formats as loading when null trips`() {
         val now = Clock.System.now()
@@ -15,8 +15,8 @@ class PatternsByHeadsignTest {
         val route = objects.route()
 
         assertEquals(
-            PatternsByHeadsign.Format.Loading,
-            PatternsByHeadsign(route, "", emptyList(), null, null).format(now)
+            RealtimePatterns.Format.Loading,
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null).format(now)
         )
     }
 
@@ -30,8 +30,9 @@ class PatternsByHeadsignTest {
         val alert = objects.alert {}
 
         assertEquals(
-            PatternsByHeadsign.Format.NoService(alert),
-            PatternsByHeadsign(route, "", emptyList(), emptyList(), listOf(alert)).format(now)
+            RealtimePatterns.Format.NoService(alert),
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
+                .format(now)
         )
     }
 
@@ -53,8 +54,15 @@ class PatternsByHeadsignTest {
         val alert = objects.alert {}
 
         assertEquals(
-            PatternsByHeadsign.Format.NoService(alert),
-            PatternsByHeadsign(route, "", emptyList(), listOf(upcomingTrip), listOf(alert))
+            RealtimePatterns.Format.NoService(alert),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip),
+                    listOf(alert)
+                )
                 .format(now)
         )
     }
@@ -67,8 +75,9 @@ class PatternsByHeadsignTest {
         val route = objects.route()
 
         assertEquals(
-            PatternsByHeadsign.Format.None,
-            PatternsByHeadsign(route, "", emptyList(), emptyList(), emptyList()).format(now)
+            RealtimePatterns.Format.None,
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
+                .format(now)
         )
     }
 
@@ -97,15 +106,21 @@ class PatternsByHeadsignTest {
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
 
         assertEquals(
-            PatternsByHeadsign.Format.Some(
+            RealtimePatterns.Format.Some(
                 listOf(
-                    PatternsByHeadsign.Format.Some.FormatWithId(
+                    RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
                         UpcomingTrip.Format.Minutes(5)
                     )
                 )
             ),
-            PatternsByHeadsign(route, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip1, upcomingTrip2)
+                )
                 .format(now)
         )
     }
@@ -136,31 +151,43 @@ class PatternsByHeadsignTest {
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
 
         assertEquals(
-            PatternsByHeadsign.Format.Some(
+            RealtimePatterns.Format.Some(
                 listOf(
-                    PatternsByHeadsign.Format.Some.FormatWithId(
+                    RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
                         UpcomingTrip.Format.Minutes(5)
                     )
                 )
             ),
-            PatternsByHeadsign(subwayRoute, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
+            RealtimePatterns.ByHeadsign(
+                    subwayRoute,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip1, upcomingTrip2)
+                )
                 .format(now)
         )
         assertEquals(
-            PatternsByHeadsign.Format.Some(
+            RealtimePatterns.Format.Some(
                 listOf(
-                    PatternsByHeadsign.Format.Some.FormatWithId(
+                    RealtimePatterns.Format.Some.FormatWithId(
                         trip1.id,
                         UpcomingTrip.Format.Schedule(now + 5.minutes)
                     ),
-                    PatternsByHeadsign.Format.Some.FormatWithId(
+                    RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
                         UpcomingTrip.Format.Minutes(5)
                     )
                 )
             ),
-            PatternsByHeadsign(busRoute, "", emptyList(), listOf(upcomingTrip1, upcomingTrip2))
+            RealtimePatterns.ByHeadsign(
+                    busRoute,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip1, upcomingTrip2)
+                )
                 .format(now)
         )
     }
@@ -175,12 +202,24 @@ class PatternsByHeadsignTest {
         val prediction1 = objects.schedule { trip = trip1 }
         assertEquals(
             0,
-            PatternsByHeadsign(route, "", emptyList(), listOf(objects.upcomingTrip(prediction0)))
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(objects.upcomingTrip(prediction0))
+                )
                 .directionId()
         )
         assertEquals(
             1,
-            PatternsByHeadsign(route, "", emptyList(), listOf(objects.upcomingTrip(prediction1)))
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(objects.upcomingTrip(prediction1))
+                )
                 .directionId()
         )
     }
@@ -191,14 +230,25 @@ class PatternsByHeadsignTest {
         val route = objects.route()
         val routePattern0 = objects.routePattern(route) { directionId = 0 }
         val routePattern1 = objects.routePattern(route) { directionId = 1 }
-        assertEquals(0, PatternsByHeadsign(route, "", listOf(routePattern0)).directionId())
-        assertEquals(1, PatternsByHeadsign(route, "", listOf(routePattern1)).directionId())
+        assertEquals(
+            0,
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0)).directionId()
+        )
+        assertEquals(
+            1,
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1)).directionId()
+        )
     }
 
     @Test
     fun `directionId throws if empty`() {
         assertFailsWith<NoSuchElementException> {
-            PatternsByHeadsign(ObjectCollectionBuilder.Single.route(), "", emptyList())
+            RealtimePatterns.ByHeadsign(
+                    ObjectCollectionBuilder.Single.route(),
+                    "",
+                    null,
+                    emptyList()
+                )
                 .directionId()
         }
     }

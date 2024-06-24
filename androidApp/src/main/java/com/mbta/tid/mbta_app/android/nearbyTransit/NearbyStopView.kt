@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.RealtimePatterns
 import kotlinx.datetime.Instant
 
 @Composable
@@ -14,10 +15,15 @@ fun NearbyStopView(
 ) {
     Text(text = patternsAtStop.stop.name, fontWeight = FontWeight.Bold)
 
-    for (patternsByHeadsign in patternsAtStop.patternsByHeadsign) {
-        HeadsignRowView(
-            patternsByHeadsign.headsign,
-            patternsByHeadsign.format(now),
-        )
+    for (patterns in patternsAtStop.patterns) {
+        when (patterns) {
+            is RealtimePatterns.ByHeadsign -> {
+                HeadsignRowView(
+                    patterns.headsign,
+                    patterns.format(now),
+                )
+            }
+            is RealtimePatterns.ByDirection -> {}
+        }
     }
 }

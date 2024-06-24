@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.android.fetcher.getSchedules
 import com.mbta.tid.mbta_app.android.fetcher.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.NearbyStaticData
+import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
@@ -70,7 +71,14 @@ fun NearbyTransitPage(
     }
 
     if (nearbyWithRealtimeInfo != null) {
-        LazyColumn(modifier) { items(nearbyWithRealtimeInfo) { NearbyRouteView(it, now) } }
+        LazyColumn(modifier) {
+            items(nearbyWithRealtimeInfo) {
+                when (it) {
+                    is StopsAssociated.WithRoute -> NearbyRouteView(it, now)
+                    is StopsAssociated.WithLine -> {}
+                }
+            }
+        }
     } else {
         Text(text = "Loading...", modifier)
     }
