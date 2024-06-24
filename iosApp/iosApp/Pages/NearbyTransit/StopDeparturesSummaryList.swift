@@ -89,7 +89,7 @@ struct DestinationView: View {
             )
         case let patternsByDirection as RealtimePatterns.ByDirection:
             HeadsignRowView(
-                headsign: patternsByDirection.direction.destination,
+                direction: patternsByDirection.direction,
                 predictions: patternsByDirection.format(now: now),
                 routeType: patternsByDirection.representativeRoute.type,
                 pillDecoration: .onPrediction(routesByTrip: patternsByDirection.routesByTrip)

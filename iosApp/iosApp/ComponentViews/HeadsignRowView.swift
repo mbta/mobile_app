@@ -16,7 +16,8 @@ struct HeadsignRowView: View {
         case onPrediction(routesByTrip: [String: Route])
     }
 
-    let headsign: String
+    var headsign: String? = nil
+    var direction: Direction? = nil
     let predictions: RealtimePatterns.Format
     let routeType: RouteType
     let pillDecoration: PillDecoration
@@ -28,6 +29,7 @@ struct HeadsignRowView: View {
         pillDecoration: PillDecoration = .none
     ) {
         self.headsign = headsign
+        direction = nil
         self.predictions = predictions
         self.routeType = routeType
         self.pillDecoration = pillDecoration
@@ -38,10 +40,7 @@ struct HeadsignRowView: View {
             if case let .onRow(route) = pillDecoration {
                 RoutePill(route: route, type: .flex).padding(.trailing, 8)
             }
-            Text(headsign)
-                .foregroundStyle(Color.text)
-                .font(Typography.bodySemibold)
-                .multilineTextAlignment(.leading)
+            destinationLabel
             Spacer(minLength: 8)
             switch onEnum(of: predictions) {
             case let .some(trips):
@@ -72,9 +71,24 @@ struct HeadsignRowView: View {
                 UpcomingTripView(prediction: .loading, routeType: routeType, isFirst: true, isOnly: true)
             }
         }
-        .accessibilityInputLabels([headsign])
+        .accessibilityInputLabels([headsign ?? direction?.destination ?? "Unknown Destination"])
         .background(Color.fill3)
         .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder
+    var destinationLabel: some View {
+        EmptyView()
+        if let headsign {
+            Text(headsign)
+                .foregroundStyle(Color.text)
+                .font(Typography.bodySemibold)
+                .multilineTextAlignment(.leading)
+        }
+        if let direction {
+            DirectionLabel(direction: direction)
+                .foregroundStyle(Color.text)
+        }
     }
 
     struct TripPill: View {
@@ -90,8 +104,23 @@ struct HeadsignRowView: View {
                 return AnyView(EmptyView())
             }
 
-            return AnyView(RoutePill(route: route, type: .flex).scaleEffect(0.75).padding(.leading, 6))
+            return AnyView(RoutePill(route: route, type: .flex).scaleEffect(0.75).padding(.leading, 2))
         }
+    }
+}
+
+extension HeadsignRowView {
+    init(
+        direction: Direction,
+        predictions: RealtimePatterns.Format,
+        routeType: RouteType,
+        pillDecoration: PillDecoration = .none
+    ) {
+        headsign = nil
+        self.direction = direction
+        self.predictions = predictions
+        self.routeType = routeType
+        self.pillDecoration = pillDecoration
     }
 }
 

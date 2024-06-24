@@ -136,6 +136,7 @@
 		9A9E7DD32C2203BE000DA1FD /* TransitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD22C2203BE000DA1FD /* TransitSection.swift */; };
 		9A9E7DD52C2203E8000DA1FD /* PinButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD42C2203E8000DA1FD /* PinButton.swift */; };
 		9A9E7DD72C220812000DA1FD /* LineSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD62C220812000DA1FD /* LineSection.swift */; };
+		9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA379A22C2A314F00278541 /* DirectionLabel.swift */; };
 		9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		9AB3F50F2BE45382008D9E40 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */; };
 		9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */; };
@@ -344,6 +345,7 @@
 		9A9E7DD22C2203BE000DA1FD /* TransitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitSection.swift; sourceTree = "<group>"; };
 		9A9E7DD42C2203E8000DA1FD /* PinButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinButton.swift; sourceTree = "<group>"; };
 		9A9E7DD62C220812000DA1FD /* LineSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSection.swift; sourceTree = "<group>"; };
+		9AA379A22C2A314F00278541 /* DirectionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionLabel.swift; sourceTree = "<group>"; };
 		9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopIcons.swift; sourceTree = "<group>"; };
 		9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCard.swift; sourceTree = "<group>"; };
@@ -753,6 +755,7 @@
 				6EA2316E2C21BEB100789173 /* LoadingCard.swift */,
 				9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */,
 				9A9E7DD42C2203E8000DA1FD /* PinButton.swift */,
+				9AA379A22C2A314F00278541 /* DirectionLabel.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1245,6 +1248,7 @@
 				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
 				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,
 				ED24EAD82C1A941E00A7BE4D /* NearbyTransitAnalytics.swift in Sources */,
+				9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */,
 				9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */,
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
