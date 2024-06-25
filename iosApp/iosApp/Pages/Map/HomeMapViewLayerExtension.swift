@@ -25,15 +25,18 @@ extension HomeMapView {
             selectedStop: lastNavEntry?.stop(),
             routeLines: routeSourceGenerator.routeLines
         )
+        let childStopSourceGenerator = ChildStopSourceGenerator(childStops: nil)
 
         layerManager.addSources(
             routeSourceGenerator: routeSourceGenerator,
-            stopSourceGenerator: stopSourceGenerator
+            stopSourceGenerator: stopSourceGenerator,
+            childStopSourceGenerator: childStopSourceGenerator
         )
 
         layerManager.addLayers(
             routeLayerGenerator: RouteLayerGenerator(),
-            stopLayerGenerator: StopLayerGenerator()
+            stopLayerGenerator: StopLayerGenerator(),
+            childStopLayerGenerator: ChildStopLayerGenerator()
         )
     }
 
@@ -49,9 +52,11 @@ extension HomeMapView {
             selectedStop: nil,
             routeLines: updatedRouteSources.routeLines
         )
+        let updatedChildStopSources = ChildStopSourceGenerator(childStops: nil)
         layerManager?.updateSourceData(
             routeSourceGenerator: updatedRouteSources,
-            stopSourceGenerator: updatedStopSources
+            stopSourceGenerator: updatedStopSources,
+            childStopSourceGenerator: updatedChildStopSources
         )
     }
 
@@ -84,6 +89,9 @@ extension HomeMapView {
             )
             layerManager?.updateSourceData(routeSourceGenerator: railRouteSource)
         }
+
+        let childStopSource = ChildStopSourceGenerator(childStops: stopMapData.childStops)
+        layerManager?.updateSourceData(childStopSourceGenerator: childStopSource)
     }
 
     func filteredRouteShapesForStop(

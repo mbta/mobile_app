@@ -1,0 +1,22 @@
+{
+  "images": [
+    {
+      "filename": "circle.circle.fill-light.svg",
+      "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "circle.circle.fill-dark.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
