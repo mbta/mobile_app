@@ -1412,4 +1412,209 @@ class NearbyResponseTest {
             )
         )
     }
+
+    @Test
+    fun `withRealtimeInfo groups lines by direction`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val line = objects.line { id = "line-Green" }
+        val routeB =
+            objects.route {
+                id = "B"
+                sortOrder = 1
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Kenmore & West", "Park St & North")
+            }
+        val routePatternB1 =
+            objects.routePattern(routeB) {
+                representativeTrip { headsign = "B" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternB2 =
+            objects.routePattern(routeB) {
+                representativeTrip { headsign = "B" }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripB1 = objects.trip(routePatternB1)
+        val tripB2 = objects.trip(routePatternB2)
+
+        val routeC =
+            objects.route {
+                id = "C"
+                sortOrder = 2
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Kenmore & West", "Park St & North")
+            }
+        val routePatternC1 =
+            objects.routePattern(routeC) {
+                representativeTrip { headsign = "C" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternC2 =
+            objects.routePattern(routeC) {
+                representativeTrip { headsign = "C" }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripC1 = objects.trip(routePatternC1)
+        val tripC2 = objects.trip(routePatternC2)
+
+        val routeE =
+            objects.route {
+                id = "E"
+                sortOrder = 3
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Heath Street", "Park St & North")
+            }
+        val routePatternE1 =
+            objects.routePattern(routeE) {
+                representativeTrip { headsign = "Heath Street" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternE2 =
+            objects.routePattern(routeE) {
+                representativeTrip { headsign = "Medford/Tufts" }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripE1 = objects.trip(routePatternE1)
+        val tripE2 = objects.trip(routePatternE2)
+
+        val time = Instant.parse("2024-03-18T10:41:13-04:00")
+
+        val schedB1 =
+            objects.schedule {
+                trip = tripB1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+        val schedB2 =
+            objects.schedule {
+                trip = tripB2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 4.minutes
+            }
+        val schedC1 =
+            objects.schedule {
+                trip = tripC1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+            }
+        val schedC2 =
+            objects.schedule {
+                trip = tripC2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 5.minutes
+            }
+        val schedE1 =
+            objects.schedule {
+                trip = tripE1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 3.minutes
+            }
+        val schedE2 =
+            objects.schedule {
+                trip = tripE2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 6.minutes
+            }
+
+        val predB1 = objects.prediction(schedB1) { departureTime = time + 1.5.minutes }
+        val predB2 = objects.prediction(schedB2) { departureTime = time + 4.5.minutes }
+        val predC1 = objects.prediction(schedC1) { departureTime = time + 2.3.minutes }
+        val predC2 = objects.prediction(schedC2) { departureTime = time + 5.3.minutes }
+        val predE1 = objects.prediction(schedE1) { departureTime = time + 2.3.minutes }
+        val predE2 = objects.prediction(schedE2) { departureTime = time + 6.3.minutes }
+
+        val directionWest = Direction("West", "Kenmore & West", 0)
+        val directionEast = Direction("East", "Park St & North", 1)
+
+        val staticData =
+            NearbyStaticData.build {
+                line(line, listOf(routeB, routeC, routeE)) {
+                    stop(stop) {
+                        direction(
+                            directionWest,
+                            listOf(routeB, routeC),
+                            listOf(routePatternB1, routePatternC1)
+                        )
+                        headsign(routeE, "Heath Street", listOf(routePatternE1))
+                        direction(
+                            directionEast,
+                            listOf(routeB, routeC, routeE),
+                            listOf(routePatternB2, routePatternC2, routePatternE2)
+                        )
+                    }
+                }
+            }
+
+        val expected =
+            StopsAssociated.WithLine(
+                line,
+                listOf(routeB, routeC, routeE),
+                listOf(
+                    PatternsByStop(
+                        listOf(routeB, routeC, routeE),
+                        line,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByDirection(
+                                line,
+                                listOf(routeB, routeC),
+                                directionWest,
+                                listOf(routePatternB1, routePatternC1),
+                                listOf(
+                                    objects.upcomingTrip(schedB1, predB1),
+                                    objects.upcomingTrip(schedC1, predC1),
+                                )
+                            ),
+                            RealtimePatterns.ByHeadsign(
+                                routeE,
+                                "Heath Street",
+                                line,
+                                listOf(routePatternE1),
+                                listOf(objects.upcomingTrip(schedE1, predE1))
+                            ),
+                            RealtimePatterns.ByDirection(
+                                line,
+                                listOf(routeB, routeC, routeE),
+                                directionEast,
+                                listOf(routePatternB2, routePatternC2, routePatternE2),
+                                listOf(
+                                    objects.upcomingTrip(schedB2, predB2),
+                                    objects.upcomingTrip(schedC2, predC2),
+                                    objects.upcomingTrip(schedE2, predE2),
+                                )
+                            ),
+                        ),
+                        listOf(directionWest, directionEast)
+                    )
+                )
+            )
+
+        assertEquals(
+            listOf(expected),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+            )
+        )
+    }
 }

@@ -474,30 +474,49 @@ fun NearbyStaticData.withRealtimeInfo(
 class NearbyStaticDataBuilder {
     val data = mutableListOf<NearbyStaticData.TransitWithStops>()
 
-    fun route(route: Route, block: PatternsByStopBuilder.() -> Unit) {
-        val builder = PatternsByStopBuilder(route)
+    fun route(route: Route, block: StopPatternsForRouteBuilder.() -> Unit) {
+        val builder = StopPatternsForRouteBuilder(route)
         builder.block()
         data.add(NearbyStaticData.TransitWithStops.ByRoute(route, builder.data))
     }
 
-    class PatternsByHeadsignBuilder(val route: Route) {
-        val data = mutableListOf<NearbyStaticData.StaticPatterns.ByHeadsign>()
+    fun line(line: Line, routes: List<Route>, block: StopPatternsForLineBuilder.() -> Unit) {
+        val builder = StopPatternsForLineBuilder(line, routes)
+        builder.block()
+        data.add(NearbyStaticData.TransitWithStops.ByLine(line, routes, builder.data))
+    }
+
+    class PatternsBuilder(val line: Line?, val routes: List<Route>) {
+        val data = mutableListOf<NearbyStaticData.StaticPatterns>()
+        val directions = mutableListOf<Direction>()
+
+        fun headsign(route: Route, headsign: String, patterns: List<RoutePattern>) {
+            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns))
+        }
 
         fun headsign(headsign: String, patterns: List<RoutePattern>) {
-            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, null, patterns))
+            headsign(routes.min(), headsign, patterns)
+        }
+
+        fun direction(direction: Direction, routes: List<Route>, patterns: List<RoutePattern>) {
+            if (line == null) {
+                throw RuntimeException("Can't build direction patterns without a line")
+            }
+            data.add(NearbyStaticData.StaticPatterns.ByDirection(line, routes, direction, patterns))
+            directions.add(direction)
         }
     }
 
-    class PatternsByStopBuilder(val route: Route) {
+    class StopPatternsForRouteBuilder(val route: Route) {
         val data = mutableListOf<NearbyStaticData.StopPatterns>()
 
         @DefaultArgumentInterop.Enabled
         fun stop(
             stop: Stop,
             childStopIds: List<String> = emptyList(),
-            block: PatternsByHeadsignBuilder.() -> Unit
+            block: PatternsBuilder.() -> Unit
         ) {
-            val builder = PatternsByHeadsignBuilder(route)
+            val builder = PatternsBuilder(null, listOf(route))
             builder.block()
             data.add(
                 NearbyStaticData.StopPatterns.ForRoute(
@@ -505,6 +524,30 @@ class NearbyStaticDataBuilder {
                     stop,
                     setOf(stop.id).plus(childStopIds),
                     builder.data
+                )
+            )
+        }
+    }
+
+    class StopPatternsForLineBuilder(val line: Line, val routes: List<Route>) {
+        val data = mutableListOf<NearbyStaticData.StopPatterns>()
+
+        @DefaultArgumentInterop.Enabled
+        fun stop(
+            stop: Stop,
+            childStopIds: List<String> = emptyList(),
+            block: PatternsBuilder.() -> Unit
+        ) {
+            val builder = PatternsBuilder(line, routes)
+            builder.block()
+            data.add(
+                NearbyStaticData.StopPatterns.ForLine(
+                    line,
+                    routes,
+                    stop,
+                    setOf(stop.id).plus(childStopIds),
+                    builder.data,
+                    builder.directions
                 )
             )
         }
