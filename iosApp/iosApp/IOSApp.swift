@@ -1,3 +1,4 @@
+import AppcuesKit
 import FirebaseCore
 import os
 import shared
@@ -5,6 +6,8 @@ import SwiftPhoenixClient
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    var appcues: Appcues?
+
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -12,6 +15,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Don't configure GA/Firebase for debug builds to reduce pollution of events
         #if !DEBUG
             FirebaseApp.configure()
+        #endif
+
+        // Don't configure Appcues for debug builds to not waste active user slots
+        #if !DEBUG
+            let bundle = Bundle.main
+            let info = bundle.infoDictionary
+            if let info, let appcuesAccountID = info["APPCUES_ACCOUNT_ID"] as? String,
+               let appcuesAppID = info["APPCUES_APP_ID"] as? String, !appcuesAccountID.isEmpty, !appcuesAppID.isEmpty {
+                let appcuesConfig = Appcues.Config(
+                    accountID: appcuesAccountID,
+                    applicationID: appcuesAppID
+                )
+
+                appcues = Appcues(config: appcuesConfig)
+            } else {
+                Logger().info("Appcues config not set, skipping initialization")
+            }
         #endif
         return true
     }
@@ -32,6 +52,9 @@ struct IOSApp: App {
                 DummyTestAppView()
             } else {
                 ProductionAppView()
+                    .onAppear {
+                        delegate.appcues?.anonymous()
+                    }
             }
         }
     }
