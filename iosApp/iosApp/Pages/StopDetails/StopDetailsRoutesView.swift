@@ -43,51 +43,57 @@ struct StopDetailsRoutesView: View {
     }
 }
 
-// #Preview {
-//    let objects = ObjectCollectionBuilder()
-//    let route1 = objects.route { route in
-//        route.color = "00843D"
-//        route.longName = "Green Line B"
-//        route.textColor = "FFFFFF"
-//        route.type = .lightRail
-//    }
-//    let route2 = objects.route { route in
-//        route.color = "FFC72C"
-//        route.shortName = "57"
-//        route.textColor = "000000"
-//        route.type = .bus
-//    }
-//    let stop = objects.stop { _ in }
-//    let trip1 = objects.trip { _ in }
-//    let prediction1 = objects.prediction { prediction in
-//        prediction.trip = trip1
-//        prediction.departureTime = (Date.now + 5 * 60).toKotlinInstant()
-//    }
-//    let trip2 = objects.trip { _ in }
-//    let schedule2 = objects.schedule { schedule in
-//        schedule.trip = trip2
-//        schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
-//    }
-//    let trip3 = objects.trip { _ in }
-//    let prediction2 = objects.prediction { prediction in
-//        prediction.trip = trip3
-//        prediction.departureTime = (Date.now + 8 * 60).toKotlinInstant()
-//    }
-//
-//    return StopDetailsRoutesView(departures: .init(routes: [
-//        .init(route: route1, stop: stop, patternsByHeadsign: [
-//            .init(route: route1, headsign: "A", patterns: [],
-//                  upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
-//                  alertsHere: nil),
-//        ]),
-//        .init(route: route2, stop: stop, patternsByHeadsign: [
-//            .init(route: route2, headsign: "B", patterns: [],
-//                  upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
-//                  alertsHere: nil),
-//            .init(route: route2, headsign: "C", patterns: [],
-//                  upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
-//                  alertsHere: nil),
-//        ]),
-//    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
-//    pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)
-// }
+#Preview {
+    let objects = ObjectCollectionBuilder()
+    let route1 = objects.route { route in
+        route.color = "00843D"
+        route.longName = "Green Line B"
+        route.textColor = "FFFFFF"
+        route.type = .lightRail
+    }
+    let route2 = objects.route { route in
+        route.color = "FFC72C"
+        route.shortName = "57"
+        route.textColor = "000000"
+        route.type = .bus
+    }
+    let stop = objects.stop { _ in }
+    let trip1 = objects.trip { _ in }
+    let prediction1 = objects.prediction { prediction in
+        prediction.trip = trip1
+        prediction.departureTime = (Date.now + 5 * 60).toKotlinInstant()
+    }
+    let trip2 = objects.trip { _ in }
+    let schedule2 = objects.schedule { schedule in
+        schedule.trip = trip2
+        schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+    }
+    let trip3 = objects.trip { _ in }
+    let prediction2 = objects.prediction { prediction in
+        prediction.trip = trip3
+        prediction.departureTime = (Date.now + 8 * 60).toKotlinInstant()
+    }
+
+    return StopDetailsRoutesView(departures: .init(routes: [
+        .init(route: route1, stop: stop, patterns: [
+            .ByHeadsign(
+                route: route1, headsign: "A", line: nil, patterns: [],
+                upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
+                alertsHere: nil
+            ),
+        ]),
+        .init(route: route2, stop: stop, patterns: [
+            .ByHeadsign(
+                route: route2, headsign: "B", line: nil, patterns: [],
+                upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
+                alertsHere: nil
+            ),
+            .ByHeadsign(
+                route: route2, headsign: "C", line: nil, patterns: [],
+                upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
+                alertsHere: nil
+            ),
+        ]),
+    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
+    pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)
+}
