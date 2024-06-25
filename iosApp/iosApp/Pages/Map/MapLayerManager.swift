@@ -17,11 +17,24 @@ protocol IMapLayerManager {
     var stopSourceGenerator: StopSourceGenerator? { get }
     var stopLayerGenerator: StopLayerGenerator? { get }
 
-    func addSources(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
-    func addLayers(routeLayerGenerator: RouteLayerGenerator, stopLayerGenerator: StopLayerGenerator)
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
+    func addSources(
+        routeSourceGenerator: RouteSourceGenerator,
+        stopSourceGenerator: StopSourceGenerator,
+        childStopSourceGenerator: ChildStopSourceGenerator
+    )
+    func addLayers(
+        routeLayerGenerator: RouteLayerGenerator,
+        stopLayerGenerator: StopLayerGenerator,
+        childStopLayerGenerator: ChildStopLayerGenerator
+    )
+    func updateSourceData(
+        routeSourceGenerator: RouteSourceGenerator,
+        stopSourceGenerator: StopSourceGenerator,
+        childStopSourceGenerator: ChildStopSourceGenerator
+    )
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator)
     func updateSourceData(stopSourceGenerator: StopSourceGenerator)
+    func updateSourceData(childStopSourceGenerator: ChildStopSourceGenerator)
 }
 
 struct MapImageError: Error {}
@@ -32,11 +45,13 @@ class MapLayerManager: IMapLayerManager {
     var routeLayerGenerator: RouteLayerGenerator?
     var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
+    var childStopSourceGenerator: ChildStopSourceGenerator?
+    var childStopLayerGenerator: ChildStopLayerGenerator?
 
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in StopIcons.all + AlertIcons.all {
+        for iconId in StopIcons.all + AlertIcons.all + ChildStopIcons.all {
             do {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
                 try map.addImage(image, id: iconId)
@@ -46,12 +61,18 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func addSources(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
+    func addSources(
+        routeSourceGenerator: RouteSourceGenerator,
+        stopSourceGenerator: StopSourceGenerator,
+        childStopSourceGenerator: ChildStopSourceGenerator
+    ) {
         self.routeSourceGenerator = routeSourceGenerator
         self.stopSourceGenerator = stopSourceGenerator
+        self.childStopSourceGenerator = childStopSourceGenerator
 
         updateSourceData(source: routeSourceGenerator.routeSource)
         updateSourceData(source: stopSourceGenerator.stopSource)
+        updateSourceData(source: childStopSourceGenerator.childStopSource)
     }
 
     private func addSource(source: GeoJSONSource) {
@@ -62,11 +83,17 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func addLayers(routeLayerGenerator: RouteLayerGenerator, stopLayerGenerator: StopLayerGenerator) {
+    func addLayers(
+        routeLayerGenerator: RouteLayerGenerator,
+        stopLayerGenerator: StopLayerGenerator,
+        childStopLayerGenerator: ChildStopLayerGenerator
+    ) {
         self.routeLayerGenerator = routeLayerGenerator
         self.stopLayerGenerator = stopLayerGenerator
+        self.childStopLayerGenerator = childStopLayerGenerator
 
-        let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator.stopLayers
+        let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator
+            .stopLayers + [childStopLayerGenerator.childStopLayer]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
@@ -103,8 +130,18 @@ class MapLayerManager: IMapLayerManager {
         updateSourceData(source: stopSourceGenerator.stopSource)
     }
 
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
+    func updateSourceData(childStopSourceGenerator: ChildStopSourceGenerator) {
+        self.childStopSourceGenerator = childStopSourceGenerator
+        updateSourceData(source: childStopSourceGenerator.childStopSource)
+    }
+
+    func updateSourceData(
+        routeSourceGenerator: RouteSourceGenerator,
+        stopSourceGenerator: StopSourceGenerator,
+        childStopSourceGenerator: ChildStopSourceGenerator
+    ) {
         updateSourceData(routeSourceGenerator: routeSourceGenerator)
         updateSourceData(stopSourceGenerator: stopSourceGenerator)
+        updateSourceData(childStopSourceGenerator: childStopSourceGenerator)
     }
 }

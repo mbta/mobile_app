@@ -100,50 +100,6 @@ struct AnnotatedMap: View {
                     }
                 }
             }
-            if let childStops = stopMapData?.childStops.values {
-                /* TODO: Switch these to PointAnnotations once we have finalized icons and have decided
-                    how to handle child stops in general. We should be taking advantage of the text label
-                    functionality, and possibly the PointAnnotationGroup clustering behavior to
-                    handle stations with overlapping child stops. They may even need to be SymbolLayers
-                    if we need to do something really complicated with clustering.
-                 */
-                ForEvery(Array(childStops), id: \.id) { child in
-                    switch child.locationType {
-                    case .entranceExit:
-                        MapViewAnnotation(coordinate: child.coordinate) {
-                            Image(systemName: "door.left.hand.open").annotationLabel(
-                                Text(child.name.split(separator: " - ").last ?? "")
-                                    .font(Typography.captionItalic)
-                                    .foregroundStyle(.gray)
-                                    .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
-                            )
-                        }
-                        .allowHitTesting(false)
-                        .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= MapDefaults.closeZoomThreshold)
-                    case .boardingArea, .stop:
-                        MapViewAnnotation(coordinate: child.coordinate) {
-                            Circle()
-                                .strokeBorder(.white, lineWidth: 2.5)
-                                .background(Circle().fill(.gray))
-                                .frame(width: 12, height: 12)
-                                .annotationLabel(
-                                    Text(child.platformName ?? child.name)
-                                        .font(Typography.captionItalic)
-                                        .foregroundStyle(.gray)
-                                        .opacity(zoomLevel >= Self.annotationTextZoomThreshold ? 1 : 0)
-                                )
-                        }
-                        .allowHitTesting(false)
-                        .ignoreCameraPadding(true)
-                        .visible(zoomLevel >= MapDefaults.closeZoomThreshold)
-                    default:
-                        MapViewAnnotation(coordinate: child.coordinate) {
-                            EmptyView()
-                        }.visible(false)
-                    }
-                }
-            }
         }
         .gestureHandlers(.init(onBegin: { gestureType in
                                    if centerMovingGestures.contains(gestureType) {

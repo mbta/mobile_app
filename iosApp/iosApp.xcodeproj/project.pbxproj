@@ -70,6 +70,10 @@
 		8CA1FB772BF813F500384658 /* TripDetailsStopListSplitViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA1FB762BF813F500384658 /* TripDetailsStopListSplitViewTests.swift */; };
 		8CA485B62BDC610B00E84E1F /* VehiclesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA485B52BDC610B00E84E1F /* VehiclesFetcher.swift */; };
 		8CA485B82BDC679A00E84E1F /* VehicleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */; };
+		8CB28DAC2C29D6240036258E /* ChildStopSourceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB28DAB2C29D6240036258E /* ChildStopSourceGenerator.swift */; };
+		8CB28DAE2C29DCBF0036258E /* ChildStopLayerGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB28DAD2C29DCBF0036258E /* ChildStopLayerGenerator.swift */; };
+		8CB28DB02C29EE1F0036258E /* ChildStopIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB28DAF2C29EE1F0036258E /* ChildStopIcons.swift */; };
+		8CB28DB22C2A288E0036258E /* ChildStopSourceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */; };
 		8CB823D62BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */; };
 		8CB823D92BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823D82BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift */; };
 		8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */; };
@@ -279,6 +283,10 @@
 		8CA1FB762BF813F500384658 /* TripDetailsStopListSplitViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsStopListSplitViewTests.swift; sourceTree = "<group>"; };
 		8CA485B52BDC610B00E84E1F /* VehiclesFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehiclesFetcher.swift; sourceTree = "<group>"; };
 		8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleExtension.swift; sourceTree = "<group>"; };
+		8CB28DAB2C29D6240036258E /* ChildStopSourceGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildStopSourceGenerator.swift; sourceTree = "<group>"; };
+		8CB28DAD2C29DCBF0036258E /* ChildStopLayerGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildStopLayerGenerator.swift; sourceTree = "<group>"; };
+		8CB28DAF2C29EE1F0036258E /* ChildStopIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildStopIcons.swift; sourceTree = "<group>"; };
+		8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildStopSourceGeneratorTests.swift; sourceTree = "<group>"; };
 		8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntryTests.swift; sourceTree = "<group>"; };
 		8CB823D82BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteViewTests.swift; sourceTree = "<group>"; };
 		8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesViewTests.swift; sourceTree = "<group>"; };
@@ -721,6 +729,9 @@
 				9A17D42B2C0A4F8100F4A745 /* MapDefaults.swift */,
 				9A71D9592C0E54CC0059AA35 /* MapExp.swift */,
 				9A19CDDD2C10DFBC006F1059 /* AlertIcons.swift */,
+				8CB28DAB2C29D6240036258E /* ChildStopSourceGenerator.swift */,
+				8CB28DAD2C29DCBF0036258E /* ChildStopLayerGenerator.swift */,
+				8CB28DAF2C29EE1F0036258E /* ChildStopIcons.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -781,6 +792,7 @@
 				9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */,
 				9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */,
 				9A6FA0242BC714360067769C /* HomeMapViewTest.swift */,
+				8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1161,6 +1173,7 @@
 				9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */,
 				9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */,
 				6EE76D1D2BF535330051D608 /* VehicleCardViewTests.swift in Sources */,
+				8CB28DB22C2A288E0036258E /* ChildStopSourceGeneratorTests.swift in Sources */,
 				6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */,
 				9A5B27622BB32621009A6FC6 /* RouteSourceGeneratorTests.swift in Sources */,
 				9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */,
@@ -1206,6 +1219,7 @@
 				9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */,
 				9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */,
 				9A17D42C2C0A4F8100F4A745 /* MapDefaults.swift in Sources */,
+				8CB28DB02C29EE1F0036258E /* ChildStopIcons.swift in Sources */,
 				9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */,
 				9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */,
 				9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */,
@@ -1217,6 +1231,7 @@
 				9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */,
 				8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */,
 				9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */,
+				8CB28DAE2C29DCBF0036258E /* ChildStopLayerGenerator.swift in Sources */,
 				9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */,
 				6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
@@ -1266,6 +1281,7 @@
 				9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */,
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
+				8CB28DAC2C29D6240036258E /* ChildStopSourceGenerator.swift in Sources */,
 				8C7FA8732B5F36D6009B699D /* Backend.swift in Sources */,
 				EDEEFA9E2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift in Sources */,
 				9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */,
