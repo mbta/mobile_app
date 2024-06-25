@@ -330,11 +330,14 @@ final class HomeMapViewTests: XCTestCase {
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
             [.init(route: MapTestDataHelper.routeOrange, stop: stop,
-                   patternsByHeadsign: [.init(route: MapTestDataHelper.routeOrange,
-                                              headsign: MapTestDataHelper.tripOrangeC1.headsign,
-                                              patterns: [MapTestDataHelper.patternOrange30],
-                                              upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                                              alertsHere: nil)])]))
+                   patterns: [.ByHeadsign(
+                       route: MapTestDataHelper.routeOrange,
+                       headsign: MapTestDataHelper.tripOrangeC1.headsign,
+                       line: nil,
+                       patterns: [MapTestDataHelper.patternOrange30],
+                       upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                       alertsHere: nil
+                   )])]))
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
@@ -402,11 +405,12 @@ final class HomeMapViewTests: XCTestCase {
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
             [.init(route: MapTestDataHelper.routeOrange, stop: stop,
-                   patternsByHeadsign: [.init(route: MapTestDataHelper.routeOrange,
-                                              headsign: MapTestDataHelper.tripOrangeC1.headsign,
-                                              patterns: [MapTestDataHelper.patternOrange30],
-                                              upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                                              alertsHere: nil)])]))
+                   patterns: [.ByHeadsign(route: MapTestDataHelper.routeOrange,
+                                          headsign: MapTestDataHelper.tripOrangeC1.headsign,
+                                          line: nil,
+                                          patterns: [MapTestDataHelper.patternOrange30],
+                                          upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                                          alertsHere: nil)])]))
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(
             stop,

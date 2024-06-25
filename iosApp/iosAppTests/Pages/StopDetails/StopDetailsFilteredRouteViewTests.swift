@@ -57,17 +57,19 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             $0.stopSequence = Int32(stopSequence)
         }
 
-        let patternsByStop = PatternsByStop(route: route, stop: stop, patternsByHeadsign: [
-            .init(
+        let patternsByStop = PatternsByStop(route: route, stop: stop, patterns: [
+            RealtimePatterns.ByHeadsign(
                 route: route,
                 headsign: "North",
+                line: nil,
                 patterns: [patternNorth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
                 alertsHere: nil
             ),
-            .init(
+            RealtimePatterns.ByHeadsign(
                 route: route,
                 headsign: "South",
+                line: nil,
                 patterns: [patternSouth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
                 alertsHere: nil

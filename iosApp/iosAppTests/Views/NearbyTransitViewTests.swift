@@ -356,19 +356,19 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictions)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().find(text: "No real-time data"))
+                .parent().parent().find(text: "No real-time data"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().find(text: "10 min"))
+                .parent().parent().find(text: "10 min"))
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().find(text: "Overridden"))
+                .parent().parent().find(text: "Overridden"))
 
             XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-                .parent().find(text: "1 min"))
+                .parent().parent().find(text: "1 min"))
 
             let expectedState = UpcomingTripView.State
                 .some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
-            XCTAssert(try !stops[1].find(text: "Watertown Yard").parent()
+            XCTAssert(try !stops[1].find(text: "Watertown Yard").parent().parent()
                 .findAll(UpcomingTripView.self, where: { sut in
                     try debugPrint(sut.actualView())
                     return try sut.actualView().prediction == expectedState
@@ -430,7 +430,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
         let newState = NearbyStaticData.companion.build { builder in
-            builder.route(route: sut.state.nearbyByRouteAndStop!.data[0].route) { builder in
+            builder.route(route: sut.state.nearbyByRouteAndStop!.data[0].sortRoute()) { builder in
                 let lechmere = Stop(
                     id: "place-lech",
                     latitude: 90.12,
@@ -790,20 +790,24 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        let sut = NearbyStopView(patternsAtStop: PatternsByStop(
-            route: route, stop: stop,
-            patternsByHeadsign: [PatternsByHeadsign(
-                route: route,
-                headsign: "Place",
-                patterns: [pattern],
-                upcomingTrips: nil,
-                alertsHere: nil
-            )]
+        let sut = NearbyStopView(
+            patternsAtStop: PatternsByStop(
+                route: route, stop: stop,
+                patterns: [RealtimePatterns.ByHeadsign(
+                    route: route,
+                    headsign: "Place",
+                    line: nil,
+                    patterns: [pattern],
+                    upcomingTrips: nil,
+                    alertsHere: nil
+                )]
 
-        ), pushNavEntry: pushNavEntry,
-        now: Date.now.toKotlinInstant())
+            ),
+            now: Date.now.toKotlinInstant(),
+            pushNavEntry: pushNavEntry
+        )
 
-        try sut.inspect().find(HeadsignRowView.self).parent().parent().parent().button().tap()
+        try sut.inspect().find(DestinationView.self).parent().parent().parent().button().tap()
 
         wait(for: [stopEntryPushedExp], timeout: 2)
     }

@@ -36,8 +36,8 @@ final class StopDetailsViewTests: XCTestCase {
                                   stop: stop,
                                   filter: .constant(nil),
                                   nearbyVM: .init(departures: .init(routes: [
-                                      .init(route: routeDefaultSort1, stop: stop, patternsByHeadsign: []),
-                                      .init(route: routeDefaultSort0, stop: stop, patternsByHeadsign: []),
+                                      .init(route: routeDefaultSort1, stop: stop, patterns: []),
+                                      .init(route: routeDefaultSort0, stop: stop, patterns: []),
                                   ])),
                                   pinnedRoutes: [], togglePinnedRoute: { _ in })
 

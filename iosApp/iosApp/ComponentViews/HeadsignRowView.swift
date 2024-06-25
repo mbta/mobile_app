@@ -16,8 +16,8 @@ struct HeadsignRowView: View {
         case onPrediction(routesByTrip: [String: Route])
     }
 
-    var headsign: String? = nil
-    var direction: Direction? = nil
+    var headsign: String?
+    var direction: Direction?
     let predictions: RealtimePatterns.Format
     let routeType: RouteType
     let pillDecoration: PillDecoration
@@ -78,7 +78,6 @@ struct HeadsignRowView: View {
 
     @ViewBuilder
     var destinationLabel: some View {
-        EmptyView()
         if let headsign {
             Text(headsign)
                 .foregroundStyle(Color.text)
