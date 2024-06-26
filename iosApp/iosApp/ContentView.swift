@@ -12,7 +12,6 @@ struct ContentView: View {
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
-    @EnvironmentObject var tripPredictionsFetcher: TripPredictionsFetcher
     @EnvironmentObject var vehicleFetcher: VehicleFetcher
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -123,7 +122,6 @@ struct ContentView: View {
                                 target: target,
                                 globalFetcher: globalFetcher,
                                 nearbyVM: nearbyVM,
-                                tripPredictionsFetcher: tripPredictionsFetcher,
                                 vehicleFetcher: vehicleFetcher
                             ).onAppear {
                                 visibleNearbySheet = entry

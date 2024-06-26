@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import org.koin.core.module.Module
@@ -36,6 +37,9 @@ fun repositoriesModule(repositories: IRepositories): Module {
         }
         repositories.alerts?.let { alertsRepo -> factory<IAlertsRepository> { alertsRepo } }
         single<INearbyRepository> { repositories.nearby }
+        repositories.tripPredictions?.let { tripPredictionsRepo ->
+            factory<ITripPredictionsRepository> { tripPredictionsRepo }
+        }
         single { TogglePinnedRouteUsecase(get()) }
     }
 }

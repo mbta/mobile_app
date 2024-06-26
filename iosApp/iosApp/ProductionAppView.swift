@@ -32,7 +32,6 @@ struct ProductionAppView: View {
     @StateObject var globalFetcher: GlobalFetcher
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var socketProvider: SocketProvider
-    @StateObject var tripPredictionsFetcher: TripPredictionsFetcher
     @StateObject var vehicleFetcher: VehicleFetcher
     @StateObject var vehiclesFetcher: VehiclesFetcher
     @StateObject var viewportProvider: ViewportProvider
@@ -51,7 +50,6 @@ struct ProductionAppView: View {
         _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
-        _tripPredictionsFetcher = StateObject(wrappedValue: TripPredictionsFetcher(socket: socket))
         _vehicleFetcher = StateObject(wrappedValue: VehicleFetcher(socket: socket))
         _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
@@ -65,7 +63,6 @@ struct ProductionAppView: View {
             .environmentObject(globalFetcher)
             .environmentObject(railRouteShapeFetcher)
             .environmentObject(socketProvider)
-            .environmentObject(tripPredictionsFetcher)
             .environmentObject(vehicleFetcher)
             .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)

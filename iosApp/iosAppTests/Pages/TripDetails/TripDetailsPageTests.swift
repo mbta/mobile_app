@@ -39,7 +39,7 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
-        let tripPredictionsFetcher = FakeTripPredictionsFetcher(response: .init(objects: objects))
+        let tripPredictionsRepository = FakeTripPredictionsRepository(response: .init(objects: objects))
 
         let tripId = "123"
         let vehicleId = "999"
@@ -49,7 +49,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
-            tripPredictionsFetcher: tripPredictionsFetcher,
+            tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: .init(socket: MockSocket())
         )
@@ -105,7 +105,7 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
-        let tripPredictionsFetcher = FakeTripPredictionsFetcher(response: .init(objects: objects))
+        let tripPredictionsRepository = FakeTripPredictionsRepository(response: .init(objects: objects))
 
         let tripId = trip.id
         let vehicleId = vehicle.id
@@ -115,7 +115,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
-            tripPredictionsFetcher: tripPredictionsFetcher,
+            tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
         )
@@ -157,7 +157,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: .init(stopId: stop1.id, stopSequence: 998),
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
-            tripPredictionsFetcher: FakeTripPredictionsFetcher(response: .init(objects: objects)),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: nil)
         )
@@ -251,7 +251,12 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
-        let tripPredictionsFetcher = FakeTripPredictionsFetcher(response: .init(objects: objects))
+        let tripPredictionsLoaded = PassthroughSubject<Void, Never>()
+
+        let tripPredictionsRepository = FakeTripPredictionsRepository(
+            response: .init(objects: objects),
+            onConnect: { _ in tripPredictionsLoaded.send() }
+        )
 
         let tripId = trip.id
         let vehicleId = vehicle.id
@@ -261,12 +266,14 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
-            tripPredictionsFetcher: tripPredictionsFetcher,
+            tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
         )
 
-        let routeExp = sut.inspection.inspect { view in
+        let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
+
+        let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
             let stop1Row = try view.find(TripDetailsStopView.self, containing: stop1.name)
             let stop2Row = try view.find(TripDetailsStopView.self, containing: stop2.name)
             XCTAssertNotNil(try stop1Row.find(RoutePill.self, containing: "Green Line"))
@@ -304,7 +311,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: GlobalFetcher(backend: IdleBackend()),
             nearbyVM: FakeNearbyVM(backExp),
-            tripPredictionsFetcher: .init(socket: MockSocket()),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: FakeTripSchedulesRepository(response: TripSchedulesResponse
                 .StopIds(stopIds: ["stop1"])),
             vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: nil))
@@ -330,20 +337,24 @@ final class TripDetailsPageTests: XCTestCase {
         }
     }
 
-    class FakeTripPredictionsFetcher: TripPredictionsFetcher {
+    class FakeTripPredictionsRepository: ITripPredictionsRepository {
         let response: PredictionsStreamDataResponse
-        let onRun: ((_ tripId: String) -> Void)?
+        let onConnect: ((_ tripId: String) -> Void)?
 
-        init(response: PredictionsStreamDataResponse, onRun: ((_ tripId: String) -> Void)? = nil) {
+        init(response: PredictionsStreamDataResponse, onConnect: ((_ tripId: String) -> Void)? = nil) {
             self.response = response
-            self.onRun = onRun
-            super.init(socket: MockSocket())
+            self.onConnect = onConnect
         }
 
-        override func run(tripId: String) {
-            onRun?(tripId)
-            predictions = response
+        func connect(
+            tripId: String,
+            onReceive: @escaping (Outcome<PredictionsStreamDataResponse, __SocketError>) -> Void
+        ) {
+            onConnect?(tripId)
+            onReceive(.init(data: response, error: nil))
         }
+
+        func disconnect() {}
     }
 
     class FakeVehicleFetcher: VehicleFetcher {

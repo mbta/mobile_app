@@ -16,10 +16,11 @@ struct TripDetailsPage: View {
     let vehicleId: String
     let target: TripDetailsTarget?
 
-    @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var vehicleFetcher: VehicleFetcher
+    var tripPredictionsRepository: ITripPredictionsRepository
+    @State var tripPredictions: PredictionsStreamDataResponse?
     var tripSchedulesRepository: ITripSchedulesRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
 
@@ -33,7 +34,7 @@ struct TripDetailsPage: View {
         target: TripDetailsTarget?,
         globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
-        tripPredictionsFetcher: TripPredictionsFetcher,
+        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
         vehicleFetcher: VehicleFetcher
     ) {
@@ -42,7 +43,7 @@ struct TripDetailsPage: View {
         self.target = target
         self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
-        self.tripPredictionsFetcher = tripPredictionsFetcher
+        self.tripPredictionsRepository = tripPredictionsRepository
         self.tripSchedulesRepository = tripSchedulesRepository
         self.vehicleFetcher = vehicleFetcher
     }
@@ -55,7 +56,7 @@ struct TripDetailsPage: View {
                 let vehicle = vehicleFetcher.response?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
-                    tripPredictions: tripPredictionsFetcher.predictions,
+                    tripPredictions: tripPredictions,
                     vehicle: vehicle, globalData: globalData
                 ) {
                     vehicleCardView
@@ -74,8 +75,6 @@ struct TripDetailsPage: View {
             } else {
                 ProgressView()
             }
-
-            tripPredictionsFetcher.errorText
         }
         .task {
             do {
@@ -120,16 +119,24 @@ struct TripDetailsPage: View {
     }
 
     private func joinPredictions(tripId: String) {
-        tripPredictionsFetcher.run(tripId: tripId)
+        tripPredictionsRepository.connect(tripId: tripId) { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    tripPredictions = data
+                } else {
+                    tripPredictions = nil
+                }
+            }
+        }
     }
 
     private func leavePredictions() {
-        tripPredictionsFetcher.leave()
+        tripPredictionsRepository.disconnect()
     }
 
     @ViewBuilder
     var vehicleCardView: some View {
-        let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
+        let trip: Trip? = tripPredictions?.trips[tripId]
         let vehicle: Vehicle? = vehicleFetcher.response?.vehicle
         let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
             globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
