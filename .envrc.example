@@ -10,3 +10,7 @@ export FIREBASE_KEY=
 # Find DSN under the Client Keys settings of the mobile_app_ios project in Sentry
 export SENTRY_DSN=
 export SENTRY_ENVIRONMENT=debug
+
+# Appcues - needed only to show surveys via Appcues
+export APPCUES_ACCOUNT_ID=
+export APPCUES_APP_ID=

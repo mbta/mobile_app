@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "appcues-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/appcues/appcues-ios-sdk",
+      "state" : {
+        "revision" : "5b3668a18154dcfc37a5b551658c29985a5f80e1",
+        "version" : "3.2.0"
+      }
+    },
+    {
       "identity" : "firebase-ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
