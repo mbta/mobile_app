@@ -603,7 +603,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let exp = sut.on(\.didAppear) { view in
             try view.vStack().callOnChange(newValue: predictions)
             let stops = view.findAll(NearbyStopView.self)
-            XCTAssertEqual(stops[0].findAll(DestinationView.self).count, 3)
+            XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 
             let kenmoreDirection = try stops[0].find(text: "Kenmore & West")
                 .parent().parent().parent().parent()
