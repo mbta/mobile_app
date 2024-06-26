@@ -20,7 +20,7 @@ struct StopDetailsFilteredRouteView: View {
     struct RowData {
         let tripId: String
         let headsign: String
-        let formatted: RealtimePatterns.ByHeadsign.Format
+        let formatted: RealtimePatterns.Format
         let navigationTarget: SheetNavigationStackEntry?
 
         init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
@@ -42,7 +42,7 @@ struct StopDetailsFilteredRouteView: View {
                 navigationTarget = nil
             }
 
-            if !(formatted is RealtimePatterns.ByHeadsign.FormatSome) {
+            if !(formatted is RealtimePatterns.FormatSome) {
                 return nil
             }
         }
@@ -76,15 +76,15 @@ struct StopDetailsFilteredRouteView: View {
     }
 
     var body: some View {
-        if let patternsByStop, let route = patternsByStop.routes.first {
-            let routeHex: String? = route.color
+        if let patternsByStop {
+            let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
             ZStack {
                 if let routeHex {
                     Color(hex: routeHex)
                 }
                 ScrollView {
                     VStack {
-                        RouteHeader(route: route)
+                        RouteHeader(route: patternsByStop.representativeRoute)
                         DirectionPicker(
                             patternsByStop: patternsByStop,
                             filter: $filter
@@ -99,12 +99,12 @@ struct StopDetailsFilteredRouteView: View {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             pushNavEntry(entry)
                                             analytics.tappedDepartureRow(
-                                                routeId: route.id,
+                                                routeId: patternsByStop.routeIdentifier,
                                                 stopId: patternsByStop.stop.id
                                             )
                                         }) {
                                             HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
-                                                            routeType: route.type)
+                                                            routeType: patternsByStop.representativeRoute.type)
                                         }
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 16)

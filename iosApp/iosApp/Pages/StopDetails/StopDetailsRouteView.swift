@@ -23,6 +23,7 @@ struct StopDetailsRouteView: View {
             RouteSection(route: route, pinned: pinned, onPin: onPin) {
                 StopDeparturesSummaryList(
                     patternsByStop: patternsByStop,
+                    condenseHeadsignPredictions: false,
                     now: now,
                     pushNavEntry: { entry in pushNavEntry(entry) }
                 )

@@ -12,6 +12,7 @@ import SwiftUI
 
 struct StopDeparturesSummaryList: View {
     let patternsByStop: PatternsByStop
+    let condenseHeadsignPredictions: Bool
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
@@ -30,7 +31,8 @@ struct StopDeparturesSummaryList: View {
                 ) {
                     DestinationView(
                         patterns: patterns,
-                        now: now
+                        now: now,
+                        singleHeadsignPredictions: condenseHeadsignPredictions
                     )
                 }
                 .padding(8)
@@ -52,6 +54,11 @@ struct StopDeparturesSummaryList: View {
             .init(
                 routeId: patternsByStop.routeIdentifier,
                 directionId: patternsByHeadsign.directionId()
+            )
+        case let patternsByDirection as RealtimePatterns.ByDirection:
+            .init(
+                routeId: patternsByStop.routeIdentifier,
+                directionId: patternsByDirection.directionId()
             )
         default:
             .init(routeId: "", directionId: 0)
@@ -75,8 +82,17 @@ struct DestinationView: View {
         case let patternsByHeadsign as RealtimePatterns.ByHeadsign:
             HeadsignRowView(
                 headsign: patternsByHeadsign.headsign,
-                predictions: patternsByHeadsign.format(now: now, count: 2),
-                routeType: patternsByHeadsign.route.type
+                predictions: patternsByHeadsign.format(now: now, count: condenseHeadsignPredictions ? 1 : 2),
+                routeType: patternsByHeadsign.route.type,
+                pillDecoration: patternsByHeadsign.line != nil ?
+                    .onRow(route: patternsByHeadsign.route) : .none
+            )
+        case let patternsByDirection as RealtimePatterns.ByDirection:
+            HeadsignRowView(
+                direction: patternsByDirection.direction,
+                predictions: patternsByDirection.format(now: now),
+                routeType: patternsByDirection.representativeRoute.type,
+                pillDecoration: .onPrediction(routesByTrip: patternsByDirection.routesByTrip)
             )
         default:
             EmptyView()
