@@ -38,6 +38,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             compareValuesBy(
                 this,
                 other,
+                { it.patterns.first().directionId },
                 {
                     when (it) {
                         is ByDirection -> -1

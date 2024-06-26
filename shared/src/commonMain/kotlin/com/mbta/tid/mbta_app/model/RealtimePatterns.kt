@@ -151,6 +151,7 @@ sealed class RealtimePatterns(
             compareValuesBy(
                 this,
                 other,
+                { it.patterns.first().directionId },
                 {
                     when (it) {
                         is ByDirection -> -1
