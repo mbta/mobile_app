@@ -101,16 +101,8 @@ struct NearbyTransitView: View {
                         switch nearbyTransit as AnyObject {
                         case let nearbyRoute as StopsAssociated.WithRoute:
                             NearbyRouteView(
-                                nearbyRoute: nearbyRoute,
+                                nearbyTransit: nearbyRoute,
                                 pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                                onPin: { id in toggledPinnedRoute(id) },
-                                pushNavEntry: nearbyVM.pushNavEntry,
-                                now: now.toKotlinInstant()
-                            )
-                        case let nearbyLine as StopsAssociated.WithLine:
-                            NearbyLineView(
-                                nearbyLine: nearbyLine,
-                                pinned: pinnedRoutes.contains(nearbyLine.line.id),
                                 onPin: { id in toggledPinnedRoute(id) },
                                 pushNavEntry: nearbyVM.pushNavEntry,
                                 now: now.toKotlinInstant()
@@ -381,7 +373,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
         )
         List {
             NearbyRouteView(
-                nearbyRoute: StopsAssociated.WithRoute(
+                nearbyTransit: StopsAssociated.WithRoute(
                     route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
@@ -409,7 +401,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
-                nearbyRoute: StopsAssociated.WithRoute(
+                nearbyTransit: StopsAssociated.WithRoute(
                     route: crRoute,
                     patternsByStop: [
                         PatternsByStop(
