@@ -29,13 +29,13 @@ struct NearbyTransitView: View {
     @State var scheduleResponse: ScheduleResponse?
     @State var nearbyWithRealtimeInfo: [StopsAssociated]?
     @State var now = Date.now
-    @State var scrollPosition: String?
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsError: SocketError?
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
+    let scrollSubject = PassthroughSubject<String, Never>()
 
     var body: some View {
         VStack {
@@ -113,11 +113,9 @@ struct NearbyTransitView: View {
                     }
                 }
             }
-            .onChange(of: scrollPosition) { id in
-                guard let id else { return }
+            .onReceive(scrollSubject) { id in
                 withAnimation {
-                    proxy.scrollTo(id, anchor: .center)
-                    scrollPosition = nil
+                    proxy.scrollTo(id, anchor: .top)
                 }
             }
             .putAboveWhen(predictionsError) { error in
@@ -190,7 +188,7 @@ struct NearbyTransitView: View {
 
     private func scrollToTop() {
         guard let id = nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
-        scrollPosition = id
+        scrollSubject.send(id)
     }
 
     private func updateNearbyRoutes(
