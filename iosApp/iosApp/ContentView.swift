@@ -12,7 +12,6 @@ struct ContentView: View {
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
-    @EnvironmentObject var vehicleFetcher: VehicleFetcher
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
@@ -121,8 +120,7 @@ struct ContentView: View {
                                 vehicleId: vehicleId,
                                 target: target,
                                 globalFetcher: globalFetcher,
-                                nearbyVM: nearbyVM,
-                                vehicleFetcher: vehicleFetcher
+                                nearbyVM: nearbyVM
                             ).onAppear {
                                 visibleNearbySheet = entry
                             }

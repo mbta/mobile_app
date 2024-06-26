@@ -50,8 +50,7 @@ final class TripDetailsPageTests: XCTestCase {
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
-            tripSchedulesRepository: tripSchedulesRepository,
-            vehicleFetcher: .init(socket: MockSocket())
+            tripSchedulesRepository: tripSchedulesRepository
         )
 
         let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
@@ -117,7 +116,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
-            vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
         let showVehicleCardExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
@@ -159,7 +158,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: tripSchedulesRepository,
-            vehicleFetcher: FakeVehicleFetcher(response: nil)
+            vehicleRepository: FakeVehicleRepository(response: nil)
         )
 
         let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
@@ -268,7 +267,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
-            vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: vehicle))
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
@@ -314,7 +313,7 @@ final class TripDetailsPageTests: XCTestCase {
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: FakeTripSchedulesRepository(response: TripSchedulesResponse
                 .StopIds(stopIds: ["stop1"])),
-            vehicleFetcher: FakeVehicleFetcher(response: .init(vehicle: nil))
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
         )
 
         try sut.inspect().find(CloseButton.self).button().tap()
@@ -357,15 +356,19 @@ final class TripDetailsPageTests: XCTestCase {
         func disconnect() {}
     }
 
-    class FakeVehicleFetcher: VehicleFetcher {
-        let overriddenResponse: VehicleStreamDataResponse?
+    class FakeVehicleRepository: IVehicleRepository {
+        let response: VehicleStreamDataResponse?
         init(response: VehicleStreamDataResponse?) {
-            overriddenResponse = response
-            super.init(socket: MockSocket())
+            self.response = response
         }
 
-        override func run(vehicleId _: String) {
-            response = overriddenResponse
+        func connect(
+            vehicleId _: String,
+            onReceive: @escaping (Outcome<VehicleStreamDataResponse, __SocketError>) -> Void
+        ) {
+            onReceive(.init(data: response, error: nil))
         }
+
+        func disconnect() {}
     }
 }
