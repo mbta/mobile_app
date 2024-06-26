@@ -70,3 +70,5 @@ touch .envrc
 echo "export SENTRY_DSN=${SENTRY_DSN}" >> .envrc
 echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}" >> .envrc
 echo "export FIREBASE_KEY=${FIREBASE_KEY}" >> .envrc
+echo "export APPCUES_ACCOUNT_ID=${APPCUES_ACCOUNT_ID}" >> .envrc
+echo "export APPCUES_APP_ID=${APPCUES_APP_ID}" >> .envrc
