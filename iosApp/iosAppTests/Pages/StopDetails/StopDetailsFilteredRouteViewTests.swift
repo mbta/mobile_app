@@ -111,7 +111,9 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let expected = SheetNavigationStackEntry.tripDetails(
             tripId: data.tripNorthId,
             vehicleId: data.vehicleNorthId,
-            target: .init(stopId: data.stopId, stopSequence: data.stopSequence)
+            target: .init(stopId: data.stopId, stopSequence: data.stopSequence),
+            routeId: data.routeId,
+            directionId: 0
         )
 
         func pushNavEntry(entry: SheetNavigationStackEntry) {

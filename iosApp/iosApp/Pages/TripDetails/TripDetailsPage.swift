@@ -18,6 +18,7 @@ struct TripDetailsPage: View {
 
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
+    @ObservedObject var mapVM: MapViewModel
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
     @State var tripSchedulesRepository: ITripSchedulesRepository
@@ -35,6 +36,7 @@ struct TripDetailsPage: View {
         target: TripDetailsTarget?,
         globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
+        mapVM: MapViewModel,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
@@ -44,6 +46,7 @@ struct TripDetailsPage: View {
         self.target = target
         self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
+        self.mapVM = mapVM
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripSchedulesRepository = tripSchedulesRepository
         self.vehicleRepository = vehicleRepository
@@ -140,6 +143,7 @@ struct TripDetailsPage: View {
             DispatchQueue.main.async {
                 if let data = outcome.data {
                     vehicleResponse = data
+                    mapVM.selectedVehicle = data.vehicle
                 } else {
                     vehicleResponse = nil
                 }
@@ -149,6 +153,9 @@ struct TripDetailsPage: View {
 
     private func leaveVehicle() {
         vehicleRepository.disconnect()
+        if mapVM.selectedVehicle?.id == vehicleId {
+            mapVM.selectedVehicle = nil
+        }
     }
 
     @ViewBuilder

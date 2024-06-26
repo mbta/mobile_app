@@ -13,7 +13,13 @@ import XCTest
 
 final class OptionalNavigationLinkTests: XCTestCase {
     func testIsLink() throws {
-        let target = SheetNavigationStackEntry.tripDetails(tripId: "1", vehicleId: "a", target: nil)
+        let target = SheetNavigationStackEntry.tripDetails(
+            tripId: "1",
+            vehicleId: "a",
+            target: nil,
+            routeId: "Z",
+            directionId: 1
+        )
 
         let tappedExp = XCTestExpectation(description: "Nav link button tapped with target")
 
