@@ -5,18 +5,11 @@ import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 
 sealed class StopsAssociated() {
     abstract val id: String
+    abstract val patternsByStop: List<PatternsByStop>
 
-    fun distanceFrom(position: Position): Double =
-        when (this) {
-            is WithRoute -> this.distance(position)
-            is WithLine -> this.distance(position)
-        }
+    fun distanceFrom(position: Position): Double = this.distance(position)
 
-    fun isEmpty(): Boolean =
-        when (this) {
-            is WithRoute -> this.patternsByStop.isEmpty()
-            is WithLine -> this.patternsByStop.isEmpty()
-        }
+    fun isEmpty(): Boolean = this.patternsByStop.isEmpty()
 
     fun sortRoute(): Route =
         when (this) {
@@ -28,19 +21,15 @@ sealed class StopsAssociated() {
      * @property patternsByStop A list of route patterns grouped by the station or stop that they
      *   serve.
      */
-    data class WithRoute(val route: Route, val patternsByStop: List<PatternsByStop>) :
+    data class WithRoute(val route: Route, override val patternsByStop: List<PatternsByStop>) :
         StopsAssociated() {
         override val id: String = route.id
-
-        @OptIn(ExperimentalTurfApi::class)
-        fun distance(position: Position): Double =
-            io.github.dellisd.spatialk.turf.distance(position, patternsByStop.first().position)
     }
 
     data class WithLine(
         val line: Line,
         val routes: List<Route>,
-        val patternsByStop: List<PatternsByStop>,
+        override val patternsByStop: List<PatternsByStop>,
     ) : StopsAssociated() {
         override val id: String = line.id
 
@@ -57,9 +46,9 @@ sealed class StopsAssociated() {
             val matchRoute = upcoming.first().trip.routeId
             return !upcoming.all { it.trip.routeId == matchRoute }
         }
-
-        @OptIn(ExperimentalTurfApi::class)
-        fun distance(position: Position): Double =
-            io.github.dellisd.spatialk.turf.distance(position, patternsByStop.first().position)
     }
+
+    @OptIn(ExperimentalTurfApi::class)
+    fun distance(position: Position): Double =
+        io.github.dellisd.spatialk.turf.distance(position, patternsByStop.first().position)
 }

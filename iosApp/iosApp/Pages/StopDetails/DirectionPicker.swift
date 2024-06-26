@@ -23,7 +23,7 @@ struct DirectionPicker: View {
             pattern.directionId()
         }).sorted()
         directions = patternsByStop.directions
-        route = patternsByStop.routes.first!
+        route = patternsByStop.representativeRoute
 
         _filter = filter
     }

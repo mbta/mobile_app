@@ -38,7 +38,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             compareValuesBy(
                 this,
                 other,
-                { it.patterns.first().directionId },
                 {
                     when (it) {
                         is ByDirection -> -1
@@ -107,7 +106,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         fun sortRoute(): Route =
             when (this) {
                 is ByRoute -> this.route
-                is ByLine -> this.routes.max()
+                is ByLine -> this.routes.min()
             }
 
         data class ByLine(
@@ -222,7 +221,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     )
 
     companion object {
-        val groupedLines = listOf("line-Green")
+        val groupedLines = emptyList<String>()
 
         fun buildStopPatternsForRoute(
             stop: Stop,

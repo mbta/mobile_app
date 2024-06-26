@@ -28,7 +28,7 @@ struct StopDeparturesSummaryList: View {
                     ),
                     action: pushNavEntry
                 ) {
-                    DestinationView(
+                    DestinationRowView(
                         patterns: patterns,
                         now: now
                     )
@@ -47,39 +47,14 @@ struct StopDeparturesSummaryList: View {
     }
 
     func filterFor(patterns: RealtimePatterns) -> StopDetailsFilter {
-        switch patterns as AnyObject {
-        case let patternsByHeadsign as RealtimePatterns.ByHeadsign:
+        switch onEnum(of: patterns) {
+        case let .byHeadsign(patternsByHeadsign):
             .init(
                 routeId: patternsByStop.routeIdentifier,
                 directionId: patternsByHeadsign.directionId()
             )
         default:
             .init(routeId: "", directionId: 0)
-        }
-    }
-}
-
-struct DestinationView: View {
-    let patterns: RealtimePatterns
-    let condenseHeadsignPredictions: Bool
-    let now: Instant
-
-    init(patterns: RealtimePatterns, now: Instant, singleHeadsignPredictions: Bool = false) {
-        self.patterns = patterns
-        self.now = now
-        condenseHeadsignPredictions = singleHeadsignPredictions
-    }
-
-    var body: some View {
-        switch patterns as AnyObject {
-        case let patternsByHeadsign as RealtimePatterns.ByHeadsign:
-            HeadsignRowView(
-                headsign: patternsByHeadsign.headsign,
-                predictions: patternsByHeadsign.format(now: now, count: 2),
-                routeType: patternsByHeadsign.route.type
-            )
-        default:
-            EmptyView()
         }
     }
 }

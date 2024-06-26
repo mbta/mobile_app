@@ -17,8 +17,8 @@ struct NearbyRouteView: View {
     let now: Instant
 
     var body: some View {
-        switch nearbyTransit as AnyObject {
-        case let nearbyRoute as StopsAssociated.WithRoute:
+        switch onEnum(of: nearbyTransit) {
+        case let .withRoute(nearbyRoute):
             RouteSection(route: nearbyRoute.route, pinned: pinned, onPin: onPin) {
                 ForEach(Array(nearbyRoute.patternsByStop.enumerated()),
                         id: \.element.stop.id) { index, patternsAtStop in

@@ -6,7 +6,7 @@ import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
-class RealtimePatternsByHeadsignTest {
+class RealtimePatternsTest {
     @Test
     fun `formats as loading when null trips`() {
         val now = Clock.System.now()
@@ -251,5 +251,78 @@ class RealtimePatternsByHeadsignTest {
                 )
                 .directionId()
         }
+    }
+
+    @Test
+    fun `predictions grouped by direction are displayed`() {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val line = objects.line {}
+        val route1 = objects.route()
+        val route2 = objects.route()
+        val route3 = objects.route()
+
+        val trip1 = objects.trip { routeId = route1.id }
+        val trip2 = objects.trip { routeId = route2.id }
+        val trip3 = objects.trip { routeId = route3.id }
+        val trip4 = objects.trip { routeId = route1.id }
+
+        val prediction1 =
+            objects.prediction {
+                trip = trip1
+                departureTime = now + 3.minutes
+            }
+        val prediction2 =
+            objects.prediction {
+                trip = trip2
+                departureTime = now + 5.minutes
+            }
+        val prediction3 =
+            objects.prediction {
+                trip = trip3
+                departureTime = now + 7.minutes
+            }
+        val prediction4 =
+            objects.prediction {
+                trip = trip4
+                departureTime = now + 9.minutes
+            }
+
+        val upcomingTrip1 = objects.upcomingTrip(prediction1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
+        val upcomingTrip3 = objects.upcomingTrip(prediction3)
+        val upcomingTrip4 = objects.upcomingTrip(prediction4)
+
+        val directionPatterns =
+            RealtimePatterns.ByDirection(
+                line,
+                routes = listOf(route1, route2, route3),
+                direction = Direction("", "", 0),
+                emptyList(),
+                listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3, upcomingTrip4)
+            )
+
+        assertEquals(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip1.id,
+                        UpcomingTrip.Format.Minutes(3)
+                    ),
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip2.id,
+                        UpcomingTrip.Format.Minutes(5)
+                    ),
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip3.id,
+                        UpcomingTrip.Format.Minutes(7)
+                    )
+                )
+            ),
+            directionPatterns.format(now)
+        )
+
+        assertEquals(directionPatterns.routesByTrip[trip2.id], route2)
     }
 }

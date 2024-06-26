@@ -76,25 +76,6 @@ sealed class RealtimePatterns(
 
         override fun compareTo(other: RealtimePatterns): Int =
             patterns.first().compareTo(other.patterns.first())
-
-        fun format(now: Instant, count: Int = 2): Format {
-            val alert = alertsHere?.firstOrNull()
-            if (alert != null) return Format.NoService(alert)
-            if (this.upcomingTrips == null) return Format.Loading
-            val tripsToShow =
-                upcomingTrips
-                    .map { Format.Some.FormatWithId(it, now) }
-                    .filterNot {
-                        it.format is UpcomingTrip.Format.Hidden ||
-
-                            // API best practices call for hiding scheduled times on subway
-                            (this.route.type.isSubway() &&
-                                it.format is UpcomingTrip.Format.Schedule)
-                    }
-                    .take(count)
-            if (tripsToShow.isEmpty()) return Format.None
-            return Format.Some(tripsToShow)
-        }
     }
 
     /**
@@ -170,7 +151,6 @@ sealed class RealtimePatterns(
             compareValuesBy(
                 this,
                 other,
-                { it.patterns.first().directionId },
                 {
                     when (it) {
                         is ByDirection -> -1
@@ -179,24 +159,39 @@ sealed class RealtimePatterns(
                 },
                 { it.patterns.first() }
             )
+    }
 
-        fun format(now: Instant): Format {
-            val alert = alertsHere?.firstOrNull()
-            if (alert != null) return Format.NoService(alert)
-            if (this.upcomingTrips == null) return Format.Loading
-            val tripsToShow =
-                upcomingTrips
-                    .map { Format.Some.FormatWithId(it, now) }
-                    .filterNot {
-                        it.format is UpcomingTrip.Format.Hidden ||
-                            // API best practices call for hiding scheduled times on subway
-                            (this.routes.min().type.isSubway() &&
-                                it.format is UpcomingTrip.Format.Schedule)
-                    }
-                    .take(3)
-            if (tripsToShow.isEmpty()) return Format.None
-            return Format.Some(tripsToShow)
-        }
+    fun format(now: Instant): Format {
+        return this.format(
+            now,
+            when (this) {
+                is ByHeadsign -> 2
+                is ByDirection -> 3
+            }
+        )
+    }
+
+    fun format(now: Instant, count: Int): Format {
+        val alert = alertsHere?.firstOrNull()
+        if (alert != null) return Format.NoService(alert)
+        if (this.upcomingTrips == null) return Format.Loading
+        val allTrips = upcomingTrips ?: emptyList()
+        val tripsToShow =
+            allTrips
+                .map { Format.Some.FormatWithId(it, now) }
+                .filterNot {
+                    it.format is UpcomingTrip.Format.Hidden ||
+                        // API best practices call for hiding scheduled times on subway
+                        (when (this) {
+                                is ByHeadsign -> this.route
+                                is ByDirection -> this.routes.min()
+                            }
+                            .type
+                            .isSubway() && it.format is UpcomingTrip.Format.Schedule)
+                }
+                .take(count)
+        if (tripsToShow.isEmpty()) return Format.None
+        return Format.Some(tripsToShow)
     }
 
     /**
