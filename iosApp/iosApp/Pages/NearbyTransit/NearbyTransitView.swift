@@ -98,8 +98,8 @@ struct NearbyTransitView: View {
             ScrollView {
                 LazyVStack {
                     ForEach(transit, id: \.id) { nearbyTransit in
-                        switch nearbyTransit as AnyObject {
-                        case let nearbyRoute as StopsAssociated.WithRoute:
+                        switch onEnum(of: nearbyTransit) {
+                        case let .withRoute(nearbyRoute):
                             NearbyRouteView(
                                 nearbyRoute: nearbyRoute,
                                 pinned: pinnedRoutes.contains(nearbyRoute.route.id),
@@ -107,7 +107,7 @@ struct NearbyTransitView: View {
                                 pushNavEntry: nearbyVM.pushNavEntry,
                                 now: now.toKotlinInstant()
                             )
-                        case let nearbyLine as StopsAssociated.WithLine:
+                        case let .withLine(nearbyLine):
                             NearbyLineView(
                                 nearbyLine: nearbyLine,
                                 pinned: pinnedRoutes.contains(nearbyLine.line.id),
@@ -115,8 +115,6 @@ struct NearbyTransitView: View {
                                 pushNavEntry: nearbyVM.pushNavEntry,
                                 now: now.toKotlinInstant()
                             )
-                        default:
-                            EmptyView()
                         }
                     }
                 }

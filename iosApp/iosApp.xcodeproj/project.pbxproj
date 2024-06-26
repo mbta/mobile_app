@@ -142,6 +142,7 @@
 		9A9E7DD52C2203E8000DA1FD /* PinButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD42C2203E8000DA1FD /* PinButton.swift */; };
 		9A9E7DD72C220812000DA1FD /* LineSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD62C220812000DA1FD /* LineSection.swift */; };
 		9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA379A22C2A314F00278541 /* DirectionLabel.swift */; };
+		9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */; };
 		9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		9AB3F50F2BE45382008D9E40 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */; };
 		9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */; };
@@ -355,6 +356,7 @@
 		9A9E7DD42C2203E8000DA1FD /* PinButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinButton.swift; sourceTree = "<group>"; };
 		9A9E7DD62C220812000DA1FD /* LineSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSection.swift; sourceTree = "<group>"; };
 		9AA379A22C2A314F00278541 /* DirectionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionLabel.swift; sourceTree = "<group>"; };
+		9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationRowView.swift; sourceTree = "<group>"; };
 		9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopIcons.swift; sourceTree = "<group>"; };
 		9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCard.swift; sourceTree = "<group>"; };
@@ -709,6 +711,7 @@
 				9A2005C62B97B63300F562E1 /* NearbyStopView.swift */,
 				9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */,
 				6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */,
+				9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */,
 			);
 			path = NearbyTransit;
 			sourceTree = "<group>";
@@ -1286,6 +1289,7 @@
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
 				8CB28DAC2C29D6240036258E /* ChildStopSourceGenerator.swift in Sources */,
+				9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */,
 				8C7FA8732B5F36D6009B699D /* Backend.swift in Sources */,
 				EDEEFA9E2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift in Sources */,
 				9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */,

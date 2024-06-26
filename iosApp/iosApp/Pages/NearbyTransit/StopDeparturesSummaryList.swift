@@ -29,7 +29,7 @@ struct StopDeparturesSummaryList: View {
                     ),
                     action: pushNavEntry
                 ) {
-                    DestinationView(
+                    DestinationRowView(
                         patterns: patterns,
                         now: now,
                         singleHeadsignPredictions: condenseHeadsignPredictions
@@ -49,53 +49,17 @@ struct StopDeparturesSummaryList: View {
     }
 
     func filterFor(patterns: RealtimePatterns) -> StopDetailsFilter {
-        switch patterns as AnyObject {
-        case let patternsByHeadsign as RealtimePatterns.ByHeadsign:
+        switch onEnum(of: patterns) {
+        case let .byHeadsign(patternsByHeadsign):
             .init(
                 routeId: patternsByStop.routeIdentifier,
                 directionId: patternsByHeadsign.directionId()
             )
-        case let patternsByDirection as RealtimePatterns.ByDirection:
+        case let .byDirection(patternsByDirection):
             .init(
                 routeId: patternsByStop.routeIdentifier,
                 directionId: patternsByDirection.directionId()
             )
-        default:
-            .init(routeId: "", directionId: 0)
-        }
-    }
-}
-
-struct DestinationView: View {
-    let patterns: RealtimePatterns
-    let condenseHeadsignPredictions: Bool
-    let now: Instant
-
-    init(patterns: RealtimePatterns, now: Instant, singleHeadsignPredictions: Bool = false) {
-        self.patterns = patterns
-        self.now = now
-        condenseHeadsignPredictions = singleHeadsignPredictions
-    }
-
-    var body: some View {
-        switch patterns as AnyObject {
-        case let patternsByHeadsign as RealtimePatterns.ByHeadsign:
-            HeadsignRowView(
-                headsign: patternsByHeadsign.headsign,
-                predictions: patternsByHeadsign.format(now: now, count: condenseHeadsignPredictions ? 1 : 2),
-                routeType: patternsByHeadsign.route.type,
-                pillDecoration: patternsByHeadsign.line != nil ?
-                    .onRow(route: patternsByHeadsign.route) : .none
-            )
-        case let patternsByDirection as RealtimePatterns.ByDirection:
-            HeadsignRowView(
-                direction: patternsByDirection.direction,
-                predictions: patternsByDirection.format(now: now),
-                routeType: patternsByDirection.representativeRoute.type,
-                pillDecoration: .onPrediction(routesByTrip: patternsByDirection.routesByTrip)
-            )
-        default:
-            EmptyView()
         }
     }
 }
