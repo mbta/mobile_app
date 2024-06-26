@@ -811,7 +811,7 @@ final class NearbyTransitViewTests: XCTestCase {
             now: Date.now.toKotlinInstant()
         )
 
-        try sut.inspect().find(DestinationView.self).parent().parent().parent().button().tap()
+        try sut.inspect().find(DestinationRowView.self).parent().parent().parent().button().tap()
 
         wait(for: [stopEntryPushedExp], timeout: 2)
     }
