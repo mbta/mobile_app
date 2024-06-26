@@ -39,16 +39,6 @@ struct NearbyTransitView: View {
 
     var body: some View {
         VStack {
-            // TODO: Remove before merging
-            HStack {
-                Button("scroll to top") {
-                    scrollToTop()
-                }
-                Button("scroll to random element") {
-                    guard let id = nearbyWithRealtimeInfo?.randomElement()?.route.id else { return }
-                    scrollSubject.send(id)
-                }
-            }
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
             } else {
