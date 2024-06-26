@@ -21,6 +21,7 @@ final class NearbyTransitViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
 
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
+    private var cancellables = Set<AnyCancellable>()
 
     override func setUp() {
         executionTimeAllowance = 60
@@ -896,6 +897,7 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testScrollToTopWhenNearbyChanges() throws {
+        let scrollPositionSetExpectation = XCTestExpectation()
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -909,12 +911,14 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
-            XCTAssertNil(try view.actualView().scrollPosition)
-            try view.vStack().callOnChange(newValue: self.route52State.nearbyByRouteAndStop)
-            XCTAssertNotNil(try view.actualView().scrollPosition)
+            let actualView = try view.actualView()
+            actualView.scrollSubject.sink { _ in
+                scrollPositionSetExpectation.fulfill()
+            }.store(in: &self.cancellables)
+            try actualView.inspect().vStack().callOnChange(newValue: self.route52State.nearbyByRouteAndStop)
         }
         ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp, scrollPositionSetExpectation], timeout: 1)
     }
 
     func testNearbyErrorMessage() throws {
