@@ -14,10 +14,10 @@ struct DestinationRowView: View {
     let condenseHeadsignPredictions: Bool
     let now: Instant
 
-    init(patterns: RealtimePatterns, now: Instant, singleHeadsignPredictions: Bool = false) {
+    init(patterns: RealtimePatterns, now: Instant, condenseHeadsignPredictions: Bool = false) {
         self.patterns = patterns
         self.now = now
-        condenseHeadsignPredictions = singleHeadsignPredictions
+        self.condenseHeadsignPredictions = condenseHeadsignPredictions
     }
 
     var body: some View {

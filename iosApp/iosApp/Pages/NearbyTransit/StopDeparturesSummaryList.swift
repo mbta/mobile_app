@@ -32,7 +32,7 @@ struct StopDeparturesSummaryList: View {
                     DestinationRowView(
                         patterns: patterns,
                         now: now,
-                        singleHeadsignPredictions: condenseHeadsignPredictions
+                        condenseHeadsignPredictions: condenseHeadsignPredictions
                     )
                 }
                 .padding(8)
