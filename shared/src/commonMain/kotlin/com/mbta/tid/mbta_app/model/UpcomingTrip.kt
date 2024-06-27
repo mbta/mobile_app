@@ -155,6 +155,7 @@ data class UpcomingTrip(
             scheduleKey: (Schedule, ScheduleResponse) -> Key,
             predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key
         ): Map<Key, List<UpcomingTrip>>? {
+
             val schedulesMap =
                 schedules?.let { scheduleData ->
                     scheduleData.schedules.groupBy { schedule ->

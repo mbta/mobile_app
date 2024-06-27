@@ -20,7 +20,7 @@ struct StopDetailsFilteredRouteView: View {
     struct RowData {
         let tripId: String
         let headsign: String
-        let formatted: PatternsByHeadsign.Format
+        let formatted: RealtimePatterns.ByHeadsign.Format
         let navigationTarget: SheetNavigationStackEntry?
 
         init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
@@ -31,8 +31,8 @@ struct StopDetailsFilteredRouteView: View {
 
             tripId = trip.id
             headsign = trip.headsign
-            formatted = PatternsByHeadsign(
-                route: route, headsign: headsign, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
+            formatted = RealtimePatterns.ByHeadsign(
+                route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
             ).format(now: now)
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
@@ -42,7 +42,7 @@ struct StopDetailsFilteredRouteView: View {
                 navigationTarget = nil
             }
 
-            if !(formatted is PatternsByHeadsign.FormatSome) {
+            if !(formatted is RealtimePatterns.ByHeadsign.FormatSome) {
                 return nil
             }
         }
@@ -54,7 +54,7 @@ struct StopDetailsFilteredRouteView: View {
          pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void) {
         _filter = filterBinding
         let filter = filterBinding.wrappedValue
-        let patternsByStop = departures.routes.first(where: { $0.route.id == filter?.routeId })
+        let patternsByStop = departures.routes.first(where: { $0.routeIdentifier == filter?.routeId })
         self.patternsByStop = patternsByStop
         self.now = now
         self.pushNavEntry = pushNavEntry
@@ -64,7 +64,7 @@ struct StopDetailsFilteredRouteView: View {
             rows = patternsByStop.allUpcomingTrips().compactMap {
                 RowData(
                     upcoming: $0,
-                    route: patternsByStop.route,
+                    route: patternsByStop.representativeRoute,
                     stopId: patternsByStop.stop.id,
                     expectedDirection: expectedDirection,
                     now: now
@@ -76,15 +76,15 @@ struct StopDetailsFilteredRouteView: View {
     }
 
     var body: some View {
-        if let patternsByStop {
-            let routeHex: String? = patternsByStop.route.color
+        if let patternsByStop, let route = patternsByStop.routes.first {
+            let routeHex: String? = route.color
             ZStack {
                 if let routeHex {
                     Color(hex: routeHex)
                 }
                 ScrollView {
                     VStack {
-                        RouteHeader(route: patternsByStop.route)
+                        RouteHeader(route: route)
                         DirectionPicker(
                             patternsByStop: patternsByStop,
                             filter: $filter
@@ -99,12 +99,12 @@ struct StopDetailsFilteredRouteView: View {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             pushNavEntry(entry)
                                             analytics.tappedDepartureRow(
-                                                routeId: patternsByStop.route.id,
+                                                routeId: route.id,
                                                 stopId: patternsByStop.stop.id
                                             )
                                         }) {
                                             HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
-                                                            routeType: patternsByStop.route.type)
+                                                            routeType: route.type)
                                         }
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 16)

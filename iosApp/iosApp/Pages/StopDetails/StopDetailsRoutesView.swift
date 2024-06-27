@@ -27,12 +27,12 @@ struct StopDetailsRoutesView: View {
                 Color.fill1.ignoresSafeArea(.all)
                 ScrollView {
                     LazyVStack {
-                        ForEach(departures.routes, id: \.route.id) { patternsByStop in
+                        ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                             StopDetailsRouteView(
                                 patternsByStop: patternsByStop,
                                 now: now,
                                 pushNavEntry: pushNavEntry,
-                                pinned: pinnedRoutes.contains(patternsByStop.route.id),
+                                pinned: pinnedRoutes.contains(patternsByStop.routeIdentifier),
                                 onPin: pinRoute
                             )
                         }
@@ -75,18 +75,24 @@ struct StopDetailsRoutesView: View {
     }
 
     return StopDetailsRoutesView(departures: .init(routes: [
-        .init(route: route1, stop: stop, patternsByHeadsign: [
-            .init(route: route1, headsign: "A", patterns: [],
-                  upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
-                  alertsHere: nil),
+        .init(route: route1, stop: stop, patterns: [
+            .ByHeadsign(
+                route: route1, headsign: "A", line: nil, patterns: [],
+                upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
+                alertsHere: nil
+            ),
         ]),
-        .init(route: route2, stop: stop, patternsByHeadsign: [
-            .init(route: route2, headsign: "B", patterns: [],
-                  upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
-                  alertsHere: nil),
-            .init(route: route2, headsign: "C", patterns: [],
-                  upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
-                  alertsHere: nil),
+        .init(route: route2, stop: stop, patterns: [
+            .ByHeadsign(
+                route: route2, headsign: "B", line: nil, patterns: [],
+                upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
+                alertsHere: nil
+            ),
+            .ByHeadsign(
+                route: route2, headsign: "C", line: nil, patterns: [],
+                upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
+                alertsHere: nil
+            ),
         ]),
     ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
     pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)

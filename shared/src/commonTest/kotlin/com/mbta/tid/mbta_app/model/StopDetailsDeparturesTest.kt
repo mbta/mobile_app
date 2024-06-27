@@ -51,16 +51,23 @@ class StopDetailsDeparturesTest {
                         route,
                         stop,
                         listOf(
-                            PatternsByHeadsign(
+                            RealtimePatterns.ByHeadsign(
                                 route,
                                 "A",
+                                null,
                                 listOf(routePattern1),
                                 listOf(
                                     objects.upcomingTrip(schedule1, prediction1),
                                     objects.upcomingTrip(schedule2)
                                 )
                             ),
-                            PatternsByHeadsign(route, "B", listOf(routePattern2), listOf())
+                            RealtimePatterns.ByHeadsign(
+                                route,
+                                "B",
+                                null,
+                                listOf(routePattern2),
+                                listOf()
+                            )
                         )
                     )
                 )
@@ -94,7 +101,7 @@ class StopDetailsDeparturesTest {
             val predictedTrip: UpcomingTrip?,
         ) {
             fun patternsByHeadsign(trips: List<UpcomingTrip>?) =
-                PatternsByHeadsign(route, headsign, listOf(routePattern), trips)
+                RealtimePatterns.ByHeadsign(route, headsign, null, listOf(routePattern), trips)
         }
 
         fun buildPattern(scheduled: Boolean, predicted: Boolean): PatternInfo {
@@ -147,7 +154,7 @@ class StopDetailsDeparturesTest {
         val unscheduledPredicted = buildPattern(scheduled = false, predicted = true)
         val unscheduledUnpredicted = buildPattern(scheduled = false, predicted = false)
 
-        fun expected(vararg pattern: PatternsByHeadsign): StopDetailsDepartures =
+        fun expected(vararg pattern: RealtimePatterns.ByHeadsign): StopDetailsDepartures =
             StopDetailsDepartures(listOf(PatternsByStop(route, stop, pattern.toList())))
 
         fun actual(includeSchedules: Boolean = true, includePredictions: Boolean = true) =
@@ -242,16 +249,23 @@ class StopDetailsDeparturesTest {
                         routePinned,
                         stop,
                         listOf(
-                            PatternsByHeadsign(routePinned, "A", listOf(routePattern1), listOf()),
+                            RealtimePatterns.ByHeadsign(
+                                routePinned,
+                                "A",
+                                null,
+                                listOf(routePattern1),
+                                listOf()
+                            ),
                         )
                     ),
                     PatternsByStop(
                         routeNotPinned,
                         stop,
                         listOf(
-                            PatternsByHeadsign(
+                            RealtimePatterns.ByHeadsign(
                                 routeNotPinned,
                                 "B",
+                                null,
                                 listOf(routeNotPinnedPattern),
                                 listOf()
                             ),
@@ -261,9 +275,10 @@ class StopDetailsDeparturesTest {
                         routeNotPinned2,
                         stop,
                         listOf(
-                            PatternsByHeadsign(
+                            RealtimePatterns.ByHeadsign(
                                 routeNotPinned2,
                                 "C",
+                                null,
                                 listOf(routeNotPinnedPattern2),
                                 listOf()
                             ),

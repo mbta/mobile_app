@@ -11,7 +11,7 @@ import SwiftUI
 
 struct HeadsignRowView: View {
     let headsign: String
-    let predictions: PatternsByHeadsign.Format
+    let predictions: RealtimePatterns.ByHeadsign.Format
     let routeType: RouteType
 
     var body: some View {
@@ -77,7 +77,7 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
             }
             List {
                 HeadsignRowView(headsign: "Some",
-                                predictions: PatternsByHeadsign.FormatSome(trips: [
+                                predictions: RealtimePatterns.ByHeadsign.FormatSome(trips: [
                                     .init(
                                         trip: .init(trip: trip1, prediction: prediction1),
                                         now: now.toKotlinInstant()
@@ -89,13 +89,13 @@ struct NearbyStopRoutePatternView_Previews: PreviewProvider {
                                 ]),
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "None",
-                                predictions: PatternsByHeadsign.FormatNone.shared,
+                                predictions: RealtimePatterns.ByHeadsign.FormatNone.shared,
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "Loading",
-                                predictions: PatternsByHeadsign.FormatLoading.shared,
+                                predictions: RealtimePatterns.ByHeadsign.FormatLoading.shared,
                                 routeType: .heavyRail)
                 HeadsignRowView(headsign: "No Service",
-                                predictions: PatternsByHeadsign.FormatNoService(
+                                predictions: RealtimePatterns.ByHeadsign.FormatNoService(
                                     alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                                         alert.effect = .suspension
                                     }

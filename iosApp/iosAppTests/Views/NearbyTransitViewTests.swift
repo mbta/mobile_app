@@ -431,7 +431,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 
         let newState = NearbyStaticData.companion.build { builder in
-            builder.route(route: sut.state.nearbyByRouteAndStop!.data[0].route) { builder in
+            builder.route(route: sut.state.nearbyByRouteAndStop!.data[0].sortRoute()) { builder in
                 let lechmere = Stop(
                     id: "place-lech",
                     latitude: 90.12,
@@ -794,20 +794,24 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
-        let sut = NearbyStopView(patternsAtStop: PatternsByStop(
-            route: route, stop: stop,
-            patternsByHeadsign: [PatternsByHeadsign(
-                route: route,
-                headsign: "Place",
-                patterns: [pattern],
-                upcomingTrips: nil,
-                alertsHere: nil
-            )]
+        let sut = NearbyStopView(
+            patternsAtStop: PatternsByStop(
+                route: route, stop: stop,
+                patterns: [RealtimePatterns.ByHeadsign(
+                    route: route,
+                    headsign: "Place",
+                    line: nil,
+                    patterns: [pattern],
+                    upcomingTrips: nil,
+                    alertsHere: nil
+                )]
 
-        ), pushNavEntry: pushNavEntry,
-        now: Date.now.toKotlinInstant())
+            ),
+            pushNavEntry: pushNavEntry,
+            now: Date.now.toKotlinInstant()
+        )
 
-        try sut.inspect().find(HeadsignRowView.self).parent().parent().parent().button().tap()
+        try sut.inspect().find(DestinationRowView.self).parent().parent().parent().button().tap()
 
         wait(for: [stopEntryPushedExp], timeout: 2)
     }

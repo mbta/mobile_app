@@ -16,29 +16,45 @@ struct StopDeparturesSummaryList: View {
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
     var body: some View {
-        ForEach(Array(patternsByStop.patternsByHeadsign.enumerated()),
-                id: \.element.headsign) { index, patternsByHeadsign in
-
+        ForEach(
+            Array(patternsByStop.patterns.enumerated()),
+            id: \.element.id
+        ) { index, patterns in
             VStack(spacing: 0) {
-                SheetNavigationLink(value: .stopDetails(patternsByStop.stop,
-                                                        .init(routeId: patternsByStop.route.id,
-                                                              directionId: patternsByHeadsign.directionId())),
-                                    action: pushNavEntry) {
-                    HeadsignRowView(
-                        headsign: patternsByHeadsign.headsign,
-                        predictions: patternsByHeadsign.format(now: now),
-                        routeType: patternsByHeadsign.route.type
+                SheetNavigationLink(
+                    value: .stopDetails(
+                        patternsByStop.stop,
+                        filterFor(patterns: patterns)
+                    ),
+                    action: pushNavEntry
+                ) {
+                    DestinationRowView(
+                        patterns: patterns,
+                        now: now
                     )
                 }
                 .padding(8)
                 .frame(minHeight: 44)
                 .padding(.leading, 8)
 
-                if index < patternsByStop.patternsByHeadsign.count - 1 {
+                if index < patternsByStop.patterns.count - 1 {
                     Divider().background(Color.halo)
                 }
             }
-        }.accessibilityElement(children: .contain)
-            .accessibilityHint(Text("Open for more arrivals"))
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityHint(Text("Open for more arrivals"))
+    }
+
+    func filterFor(patterns: RealtimePatterns) -> StopDetailsFilter {
+        switch onEnum(of: patterns) {
+        case let .byHeadsign(patternsByHeadsign):
+            .init(
+                routeId: patternsByStop.routeIdentifier,
+                directionId: patternsByHeadsign.directionId()
+            )
+        default:
+            .init(routeId: "", directionId: 0)
+        }
     }
 }

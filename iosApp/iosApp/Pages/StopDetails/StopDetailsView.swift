@@ -45,7 +45,7 @@ struct StopDetailsView: View {
         self.togglePinnedRoute = togglePinnedRoute
 
         if let departures = nearbyVM.departures {
-            servedRoutes = OrderedSet(departures.routes.map { pattern in pattern.route })
+            servedRoutes = OrderedSet(departures.routes.flatMap { pattern in pattern.routes })
                 .map { (route: $0, line: globalFetcher.lookUpLine(lineId: $0.lineId)) }
         }
     }
@@ -82,10 +82,10 @@ struct StopDetailsView: View {
     func tapRoutePill(_ route: Route) {
         if filter?.routeId == route.id { filter = nil; return }
         guard let departures = nearbyVM.departures else { return }
-        guard let patterns = departures.routes.first(where: { patterns in patterns.route.id == route.id })
+        guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == route.id })
         else { return }
-        analytics.tappedRouteFilter(routeId: patterns.route.id, stopId: stop.id)
-        let defaultDirectionId = patterns.patternsByHeadsign.flatMap { headsign in
+        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
+        let defaultDirectionId = patterns.patterns.flatMap { headsign in
             headsign.patterns.map { pattern in pattern.directionId }
         }.min() ?? 0
         filter = .init(routeId: route.id, directionId: defaultDirectionId)

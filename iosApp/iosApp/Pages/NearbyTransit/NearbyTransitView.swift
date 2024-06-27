@@ -27,7 +27,7 @@ struct NearbyTransitView: View {
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
-    @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
+    @State var nearbyWithRealtimeInfo: [StopsAssociated]?
     @State var now = Date.now
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
@@ -93,18 +93,23 @@ struct NearbyTransitView: View {
         }
     }
 
-    private func nearbyList(_ routes: [StopAssociatedRoute]) -> some View {
+    private func nearbyList(_ transit: [StopsAssociated]) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack {
-                    ForEach(routes, id: \.route.id) { nearbyRoute in
-                        NearbyRouteView(
-                            nearbyRoute: nearbyRoute,
-                            pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                            onPin: { id in toggledPinnedRoute(id) },
-                            pushNavEntry: nearbyVM.pushNavEntry,
-                            now: now.toKotlinInstant()
-                        )
+                    ForEach(transit, id: \.id) { nearbyTransit in
+                        switch onEnum(of: nearbyTransit) {
+                        case let .withRoute(nearbyRoute):
+                            NearbyRouteView(
+                                nearbyTransit: nearbyRoute,
+                                pinned: pinnedRoutes.contains(nearbyRoute.route.id),
+                                onPin: { id in toggledPinnedRoute(id) },
+                                pushNavEntry: nearbyVM.pushNavEntry,
+                                now: now.toKotlinInstant()
+                            )
+                        default:
+                            EmptyView()
+                        }
                     }
                 }
             }
@@ -182,7 +187,7 @@ struct NearbyTransitView: View {
     }
 
     private func scrollToTop() {
-        guard let id = nearbyWithRealtimeInfo?.first?.route.id else { return }
+        guard let id = nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
         scrollSubject.send(id)
     }
 
@@ -207,7 +212,7 @@ struct NearbyTransitView: View {
         alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant,
         pinnedRoutes: Set<String>
-    ) -> [StopAssociatedRoute]? {
+    ) -> [StopsAssociated]? {
         guard let loadedLocation = state.loadedLocation else { return nil }
         return state.nearbyByRouteAndStop?.withRealtimeInfo(
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
@@ -366,16 +371,17 @@ struct NearbyTransitView_Previews: PreviewProvider {
         )
         List {
             NearbyRouteView(
-                nearbyRoute: StopAssociatedRoute(
+                nearbyTransit: StopsAssociated.WithRoute(
                     route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
                             route: busRoute,
                             stop: busStop,
-                            patternsByHeadsign: [
-                                PatternsByHeadsign(
+                            patterns: [
+                                RealtimePatterns.ByHeadsign(
                                     route: busRoute,
                                     headsign: "Houghs Neck",
+                                    line: nil,
                                     patterns: [busPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
@@ -393,16 +399,17 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
-                nearbyRoute: StopAssociatedRoute(
+                nearbyTransit: StopsAssociated.WithRoute(
                     route: crRoute,
                     patternsByStop: [
                         PatternsByStop(
                             route: crRoute,
                             stop: crStop,
-                            patternsByHeadsign: [
-                                PatternsByHeadsign(
+                            patterns: [
+                                RealtimePatterns.ByHeadsign(
                                     route: crRoute,
                                     headsign: "Houghs Neck",
+                                    line: nil,
                                     patterns: [crPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),

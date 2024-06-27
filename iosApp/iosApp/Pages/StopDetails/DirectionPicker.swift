@@ -19,11 +19,11 @@ struct DirectionPicker: View {
     private let reformatDirectionNames: Set<String> = ["North", "South", "East", "West"]
 
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
-        availableDirections = Set(patternsByStop.patternsByHeadsign.map { pattern in
+        availableDirections = Set(patternsByStop.patterns.map { pattern in
             pattern.directionId()
         }).sorted()
         directions = patternsByStop.directions
-        route = patternsByStop.route
+        route = patternsByStop.representativeRoute
 
         _filter = filter
     }

@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 data class Direction(
     var name: String,
     var destination: String,
+    var id: Int,
 ) {
     constructor(
         directionId: Int,
@@ -14,7 +15,8 @@ data class Direction(
     ) : this(
         name = route.directionNames[directionId] ?: "",
         destination = getSpecialCaseDestination(directionId, route.id, stop?.id, routeStopIds)
-                ?: route.directionDestinations[directionId] ?: ""
+                ?: route.directionDestinations[directionId] ?: "",
+        directionId
     )
 
     companion object {
