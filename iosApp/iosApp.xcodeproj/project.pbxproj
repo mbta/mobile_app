@@ -143,6 +143,8 @@
 		9A9E7DD72C220812000DA1FD /* LineSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD62C220812000DA1FD /* LineSection.swift */; };
 		9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA379A22C2A314F00278541 /* DirectionLabel.swift */; };
 		9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */; };
+		9AAA26A12C2DB43600A7745A /* PredictionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */; };
+		9AAA26A32C2DB79E00A7745A /* DirectionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA26A22C2DB79E00A7745A /* DirectionRowView.swift */; };
 		9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		9AB3F50F2BE45382008D9E40 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */; };
 		9AB446B02BBDDCAF00D8C920 /* StopIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */; };
@@ -357,6 +359,8 @@
 		9A9E7DD62C220812000DA1FD /* LineSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSection.swift; sourceTree = "<group>"; };
 		9AA379A22C2A314F00278541 /* DirectionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionLabel.swift; sourceTree = "<group>"; };
 		9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationRowView.swift; sourceTree = "<group>"; };
+		9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionRowView.swift; sourceTree = "<group>"; };
+		9AAA26A22C2DB79E00A7745A /* DirectionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionRowView.swift; sourceTree = "<group>"; };
 		9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopIcons.swift; sourceTree = "<group>"; };
 		9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCard.swift; sourceTree = "<group>"; };
@@ -756,7 +760,6 @@
 				9A4E8E582B7EC4B90066B936 /* RoutePill.swift */,
 				9AB44A102B8FC43E00E8FFB3 /* IconCard.swift */,
 				8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */,
-				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
 				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 				8C7726182BE5941E0088D423 /* OptionalNavigationLink.swift */,
 				6EE76D1A2BF532010051D608 /* RouteIcon.swift */,
@@ -772,6 +775,9 @@
 				9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */,
 				9A9E7DD42C2203E8000DA1FD /* PinButton.swift */,
 				9AA379A22C2A314F00278541 /* DirectionLabel.swift */,
+				9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */,
+				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
+				9AAA26A22C2DB79E00A7745A /* DirectionRowView.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1289,6 +1295,7 @@
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
 				8CB28DAC2C29D6240036258E /* ChildStopSourceGenerator.swift in Sources */,
+				9AAA26A12C2DB43600A7745A /* PredictionRowView.swift in Sources */,
 				9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */,
 				8C7FA8732B5F36D6009B699D /* Backend.swift in Sources */,
 				EDEEFA9E2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift in Sources */,
@@ -1296,6 +1303,7 @@
 				9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				6E2AF9D12BF7DCAE009A9DFD /* VehicleFetcher.swift in Sources */,
+				9AAA26A32C2DB79E00A7745A /* DirectionRowView.swift in Sources */,
 				9ADB84A22BAE37C0006581CE /* StopExtension.swift in Sources */,
 				9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */,
 				9AB44A112B8FC43E00E8FFB3 /* IconCard.swift in Sources */,

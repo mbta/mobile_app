@@ -31,7 +31,7 @@ struct DestinationRowView: View {
                     .onRow(route: patternsByHeadsign.route) : .none
             )
         case let .byDirection(patternsByDirection):
-            HeadsignRowView(
+            DirectionRowView(
                 direction: patternsByDirection.direction,
                 predictions: patternsByDirection.format(now: now),
                 routeType: patternsByDirection.representativeRoute.type,
