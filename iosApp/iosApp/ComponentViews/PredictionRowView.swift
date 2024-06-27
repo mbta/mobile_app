@@ -78,15 +78,11 @@ struct PredictionRowView: View {
         let pillDecoration: PillDecoration
 
         var body: some View {
-            guard case let .onPrediction(routesByTrip) = pillDecoration else {
-                return AnyView(EmptyView())
+            if case let .onPrediction(routesByTrip) = pillDecoration, let route = routesByTrip[tripId] {
+                RoutePill(route: route, type: .flex).scaleEffect(0.75).padding(.leading, 2)
+            } else {
+                EmptyView()
             }
-
-            guard let route = routesByTrip[tripId] else {
-                return AnyView(EmptyView())
-            }
-
-            return AnyView(RoutePill(route: route, type: .flex).scaleEffect(0.75).padding(.leading, 2))
         }
     }
 }
