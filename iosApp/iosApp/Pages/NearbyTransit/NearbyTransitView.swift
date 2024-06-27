@@ -18,7 +18,7 @@ struct NearbyTransitView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
-    var predictionsRepository = RepositoryDI().predictions
+    @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState

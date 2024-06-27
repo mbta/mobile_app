@@ -18,11 +18,11 @@ struct TripDetailsPage: View {
 
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
-    var tripPredictionsRepository: ITripPredictionsRepository
+    @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
-    var tripSchedulesRepository: ITripSchedulesRepository
+    @State var tripSchedulesRepository: ITripSchedulesRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
-    var vehicleRepository: IVehicleRepository
+    @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
     @State var now = Date.now.toKotlinInstant()
