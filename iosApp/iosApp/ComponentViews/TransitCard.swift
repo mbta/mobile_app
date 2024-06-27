@@ -1,5 +1,5 @@
 //
-//  TransitSection.swift
+//  TransitCard.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 6/18/24.
@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-struct TransitSection<Header: View, Content: View>: View {
+struct TransitCard<Header: View, Content: View>: View {
     let header: () -> Header
     let content: () -> Content
 

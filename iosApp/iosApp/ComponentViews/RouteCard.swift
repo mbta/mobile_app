@@ -1,5 +1,5 @@
 //
-//  RouteSection.swift
+//  RouteCard.swift
 //  iosApp
 //
 //  Created by Brandon Rodriguez on 4/16/24.
@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-struct RouteSection<Content: View>: View {
+struct RouteCard<Content: View>: View {
     let route: Route
     let pinned: Bool
     let onPin: (String) -> Void
@@ -18,7 +18,7 @@ struct RouteSection<Content: View>: View {
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
-        TransitSection(header: {
+        TransitCard(header: {
             RouteHeader(route: route) {
                 PinButton(pinned: pinned, action: { onPin(route.id) })
             }

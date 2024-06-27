@@ -17,7 +17,7 @@ struct NearbyLineView: View {
     let now: Instant
 
     var body: some View {
-        LineSection(line: nearbyLine.line, routes: nearbyLine.routes, pinned: pinned, onPin: onPin) {
+        LineCard(line: nearbyLine.line, routes: nearbyLine.routes, pinned: pinned, onPin: onPin) {
             ForEach(Array(nearbyLine.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
                     NearbyStopView(

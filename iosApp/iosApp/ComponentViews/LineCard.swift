@@ -1,5 +1,5 @@
 //
-//  LineSection.swift
+//  LineCard.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 6/18/24.
@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-struct LineSection<Content: View>: View {
+struct LineCard<Content: View>: View {
     let line: Line
     let routes: [Route]
     let pinned: Bool
@@ -19,7 +19,7 @@ struct LineSection<Content: View>: View {
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
-        TransitSection(header: {
+        TransitCard(header: {
             LineHeader(line: line, routes: routes) {
                 PinButton(pinned: pinned, action: { onPin(line.id) })
             }

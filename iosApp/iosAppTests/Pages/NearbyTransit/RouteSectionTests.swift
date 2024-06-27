@@ -19,7 +19,7 @@ final class RouteSectionTests: XCTestCase {
             route.longName = "Red"
         }
 
-        let sut = RouteSection(route: route, pinned: false, onPin: { _ in }) {
+        let sut = RouteCard(route: route, pinned: false, onPin: { _ in }) {
             Text("Route details")
         }
 
@@ -38,7 +38,7 @@ final class RouteSectionTests: XCTestCase {
             pinRouteExp.fulfill()
         }
 
-        let sut = RouteSection(route: route, pinned: false, onPin: onPin) {
+        let sut = RouteCard(route: route, pinned: false, onPin: onPin) {
             Text("Route details")
         }
 

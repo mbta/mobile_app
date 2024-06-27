@@ -138,9 +138,9 @@
 		9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */; };
 		9A9E7DCF2C2200C9000DA1FD /* LineHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCE2C2200C9000DA1FD /* LineHeader.swift */; };
 		9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */; };
-		9A9E7DD32C2203BE000DA1FD /* TransitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD22C2203BE000DA1FD /* TransitSection.swift */; };
+		9A9E7DD32C2203BE000DA1FD /* TransitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD22C2203BE000DA1FD /* TransitCard.swift */; };
 		9A9E7DD52C2203E8000DA1FD /* PinButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD42C2203E8000DA1FD /* PinButton.swift */; };
-		9A9E7DD72C220812000DA1FD /* LineSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD62C220812000DA1FD /* LineSection.swift */; };
+		9A9E7DD72C220812000DA1FD /* LineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD62C220812000DA1FD /* LineCard.swift */; };
 		9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA379A22C2A314F00278541 /* DirectionLabel.swift */; };
 		9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */; };
 		9AAA26A12C2DB43600A7745A /* PredictionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */; };
@@ -171,7 +171,7 @@
 		ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */; };
 		ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */; };
 		ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */; };
-		EDC768C72BCF6FD6008BAE58 /* RouteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* RouteSection.swift */; };
+		EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */; };
 		EDEEFA9E2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */; };
 /* End PBXBuildFile section */
 
@@ -354,9 +354,9 @@
 		9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NearbyLineView.swift; path = iosAppUITests/NearbyLineView.swift; sourceTree = SOURCE_ROOT; };
 		9A9E7DCE2C2200C9000DA1FD /* LineHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineHeader.swift; sourceTree = "<group>"; };
 		9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitHeader.swift; sourceTree = "<group>"; };
-		9A9E7DD22C2203BE000DA1FD /* TransitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitSection.swift; sourceTree = "<group>"; };
+		9A9E7DD22C2203BE000DA1FD /* TransitCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitCard.swift; sourceTree = "<group>"; };
 		9A9E7DD42C2203E8000DA1FD /* PinButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinButton.swift; sourceTree = "<group>"; };
-		9A9E7DD62C220812000DA1FD /* LineSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSection.swift; sourceTree = "<group>"; };
+		9A9E7DD62C220812000DA1FD /* LineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineCard.swift; sourceTree = "<group>"; };
 		9AA379A22C2A314F00278541 /* DirectionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionLabel.swift; sourceTree = "<group>"; };
 		9AAA269E2C2CAB2600A7745A /* DestinationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationRowView.swift; sourceTree = "<group>"; };
 		9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionRowView.swift; sourceTree = "<group>"; };
@@ -389,7 +389,7 @@
 		ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoenixChannelError.swift; sourceTree = "<group>"; };
 		ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketErrorExtension.swift; sourceTree = "<group>"; };
 		ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPinnedRoutesRepository.swift; sourceTree = "<group>"; };
-		EDC768C62BCF6FD6008BAE58 /* RouteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSection.swift; sourceTree = "<group>"; };
+		EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCard.swift; sourceTree = "<group>"; };
 		EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsErrorExtension.swift; sourceTree = "<group>"; };
 		F35CF19A11F0511AA7B2E080 /* Pods-iosApp.stagingdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingdebug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingdebug.xcconfig"; sourceTree = "<group>"; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -766,9 +766,9 @@
 				6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */,
 				6E973DA42C17384C00CBF341 /* SheetHeader.swift */,
 				6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */,
-				9A9E7DD62C220812000DA1FD /* LineSection.swift */,
-				EDC768C62BCF6FD6008BAE58 /* RouteSection.swift */,
-				9A9E7DD22C2203BE000DA1FD /* TransitSection.swift */,
+				9A9E7DD22C2203BE000DA1FD /* TransitCard.swift */,
+				EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */,
+				9A9E7DD62C220812000DA1FD /* LineCard.swift */,
 				9A9E7DCE2C2200C9000DA1FD /* LineHeader.swift */,
 				6E04D4312C1B50230055FD99 /* RouteHeader.swift */,
 				6EA2316E2C21BEB100789173 /* LoadingCard.swift */,
@@ -1249,7 +1249,7 @@
 				6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
 				6EFEE42D2BED0FA800810319 /* ScenePhaseChangeModifier.swift in Sources */,
-				EDC768C72BCF6FD6008BAE58 /* RouteSection.swift in Sources */,
+				EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */,
 				9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */,
 				8CA485B82BDC679A00E84E1F /* VehicleExtension.swift in Sources */,
 				6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */,
@@ -1319,14 +1319,14 @@
 				9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */,
 				9AB619AC2BF29FC6007E7191 /* PredictionText.swift in Sources */,
 				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
-				9A9E7DD72C220812000DA1FD /* LineSection.swift in Sources */,
+				9A9E7DD72C220812000DA1FD /* LineCard.swift in Sources */,
 				9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */,
 				8C7726192BE5941E0088D423 /* OptionalNavigationLink.swift in Sources */,
 				9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */,
 				9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */,
 				9A5B27522BB1EF45009A6FC6 /* StopSourceGenerator.swift in Sources */,
 				6E973DA52C17384C00CBF341 /* SheetHeader.swift in Sources */,
-				9A9E7DD32C2203BE000DA1FD /* TransitSection.swift in Sources */,
+				9A9E7DD32C2203BE000DA1FD /* TransitCard.swift in Sources */,
 				8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
