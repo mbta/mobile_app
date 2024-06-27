@@ -134,7 +134,11 @@ enum GreenLineHelper {
 
     static let nearbyData = NearbyStaticData.companion.build { builder in
         builder.line(line: line, routes: [routeB, routeC, routeE]) { builder in
-            builder.stop(stop: stopArlington, childStopIds: [stopEastbound.id, stopWestbound.id]) { builder in
+            builder.stop(
+                stop: stopArlington,
+                routes: [routeB, routeC, routeE],
+                childStopIds: [stopEastbound.id, stopWestbound.id]
+            ) { builder in
                 builder.direction(
                     direction: Direction(name: "West", destination: "Kenmore & West", id: 0),
                     routes: [routeB, routeC], patterns: [rpB0, rpC0]
