@@ -14,7 +14,7 @@ struct DirectionPicker: View {
 
     let availableDirections: [Int32]
     let directions: [Direction]
-    let route: Route?
+    let route: Route
 
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
         availableDirections = Set(patternsByStop.patterns.map { pattern in
@@ -27,7 +27,7 @@ struct DirectionPicker: View {
     }
 
     var body: some View {
-        if let route, availableDirections.count > 1 {
+        if availableDirections.count > 1 {
             let deselectedBackroundColor = deselectedBackgroundColor(route)
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
