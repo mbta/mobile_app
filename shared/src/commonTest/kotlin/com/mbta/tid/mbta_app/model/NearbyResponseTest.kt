@@ -423,6 +423,92 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `Green Line routes are grouped together`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+        val stop3 = objects.stop()
+
+        val line = objects.line { id = "line-Green" }
+
+        val route1 =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Park St & North")
+            }
+        val route2 =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Cleveland Circle", "Park St & North")
+            }
+
+        val route1rp1 =
+            objects.routePattern(route1) {
+                representativeTrip { headsign = "Boston College" }
+                directionId = 0
+                sortOrder = 1
+            }
+        val route1rp2 =
+            objects.routePattern(route1) {
+                representativeTrip { headsign = "Government Center" }
+                directionId = 1
+                sortOrder = 2
+            }
+        val route2rp1 =
+            objects.routePattern(route2) {
+                representativeTrip { headsign = "Cleveland Circle" }
+                directionId = 0
+                sortOrder = 3
+            }
+        val route2rp2 =
+            objects.routePattern(route2) {
+                representativeTrip { headsign = "Government Center" }
+                directionId = 1
+                sortOrder = 4
+            }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        stop1.id to listOf(route1rp1.id),
+                        stop2.id to listOf(route2rp1.id),
+                        stop3.id to listOf(route1rp2.id, route2rp2.id),
+                    ),
+            )
+        val nearby = NearbyResponse(objects)
+
+        val cDir = Direction("West", "Cleveland Circle", 0)
+        val bDir = Direction("West", "Boston College", 0)
+        val parkDir = Direction("East", "Park St & North", 1)
+
+        assertEquals(
+            NearbyStaticData.build {
+                line(line, listOf(route1, route2)) {
+                    stop(stop1, routes = listOf(route1), directions = listOf(bDir, parkDir)) {
+                        headsign(route1, "Boston College", listOf(route1rp1))
+                    }
+                    stop(
+                        stop3,
+                        routes = listOf(route1, route2),
+                        directions = listOf(bDir, parkDir)
+                    ) {
+                        direction(parkDir, listOf(route1, route2), listOf(route1rp2, route2rp2))
+                    }
+                    stop(stop2, listOf(route2), directions = listOf(cDir, parkDir)) {
+                        headsign(route2, "Cleveland Circle", listOf(route2rp1))
+                    }
+                }
+            },
+            NearbyStaticData(global, nearby)
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo includes predictions filtered to the correct stop and pattern`() {
         val objects = ObjectCollectionBuilder()
 
@@ -1545,7 +1631,7 @@ class NearbyResponseTest {
         val staticData =
             NearbyStaticData.build {
                 line(line, listOf(routeB, routeC, routeE)) {
-                    stop(stop) {
+                    stop(stop, listOf(routeB, routeC, routeE)) {
                         direction(
                             directionWest,
                             listOf(routeB, routeC),

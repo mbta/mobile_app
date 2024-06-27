@@ -19,7 +19,7 @@ final class DirectionLabelTests: XCTestCase {
 
     func testBasicDirection() throws {
         let sut = DirectionLabel(direction: Direction(name: "Inbound", destination: "South Station", id: 1))
-        XCTAssertNotNil(try sut.inspect().find(text: "Inbound"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Inbound to"))
         XCTAssertNotNil(try sut.inspect().find(text: "South Station"))
     }
 
