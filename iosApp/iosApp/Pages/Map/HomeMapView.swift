@@ -68,15 +68,29 @@ struct HomeMapView: View {
     }
 
     var body: some View {
-        realtimeResponsiveMap.overlay(alignment: .topTrailing) {
-            if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                RecenterButton { Task { viewportProvider.follow() } }
+        realtimeResponsiveMap
+            .overlay(alignment: .topTrailing) {
+                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                    RecenterButton { Task { viewportProvider.follow() } }
+                }
             }
-        }
-        .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
-            handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
-        }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .overlay(alignment: .center) {
+                if nearbyVM.selectingLocation {
+                    crosshairs
+                }
+            }
+            .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
+                handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
+            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
+                guard isManuallyCentering else { return }
+                /*
+                 This will be set to false after nearby is loaded to avoid the crosshair
+                 dissapearing and re-appearing
+                 */
+                nearbyVM.selectingLocation = true
+            }
     }
 
     @ViewBuilder
@@ -143,6 +157,14 @@ struct HomeMapView: View {
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle
         )
+    }
+
+    private var crosshairs: some View {
+        VStack {
+            Image("map-nearby-location-cursor")
+            Spacer()
+                .frame(height: sheetHeight)
+        }
     }
 
     var didAppear: ((Self) -> Void)?
