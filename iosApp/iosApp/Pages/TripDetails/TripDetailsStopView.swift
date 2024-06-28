@@ -56,7 +56,7 @@ struct TripDetailsStopView: View {
                 },
                 objects.route {
                     $0.longName = "Green Line"
-                    $0.color = "#008400"
+                    $0.color = "#00843D"
                     $0.textColor = "#ffffff"
                 },
             ]
