@@ -19,6 +19,7 @@ struct AnnotatedMap: View {
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
     var routes: [String: Route]
+    var selectedVehicle: Vehicle?
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
@@ -57,6 +58,15 @@ struct AnnotatedMap: View {
             }
     }
 
+    private var allVehicles: [Vehicle]? {
+        switch (vehicles, selectedVehicle) {
+        case (.none, .none): nil
+        case let (.none, .some(vehicle)): [vehicle]
+        case let (.some(vehicles), .none): vehicles
+        case let (.some(vehicles), .some(vehicle)): vehicles + [vehicle]
+        }
+    }
+
     @ViewBuilder
     var map: Map {
         Map(viewport: $viewportProvider.viewport) {
@@ -72,12 +82,11 @@ struct AnnotatedMap: View {
                     Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)
                 }
             }
-            if let filter, let vehicles {
-                ForEvery(vehicles, id: \.id) { vehicle in
+            if let allVehicles {
+                ForEvery(allVehicles, id: \.id) { vehicle in
                     if let routeId = vehicle.routeId,
-                       let route = routes[routeId],
-                       routeId == filter.routeId,
-                       vehicle.directionId == filter.directionId {
+                       let route = routes[routeId] {
+                        let isSelected = vehicle.id == selectedVehicle?.id
                         MapViewAnnotation(coordinate: vehicle.coordinate) {
                             ZStack {
                                 ZStack {
@@ -91,6 +100,7 @@ struct AnnotatedMap: View {
                                     .foregroundStyle(Color(hex: route.textColor))
                                     .frame(height: 18)
                             }
+                            .scaleEffect(isSelected ? 2 : 1, anchor: .center)
                             .padding(6)
                             .onTapGesture { handleTapVehicle(vehicle) }
                         }

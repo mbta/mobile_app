@@ -21,7 +21,7 @@ struct TripDetailsTarget: Hashable {
 
 enum SheetNavigationStackEntry: Hashable, Identifiable {
     case stopDetails(Stop, StopDetailsFilter?)
-    case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?)
+    case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?, routeId: String, directionId: Int32)
     case nearby
 
     var id: Int {
@@ -51,7 +51,7 @@ struct NearbySheetItem: Identifiable {
     var id: String {
         switch stackEntry {
         case let .stopDetails(stop, _): stop.id
-        case let .tripDetails(tripId, _, _): tripId
+        case let .tripDetails(tripId, _, _, _, _): tripId
         case .nearby: "nearby"
         }
     }

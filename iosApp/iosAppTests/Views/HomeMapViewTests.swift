@@ -27,6 +27,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -48,6 +49,7 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -96,6 +98,7 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             globalFetcher: FakeGlobalFetcher(),
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(
                 getRailRouteShapeExpectation: getRailRouteShapeExpectation
@@ -122,6 +125,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -148,6 +152,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -239,6 +244,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -288,6 +294,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -359,6 +366,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -436,6 +444,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: nearbyVM,
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle]),
@@ -450,7 +459,9 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertEqual(nearbyVM.navigationStack.last, .tripDetails(
                 tripId: trip.id,
                 vehicleId: vehicle.id,
-                target: .init(stopId: stop.id, stopSequence: Int(prediction.stopSequence))
+                target: .init(stopId: stop.id, stopSequence: Int(prediction.stopSequence)),
+                routeId: trip.routeId,
+                directionId: trip.directionId
             ))
         }
 
@@ -496,6 +507,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
@@ -537,6 +549,7 @@ final class HomeMapViewTests: XCTestCase {
         let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
         let sut = HomeMapView(
             globalFetcher: globalFetcher,
+            mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),

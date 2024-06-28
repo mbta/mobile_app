@@ -49,6 +49,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
+            mapVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository
         )
@@ -114,6 +115,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
+            mapVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -156,6 +158,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: .init(stopId: stop1.id, stopSequence: 998),
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
+            mapVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleRepository: FakeVehicleRepository(response: nil)
@@ -265,6 +268,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: globalFetcher,
             nearbyVM: .init(),
+            mapVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -310,6 +314,7 @@ final class TripDetailsPageTests: XCTestCase {
             target: nil,
             globalFetcher: GlobalFetcher(backend: IdleBackend()),
             nearbyVM: FakeNearbyVM(backExp),
+            mapVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: FakeTripSchedulesRepository(response: TripSchedulesResponse
                 .StopIds(stopIds: ["stop1"])),
@@ -319,6 +324,45 @@ final class TripDetailsPageTests: XCTestCase {
         try sut.inspect().find(CloseButton.self).button().tap()
 
         wait(for: [backExp], timeout: 2)
+    }
+
+    func testUpdatesMapVMSelectedTrip() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let trip = objects.trip { _ in }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.currentStatus = .inTransitTo
+        }
+
+        let vehicleRepository = FakeVehicleRepository(response: .init(vehicle: vehicle))
+
+        let mapVM = MapViewModel()
+
+        let tripId = trip.id
+        let vehicleId = vehicle.id
+        let sut = TripDetailsPage(
+            tripId: tripId,
+            vehicleId: vehicleId,
+            target: nil,
+            globalFetcher: .init(backend: IdleBackend()),
+            nearbyVM: .init(),
+            mapVM: mapVM,
+            vehicleRepository: vehicleRepository
+        )
+
+        ViewHosting.host(view: sut)
+
+        let selectedVehicleSetExp = expectation(description: "selected vehicle should be set")
+        let subscription = mapVM.$selectedVehicle.drop(while: { $0 == nil }).sink {
+            XCTAssertEqual($0, vehicle)
+            selectedVehicleSetExp.fulfill()
+        }
+
+        wait(for: [selectedVehicleSetExp], timeout: 1)
+
+        subscription.cancel()
     }
 
     class FakeTripSchedulesRepository: ITripSchedulesRepository {
