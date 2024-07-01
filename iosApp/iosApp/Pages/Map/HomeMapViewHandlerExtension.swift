@@ -27,7 +27,7 @@ extension HomeMapView {
     }
 
     func handleLayerInit(_ map: MapboxMap) {
-        let layerManager = MapLayerManager(map: map)
+        let layerManager = layerManager ?? MapLayerManager(map: map)
         initializeLayers(layerManager)
         self.layerManager = layerManager
     }
@@ -94,7 +94,33 @@ extension HomeMapView {
             } else {
                 handleStopDetailsChange(stop, filter)
             }
-        } else {
+        }
+
+        if case let .tripDetails(tripId: tripId, vehicleId: _, target: _, routeId: _, directionId: _) = nextNavEntry {
+            Task {
+                print("Selected Trip ID changed \(tripId)")
+                do {
+                    print("trying")
+                    let response: TripShapeResponse = try await RepositoryDI().tripSchedules
+                        .getTripShape(tripId: tripId)
+                    print("response: \(response)")
+                    let updatedSource = RouteSourceGenerator(
+                        routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                            routeId: response.mapFriendlyRouteShape.sourceRouteId,
+                            segmentedShapes: [response.mapFriendlyRouteShape]
+                        )],
+                        routesById: globalFetcher.routes,
+                        stopsById: globalFetcher.stops,
+                        alertsByStop: globalMapData?.alertsByStop ?? [:]
+                    )
+                    layerManager?.updateSourceData(routeSourceGenerator: updatedSource)
+
+                } catch {
+                    debugPrint(error)
+                }
+            }
+        }
+        if nextNavEntry == nil {
             clearSelectedStop()
         }
         if nextNavEntry == nil {

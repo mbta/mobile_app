@@ -121,8 +121,10 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
+        print("UPdating route source data \(routeSourceGenerator.routeLines.map(\.routeId))")
         self.routeSourceGenerator = routeSourceGenerator
         updateSourceData(source: routeSourceGenerator.routeSource)
+        print("MY new source generator: \(self.routeSourceGenerator?.routeData.map(\.routeId))")
     }
 
     func updateSourceData(stopSourceGenerator: StopSourceGenerator) {
@@ -140,6 +142,9 @@ class MapLayerManager: IMapLayerManager {
         stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     ) {
+        self.routeSourceGenerator = routeSourceGenerator
+        self.stopSourceGenerator = stopSourceGenerator
+        self.childStopSourceGenerator = childStopSourceGenerator
         updateSourceData(routeSourceGenerator: routeSourceGenerator)
         updateSourceData(stopSourceGenerator: stopSourceGenerator)
         updateSourceData(childStopSourceGenerator: childStopSourceGenerator)

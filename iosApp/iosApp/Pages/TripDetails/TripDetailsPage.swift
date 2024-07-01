@@ -99,10 +99,13 @@ struct TripDetailsPage: View {
             }
         }
         .onAppear { joinRealtime()
+            mapVM.selectedTripId = tripId
         }
         .onDisappear { leaveRealtime()
         }
-        .onChange(of: tripId) { joinPredictions(tripId: $0) }
+        .onChange(of: tripId) { joinPredictions(tripId: $0)
+            mapVM.selectedTripId = $0
+        }
         .onChange(of: vehicleId) { vehicleId in
             joinVehicle(vehicleId: vehicleId)
         }
