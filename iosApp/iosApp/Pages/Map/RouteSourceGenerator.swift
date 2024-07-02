@@ -81,11 +81,13 @@ class RouteSourceGenerator {
                       segmentedShapes: [.init(sourceRoutePatternId: shapeWithStops.routeId,
                                               sourceRouteId: shapeWithStops.routeId,
                                               directionId: shapeWithStops.directionId,
-                                              routeSegments: [.init(id: shape.id,
-                                                                    sourceRoutePatternId: shapeWithStops.routePatternId,
-                                                                    sourceRouteId: shapeWithStops.routeId,
-                                                                    stopIds: shapeWithStops.stopIds,
-                                                                    otherPatternsByStopId: [:])],
+                                              routeSegments: [
+                                                  .init(id: shape.id,
+                                                        sourceRoutePatternId: shapeWithStops.routePatternId,
+                                                        sourceRouteId: shapeWithStops.routeId,
+                                                        stopIds: shapeWithStops.stopIds,
+                                                        otherPatternsByStopId: [:]),
+                                              ],
                                               shape: shape)]),
             ]
         }
