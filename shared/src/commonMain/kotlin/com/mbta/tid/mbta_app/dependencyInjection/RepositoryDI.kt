@@ -7,12 +7,12 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IdleNearbyRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
-import com.mbta.tid.mbta_app.repositories.IdleTripSchedulesRepository
+import com.mbta.tid.mbta_app.repositories.IdleTripRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
@@ -22,7 +22,7 @@ import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
-import com.mbta.tid.mbta_app.repositories.TripSchedulesRepository
+import com.mbta.tid.mbta_app.repositories.TripRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -31,7 +31,7 @@ interface IRepositories {
     val schedules: ISchedulesRepository
     val settings: ISettingsRepository
     val stop: IStopRepository
-    val tripSchedules: ITripSchedulesRepository
+    val tripSchedules: ITripRepository
     val predictions: IPredictionsRepository?
     val alerts: IAlertsRepository?
     val nearby: INearbyRepository
@@ -44,7 +44,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val schedules: ISchedulesRepository by inject()
     override val settings: ISettingsRepository by inject()
     override val stop: IStopRepository by inject()
-    override val tripSchedules: ITripSchedulesRepository by inject()
+    override val tripSchedules: ITripRepository by inject()
     override val predictions: IPredictionsRepository by inject()
     override val alerts: IAlertsRepository by inject()
     override val nearby: INearbyRepository by inject()
@@ -57,7 +57,7 @@ class RealRepositories : IRepositories {
     override val schedules = SchedulesRepository()
     override val settings = SettingsRepository()
     override val stop = StopRepository()
-    override val tripSchedules = TripSchedulesRepository()
+    override val tripSchedules = TripRepository()
     override val predictions = null
     override val alerts = null
     override val nearby = NearbyRepository()
@@ -70,7 +70,7 @@ class MockRepositories(
     override val schedules: ISchedulesRepository,
     override val settings: ISettingsRepository,
     override val stop: IStopRepository,
-    override val tripSchedules: ITripSchedulesRepository,
+    override val tripSchedules: ITripRepository,
     override val predictions: IPredictionsRepository,
     override val alerts: IAlertsRepository,
     override val nearby: INearbyRepository,
@@ -85,7 +85,7 @@ class MockRepositories(
             schedules: ISchedulesRepository = IdleScheduleRepository(),
             settings: ISettingsRepository = SettingsRepository(),
             stop: IStopRepository = IdleStopRepository(),
-            tripSchedules: ITripSchedulesRepository = IdleTripSchedulesRepository(),
+            tripSchedules: ITripRepository = IdleTripRepository(),
             predictions: IPredictionsRepository = MockPredictionsRepository(),
             alerts: IAlertsRepository = MockAlertsRepository(),
             nearby: INearbyRepository = IdleNearbyRepository(),

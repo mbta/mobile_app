@@ -15,7 +15,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
-class TripSchedulesRepositoryTest : KoinTest {
+class TripRepositoryTest : KoinTest {
     @Test
     fun `gets trip schedules`() {
         val mockEngine = MockEngine {
@@ -30,7 +30,7 @@ class TripSchedulesRepositoryTest : KoinTest {
         }
 
         runBlocking {
-            val response = TripSchedulesRepository().getTripSchedules(tripId = "12345")
+            val response = TripRepository().getTripSchedules(tripId = "12345")
 
             assertEquals(TripSchedulesResponse.StopIds(listOf("1", "2", "3")), response)
         }
