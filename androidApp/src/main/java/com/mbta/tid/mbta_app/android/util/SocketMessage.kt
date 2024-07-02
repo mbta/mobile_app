@@ -1,23 +1,43 @@
 package com.mbta.tid.mbta_app.android.util
 
-import com.mbta.tid.mbta_app.json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.phoenixframework.Message
 
-fun decodeMessage(message: String): Message {
-    val el: JsonElement = json.decodeFromString(message)
-    val joinRef = el.jsonArray[0].jsonPrimitive.contentOrNull
-    val ref = el.jsonArray[1].jsonPrimitive.contentOrNull ?: ""
-    val topic = el.jsonArray[2].jsonPrimitive.content
-    val event = el.jsonArray[3].jsonPrimitive.content
-    val payload = el.jsonArray[4].jsonObject
-    return Message(joinRef, ref, topic, event, payload)
-}
+fun decodeMessage(rawMessage: String): Message {
+    // https://github.com/dsrees/JavaPhoenixClient/blob/1.3.1/src/main/kotlin/org/phoenixframework/Defaults.kt#L68
+    val parseValue: (String) -> String? = { value ->
+        when (value) {
+            "null" -> null
+            else -> value.replace("\"", "")
+        }
+    }
 
-inline fun <reified T> Message.decodeJson(): T = json.decodeFromJsonElement(payload as JsonObject)
+    var message = rawMessage
+    message = message.removeRange(0, 1) // remove '['
+
+    val joinRef = message.takeWhile { it != ',' } // take "join ref", "null" or "\"5\""
+    message = message.removeRange(0, joinRef.length) // remove join ref
+    message = message.removeRange(0, 1) // remove ','
+
+    val ref = message.takeWhile { it != ',' } // take ref, "null" or "\"5\""
+    message = message.removeRange(0, ref.length) // remove ref
+    message = message.removeRange(0, 1) // remove ','
+
+    val topic = message.takeWhile { it != ',' } // take topic, "\"topic\""
+    message = message.removeRange(0, topic.length)
+    message = message.removeRange(0, 1) // remove ','
+
+    val event = message.takeWhile { it != ',' } // take event, "\"phx_reply\""
+    message = message.removeRange(0, event.length)
+    message = message.removeRange(0, 1) // remove ','
+
+    val payloadJson = message.removeRange(message.length - 1, message.length) // remove ']'
+
+    return Message(
+        joinRef = parseValue(joinRef),
+        ref = parseValue(ref) ?: "",
+        topic = parseValue(topic) ?: "",
+        event = parseValue(event) ?: "",
+        rawPayload = emptyMap(),
+        payloadJson = payloadJson
+    )
+}

@@ -29,11 +29,13 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(platform(libs.compose.bom))
+    implementation(platform(libs.koin.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.javaPhoenixClient)
+    implementation(libs.koin.androidxCompose)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.datetime)
     implementation(libs.mapbox.android)

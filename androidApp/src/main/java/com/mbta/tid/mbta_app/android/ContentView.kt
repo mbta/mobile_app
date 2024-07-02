@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
@@ -23,24 +22,33 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.android.fetcher.fetchGlobalData
-import com.mbta.tid.mbta_app.android.fetcher.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitPage
-import com.mbta.tid.mbta_app.android.util.decodeMessage
+import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.util.toPosition
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
-import org.phoenixframework.Socket
+import org.koin.compose.koinInject
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
-fun ContentView(appVariant: AppVariant) {
+fun ContentView(
+    appVariant: AppVariant,
+    alertsRepository: IAlertsRepository = koinInject(),
+    socket: PhoenixSocket = koinInject(),
+) {
     val backend = remember { Backend(appVariant) }
-    val socket = remember { Socket(appVariant.socketUrl, decode = ::decodeMessage) }
-    val alertData = subscribeToAlerts(socket = socket)
+    var alertData: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
+    DisposableEffect(null) {
+        alertsRepository.connect { alertData = it.data }
+        onDispose { alertsRepository.disconnect() }
+    }
     val globalData = fetchGlobalData(backend = backend)
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -65,18 +73,15 @@ fun ContentView(appVariant: AppVariant) {
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
 
     DisposableEffect(null) {
-        socket.connect()
-        socket.onMessage { message -> Log.i("Socket", message.toString()) }
-        socket.onError { throwable, response -> Log.e("Socket", response.toString(), throwable) }
-        onDispose { socket.disconnect() }
+        socket.attach()
+        (socket as? PhoenixSocketWrapper)?.attachLogging()
+        onDispose { socket.detach() }
     }
 
     BottomSheetScaffold(
         sheetContent = {
             NearbyTransitPage(
                 Modifier.fillMaxSize(),
-                backend = backend,
-                socket = socket,
                 alertData = alertData,
                 globalData = globalData,
                 targetLocation = mapCenter,

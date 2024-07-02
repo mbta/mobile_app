@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
-import com.mbta.tid.mbta_app.model.PatternsByHeadsign
+import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import org.junit.Rule
 import org.junit.Test
@@ -16,7 +16,7 @@ import org.junit.Test
 class HeadsignRowViewTest {
     @get:Rule val composeTestRule = createComposeRule()
 
-    private fun init(headsign: String, predictions: PatternsByHeadsign.Format) {
+    private fun init(headsign: String, predictions: RealtimePatterns.Format) {
         composeTestRule.setContent { MyApplicationTheme { HeadsignRowView(headsign, predictions) } }
     }
 
@@ -24,16 +24,10 @@ class HeadsignRowViewTest {
     fun showsTwoPredictions() {
         init(
             "Headsign",
-            PatternsByHeadsign.Format.Some(
+            RealtimePatterns.Format.Some(
                 listOf(
-                    PatternsByHeadsign.Format.Some.FormatWithId(
-                        "a",
-                        UpcomingTrip.Format.Minutes(2)
-                    ),
-                    PatternsByHeadsign.Format.Some.FormatWithId(
-                        "b",
-                        UpcomingTrip.Format.Minutes(10)
-                    ),
+                    RealtimePatterns.Format.Some.FormatWithId("a", UpcomingTrip.Format.Minutes(2)),
+                    RealtimePatterns.Format.Some.FormatWithId("b", UpcomingTrip.Format.Minutes(10)),
                 )
             )
         )
@@ -47,10 +41,8 @@ class HeadsignRowViewTest {
     fun showsOnePrediction() {
         init(
             "A Place",
-            PatternsByHeadsign.Format.Some(
-                listOf(
-                    PatternsByHeadsign.Format.Some.FormatWithId("a", UpcomingTrip.Format.Boarding)
-                )
+            RealtimePatterns.Format.Some(
+                listOf(RealtimePatterns.Format.Some.FormatWithId("a", UpcomingTrip.Format.Boarding))
             )
         )
 
@@ -60,7 +52,7 @@ class HeadsignRowViewTest {
 
     @Test
     fun showsNoPredictions() {
-        init("Somewhere", PatternsByHeadsign.Format.None)
+        init("Somewhere", RealtimePatterns.Format.None)
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
         composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
@@ -68,17 +60,14 @@ class HeadsignRowViewTest {
 
     @Test
     fun showsAlert() {
-        init(
-            "Headsign",
-            PatternsByHeadsign.Format.NoService(alert { effect = Alert.Effect.Shuttle })
-        )
+        init("Headsign", RealtimePatterns.Format.NoService(alert { effect = Alert.Effect.Shuttle }))
 
         composeTestRule.onNodeWithText("Shuttle", ignoreCase = true).assertIsDisplayed()
     }
 
     @Test
     fun showsLoading() {
-        init("Headsign", PatternsByHeadsign.Format.Loading)
+        init("Headsign", RealtimePatterns.Format.Loading)
 
         composeTestRule
             .onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
