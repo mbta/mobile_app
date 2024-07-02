@@ -1,5 +1,5 @@
 //
-//  StopDetailsRoutePillsTests.swift
+//  StopDetailsFilterPillsTests.swift
 //  iosAppTests
 //
 //  Created by Simon, Emma on 4/17/24.
@@ -12,13 +12,13 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsRoutePillsTests: XCTestCase {
+final class StopDetailsFilterPillsTests: XCTestCase {
     func testRoutePillsDisplay() throws {
         let objects = ObjectCollectionBuilder()
         let route1 = objects.route()
         let route2 = objects.route()
-        let sut = StopDetailsRoutePills(
-            servedRoutes: [(route: route1, line: nil), (route: route2, line: nil)],
+        let sut = StopDetailsFilterPills(
+            servedRoutes: [.route(route1, nil), .route(route2, nil)],
             tapRoutePill: { _ in },
             filter: .constant(nil)
         )
@@ -32,8 +32,8 @@ final class StopDetailsRoutePillsTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route1 = objects.route()
         let route2 = objects.route()
-        let sut = StopDetailsRoutePills(
-            servedRoutes: [(route: route1, line: nil), (route: route2, line: nil)],
+        let sut = StopDetailsFilterPills(
+            servedRoutes: [.route(route1, nil), .route(route2, nil)],
             tapRoutePill: { _ in },
             filter: .constant(.init(routeId: route1.id, directionId: 0))
         )
@@ -48,10 +48,14 @@ final class StopDetailsRoutePillsTests: XCTestCase {
         let route1 = objects.route()
         let route2 = objects.route()
         let tapExpectation = XCTestExpectation()
-        let sut = StopDetailsRoutePills(
-            servedRoutes: [(route: route1, line: nil), (route: route2, line: nil)],
-            tapRoutePill: { route in
+        let sut = StopDetailsFilterPills(
+            servedRoutes: [.route(route1, nil), .route(route2, nil)],
+            tapRoutePill: { filter in
                 tapExpectation.fulfill()
+                guard case let .route(route, _) = filter else {
+                    XCTFail("Filter was not by route")
+                    return
+                }
                 XCTAssertEqual(route, route2)
             },
             filter: .constant(nil)
