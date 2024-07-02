@@ -71,9 +71,6 @@ sealed class RealtimePatterns() : Comparable<RealtimePatterns> {
                 null
             }
         )
-
-        override fun compareTo(other: RealtimePatterns): Int =
-            patterns.first().compareTo(other.patterns.first())
     }
 
     /**
@@ -143,21 +140,21 @@ sealed class RealtimePatterns() : Comparable<RealtimePatterns> {
                 null
             }
         )
-
-        override fun compareTo(other: RealtimePatterns): Int =
-            compareValuesBy(
-                this,
-                other,
-                { it.patterns.first().directionId },
-                {
-                    when (it) {
-                        is ByDirection -> -1
-                        is ByHeadsign -> 1
-                    }
-                },
-                { it.patterns.first() }
-            )
     }
+
+    override fun compareTo(other: RealtimePatterns): Int =
+        compareValuesBy(
+            this,
+            other,
+            { it.directionId() },
+            {
+                when (it) {
+                    is ByDirection -> -1
+                    is ByHeadsign -> 1
+                }
+            },
+            { it.patterns.first() }
+        )
 
     fun format(now: Instant): Format {
         return this.format(

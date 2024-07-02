@@ -235,6 +235,13 @@ class StopDetailsDeparturesTest {
                                     objects.upcomingTrip(schedC1, predC1),
                                 )
                             ),
+                            RealtimePatterns.ByHeadsign(
+                                routeE,
+                                "Heath Street",
+                                line,
+                                listOf(routePatternE1),
+                                listOf(objects.upcomingTrip(schedE1, predE1))
+                            ),
                             RealtimePatterns.ByDirection(
                                 line,
                                 listOf(routeB, routeC, routeE),
@@ -245,13 +252,6 @@ class StopDetailsDeparturesTest {
                                     objects.upcomingTrip(schedC2, predC2),
                                     objects.upcomingTrip(schedE2, predE2),
                                 )
-                            ),
-                            RealtimePatterns.ByHeadsign(
-                                routeE,
-                                "Heath Street",
-                                line,
-                                listOf(routePatternE1),
-                                listOf(objects.upcomingTrip(schedE1, predE1))
                             ),
                         ),
                         listOf(Direction("West", null, 0), directionEast)
