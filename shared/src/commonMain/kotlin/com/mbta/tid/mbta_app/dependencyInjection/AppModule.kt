@@ -3,8 +3,10 @@ package com.mbta.tid.mbta_app.dependencyInjection
 import IRepositories
 import RealRepositories
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.cache.GlobalCache
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
@@ -22,9 +24,12 @@ import org.koin.dsl.module
 fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
+        cacheModule(),
         repositoriesModule(RealRepositories())
     )
 }
+
+fun cacheModule() = module { single { GlobalCache() } }
 
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {
@@ -42,6 +47,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
             factory<ITripPredictionsRepository> { tripPredictionsRepo }
         }
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
+        single<IGlobalRepository> { repositories.global }
         single { TogglePinnedRouteUsecase(get()) }
     }
 }

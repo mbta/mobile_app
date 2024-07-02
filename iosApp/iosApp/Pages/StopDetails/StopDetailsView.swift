@@ -15,7 +15,8 @@ import SwiftUI
 
 struct StopDetailsView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider()
-    @ObservedObject var globalFetcher: GlobalFetcher
+    let globalRepository: IGlobalRepository
+    @State var globalResponse: GlobalResponse?
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
@@ -30,14 +31,14 @@ struct StopDetailsView: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        globalFetcher: GlobalFetcher,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
         nearbyVM: NearbyViewModel,
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
     ) {
-        self.globalFetcher = globalFetcher
+        self.globalRepository = globalRepository
         self.stop = stop
         _filter = filter
         self.nearbyVM = nearbyVM
@@ -46,7 +47,7 @@ struct StopDetailsView: View {
 
         if let departures = nearbyVM.departures {
             servedRoutes = OrderedSet(departures.routes.flatMap { pattern in pattern.routes })
-                .map { (route: $0, line: globalFetcher.lookUpLine(lineId: $0.lineId)) }
+                .map { (route: $0, line: globalResponse?.getLine(lineId: $0.lineId)) }
         }
     }
 
@@ -75,6 +76,13 @@ struct StopDetailsView: View {
                 } else {
                     ProgressView()
                 }
+            }
+        }
+        .task {
+            do {
+                globalResponse = try await globalRepository.getGlobalData()
+            } catch {
+                debugPrint(error)
             }
         }
     }

@@ -18,7 +18,7 @@ struct AnnotatedMap: View {
     var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
     var nearbyLocation: CLLocationCoordinate2D?
-    var routes: [String: Route]
+    var routes: [String: Route]?
     var selectedVehicle: Vehicle?
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
@@ -85,7 +85,7 @@ struct AnnotatedMap: View {
             if let allVehicles {
                 ForEvery(allVehicles, id: \.id) { vehicle in
                     if let routeId = vehicle.routeId,
-                       let route = routes[routeId] {
+                       let route = routes?[routeId] {
                         let isSelected = vehicle.id == selectedVehicle?.id
                         MapViewAnnotation(coordinate: vehicle.coordinate) {
                             ZStack {

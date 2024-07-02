@@ -29,9 +29,6 @@ final class TripDetailsPageTests: XCTestCase {
             prediction.departureTime = Date.now.addingTimeInterval(30).toKotlinInstant()
         }
 
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
-
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripSchedulesRepository = FakeTripSchedulesRepository(
@@ -47,9 +44,9 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: tripId,
             vehicleId: vehicleId,
             target: nil,
-            globalFetcher: globalFetcher,
             nearbyVM: .init(),
             mapVM: .init(),
+            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository
         )
@@ -94,10 +91,6 @@ final class TripDetailsPageTests: XCTestCase {
             prediction.departureTime = Date.now.toKotlinInstant()
         }
 
-        let response = GlobalResponse(objects: objects, patternIdsByStop: [:])
-        let globalFetcher = GlobalFetcher(backend: IdleBackend(), stops: response.stops, routes: response.routes)
-        globalFetcher.response = response
-
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripSchedulesRepository = FakeTripSchedulesRepository(
@@ -113,9 +106,9 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: tripId,
             vehicleId: vehicleId,
             target: nil,
-            globalFetcher: globalFetcher,
             nearbyVM: .init(),
             mapVM: .init(),
+            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -140,9 +133,6 @@ final class TripDetailsPageTests: XCTestCase {
             stop.name = "Elsewhere"
         }
 
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
-
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripSchedulesRepository = FakeTripSchedulesRepository(
@@ -156,9 +146,9 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: tripId,
             vehicleId: vehicleId,
             target: .init(stopId: stop1.id, stopSequence: 998),
-            globalFetcher: globalFetcher,
             nearbyVM: .init(),
             mapVM: .init(),
+            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleRepository: FakeVehicleRepository(response: nil)
@@ -239,12 +229,10 @@ final class TripDetailsPageTests: XCTestCase {
             prediction.departureTime = Date.now.toKotlinInstant().plus(duration: 100)
         }
 
-        let response = GlobalResponse(objects: objects, patternIdsByStop: [
+        let globalData = GlobalResponse(objects: objects, patternIdsByStop: [
             stop1.id: [pattern1.id, pattern2.id],
             stop2.id: [pattern1.id, pattern3.id],
         ])
-        let globalFetcher = GlobalFetcher(backend: IdleBackend(), stops: response.stops, routes: response.routes)
-        globalFetcher.response = response
 
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
@@ -266,9 +254,9 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: tripId,
             vehicleId: vehicleId,
             target: nil,
-            globalFetcher: globalFetcher,
             nearbyVM: .init(),
             mapVM: .init(),
+            globalRepository: FakeGlobalRepository(response: globalData),
             tripPredictionsRepository: tripPredictionsRepository,
             tripSchedulesRepository: tripSchedulesRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -312,7 +300,6 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: "tripId",
             vehicleId: "veicleId",
             target: nil,
-            globalFetcher: GlobalFetcher(backend: IdleBackend()),
             nearbyVM: FakeNearbyVM(backExp),
             mapVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
@@ -346,7 +333,6 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: tripId,
             vehicleId: vehicleId,
             target: nil,
-            globalFetcher: .init(backend: IdleBackend()),
             nearbyVM: .init(),
             mapVM: mapVM,
             vehicleRepository: vehicleRepository
@@ -363,6 +349,18 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [selectedVehicleSetExp], timeout: 1)
 
         subscription.cancel()
+    }
+
+    class FakeGlobalRepository: IGlobalRepository {
+        let response: GlobalResponse
+
+        init(response: GlobalResponse) {
+            self.response = response
+        }
+
+        func __getGlobalData() async throws -> GlobalResponse {
+            response
+        }
     }
 
     class FakeTripSchedulesRepository: ITripSchedulesRepository {

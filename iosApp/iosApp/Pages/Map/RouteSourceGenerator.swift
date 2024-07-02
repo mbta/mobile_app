@@ -57,10 +57,10 @@ class RouteSourceGenerator {
     static let propRouteColor = "routeColor"
     static let propAlertStateKey = "alertState"
 
-    init(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route],
-         stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
+    init(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route]?,
+         stopsById: [String: Stop]?, alertsByStop: [String: AlertAssociatedStop]?) {
         self.routeData = routeData
-        routeLines = routeData.flatMap { Self.generateRouteLines(routeWithShapes: $0, route: routesById[$0.routeId],
+        routeLines = routeData.flatMap { Self.generateRouteLines(routeWithShapes: $0, route: routesById?[$0.routeId],
                                                                  stopsById: stopsById,
                                                                  alertsByStop: alertsByStop) }
 
@@ -90,8 +90,8 @@ class RouteSourceGenerator {
 
     static func generateRouteLines(routeWithShapes: MapFriendlyRouteResponse.RouteWithSegmentedShapes,
                                    route: Route?,
-                                   stopsById: [String: Stop],
-                                   alertsByStop: [String: AlertAssociatedStop])
+                                   stopsById: [String: Stop]?,
+                                   alertsByStop: [String: AlertAssociatedStop]?)
         -> [RouteLineData] {
         routeWithShapes.segmentedShapes
             .flatMap { routePatternShape in
@@ -102,8 +102,8 @@ class RouteSourceGenerator {
 
     private static func routeShapeToLineData(routePatternShape: SegmentedRouteShape,
                                              route: Route?,
-                                             stopsById: [String: Stop],
-                                             alertsByStop: [String: AlertAssociatedStop]) -> [RouteLineData] {
+                                             stopsById: [String: Stop]?,
+                                             alertsByStop: [String: AlertAssociatedStop]?) -> [RouteLineData] {
         guard let polyline = routePatternShape.shape.polyline,
               let coordinates = Polyline(encodedPolyline: polyline).coordinates
         else {
@@ -112,7 +112,7 @@ class RouteSourceGenerator {
 
         let fullLineString = LineString(coordinates)
         let alertAwareSegments = routePatternShape.routeSegments.flatMap { segment in
-            segment.splitAlertingSegments(alertsByStop: alertsByStop)
+            segment.splitAlertingSegments(alertsByStop: alertsByStop ?? [:])
         }
         return alertAwareSegments.compactMap { segment in
 
@@ -124,11 +124,11 @@ class RouteSourceGenerator {
 
     private static func routeSegmentToRouteLineData(segment: AlertAwareRouteSegment, route: Route?,
                                                     fullLineString: LineString,
-                                                    stopsById: [String: Stop]) -> RouteLineData? {
+                                                    stopsById: [String: Stop]?) -> RouteLineData? {
         guard let firstStopId = segment.stopIds.first,
-              let firstStop = stopsById[firstStopId],
+              let firstStop = stopsById?[firstStopId],
               let lastStopId = segment.stopIds.last,
-              let lastStop = stopsById[lastStopId],
+              let lastStop = stopsById?[lastStopId],
               let lineSegment = fullLineString.sliced(from: firstStop.coordinate,
                                                       to: lastStop.coordinate)
         else {
@@ -144,11 +144,11 @@ class RouteSourceGenerator {
 
     static func forRailAtStop(_ stopShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
                               _ railShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
-                              _ routesById: [String: Route],
-                              _ stopsById: [String: Stop],
-                              _ alertsByStop: [String: AlertAssociatedStop]) -> RouteSourceGenerator {
+                              _ routesById: [String: Route]?,
+                              _ stopsById: [String: Stop]?,
+                              _ alertsByStop: [String: AlertAssociatedStop]?) -> RouteSourceGenerator {
         let stopRailRouteIds: Set<String> = Set(stopShapes.filter { routeWithShape in
-            let maybeRouteType = routesById[routeWithShape.routeId]?.type
+            let maybeRouteType = routesById?[routeWithShape.routeId]?.type
             if let routeType = maybeRouteType {
                 return routeType == RouteType.heavyRail ||
                     routeType == RouteType.lightRail ||

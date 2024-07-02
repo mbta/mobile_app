@@ -7,6 +7,7 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headersOf
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -16,6 +17,11 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 class TripSchedulesRepositoryTest : KoinTest {
+    @AfterTest
+    fun teardown() {
+        stopKoin()
+    }
+
     @Test
     fun `gets trip schedules`() {
         val mockEngine = MockEngine {
@@ -34,7 +40,5 @@ class TripSchedulesRepositoryTest : KoinTest {
 
             assertEquals(TripSchedulesResponse.StopIds(listOf("1", "2", "3")), response)
         }
-
-        stopKoin()
     }
 }

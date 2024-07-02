@@ -14,12 +14,14 @@ import SwiftUI
 
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider()
-    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
+
+    var globalRepository: IGlobalRepository
+    @State var globalData: GlobalResponse?
 
     var stopRepository: IStopRepository
     @State var globalMapData: GlobalMapData?
@@ -44,7 +46,7 @@ struct HomeMapView: View {
     }
 
     init(
-        globalFetcher: GlobalFetcher,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
         railRouteShapeFetcher: RailRouteShapeFetcher,
@@ -55,7 +57,7 @@ struct HomeMapView: View {
         sheetHeight: Binding<CGFloat>,
         layerManager: IMapLayerManager? = nil
     ) {
-        self.globalFetcher = globalFetcher
+        self.globalRepository = globalRepository
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.railRouteShapeFetcher = railRouteShapeFetcher
@@ -77,6 +79,13 @@ struct HomeMapView: View {
             .overlay(alignment: .center) {
                 if nearbyVM.selectingLocation {
                     crosshairs
+                }
+            }
+            .task {
+                do {
+                    globalData = try await globalRepository.getGlobalData()
+                } catch {
+                    debugPrint(error)
                 }
             }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
@@ -122,11 +131,10 @@ struct HomeMapView: View {
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
-            globalFetcher: globalFetcher,
             railRouteShapeFetcher: railRouteShapeFetcher,
             globalMapData: globalMapData
         )
-        .onChange(of: globalFetcher.response) { _ in
+        .onChange(of: globalData) { _ in
             handleGlobalMapDataChange(now: now)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
@@ -148,7 +156,7 @@ struct HomeMapView: View {
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
-            routes: globalFetcher.routes,
+            routes: globalData?.routes,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
             vehicles: vehicles,
@@ -174,7 +182,7 @@ struct ProxyModifiedMap: View {
     var mapContent: AnyView
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
     var handleTryLayerInit: (_ map: MapboxMap?) -> Void
-    var globalFetcher: GlobalFetcher
+    var globalData: GlobalResponse?
     var railRouteShapeFetcher: RailRouteShapeFetcher
     var globalMapData: GlobalMapData?
 
@@ -184,7 +192,7 @@ struct ProxyModifiedMap: View {
                 .onAppear {
                     handleAppear(proxy.location, proxy.map)
                 }
-                .onChange(of: globalFetcher.response) { _ in
+                .onChange(of: globalData) { _ in
                     handleTryLayerInit(proxy.map)
                 }
                 .onChange(of: railRouteShapeFetcher.response) { _ in
