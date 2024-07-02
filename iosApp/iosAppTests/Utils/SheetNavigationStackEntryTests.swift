@@ -44,7 +44,13 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         let previousEntries: [SheetNavigationStackEntry] = [
             .stopDetails(otherStop, .init(routeId: "A", directionId: 1)),
             .stopDetails(otherStop, .init(routeId: "B", directionId: 1)),
-            .tripDetails(tripId: "345", vehicleId: "abc", target: .init(stopId: "999", stopSequence: 111)),
+            .tripDetails(
+                tripId: "345",
+                vehicleId: "abc",
+                target: .init(stopId: "999", stopSequence: 111),
+                routeId: "Z",
+                directionId: 1
+            ),
             .stopDetails(otherStop, .init(routeId: "C", directionId: 0)),
             .stopDetails(otherStop, .init(routeId: "D", directionId: 0)),
         ]
@@ -66,7 +72,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         var stack: [SheetNavigationStackEntry] = [
             .stopDetails(stop, .init(routeId: "A", directionId: 1)),
             .stopDetails(stop, .init(routeId: "B", directionId: 0)),
-            .tripDetails(tripId: "a", vehicleId: "1", target: nil),
+            .tripDetails(tripId: "a", vehicleId: "1", target: nil, routeId: "C", directionId: 1),
         ]
 
         XCTAssertEqual(stack.lastStopDetailsFilter, nil)
@@ -80,7 +86,13 @@ final class SheetNavigationStackEntryTests: XCTestCase {
     func testNearbySheetItemIdentifable() throws {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         let stopEntry: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: "A", directionId: 1))
-        let tripEntry: SheetNavigationStackEntry = .tripDetails(tripId: "tripId", vehicleId: "vehicleId", target: nil)
+        let tripEntry: SheetNavigationStackEntry = .tripDetails(
+            tripId: "tripId",
+            vehicleId: "vehicleId",
+            target: nil,
+            routeId: "routeId",
+            directionId: 0
+        )
 
         let nearbyEntry: SheetNavigationStackEntry = .nearby
 

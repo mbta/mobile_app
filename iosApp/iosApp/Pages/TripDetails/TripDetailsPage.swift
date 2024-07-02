@@ -16,12 +16,15 @@ struct TripDetailsPage: View {
     let vehicleId: String
     let target: TripDetailsTarget?
 
-    @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
     @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var vehicleFetcher: VehicleFetcher
-    var tripSchedulesRepository: ITripSchedulesRepository
+    @ObservedObject var mapVM: MapViewModel
+    @State var tripPredictionsRepository: ITripPredictionsRepository
+    @State var tripPredictions: PredictionsStreamDataResponse?
+    @State var tripSchedulesRepository: ITripSchedulesRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
+    @State var vehicleRepository: IVehicleRepository
+    @State var vehicleResponse: VehicleStreamDataResponse?
 
     @State var now = Date.now.toKotlinInstant()
 
@@ -33,18 +36,20 @@ struct TripDetailsPage: View {
         target: TripDetailsTarget?,
         globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
-        tripPredictionsFetcher: TripPredictionsFetcher,
+        mapVM: MapViewModel,
+        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
-        vehicleFetcher: VehicleFetcher
+        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
         self.target = target
         self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
-        self.tripPredictionsFetcher = tripPredictionsFetcher
+        self.mapVM = mapVM
+        self.tripPredictionsRepository = tripPredictionsRepository
         self.tripSchedulesRepository = tripSchedulesRepository
-        self.vehicleFetcher = vehicleFetcher
+        self.vehicleRepository = vehicleRepository
     }
 
     var body: some View {
@@ -52,10 +57,10 @@ struct TripDetailsPage: View {
             SheetHeader(onClose: { nearbyVM.goBack() })
 
             if let globalData = globalFetcher.response {
-                let vehicle = vehicleFetcher.response?.vehicle
+                let vehicle = vehicleResponse?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
-                    tripPredictions: tripPredictionsFetcher.predictions,
+                    tripPredictions: tripPredictions,
                     vehicle: vehicle, globalData: globalData
                 ) {
                     vehicleCardView
@@ -74,8 +79,6 @@ struct TripDetailsPage: View {
             } else {
                 ProgressView()
             }
-
-            tripPredictionsFetcher.errorText
         }
         .task {
             do {
@@ -101,7 +104,7 @@ struct TripDetailsPage: View {
         }
         .onChange(of: tripId) { joinPredictions(tripId: $0) }
         .onChange(of: vehicleId) { vehicleId in
-            vehicleFetcher.run(vehicleId: vehicleId)
+            joinVehicle(vehicleId: vehicleId)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .withScenePhaseHandlers(onActive: joinRealtime,
@@ -111,26 +114,54 @@ struct TripDetailsPage: View {
 
     private func joinRealtime() {
         joinPredictions(tripId: tripId)
-        vehicleFetcher.run(vehicleId: vehicleId)
+        joinVehicle(vehicleId: vehicleId)
     }
 
     private func leaveRealtime() {
         leavePredictions()
-        vehicleFetcher.leave()
+        leaveVehicle()
     }
 
     private func joinPredictions(tripId: String) {
-        tripPredictionsFetcher.run(tripId: tripId)
+        tripPredictionsRepository.connect(tripId: tripId) { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    tripPredictions = data
+                } else {
+                    tripPredictions = nil
+                }
+            }
+        }
     }
 
     private func leavePredictions() {
-        tripPredictionsFetcher.leave()
+        tripPredictionsRepository.disconnect()
+    }
+
+    private func joinVehicle(vehicleId: String) {
+        vehicleRepository.connect(vehicleId: vehicleId) { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    vehicleResponse = data
+                    mapVM.selectedVehicle = data.vehicle
+                } else {
+                    vehicleResponse = nil
+                }
+            }
+        }
+    }
+
+    private func leaveVehicle() {
+        vehicleRepository.disconnect()
+        if mapVM.selectedVehicle?.id == vehicleId {
+            mapVM.selectedVehicle = nil
+        }
     }
 
     @ViewBuilder
     var vehicleCardView: some View {
-        let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
-        let vehicle: Vehicle? = vehicleFetcher.response?.vehicle
+        let trip: Trip? = tripPredictions?.trips[tripId]
+        let vehicle: Vehicle? = vehicleResponse?.vehicle
         let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
             globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
         } else {

@@ -261,6 +261,7 @@ class ObjectCollectionBuilder {
             trips,
             TripBuilder().apply {
                 directionId = routePattern.directionId
+                routeId = routePattern.routeId
                 routePatternId = routePattern.id
                 val representativeTrip = trips[routePattern.representativeTripId]
                 if (representativeTrip != null) {

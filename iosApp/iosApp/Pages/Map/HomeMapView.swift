@@ -15,6 +15,7 @@ import SwiftUI
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     @ObservedObject var globalFetcher: GlobalFetcher
+    @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
@@ -44,6 +45,7 @@ struct HomeMapView: View {
 
     init(
         globalFetcher: GlobalFetcher,
+        mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
         railRouteShapeFetcher: RailRouteShapeFetcher,
         vehiclesFetcher: VehiclesFetcher,
@@ -54,6 +56,7 @@ struct HomeMapView: View {
         layerManager: IMapLayerManager? = nil
     ) {
         self.globalFetcher = globalFetcher
+        self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.railRouteShapeFetcher = railRouteShapeFetcher
         self.vehiclesFetcher = vehiclesFetcher
@@ -65,15 +68,29 @@ struct HomeMapView: View {
     }
 
     var body: some View {
-        realtimeResponsiveMap.overlay(alignment: .topTrailing) {
-            if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                RecenterButton { Task { viewportProvider.follow() } }
+        realtimeResponsiveMap
+            .overlay(alignment: .topTrailing) {
+                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                    RecenterButton { Task { viewportProvider.follow() } }
+                }
             }
-        }
-        .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
-            handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
-        }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .overlay(alignment: .center) {
+                if nearbyVM.selectingLocation {
+                    crosshairs
+                }
+            }
+            .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
+                handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
+            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
+                guard isManuallyCentering else { return }
+                /*
+                 This will be set to false after nearby is loaded to avoid the crosshair
+                 dissapearing and re-appearing
+                 */
+                nearbyVM.selectingLocation = true
+            }
     }
 
     @ViewBuilder
@@ -123,18 +140,31 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var annotatedMap: some View {
+        let selectedVehicle: Vehicle? = if case .tripDetails = nearbyVM.navigationStack.last {
+            mapVM.selectedVehicle
+        } else { nil }
+        let vehicles: [Vehicle]? = vehiclesFetcher.vehicles?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
             routes: globalFetcher.routes,
+            selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
-            vehicles: vehiclesFetcher.vehicles,
+            vehicles: vehicles,
             viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle
         )
+    }
+
+    private var crosshairs: some View {
+        VStack {
+            Image("map-nearby-location-cursor")
+            Spacer()
+                .frame(height: sheetHeight)
+        }
     }
 
     var didAppear: ((Self) -> Void)?

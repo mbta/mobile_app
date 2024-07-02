@@ -39,7 +39,8 @@ struct StopDetailsFilteredRouteView: View {
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
-                                                target: .init(stopId: stopId, stopSequence: stopSequence.intValue))
+                                                target: .init(stopId: stopId, stopSequence: stopSequence.intValue),
+                                                routeId: upcoming.trip.routeId, directionId: upcoming.trip.directionId)
             } else {
                 navigationTarget = nil
             }

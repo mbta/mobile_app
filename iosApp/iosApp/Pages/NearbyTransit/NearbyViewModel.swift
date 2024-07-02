@@ -23,6 +23,7 @@ class NearbyViewModel: ObservableObject {
     @Published var navigationStack: [SheetNavigationStackEntry] = []
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
+    @Published var selectingLocation = false
     private let alertsRepository: IAlertsRepository
     private let nearbyRepository: INearbyRepository
     private var fetchNearbyTask: Task<Void, Never>?
@@ -79,7 +80,10 @@ class NearbyViewModel: ObservableObject {
                 self.analytics.refetchedNearbyTransit()
             }
             self.nearbyState.loading = true
-            defer { self.nearbyState.loading = false }
+            defer {
+                self.nearbyState.loading = false
+                self.selectingLocation = false
+            }
             do {
                 let response = try await self.nearbyRepository.getNearby(
                     global: global,
