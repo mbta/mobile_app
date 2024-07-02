@@ -71,26 +71,33 @@ class RouteSourceGenerator {
         routeSource = source
     }
 
-    convenience init(shapeWithStops: TripShapeResponse.TripShape?, routesById: [String: Route],
+    convenience init(shapesWithStops: [ShapeWithStops], routesById: [String: Route],
                      stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
-        var routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
-        if let shapeWithStops,
-           let shape = shapeWithStops.shape {
-            routeData = [
-                .init(routeId: shapeWithStops.routeId,
-                      segmentedShapes: [.init(sourceRoutePatternId: shapeWithStops.routeId,
-                                              sourceRouteId: shapeWithStops.routeId,
-                                              directionId: shapeWithStops.directionId,
-                                              routeSegments: [
-                                                  .init(id: shape.id,
-                                                        sourceRoutePatternId: shapeWithStops.routePatternId,
-                                                        sourceRouteId: shapeWithStops.routeId,
-                                                        stopIds: shapeWithStops.stopIds,
-                                                        otherPatternsByStopId: [:]),
-                                              ],
-                                              shape: shape)]),
-            ]
-        }
+        var routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] =
+            shapesWithStops
+                .compactMap { shapeWithStops in
+                    if let shape = shapeWithStops.shape {
+                        MapFriendlyRouteResponse
+                            .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
+                                                      segmentedShapes: [
+                                                          .init(sourceRoutePatternId: shapeWithStops.routeId,
+                                                                sourceRouteId: shapeWithStops.routeId,
+                                                                directionId: shapeWithStops.directionId,
+                                                                routeSegments:
+                                                                [
+                                                                    .init(id: shape.id,
+                                                                          sourceRoutePatternId: shapeWithStops
+                                                                              .routePatternId,
+                                                                          sourceRouteId: shapeWithStops.routeId,
+                                                                          stopIds: shapeWithStops.stopIds,
+                                                                          otherPatternsByStopId: [:]),
+                                                                ],
+                                                                shape: shape),
+                                                      ])
+                    } else {
+                        nil
+                    }
+                }
 
         self.init(routeData: routeData, routesById: routesById,
                   stopsById: stopsById, alertsByStop: alertsByStop)

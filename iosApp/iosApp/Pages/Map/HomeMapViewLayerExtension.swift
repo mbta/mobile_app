@@ -133,8 +133,6 @@ extension HomeMapView {
         layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         // If routes are already being displayed, keep using those. Otherwise, use the rail shapes
 
-        print("EXISTING DATA \(layerManager?.routeSourceGenerator?.routeData.map(\.routeId))")
-
         let routeData = layerManager?.routeSourceGenerator?.routeData ??
             railRouteShapeFetcher.response?.routesWithSegmentedShapes ??
             []

@@ -97,38 +97,39 @@ extension HomeMapView {
         }
 
         if case let .tripDetails(tripId: tripId, vehicleId: _, target: _, routeId: _, directionId: _) = nextNavEntry {
-            Task {
-                print("Selected Trip ID changed \(tripId)")
-                do {
-                    print("trying")
-                    let response: TripShapeResponse = try await RepositoryDI().tripSchedules
-                        .getTripShape(tripId: tripId)
-                    print("response: \(response)")
-
-                    let shapeWithStops: TripShapeResponse.TripShape? = switch onEnum(of: response) {
-                    case let .tripShape(tripShape): tripShape
-
-                    case .notFound:
-                        nil
-                    }
-                    let updatedSource = RouteSourceGenerator(
-                        shapeWithStops: shapeWithStops,
-                        routesById: globalFetcher.routes,
-                        stopsById: globalFetcher.stops,
-                        alertsByStop: globalMapData?.alertsByStop ?? [:]
-                    )
-                    layerManager?.updateSourceData(routeSourceGenerator: updatedSource)
-
-                } catch {
-                    debugPrint(error)
-                }
-            }
+            handleTripDetailsChange(tripId)
         }
         if nextNavEntry == nil {
             clearSelectedStop()
         }
         if nextNavEntry == nil {
             viewportProvider.restoreNearbyTransitViewport()
+        }
+    }
+
+    func handleTripDetailsChange(_ tripId: String) {
+        Task {
+            do {
+                let response: TripShapeResponse = try await RepositoryDI().tripSchedules
+                    .getTripShape(tripId: tripId)
+
+                let shapesWithStops: [ShapeWithStops] = switch onEnum(of: response) {
+                case let .tripShape(tripShape): [tripShape.shapeWithStops]
+
+                case .notFound:
+                    []
+                }
+                let updatedSource = RouteSourceGenerator(
+                    shapesWithStops: shapesWithStops,
+                    routesById: globalFetcher.routes,
+                    stopsById: globalFetcher.stops,
+                    alertsByStop: globalMapData?.alertsByStop ?? [:]
+                )
+                layerManager?.updateSourceData(routeSourceGenerator: updatedSource)
+
+            } catch {
+                debugPrint(error)
+            }
         }
     }
 

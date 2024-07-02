@@ -121,10 +121,8 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
-        print("UPdating route source data \(routeSourceGenerator.routeLines.map(\.routeId))")
         self.routeSourceGenerator = routeSourceGenerator
         updateSourceData(source: routeSourceGenerator.routeSource)
-        print("MY new source generator: \(self.routeSourceGenerator?.routeData.map(\.routeId))")
     }
 
     func updateSourceData(stopSourceGenerator: StopSourceGenerator) {

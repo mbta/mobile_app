@@ -2,7 +2,9 @@ package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.model.Shape
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ShapeWithStops(
     @SerialName("direction_id") val directionId: Int,
     @SerialName("route_id") val routeId: String,
