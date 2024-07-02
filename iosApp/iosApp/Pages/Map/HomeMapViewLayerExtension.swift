@@ -14,12 +14,8 @@ import SwiftUI
  */
 extension HomeMapView {
     func initializeLayers(_ layerManager: IMapLayerManager) {
-        let routeData = layerManager.routeSourceGenerator?.routeData ??
-            railRouteShapeFetcher.response?.routesWithSegmentedShapes ??
-            []
-
         let routeSourceGenerator = RouteSourceGenerator(
-            routeData: routeData,
+            routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
             routesById: globalFetcher.routes,
             stopsById: globalFetcher.stops,
             alertsByStop: globalMapData?.alertsByStop ?? [:]

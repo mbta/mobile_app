@@ -11,5 +11,4 @@ import shared
 
 class MapViewModel: ObservableObject {
     @Published var selectedVehicle: Vehicle?
-    @Published var selectedTripId: String?
 }

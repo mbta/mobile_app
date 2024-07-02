@@ -140,9 +140,6 @@ class MapLayerManager: IMapLayerManager {
         stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     ) {
-        self.routeSourceGenerator = routeSourceGenerator
-        self.stopSourceGenerator = stopSourceGenerator
-        self.childStopSourceGenerator = childStopSourceGenerator
         updateSourceData(routeSourceGenerator: routeSourceGenerator)
         updateSourceData(stopSourceGenerator: stopSourceGenerator)
         updateSourceData(childStopSourceGenerator: childStopSourceGenerator)
