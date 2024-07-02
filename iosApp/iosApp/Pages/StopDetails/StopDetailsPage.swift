@@ -19,7 +19,7 @@ struct StopDetailsPage: View {
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
 
-    let predictionsRepository: IPredictionsRepository
+    @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now

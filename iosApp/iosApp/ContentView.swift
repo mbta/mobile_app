@@ -12,12 +12,11 @@ struct ContentView: View {
     @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
-    @EnvironmentObject var tripPredictionsFetcher: TripPredictionsFetcher
-    @EnvironmentObject var vehicleFetcher: VehicleFetcher
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var nearbyVM: NearbyViewModel = .init()
+    @StateObject var mapVM = MapViewModel()
 
     private enum SelectedTab: Hashable {
         case nearby
@@ -81,6 +80,7 @@ struct ContentView: View {
             }
             HomeMapView(
                 globalFetcher: globalFetcher,
+                mapVM: mapVM,
                 nearbyVM: nearbyVM,
                 railRouteShapeFetcher: railRouteShapeFetcher,
                 vehiclesFetcher: vehiclesFetcher,
@@ -116,15 +116,20 @@ struct ContentView: View {
                                 visibleNearbySheet = entry
                             }
 
-                        case let .tripDetails(tripId: tripId, vehicleId: vehicleId, target: target):
+                        case let .tripDetails(
+                            tripId: tripId,
+                            vehicleId: vehicleId,
+                            target: target,
+                            routeId: _,
+                            directionId: _
+                        ):
                             TripDetailsPage(
                                 tripId: tripId,
                                 vehicleId: vehicleId,
                                 target: target,
                                 globalFetcher: globalFetcher,
                                 nearbyVM: nearbyVM,
-                                tripPredictionsFetcher: tripPredictionsFetcher,
-                                vehicleFetcher: vehicleFetcher
+                                mapVM: mapVM
                             ).onAppear {
                                 visibleNearbySheet = entry
                             }

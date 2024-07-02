@@ -71,7 +71,12 @@ extension HomeMapView {
 
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
         if let filter = navigationStack.lastStopDetailsFilter {
+            vehiclesFetcher.leave()
             vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
+        } else if case let .tripDetails(tripId: _, vehicleId: _, target: _, routeId: routeId,
+                                        directionId: directionId) = navigationStack.last {
+            vehiclesFetcher.leave()
+            vehiclesFetcher.run(routeId: routeId, directionId: Int(directionId))
         } else {
             vehiclesFetcher.leave()
         }
@@ -168,7 +173,10 @@ extension HomeMapView {
             nearbyVM.navigationStack.append(.tripDetails(
                 tripId: tripId,
                 vehicleId: vehicle.id,
-                target: nil
+                target: nil,
+                // TODO: figure out something to do if this is nil
+                routeId: vehicle.routeId!,
+                directionId: vehicle.directionId
             ))
             return
         }
@@ -179,7 +187,9 @@ extension HomeMapView {
             target: .init(
                 stopId: patterns.stop.id,
                 stopSequence: stopSequence
-            )
+            ),
+            routeId: trip.trip.routeId,
+            directionId: trip.trip.directionId
         ))
     }
 }
