@@ -66,10 +66,10 @@ struct StopDetailsFilteredRouteView: View {
         if let patternsByStop {
             rows = patternsByStop.allUpcomingTrips().compactMap { upcoming in
                 guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
-                    Logger().error(
-                        "Failed to find route ID \(upcoming.trip.routeId) from upcoming trip "
-                            + "in patternsByStop.routes (\(patternsByStop.routes.map(\.id)))"
-                    )
+                    Logger().error("""
+                    Failed to find route ID \(upcoming.trip.routeId) from upcoming \
+                    trip in patternsByStop.routes (\(patternsByStop.routes.map(\.id)))
+                    """)
                     return nil
                 }
                 return RowData(
