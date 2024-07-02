@@ -65,4 +65,28 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         try pills.last?.callOnTapGesture()
         wait(for: [tapExpectation])
     }
+
+    func testLinePillTap() throws {
+        let objects = ObjectCollectionBuilder()
+        let route1 = objects.route()
+        let route2 = objects.route()
+        let line = objects.line()
+        let tapExpectation = XCTestExpectation()
+        let sut = StopDetailsFilterPills(
+            servedRoutes: [.route(route1, nil), .route(route2, nil), .line(line)],
+            tapRoutePill: { filter in
+                tapExpectation.fulfill()
+                guard case let .line(line) = filter else {
+                    XCTFail("Filter was not by line")
+                    return
+                }
+                XCTAssertEqual(line, line)
+            },
+            filter: .constant(nil)
+        )
+
+        let pills = try sut.inspect().findAll(RoutePill.self)
+        try pills.last?.callOnTapGesture()
+        wait(for: [tapExpectation])
+    }
 }
