@@ -750,17 +750,17 @@ class NearbyResponseTest {
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
-                                    "Typical In",
-                                    null,
-                                    listOf(typicalInbound),
-                                    emptyList()
-                                ),
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
                                     "Deviation Out",
                                     null,
                                     listOf(deviationOutbound),
                                     listOf(objects.upcomingTrip(deviationOutboundPrediction))
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Typical In",
+                                    null,
+                                    listOf(typicalInbound),
+                                    emptyList()
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
