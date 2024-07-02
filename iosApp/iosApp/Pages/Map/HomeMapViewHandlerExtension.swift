@@ -104,11 +104,15 @@ extension HomeMapView {
                     let response: TripShapeResponse = try await RepositoryDI().tripSchedules
                         .getTripShape(tripId: tripId)
                     print("response: \(response)")
+
+                    let shapeWithStops: TripShapeResponse.TripShape? = switch onEnum(of: response) {
+                    case let .tripShape(tripShape): tripShape
+
+                    case .notFound:
+                        nil
+                    }
                     let updatedSource = RouteSourceGenerator(
-                        routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes(
-                            routeId: response.mapFriendlyRouteShape.sourceRouteId,
-                            segmentedShapes: [response.mapFriendlyRouteShape]
-                        )],
+                        shapeWithStops: shapeWithStops,
                         routesById: globalFetcher.routes,
                         stopsById: globalFetcher.stops,
                         alertsByStop: globalMapData?.alertsByStop ?? [:]

@@ -71,6 +71,29 @@ class RouteSourceGenerator {
         routeSource = source
     }
 
+    convenience init(shapeWithStops: TripShapeResponse.TripShape?, routesById: [String: Route],
+                     stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
+        var routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
+        if let shapeWithStops,
+           let shape = shapeWithStops.shape {
+            routeData = [
+                .init(routeId: shapeWithStops.routeId,
+                      segmentedShapes: [.init(sourceRoutePatternId: shapeWithStops.routeId,
+                                              sourceRouteId: shapeWithStops.routeId,
+                                              directionId: shapeWithStops.directionId,
+                                              routeSegments: [.init(id: shape.id,
+                                                                    sourceRoutePatternId: shapeWithStops.routePatternId,
+                                                                    sourceRouteId: shapeWithStops.routeId,
+                                                                    stopIds: shapeWithStops.stopIds,
+                                                                    otherPatternsByStopId: [:])],
+                                              shape: shape)]),
+            ]
+        }
+
+        self.init(routeData: routeData, routesById: routesById,
+                  stopsById: stopsById, alertsByStop: alertsByStop)
+    }
+
     static func lineToFeature(routeLineData: RouteLineData) -> Feature {
         var feature = Feature(geometry: routeLineData.line)
         var featureProps = JSONObject()

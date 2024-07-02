@@ -4,6 +4,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TripShapeResponse(
-    @SerialName("map_friendly_route_shapes") val mapFriendlyRouteShape: SegmentedRouteShape
-)
+sealed class TripShapeResponse {
+    @Serializable
+    @SerialName("unknown")
+    data class NotFound(val message: String) : TripShapeResponse()
+
+    @Serializable
+    @SerialName("single_shape")
+    data class TripShape(
+        @SerialName("direction_id") val directionId: Int,
+        @SerialName("route_id") val routeId: String,
+        @SerialName("route_pattern_id") val routePatternId: String,
+        @SerialName("shape") val shape: Shape?,
+        @SerialName("stop_ids") val stopIds: List<String>
+    ) : TripShapeResponse()
+}

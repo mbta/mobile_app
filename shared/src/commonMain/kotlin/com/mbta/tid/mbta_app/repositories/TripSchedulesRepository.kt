@@ -41,8 +41,9 @@ class TripSchedulesRepository : ITripSchedulesRepository, KoinComponent {
             }
             .body()
 
-    override suspend fun getTripShape(tripId: String): TripShapeResponse =
-        mobileBackendClient
+    override suspend fun getTripShape(tripId: String): TripShapeResponse {
+        // todo: Check status code, return different result?
+        return mobileBackendClient
             .get {
                 url {
                     path("api/trip/map")
@@ -50,6 +51,7 @@ class TripSchedulesRepository : ITripSchedulesRepository, KoinComponent {
                 }
             }
             .body()
+    }
 }
 
 class IdleTripSchedulesRepository : ITripSchedulesRepository {
