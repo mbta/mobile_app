@@ -19,7 +19,16 @@ struct StopDetailsRouteView: View {
     let onPin: (String) -> Void
 
     var body: some View {
-        if let route = patternsByStop.routes.first {
+        if let line = patternsByStop.line {
+            LineCard(line: line, routes: patternsByStop.routes, pinned: pinned, onPin: onPin) {
+                StopDeparturesSummaryList(
+                    patternsByStop: patternsByStop,
+                    condenseHeadsignPredictions: patternsByStop.routes.count > 1,
+                    now: now,
+                    pushNavEntry: { entry in pushNavEntry(entry) }
+                )
+            }
+        } else if let route = patternsByStop.routes.first {
             RouteCard(route: route, pinned: pinned, onPin: onPin) {
                 StopDeparturesSummaryList(
                     patternsByStop: patternsByStop,

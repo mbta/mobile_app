@@ -15,6 +15,7 @@ struct DirectionPicker: View {
     let availableDirections: [Int32]
     let directions: [Direction]
     let route: Route
+    let line: Line?
 
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
         availableDirections = Set(patternsByStop.patterns.map { pattern in
@@ -22,6 +23,7 @@ struct DirectionPicker: View {
         }).sorted()
         directions = patternsByStop.directions
         route = patternsByStop.representativeRoute
+        line = patternsByStop.line
 
         _filter = filter
     }
@@ -32,7 +34,7 @@ struct DirectionPicker: View {
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = filter?.directionId == direction
-                    let action = { $filter.wrappedValue = .init(routeId: route.id, directionId: direction) }
+                    let action = { $filter.wrappedValue = .init(routeId: line?.id ?? route.id, directionId: direction) }
 
                     Button(action: action) {
                         DirectionLabel(direction: directions[Int(direction)])

@@ -4,9 +4,7 @@ import kotlinx.datetime.Instant
 
 typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>
 
-sealed class RealtimePatterns(
-    val label: String,
-) : Comparable<RealtimePatterns> {
+sealed class RealtimePatterns() : Comparable<RealtimePatterns> {
     sealed class UpcomingTripKey() {
         data class ByHeadsign(val routeId: String, val headsign: String, val stopId: String) :
             UpcomingTripKey()
@@ -32,7 +30,7 @@ sealed class RealtimePatterns(
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
-    ) : RealtimePatterns(headsign) {
+    ) : RealtimePatterns() {
         override val id = headsign
 
         constructor(
@@ -90,9 +88,8 @@ sealed class RealtimePatterns(
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
-    ) : RealtimePatterns(direction.destination) {
-
-        override val id = direction.destination
+    ) : RealtimePatterns() {
+        override val id = "${line.id}:${direction.id}"
         val representativeRoute = routes.min()
         val routesByTrip =
             upcomingTrips

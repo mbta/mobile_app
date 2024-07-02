@@ -19,9 +19,8 @@ struct StopDetailsRoutesView: View {
     var pinnedRoutes: Set<String> = []
 
     var body: some View {
-        if let filter {
+        if filter != nil {
             StopDetailsFilteredRouteView(departures: departures, now: now, filter: $filter, pushNavEntry: pushNavEntry)
-
         } else {
             ZStack {
                 Color.fill1.ignoresSafeArea(.all)
