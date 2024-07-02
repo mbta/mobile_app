@@ -110,13 +110,11 @@ extension HomeMapView {
     func handleTripDetailsChange(_ tripId: String) {
         Task {
             do {
-                let response: TripShapeResponse = try await RepositoryDI().tripSchedules
-                    .getTripShape(tripId: tripId)
-
+                let response: ApiResult<TripShape> = try await RepositoryDI().trip.getTripShape(tripId: tripId)
                 let shapesWithStops: [ShapeWithStops] = switch onEnum(of: response) {
-                case let .tripShape(tripShape): [tripShape.shapeWithStops]
+                case let .ok(okResponse): [okResponse.data.shapeWithStops]
 
-                case .notFound:
+                case .error:
                     []
                 }
                 let updatedSource = RouteSourceGenerator(

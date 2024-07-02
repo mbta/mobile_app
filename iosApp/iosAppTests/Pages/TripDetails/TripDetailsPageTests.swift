@@ -365,7 +365,7 @@ final class TripDetailsPageTests: XCTestCase {
         subscription.cancel()
     }
 
-    class FakeTripRepository: ITripRepository {
+    class FakeTripRepository: IdleTripRepository {
         let response: TripSchedulesResponse
         let onGetTripSchedules: (() -> Void)?
 
@@ -374,7 +374,7 @@ final class TripDetailsPageTests: XCTestCase {
             self.onGetTripSchedules = onGetTripSchedules
         }
 
-        func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
+        override func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
             onGetTripSchedules?()
             return response
         }

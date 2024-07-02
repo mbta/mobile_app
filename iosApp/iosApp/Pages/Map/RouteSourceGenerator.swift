@@ -77,7 +77,10 @@ class RouteSourceGenerator {
             shapesWithStops
                 .compactMap { shapeWithStops in
                     if let shape = shapeWithStops.shape {
-                        MapFriendlyRouteResponse
+                        let parentResolvedStops = shapeWithStops.stopIds.map { stopsById[$0]?
+                            .resolveParent(stops: stopsById).id ?? $0
+                        }
+                        return MapFriendlyRouteResponse
                             .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
                                                       segmentedShapes: [
                                                           .init(sourceRoutePatternId: shapeWithStops.routeId,
@@ -89,13 +92,13 @@ class RouteSourceGenerator {
                                                                           sourceRoutePatternId: shapeWithStops
                                                                               .routePatternId,
                                                                           sourceRouteId: shapeWithStops.routeId,
-                                                                          stopIds: shapeWithStops.stopIds,
+                                                                          stopIds: parentResolvedStops,
                                                                           otherPatternsByStopId: [:]),
                                                                 ],
                                                                 shape: shape),
                                                       ])
                     } else {
-                        nil
+                        return nil
                     }
                 }
 

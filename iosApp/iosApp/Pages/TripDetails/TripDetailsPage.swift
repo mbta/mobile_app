@@ -21,7 +21,7 @@ struct TripDetailsPage: View {
     @ObservedObject var mapVM: MapViewModel
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
-    @State var: ITripRepository
+    @State var tripRepository: ITripRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
@@ -38,7 +38,7 @@ struct TripDetailsPage: View {
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
-        tripRepository: ITripRepository = RepositoryDI().tripSchedules,
+        tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
     ) {
         self.tripId = tripId

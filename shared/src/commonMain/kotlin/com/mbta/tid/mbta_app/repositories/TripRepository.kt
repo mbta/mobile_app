@@ -1,12 +1,16 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.TripShapeResponse
+import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.TripShape
+import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.ErrorDetails
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.parameter
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.path
 import io.ktor.serialization.JsonConvertException
 import io.ktor.utils.io.errors.IOException
@@ -25,7 +29,7 @@ interface ITripRepository {
     )
     suspend fun getTripSchedules(tripId: String): TripSchedulesResponse
 
-    suspend fun getTripShape(tripId: String): TripShapeResponse
+    suspend fun getTripShape(tripId: String): ApiResult<TripShape>
 }
 
 class TripRepository : ITripRepository, KoinComponent {
@@ -41,25 +45,33 @@ class TripRepository : ITripRepository, KoinComponent {
             }
             .body()
 
-    override suspend fun getTripShape(tripId: String): TripShapeResponse {
-        // todo: Check status code, return different result?
-        return mobileBackendClient
-            .get {
-                url {
-                    path("api/trip/map")
-                    parameter("trip_id", tripId)
+    override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
+        try {
+            val response =
+                mobileBackendClient.get {
+                    url {
+                        path("api/trip/map")
+                        parameter("trip_id", tripId)
+                    }
                 }
+
+            if (response.status === HttpStatusCode.OK) {
+                return ApiResult.Ok(data = json.decodeFromString(response.body()))
+            } else {
+                return ApiResult.Error(json.decodeFromString<ErrorDetails>(response.body()))
             }
-            .body()
+        } catch (e: Exception) {
+            return ApiResult.Error(ErrorDetails(message = e.message ?: e.toString()))
+        }
     }
 }
 
-class IdleTripRepository : ITripRepository {
+open class IdleTripRepository : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): TripSchedulesResponse {
         return suspendCancellableCoroutine {}
     }
 
-    override suspend fun getTripShape(tripId: String): TripShapeResponse {
+    override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
         return suspendCancellableCoroutine {}
     }
 }

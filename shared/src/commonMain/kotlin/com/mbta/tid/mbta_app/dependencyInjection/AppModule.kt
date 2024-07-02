@@ -32,7 +32,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<ISchedulesRepository> { repositories.schedules }
         single<ISettingsRepository> { repositories.settings }
         single<IStopRepository> { repositories.stop }
-        single<ITripRepository> { repositories.tripSchedules }
+        single<ITripRepository> { repositories.trip }
         repositories.predictions?.let { predictionsRepo ->
             factory<IPredictionsRepository> { predictionsRepo }
         }
