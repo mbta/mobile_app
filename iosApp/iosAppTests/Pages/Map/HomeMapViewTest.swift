@@ -24,7 +24,6 @@ final class HomeMapViewTest: XCTestCase {
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
         let sut = HomeMapView(
-            globalFetcher: .init(backend: IdleBackend()),
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),

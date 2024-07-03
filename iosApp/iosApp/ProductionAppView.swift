@@ -29,7 +29,6 @@ struct ProductionAppView: View {
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var backendProvider: BackendProvider
-    @StateObject var globalFetcher: GlobalFetcher
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var socketProvider: SocketProvider
     @StateObject var vehiclesFetcher: VehiclesFetcher
@@ -46,7 +45,6 @@ struct ProductionAppView: View {
         let backend = backend
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
         _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
-        _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
@@ -58,7 +56,6 @@ struct ProductionAppView: View {
             .font(Typography.body)
             .environmentObject(locationDataManager)
             .environmentObject(backendProvider)
-            .environmentObject(globalFetcher)
             .environmentObject(railRouteShapeFetcher)
             .environmentObject(socketProvider)
             .environmentObject(vehiclesFetcher)

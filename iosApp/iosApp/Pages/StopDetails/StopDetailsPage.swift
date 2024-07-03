@@ -12,7 +12,8 @@ import SwiftUI
 
 struct StopDetailsPage: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider()
-    @ObservedObject var globalFetcher: GlobalFetcher
+    let globalRepository: IGlobalRepository
+    @State var globalResponse: GlobalResponse?
     @ObservedObject var viewportProvider: ViewportProvider
     let schedulesRepository: ISchedulesRepository
     @State var schedulesResponse: ScheduleResponse?
@@ -31,7 +32,7 @@ struct StopDetailsPage: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        globalFetcher: GlobalFetcher,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         viewportProvider: ViewportProvider,
@@ -39,7 +40,7 @@ struct StopDetailsPage: View {
         filter: Binding<StopDetailsFilter?>,
         nearbyVM: NearbyViewModel
     ) {
-        self.globalFetcher = globalFetcher
+        self.globalRepository = globalRepository
         self.schedulesRepository = schedulesRepository
         self.predictionsRepository = predictionsRepository
         self.viewportProvider = viewportProvider
@@ -49,19 +50,19 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        StopDetailsView(globalFetcher: globalFetcher,
-                        stop: stop,
+        StopDetailsView(stop: stop,
                         filter: $filter,
                         nearbyVM: nearbyVM,
                         pinnedRoutes: pinnedRoutes,
                         togglePinnedRoute: togglePinnedRoute)
             .onAppear {
+                loadGlobalData()
                 changeStop(stop)
                 loadPinnedRoutes()
             }
 
             .onChange(of: stop) { nextStop in changeStop(nextStop) }
-            .onChange(of: globalFetcher.response) { _ in updateDepartures() }
+            .onChange(of: globalResponse) { _ in updateDepartures() }
             .onChange(of: pinnedRoutes) { _ in updateDepartures() }
             .onChange(of: predictions) { _ in updateDepartures() }
             .onChange(of: schedulesResponse) { _ in updateDepartures() }
@@ -74,6 +75,16 @@ struct StopDetailsPage: View {
             .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
                                     onInactive: leavePredictions,
                                     onBackground: leavePredictions)
+    }
+
+    func loadGlobalData() {
+        Task {
+            do {
+                globalResponse = try await globalRepository.getGlobalData()
+            } catch {
+                debugPrint(error)
+            }
+        }
     }
 
     func loadPinnedRoutes() {
@@ -132,7 +143,7 @@ struct StopDetailsPage: View {
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
 
-        let newDepartures: StopDetailsDepartures? = if let globalResponse = globalFetcher.response {
+        let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures(
                 stop: stop,
                 global: globalResponse,

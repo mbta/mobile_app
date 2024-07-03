@@ -9,7 +9,6 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
-    @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
@@ -49,7 +48,6 @@ struct ContentView: View {
         VStack {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
-                    globalFetcher: globalFetcher,
                     nearbyVM: nearbyVM,
                     viewportProvider: viewportProvider
                 )
@@ -79,7 +77,6 @@ struct ContentView: View {
                 Text("Location access state unknown")
             }
             HomeMapView(
-                globalFetcher: globalFetcher,
                 mapVM: mapVM,
                 nearbyVM: nearbyVM,
                 railRouteShapeFetcher: railRouteShapeFetcher,
@@ -108,7 +105,6 @@ struct ContentView: View {
                         switch entry {
                         case let .stopDetails(stop, _):
                             StopDetailsPage(
-                                globalFetcher: globalFetcher,
                                 viewportProvider: viewportProvider,
                                 stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                                 nearbyVM: nearbyVM
@@ -127,7 +123,6 @@ struct ContentView: View {
                                 tripId: tripId,
                                 vehicleId: vehicleId,
                                 target: target,
-                                globalFetcher: globalFetcher,
                                 nearbyVM: nearbyVM,
                                 mapVM: mapVM
                             ).onAppear {
@@ -158,9 +153,6 @@ struct ContentView: View {
         }
         .onAppear {
             socketProvider.socket.attach()
-            Task {
-                try await globalFetcher.getGlobalData()
-            }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {

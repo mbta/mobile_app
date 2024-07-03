@@ -16,9 +16,10 @@ struct TripDetailsPage: View {
     let vehicleId: String
     let target: TripDetailsTarget?
 
-    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
+    var globalRepository: IGlobalRepository
+    @State var globalResponse: GlobalResponse?
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
     @State var tripRepository: ITripRepository
@@ -34,9 +35,9 @@ struct TripDetailsPage: View {
         tripId: String,
         vehicleId: String,
         target: TripDetailsTarget?,
-        globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
@@ -44,9 +45,9 @@ struct TripDetailsPage: View {
         self.tripId = tripId
         self.vehicleId = vehicleId
         self.target = target
-        self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
+        self.globalRepository = globalRepository
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
@@ -56,18 +57,18 @@ struct TripDetailsPage: View {
         VStack {
             SheetHeader(onClose: { nearbyVM.goBack() })
 
-            if let globalData = globalFetcher.response {
+            if let globalResponse {
                 let vehicle = vehicleResponse?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictions,
-                    vehicle: vehicle, globalData: globalData
+                    vehicle: vehicle, globalData: globalResponse
                 ) {
                     vehicleCardView
                     if let target, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
                         targetStopSequence: Int32(target.stopSequence),
-                        globalData: globalData
+                        globalData: globalResponse
                     ) {
                         TripDetailsStopListSplitView(splitStops: splitStops, now: now)
                     } else {
@@ -78,6 +79,13 @@ struct TripDetailsPage: View {
                 }
             } else {
                 ProgressView()
+            }
+        }
+        .task {
+            do {
+                globalResponse = try await globalRepository.getGlobalData()
+            } catch {
+                debugPrint(error)
             }
         }
         .task {
@@ -162,19 +170,19 @@ struct TripDetailsPage: View {
     var vehicleCardView: some View {
         let trip: Trip? = tripPredictions?.trips[tripId]
         let vehicle: Vehicle? = vehicleResponse?.vehicle
-        let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
-            globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
+        let vehicleStop: Stop? = if let stopId = vehicle?.stopId, let allStops = globalResponse?.stops {
+            allStops[stopId]?.resolveParent(stops: allStops)
         } else {
             nil
         }
         let route: Route? = if let routeId = trip?.routeId {
-            globalFetcher.routes[routeId]
+            globalResponse?.routes[routeId]
         } else {
             nil
         }
         VehicleCardView(vehicle: vehicle,
                         route: route,
-                        line: globalFetcher.lookUpLine(lineId: route?.lineId),
+                        line: globalResponse?.getLine(lineId: route?.lineId),
                         stop: vehicleStop,
                         trip: trip,
                         now: now.toNSDate())

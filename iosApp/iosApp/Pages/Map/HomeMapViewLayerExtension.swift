@@ -16,9 +16,9 @@ extension HomeMapView {
     func initializeLayers(_ layerManager: IMapLayerManager) {
         let routeSourceGenerator = RouteSourceGenerator(
             routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
-            routesById: globalFetcher.routes,
-            stopsById: globalFetcher.stops,
-            alertsByStop: globalMapData?.alertsByStop ?? [:]
+            routesById: globalData?.routes,
+            stopsById: globalData?.stops,
+            alertsByStop: globalMapData?.alertsByStop
         )
         let stopSourceGenerator = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
@@ -43,9 +43,9 @@ extension HomeMapView {
     func resetDefaultSources() {
         let updatedRouteSources = RouteSourceGenerator(
             routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
-            routesById: globalFetcher.routes,
-            stopsById: globalFetcher.stops,
-            alertsByStop: globalMapData?.alertsByStop ?? [:]
+            routesById: globalData?.routes,
+            stopsById: globalData?.stops,
+            alertsByStop: globalMapData?.alertsByStop
         )
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
@@ -73,9 +73,9 @@ extension HomeMapView {
             )
             let filteredSource = RouteSourceGenerator(
                 routeData: [filteredRouteWithShapes],
-                routesById: globalFetcher.routes,
-                stopsById: globalFetcher.stops,
-                alertsByStop: globalMapData?.alertsByStop ?? [:]
+                routesById: globalData?.routes,
+                stopsById: globalData?.stops,
+                alertsByStop: globalMapData?.alertsByStop
             )
             layerManager?.updateSourceData(routeSourceGenerator: filteredSource)
 
@@ -83,9 +83,9 @@ extension HomeMapView {
             let railRouteSource = RouteSourceGenerator.forRailAtStop(
                 stopMapData.routeShapes,
                 railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
-                globalFetcher.routes,
-                globalFetcher.stops,
-                globalMapData?.alertsByStop ?? [:]
+                globalData?.routes,
+                globalData?.stops,
+                globalMapData?.alertsByStop
             )
             layerManager?.updateSourceData(routeSourceGenerator: railRouteSource)
         }
@@ -133,9 +133,9 @@ extension HomeMapView {
             []
         let updatedRouteSources = RouteSourceGenerator(
             routeData: routeData,
-            routesById: globalFetcher.routes,
-            stopsById: globalFetcher.stops,
-            alertsByStop: globalMapData?.alertsByStop ?? [:]
+            routesById: globalData?.routes,
+            stopsById: globalData?.stops,
+            alertsByStop: globalMapData?.alertsByStop
         )
         layerManager?.updateSourceData(routeSourceGenerator: updatedRouteSources)
     }
