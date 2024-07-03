@@ -32,7 +32,7 @@ struct DirectionRowView: View {
             DirectionLabel(direction: direction)
                 .foregroundStyle(Color.text)
         }
-        .accessibilityInputLabels([direction.destination])
+        .accessibilityInputLabels([direction.destination ?? direction.name])
     }
 }
 

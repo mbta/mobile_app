@@ -23,12 +23,19 @@ struct DirectionLabel: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(directionNameFormatted(direction)) to")
-                .font(Typography.footnote)
-                .textCase(.none)
-            Text(direction.destination)
-                .font(Typography.bodySemibold)
-                .textCase(.none)
+            if let destination = direction.destination {
+                Text("\(directionNameFormatted(direction)) to")
+                    .font(Typography.footnote)
+                    .textCase(.none)
+                Text(destination)
+                    .font(Typography.bodySemibold)
+                    .textCase(.none)
+            } else {
+                Text(directionNameFormatted(direction))
+                    .font(Typography.bodySemibold)
+                    .textCase(.none)
+                    .frame(maxHeight: .infinity, alignment: .leading)
+            }
         }
     }
 }

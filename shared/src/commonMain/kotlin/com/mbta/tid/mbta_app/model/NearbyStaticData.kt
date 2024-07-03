@@ -17,7 +17,7 @@ import kotlinx.datetime.Instant
  */
 data class NearbyStaticData(val data: List<TransitWithStops>) {
 
-    sealed class StaticPatterns(val label: String) : Comparable<StaticPatterns> {
+    sealed class StaticPatterns() : Comparable<StaticPatterns> {
         abstract val patterns: List<RoutePattern>
 
         data class ByHeadsign(
@@ -25,14 +25,14 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             val headsign: String,
             val line: Line?,
             override val patterns: List<RoutePattern>
-        ) : StaticPatterns(headsign)
+        ) : StaticPatterns()
 
         data class ByDirection(
             val line: Line,
             val routes: List<Route>,
             val direction: Direction,
             override val patterns: List<RoutePattern>
-        ) : StaticPatterns(direction.destination)
+        ) : StaticPatterns()
 
         override fun compareTo(other: StaticPatterns): Int =
             compareValuesBy(
@@ -251,7 +251,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             )
         }
 
-        private fun buildStopPatternsForLine(
+        fun buildStopPatternsForLine(
             stop: Stop,
             patterns: Map<Route, List<RoutePattern>>,
             line: Line,

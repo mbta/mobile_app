@@ -4,7 +4,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 
 data class Direction(
     var name: String,
-    var destination: String,
+    var destination: String?,
     var id: Int,
 ) {
     constructor(
@@ -20,6 +20,8 @@ data class Direction(
     )
 
     companion object {
+        // This is split into a separate variable for a hardcoded check
+        private val northStationDestination = "North Station & North"
         /*
         This is a map containing all the special case direction labels for branching routes.
 
@@ -53,7 +55,7 @@ data class Direction(
                         listOf(
                             Pair("place-boyls", "Park St & North"),
                             Pair("place-pktrm", "Gov Ctr & North"),
-                            Pair("place-haecl", "North Station & North"),
+                            Pair("place-haecl", northStationDestination),
                             Pair("place-spmnl", "Lechmere & North"),
                             Pair("place-lech", null)
                         )
@@ -108,24 +110,89 @@ data class Direction(
                 return listOf(0, 1).map { directionId -> Direction(directionId, route) }
             }
 
-            val typicalParentStopIdsByDirection =
+            val stopSequenceByDirection = getTypicalStopSequenceByDirection(patterns, global)
+            return listOf(0, 1).map { directionId ->
+                Direction(directionId, route, stop, stopSequenceByDirection[directionId])
+            }
+        }
+
+        fun getDirectionsForLine(
+            global: GlobalResponse,
+            stop: Stop,
+            patterns: List<RoutePattern>
+        ): List<Direction> {
+            if (patterns.isEmpty()) {
+                // If no patterns were provided, something is wrong, return dummy directions
+                return listOf(0, 1).map { Direction("", "", it) }
+            }
+
+            val directionsByRoute =
                 patterns
-                    .groupBy { pattern -> pattern.directionId }
-                    .mapValues { directionPatterns ->
-                        val typicalTripId =
-                            directionPatterns.value
-                                .firstOrNull { pattern ->
-                                    pattern.typicality == RoutePattern.Typicality.Typical
-                                }
-                                ?.representativeTripId
-                        global.trips[typicalTripId]?.stopIds?.map { stopId ->
-                            global.stops[stopId]?.parentStationId ?: stopId
-                        }
+                    .groupBy { it.routeId }
+                    .mapValues {
+                        val route = global.routes[it.key] ?: return emptyList()
+                        getDirections(global, stop, route, it.value)
                     }
 
             return listOf(0, 1).map { directionId ->
-                Direction(directionId, route, stop, typicalParentStopIdsByDirection[directionId])
+                val directionsByDestination =
+                    directionsByRoute
+                        .mapNotNull { it.value.getOrNull(directionId) }
+                        .associateBy { it.destination }
+
+                if (directionsByDestination.size == 1) {
+                    // When only one direction is in the set, it means that all the routes in the
+                    // line share the same destination at this stop, so we can safely display it.
+                    directionsByDestination.values.first()
+                } else if (directionsByDestination.isNotEmpty()) {
+                    // Handle the unique mid-route terminal case at Government Center
+                    val specialCase = govCenterSpecialCase(directionsByDestination)
+                    if (specialCase != null) {
+                        return@map specialCase
+                    }
+                    // When multiple destinations are served in one direction, we don't want to
+                    // display any destination label, so it's set to null.
+                    val representativeDirection = directionsByDestination.values.first()
+                    Direction(representativeDirection.name, null, directionId)
+                } else {
+                    // If this is true, the direction isn't served and shouldn't be displayed,
+                    // or something is wrong with the provided data.
+                    Direction("", "", directionId)
+                }
             }
+        }
+
+        // This is hacky, but seemed like the best way to handle this case, where the Green Line
+        // has multiple routes which terminate mid-line at Gov Center, but since those routes are
+        // served at the stop, it has non-null Direction objects with Gov Center destinations. This
+        // checks if we have this specific case, and returns the North direction if we do.
+        private fun govCenterSpecialCase(
+            directionsByDestination: Map<String?, Direction>
+        ): Direction? {
+            val govCenterDestinations = setOf("Government Center", northStationDestination)
+            if (directionsByDestination.keys == govCenterDestinations) {
+                return directionsByDestination[northStationDestination]
+            }
+            return null
+        }
+
+        private fun getTypicalStopSequenceByDirection(
+            patterns: List<RoutePattern>,
+            global: GlobalResponse
+        ): Map<Int, List<String>?> {
+            return patterns
+                .groupBy { pattern -> pattern.directionId }
+                .mapValues { directionPatterns ->
+                    val typicalTripId =
+                        directionPatterns.value
+                            .firstOrNull { pattern ->
+                                pattern.typicality == RoutePattern.Typicality.Typical
+                            }
+                            ?.representativeTripId
+                    global.trips[typicalTripId]?.stopIds?.map { stopId ->
+                        global.stops[stopId]?.parentStationId ?: stopId
+                    }
+                }
         }
     }
 }
