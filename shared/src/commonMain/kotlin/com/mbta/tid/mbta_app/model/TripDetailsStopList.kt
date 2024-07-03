@@ -3,8 +3,6 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
-import kotlin.math.roundToInt
-import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
 
 data class TripDetailsStopList(val stops: List<Entry>) {
@@ -16,44 +14,8 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         val vehicle: Vehicle?,
         val routes: List<Route>
     ) {
-        // we want very slightly different logic than the UpcomingTrip itself has
-        // specifically, we want to still render predictions that are arrival-only
-        fun format(now: Instant): UpcomingTrip.Format {
-            prediction?.status?.let {
-                return UpcomingTrip.Format.Overridden(it)
-            }
-            if (prediction == null) {
-                val scheduleTime = schedule?.scheduleTime
-                return if (scheduleTime == null) {
-                    UpcomingTrip.Format.Hidden
-                } else {
-                    UpcomingTrip.Format.Schedule(scheduleTime)
-                }
-            }
-            if (prediction.predictionTime == null) {
-                return UpcomingTrip.Format.Hidden
-            }
-            val timeRemaining = prediction.predictionTime.minus(now)
-            if (
-                vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
-                    vehicle.stopId == prediction.stopId &&
-                    vehicle.tripId == prediction.tripId &&
-                    timeRemaining <= BOARDING_CUTOFF
-            ) {
-                return UpcomingTrip.Format.Boarding
-            }
-            if (timeRemaining <= ARRIVAL_CUTOFF) {
-                return UpcomingTrip.Format.Arriving
-            }
-            if (timeRemaining <= APPROACH_CUTOFF) {
-                return UpcomingTrip.Format.Approaching
-            }
-            if (timeRemaining > DISTANT_FUTURE_CUTOFF) {
-                return UpcomingTrip.Format.DistantFuture(prediction.predictionTime)
-            }
-            val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
-            return UpcomingTrip.Format.Minutes(minutes)
-        }
+        fun format(now: Instant) =
+            TimepointDisplay.from(prediction, schedule, vehicle, now, allowArrivalOnly = true)
     }
 
     /**

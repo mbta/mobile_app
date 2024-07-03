@@ -108,10 +108,7 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
-                        UpcomingTrip.Format.Minutes(5)
-                    )
+                    RealtimePatterns.Format.Some.FormatWithId(trip2.id, TimepointDisplay.Minutes(5))
                 )
             ),
             RealtimePatterns.ByHeadsign(
@@ -153,10 +150,7 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
-                        UpcomingTrip.Format.Minutes(5)
-                    )
+                    RealtimePatterns.Format.Some.FormatWithId(trip2.id, TimepointDisplay.Minutes(5))
                 )
             ),
             RealtimePatterns.ByHeadsign(
@@ -173,12 +167,9 @@ class RealtimePatternsTest {
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip1.id,
-                        UpcomingTrip.Format.Schedule(now + 5.minutes)
+                        TimepointDisplay.Schedule(now + 5.minutes)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip2.id,
-                        UpcomingTrip.Format.Minutes(5)
-                    )
+                    RealtimePatterns.Format.Some.FormatWithId(trip2.id, TimepointDisplay.Minutes(5))
                 )
             ),
             RealtimePatterns.ByHeadsign(
@@ -308,16 +299,13 @@ class RealtimePatternsTest {
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip1.id,
-                        UpcomingTrip.Format.Minutes(3)
+                        TimepointDisplay.Minutes(3)
                     ),
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
-                        UpcomingTrip.Format.Minutes(5)
+                        TimepointDisplay.Minutes(5)
                     ),
-                    RealtimePatterns.Format.Some.FormatWithId(
-                        trip3.id,
-                        UpcomingTrip.Format.Minutes(7)
-                    )
+                    RealtimePatterns.Format.Some.FormatWithId(trip3.id, TimepointDisplay.Minutes(7))
                 )
             ),
             directionPatterns.format(now)
