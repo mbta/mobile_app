@@ -27,7 +27,7 @@ extension HomeMapView {
     }
 
     func handleLayerInit(_ map: MapboxMap) {
-        let layerManager = layerManager ?? MapLayerManager(map: map)
+        let layerManager = MapLayerManager(map: map)
         initializeLayers(layerManager)
         self.layerManager = layerManager
     }
@@ -96,11 +96,12 @@ extension HomeMapView {
             }
         }
 
+        else {
+            clearSelectedStop()
+        }
+
         if case let .tripDetails(tripId: tripId, vehicleId: _, target: _, routeId: _, directionId: _) = nextNavEntry {
             handleTripDetailsChange(tripId)
-        }
-        if nextNavEntry == nil {
-            clearSelectedStop()
         }
         if nextNavEntry == nil {
             viewportProvider.restoreNearbyTransitViewport()

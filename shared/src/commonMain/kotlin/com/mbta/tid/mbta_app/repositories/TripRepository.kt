@@ -18,7 +18,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-// TODO: rename
 interface ITripRepository {
     @Throws(
         IOException::class,
