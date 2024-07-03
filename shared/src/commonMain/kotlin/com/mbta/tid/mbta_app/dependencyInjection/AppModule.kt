@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
+import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -49,5 +50,6 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         single<IGlobalRepository> { repositories.global }
         single { TogglePinnedRouteUsecase(get()) }
+        single { GetSettingUsecase(get()) }
     }
 }

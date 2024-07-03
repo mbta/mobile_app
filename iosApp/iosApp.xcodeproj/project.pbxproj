@@ -174,7 +174,11 @@
 		ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */; };
 		ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */; };
 		EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */; };
+		EDE92FA32C3D81D6007AD2F6 /* MacroUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA22C3D81D6007AD2F6 /* MacroUtils.swift */; };
 		EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */; };
+		EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */; };
+		EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA92C408A50007AD2F6 /* SettingsSection.swift */; };
+		EDE92FAC2C408A6A007AD2F6 /* Setting+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */; };
 		EDEEFA9E2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */; };
 /* End PBXBuildFile section */
 
@@ -395,7 +399,11 @@
 		ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketErrorExtension.swift; sourceTree = "<group>"; };
 		ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPinnedRoutesRepository.swift; sourceTree = "<group>"; };
 		EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCard.swift; sourceTree = "<group>"; };
+		EDE92FA22C3D81D6007AD2F6 /* MacroUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroUtils.swift; sourceTree = "<group>"; };
 		EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTracker.swift; sourceTree = "<group>"; };
+		EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		EDE92FA92C408A50007AD2F6 /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
+		EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Setting+Convenience.swift"; sourceTree = "<group>"; };
 		EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsErrorExtension.swift; sourceTree = "<group>"; };
 		F35CF19A11F0511AA7B2E080 /* Pods-iosApp.stagingdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingdebug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingdebug.xcconfig"; sourceTree = "<group>"; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -638,6 +646,9 @@
 			isa = PBXGroup;
 			children = (
 				8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */,
+				EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */,
+				EDE92FA92C408A50007AD2F6 /* SettingsSection.swift */,
+				EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -867,6 +878,7 @@
 				8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */,
 				6EFEE42E2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift */,
 				9AAA26A42C2DBC5800A7745A /* GreenLineHelper.swift */,
+				EDE92FA22C3D81D6007AD2F6 /* MacroUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1212,6 +1224,7 @@
 				6E9DDFB72C388514009DD68A /* MockLayerManager.swift in Sources */,
 				9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */,
 				6E973DAB2C178C0200CBF341 /* SheetHeaderTests.swift in Sources */,
+				EDE92FA32C3D81D6007AD2F6 /* MacroUtils.swift in Sources */,
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
 				6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */,
@@ -1294,15 +1307,18 @@
 				9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */,
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
 				9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */,
+				EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */,
 				8C815AF32BF5257B009BB51C /* TripDetailsStopListView.swift in Sources */,
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
+				EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */,
 				8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */,
 				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
 				ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */,
 				8CA1FB732BF7E69000384658 /* TripDetailsStopView.swift in Sources */,
 				6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */,
+				EDE92FAC2C408A6A007AD2F6 /* Setting+Convenience.swift in Sources */,
 				8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */,
 				6E3C8D7E2C11FDA80059C28C /* CloseButton.swift in Sources */,
 				9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */,
@@ -1851,6 +1867,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
