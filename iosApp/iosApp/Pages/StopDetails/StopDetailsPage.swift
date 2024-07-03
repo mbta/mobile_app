@@ -23,7 +23,6 @@ struct StopDetailsPage: View {
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
-    @State var servedRoutes: [(route: Route, line: Line?)] = []
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
@@ -132,7 +131,6 @@ struct StopDetailsPage: View {
 
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
-        servedRoutes = []
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse = globalFetcher.response {
             StopDetailsDepartures(

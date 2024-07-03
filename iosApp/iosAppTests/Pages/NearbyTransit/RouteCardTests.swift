@@ -1,5 +1,5 @@
 //
-//  RouteSectionTests.swift
+//  RouteCardTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/13/24.
@@ -13,13 +13,13 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class RouteSectionTests: XCTestCase {
+final class RouteCardTests: XCTestCase {
     func testRouteContents() throws {
         let route = ObjectCollectionBuilder.Single().route { route in
             route.longName = "Red"
         }
 
-        let sut = RouteSection(route: route, pinned: false, onPin: { _ in }) {
+        let sut = RouteCard(route: route, pinned: false, onPin: { _ in }) {
             Text("Route details")
         }
 
@@ -38,7 +38,7 @@ final class RouteSectionTests: XCTestCase {
             pinRouteExp.fulfill()
         }
 
-        let sut = RouteSection(route: route, pinned: false, onPin: onPin) {
+        let sut = RouteCard(route: route, pinned: false, onPin: onPin) {
             Text("Route details")
         }
 

@@ -14,10 +14,10 @@ struct DestinationRowView: View {
     let condenseHeadsignPredictions: Bool
     let now: Instant
 
-    init(patterns: RealtimePatterns, now: Instant, singleHeadsignPredictions: Bool = false) {
+    init(patterns: RealtimePatterns, now: Instant, condenseHeadsignPredictions: Bool = false) {
         self.patterns = patterns
         self.now = now
-        condenseHeadsignPredictions = singleHeadsignPredictions
+        self.condenseHeadsignPredictions = condenseHeadsignPredictions
     }
 
     var body: some View {
@@ -25,11 +25,18 @@ struct DestinationRowView: View {
         case let .byHeadsign(patternsByHeadsign):
             HeadsignRowView(
                 headsign: patternsByHeadsign.headsign,
-                predictions: patternsByHeadsign.format(now: now, count: 2),
-                routeType: patternsByHeadsign.route.type
+                predictions: patternsByHeadsign.format(now: now, count: condenseHeadsignPredictions ? 1 : 2),
+                routeType: patternsByHeadsign.route.type,
+                pillDecoration: patternsByHeadsign.line != nil ?
+                    .onRow(route: patternsByHeadsign.route) : .none
             )
-        default:
-            EmptyView()
+        case let .byDirection(patternsByDirection):
+            DirectionRowView(
+                direction: patternsByDirection.direction,
+                predictions: patternsByDirection.format(now: now),
+                routeType: patternsByDirection.representativeRoute.type,
+                pillDecoration: .onPrediction(routesByTrip: patternsByDirection.routesByTrip)
+            )
         }
     }
 }

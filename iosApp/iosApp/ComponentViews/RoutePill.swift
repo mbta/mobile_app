@@ -28,8 +28,13 @@ struct RoutePill: View {
         self.type = type
         self.isActive = isActive
         guard let route else {
-            textColor = nil
-            routeColor = nil
+            guard let line else {
+                textColor = nil
+                routeColor = nil
+                return
+            }
+            textColor = Color(hex: line.textColor)
+            routeColor = Color(hex: line.color)
             return
         }
         if route.id.starts(with: "Shuttle"), let line {
@@ -48,13 +53,26 @@ struct RoutePill: View {
     }
 
     private func getPillContent() -> PillContent {
-        guard let route else { return .empty }
+        guard let route else {
+            guard let line else {
+                return .empty
+            }
+            return Self.linePillContent(line: line, type: type)
+        }
         return switch route.type {
         case .lightRail: Self.lightRailPillContent(route: route, type: type)
         case .heavyRail: Self.heavyRailPillContent(route: route, type: type)
         case .commuterRail: Self.commuterRailPillContent(route: route, type: type)
         case .bus: Self.busPillContent(route: route, type: type)
         case .ferry: Self.ferryPillContent(route: route, type: type)
+        }
+    }
+
+    private static func linePillContent(line: Line, type: Type) -> PillContent {
+        if line.longName == "Green Line", type == .fixed {
+            .text("GL")
+        } else {
+            .text(line.longName)
         }
     }
 
@@ -163,7 +181,7 @@ struct RoutePill: View {
     }
 
     var body: some View {
-        if route == nil {
+        if route == nil, line == nil {
             EmptyView()
         } else {
             getPillBase()

@@ -1,5 +1,5 @@
 //
-//  StopDetailsRoutePills.swift
+//  StopDetailsFilterPills.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 4/17/24.
@@ -9,9 +9,21 @@
 import shared
 import SwiftUI
 
-struct StopDetailsRoutePills: View {
-    let servedRoutes: [(route: Route, line: Line?)]
-    let tapRoutePill: (Route) -> Void
+struct StopDetailsFilterPills: View {
+    enum FilterBy {
+        var id: String {
+            switch self {
+            case let .route(route, _): route.id
+            case let .line(line): line.id
+            }
+        }
+
+        case route(Route, Line?)
+        case line(Line)
+    }
+
+    let servedRoutes: [FilterBy]
+    let tapRoutePill: (FilterBy) -> Void
     @Binding var filter: StopDetailsFilter?
 
     var body: some View {
@@ -19,15 +31,27 @@ struct StopDetailsRoutePills: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(servedRoutes, id: \.route.id) { route in
-                            RoutePill(
-                                route: route.route,
-                                line: route.line,
-                                type: .flex,
-                                isActive: filter == nil || filter?.routeId == route.route.id
-                            )
-                            .frame(minWidth: 44, minHeight: 44, alignment: .center)
-                            .onTapGesture { tapRoutePill(route.route) }
+                        ForEach(servedRoutes, id: \.id) { filterBy in
+                            switch filterBy {
+                            case let .route(route, line):
+                                RoutePill(
+                                    route: route,
+                                    line: line,
+                                    type: .flex,
+                                    isActive: filter == nil || filter?.routeId == route.id
+                                )
+                                .frame(minWidth: 44, minHeight: 44, alignment: .center)
+                                .onTapGesture { tapRoutePill(filterBy) }
+                            case let .line(line):
+                                RoutePill(
+                                    route: nil,
+                                    line: line,
+                                    type: .flex,
+                                    isActive: filter == nil || filter?.routeId == line.id
+                                )
+                                .frame(minWidth: 44, minHeight: 44, alignment: .center)
+                                .onTapGesture { tapRoutePill(filterBy) }
+                            }
                         }
                     }
                     .padding(.horizontal, 15)

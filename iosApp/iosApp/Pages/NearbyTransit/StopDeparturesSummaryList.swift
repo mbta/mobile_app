@@ -12,6 +12,7 @@ import SwiftUI
 
 struct StopDeparturesSummaryList: View {
     let patternsByStop: PatternsByStop
+    let condenseHeadsignPredictions: Bool
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
@@ -30,7 +31,8 @@ struct StopDeparturesSummaryList: View {
                 ) {
                     DestinationRowView(
                         patterns: patterns,
-                        now: now
+                        now: now,
+                        condenseHeadsignPredictions: condenseHeadsignPredictions
                     )
                 }
                 .padding(8)
@@ -53,8 +55,11 @@ struct StopDeparturesSummaryList: View {
                 routeId: patternsByStop.routeIdentifier,
                 directionId: patternsByHeadsign.directionId()
             )
-        default:
-            .init(routeId: "", directionId: 0)
+        case let .byDirection(patternsByDirection):
+            .init(
+                routeId: patternsByStop.routeIdentifier,
+                directionId: patternsByDirection.directionId()
+            )
         }
     }
 }
