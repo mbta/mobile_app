@@ -97,8 +97,35 @@ extension HomeMapView {
         } else {
             clearSelectedStop()
         }
+
+        if case let .tripDetails(tripId: tripId, vehicleId: _, target: _, routeId: _, directionId: _) = nextNavEntry {
+            handleTripDetailsChange(tripId)
+        }
         if nextNavEntry == nil {
             viewportProvider.restoreNearbyTransitViewport()
+        }
+    }
+
+    func handleTripDetailsChange(_ tripId: String) {
+        Task {
+            do {
+                let response: ApiResult<TripShape> = try await RepositoryDI().trip.getTripShape(tripId: tripId)
+                let shapesWithStops: [ShapeWithStops] = switch onEnum(of: response) {
+                case let .ok(okResponse): [okResponse.data.shapeWithStops]
+                case .error:
+                    []
+                }
+                let updatedSource = RouteSourceGenerator(
+                    shapesWithStops: shapesWithStops,
+                    routesById: globalFetcher.routes,
+                    stopsById: globalFetcher.stops,
+                    alertsByStop: globalMapData?.alertsByStop ?? [:]
+                )
+                layerManager?.updateSourceData(routeSourceGenerator: updatedSource)
+
+            } catch {
+                debugPrint(error)
+            }
         }
     }
 

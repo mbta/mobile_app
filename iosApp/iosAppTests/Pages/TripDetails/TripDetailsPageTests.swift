@@ -34,7 +34,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
-        let tripSchedulesRepository = FakeTripSchedulesRepository(
+        let tripRepository = FakeTripRepository(
             response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -51,7 +51,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             mapVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
-            tripSchedulesRepository: tripSchedulesRepository
+            tripRepository: tripRepository
         )
 
         let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
@@ -100,7 +100,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
-        let tripSchedulesRepository = FakeTripSchedulesRepository(
+        let tripRepository = FakeTripRepository(
             response: TripSchedulesResponse.StopIds(stopIds: [stop1.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -117,7 +117,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             mapVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
-            tripSchedulesRepository: tripSchedulesRepository,
+            tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
@@ -145,7 +145,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
-        let tripSchedulesRepository = FakeTripSchedulesRepository(
+        let tripRepository = FakeTripRepository(
             response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -160,7 +160,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             mapVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
-            tripSchedulesRepository: tripSchedulesRepository,
+            tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: nil)
         )
 
@@ -248,7 +248,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
-        let tripSchedulesRepository = FakeTripSchedulesRepository(
+        let tripRepository = FakeTripRepository(
             response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -270,7 +270,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: .init(),
             mapVM: .init(),
             tripPredictionsRepository: tripPredictionsRepository,
-            tripSchedulesRepository: tripSchedulesRepository,
+            tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
@@ -316,7 +316,7 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: FakeNearbyVM(backExp),
             mapVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
-            tripSchedulesRepository: FakeTripSchedulesRepository(response: TripSchedulesResponse
+            tripRepository: FakeTripRepository(response: TripSchedulesResponse
                 .StopIds(stopIds: ["stop1"])),
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
         )
@@ -365,7 +365,7 @@ final class TripDetailsPageTests: XCTestCase {
         subscription.cancel()
     }
 
-    class FakeTripSchedulesRepository: ITripSchedulesRepository {
+    class FakeTripRepository: IdleTripRepository {
         let response: TripSchedulesResponse
         let onGetTripSchedules: (() -> Void)?
 
@@ -374,7 +374,7 @@ final class TripDetailsPageTests: XCTestCase {
             self.onGetTripSchedules = onGetTripSchedules
         }
 
-        func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
+        override func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
             onGetTripSchedules?()
             return response
         }

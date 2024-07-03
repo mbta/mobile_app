@@ -12,7 +12,7 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
-import com.mbta.tid.mbta_app.repositories.ITripSchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import org.koin.core.module.Module
@@ -32,7 +32,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<ISchedulesRepository> { repositories.schedules }
         single<ISettingsRepository> { repositories.settings }
         single<IStopRepository> { repositories.stop }
-        single<ITripSchedulesRepository> { repositories.tripSchedules }
+        single<ITripRepository> { repositories.trip }
         repositories.predictions?.let { predictionsRepo ->
             factory<IPredictionsRepository> { predictionsRepo }
         }

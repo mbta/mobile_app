@@ -68,6 +68,14 @@ enum MapTestDataHelper {
         stop.locationType = LocationType.station
     }
 
+    static let stopDavisChild = objects.stop { stop in
+        stop.id = "70063"
+        stop.latitude = 42.39674
+        stop.longitude = -71.121815
+        stop.locationType = LocationType.stop
+        stop.parentStationId = stopDavis.id
+    }
+
     static let mapStopDavis: MapStop = .init(
         stop: stopDavis,
         routes: [MapStopRoute.red: [routeRed]],

@@ -21,7 +21,7 @@ struct TripDetailsPage: View {
     @ObservedObject var mapVM: MapViewModel
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
-    @State var tripSchedulesRepository: ITripSchedulesRepository
+    @State var tripRepository: ITripRepository
     @State var tripSchedulesResponse: TripSchedulesResponse?
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
@@ -38,7 +38,7 @@ struct TripDetailsPage: View {
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
-        tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
+        tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
     ) {
         self.tripId = tripId
@@ -48,7 +48,7 @@ struct TripDetailsPage: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.tripPredictionsRepository = tripPredictionsRepository
-        self.tripSchedulesRepository = tripSchedulesRepository
+        self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
     }
 
@@ -82,7 +82,7 @@ struct TripDetailsPage: View {
         }
         .task {
             do {
-                tripSchedulesResponse = try await tripSchedulesRepository.getTripSchedules(tripId: tripId)
+                tripSchedulesResponse = try await tripRepository.getTripSchedules(tripId: tripId)
             } catch {
                 debugPrint(error)
             }

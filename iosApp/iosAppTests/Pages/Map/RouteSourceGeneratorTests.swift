@@ -207,4 +207,64 @@ final class RouteSourceGeneratorTests: XCTestCase {
             XCTFail("Red route source had no features")
         }
     }
+
+    func testShapeWithStopsInitAlertingStops() {
+        let now = Date.now
+
+        let objects = ObjectCollectionBuilder()
+
+        let redAlert = objects.alert { alert in
+            alert.id = "a1"
+            alert.effect = .shuttle
+            alert.activePeriod(start: now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
+            alert.informedEntity(activities: [.board], directionId: nil, facility: nil,
+                                 route: MapTestDataHelper.routeRed.id, routeType: .heavyRail,
+                                 stop: MapTestDataHelper.stopAlewife.id, trip: nil)
+            alert.informedEntity(activities: [.board], directionId: nil, facility: nil,
+                                 route: MapTestDataHelper.routeRed.id, routeType: .heavyRail,
+                                 stop: MapTestDataHelper.stopDavis.id, trip: nil)
+        }
+        let alertsByStop = [
+            MapTestDataHelper.stopAlewife.id: AlertAssociatedStop(
+                stop: MapTestDataHelper.stopAlewife,
+                relevantAlerts: [redAlert],
+                stateByRoute: [.red: .shuttle]
+            ),
+            MapTestDataHelper.stopDavis.id: AlertAssociatedStop(
+                stop: MapTestDataHelper.stopDavis,
+                relevantAlerts: [redAlert],
+                stateByRoute: [.red: .shuttle]
+            ),
+        ]
+
+        let routeSourceGenerator = RouteSourceGenerator(
+            shapesWithStops: [.init(directionId: MapTestDataHelper.patternRed10.directionId,
+                                    routeId: MapTestDataHelper.routeRed.id,
+                                    routePatternId: MapTestDataHelper.patternRed10.id,
+                                    shape: MapTestDataHelper.shapeRedC1,
+                                    stopIds: [
+                                        MapTestDataHelper.stopAlewifeChild.id,
+                                        MapTestDataHelper.stopDavisChild.id,
+                                    ])],
+            routesById: MapTestDataHelper.routesById,
+            stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                        MapTestDataHelper.stopDavis.id: MapTestDataHelper
+                            .stopDavis,
+                        MapTestDataHelper.stopAlewifeChild.id: MapTestDataHelper.stopAlewifeChild,
+                        MapTestDataHelper.stopDavisChild.id: MapTestDataHelper.stopDavisChild],
+            alertsByStop: alertsByStop
+        )
+
+        XCTAssertEqual([MapTestDataHelper.stopAlewife.id, MapTestDataHelper.stopDavis.id],
+                       routeSourceGenerator.routeLines[0].stopIds)
+
+        if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 1)
+            XCTAssertEqual(collection.features.filter {
+                $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
+            }.count, 1)
+        } else {
+            XCTFail("Red route source had no features")
+        }
+    }
 }
