@@ -406,8 +406,6 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(trip: FakeTripRepository()))
 
-        let objectCollection = ObjectCollectionBuilder()
-
         let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called with trip shape")
         func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
             if routeGenerator.routeLines.allSatisfy({ $0.routePatternId == MapTestDataHelper.patternOrange30.id }) {

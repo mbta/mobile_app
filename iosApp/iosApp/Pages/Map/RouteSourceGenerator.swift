@@ -73,7 +73,7 @@ class RouteSourceGenerator {
 
     convenience init(shapesWithStops: [ShapeWithStops], routesById: [String: Route],
                      stopsById: [String: Stop], alertsByStop: [String: AlertAssociatedStop]) {
-        var routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] =
+        let routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] =
             shapesWithStops
                 .compactMap { shapeWithStops in
                     if let shape = shapeWithStops.shape {

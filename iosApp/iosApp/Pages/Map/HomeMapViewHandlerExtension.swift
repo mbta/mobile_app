@@ -94,9 +94,7 @@ extension HomeMapView {
             } else {
                 handleStopDetailsChange(stop, filter)
             }
-        }
-
-        else {
+        } else {
             clearSelectedStop()
         }
 
@@ -114,7 +112,6 @@ extension HomeMapView {
                 let response: ApiResult<TripShape> = try await RepositoryDI().trip.getTripShape(tripId: tripId)
                 let shapesWithStops: [ShapeWithStops] = switch onEnum(of: response) {
                 case let .ok(okResponse): [okResponse.data.shapeWithStops]
-
                 case .error:
                     []
                 }
