@@ -12,8 +12,21 @@ import SwiftUI
 struct NearbyStopView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider()
     let patternsAtStop: PatternsByStop
-    let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let condenseHeadsignPredictions: Bool
     let now: Instant
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
+
+    init(
+        patternsAtStop: PatternsByStop,
+        condenseHeadsignPredictions: Bool = false,
+        now: Instant,
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void
+    ) {
+        self.patternsAtStop = patternsAtStop
+        self.condenseHeadsignPredictions = condenseHeadsignPredictions
+        self.now = now
+        self.pushNavEntry = pushNavEntry
+    }
 
     var body: some View {
         Text(patternsAtStop.stop.name)
@@ -23,9 +36,14 @@ struct NearbyStopView: View {
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.fill2)
-        StopDeparturesSummaryList(patternsByStop: patternsAtStop, now: now, pushNavEntry: { entry in
-            pushNavEntry(entry)
-            analytics.tappedDeparture(routeId: patternsAtStop.routeIdentifier, stopId: patternsAtStop.stop.id)
-        })
+        StopDeparturesSummaryList(
+            patternsByStop: patternsAtStop,
+            condenseHeadsignPredictions: condenseHeadsignPredictions,
+            now: now,
+            pushNavEntry: { entry in
+                pushNavEntry(entry)
+                analytics.tappedDeparture(routeId: patternsAtStop.routeIdentifier, stopId: patternsAtStop.stop.id)
+            }
+        )
     }
 }

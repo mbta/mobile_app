@@ -41,7 +41,7 @@ final class StopDetailsViewTests: XCTestCase {
                                   pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
-        let routePills = try sut.inspect().find(StopDetailsRoutePills.self).findAll(RoutePill.self)
+        let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
         XCTAssertEqual(2, routePills.count)
         XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
         XCTAssertNotNil(try routePills[1].find(text: "Should be second"))

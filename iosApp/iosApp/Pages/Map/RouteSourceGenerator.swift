@@ -71,6 +71,41 @@ class RouteSourceGenerator {
         routeSource = source
     }
 
+    convenience init(shapesWithStops: [ShapeWithStops], routesById: [String: Route]?,
+                     stopsById: [String: Stop]?, alertsByStop: [String: AlertAssociatedStop]?) {
+        let routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] =
+            shapesWithStops
+                .compactMap { shapeWithStops in
+                    if let shape = shapeWithStops.shape {
+                        let parentResolvedStops = shapeWithStops.stopIds.map { stopsById?[$0]?
+                            .resolveParent(stops: stopsById ?? [:]).id ?? $0
+                        }
+                        return MapFriendlyRouteResponse
+                            .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
+                                                      segmentedShapes: [
+                                                          .init(sourceRoutePatternId: shapeWithStops.routeId,
+                                                                sourceRouteId: shapeWithStops.routeId,
+                                                                directionId: shapeWithStops.directionId,
+                                                                routeSegments:
+                                                                [
+                                                                    .init(id: shape.id,
+                                                                          sourceRoutePatternId: shapeWithStops
+                                                                              .routePatternId,
+                                                                          sourceRouteId: shapeWithStops.routeId,
+                                                                          stopIds: parentResolvedStops,
+                                                                          otherPatternsByStopId: [:]),
+                                                                ],
+                                                                shape: shape),
+                                                      ])
+                    } else {
+                        return nil
+                    }
+                }
+
+        self.init(routeData: routeData, routesById: routesById,
+                  stopsById: stopsById, alertsByStop: alertsByStop)
+    }
+
     static func lineToFeature(routeLineData: RouteLineData) -> Feature {
         var feature = Feature(geometry: routeLineData.line)
         var featureProps = JSONObject()

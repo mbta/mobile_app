@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Foundation
+import os
 import shared
 import SwiftUI
 
@@ -19,8 +19,9 @@ struct StopDetailsFilteredRouteView: View {
 
     struct RowData {
         let tripId: String
+        let route: Route
         let headsign: String
-        let formatted: RealtimePatterns.ByHeadsign.Format
+        let formatted: RealtimePatterns.Format
         let navigationTarget: SheetNavigationStackEntry?
 
         init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
@@ -30,6 +31,7 @@ struct StopDetailsFilteredRouteView: View {
             }
 
             tripId = trip.id
+            self.route = route
             headsign = trip.headsign
             formatted = RealtimePatterns.ByHeadsign(
                 route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
@@ -43,7 +45,7 @@ struct StopDetailsFilteredRouteView: View {
                 navigationTarget = nil
             }
 
-            if !(formatted is RealtimePatterns.ByHeadsign.FormatSome) {
+            if !(formatted is RealtimePatterns.FormatSome) {
                 return nil
             }
         }
@@ -62,10 +64,17 @@ struct StopDetailsFilteredRouteView: View {
 
         let expectedDirection: Int32? = filter?.directionId
         if let patternsByStop {
-            rows = patternsByStop.allUpcomingTrips().compactMap {
-                RowData(
-                    upcoming: $0,
-                    route: patternsByStop.representativeRoute,
+            rows = patternsByStop.allUpcomingTrips().compactMap { upcoming in
+                guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
+                    Logger().error("""
+                    Failed to find route ID \(upcoming.trip.routeId) from upcoming \
+                    trip in patternsByStop.routes (\(patternsByStop.routes.map(\.id)))
+                    """)
+                    return nil
+                }
+                return RowData(
+                    upcoming: upcoming,
+                    route: route,
                     stopId: patternsByStop.stop.id,
                     expectedDirection: expectedDirection,
                     now: now
@@ -77,15 +86,19 @@ struct StopDetailsFilteredRouteView: View {
     }
 
     var body: some View {
-        if let patternsByStop, let route = patternsByStop.routes.first {
-            let routeHex: String? = route.color
+        if let patternsByStop {
+            let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
             ZStack {
                 if let routeHex {
                     Color(hex: routeHex)
                 }
                 ScrollView {
                     VStack {
-                        RouteHeader(route: route)
+                        if let line = patternsByStop.line {
+                            LineHeader(line: line, routes: patternsByStop.routes)
+                        } else {
+                            RouteHeader(route: patternsByStop.representativeRoute)
+                        }
                         DirectionPicker(
                             patternsByStop: patternsByStop,
                             filter: $filter
@@ -100,12 +113,17 @@ struct StopDetailsFilteredRouteView: View {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             pushNavEntry(entry)
                                             analytics.tappedDepartureRow(
-                                                routeId: route.id,
+                                                routeId: patternsByStop.routeIdentifier,
                                                 stopId: patternsByStop.stop.id
                                             )
                                         }) {
-                                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
-                                                            routeType: route.type)
+                                            HeadsignRowView(
+                                                headsign: row.headsign,
+                                                predictions: row.formatted,
+                                                routeType: patternsByStop.representativeRoute.type,
+                                                pillDecoration: patternsByStop.line != nil ?
+                                                    .onRow(route: row.route) : .none
+                                            )
                                         }
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 16)

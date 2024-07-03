@@ -1,11 +1,16 @@
 package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.TripShape
+import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.ErrorDetails
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.parameter
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.path
 import io.ktor.serialization.JsonConvertException
 import io.ktor.utils.io.errors.IOException
@@ -13,7 +18,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface ITripSchedulesRepository {
+interface ITripRepository {
     @Throws(
         IOException::class,
         kotlin.coroutines.cancellation.CancellationException::class,
@@ -22,9 +27,11 @@ interface ITripSchedulesRepository {
         HttpRequestTimeoutException::class
     )
     suspend fun getTripSchedules(tripId: String): TripSchedulesResponse
+
+    suspend fun getTripShape(tripId: String): ApiResult<TripShape>
 }
 
-class TripSchedulesRepository : ITripSchedulesRepository, KoinComponent {
+class TripRepository : ITripRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun getTripSchedules(tripId: String): TripSchedulesResponse =
@@ -36,10 +43,34 @@ class TripSchedulesRepository : ITripSchedulesRepository, KoinComponent {
                 }
             }
             .body()
+
+    override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
+        try {
+            val response =
+                mobileBackendClient.get {
+                    url {
+                        path("api/trip/map")
+                        parameter("trip_id", tripId)
+                    }
+                }
+
+            if (response.status === HttpStatusCode.OK) {
+                return ApiResult.Ok(data = json.decodeFromString(response.body()))
+            } else {
+                return ApiResult.Error(json.decodeFromString<ErrorDetails>(response.body()))
+            }
+        } catch (e: Exception) {
+            return ApiResult.Error(ErrorDetails(message = e.message ?: e.toString()))
+        }
+    }
 }
 
-class IdleTripSchedulesRepository : ITripSchedulesRepository {
+open class IdleTripRepository : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): TripSchedulesResponse {
+        return suspendCancellableCoroutine {}
+    }
+
+    override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
         return suspendCancellableCoroutine {}
     }
 }

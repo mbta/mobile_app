@@ -365,6 +365,72 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
+    func testUpdatesRouteSourceWhenTripSelected() throws {
+        class FakeTripRepository: IdleTripRepository {
+            override func __getTripShape(tripId _: String) async throws -> ApiResult<TripShape> {
+                ApiResultOk(data: .init(shapeWithStops: .init(directionId: 1,
+                                                              routeId: MapTestDataHelper.routeOrange.id,
+                                                              routePatternId: MapTestDataHelper.patternOrange30
+                                                                  .id,
+                                                              shape: MapTestDataHelper.shapeOrangeC1,
+                                                              stopIds: [MapTestDataHelper.stopAssembly.id,
+                                                                        MapTestDataHelper.stopSullivan.id])))
+            }
+        }
+        HelpersKt
+            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(trip: FakeTripRepository()))
+
+        let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called with trip shape")
+        func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
+            if routeGenerator.routeLines.allSatisfy({ $0.routePatternId == MapTestDataHelper.patternOrange30.id }) {
+                olRouteSourceUpdateExpectation.fulfill()
+            }
+        }
+        let globalRepo: IGlobalRepository = MockGlobalRepository(response: .init(
+            lines: [:],
+            patternIdsByStop: [:],
+            routes: [
+                MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange,
+            ],
+            routePatterns: [:],
+            stops: [MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan],
+            trips: [:]
+        ))
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
+        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        var sut = HomeMapView(
+            globalRepository: globalRepo,
+            mapVM: .init(),
+            nearbyVM: .init(),
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: locationDataManager,
+            sheetHeight: .constant(0),
+            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            let newNavStackEntry: SheetNavigationStackEntry = .tripDetails(tripId: "ol_trip_id",
+                                                                           vehicleId: "vehicle",
+                                                                           target: nil,
+                                                                           routeId: MapTestDataHelper.routeOrange.id,
+                                                                           directionId: MapTestDataHelper
+                                                                               .patternOrange30
+                                                                               .directionId)
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, olRouteSourceUpdateExpectation], timeout: 5)
+
+        addTeardownBlock {
+            HelpersKt.loadDefaultRepoModules()
+        }
+    }
+
     func testVehicleTapping() throws {
         class FakeStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {

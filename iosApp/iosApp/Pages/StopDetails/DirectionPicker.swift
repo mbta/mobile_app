@@ -15,8 +15,7 @@ struct DirectionPicker: View {
     let availableDirections: [Int32]
     let directions: [Direction]
     let route: Route
-
-    private let reformatDirectionNames: Set<String> = ["North", "South", "East", "West"]
+    let line: Line?
 
     init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
         availableDirections = Set(patternsByStop.patterns.map { pattern in
@@ -24,6 +23,7 @@ struct DirectionPicker: View {
         }).sorted()
         directions = patternsByStop.directions
         route = patternsByStop.representativeRoute
+        line = patternsByStop.line
 
         _filter = filter
     }
@@ -34,19 +34,12 @@ struct DirectionPicker: View {
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = filter?.directionId == direction
-                    let action = { $filter.wrappedValue = .init(routeId: route.id, directionId: direction) }
+                    let action = { $filter.wrappedValue = .init(routeId: line?.id ?? route.id, directionId: direction) }
 
                     Button(action: action) {
-                        VStack(alignment: .leading) {
-                            Text("\(directionNameFormatted(directions[Int(direction)])) to")
-                                .font(Typography.footnote)
-                                .textCase(.none)
-                            Text(directions[Int(direction)].destination)
-                                .font(Typography.bodySemibold)
-                                .textCase(.none)
-                        }
-                        .padding(8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        DirectionLabel(direction: directions[Int(direction)])
+                            .padding(8)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
                     .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
                     .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
@@ -57,13 +50,6 @@ struct DirectionPicker: View {
             .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 6))
         }
-    }
-
-    private func directionNameFormatted(_ direction: Direction) -> String {
-        if reformatDirectionNames.contains(direction.name) {
-            return "\(direction.name)bound"
-        }
-        return direction.name
     }
 
     private func deselectedBackgroundColor(_ route: Route) -> Color {

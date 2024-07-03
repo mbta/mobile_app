@@ -86,7 +86,8 @@ class ObjectCollectionBuilder {
         override fun built() = Line(id, color, longName, shortName, sortOrder, textColor)
     }
 
-    fun line(block: LineBuilder.() -> Unit) = build(lines, LineBuilder(), block)
+    @DefaultArgumentInterop.Enabled
+    fun line(block: LineBuilder.() -> Unit = {}) = build(lines, LineBuilder(), block)
 
     inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
@@ -126,6 +127,7 @@ class ObjectCollectionBuilder {
             )
     }
 
+    @DefaultArgumentInterop.Enabled
     fun prediction(block: PredictionBuilder.() -> Unit = {}) =
         build(predictions, PredictionBuilder(), block)
 
@@ -363,6 +365,8 @@ class ObjectCollectionBuilder {
 
     object Single {
         fun alert(block: AlertBuilder.() -> Unit = {}) = ObjectCollectionBuilder().alert(block)
+
+        fun line(block: LineBuilder.() -> Unit = {}) = ObjectCollectionBuilder().line(block)
 
         fun prediction(block: PredictionBuilder.() -> Unit = {}) =
             ObjectCollectionBuilder().prediction(block)

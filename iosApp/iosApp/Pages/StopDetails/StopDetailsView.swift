@@ -20,7 +20,7 @@ struct StopDetailsView: View {
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
-    var servedRoutes: [(route: Route, line: Line?)] = []
+    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
     @ObservedObject var nearbyVM: NearbyViewModel
     let pinnedRoutes: Set<String>
     @State var predictions: PredictionsStreamDataResponse?
@@ -46,8 +46,15 @@ struct StopDetailsView: View {
         self.togglePinnedRoute = togglePinnedRoute
 
         if let departures = nearbyVM.departures {
-            servedRoutes = OrderedSet(departures.routes.flatMap { pattern in pattern.routes })
-                .map { (route: $0, line: globalResponse?.getLine(lineId: $0.lineId)) }
+            servedRoutes = departures.routes.map { patterns in
+                if let line = patterns.line {
+                    return .line(line)
+                }
+                return .route(
+                    patterns.representativeRoute,
+                    globalResponse?.getLine(lineId: patterns.representativeRoute.lineId)
+                )
+            }
         }
     }
 
@@ -57,9 +64,11 @@ struct StopDetailsView: View {
             VStack(spacing: 0) {
                 VStack {
                     SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
-                    StopDetailsRoutePills(servedRoutes: servedRoutes,
-                                          tapRoutePill: tapRoutePill,
-                                          filter: $filter)
+                    StopDetailsFilterPills(
+                        servedRoutes: servedRoutes,
+                        tapRoutePill: tapRoutePill,
+                        filter: $filter
+                    )
                 }
                 .padding([.bottom], 8)
                 .border(Color.halo.opacity(0.15), width: 2)
@@ -87,15 +96,21 @@ struct StopDetailsView: View {
         }
     }
 
-    func tapRoutePill(_ route: Route) {
-        if filter?.routeId == route.id { filter = nil; return }
+    func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {
+        let filterId = switch filterBy {
+        case let .line(line):
+            line.id
+        case let .route(route, _):
+            route.id
+        }
+        if filter?.routeId == filterId { filter = nil; return }
         guard let departures = nearbyVM.departures else { return }
-        guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == route.id })
+        guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
         analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
             headsign.patterns.map { pattern in pattern.directionId }
         }.min() ?? 0
-        filter = .init(routeId: route.id, directionId: defaultDirectionId)
+        filter = .init(routeId: filterId, directionId: defaultDirectionId)
     }
 }
