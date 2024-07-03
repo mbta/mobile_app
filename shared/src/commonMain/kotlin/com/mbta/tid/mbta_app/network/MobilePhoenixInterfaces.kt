@@ -8,7 +8,7 @@ enum class PhoenixPushStatus(val value: String) {
 
 interface PhoenixMessage {
     val subject: String
-    val body: Map<String, Any>
+    val body: Map<String, Any?>
     val jsonBody: String?
 }
 
