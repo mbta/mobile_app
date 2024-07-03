@@ -55,6 +55,7 @@ struct HomeMapView: View {
         stopRepository: IStopRepository = RepositoryDI().stop,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         sheetHeight: Binding<CGFloat>,
+        globalMapData: GlobalMapData? = nil,
         layerManager: IMapLayerManager? = nil
     ) {
         self.globalRepository = globalRepository
@@ -66,6 +67,7 @@ struct HomeMapView: View {
         self.stopRepository = stopRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
+        _globalMapData = State(wrappedValue: globalMapData)
         _layerManager = State(wrappedValue: layerManager)
     }
 
@@ -100,6 +102,13 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
+            .withScenePhaseHandlers(onActive: {
+                // Layers are removed when the app is backgrounded, add them back.
+                if let layerManager {
+                    addLayers(layerManager)
+                    updateGlobalMapDataSources()
+                }
+            })
     }
 
     @ViewBuilder
@@ -201,9 +210,6 @@ struct ProxyModifiedMap: View {
                 .onChange(of: globalMapData) { _ in
                     handleTryLayerInit(proxy.map)
                 }
-                .withScenePhaseHandlers(onActive: {
-                    handleTryLayerInit(proxy.map)
-                })
         }
     }
 }
