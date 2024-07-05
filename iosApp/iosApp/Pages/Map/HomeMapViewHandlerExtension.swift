@@ -98,13 +98,11 @@ extension HomeMapView {
                 case .error:
                     []
                 }
-                let updatedSource = RouteSourceGenerator(
-                    shapesWithStops: shapesWithStops,
-                    routesById: globalData?.routes,
-                    stopsById: globalData?.stops,
-                    alertsByStop: globalMapData?.alertsByStop
+                let routeSourceData = RouteSourceGenerator.shapesWithStopsToMapFriendly(
+                    shapesWithStops,
+                    globalData?.stops
                 )
-                mapVM.layerManager?.updateSourceData(routeSourceGenerator: updatedSource)
+                mapVM.routeSourceData = routeSourceData
 
             } catch {
                 debugPrint(error)
@@ -116,7 +114,8 @@ extension HomeMapView {
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: stop,
-            routeLines: mapVM.layerManager?.routeSourceGenerator?.routeLines
+            // TODO: Route lines
+            routeLines: []
         )
         mapVM.layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         viewportProvider.animateTo(coordinates: stop.coordinate, zoom: 17.0)

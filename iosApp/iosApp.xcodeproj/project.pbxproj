@@ -28,6 +28,8 @@
 		6E973DA92C178BF500CBF341 /* CloseButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA82C178BF500CBF341 /* CloseButtonTests.swift */; };
 		6E973DAB2C178C0200CBF341 /* SheetHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DAA2C178C0200CBF341 /* SheetHeaderTests.swift */; };
 		6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E99CBB62B9892C80047E78D /* SocketProvider.swift */; };
+		6E9DDFB52C3884B7009DD68A /* MapViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */; };
+		6E9DDFB72C388514009DD68A /* MockLayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9DDFB62C388514009DD68A /* MockLayerManager.swift */; };
 		6E9F4D382BFE851D00BFB3DA /* UpcomingTripViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F4D372BFE851D00BFB3DA /* UpcomingTripViewTests.swift */; };
 		6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA2316E2C21BEB100789173 /* LoadingCard.swift */; };
 		6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */; };
@@ -237,6 +239,8 @@
 		6E973DAA2C178C0200CBF341 /* SheetHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetHeaderTests.swift; sourceTree = "<group>"; };
 		6E99CBB62B9892C80047E78D /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
 		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
+		6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModelTests.swift; sourceTree = "<group>"; };
+		6E9DDFB62C388514009DD68A /* MockLayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLayerManager.swift; sourceTree = "<group>"; };
 		6E9F4D372BFE851D00BFB3DA /* UpcomingTripViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTripViewTests.swift; sourceTree = "<group>"; };
 		6EA2316E2C21BEB100789173 /* LoadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCard.swift; sourceTree = "<group>"; };
 		6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
@@ -444,6 +448,7 @@
 				6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */,
 				6EF50F472B9889D600833070 /* MockSocket.swift */,
 				ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */,
+				6E9DDFB62C388514009DD68A /* MockLayerManager.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -806,6 +811,7 @@
 				9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */,
 				9A6FA0242BC714360067769C /* HomeMapViewTest.swift */,
 				8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */,
+				6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1179,6 +1185,7 @@
 				9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */,
 				9AAA26A52C2DBC5800A7745A /* GreenLineHelper.swift in Sources */,
 				8CD58ECD2BEC115B0004E031 /* TripDetailsPageTests.swift in Sources */,
+				6E9DDFB52C3884B7009DD68A /* MapViewModelTests.swift in Sources */,
 				6E9F4D382BFE851D00BFB3DA /* UpcomingTripViewTests.swift in Sources */,
 				ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */,
 				9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */,
@@ -1199,6 +1206,7 @@
 				9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */,
 				9A5B27642BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift in Sources */,
 				9A6FA0282BC72F110067769C /* StopDetailsPageTests.swift in Sources */,
+				6E9DDFB72C388514009DD68A /* MockLayerManager.swift in Sources */,
 				9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */,
 				6E973DAB2C178C0200CBF341 /* SheetHeaderTests.swift in Sources */,
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,

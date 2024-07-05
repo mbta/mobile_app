@@ -44,11 +44,7 @@ class RouteLineData {
     }
 }
 
-class RouteSourceGenerator {
-    let routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]
-    let routeLines: [RouteLineData]
-    let routeSource: GeoJSONSource
-
+enum RouteSourceGenerator {
     static let routeSourceId = "route-source"
 
     static let propRouteId = "routeId"
@@ -57,53 +53,68 @@ class RouteSourceGenerator {
     static let propRouteColor = "routeColor"
     static let propAlertStateKey = "alertState"
 
-    init(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes], routesById: [String: Route]?,
-         stopsById: [String: Stop]?, alertsByStop: [String: AlertAssociatedStop]?) {
-        self.routeData = routeData
-        routeLines = routeData.flatMap { Self.generateRouteLines(routeWithShapes: $0, route: routesById?[$0.routeId],
-                                                                 stopsById: stopsById,
-                                                                 alertsByStop: alertsByStop) }
+    static func generateRouteLines(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                                   routesById: [String: Route]?,
+                                   stopsById: [String: Stop]?,
+                                   alertsByStop: [String: AlertAssociatedStop]?) -> [RouteLineData] {
+        routeData.flatMap { generateRouteLines(routeWithShapes: $0, route: routesById?[$0.routeId],
+                                               stopsById: stopsById,
+                                               alertsByStop: alertsByStop) }
+    }
 
+    static func generateSource(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+                               routesById: [String: Route]?,
+                               stopsById: [String: Stop]?,
+                               alertsByStop: [String: AlertAssociatedStop]?) -> GeoJSONSource {
+        let routeLines: [RouteLineData] = generateRouteLines(routeData: routeData,
+                                                             routesById: routesById,
+                                                             stopsById: stopsById,
+                                                             alertsByStop: alertsByStop)
+        return generateSource(routeLines: routeLines)
+    }
+
+    static func generateSource(routeLines: [RouteLineData]) -> GeoJSONSource {
         let routeFeatures = routeLines.map { Self.lineToFeature(routeLineData: $0) }
         var source = GeoJSONSource(id: Self.routeSourceId)
         source.data = .featureCollection(FeatureCollection(features: routeFeatures))
-
-        routeSource = source
+        return source
     }
 
-    convenience init(shapesWithStops: [ShapeWithStops], routesById: [String: Route]?,
-                     stopsById: [String: Stop]?, alertsByStop: [String: AlertAssociatedStop]?) {
-        let routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] =
-            shapesWithStops
-                .compactMap { shapeWithStops in
-                    if let shape = shapeWithStops.shape {
-                        let parentResolvedStops = shapeWithStops.stopIds.map { stopsById?[$0]?
-                            .resolveParent(stops: stopsById ?? [:]).id ?? $0
-                        }
-                        return MapFriendlyRouteResponse
-                            .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
-                                                      segmentedShapes: [
-                                                          .init(sourceRoutePatternId: shapeWithStops.routeId,
-                                                                sourceRouteId: shapeWithStops.routeId,
-                                                                directionId: shapeWithStops.directionId,
-                                                                routeSegments:
-                                                                [
-                                                                    .init(id: shape.id,
-                                                                          sourceRoutePatternId: shapeWithStops
-                                                                              .routePatternId,
-                                                                          sourceRouteId: shapeWithStops.routeId,
-                                                                          stopIds: parentResolvedStops,
-                                                                          otherPatternsByStopId: [:]),
-                                                                ],
-                                                                shape: shape),
-                                                      ])
-                    } else {
-                        return nil
-                    }
-                }
+    static func shapesWithStopsToMapFriendly(_ shapesWithStops: [ShapeWithStops],
+                                             _ stopsById: [String: Stop]?)
+        -> [MapFriendlyRouteResponse.RouteWithSegmentedShapes] {
+        shapesWithStops.compactMap { shapeWithStops in
+            shapeWithStopsToMapFriendly(shapeWithStops, stopsById)
+        }
+    }
 
-        self.init(routeData: routeData, routesById: routesById,
-                  stopsById: stopsById, alertsByStop: alertsByStop)
+    static func shapeWithStopsToMapFriendly(_ shapeWithStops: ShapeWithStops,
+                                            _ stopsById: [String: Stop]?) -> MapFriendlyRouteResponse
+        .RouteWithSegmentedShapes? {
+        if let shape = shapeWithStops.shape {
+            let parentResolvedStops = shapeWithStops.stopIds.map { stopsById?[$0]?
+                .resolveParent(stops: stopsById ?? [:]).id ?? $0
+            }
+            return MapFriendlyRouteResponse
+                .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
+                                          segmentedShapes: [
+                                              .init(sourceRoutePatternId: shapeWithStops.routeId,
+                                                    sourceRouteId: shapeWithStops.routeId,
+                                                    directionId: shapeWithStops.directionId,
+                                                    routeSegments:
+                                                    [
+                                                        .init(id: shape.id,
+                                                              sourceRoutePatternId: shapeWithStops
+                                                                  .routePatternId,
+                                                              sourceRouteId: shapeWithStops.routeId,
+                                                              stopIds: parentResolvedStops,
+                                                              otherPatternsByStopId: [:]),
+                                                    ],
+                                                    shape: shape),
+                                          ])
+        } else {
+            return nil
+        }
     }
 
     static func lineToFeature(routeLineData: RouteLineData) -> Feature {
@@ -180,8 +191,9 @@ class RouteSourceGenerator {
     static func forRailAtStop(_ stopShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
                               _ railShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
                               _ routesById: [String: Route]?,
-                              _ stopsById: [String: Stop]?,
-                              _ alertsByStop: [String: AlertAssociatedStop]?) -> RouteSourceGenerator {
+                              _: [String: Stop]?,
+                              _: [String: AlertAssociatedStop]?)
+        -> [MapFriendlyRouteResponse.RouteWithSegmentedShapes] {
         let stopRailRouteIds: Set<String> = Set(stopShapes.filter { routeWithShape in
             let maybeRouteType = routesById?[routeWithShape.routeId]?.type
             if let routeType = maybeRouteType {
@@ -192,11 +204,6 @@ class RouteSourceGenerator {
                 return false
             }
         }.map(\.routeId))
-        return RouteSourceGenerator(
-            routeData: railShapes.filter { stopRailRouteIds.contains($0.routeId) },
-            routesById: routesById,
-            stopsById: stopsById,
-            alertsByStop: alertsByStop
-        )
+        return railShapes.filter { stopRailRouteIds.contains($0.routeId) }
     }
 }
