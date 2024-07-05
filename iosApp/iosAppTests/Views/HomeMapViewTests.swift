@@ -183,14 +183,13 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -231,14 +230,13 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -301,14 +299,13 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -363,14 +360,13 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalRepository: globalRepo,
-            mapVM: .init(),
+            mapVM: .init(layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -504,14 +500,13 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: FakeLayerManager(updateRouteSourceCallback: allRailRouteSourceCheck)),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: allRailRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -550,8 +545,7 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: nil
+            sheetHeight: .constant(0)
         )
 
         sut.handleCameraChange(.init(cameraState: CameraState(center: .init(latitude: 2, longitude: 2),
@@ -567,16 +561,19 @@ final class HomeMapViewTests: XCTestCase {
         let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
         let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
 
+        let layerManger: IMapLayerManager = FakeLayerManager(
+            addLayersCallback: { addLayersCalledExpectation.fulfill() },
+            updateRouteSourceCallback: { _ in updateSourcesCalledExpectation.fulfill() }
+        )
+
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: layerManger),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(addLayersCallback: { addLayersCalledExpectation.fulfill() },
-                                           updateRouteSourceCallback: { _ in updateSourcesCalledExpectation.fulfill() })
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -597,14 +594,13 @@ final class HomeMapViewTests: XCTestCase {
                                                 updateSourcesCalledExpectation.fulfill()
                                             })
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0),
-            layerManager: layerManager
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in

@@ -11,4 +11,9 @@ import shared
 
 class MapViewModel: ObservableObject {
     @Published var selectedVehicle: Vehicle?
+    var layerManager: IMapLayerManager?
+
+    init(layerManager: IMapLayerManager? = nil) {
+        self.layerManager = layerManager
+    }
 }
