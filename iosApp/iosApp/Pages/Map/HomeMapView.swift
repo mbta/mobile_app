@@ -90,6 +90,9 @@ struct HomeMapView: View {
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
             }
+            .onChange(of: mapVM.routeSourceData) { routeData in
+                updateRouteSources(routeData: routeData)
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 guard isManuallyCentering else { return }
