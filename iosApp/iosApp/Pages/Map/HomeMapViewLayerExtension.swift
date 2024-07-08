@@ -37,11 +37,16 @@ extension HomeMapView {
         mapVM.allRailSourceData = routeSourceData
         mapVM.routeSourceData = routeSourceData
 
+        let snappedStopRouteLines = RouteSourceGenerator.generateRouteLines(routeData: routeSourceData,
+                                                                            routesById: globalData?.routes,
+                                                                            stopsById: globalData?.stops,
+                                                                            alertsByStop: globalMapData?.alertsByStop)
+        mapVM.snappedStopRouteLines = snappedStopRouteLines
+
         let stopSourceGenerator = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: lastNavEntry?.stop(),
-            // TODO: routeLlines
-            routeLines: []
+            routeLines: snappedStopRouteLines
         )
         let childStopSourceGenerator = ChildStopSourceGenerator(childStops: nil)
 
@@ -65,8 +70,7 @@ extension HomeMapView {
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: nil,
-            // TODO: route lines
-            routeLines: []
+            routeLines: mapVM.snappedStopRouteLines
         )
         mapVM.routeSourceData = mapVM.allRailSourceData
         let updatedChildStopSources = ChildStopSourceGenerator(childStops: nil)
@@ -132,8 +136,7 @@ extension HomeMapView {
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: lastNavEntry?.stop(),
-            // TODO: routeLines
-            routeLines: []
+            routeLines: mapVM.snappedStopRouteLines
         )
         mapVM.layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         // If routes are already being displayed, keep using those. Otherwise, use the rail shapes
