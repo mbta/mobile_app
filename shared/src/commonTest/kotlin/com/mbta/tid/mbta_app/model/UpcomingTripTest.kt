@@ -18,7 +18,7 @@ class UpcomingTripTest {
         @Test
         fun `status is non-null`() {
             assertEquals(
-                TimepointDisplay.Overridden("Custom Text"),
+                TripInstantDisplay.Overridden("Custom Text"),
                 UpcomingTrip(trip {}, prediction { status = "Custom Text" })
                     .format(Clock.System.now())
             )
@@ -28,7 +28,7 @@ class UpcomingTripTest {
         fun `scheduled trip skipped`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Skipped(now + 15.minutes),
+                TripInstantDisplay.Skipped(now + 15.minutes),
                 UpcomingTrip(
                         trip {},
                         schedule { departureTime = now + 15.minutes },
@@ -43,7 +43,7 @@ class UpcomingTripTest {
         @Test
         fun `unscheduled trip skipped`() {
             assertEquals(
-                TimepointDisplay.Hidden,
+                TripInstantDisplay.Hidden,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -57,12 +57,12 @@ class UpcomingTripTest {
         @Test
         fun `departure_time is null`() {
             assertEquals(
-                TimepointDisplay.Hidden,
+                TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, prediction { departureTime = null })
                     .format(Clock.System.now())
             )
             assertEquals(
-                TimepointDisplay.Hidden,
+                TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, schedule { departureTime = null }).format(Clock.System.now())
             )
         }
@@ -71,7 +71,7 @@ class UpcomingTripTest {
         fun `schedule instead of prediction`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Schedule(now + 15.minutes),
+                TripInstantDisplay.Schedule(now + 15.minutes),
                 UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes }).format(now)
             )
         }
@@ -80,7 +80,7 @@ class UpcomingTripTest {
         fun `departure_time in the past`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Hidden,
+                TripInstantDisplay.Hidden,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -96,7 +96,7 @@ class UpcomingTripTest {
         fun `seconds less than 0`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Arriving,
+                TripInstantDisplay.Arriving,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -117,7 +117,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertEquals(
-                TimepointDisplay.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -141,7 +141,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertEquals(
-                TimepointDisplay.Minutes(2),
+                TripInstantDisplay.Minutes(2),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -166,7 +166,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertNotEquals(
-                TimepointDisplay.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -186,7 +186,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertNotEquals(
-                TimepointDisplay.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -206,7 +206,7 @@ class UpcomingTripTest {
                 tripId = "trip2"
             }
             assertNotEquals(
-                TimepointDisplay.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -225,7 +225,7 @@ class UpcomingTripTest {
         fun `seconds less than 30`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Arriving,
+                TripInstantDisplay.Arriving,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -236,7 +236,7 @@ class UpcomingTripTest {
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Arriving,
+                TripInstantDisplay.Arriving,
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
                     .format(now)
             )
@@ -246,7 +246,7 @@ class UpcomingTripTest {
         fun `seconds less than 60`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Approaching,
+                TripInstantDisplay.Approaching,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -257,7 +257,7 @@ class UpcomingTripTest {
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Approaching,
+                TripInstantDisplay.Approaching,
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
                     .format(now)
             )
@@ -270,7 +270,7 @@ class UpcomingTripTest {
             val moreFuture = future.plus(38.minutes)
 
             assertEquals(
-                TimepointDisplay.DistantFuture(future),
+                TripInstantDisplay.DistantFuture(future),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -281,7 +281,7 @@ class UpcomingTripTest {
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.DistantFuture(moreFuture),
+                TripInstantDisplay.DistantFuture(moreFuture),
                 UpcomingTrip(trip {}, prediction { departureTime = moreFuture }).format(now)
             )
         }
@@ -290,32 +290,32 @@ class UpcomingTripTest {
         fun `minutes less than 20`() {
             val now = Clock.System.now()
             assertEquals(
-                TimepointDisplay.Minutes(1),
+                TripInstantDisplay.Minutes(1),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Minutes(2),
+                TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Minutes(2),
+                TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Minutes(3),
+                TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Minutes(3),
+                TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
                     .format(now)
             )
             assertEquals(
-                TimepointDisplay.Minutes(45),
+                TripInstantDisplay.Minutes(45),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
                     .format(now)
             )

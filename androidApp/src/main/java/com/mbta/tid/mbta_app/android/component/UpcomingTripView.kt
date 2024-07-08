@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.TimepointDisplay
+import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.time.Duration.Companion.minutes
@@ -34,7 +34,7 @@ sealed interface UpcomingTripViewState {
 
     data class NoService(val effect: Alert.Effect) : UpcomingTripViewState
 
-    data class Some(val trip: TimepointDisplay) : UpcomingTripViewState
+    data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
 }
 
 val format: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
@@ -48,23 +48,23 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {
-                is TimepointDisplay.Overridden -> Text(state.trip.text, modifier)
-                is TimepointDisplay.Hidden -> {}
-                is TimepointDisplay.Skipped -> {}
-                is TimepointDisplay.Boarding ->
+                is TripInstantDisplay.Overridden -> Text(state.trip.text, modifier)
+                is TripInstantDisplay.Hidden -> {}
+                is TripInstantDisplay.Skipped -> {}
+                is TripInstantDisplay.Boarding ->
                     Text(stringResource(R.string.boarding_abbr), modifier)
-                is TimepointDisplay.Arriving ->
+                is TripInstantDisplay.Arriving ->
                     Text(stringResource(R.string.arriving_abbr), modifier)
-                is TimepointDisplay.Approaching ->
+                is TripInstantDisplay.Approaching ->
                     Text(stringResource(R.string.approaching_abbr), modifier)
-                is TimepointDisplay.DistantFuture ->
+                is TripInstantDisplay.DistantFuture ->
                     Text(formatTime(state.trip.predictionTime), modifier)
-                is TimepointDisplay.Schedule ->
+                is TripInstantDisplay.Schedule ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                         Text(formatTime(state.trip.scheduleTime))
                         Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")
                     }
-                is TimepointDisplay.Minutes ->
+                is TripInstantDisplay.Minutes ->
                     Text(stringResource(R.string.minutes_abbr, state.trip.minutes), modifier)
             }
         is UpcomingTripViewState.NoService ->
@@ -127,9 +127,9 @@ fun NoServiceView(effect: NoServiceViewEffect, modifier: Modifier = Modifier) {
 @Composable
 fun UpcomingTripViewPreview() {
     Row {
-        UpcomingTripView(UpcomingTripViewState.Some(TimepointDisplay.Minutes(5)))
+        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
         UpcomingTripView(
-            UpcomingTripViewState.Some(TimepointDisplay.Schedule(Clock.System.now() + 10.minutes))
+            UpcomingTripViewState.Some(TripInstantDisplay.Schedule(Clock.System.now() + 10.minutes))
         )
     }
 }

@@ -80,7 +80,7 @@ data class UpcomingTrip(
     }
 
     fun format(now: Instant) =
-        TimepointDisplay.from(prediction, schedule, vehicle, now, allowArrivalOnly = false)
+        TripInstantDisplay.from(prediction, schedule, vehicle, now, allowArrivalOnly = false)
 
     companion object {
         fun <Key> tripsMappedBy(

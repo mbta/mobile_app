@@ -175,15 +175,15 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             allTrips
                 .map { Format.Some.FormatWithId(it, now) }
                 .filterNot {
-                    it.format is TimepointDisplay.Hidden ||
-                        it.format is TimepointDisplay.Skipped ||
+                    it.format is TripInstantDisplay.Hidden ||
+                        it.format is TripInstantDisplay.Skipped ||
                         // API best practices call for hiding scheduled times on subway
                         (when (this) {
                                 is ByHeadsign -> this.route
                                 is ByDirection -> this.routes.min()
                             }
                             .type
-                            .isSubway() && it.format is TimepointDisplay.Schedule)
+                            .isSubway() && it.format is TripInstantDisplay.Schedule)
                 }
                 .take(count)
         if (tripsToShow.isEmpty()) return Format.None
@@ -251,7 +251,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         data object None : Format()
 
         data class Some(val trips: List<FormatWithId>) : Format() {
-            data class FormatWithId(val id: String, val format: TimepointDisplay) {
+            data class FormatWithId(val id: String, val format: TripInstantDisplay) {
                 constructor(trip: UpcomingTrip, now: Instant) : this(trip.trip.id, trip.format(now))
             }
         }

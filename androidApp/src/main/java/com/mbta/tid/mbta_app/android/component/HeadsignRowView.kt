@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
-import com.mbta.tid.mbta_app.model.TimepointDisplay
+import com.mbta.tid.mbta_app.model.TripInstantDisplay
 
 @Composable
 fun HeadsignRowView(
@@ -51,8 +51,14 @@ fun HeadsignRowViewPreview() {
                 "Some",
                 RealtimePatterns.Format.Some(
                     listOf(
-                        RealtimePatterns.Format.Some.FormatWithId("1", TimepointDisplay.Minutes(5)),
-                        RealtimePatterns.Format.Some.FormatWithId("2", TimepointDisplay.Minutes(15))
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            "1",
+                            TripInstantDisplay.Minutes(5)
+                        ),
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            "2",
+                            TripInstantDisplay.Minutes(15)
+                        )
                     )
                 )
             )

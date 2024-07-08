@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-extension TimepointDisplay.Overridden {
+extension TripInstantDisplay.Overridden {
     func textWithLocale() -> AttributedString {
         var result = AttributedString(text)
         result.languageIdentifier = "en-US"
@@ -32,7 +32,7 @@ struct UpcomingTripView: View {
         case loading
         case none
         case noService(shared.Alert.Effect)
-        case some(TimepointDisplay)
+        case some(TripInstantDisplay)
     }
 
     var body: some View {

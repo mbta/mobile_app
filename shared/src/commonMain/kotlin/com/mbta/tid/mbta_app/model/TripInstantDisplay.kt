@@ -9,24 +9,24 @@ import kotlinx.datetime.Instant
  *
  * Can be localized in the frontend layer, except for `Overridden` which is always English.
  */
-sealed class TimepointDisplay {
-    data class Overridden(val text: String) : TimepointDisplay()
+sealed class TripInstantDisplay {
+    data class Overridden(val text: String) : TripInstantDisplay()
 
-    data object Hidden : TimepointDisplay()
+    data object Hidden : TripInstantDisplay()
 
-    data object Boarding : TimepointDisplay()
+    data object Boarding : TripInstantDisplay()
 
-    data object Arriving : TimepointDisplay()
+    data object Arriving : TripInstantDisplay()
 
-    data object Approaching : TimepointDisplay()
+    data object Approaching : TripInstantDisplay()
 
-    data class DistantFuture(val predictionTime: Instant) : TimepointDisplay()
+    data class DistantFuture(val predictionTime: Instant) : TripInstantDisplay()
 
-    data class Schedule(val scheduleTime: Instant) : TimepointDisplay()
+    data class Schedule(val scheduleTime: Instant) : TripInstantDisplay()
 
-    data class Skipped(val scheduledTime: Instant?) : TimepointDisplay()
+    data class Skipped(val scheduledTime: Instant?) : TripInstantDisplay()
 
-    data class Minutes(val minutes: Int) : TimepointDisplay()
+    data class Minutes(val minutes: Int) : TripInstantDisplay()
 
     companion object {
         fun from(
@@ -35,7 +35,7 @@ sealed class TimepointDisplay {
             vehicle: Vehicle?,
             now: Instant,
             allowArrivalOnly: Boolean
-        ): TimepointDisplay {
+        ): TripInstantDisplay {
             prediction?.status?.let {
                 return Overridden(it)
             }
