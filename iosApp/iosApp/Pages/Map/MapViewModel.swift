@@ -16,6 +16,7 @@ class MapViewModel: ObservableObject {
 
     @Published var allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
     @Published var allStopSourceData: StopSourceData?
+    var snappedStopRouteLines: [RouteLineData] = []
     var layerManager: IMapLayerManager? = nil
 
     init(allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = [],

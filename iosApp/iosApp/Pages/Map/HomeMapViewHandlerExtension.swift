@@ -114,8 +114,7 @@ extension HomeMapView {
         let updatedStopSources = StopSourceGenerator(
             stops: globalMapData?.mapStops ?? [:],
             selectedStop: stop,
-            // TODO: Route lines
-            routeLines: []
+            routeLines: mapVM.snappedStopRouteLines
         )
         mapVM.layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         viewportProvider.animateTo(coordinates: stop.coordinate, zoom: 17.0)
