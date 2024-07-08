@@ -16,9 +16,9 @@ import SwiftUI
 extension HomeMapView {
     func handleTryLayerInit(map: MapboxMap?) {
         guard let map,
-              let _ = globalData,
-              let _ = railRouteShapeFetcher.response,
-              let _ = globalMapData?.mapStops,
+              globalData != nil,
+              railRouteShapeFetcher.response != nil,
+              globalMapData?.mapStops != nil,
               layerManager == nil
         else {
             return
