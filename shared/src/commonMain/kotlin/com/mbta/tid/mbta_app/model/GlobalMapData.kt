@@ -17,6 +17,7 @@ data class GlobalMapData(
     val alertsByStop: Map<String, AlertAssociatedStop>?
 ) {
     companion object {
+
         /*
         Only stops without a parent stop (stations and isolated stops) are returned in the result.
         Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on
@@ -159,4 +160,8 @@ data class GlobalMapData(
             .toMap(),
         alertsByStop
     )
+
+    fun stopIds(): Set<String> {
+        return mapStops.keys
+    }
 }
