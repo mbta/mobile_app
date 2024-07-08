@@ -13,11 +13,9 @@ import SwiftUI
 
 protocol IMapLayerManager {
     var routeLayerGenerator: RouteLayerGenerator? { get }
-    var stopSourceGenerator: StopSourceGenerator? { get }
     var stopLayerGenerator: StopLayerGenerator? { get }
 
     func addSources(
-        stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     )
     func addLayers(
@@ -25,12 +23,9 @@ protocol IMapLayerManager {
         stopLayerGenerator: StopLayerGenerator,
         childStopLayerGenerator: ChildStopLayerGenerator
     )
-    func updateSourceData(
-        stopSourceGenerator: StopSourceGenerator,
-        childStopSourceGenerator: ChildStopSourceGenerator
-    )
+
     func updateSourceData(routeSource: GeoJSONSource)
-    func updateSourceData(stopSourceGenerator: StopSourceGenerator)
+    func updateSourceData(stopSource: GeoJSONSource)
     func updateSourceData(childStopSourceGenerator: ChildStopSourceGenerator)
 }
 
@@ -39,7 +34,6 @@ struct MapImageError: Error {}
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
     var routeLayerGenerator: RouteLayerGenerator?
-    var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
     var childStopSourceGenerator: ChildStopSourceGenerator?
     var childStopLayerGenerator: ChildStopLayerGenerator?
@@ -58,13 +52,9 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addSources(
-        stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     ) {
-        self.stopSourceGenerator = stopSourceGenerator
         self.childStopSourceGenerator = childStopSourceGenerator
-
-        updateSourceData(source: stopSourceGenerator.stopSource)
         updateSourceData(source: childStopSourceGenerator.childStopSource)
     }
 
@@ -106,7 +96,9 @@ class MapLayerManager: IMapLayerManager {
 
     func updateSourceData(source: GeoJSONSource) {
         if map.sourceExists(withId: source.id) {
-            guard let actualData = source.data else { return }
+            guard let actualData = source.data else {
+                return
+            }
             map.updateGeoJSONSource(withId: source.id, data: actualData)
         } else {
             addSource(source: source)
@@ -117,21 +109,13 @@ class MapLayerManager: IMapLayerManager {
         updateSourceData(source: routeSource)
     }
 
-    func updateSourceData(stopSourceGenerator: StopSourceGenerator) {
-        self.stopSourceGenerator = stopSourceGenerator
-        updateSourceData(source: stopSourceGenerator.stopSource)
-    }
-
-    func updateSourceData(childStopSourceGenerator: ChildStopSourceGenerator) {
-        self.childStopSourceGenerator = childStopSourceGenerator
-        updateSourceData(source: childStopSourceGenerator.childStopSource)
+    func updateSourceData(stopSource: GeoJSONSource) {
+        updateSourceData(source: stopSource)
     }
 
     func updateSourceData(
-        stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     ) {
-        updateSourceData(stopSourceGenerator: stopSourceGenerator)
-        updateSourceData(childStopSourceGenerator: childStopSourceGenerator)
+        updateSourceData(source: childStopSourceGenerator.childStopSource)
     }
 }
