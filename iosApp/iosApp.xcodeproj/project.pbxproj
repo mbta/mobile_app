@@ -1583,7 +1583,7 @@
 			baseConfigurationReference = 2C1D97878C3E597A2B683565 /* Pods-iosApp.proddebug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_NAME = "MBTA Transit";
+				BUNDLE_NAME = "MBTA Go";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = RP77QY87AD;
@@ -1617,7 +1617,7 @@
 			baseConfigurationReference = 044872B56401E9A9CE49444E /* Pods-iosApp.prodrelease.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_NAME = "MBTA Transit";
+				BUNDLE_NAME = "MBTA Go";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = RP77QY87AD;
@@ -1712,7 +1712,7 @@
 			baseConfigurationReference = F35CF19A11F0511AA7B2E080 /* Pods-iosApp.stagingdebug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStaging;
-				BUNDLE_NAME = "MBTA Transit Staging";
+				BUNDLE_NAME = "MBTA Go Staging";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = RP77QY87AD;
@@ -1860,7 +1860,7 @@
 			baseConfigurationReference = 84B5D164E49C6058407CC984 /* Pods-iosApp.stagingrelease.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStaging;
-				BUNDLE_NAME = "MBTA Transit Staging";
+				BUNDLE_NAME = "MBTA Go Staging";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = RP77QY87AD;
