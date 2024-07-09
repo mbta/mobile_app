@@ -37,6 +37,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+class AppcuesContainer: ObservableObject {
+    var appcues: Appcues?
+
+    init(appcues: Appcues?) {
+        self.appcues = appcues
+    }
+}
+
 @main
 struct IOSApp: App {
     // register app delegate for Firebase setup
@@ -55,6 +63,7 @@ struct IOSApp: App {
                     .onAppear {
                         delegate.appcues?.anonymous()
                     }
+                    .environmentObject(AppcuesContainer(appcues: delegate.appcues))
             }
         }
     }
