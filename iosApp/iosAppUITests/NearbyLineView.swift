@@ -24,7 +24,8 @@ struct NearbyLineView: View {
                         patternsAtStop: patternsAtStop,
                         condenseHeadsignPredictions: nearbyLine.condensePredictions,
                         now: now,
-                        pushNavEntry: pushNavEntry
+                        pushNavEntry: pushNavEntry,
+                        pinned: pinned
                     )
                     if index < nearbyLine.patternsByStop.count - 1 {
                         Divider().background(Color.halo)

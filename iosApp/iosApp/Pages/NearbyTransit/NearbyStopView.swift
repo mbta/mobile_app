@@ -15,17 +15,20 @@ struct NearbyStopView: View {
     let condenseHeadsignPredictions: Bool
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let pinned: Bool
 
     init(
         patternsAtStop: PatternsByStop,
         condenseHeadsignPredictions: Bool = false,
         now: Instant,
-        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
+        pinned: Bool
     ) {
         self.patternsAtStop = patternsAtStop
         self.condenseHeadsignPredictions = condenseHeadsignPredictions
         self.now = now
         self.pushNavEntry = pushNavEntry
+        self.pinned = pinned
     }
 
     var body: some View {
@@ -42,7 +45,11 @@ struct NearbyStopView: View {
             now: now,
             pushNavEntry: { entry in
                 pushNavEntry(entry)
-                analytics.tappedDeparture(routeId: patternsAtStop.routeIdentifier, stopId: patternsAtStop.stop.id)
+                analytics.tappedDeparture(
+                    routeId: patternsAtStop.routeIdentifier,
+                    stopId: patternsAtStop.stop.id,
+                    pinned: pinned
+                )
             }
         )
     }

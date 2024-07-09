@@ -172,6 +172,7 @@
 		ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */; };
 		ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */; };
 		EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */; };
+		EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */; };
 		EDEEFA9E2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */; };
 /* End PBXBuildFile section */
 
@@ -390,6 +391,7 @@
 		ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketErrorExtension.swift; sourceTree = "<group>"; };
 		ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPinnedRoutesRepository.swift; sourceTree = "<group>"; };
 		EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCard.swift; sourceTree = "<group>"; };
+		EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTracker.swift; sourceTree = "<group>"; };
 		EDEEFA9D2BEC5F6D007FDA06 /* PredictionsErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionsErrorExtension.swift; sourceTree = "<group>"; };
 		F35CF19A11F0511AA7B2E080 /* Pods-iosApp.stagingdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingdebug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingdebug.xcconfig"; sourceTree = "<group>"; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -869,6 +871,7 @@
 				ED24EAD72C1A941E00A7BE4D /* NearbyTransitAnalytics.swift */,
 				ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */,
 				ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */,
+				EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -1286,6 +1289,7 @@
 				8C815AF32BF5257B009BB51C /* TripDetailsStopListView.swift in Sources */,
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
+				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
 				8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */,
 				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
 				ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */,
