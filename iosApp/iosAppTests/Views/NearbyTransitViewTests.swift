@@ -232,14 +232,14 @@ final class NearbyTransitViewTests: XCTestCase {
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
             XCTAssertEqual(
                 try upcomingSchedule.actualView().prediction,
-                .some(UpcomingTrip.FormatSchedule(scheduleTime: time1))
+                .some(.Schedule(scheduleTime: time1))
             )
             XCTAssertEqual(try upcomingSchedule.find(ViewType.Image.self).actualImage().name(), "fa-clock")
 
             XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
             XCTAssertEqual(
                 try patterns[1].find(UpcomingTripView.self).actualView().prediction,
-                .some(UpcomingTrip.FormatMinutes(minutes: 10))
+                .some(.Minutes(minutes: 10))
             )
 
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
@@ -349,7 +349,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 .parent().parent().find(text: "1 min"))
 
             let expectedState = UpcomingTripView.State
-                .some(UpcomingTrip.FormatDistantFuture(predictionTime: distantInstant))
+                .some(.DistantFuture(predictionTime: distantInstant))
             XCTAssert(try !stops[1].find(text: "Watertown Yard").parent().parent()
                 .findAll(UpcomingTripView.self, where: { sut in
                     try debugPrint(sut.actualView())
