@@ -160,8 +160,4 @@ data class GlobalMapData(
             .toMap(),
         alertsByStop
     )
-
-    fun stopIds(): Set<String> {
-        return mapStops.keys
-    }
 }
