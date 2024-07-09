@@ -96,6 +96,9 @@ struct HomeMapView: View {
             .onChange(of: mapVM.stopSourceData) { stopData in
                 updateStopSource(stopData: stopData)
             }
+            .onChange(of: mapVM.childStops) { childStops in
+                updateChildStopSource(childStops: childStops)
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 guard isManuallyCentering else { return }

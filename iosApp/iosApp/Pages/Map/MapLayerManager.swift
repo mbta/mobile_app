@@ -12,12 +12,6 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
-    var routeLayerGenerator: RouteLayerGenerator? { get }
-    var stopLayerGenerator: StopLayerGenerator? { get }
-
-    func addSources(
-        childStopSourceGenerator: ChildStopSourceGenerator
-    )
     func addLayers(
         routeLayerGenerator: RouteLayerGenerator,
         stopLayerGenerator: StopLayerGenerator,
@@ -26,7 +20,7 @@ protocol IMapLayerManager {
 
     func updateSourceData(routeSource: GeoJSONSource)
     func updateSourceData(stopSource: GeoJSONSource)
-    func updateSourceData(childStopSourceGenerator: ChildStopSourceGenerator)
+    func updateSourceData(childStopSource: GeoJSONSource)
 }
 
 struct MapImageError: Error {}
@@ -51,13 +45,6 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func addSources(
-        childStopSourceGenerator: ChildStopSourceGenerator
-    ) {
-        self.childStopSourceGenerator = childStopSourceGenerator
-        updateSourceData(source: childStopSourceGenerator.childStopSource)
-    }
-
     private func addSource(source: GeoJSONSource) {
         do {
             try map.addSource(source)
@@ -71,10 +58,6 @@ class MapLayerManager: IMapLayerManager {
         stopLayerGenerator: StopLayerGenerator,
         childStopLayerGenerator: ChildStopLayerGenerator
     ) {
-        self.routeLayerGenerator = routeLayerGenerator
-        self.stopLayerGenerator = stopLayerGenerator
-        self.childStopLayerGenerator = childStopLayerGenerator
-
         let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator
             .stopLayers + [childStopLayerGenerator.childStopLayer]
         for layer in layers {
@@ -113,9 +96,7 @@ class MapLayerManager: IMapLayerManager {
         updateSourceData(source: stopSource)
     }
 
-    func updateSourceData(
-        childStopSourceGenerator: ChildStopSourceGenerator
-    ) {
-        updateSourceData(source: childStopSourceGenerator.childStopSource)
+    func updateSourceData(childStopSource: GeoJSONSource) {
+        updateSourceData(source: childStopSource)
     }
 }

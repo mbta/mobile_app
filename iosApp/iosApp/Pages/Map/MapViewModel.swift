@@ -11,6 +11,7 @@ import shared
 @_spi(Experimental) import MapboxMaps
 
 class MapViewModel: ObservableObject {
+    @Published var childStops: [String: Stop]?
     @Published var selectedVehicle: Vehicle?
     @Published var routeSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
     @Published var stopSourceData: StopSourceData = .init()
@@ -32,5 +33,9 @@ class MapViewModel: ObservableObject {
 
     func updateStopSource(_ stopSource: GeoJSONSource) {
         layerManager?.updateSourceData(stopSource: stopSource)
+    }
+
+    func updateChildStopSource(_ childStopSource: GeoJSONSource) {
+        layerManager?.updateSourceData(childStopSource: childStopSource)
     }
 }

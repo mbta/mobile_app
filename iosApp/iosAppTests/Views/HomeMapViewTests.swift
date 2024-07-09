@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 @testable import iosApp
 import ViewInspector
 @_spi(Experimental) import MapboxMaps
@@ -203,18 +204,45 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testUpdatesRouteSourceWhenStopSelected() throws {
+    func testUpdatesRouteAndChildStopsWhenStopSelected() throws {
+        let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
+
         class OLOnlyStopRepository: IStopRepository {
+            private var onGetStopMapData: () -> Void
+
+            init(onGetStopMapData: @escaping () -> Void) {
+                self.onGetStopMapData = onGetStopMapData
+            }
+
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
-                StopMapResponse(
+                onGetStopMapData()
+
+                return StopMapResponse(
                     routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes
                         .filter { $0.routeId == MapTestDataHelper.routeOrange.id },
                     childStops: [:]
                 )
             }
         }
+
+        let globalRepo: IGlobalRepository = MockGlobalRepository(response: .init(
+            lines: [:],
+            patternIdsByStop: [:],
+            routes: [
+                MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange,
+                MapTestDataHelper.routeRed.id: MapTestDataHelper.routeRed,
+
+            ],
+            routePatterns: [:],
+            stops: [MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
+                    MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter],
+            trips: [:]
+        ))
+
         HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: OLOnlyStopRepository()))
+            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
+                OLOnlyStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }), global: globalRepo))
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -224,6 +252,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+        mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
@@ -241,11 +270,16 @@ final class HomeMapViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { sut in
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
-            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared], timeout: 5)
+
+        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
+            XCTAssertFalse(mapVM.routeSourceData.isEmpty)
+            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
+            XCTAssertNotNil(mapVM.childStops)
+        }
+        wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
@@ -287,6 +321,7 @@ final class HomeMapViewTests: XCTestCase {
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
                                          directionId: MapTestDataHelper.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssert(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
         }
 
@@ -706,5 +741,31 @@ final class HomeMapViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared, updateStopSourcesCalledExpectation], timeout: 5)
+    }
+
+    func testUpdatesChildStopSourcesWhenDataChanges() {
+        let updateChildStopSourcesCalledExpectation = XCTestExpectation(description: "Update child stop source called")
+
+        let layerManager = MockLayerManager(updateChildStopSourceCallback: { _ in
+            updateChildStopSourcesCalledExpectation.fulfill()
+        })
+
+        let childStopData: [String: Stop]? = ["stop1": ObjectCollectionBuilder().stop { _ in }]
+        var sut = HomeMapView(
+            mapVM: .init(layerManager: layerManager),
+            nearbyVM: .init(),
+            railRouteShapeFetcher: .init(backend: IdleBackend()),
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: childStopData)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, updateChildStopSourcesCalledExpectation], timeout: 5)
     }
 }
