@@ -173,40 +173,36 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called only OL route")
-        func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeLines.allSatisfy({ $0.routeId == MapTestDataHelper.routeOrange.id }) {
-                olRouteSourceUpdateExpectation.fulfill()
-            }
-        }
+        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, olRouteSourceUpdateExpectation], timeout: 5)
+        wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
         }
     }
 
-    func testUpdatesRouteSourceWhenStopSelectedWithRouteFilter() throws {
+    func testSetsRouteSourceWhenStopSelectedWithRouteFilter() throws {
         class FakeStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
                 StopMapResponse(routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes, childStops: [:])
@@ -221,24 +217,19 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called only OL route")
-        func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeLines.allSatisfy({ $0.routeId == MapTestDataHelper.routeOrange.id }) {
-                olRouteSourceUpdateExpectation.fulfill()
-            }
-        }
+        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -246,10 +237,11 @@ final class HomeMapViewTests: XCTestCase {
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
                                          directionId: MapTestDataHelper.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            XCTAssert(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, olRouteSourceUpdateExpectation], timeout: 5)
+        wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
@@ -278,12 +270,7 @@ final class HomeMapViewTests: XCTestCase {
             prediction.trip = trip
         }
 
-        let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSouce called for expected RP")
-        func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeLines.allSatisfy({ $0.routePatternId == MapTestDataHelper.patternOrange30.id }) {
-                olRouteSourceUpdateExpectation.fulfill()
-            }
-        }
+        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
 
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
@@ -301,14 +288,13 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -316,10 +302,13 @@ final class HomeMapViewTests: XCTestCase {
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
                                          directionId: MapTestDataHelper.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
+                segment.sourceRoutePatternId == MapTestDataHelper.patternOrange30.id
+            } })
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, olRouteSourceUpdateExpectation], timeout: 5)
+        wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
@@ -341,12 +330,8 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(trip: FakeTripRepository()))
 
-        let olRouteSourceUpdateExpectation = XCTestExpectation(description: "updateRouteSource called with trip shape")
-        func olOnlyRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeLines.allSatisfy({ $0.routePatternId == MapTestDataHelper.patternOrange30.id }) {
-                olRouteSourceUpdateExpectation.fulfill()
-            }
-        }
+        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+
         let globalRepo: IGlobalRepository = MockGlobalRepository(response: .init(
             lines: [:],
             patternIdsByStop: [:],
@@ -363,14 +348,13 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             globalRepository: globalRepo,
-            mapVM: .init(),
+            mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: olOnlyRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -382,10 +366,13 @@ final class HomeMapViewTests: XCTestCase {
                                                                                .patternOrange30
                                                                                .directionId)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
+                segment.sourceRoutePatternId == MapTestDataHelper.patternOrange30.id
+            }})
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, olRouteSourceUpdateExpectation], timeout: 5)
+        wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
@@ -493,33 +480,28 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let allRailRouteSourceUpdateExpectation =
-            XCTestExpectation(description: "updateRouteSource called with all rail sources")
-        func allRailRouteSourceCheck(routeGenerator: RouteSourceGenerator) {
-            if routeGenerator.routeData == MapTestDataHelper.routeResponse.routesWithSegmentedShapes {
-                allRailRouteSourceUpdateExpectation.fulfill()
-            }
-        }
+        let mapVM: MapViewModel = .init(allRailSourceData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+                                        layerManager: MockLayerManager())
+
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: mapVM,
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(updateRouteSourceCallback: allRailRouteSourceCheck)
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as SheetNavigationStackEntry?)
+            XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.routeResponse.routesWithSegmentedShapes)
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, allRailRouteSourceUpdateExpectation], timeout: 5)
+        wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
@@ -550,8 +532,7 @@ final class HomeMapViewTests: XCTestCase {
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            layerManager: nil
+            sheetHeight: .constant(0)
         )
 
         sut.handleCameraChange(.init(cameraState: CameraState(center: .init(latitude: 2, longitude: 2),
@@ -567,16 +548,19 @@ final class HomeMapViewTests: XCTestCase {
         let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
         let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
 
+        let layerManger: IMapLayerManager = MockLayerManager(
+            addLayersCallback: { addLayersCalledExpectation.fulfill() },
+            updateRouteSourceCallback: { _ in updateSourcesCalledExpectation.fulfill() }
+        )
+
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: layerManger),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0),
-            layerManager: FakeLayerManager(addLayersCallback: { addLayersCalledExpectation.fulfill() },
-                                           updateRouteSourceCallback: { _ in updateSourcesCalledExpectation.fulfill() })
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -592,19 +576,18 @@ final class HomeMapViewTests: XCTestCase {
         addLayersNotCalledExpectation.isInverted = true
         let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
 
-        let layerManager = FakeLayerManager(addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
+        let layerManager = MockLayerManager(addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
                                             updateRouteSourceCallback: { _ in
                                                 updateSourcesCalledExpectation.fulfill()
                                             })
         var sut = HomeMapView(
-            mapVM: .init(),
+            mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0),
-            layerManager: layerManager
+            sheetHeight: .constant(0)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -615,48 +598,29 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared, addLayersNotCalledExpectation, updateSourcesCalledExpectation], timeout: 5)
     }
 
-    class FakeLayerManager: IMapLayerManager {
-        var routeSourceGenerator: RouteSourceGenerator?
-        var routeLayerGenerator: RouteLayerGenerator?
-        var stopSourceGenerator: StopSourceGenerator?
-        var stopLayerGenerator: StopLayerGenerator?
-        var childStopSourceGenerator: ChildStopSourceGenerator?
-        var childStopLayerGenerator: ChildStopLayerGenerator?
-        private let addLayersCallback: () -> Void
-        private let updateRouteSourceCallback: (RouteSourceGenerator) -> Void
+    func testUpdatesSourcesWhenRouteDataChanges() {
+        let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
 
-        init(addLayersCallback: @escaping () -> Void = {},
-             updateRouteSourceCallback: @escaping (RouteSourceGenerator) -> Void = { _ in }) {
-            self.updateRouteSourceCallback = updateRouteSourceCallback
-            self.addLayersCallback = addLayersCallback
+        let layerManager = MockLayerManager(updateRouteSourceCallback: { _ in
+            updateSourcesCalledExpectation.fulfill()
+        })
+
+        let routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+        var sut = HomeMapView(
+            mapVM: .init(layerManager: layerManager),
+            nearbyVM: .init(),
+            railRouteShapeFetcher: .init(backend: IdleBackend()),
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: routeData)
         }
 
-        func addSources(
-            routeSourceGenerator _: RouteSourceGenerator,
-            stopSourceGenerator _: StopSourceGenerator,
-            childStopSourceGenerator _: ChildStopSourceGenerator
-        ) {}
-        func addLayers(
-            routeLayerGenerator _: RouteLayerGenerator,
-            stopLayerGenerator _: StopLayerGenerator,
-            childStopLayerGenerator _: ChildStopLayerGenerator
-        ) {
-            addLayersCallback()
-        }
-
-        func updateSourceData(
-            routeSourceGenerator: RouteSourceGenerator,
-            stopSourceGenerator _: StopSourceGenerator,
-            childStopSourceGenerator _: ChildStopSourceGenerator
-        ) {
-            updateRouteSourceCallback(routeSourceGenerator)
-        }
-
-        func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
-            updateRouteSourceCallback(routeSourceGenerator)
-        }
-
-        func updateSourceData(stopSourceGenerator _: StopSourceGenerator) {}
-        func updateSourceData(childStopSourceGenerator _: ChildStopSourceGenerator) {}
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, updateSourcesCalledExpectation], timeout: 5)
     }
 }

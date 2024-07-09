@@ -18,7 +18,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
     }
 
     func testRouteSourceIsCreated() {
-        let routeSourceGenerator = RouteSourceGenerator(
+        let routeSource = RouteSourceGenerator.generateSource(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
@@ -37,7 +37,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
             alertsByStop: [:]
         )
 
-        if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
+        if case let .featureCollection(collection) = routeSource.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 3) // 2 red, 1 orange
             XCTAssertEqual(collection.features.filter {
                 $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
@@ -76,7 +76,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
     }
 
     func testRouteSourcePreservesRouteProps() {
-        let routeSourceGenerator = RouteSourceGenerator(
+        let routeSource = RouteSourceGenerator.generateSource(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
@@ -95,7 +95,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
             alertsByStop: [:]
         )
 
-        if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
+        if case let .featureCollection(collection) = routeSource.data.unsafelyUnwrapped {
             let firstRedFeature = collection.features.filter {
                 $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
             }[0]
@@ -144,7 +144,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
             ),
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(
+        let routeSource = RouteSourceGenerator.generateSource(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
@@ -159,7 +159,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
             alertsByStop: alertsByStop
         )
 
-        if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
+        if case let .featureCollection(collection) = routeSource.data.unsafelyUnwrapped {
             let redFeatures = collection.features.filter {
                 $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
             }
@@ -208,7 +208,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
         }
     }
 
-    func testShapeWithStopsInitAlertingStops() {
+    func testShapeWithStopsToMapFriendly() {
         let now = Date.now
 
         let objects = ObjectCollectionBuilder()
@@ -237,34 +237,43 @@ final class RouteSourceGeneratorTests: XCTestCase {
             ),
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(
-            shapesWithStops: [.init(directionId: MapTestDataHelper.patternRed10.directionId,
-                                    routeId: MapTestDataHelper.routeRed.id,
-                                    routePatternId: MapTestDataHelper.patternRed10.id,
-                                    shape: MapTestDataHelper.shapeRedC1,
-                                    stopIds: [
-                                        MapTestDataHelper.stopAlewifeChild.id,
-                                        MapTestDataHelper.stopDavisChild.id,
-                                    ])],
-            routesById: MapTestDataHelper.routesById,
-            stopsById: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
-                        MapTestDataHelper.stopDavis.id: MapTestDataHelper
-                            .stopDavis,
-                        MapTestDataHelper.stopAlewifeChild.id: MapTestDataHelper.stopAlewifeChild,
-                        MapTestDataHelper.stopDavisChild.id: MapTestDataHelper.stopDavisChild],
-            alertsByStop: alertsByStop
-        )
+        let shapeWithStops: ShapeWithStops = .init(directionId: MapTestDataHelper.patternRed10.directionId,
+                                                   routeId: MapTestDataHelper.routeRed.id,
+                                                   routePatternId: MapTestDataHelper.patternRed10.id,
+                                                   shape: MapTestDataHelper.shapeRedC1,
+                                                   stopIds: [
+                                                       MapTestDataHelper.stopAlewifeChild.id,
+                                                       MapTestDataHelper.stopDavisChild.id,
+                                                   ])
 
-        XCTAssertEqual([MapTestDataHelper.stopAlewife.id, MapTestDataHelper.stopDavis.id],
-                       routeSourceGenerator.routeLines[0].stopIds)
+        let transformedShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] =
+            RouteSourceGenerator.shapesWithStopsToMapFriendly([shapeWithStops],
+                                                              [MapTestDataHelper.stopAlewife.id:
+                                                                  MapTestDataHelper.stopAlewife,
+                                                                  MapTestDataHelper.stopDavis.id:
+                                                                      MapTestDataHelper.stopDavis,
+                                                                  MapTestDataHelper.stopAlewifeChild.id:
+                                                                      MapTestDataHelper.stopAlewifeChild,
+                                                                  MapTestDataHelper.stopDavisChild.id:
+                                                                      MapTestDataHelper.stopDavisChild])
 
-        if case let .featureCollection(collection) = routeSourceGenerator.routeSource.data.unsafelyUnwrapped {
-            XCTAssertEqual(collection.features.count, 1)
-            XCTAssertEqual(collection.features.filter {
-                $0.properties![RouteSourceGenerator.propRouteId] == JSONValue(String(MapTestDataHelper.routeRed.id))
-            }.count, 1)
-        } else {
-            XCTFail("Red route source had no features")
-        }
+        XCTAssertEqual([MapFriendlyRouteResponse
+                .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
+                                          segmentedShapes: [
+                                              .init(sourceRoutePatternId: shapeWithStops.routeId,
+                                                    sourceRouteId: shapeWithStops.routeId,
+                                                    directionId: shapeWithStops.directionId,
+                                                    routeSegments:
+                                                    [
+                                                        .init(id: shapeWithStops.shape!.id,
+                                                              sourceRoutePatternId: shapeWithStops
+                                                                  .routePatternId,
+                                                              sourceRouteId: shapeWithStops.routeId,
+                                                              stopIds: [MapTestDataHelper.stopAlewife.id,
+                                                                        MapTestDataHelper.stopDavis.id],
+                                                              otherPatternsByStopId: [:]),
+                                                    ],
+                                                    shape: shapeWithStops.shape!),
+                                          ])], transformedShapes)
     }
 }
