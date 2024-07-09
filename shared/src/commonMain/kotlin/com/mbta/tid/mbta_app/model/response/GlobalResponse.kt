@@ -29,4 +29,11 @@ data class GlobalResponse(
         objects.stops,
         objects.trips
     )
+
+    fun getLine(lineId: String?) =
+        if (lineId != null) {
+            lines[lineId]
+        } else {
+            null
+        }
 }

@@ -29,9 +29,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
     func testMessageWhenManuallyCentering() throws {
         let viewportProvider = ViewportProvider(viewport: nil,
                                                 isManuallyCentering: true)
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
         let sut = NearbyTransitPageView(
-            globalFetcher: globalFetcher,
             nearbyVM: .init(),
             viewportProvider: viewportProvider
         )
@@ -45,9 +43,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0),
                                      nearbyByRouteAndStop: .init(data: []))
 
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
         let sut = NearbyTransitPageView(
-            globalFetcher: globalFetcher,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider
         )
@@ -58,6 +54,20 @@ final class NearbyTransitPageViewTests: XCTestCase {
     }
 
     @MainActor func testReloadsWhenLocationChanges() throws {
+        class FakeGlobalRepository: IGlobalRepository {
+            let notifier: any Subject<Void, Never>
+
+            init(notifier: any Subject<Void, Never>) {
+                self.notifier = notifier
+            }
+
+            func __getGlobalData() async throws -> GlobalResponse {
+                debugPrint("FakeGlobalRepo getting global")
+                notifier.send()
+                return GlobalResponse(objects: .init(), patternIdsByStop: [:])
+            }
+        }
+
         class FakeNearbyVM: NearbyViewModel {
             let expectation: XCTestExpectation
             let closure: (CLLocationCoordinate2D) -> Void
@@ -69,10 +79,16 @@ final class NearbyTransitPageViewTests: XCTestCase {
             }
 
             override func getNearby(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+                debugPrint("ViewModel getting nearby")
                 closure(location)
                 expectation.fulfill()
             }
         }
+
+        let globalDataLoaded = PassthroughSubject<Void, Never>()
+
+        loadKoinMocks(repositories: MockRepositories.companion
+            .buildWithDefaults(global: FakeGlobalRepository(notifier: globalDataLoaded)))
 
         let getNearbyExpectation = expectation(description: "getNearby")
         let newCameraState = CameraState(
@@ -86,22 +102,16 @@ final class NearbyTransitPageViewTests: XCTestCase {
             XCTAssertEqual(location, newCameraState.center)
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(
-            lines: [:],
-            patternIdsByStop: [:],
-            routes: [:],
-            routePatterns: [:],
-            stops: [:],
-            trips: [:]
-        )
         let sut = NearbyTransitPageView(
-            globalFetcher: globalFetcher,
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider
         )
-        let hasAppeared = sut.inspection.inspect { view in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded) { view in
             XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
+            try view.find(NearbyTransitView.self).actualView().globalData = .init(
+                objects: .init(),
+                patternIdsByStop: [:]
+            )
             try view.find(NearbyTransitView.self).vStack().callOnChange(newValue: newCameraState.center)
         }
 
@@ -129,18 +139,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let globalFetcher = GlobalFetcher(backend: IdleBackend())
-        globalFetcher.response = .init(
-            lines: [:],
-            patternIdsByStop: [:],
-            routes: [:],
-            routePatterns: [:],
-            stops: [:],
-            trips: [:]
-        )
         let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
-            globalFetcher: globalFetcher,
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider
         )

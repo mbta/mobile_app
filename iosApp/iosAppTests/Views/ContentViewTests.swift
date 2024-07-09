@@ -36,9 +36,9 @@ final class ContentViewTests: XCTestCase {
                                                     disconnectedExpectation: disconnectedExpectation)
 
         let sut = ContentView()
+            .environmentObject(AppcuesContainer(appcues: nil))
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
@@ -62,9 +62,9 @@ final class ContentViewTests: XCTestCase {
                                                     disconnectedExpectation: disconnectedExpectation)
 
         let sut = ContentView()
+            .environmentObject(AppcuesContainer(appcues: nil))
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(GlobalFetcher(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(SearchResultFetcher(backend: IdleBackend()))
             .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
@@ -77,49 +77,6 @@ final class ContentViewTests: XCTestCase {
         wait(for: [disconnectedExpectation], timeout: 1)
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
-    }
-
-    func testFetchesGlobalData() throws {
-        struct FakeGlobalFetcherBackend: BackendProtocol {
-            let expectation: XCTestExpectation
-            let idle = IdleBackend()
-
-            func getGlobalData() async throws -> GlobalResponse {
-                expectation.fulfill()
-                throw NotUnderTestError()
-            }
-
-            func getNearby(latitude _: Double, longitude _: Double) async throws -> NearbyResponse {
-                throw NotUnderTestError()
-            }
-
-            func getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
-                throw NotUnderTestError()
-            }
-
-            func getSearchResults(query _: String) async throws -> SearchResponse {
-                throw NotUnderTestError()
-            }
-
-            func getMapFriendlyRailShapes() async throws -> MapFriendlyRouteResponse {
-                throw NotUnderTestError()
-            }
-        }
-
-        let fetchesGlobalData = expectation(description: "fetches global data")
-
-        let sut = ContentView()
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(GlobalFetcher(backend: FakeGlobalFetcherBackend(expectation: fetchesGlobalData)))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket()))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider())
-
-        ViewHosting.host(view: sut)
-        wait(for: [fetchesGlobalData], timeout: 2)
     }
 
     class FakeSocket: MockSocket {

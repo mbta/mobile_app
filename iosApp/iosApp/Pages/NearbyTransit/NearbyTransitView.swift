@@ -24,7 +24,8 @@ struct NearbyTransitView: View {
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
     let alerts: AlertsStreamDataResponse?
-    @ObservedObject var globalFetcher: GlobalFetcher
+    var globalRepository = RepositoryDI().global
+    @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
     @State var nearbyWithRealtimeInfo: [StopsAssociated]?
@@ -46,18 +47,19 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getNearby(location: location)
+            getGlobal()
+            getNearby(location: location, globalData: globalData)
             joinPredictions(state.nearbyByRouteAndStop?.stopIds())
             updateNearbyRoutes()
             updatePinnedRoutes()
             getSchedule()
             didAppear?(self)
         }
-        .onChange(of: globalFetcher.response) { _ in
-            getNearby(location: location)
+        .onChange(of: globalData) { globalData in
+            getNearby(location: location, globalData: globalData)
         }
         .onChange(of: location) { newLocation in
-            getNearby(location: newLocation)
+            getNearby(location: newLocation, globalData: globalData)
         }
         .onChange(of: state.nearbyByRouteAndStop) {
             nearbyByRouteAndStop in
@@ -132,13 +134,23 @@ struct NearbyTransitView: View {
 
     private func errorCard(_ errorText: String) -> some View {
         IconCard(iconName: "network.slash", details: Text(errorText))
-            .refreshable(state.loading) { getNearby(location: location) }
+            .refreshable(state.loading) { getNearby(location: location, globalData: globalData) }
     }
 
     var didAppear: ((Self) -> Void)?
 
-    func getNearby(location: CLLocationCoordinate2D?) {
-        guard let location, let globalData = globalFetcher.response else { return }
+    func getGlobal() {
+        Task {
+            globalData = try await globalRepository.getGlobalData()
+            // this should be handled by the onChange but in tests it just isn't
+            getNearby(location: location, globalData: globalData)
+        }
+    }
+
+    func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
+        self.location = location
+        self.globalData = globalData
+        guard let location, let globalData else { return }
         getNearby(globalData, location)
     }
 

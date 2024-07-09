@@ -32,8 +32,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = StopDetailsView(globalFetcher: .init(backend: IdleBackend()),
-                                  stop: stop,
+        let sut = StopDetailsView(stop: stop,
                                   filter: .constant(nil),
                                   nearbyVM: .init(departures: .init(routes: [
                                       .init(route: routeDefaultSort1, stop: stop, patterns: []),

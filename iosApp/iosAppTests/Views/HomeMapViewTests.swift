@@ -22,11 +22,9 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testNoLocationDefaultCenter() throws {
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -39,7 +37,6 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationFetcher = MockLocationFetcher()
         locationFetcher.authorizationStatus = .authorizedAlways
@@ -48,7 +45,6 @@ final class HomeMapViewTests: XCTestCase {
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -69,17 +65,6 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFetchData() throws {
-        class FakeGlobalFetcher: GlobalFetcher {
-            init() {
-                super.init(backend: IdleBackend())
-            }
-
-            override func getGlobalData() async throws {
-                XCTFail("Map tried to fetch global data")
-                throw NotUnderTestError()
-            }
-        }
-
         class FakeRailRouteShapeFetcher: RailRouteShapeFetcher {
             let getRailRouteShapeExpectation: XCTestExpectation
 
@@ -97,7 +82,6 @@ final class HomeMapViewTests: XCTestCase {
         let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
 
         var sut = HomeMapView(
-            globalFetcher: FakeGlobalFetcher(),
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: FakeRailRouteShapeFetcher(
@@ -120,11 +104,9 @@ final class HomeMapViewTests: XCTestCase {
             stop.latitude = 1
             stop.longitude = 1
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -147,11 +129,9 @@ final class HomeMapViewTests: XCTestCase {
             stop.latitude = 1
             stop.longitude = 1
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -171,45 +151,6 @@ final class HomeMapViewTests: XCTestCase {
 
         try sut.inspect().find(ProxyModifiedMap.self).callOnChange(newValue: newEntry)
         XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
-    }
-
-    class FakeLayerManager: IMapLayerManager {
-        var routeSourceGenerator: RouteSourceGenerator?
-        var routeLayerGenerator: RouteLayerGenerator?
-        var stopSourceGenerator: StopSourceGenerator?
-        var stopLayerGenerator: StopLayerGenerator?
-        var childStopSourceGenerator: ChildStopSourceGenerator?
-        var childStopLayerGenerator: ChildStopLayerGenerator?
-        private let updateRouteSourceCallback: (RouteSourceGenerator) -> Void
-
-        init(updateRouteSourceCallback: @escaping (RouteSourceGenerator) -> Void) {
-            self.updateRouteSourceCallback = updateRouteSourceCallback
-        }
-
-        func addSources(
-            routeSourceGenerator _: RouteSourceGenerator,
-            stopSourceGenerator _: StopSourceGenerator,
-            childStopSourceGenerator _: ChildStopSourceGenerator
-        ) {}
-        func addLayers(
-            routeLayerGenerator _: RouteLayerGenerator,
-            stopLayerGenerator _: StopLayerGenerator,
-            childStopLayerGenerator _: ChildStopLayerGenerator
-        ) {}
-        func updateSourceData(
-            routeSourceGenerator: RouteSourceGenerator,
-            stopSourceGenerator _: StopSourceGenerator,
-            childStopSourceGenerator _: ChildStopSourceGenerator
-        ) {
-            updateRouteSourceCallback(routeSourceGenerator)
-        }
-
-        func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
-            updateRouteSourceCallback(routeSourceGenerator)
-        }
-
-        func updateSourceData(stopSourceGenerator _: StopSourceGenerator) {}
-        func updateSourceData(childStopSourceGenerator _: ChildStopSourceGenerator) {}
     }
 
     func testUpdatesRouteSourceWhenStopSelected() throws {
@@ -238,12 +179,10 @@ final class HomeMapViewTests: XCTestCase {
                 olRouteSourceUpdateExpectation.fulfill()
             }
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -288,12 +227,10 @@ final class HomeMapViewTests: XCTestCase {
                 olRouteSourceUpdateExpectation.fulfill()
             }
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -348,7 +285,6 @@ final class HomeMapViewTests: XCTestCase {
             }
         }
 
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
             [.init(route: MapTestDataHelper.routeOrange, stop: stop,
@@ -365,7 +301,6 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -412,17 +347,22 @@ final class HomeMapViewTests: XCTestCase {
                 olRouteSourceUpdateExpectation.fulfill()
             }
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops:
-            [MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
-             MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan],
+        let globalRepo: IGlobalRepository = MockGlobalRepository(response: .init(
+            lines: [:],
+            patternIdsByStop: [:],
             routes: [
                 MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange,
-            ])
+            ],
+            routePatterns: [:],
+            stops: [MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+                    MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan],
+            trips: [:]
+        ))
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
+            globalRepository: globalRepo,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -485,7 +425,6 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.directionId = 0
         }
 
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
             [.init(route: MapTestDataHelper.routeOrange, stop: stop,
@@ -504,7 +443,6 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: nearbyVM,
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -562,12 +500,10 @@ final class HomeMapViewTests: XCTestCase {
                 allRailRouteSourceUpdateExpectation.fulfill()
             }
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [stop.id: stop], routes: [:])
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -604,12 +540,10 @@ final class HomeMapViewTests: XCTestCase {
                 updateCameraExpectation.fulfill()
             }
         }
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend(), stops: [:], routes: [:])
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
         let sut = HomeMapView(
-            globalFetcher: globalFetcher,
             mapVM: .init(),
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -627,5 +561,102 @@ final class HomeMapViewTests: XCTestCase {
                                                               pitch: 0.0), timestamp: Date.now))
 
         wait(for: [updateCameraExpectation], timeout: 5)
+    }
+
+    func testLayersRestoredOnActive() throws {
+        let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
+        let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
+
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(),
+            railRouteShapeFetcher: .init(backend: IdleBackend()),
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0),
+            layerManager: FakeLayerManager(addLayersCallback: { addLayersCalledExpectation.fulfill() },
+                                           updateRouteSourceCallback: { _ in updateSourcesCalledExpectation.fulfill() })
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, addLayersCalledExpectation, updateSourcesCalledExpectation], timeout: 5)
+    }
+
+    func testLayersNotReInitWhenAlertsChanges() throws {
+        let addLayersNotCalledExpectation = XCTestExpectation(description: "Add layers not called")
+        addLayersNotCalledExpectation.isInverted = true
+        let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
+
+        let layerManager = FakeLayerManager(addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
+                                            updateRouteSourceCallback: { _ in
+                                                updateSourcesCalledExpectation.fulfill()
+                                            })
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(),
+            railRouteShapeFetcher: .init(backend: IdleBackend()),
+            vehiclesFetcher: .init(socket: MockSocket()),
+            viewportProvider: ViewportProvider(),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0),
+            layerManager: layerManager
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: GlobalMapData(mapStops: [:], alertsByStop: [:]))
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, addLayersNotCalledExpectation, updateSourcesCalledExpectation], timeout: 5)
+    }
+
+    class FakeLayerManager: IMapLayerManager {
+        var routeSourceGenerator: RouteSourceGenerator?
+        var routeLayerGenerator: RouteLayerGenerator?
+        var stopSourceGenerator: StopSourceGenerator?
+        var stopLayerGenerator: StopLayerGenerator?
+        var childStopSourceGenerator: ChildStopSourceGenerator?
+        var childStopLayerGenerator: ChildStopLayerGenerator?
+        private let addLayersCallback: () -> Void
+        private let updateRouteSourceCallback: (RouteSourceGenerator) -> Void
+
+        init(addLayersCallback: @escaping () -> Void = {},
+             updateRouteSourceCallback: @escaping (RouteSourceGenerator) -> Void = { _ in }) {
+            self.updateRouteSourceCallback = updateRouteSourceCallback
+            self.addLayersCallback = addLayersCallback
+        }
+
+        func addSources(
+            routeSourceGenerator _: RouteSourceGenerator,
+            stopSourceGenerator _: StopSourceGenerator,
+            childStopSourceGenerator _: ChildStopSourceGenerator
+        ) {}
+        func addLayers(
+            routeLayerGenerator _: RouteLayerGenerator,
+            stopLayerGenerator _: StopLayerGenerator,
+            childStopLayerGenerator _: ChildStopLayerGenerator
+        ) {
+            addLayersCallback()
+        }
+
+        func updateSourceData(
+            routeSourceGenerator: RouteSourceGenerator,
+            stopSourceGenerator _: StopSourceGenerator,
+            childStopSourceGenerator _: ChildStopSourceGenerator
+        ) {
+            updateRouteSourceCallback(routeSourceGenerator)
+        }
+
+        func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
+            updateRouteSourceCallback(routeSourceGenerator)
+        }
+
+        func updateSourceData(stopSourceGenerator _: StopSourceGenerator) {}
+        func updateSourceData(childStopSourceGenerator _: ChildStopSourceGenerator) {}
     }
 }

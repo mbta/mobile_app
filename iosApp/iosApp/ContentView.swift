@@ -1,3 +1,4 @@
+import AppcuesKit
 import CoreLocation
 import shared
 import SwiftPhoenixClient
@@ -7,9 +8,9 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let platform = Platform_iosKt.getPlatform().name
+    @EnvironmentObject var appcuesContainer: AppcuesContainer
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
-    @EnvironmentObject var globalFetcher: GlobalFetcher
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
@@ -34,6 +35,9 @@ struct ContentView: View {
                 SettingsPage()
                     .tag(SelectedTab.settings)
                     .tabItem { Label("Settings", systemImage: "gear") }
+                    .onAppear {
+                        appcuesContainer.appcues?.screen(title: "SettingsPage")
+                    }
             }
         } else {
             nearbyTab
@@ -49,7 +53,6 @@ struct ContentView: View {
         VStack {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
-                    globalFetcher: globalFetcher,
                     nearbyVM: nearbyVM,
                     viewportProvider: viewportProvider
                 )
@@ -79,7 +82,6 @@ struct ContentView: View {
                 Text("Location access state unknown")
             }
             HomeMapView(
-                globalFetcher: globalFetcher,
                 mapVM: mapVM,
                 nearbyVM: nearbyVM,
                 railRouteShapeFetcher: railRouteShapeFetcher,
@@ -108,12 +110,12 @@ struct ContentView: View {
                         switch entry {
                         case let .stopDetails(stop, _):
                             StopDetailsPage(
-                                globalFetcher: globalFetcher,
                                 viewportProvider: viewportProvider,
                                 stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                                 nearbyVM: nearbyVM
                             ).onAppear {
                                 visibleNearbySheet = entry
+                                appcuesContainer.appcues?.screen(title: "StopDetailsPage")
                             }
 
                         case let .tripDetails(
@@ -127,10 +129,11 @@ struct ContentView: View {
                                 tripId: tripId,
                                 vehicleId: vehicleId,
                                 target: target,
-                                globalFetcher: globalFetcher,
                                 nearbyVM: nearbyVM,
                                 mapVM: mapVM
                             ).onAppear {
+                                appcuesContainer.appcues?.screen(title: "TripDetailsPage")
+
                                 visibleNearbySheet = entry
                             }
 
@@ -138,6 +141,7 @@ struct ContentView: View {
                             nearbySheetContents
                                 .onAppear {
                                     visibleNearbySheet = entry
+                                    appcuesContainer.appcues?.screen(title: "NearbyTransitPage")
                                 }
                         }
                     }
@@ -158,9 +162,6 @@ struct ContentView: View {
         }
         .onAppear {
             socketProvider.socket.attach()
-            Task {
-                try await globalFetcher.getGlobalData()
-            }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {

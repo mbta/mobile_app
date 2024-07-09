@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
-import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,8 +26,8 @@ class HeadsignRowViewTest {
             "Headsign",
             RealtimePatterns.Format.Some(
                 listOf(
-                    RealtimePatterns.Format.Some.FormatWithId("a", UpcomingTrip.Format.Minutes(2)),
-                    RealtimePatterns.Format.Some.FormatWithId("b", UpcomingTrip.Format.Minutes(10)),
+                    RealtimePatterns.Format.Some.FormatWithId("a", TripInstantDisplay.Minutes(2)),
+                    RealtimePatterns.Format.Some.FormatWithId("b", TripInstantDisplay.Minutes(10)),
                 )
             )
         )
@@ -42,7 +42,7 @@ class HeadsignRowViewTest {
         init(
             "A Place",
             RealtimePatterns.Format.Some(
-                listOf(RealtimePatterns.Format.Some.FormatWithId("a", UpcomingTrip.Format.Boarding))
+                listOf(RealtimePatterns.Format.Some.FormatWithId("a", TripInstantDisplay.Boarding))
             )
         )
 
