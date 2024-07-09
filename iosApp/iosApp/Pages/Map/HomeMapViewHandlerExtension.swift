@@ -14,24 +14,6 @@ import SwiftUI
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
  */
 extension HomeMapView {
-    func handleTryLayerInit(map: MapboxMap?) {
-        guard let map,
-              let _ = globalData,
-              let _ = railRouteShapeFetcher.response,
-              let _ = globalMapData?.mapStops
-        else {
-            return
-        }
-
-        handleLayerInit(map)
-    }
-
-    func handleLayerInit(_ map: MapboxMap) {
-        let layerManager = MapLayerManager(map: map)
-        initializeLayers(layerManager)
-        self.layerManager = layerManager
-    }
-
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
@@ -55,6 +37,7 @@ extension HomeMapView {
 
     func handleGlobalMapDataChange(now: Date) {
         guard let globalData else { return }
+
         globalMapData = GlobalMapData(
             globalData: globalData,
             alertsByStop: GlobalMapData.companion.getAlertsByStop(

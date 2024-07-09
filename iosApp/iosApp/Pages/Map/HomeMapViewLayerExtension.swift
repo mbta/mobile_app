@@ -8,11 +8,30 @@
 
 import shared
 import SwiftUI
+@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for manipulating the layers displayed on the map.
  */
 extension HomeMapView {
+    func handleTryLayerInit(map: MapboxMap?) {
+        guard let map,
+              globalData != nil,
+              railRouteShapeFetcher.response != nil,
+              globalMapData?.mapStops != nil,
+              layerManager == nil
+        else {
+            return
+        }
+        handleLayerInit(map)
+    }
+
+    func handleLayerInit(_ map: MapboxMap) {
+        let layerManager = MapLayerManager(map: map)
+        initializeLayers(layerManager)
+        self.layerManager = layerManager
+    }
+
     func initializeLayers(_ layerManager: IMapLayerManager) {
         let routeSourceGenerator = RouteSourceGenerator(
             routeData: railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? [],
@@ -33,6 +52,10 @@ extension HomeMapView {
             childStopSourceGenerator: childStopSourceGenerator
         )
 
+        addLayers(layerManager)
+    }
+
+    func addLayers(_ layerManager: IMapLayerManager) {
         layerManager.addLayers(
             routeLayerGenerator: RouteLayerGenerator(),
             stopLayerGenerator: StopLayerGenerator(),
