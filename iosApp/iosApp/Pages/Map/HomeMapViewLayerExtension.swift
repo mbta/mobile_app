@@ -66,13 +66,13 @@ extension HomeMapView {
         _ departures: StopDetailsDepartures?
     ) {
         if let filter {
-            let filteredRouteWithShapes = filteredRouteShapesForStop(
+            let filteredShapes = filteredRouteShapesForStop(
                 stopMapData: stopMapData,
                 filter: filter,
                 departures: departures
             )
             let filteredSource = RouteSourceGenerator(
-                routeData: [filteredRouteWithShapes],
+                routeData: filteredShapes,
                 routesById: globalFetcher.routes,
                 stopsById: globalFetcher.stops,
                 alertsByStop: globalMapData?.alertsByStop ?? [:]
@@ -98,26 +98,42 @@ extension HomeMapView {
         stopMapData: StopMapResponse,
         filter: StopDetailsFilter,
         departures: StopDetailsDepartures?
-    ) -> MapFriendlyRouteResponse.RouteWithSegmentedShapes {
-        let targetRouteData = stopMapData.routeShapes.first { $0.routeId == filter.routeId }
-        if let targetRouteData {
+    ) -> [MapFriendlyRouteResponse.RouteWithSegmentedShapes] {
+        // TODO: When we switch to a more involved filter and pinning ID type system,
+        // this should be changed to be less hard coded and do this for any line
+        // (we'll then need to figure out how to get corresponding route ids for each)
+        let filterRoutes = filter.routeId == "line-Green" ?
+            Array(greenRoutes)
+            : [filter.routeId]
+        let targetRouteData = stopMapData.routeShapes.filter {
+            filterRoutes.contains($0.routeId)
+        }
+
+        if !targetRouteData.isEmpty {
             if let departures {
                 let upcomingRoutePatternIds: [String] = departures.routes
                     .flatMap { $0.allUpcomingTrips() }
                     .compactMap(\.trip.routePatternId)
                 let targetRoutePatternIds: Set<String> = Set(upcomingRoutePatternIds)
 
-                let filteredShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId &&
-                    targetRoutePatternIds.contains($0.sourceRoutePatternId)
+                return targetRouteData.map { routeData in
+                    let filteredShapes = routeData.segmentedShapes.filter {
+                        $0.directionId == filter.directionId &&
+                            targetRoutePatternIds.contains($0.sourceRoutePatternId)
+                    }
+                    return .init(routeId: routeData.routeId, segmentedShapes: filteredShapes)
                 }
-                return .init(routeId: filter.routeId, segmentedShapes: filteredShapes)
             } else {
-                let filteredShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId }
-                return .init(routeId: filter.routeId, segmentedShapes: filteredShapes)
+                return targetRouteData.map { routeData in
+                    let filteredShapes = routeData.segmentedShapes.filter {
+                        $0.directionId == filter.directionId
+                    }
+                    return .init(routeId: routeData.routeId, segmentedShapes: filteredShapes)
+                }
             }
         }
 
-        return .init(routeId: filter.routeId, segmentedShapes: [])
+        return [.init(routeId: filter.routeId, segmentedShapes: [])]
     }
 
     func updateGlobalMapDataSources() {
