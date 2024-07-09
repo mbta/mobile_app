@@ -98,11 +98,10 @@ extension HomeMapView {
                 case .error:
                     []
                 }
-                let routeSourceData = RouteSourceGenerator.shapesWithStopsToMapFriendly(
+                mapVM.routeSourceData = RouteSourceGenerator.shapesWithStopsToMapFriendly(
                     shapesWithStops,
                     globalData?.stops
                 )
-                mapVM.routeSourceData = routeSourceData
 
             } catch {
                 debugPrint(error)
