@@ -20,7 +20,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testFirstBoardingAccessibilityLabel() throws {
         let sut = UpcomingTripView(
-            prediction: .some(UpcomingTrip.FormatBoarding()),
+            prediction: .some(.Boarding()),
             routeType: .heavyRail,
             isFirst: true
         )
@@ -29,7 +29,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testBoardingAccessibilityLabel() throws {
         let sut = UpcomingTripView(
-            prediction: .some(UpcomingTrip.FormatBoarding()),
+            prediction: .some(.Boarding()),
             routeType: .heavyRail,
             isFirst: false
         )
@@ -38,7 +38,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testFirstArrivingAccessibilityLabel() throws {
         let sut = UpcomingTripView(
-            prediction: .some(UpcomingTrip.FormatArriving()),
+            prediction: .some(.Arriving()),
             routeType: .heavyRail,
             isFirst: true
         )
@@ -47,7 +47,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testArrivingAccessibilityLabel() throws {
         let sut = UpcomingTripView(
-            prediction: .some(UpcomingTrip.FormatArriving()),
+            prediction: .some(.Arriving()),
             routeType: .heavyRail,
             isFirst: false
         )
@@ -91,7 +91,7 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testFirstPredictedAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)),
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5)),
                                    routeType: .heavyRail,
                                    isFirst: true,
                                    isOnly: false)
@@ -103,7 +103,7 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testPredictedAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(UpcomingTrip.FormatMinutes(minutes: 5)), isFirst: false)
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5)), isFirst: false)
         let predictionView = try sut.inspect().find(PredictionText.self)
         XCTAssertEqual(
             "and in 5 min",
