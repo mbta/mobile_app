@@ -13,7 +13,7 @@ import shared
 class MapViewModel: ObservableObject {
     @Published var selectedVehicle: Vehicle?
     @Published var routeSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
-    @Published var stopSourceData: StopSourceData = .init(stopIds: [], selectedStopId: nil)
+    @Published var stopSourceData: StopSourceData = .init()
     @Published var stopMapData: StopMapResponse?
 
     @Published var allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
@@ -31,7 +31,6 @@ class MapViewModel: ObservableObject {
     }
 
     func updateStopSource(_ stopSource: GeoJSONSource) {
-        print("Updating stop source")
         layerManager?.updateSourceData(stopSource: stopSource)
     }
 }

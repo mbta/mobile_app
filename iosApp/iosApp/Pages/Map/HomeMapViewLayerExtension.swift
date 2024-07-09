@@ -43,7 +43,7 @@ extension HomeMapView {
                                                                             alertsByStop: globalMapData?.alertsByStop)
         mapVM.snappedStopRouteLines = snappedStopRouteLines
 
-        mapVM.stopSourceData = .init(stopIds: globalMapData?.stopIds() ?? [], selectedStopId: lastNavEntry?.stop()?.id)
+        mapVM.stopSourceData = .init(filteredStopIds: nil, selectedStopId: lastNavEntry?.stop()?.id)
 
         let childStopSourceGenerator = ChildStopSourceGenerator(childStops: nil)
 
@@ -63,8 +63,7 @@ extension HomeMapView {
     }
 
     func resetDefaultSources() {
-        let stopIds: Set<String> = globalMapData?.stopIds() ?? []
-        mapVM.stopSourceData = .init(stopIds: stopIds, selectedStopId: nil)
+        mapVM.stopSourceData = .init(filteredStopIds: nil, selectedStopId: nil)
         mapVM.routeSourceData = mapVM.allRailSourceData
         let updatedChildStopSources = ChildStopSourceGenerator(childStops: nil)
         mapVM.layerManager?.updateSourceData(

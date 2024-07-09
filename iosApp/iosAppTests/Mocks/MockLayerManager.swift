@@ -26,7 +26,6 @@ class MockLayerManager: IMapLayerManager {
     }
 
     func addSources(
-        stopSourceGenerator _: StopSourceGenerator,
         childStopSourceGenerator _: ChildStopSourceGenerator
     ) {}
     func addLayers(
@@ -37,15 +36,10 @@ class MockLayerManager: IMapLayerManager {
         addLayersCallback()
     }
 
-    func updateSourceData(
-        stopSourceGenerator _: StopSourceGenerator,
-        childStopSourceGenerator _: ChildStopSourceGenerator
-    ) {}
-
     func updateSourceData(routeSource: GeoJSONSource) {
         updateRouteSourceCallback(routeSource)
     }
 
-    func updateSourceData(stopSourceGenerator _: StopSourceGenerator) {}
+    func updateSourceData(stopSource _: GeoJSONSource) {}
     func updateSourceData(childStopSourceGenerator _: ChildStopSourceGenerator) {}
 }

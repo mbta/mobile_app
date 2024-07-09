@@ -63,22 +63,53 @@ final class StopSourceGeneratorTests: XCTestCase {
             stop.parentStationId = "place-andrw"
         }
 
-        let stopSourceGenerator = StopSourceGenerator(stops: [
-            stop1.id: .init(stop: stop1, routes: [:], routeTypes: [MapStopRoute.blue], isTerminal: false, alerts: nil),
-            stop2.id: .init(stop: stop2, routes: [:], routeTypes: [MapStopRoute.green], isTerminal: false, alerts: nil),
-            stop3.id: .init(
-                stop: stop3,
-                routes: [:],
-                routeTypes: [MapStopRoute.red, MapStopRoute.mattapan, MapStopRoute.bus],
-                isTerminal: false,
-                alerts: nil
-            ),
-            stop4.id: .init(stop: stop4, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false, alerts: nil),
-            stop5.id: .init(stop: stop5, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false, alerts: nil),
-            stop6.id: .init(stop: stop6, routes: [:], routeTypes: [MapStopRoute.bus], isTerminal: false, alerts: nil),
-        ])
-        let source = stopSourceGenerator.stopSource
-
+        let source = StopSourceGenerator.generateStopSource(
+            stopData: .init(filteredStopIds: nil, selectedStopId: nil),
+            stops: [
+                stop1.id: .init(
+                    stop: stop1,
+                    routes: [:],
+                    routeTypes: [MapStopRoute.blue],
+                    isTerminal: false,
+                    alerts: nil
+                ),
+                stop2.id: .init(
+                    stop: stop2,
+                    routes: [:],
+                    routeTypes: [MapStopRoute.green],
+                    isTerminal: false,
+                    alerts: nil
+                ),
+                stop3.id: .init(
+                    stop: stop3,
+                    routes: [:],
+                    routeTypes: [MapStopRoute.red, MapStopRoute.mattapan, MapStopRoute.bus],
+                    isTerminal: false,
+                    alerts: nil
+                ),
+                stop4.id: .init(
+                    stop: stop4,
+                    routes: [:],
+                    routeTypes: [MapStopRoute.bus],
+                    isTerminal: false,
+                    alerts: nil
+                ),
+                stop5.id: .init(
+                    stop: stop5,
+                    routes: [:],
+                    routeTypes: [MapStopRoute.bus],
+                    isTerminal: false,
+                    alerts: nil
+                ),
+                stop6.id: .init(
+                    stop: stop6,
+                    routes: [:],
+                    routeTypes: [MapStopRoute.bus],
+                    isTerminal: false,
+                    alerts: nil
+                ),
+            ], linesToSnap: []
+        )
         XCTAssertEqual(source.id, StopSourceGenerator.stopSourceId)
 
         XCTAssertNotNil(source)
@@ -104,11 +135,9 @@ final class StopSourceGeneratorTests: XCTestCase {
             stopsById: stops.mapValues { mapStop in mapStop.stop },
             alertsByStop: [:]
         )
-        let stopSourceGenerator = StopSourceGenerator(
-            stops: stops,
-            routeLines: routeLines
-        )
-        let source = stopSourceGenerator.stopSource
+        let source = StopSourceGenerator.generateStopSource(stopData: .init(),
+                                                            stops: stops,
+                                                            linesToSnap: routeLines)
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.3961623851223, longitude: -71.14129664101432)
 
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
@@ -143,8 +172,13 @@ final class StopSourceGeneratorTests: XCTestCase {
             stop.childStopIds = []
         }
 
-        let stopSourceGenerator = StopSourceGenerator(
-            stops: [selectedStop.id: selectedStop, otherStop.id: otherStop].mapValues { stop in
+        let source = StopSourceGenerator.generateStopSource(stopData:
+            .init(filteredStopIds: nil,
+                  selectedStopId: selectedStop.id),
+            stops: [
+                selectedStop.id: selectedStop,
+                otherStop.id: otherStop,
+            ].mapValues { stop in
                 MapStop(
                     stop: stop,
                     routes: [.red: [MapTestDataHelper.routeRed]],
@@ -153,11 +187,8 @@ final class StopSourceGeneratorTests: XCTestCase {
                     alerts: nil
                 )
             },
-            selectedStop: selectedStop,
-            routeLines: []
-        )
+            linesToSnap: [])
 
-        let source = stopSourceGenerator.stopSource
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
 
@@ -213,7 +244,8 @@ final class StopSourceGeneratorTests: XCTestCase {
             },
         ]
 
-        let stopSourceGenerator = StopSourceGenerator(
+        let source = StopSourceGenerator.generateStopSource(
+            stopData: .init(),
             stops: [
                 "70061": .init(
                     stop: stops["70061"]!,
@@ -236,9 +268,9 @@ final class StopSourceGeneratorTests: XCTestCase {
                     isTerminal: false,
                     alerts: [.orange: .suspension]
                 ),
-            ]
+            ],
+            linesToSnap: []
         )
-        let source = stopSourceGenerator.stopSource
 
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
@@ -277,12 +309,12 @@ final class StopSourceGeneratorTests: XCTestCase {
             stopsById: stops.mapValues { mapStop in mapStop.stop },
             alertsByStop: [:]
         )
-        let stopSourceGenerator = StopSourceGenerator(
+        let source = StopSourceGenerator.generateStopSource(
+            stopData: .init(),
             stops: stops,
-            routeLines: routeLines
+            linesToSnap: routeLines
         )
 
-        let source = stopSourceGenerator.stopSource
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 4)
             guard let assemblyFeature = collection.features.first(where: { feat in
@@ -330,9 +362,10 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
         ]
 
-        let stopSourceGenerator = StopSourceGenerator(stops: stops)
+        let source = StopSourceGenerator.generateStopSource(stopData: .init(),
+                                                            stops: stops,
+                                                            linesToSnap: [])
 
-        let source = stopSourceGenerator.stopSource
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
             guard let assemblyFeature = collection.features.first(where: { feat in
@@ -371,9 +404,10 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopDavis,
         ]
 
-        let stopSourceGenerator = StopSourceGenerator(stops: stops)
+        let source = StopSourceGenerator.generateStopSource(stopData: .init(),
+                                                            stops: stops,
+                                                            linesToSnap: [])
 
-        let source = stopSourceGenerator.stopSource
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
             guard let alewifeFeature = collection.features.first(where: { feat in

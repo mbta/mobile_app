@@ -110,7 +110,7 @@ extension HomeMapView {
     }
 
     func handleStopDetailsChange(_ stop: Stop, _ filter: StopDetailsFilter?) {
-        mapVM.stopSourceData = .init(stopIds: globalMapData?.stopIds() ?? [], selectedStopId: stop.id)
+        mapVM.stopSourceData = .init(filteredStopIds: nil, selectedStopId: stop.id)
         viewportProvider.animateTo(coordinates: stop.coordinate, zoom: 17.0)
 
         Task {
