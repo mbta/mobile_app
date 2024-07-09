@@ -192,7 +192,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertEqual(mapVM.stopSourceData, .init())
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
-            XCTAssertEqual(mapVM.stopSourceData, .init(filteredStopIds: nil, selectedStopId: stop.id))
+            XCTAssertEqual(mapVM.stopSourceData, .init(selectedStopId: stop.id))
         }
 
         ViewHosting.host(view: sut)
@@ -689,7 +689,7 @@ final class HomeMapViewTests: XCTestCase {
             updateStopSourcesCalledExpectation.fulfill()
         })
 
-        let stopData: StopSourceData = .init(filteredStopIds: ["stop1", "stop2"], selectedStopId: "stop1")
+        let stopData: StopSourceData = .init(selectedStopId: "stop1")
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),

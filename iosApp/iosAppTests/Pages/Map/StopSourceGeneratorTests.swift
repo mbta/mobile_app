@@ -64,7 +64,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
 
         let source = StopSourceGenerator.generateStopSource(
-            stopData: .init(filteredStopIds: nil, selectedStopId: nil),
+            stopData: .init(selectedStopId: nil),
             stops: [
                 stop1.id: .init(
                     stop: stop1,
@@ -173,8 +173,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
 
         let source = StopSourceGenerator.generateStopSource(stopData:
-            .init(filteredStopIds: nil,
-                  selectedStopId: selectedStop.id),
+            .init(selectedStopId: selectedStop.id),
             stops: [
                 selectedStop.id: selectedStop,
                 otherStop.id: otherStop,
