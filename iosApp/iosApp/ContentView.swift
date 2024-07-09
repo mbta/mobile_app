@@ -1,3 +1,4 @@
+import AppcuesKit
 import CoreLocation
 import shared
 import SwiftPhoenixClient
@@ -7,6 +8,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let platform = Platform_iosKt.getPlatform().name
+    @EnvironmentObject var appcuesContainer: AppcuesContainer
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
@@ -33,6 +35,9 @@ struct ContentView: View {
                 SettingsPage()
                     .tag(SelectedTab.settings)
                     .tabItem { Label("Settings", systemImage: "gear") }
+                    .onAppear {
+                        appcuesContainer.appcues?.screen(title: "SettingsPage")
+                    }
             }
         } else {
             nearbyTab
@@ -110,6 +115,7 @@ struct ContentView: View {
                                 nearbyVM: nearbyVM
                             ).onAppear {
                                 visibleNearbySheet = entry
+                                appcuesContainer.appcues?.screen(title: "StopDetailsPage")
                             }
 
                         case let .tripDetails(
@@ -126,6 +132,8 @@ struct ContentView: View {
                                 nearbyVM: nearbyVM,
                                 mapVM: mapVM
                             ).onAppear {
+                                appcuesContainer.appcues?.screen(title: "TripDetailsPage")
+
                                 visibleNearbySheet = entry
                             }
 
@@ -133,6 +141,7 @@ struct ContentView: View {
                             nearbySheetContents
                                 .onAppear {
                                     visibleNearbySheet = entry
+                                    appcuesContainer.appcues?.screen(title: "NearbyTransitPage")
                                 }
                         }
                     }
