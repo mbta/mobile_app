@@ -190,9 +190,7 @@ enum RouteSourceGenerator {
 
     static func forRailAtStop(_ stopShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
                               _ railShapes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
-                              _ routesById: [String: Route]?,
-                              _: [String: Stop]?,
-                              _: [String: AlertAssociatedStop]?)
+                              _ routesById: [String: Route]?)
         -> [MapFriendlyRouteResponse.RouteWithSegmentedShapes] {
         let stopRailRouteIds: Set<String> = Set(stopShapes.filter { routeWithShape in
             let maybeRouteType = routesById?[routeWithShape.routeId]?.type

@@ -94,9 +94,7 @@ extension HomeMapView {
         } else {
             mapVM.routeSourceData = RouteSourceGenerator.forRailAtStop(stopMapData.routeShapes,
                                                                        mapVM.allRailSourceData,
-                                                                       globalData?.routes,
-                                                                       globalData?.stops,
-                                                                       globalMapData?.alertsByStop)
+                                                                       globalData?.routes)
         }
 
         let childStopSource = ChildStopSourceGenerator(childStops: stopMapData.childStops)
@@ -154,12 +152,7 @@ extension HomeMapView {
         mapVM.layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
         // If routes are already being displayed, keep using those. Otherwise, use the rail shapes
         let routeData = mapVM.routeSourceData
-        mapVM.updateRouteSource(routeLines: RouteSourceGenerator.generateRouteLines(
-            routeData: routeData,
-            routesById: globalData?.routes,
-            stopsById: globalData?.stops,
-            alertsByStop: globalMapData?.alertsByStop
-        ))
+        updateRouteSources(routeData: routeData)
     }
 
     func updateRouteSources(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]) {
