@@ -16,6 +16,7 @@ struct StopFeatureData {
 }
 
 struct StopSourceData: Equatable {
+    var filteredStopIds: [String]?
     var selectedStopId: String?
 }
 
@@ -38,7 +39,12 @@ enum StopSourceGenerator {
         stops: [String: MapStop],
         linesToSnap: [RouteLineData]
     ) -> GeoJSONSource {
-        let stopFeatures = generateStopFeatures(stopData, stops, linesToSnap)
+        let filteredStops = if let filteredStopIds = stopData.filteredStopIds {
+            stops.filter { filteredStopIds.contains($0.key) }
+        } else {
+            stops
+        }
+        let stopFeatures = generateStopFeatures(stopData, filteredStops, linesToSnap)
         return generateStopSource(stopFeatures: stopFeatures)
     }
 

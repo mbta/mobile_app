@@ -32,6 +32,7 @@ final class HomeMapViewTests: XCTestCase {
         ],
         routePatterns: [:],
         stops: [MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
+                MapTestDataHelper.stopAssemblyChild.id: MapTestDataHelper.stopAssemblyChild,
                 MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
                 MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter],
         trips: [:]
@@ -414,7 +415,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testUpdatesRouteSourceWhenTripSelected() throws {
+    func testUpdatesSourcesWhenTripSelected() throws {
         let tripShapeLoadSubject = PassthroughSubject<Void, Never>()
 
         class FakeTripRepository: IdleTripRepository {
@@ -430,7 +431,7 @@ final class HomeMapViewTests: XCTestCase {
                                                                      routePatternId: MapTestDataHelper.patternOrange30
                                                                          .id,
                                                                      shape: MapTestDataHelper.shapeOrangeC1,
-                                                                     stopIds: [MapTestDataHelper.stopAssembly.id,
+                                                                     stopIds: [MapTestDataHelper.stopAssemblyChild.id,
                                                                                MapTestDataHelper.stopSullivan.id])))
             }
         }
@@ -459,13 +460,15 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            let newNavStackEntry: SheetNavigationStackEntry = .tripDetails(tripId: "ol_trip_id",
-                                                                           vehicleId: "vehicle",
-                                                                           target: nil,
-                                                                           routeId: MapTestDataHelper.routeOrange.id,
-                                                                           directionId: MapTestDataHelper
-                                                                               .patternOrange30
-                                                                               .directionId)
+            let newNavStackEntry: SheetNavigationStackEntry =
+                .tripDetails(tripId: "ol_trip_id",
+                             vehicleId: "vehicle",
+                             target: .init(stopId: MapTestDataHelper.stopSullivan.id,
+                                           stopSequence: 0),
+                             routeId: MapTestDataHelper.routeOrange.id,
+                             directionId: MapTestDataHelper
+                                 .patternOrange30
+                                 .directionId)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
@@ -477,8 +480,14 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertNil(mapVM.childStops)
         }
 
+        let stopDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 0.2) { _ in
+            XCTAssertEqual(mapVM.stopSourceData, .init(filteredStopIds: [MapTestDataHelper.stopAssembly.id,
+                                                                         MapTestDataHelper.stopSullivan.id],
+                                                       selectedStopId: MapTestDataHelper.stopSullivan.id))
+        }
+
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, routeDataSet], timeout: 5)
+        wait(for: [hasAppeared, routeDataSet, stopDataSet], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
