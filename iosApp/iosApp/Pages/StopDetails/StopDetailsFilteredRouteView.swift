@@ -16,6 +16,7 @@ struct StopDetailsFilteredRouteView: View {
     let now: Instant
     @Binding var filter: StopDetailsFilter?
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let pinned: Bool
 
     struct RowData {
         let tripId: String
@@ -53,15 +54,20 @@ struct StopDetailsFilteredRouteView: View {
 
     let rows: [RowData]
 
-    init(departures: StopDetailsDepartures, now: Instant, filter filterBinding: Binding<StopDetailsFilter?>,
-         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void) {
+    init(
+        departures: StopDetailsDepartures,
+        now: Instant,
+        filter filterBinding: Binding<StopDetailsFilter?>,
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
+        pinned: Bool
+    ) {
         _filter = filterBinding
         let filter = filterBinding.wrappedValue
         let patternsByStop = departures.routes.first(where: { $0.routeIdentifier == filter?.routeId })
         self.patternsByStop = patternsByStop
         self.now = now
         self.pushNavEntry = pushNavEntry
-
+        self.pinned = pinned
         let expectedDirection: Int32? = filter?.directionId
         if let patternsByStop {
             rows = patternsByStop.allUpcomingTrips().compactMap { upcoming in
@@ -114,7 +120,8 @@ struct StopDetailsFilteredRouteView: View {
                                             pushNavEntry(entry)
                                             analytics.tappedDepartureRow(
                                                 routeId: patternsByStop.routeIdentifier,
-                                                stopId: patternsByStop.stop.id
+                                                stopId: patternsByStop.stop.id,
+                                                pinned: pinned
                                             )
                                         }) {
                                             HeadsignRowView(

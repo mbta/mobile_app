@@ -882,7 +882,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
             ),
             now: Date.now.toKotlinInstant(),
-            pushNavEntry: pushNavEntry
+            pushNavEntry: pushNavEntry,
+            pinned: false
         )
 
         try sut.inspect().find(DestinationRowView.self).parent().parent().parent().button().tap()
