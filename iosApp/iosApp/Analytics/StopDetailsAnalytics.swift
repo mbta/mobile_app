@@ -10,17 +10,18 @@ import FirebaseAnalytics
 import Foundation
 
 protocol StopDetailsAnalytics {
-    func tappedDepartureRow(routeId: String, stopId: String)
+    func tappedDepartureRow(routeId: String, stopId: String, pinned: Bool)
     func tappedRouteFilter(routeId: String, stopId: String)
 }
 
 extension AnalyticsProvider: StopDetailsAnalytics {
-    func tappedDepartureRow(routeId: String, stopId: String) {
+    func tappedDepartureRow(routeId: String, stopId: String, pinned: Bool) {
         logEvent(
             "tapped_departure",
             parameters: [
                 "route_id": routeId,
                 "stop_id": stopId,
+                "pinned": pinned,
             ]
         )
     }

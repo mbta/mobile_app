@@ -164,7 +164,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             departures: data.departures,
             now: data.now,
             filter: .constant(.init(routeId: data.routeId, directionId: 0)),
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            pinned: false
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "North"))
@@ -178,7 +179,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             departures: data.departures,
             now: data.now,
             filter: .constant(.init(routeId: data.lineId, directionId: 0)),
-            pushNavEntry: { _ in }
+            pushNavEntry: { _ in },
+            pinned: false
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Trunk 1"))
@@ -209,7 +211,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             departures: data.departures,
             now: data.now,
             filter: .constant(.init(routeId: data.routeId, directionId: 0)),
-            pushNavEntry: pushNavEntry
+            pushNavEntry: pushNavEntry,
+            pinned: false
         )
 
         try sut.inspect().find(button: "North").tap()

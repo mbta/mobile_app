@@ -8,7 +8,6 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let platform = Platform_iosKt.getPlatform().name
-    @EnvironmentObject var appcuesContainer: AppcuesContainer
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
@@ -18,6 +17,7 @@ struct ContentView: View {
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var nearbyVM: NearbyViewModel = .init()
     @StateObject var mapVM = MapViewModel()
+    var screenTracker: ScreenTracker = AnalyticsProvider()
 
     private enum SelectedTab: Hashable {
         case nearby
@@ -36,7 +36,7 @@ struct ContentView: View {
                     .tag(SelectedTab.settings)
                     .tabItem { Label("Settings", systemImage: "gear") }
                     .onAppear {
-                        appcuesContainer.appcues?.screen(title: "SettingsPage")
+                        screenTracker.track(screen: .settings)
                     }
             }
         } else {
@@ -115,7 +115,7 @@ struct ContentView: View {
                                 nearbyVM: nearbyVM
                             ).onAppear {
                                 visibleNearbySheet = entry
-                                appcuesContainer.appcues?.screen(title: "StopDetailsPage")
+                                screenTracker.track(screen: .stopDetails)
                             }
 
                         case let .tripDetails(
@@ -132,8 +132,7 @@ struct ContentView: View {
                                 nearbyVM: nearbyVM,
                                 mapVM: mapVM
                             ).onAppear {
-                                appcuesContainer.appcues?.screen(title: "TripDetailsPage")
-
+                                screenTracker.track(screen: .tripDetails)
                                 visibleNearbySheet = entry
                             }
 
@@ -141,7 +140,7 @@ struct ContentView: View {
                             nearbySheetContents
                                 .onAppear {
                                     visibleNearbySheet = entry
-                                    appcuesContainer.appcues?.screen(title: "NearbyTransitPage")
+                                    screenTracker.track(screen: .nearbyTransit)
                                 }
                         }
                     }

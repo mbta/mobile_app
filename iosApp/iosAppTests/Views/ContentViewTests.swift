@@ -36,7 +36,6 @@ final class ContentViewTests: XCTestCase {
                                                     disconnectedExpectation: disconnectedExpectation)
 
         let sut = ContentView()
-            .environmentObject(AppcuesContainer(appcues: nil))
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
@@ -62,7 +61,6 @@ final class ContentViewTests: XCTestCase {
                                                     disconnectedExpectation: disconnectedExpectation)
 
         let sut = ContentView()
-            .environmentObject(AppcuesContainer(appcues: nil))
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
