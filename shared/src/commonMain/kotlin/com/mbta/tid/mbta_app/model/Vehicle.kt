@@ -9,6 +9,7 @@ data class Vehicle(
     override val id: String,
     val bearing: Double?,
     @SerialName("current_status") val currentStatus: CurrentStatus,
+    @SerialName("current_stop_sequence") val currentStopSequence: Int?,
     @SerialName("direction_id") val directionId: Int,
     val latitude: Double,
     val longitude: Double,

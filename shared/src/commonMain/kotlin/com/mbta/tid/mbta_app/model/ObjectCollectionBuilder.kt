@@ -316,6 +316,7 @@ class ObjectCollectionBuilder {
         var id: String = uuid()
         var bearing = 0.0
         lateinit var currentStatus: Vehicle.CurrentStatus
+        var currentStopSequence: Int? = null
         var directionId = 0
         var latitude = 1.2
         var longitude = 3.4
@@ -329,6 +330,7 @@ class ObjectCollectionBuilder {
                 id,
                 bearing,
                 currentStatus,
+                currentStopSequence,
                 directionId,
                 latitude,
                 longitude,
