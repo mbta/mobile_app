@@ -26,4 +26,28 @@ final class MapViewModelTests: XCTestCase {
 
         wait(for: [updateRouteSourceCalled], timeout: 1)
     }
+
+    func testShapeFiltering() {
+        let basicMapResponse = StopMapResponse(
+            routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            childStops: [:]
+        )
+        let filteredShapes = MapViewModel.filteredRouteShapesForStop(
+            stopMapData: basicMapResponse,
+            filter: .init(
+                routeId: MapTestDataHelper.routeRed.id,
+                directionId: MapTestDataHelper.patternRed10.directionId
+            ),
+            departures: nil
+        )
+        XCTAssertEqual(filteredShapes.count, 1)
+
+        let glFilteredShapes = MapViewModel.filteredRouteShapesForStop(
+            stopMapData: GreenLineHelper.stopMapResponse,
+            filter: .init(routeId: "line-Green", directionId: 0),
+            departures: nil
+        )
+        XCTAssertEqual(glFilteredShapes.count, 3)
+        XCTAssertEqual(glFilteredShapes[0].segmentedShapes.count, 1)
+    }
 }

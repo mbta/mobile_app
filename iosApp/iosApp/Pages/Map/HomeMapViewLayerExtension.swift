@@ -86,14 +86,11 @@ extension HomeMapView {
         _ departures: StopDetailsDepartures?
     ) {
         if let filter {
-            let filteredRouteWithShapes = filteredRouteShapesForStop(
+            mapVM.routeSourceData = MapViewModel.filteredRouteShapesForStop(
                 stopMapData: stopMapData,
                 filter: filter,
                 departures: departures
             )
-
-            mapVM.routeSourceData = [filteredRouteWithShapes]
-
         } else {
             mapVM.routeSourceData = RouteSourceGenerator.forRailAtStop(stopMapData.routeShapes,
                                                                        mapVM.allRailSourceData,
@@ -102,32 +99,6 @@ extension HomeMapView {
 
         let childStopSource = ChildStopSourceGenerator(childStops: stopMapData.childStops)
         mapVM.layerManager?.updateSourceData(childStopSourceGenerator: childStopSource)
-    }
-
-    func filteredRouteShapesForStop(
-        stopMapData: StopMapResponse,
-        filter: StopDetailsFilter,
-        departures: StopDetailsDepartures?
-    ) -> MapFriendlyRouteResponse.RouteWithSegmentedShapes {
-        let targetRouteData = stopMapData.routeShapes.first { $0.routeId == filter.routeId }
-        if let targetRouteData {
-            if let departures {
-                let upcomingRoutePatternIds: [String] = departures.routes
-                    .flatMap { $0.allUpcomingTrips() }
-                    .compactMap(\.trip.routePatternId)
-                let targetRoutePatternIds: Set<String> = Set(upcomingRoutePatternIds)
-
-                let filteredShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId &&
-                    targetRoutePatternIds.contains($0.sourceRoutePatternId)
-                }
-                return .init(routeId: filter.routeId, segmentedShapes: filteredShapes)
-            } else {
-                let filteredShapes = targetRouteData.segmentedShapes.filter { $0.directionId == filter.directionId }
-                return .init(routeId: filter.routeId, segmentedShapes: filteredShapes)
-            }
-        }
-
-        return .init(routeId: filter.routeId, segmentedShapes: [])
     }
 
     func updateGlobalMapDataSources() {
