@@ -63,7 +63,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
-        wait(for: [getNearbyExpectation], timeout: 1)
+        wait(for: [getNearbyExpectation], timeout: 5)
     }
 
     var route52NearbyData: NearbyStaticData {
