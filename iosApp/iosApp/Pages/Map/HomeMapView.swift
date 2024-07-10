@@ -31,7 +31,6 @@ struct HomeMapView: View {
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
-    @State var layerManager: IMapLayerManager?
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State var lastNavEntry: SheetNavigationStackEntry?
@@ -55,8 +54,7 @@ struct HomeMapView: View {
         stopRepository: IStopRepository = RepositoryDI().stop,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         sheetHeight: Binding<CGFloat>,
-        globalMapData: GlobalMapData? = nil,
-        layerManager: IMapLayerManager? = nil
+        globalMapData: GlobalMapData? = nil
     ) {
         self.globalRepository = globalRepository
         self.mapVM = mapVM
@@ -68,7 +66,6 @@ struct HomeMapView: View {
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
         _globalMapData = State(wrappedValue: globalMapData)
-        _layerManager = State(wrappedValue: layerManager)
     }
 
     var body: some View {
@@ -93,6 +90,9 @@ struct HomeMapView: View {
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
             }
+            .onChange(of: mapVM.routeSourceData) { routeData in
+                updateRouteSources(routeData: routeData)
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 guard isManuallyCentering else { return }
@@ -104,7 +104,7 @@ struct HomeMapView: View {
             }
             .withScenePhaseHandlers(onActive: {
                 // Layers are removed when the app is backgrounded, add them back.
-                if let layerManager {
+                if let layerManager = mapVM.layerManager {
                     addLayers(layerManager)
                     updateGlobalMapDataSources()
                 }

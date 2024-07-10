@@ -12,13 +12,11 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
-    var routeSourceGenerator: RouteSourceGenerator? { get }
     var routeLayerGenerator: RouteLayerGenerator? { get }
     var stopSourceGenerator: StopSourceGenerator? { get }
     var stopLayerGenerator: StopLayerGenerator? { get }
 
     func addSources(
-        routeSourceGenerator: RouteSourceGenerator,
         stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     )
@@ -28,11 +26,10 @@ protocol IMapLayerManager {
         childStopLayerGenerator: ChildStopLayerGenerator
     )
     func updateSourceData(
-        routeSourceGenerator: RouteSourceGenerator,
         stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     )
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator)
+    func updateSourceData(routeSource: GeoJSONSource)
     func updateSourceData(stopSourceGenerator: StopSourceGenerator)
     func updateSourceData(childStopSourceGenerator: ChildStopSourceGenerator)
 }
@@ -41,7 +38,6 @@ struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
-    var routeSourceGenerator: RouteSourceGenerator?
     var routeLayerGenerator: RouteLayerGenerator?
     var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
@@ -62,15 +58,12 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addSources(
-        routeSourceGenerator: RouteSourceGenerator,
         stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     ) {
-        self.routeSourceGenerator = routeSourceGenerator
         self.stopSourceGenerator = stopSourceGenerator
         self.childStopSourceGenerator = childStopSourceGenerator
 
-        updateSourceData(source: routeSourceGenerator.routeSource)
         updateSourceData(source: stopSourceGenerator.stopSource)
         updateSourceData(source: childStopSourceGenerator.childStopSource)
     }
@@ -120,9 +113,8 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
-        self.routeSourceGenerator = routeSourceGenerator
-        updateSourceData(source: routeSourceGenerator.routeSource)
+    func updateSourceData(routeSource: GeoJSONSource) {
+        updateSourceData(source: routeSource)
     }
 
     func updateSourceData(stopSourceGenerator: StopSourceGenerator) {
@@ -136,11 +128,9 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(
-        routeSourceGenerator: RouteSourceGenerator,
         stopSourceGenerator: StopSourceGenerator,
         childStopSourceGenerator: ChildStopSourceGenerator
     ) {
-        updateSourceData(routeSourceGenerator: routeSourceGenerator)
         updateSourceData(stopSourceGenerator: stopSourceGenerator)
         updateSourceData(childStopSourceGenerator: childStopSourceGenerator)
     }

@@ -98,7 +98,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(
+        let routeLines = RouteSourceGenerator.generateRouteLines(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: stops.mapValues { mapStop in mapStop.stop },
@@ -106,7 +106,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         )
         let stopSourceGenerator = StopSourceGenerator(
             stops: stops,
-            routeLines: routeSourceGenerator.routeLines
+            routeLines: routeLines
         )
         let source = stopSourceGenerator.stopSource
         let snappedStopCoordinates = CLLocationCoordinate2D(latitude: 42.3961623851223, longitude: -71.14129664101432)
@@ -271,7 +271,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
         ]
 
-        let routeSourceGenerator = RouteSourceGenerator(
+        let routeLines = RouteSourceGenerator.generateRouteLines(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: stops.mapValues { mapStop in mapStop.stop },
@@ -279,7 +279,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         )
         let stopSourceGenerator = StopSourceGenerator(
             stops: stops,
-            routeLines: routeSourceGenerator.routeLines
+            routeLines: routeLines
         )
 
         let source = stopSourceGenerator.stopSource
