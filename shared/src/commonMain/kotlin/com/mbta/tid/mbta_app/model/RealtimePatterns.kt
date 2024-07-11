@@ -156,24 +156,25 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             { it.patterns.first() }
         )
 
-    fun format(now: Instant): Format {
+    fun format(now: Instant, context: TripInstantDisplay.Context): Format {
         return this.format(
             now,
             when (this) {
                 is ByHeadsign -> 2
                 is ByDirection -> 3
-            }
+            },
+            context
         )
     }
 
-    fun format(now: Instant, count: Int): Format {
+    fun format(now: Instant, count: Int, context: TripInstantDisplay.Context): Format {
         val alert = alertsHere?.firstOrNull()
         if (alert != null) return Format.NoService(alert)
         if (this.upcomingTrips == null) return Format.Loading
         val allTrips = upcomingTrips ?: emptyList()
         val tripsToShow =
             allTrips
-                .map { Format.Some.FormatWithId(it, now) }
+                .map { Format.Some.FormatWithId(it, now, context) }
                 .filterNot {
                     it.format is TripInstantDisplay.Hidden ||
                         it.format is TripInstantDisplay.Skipped ||
@@ -252,7 +253,11 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
 
         data class Some(val trips: List<FormatWithId>) : Format() {
             data class FormatWithId(val id: String, val format: TripInstantDisplay) {
-                constructor(trip: UpcomingTrip, now: Instant) : this(trip.trip.id, trip.format(now))
+                constructor(
+                    trip: UpcomingTrip,
+                    now: Instant,
+                    context: TripInstantDisplay.Context
+                ) : this(trip.trip.id, trip.format(now, context))
             }
         }
 

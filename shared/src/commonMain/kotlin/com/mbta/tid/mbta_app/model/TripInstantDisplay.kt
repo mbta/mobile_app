@@ -28,14 +28,22 @@ sealed class TripInstantDisplay {
 
     data class Minutes(val minutes: Int) : TripInstantDisplay()
 
+    enum class Context {
+        NearbyTransit,
+        StopDetailsUnfiltered,
+        StopDetailsFiltered,
+        TripDetails,
+    }
+
     companion object {
         fun from(
             prediction: Prediction?,
             schedule: com.mbta.tid.mbta_app.model.Schedule?,
             vehicle: Vehicle?,
             now: Instant,
-            allowArrivalOnly: Boolean
+            context: Context
         ): TripInstantDisplay {
+            val allowArrivalOnly = context == Context.TripDetails
             prediction?.status?.let {
                 return Overridden(it)
             }
