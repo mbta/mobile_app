@@ -77,19 +77,22 @@ extension HomeMapView {
             } else {
                 handleStopDetailsChange(stop, filter)
             }
-        } else {
-            clearSelectedStop()
         }
 
-        if case let .tripDetails(tripId: tripId, vehicleId: _, target: _, routeId: _, directionId: _) = nextNavEntry {
-            handleTripDetailsChange(tripId)
+        if case let .tripDetails(tripId: tripId,
+                                 vehicleId: _,
+                                 target: target,
+                                 routeId: _,
+                                 directionId: _) = nextNavEntry {
+            handleTripDetailsChange(tripId, target?.stopId)
         }
         if nextNavEntry == nil {
+            clearSelectedStop()
             viewportProvider.restoreNearbyTransitViewport()
         }
     }
 
-    func handleTripDetailsChange(_ tripId: String) {
+    func handleTripDetailsChange(_ tripId: String, _ targetStopId: String?) {
         Task {
             do {
                 let response: ApiResult<TripShape> = try await RepositoryDI().trip.getTripShape(tripId: tripId)
@@ -102,6 +105,12 @@ extension HomeMapView {
                     shapesWithStops,
                     globalData?.stops
                 )
+
+                let filteredStopIds = shapesWithStops.flatMap(\.stopIds).map { stopId in
+                    globalData?.stops[stopId]?.resolveParent(stops: globalData?.stops ?? [:]).id ?? stopId
+                }
+
+                mapVM.stopSourceData = .init(filteredStopIds: filteredStopIds, selectedStopId: targetStopId)
 
             } catch {
                 debugPrint(error)

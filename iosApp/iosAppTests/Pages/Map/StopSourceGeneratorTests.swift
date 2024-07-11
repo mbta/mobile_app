@@ -214,6 +214,32 @@ final class StopSourceGeneratorTests: XCTestCase {
         }
     }
 
+    func testFilteredStopIds() {
+        let source = StopSourceGenerator.generateStopSource(stopData:
+            .init(filteredStopIds: [MapTestDataHelper.stopAlewife.id], selectedStopId: nil),
+            stops: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
+                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis].mapValues { stop in
+                MapStop(
+                    stop: stop,
+                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routeTypes: [.red],
+                    isTerminal: false,
+                    alerts: nil
+                )
+            },
+            linesToSnap: [])
+
+        if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
+            XCTAssertEqual(collection.features.count, 1)
+
+            XCTAssertNotNil(collection.features.first { feat in
+                feat.identifier == FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
+            })
+        } else {
+            XCTFail("Station source had no features")
+        }
+    }
+
     func testStopsFeaturesHaveServiceStatus() {
         let objects = MapTestDataHelper.objects
 
