@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.schedule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
+import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,12 +17,16 @@ import kotlinx.datetime.Clock
 
 class UpcomingTripTest {
     class FormatTest {
+        // trip details doesn't use UpcomingTrip
+        private fun ParametricTest.anyContext() =
+            anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
+
         @Test
         fun `status is non-null`() = parametricTest {
             assertEquals(
                 TripInstantDisplay.Overridden("Custom Text"),
                 UpcomingTrip(trip {}, prediction { status = "Custom Text" })
-                    .format(Clock.System.now(), anyEnumValue())
+                    .format(Clock.System.now(), anyContext())
             )
         }
 
@@ -37,7 +42,7 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         },
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -51,7 +56,7 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         }
                     )
-                    .format(Clock.System.now(), anyEnumValue())
+                    .format(Clock.System.now(), anyContext())
             )
         }
 
@@ -60,12 +65,12 @@ class UpcomingTripTest {
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, prediction { departureTime = null })
-                    .format(Clock.System.now(), anyEnumValue())
+                    .format(Clock.System.now(), anyContext())
             )
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, schedule { departureTime = null })
-                    .format(Clock.System.now(), anyEnumValue())
+                    .format(Clock.System.now(), anyContext())
             )
         }
 
@@ -75,7 +80,7 @@ class UpcomingTripTest {
             assertEquals(
                 TripInstantDisplay.Schedule(now + 15.minutes),
                 UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes })
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -91,7 +96,7 @@ class UpcomingTripTest {
                             departureTime = now.minus(2.seconds)
                         }
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -107,7 +112,7 @@ class UpcomingTripTest {
                             departureTime = now.plus(10.seconds)
                         }
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -131,7 +136,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -156,7 +161,7 @@ class UpcomingTripTest {
                             },
                             vehicle
                         )
-                        .format(now, anyEnumValue())
+                        .format(now, anyContext())
                 )
             }
 
@@ -181,7 +186,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
             // wrong stop ID
             vehicle = vehicle {
@@ -201,7 +206,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
             // wrong trip ID
             vehicle = vehicle {
@@ -221,7 +226,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -237,12 +242,12 @@ class UpcomingTripTest {
                             departureTime = now.plus(20.seconds)
                         }
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
             assertEquals(
                 TripInstantDisplay.Arriving,
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -258,12 +263,12 @@ class UpcomingTripTest {
                             departureTime = now.plus(50.seconds)
                         }
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
             assertEquals(
                 TripInstantDisplay.Approaching,
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
@@ -282,47 +287,48 @@ class UpcomingTripTest {
                             departureTime = future.plus(1.minutes)
                         }
                     )
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
             assertEquals(
                 TripInstantDisplay.DistantFuture(moreFuture),
                 UpcomingTrip(trip {}, prediction { departureTime = moreFuture })
-                    .format(now, anyEnumValue())
+                    .format(now, anyContext())
             )
         }
 
         @Test
         fun `minutes less than 20`() = parametricTest {
             val now = Clock.System.now()
+            val context = anyContext()
             assertEquals(
                 TripInstantDisplay.Minutes(1),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
-                    .format(now, anyEnumValue())
+                    .format(now, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
-                    .format(now, anyEnumValue())
+                    .format(now, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
-                    .format(now, anyEnumValue())
+                    .format(now, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
-                    .format(now, anyEnumValue())
+                    .format(now, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
-                    .format(now, anyEnumValue())
+                    .format(now, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(45),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
-                    .format(now, anyEnumValue())
+                    .format(now, context)
             )
         }
     }

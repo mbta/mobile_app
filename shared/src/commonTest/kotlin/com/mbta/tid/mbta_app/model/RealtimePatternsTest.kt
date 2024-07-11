@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -8,6 +9,10 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
 class RealtimePatternsTest {
+    // trip details doesn't use RealtimePatterns
+    private fun ParametricTest.anyContext() =
+        anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
+
     @Test
     fun `formats as loading when null trips`() = parametricTest {
         val now = Clock.System.now()
@@ -18,7 +23,7 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.Loading,
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
     }
 
@@ -34,7 +39,7 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
     }
 
@@ -65,7 +70,7 @@ class RealtimePatternsTest {
                     listOf(upcomingTrip),
                     listOf(alert)
                 )
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
     }
 
@@ -79,7 +84,7 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.None,
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
     }
 
@@ -123,7 +128,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
     }
 
@@ -168,7 +173,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
         assertEquals(
             RealtimePatterns.Format.Some(
@@ -190,7 +195,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, anyEnumValue())
+                .format(now, anyContext())
         )
     }
 
@@ -322,7 +327,7 @@ class RealtimePatternsTest {
                     )
                 )
             ),
-            directionPatterns.format(now, anyEnumValue())
+            directionPatterns.format(now, anyContext())
         )
 
         assertEquals(directionPatterns.routesByTrip[trip2.id], route2)
