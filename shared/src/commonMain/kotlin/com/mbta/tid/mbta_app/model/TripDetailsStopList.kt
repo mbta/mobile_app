@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
@@ -9,6 +10,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
     data class Entry(
         val stop: Stop,
         val stopSequence: Int,
+        val alert: Alert?,
         val schedule: Schedule?,
         val prediction: Prediction?,
         val vehicle: Vehicle?,
@@ -65,6 +67,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
     private data class WorkingEntry(
         val stopId: String,
         val stopSequence: Int,
+        val alert: Alert? = null,
         val schedule: Schedule? = null,
         val prediction: Prediction? = null,
         val vehicle: Vehicle? = null,
@@ -126,6 +129,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
+            alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
         ): TripDetailsStopList? {
             val entries = mutableMapOf<Int, WorkingEntry>()
@@ -173,6 +177,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                         Entry(
                             globalData.stops.getValue(it.value.stopId),
                             it.value.stopSequence,
+                            getAlert(it.value, alertsData, globalData, tripId),
                             it.value.schedule,
                             it.value.prediction,
                             it.value.vehicle,
@@ -345,6 +350,35 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                         scheduleIndex++
                     }
                 }
+            }
+        }
+
+        private fun getAlert(
+            entry: WorkingEntry,
+            alertsData: AlertsStreamDataResponse?,
+            globalData: GlobalResponse,
+            tripId: String
+        ): Alert? {
+            val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
+            // TODO add directionId to schedule
+            val directionId = null
+            val entryRoute = entry.prediction?.routeId ?: entry.schedule?.routeId
+            val entryRouteType =
+                globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]?.type
+
+            if (entryTime == null) return null
+            return alertsData?.alerts?.values?.find { alert ->
+                alert.isActive(entryTime) &&
+                    alert.anyInformedEntity {
+                        it.appliesTo(
+                            directionId = directionId,
+                            routeId = entryRoute,
+                            routeType = entryRouteType,
+                            stopId = entry.stopId,
+                            tripId = tripId
+                        )
+                    } &&
+                    Alert.serviceDisruptionEffects.contains(alert.effect)
             }
         }
     }

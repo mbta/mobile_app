@@ -25,6 +25,7 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
         TripDetailsStopList.Entry(
             stop: stop,
             stopSequence: Int32(stopSequence),
+            alert: nil,
             schedule: nil,
             prediction: prediction,
             vehicle: nil,

@@ -18,9 +18,17 @@ struct TripDetailsStopView: View {
             HStack {
                 Text(stop.stop.name)
                 Spacer()
-                UpcomingTripView(prediction: .some(stop.format(now: now)), routeType: nil)
+                UpcomingTripView(prediction: upcomingTripViewState, routeType: nil)
             }
             scrollRoutes
+        }
+    }
+
+    var upcomingTripViewState: UpcomingTripView.State {
+        if let alert = stop.alert {
+            .noService(alert.effect)
+        } else {
+            .some(stop.format(now: now))
         }
     }
 
@@ -45,6 +53,7 @@ struct TripDetailsStopView: View {
         stop: .init(
             stop: objects.stop { $0.name = "ABC" },
             stopSequence: 10,
+            alert: nil,
             schedule: nil,
             prediction: nil,
             vehicle: nil,

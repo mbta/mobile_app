@@ -63,7 +63,7 @@ struct TripDetailsPage: View {
                     tripId: tripId,
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictions,
-                    vehicle: vehicle, globalData: globalResponse
+                    vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
                 ) {
                     vehicleCardView
                     if let target, let splitStops = stops.splitForTarget(
