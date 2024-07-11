@@ -80,7 +80,7 @@ struct UpcomingTripView: View {
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
                 PredictionText(minutes: 1)
-            case let .distantFuture(format):
+            case let .asTime(format):
                 Text(Date(instant: format.predictionTime), style: .time)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
