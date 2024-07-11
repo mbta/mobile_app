@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -8,7 +9,7 @@ import kotlinx.datetime.Clock
 
 class RealtimePatternsTest {
     @Test
-    fun `formats as loading when null trips`() {
+    fun `formats as loading when null trips`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -16,12 +17,13 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.Loading,
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null).format(now)
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
+                .format(now, anyEnumValue())
         )
     }
 
     @Test
-    fun `formats as alert with no trips and alert`() {
+    fun `formats as alert with no trips and alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -32,12 +34,12 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
-                .format(now)
+                .format(now, anyEnumValue())
         )
     }
 
     @Test
-    fun `formats as alert with trip and alert`() {
+    fun `formats as alert with trip and alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -63,12 +65,12 @@ class RealtimePatternsTest {
                     listOf(upcomingTrip),
                     listOf(alert)
                 )
-                .format(now)
+                .format(now, anyEnumValue())
         )
     }
 
     @Test
-    fun `formats as none with no trips and no alert`() {
+    fun `formats as none with no trips and no alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -77,12 +79,12 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.None,
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
-                .format(now)
+                .format(now, anyEnumValue())
         )
     }
 
     @Test
-    fun `skips trips that should be hidden`() {
+    fun `skips trips that should be hidden`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -121,12 +123,12 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now)
+                .format(now, anyEnumValue())
         )
     }
 
     @Test
-    fun `format skips schedules on subway but keeps on non-subway`() {
+    fun `format skips schedules on subway but keeps on non-subway`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -166,7 +168,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now)
+                .format(now, anyEnumValue())
         )
         assertEquals(
             RealtimePatterns.Format.Some(
@@ -188,7 +190,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now)
+                .format(now, anyEnumValue())
         )
     }
 
@@ -254,7 +256,7 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `predictions grouped by direction are displayed`() {
+    fun `predictions grouped by direction are displayed`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -320,7 +322,7 @@ class RealtimePatternsTest {
                     )
                 )
             ),
-            directionPatterns.format(now)
+            directionPatterns.format(now, anyEnumValue())
         )
 
         assertEquals(directionPatterns.routesByTrip[trip2.id], route2)

@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.schedule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -16,16 +17,16 @@ import kotlinx.datetime.Clock
 class UpcomingTripTest {
     class FormatTest {
         @Test
-        fun `status is non-null`() {
+        fun `status is non-null`() = parametricTest {
             assertEquals(
                 TripInstantDisplay.Overridden("Custom Text"),
                 UpcomingTrip(trip {}, prediction { status = "Custom Text" })
-                    .format(Clock.System.now())
+                    .format(Clock.System.now(), anyEnumValue())
             )
         }
 
         @Test
-        fun `scheduled trip skipped`() {
+        fun `scheduled trip skipped`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Skipped(now + 15.minutes),
@@ -36,12 +37,12 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         },
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `unscheduled trip skipped`() {
+        fun `unscheduled trip skipped`() = parametricTest {
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(
@@ -50,34 +51,36 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         }
                     )
-                    .format(Clock.System.now())
+                    .format(Clock.System.now(), anyEnumValue())
             )
         }
 
         @Test
-        fun `departure_time is null`() {
+        fun `departure_time is null`() = parametricTest {
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, prediction { departureTime = null })
-                    .format(Clock.System.now())
+                    .format(Clock.System.now(), anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Hidden,
-                UpcomingTrip(trip {}, schedule { departureTime = null }).format(Clock.System.now())
+                UpcomingTrip(trip {}, schedule { departureTime = null })
+                    .format(Clock.System.now(), anyEnumValue())
             )
         }
 
         @Test
-        fun `schedule instead of prediction`() {
+        fun `schedule instead of prediction`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Schedule(now + 15.minutes),
-                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes }).format(now)
+                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes })
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `departure_time in the past`() {
+        fun `departure_time in the past`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Hidden,
@@ -88,12 +91,12 @@ class UpcomingTripTest {
                             departureTime = now.minus(2.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `seconds less than 0`() {
+        fun `seconds less than 0`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Arriving,
@@ -104,12 +107,12 @@ class UpcomingTripTest {
                             departureTime = now.plus(10.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun boarding() {
+        fun boarding() = parametricTest {
             val now = Clock.System.now()
             val vehicle = vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -128,36 +131,37 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `not boarding when stopped at stop but more than 90 seconds until departure`() {
-            val now = Clock.System.now()
-            val vehicle = vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = "12345"
-                tripId = "trip1"
+        fun `not boarding when stopped at stop but more than 90 seconds until departure`() =
+            parametricTest {
+                val now = Clock.System.now()
+                val vehicle = vehicle {
+                    currentStatus = Vehicle.CurrentStatus.StoppedAt
+                    stopId = "12345"
+                    tripId = "trip1"
+                }
+                assertEquals(
+                    TripInstantDisplay.Minutes(2),
+                    UpcomingTrip(
+                            trip {},
+                            prediction {
+                                departureTime = now.plus(95.seconds)
+                                stopId = "12345"
+                                tripId = "trip1"
+                                vehicleId = vehicle.id
+                            },
+                            vehicle
+                        )
+                        .format(now, anyEnumValue())
+                )
             }
-            assertEquals(
-                TripInstantDisplay.Minutes(2),
-                UpcomingTrip(
-                        trip {},
-                        prediction {
-                            departureTime = now.plus(95.seconds)
-                            stopId = "12345"
-                            tripId = "trip1"
-                            vehicleId = vehicle.id
-                        },
-                        vehicle
-                    )
-                    .format(now)
-            )
-        }
 
         @Test
-        fun `not boarding`() {
+        fun `not boarding`() = parametricTest {
             val now = Clock.System.now()
             // wrong vehicle status
             var vehicle = vehicle {
@@ -177,7 +181,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             // wrong stop ID
             vehicle = vehicle {
@@ -197,7 +201,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             // wrong trip ID
             vehicle = vehicle {
@@ -217,12 +221,12 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `seconds less than 30`() {
+        fun `seconds less than 30`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Arriving,
@@ -233,17 +237,17 @@ class UpcomingTripTest {
                             departureTime = now.plus(20.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Arriving,
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `seconds less than 60`() {
+        fun `seconds less than 60`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Approaching,
@@ -254,17 +258,17 @@ class UpcomingTripTest {
                             departureTime = now.plus(50.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Approaching,
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `minutes in the distant future`() {
+        fun `minutes in the distant future`() = parametricTest {
             val now = Clock.System.now()
             val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
             val moreFuture = future.plus(38.minutes)
@@ -278,46 +282,47 @@ class UpcomingTripTest {
                             departureTime = future.plus(1.minutes)
                         }
                     )
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.DistantFuture(moreFuture),
-                UpcomingTrip(trip {}, prediction { departureTime = moreFuture }).format(now)
+                UpcomingTrip(trip {}, prediction { departureTime = moreFuture })
+                    .format(now, anyEnumValue())
             )
         }
 
         @Test
-        fun `minutes less than 20`() {
+        fun `minutes less than 20`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
                 TripInstantDisplay.Minutes(1),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
             assertEquals(
                 TripInstantDisplay.Minutes(45),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
-                    .format(now)
+                    .format(now, anyEnumValue())
             )
         }
     }

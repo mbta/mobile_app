@@ -6,6 +6,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Instant
 
 @Composable
@@ -20,7 +21,7 @@ fun NearbyStopView(
             is RealtimePatterns.ByHeadsign -> {
                 HeadsignRowView(
                     patterns.headsign,
-                    patterns.format(now),
+                    patterns.format(now, TripInstantDisplay.Context.NearbyTransit),
                 )
             }
             is RealtimePatterns.ByDirection -> {}
