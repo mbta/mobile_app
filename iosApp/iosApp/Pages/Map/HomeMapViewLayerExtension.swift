@@ -43,17 +43,9 @@ extension HomeMapView {
                                                                             alertsByStop: globalMapData?.alertsByStop)
         mapVM.snappedStopRouteLines = snappedStopRouteLines
 
-        let stopSourceGenerator = StopSourceGenerator(
-            stops: globalMapData?.mapStops ?? [:],
-            selectedStop: lastNavEntry?.stop(),
-            routeLines: snappedStopRouteLines
-        )
-        let childStopSourceGenerator = ChildStopSourceGenerator(childStops: nil)
+        mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stop()?.id)
 
-        layerManager.addSources(
-            stopSourceGenerator: stopSourceGenerator,
-            childStopSourceGenerator: childStopSourceGenerator
-        )
+        mapVM.childStops = nil
 
         addLayers(layerManager)
     }
@@ -67,17 +59,9 @@ extension HomeMapView {
     }
 
     func resetDefaultSources() {
-        let updatedStopSources = StopSourceGenerator(
-            stops: globalMapData?.mapStops ?? [:],
-            selectedStop: nil,
-            routeLines: mapVM.snappedStopRouteLines
-        )
+        mapVM.stopSourceData = .init(selectedStopId: nil)
         mapVM.routeSourceData = mapVM.allRailSourceData
-        let updatedChildStopSources = ChildStopSourceGenerator(childStops: nil)
-        mapVM.layerManager?.updateSourceData(
-            stopSourceGenerator: updatedStopSources,
-            childStopSourceGenerator: updatedChildStopSources
-        )
+        mapVM.childStops = nil
     }
 
     func updateStopDetailsLayers(
@@ -85,6 +69,7 @@ extension HomeMapView {
         _ filter: StopDetailsFilter?,
         _ departures: StopDetailsDepartures?
     ) {
+        mapVM.childStops = stopMapData.childStops
         if let filter {
             mapVM.routeSourceData = MapViewModel.filteredRouteShapesForStop(
                 stopMapData: stopMapData,
@@ -96,21 +81,11 @@ extension HomeMapView {
                                                                        mapVM.allRailSourceData,
                                                                        globalData?.routes)
         }
-
-        let childStopSource = ChildStopSourceGenerator(childStops: stopMapData.childStops)
-        mapVM.layerManager?.updateSourceData(childStopSourceGenerator: childStopSource)
     }
 
     func updateGlobalMapDataSources() {
-        let updatedStopSources = StopSourceGenerator(
-            stops: globalMapData?.mapStops ?? [:],
-            selectedStop: lastNavEntry?.stop(),
-            routeLines: mapVM.snappedStopRouteLines
-        )
-        mapVM.layerManager?.updateSourceData(stopSourceGenerator: updatedStopSources)
-        // If routes are already being displayed, keep using those. Otherwise, use the rail shapes
-        let routeData = mapVM.routeSourceData
-        updateRouteSources(routeData: routeData)
+        updateStopSource(stopData: mapVM.stopSourceData)
+        updateRouteSources(routeData: mapVM.routeSourceData)
     }
 
     func updateRouteSources(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]) {
@@ -120,5 +95,15 @@ extension HomeMapView {
             stopsById: globalData?.stops,
             alertsByStop: globalMapData?.alertsByStop
         ))
+    }
+
+    func updateStopSource(stopData: StopSourceData) {
+        mapVM.updateStopSource(StopSourceGenerator.generateStopSource(stopData: stopData,
+                                                                      stops: globalMapData?.mapStops ?? [:],
+                                                                      linesToSnap: mapVM.snappedStopRouteLines))
+    }
+
+    func updateChildStopSource(childStops: [String: Stop]?) {
+        mapVM.updateChildStopSource(ChildStopSourceGenerator.generateChildStopSource(childStops: childStops))
     }
 }

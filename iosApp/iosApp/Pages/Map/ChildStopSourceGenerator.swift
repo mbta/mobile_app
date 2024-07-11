@@ -9,27 +9,26 @@
 import MapboxMaps
 import shared
 
-class ChildStopSourceGenerator {
-    var childStopSource: GeoJSONSource
-
+enum ChildStopSourceGenerator {
     static let childStopSourceId = "child-stop-source"
 
     static let propNameKey = "name"
     static let propLocationTypeKey = "locationType"
     static let propSortOrderKey = "sortOrder"
 
-    init(childStops: [String: Stop]?) {
-        childStopSource = GeoJSONSource(id: Self.childStopSourceId)
+    static func generateChildStopSource(childStops: [String: Stop]?) -> GeoJSONSource {
+        var source = GeoJSONSource(id: childStopSourceId)
         if let childStops {
             let stopsInOrder = childStops.values.sorted(by: { $0.id < $1.id })
             let features = stopsInOrder.enumerated().compactMap { Self.generateChildStopFeature(
                 childStop: $0.element,
                 index: $0.offset
             ) }
-            childStopSource.data = .featureCollection(.init(features: features))
+            source.data = .featureCollection(.init(features: features))
         } else {
-            childStopSource.data = .featureCollection(.init(features: []))
+            source.data = .featureCollection(.init(features: []))
         }
+        return source
     }
 
     static func generateChildStopFeature(childStop: Stop, index: Int) -> Feature? {

@@ -15,18 +15,11 @@ struct StopFeatureData {
     let feature: Feature
 }
 
-struct StopSourceData {
-    let stops: [String: MapStop]
-    let selectedStop: Stop?
-    let routeLines: [RouteLineData]?
+struct StopSourceData: Equatable {
+    var selectedStopId: String?
 }
 
-class StopSourceGenerator {
-    var stopSourceData: StopSourceData
-    var stopSource: GeoJSONSource
-
-    private var stopFeatures: [StopFeatureData] = []
-
+enum StopSourceGenerator {
     static let stopSourceId = "stop-source"
 
     static let propIdKey = "id"
@@ -40,29 +33,40 @@ class StopSourceGenerator {
     static let propServiceStatusKey = "serviceStatus"
     static let propSortOrderKey = "sortOrder"
 
-    init(
+    static func generateStopSource(
+        stopData: StopSourceData,
         stops: [String: MapStop],
-        selectedStop: Stop? = nil,
-        routeLines: [RouteLineData]? = nil
-    ) {
-        stopSourceData = StopSourceData(
-            stops: stops,
-            selectedStop: selectedStop,
-            routeLines: routeLines
-        )
-
-        stopFeatures = Self.generateStopFeatures(stopSourceData)
-        stopSource = Self.generateStopSource(stopFeatures: stopFeatures)
+        linesToSnap: [RouteLineData]
+    ) -> GeoJSONSource {
+        let stopFeatures = generateStopFeatures(stopData, stops, linesToSnap)
+        return generateStopSource(stopFeatures: stopFeatures)
     }
 
-    static func generateRouteAssociatedStops(
+    static func generateStopSource(stopFeatures: [StopFeatureData]) -> GeoJSONSource {
+        var stopSource = GeoJSONSource(id: Self.stopSourceId)
+        stopSource.data = .featureCollection(FeatureCollection(features: stopFeatures.map(\.feature)))
+        return stopSource
+    }
+
+    private static func generateStopFeatures(
         _ stopData: StopSourceData,
+        _ stops: [String: MapStop],
+        _ linesToSnap: [RouteLineData]
+    ) -> [StopFeatureData] {
+        var touchedStopIds: Set<String> = []
+
+        let routeStops = Self.generateRouteAssociatedStops(stopData, stops, linesToSnap, &touchedStopIds)
+        let otherStops = Self.generateRemainingStops(stopData, stops, &touchedStopIds)
+        return otherStops + routeStops
+    }
+
+    private static func generateRouteAssociatedStops(
+        _ stopData: StopSourceData,
+        _ stops: [String: MapStop],
+        _ linesToSnap: [RouteLineData],
         _ touchedStopIds: inout Set<String>
     ) -> [StopFeatureData] {
-        guard let routeLines = stopData.routeLines else { return [] }
-        let stops = stopData.stops
-
-        return routeLines.flatMap { lineData in
+        linesToSnap.flatMap { lineData in
             lineData.stopIds.compactMap { childStopId -> StopFeatureData? in
                 guard let stopOnRoute = stops[childStopId] else {
                     return nil
@@ -82,11 +86,12 @@ class StopSourceGenerator {
         }
     }
 
-    static func generateRemainingStops(
+    private static func generateRemainingStops(
         _ stopData: StopSourceData,
+        _ stops: [String: MapStop],
         _ touchedStopIds: inout Set<String>
     ) -> [StopFeatureData] {
-        stopData.stops.values.compactMap { mapStop in
+        stops.values.compactMap { mapStop in
             let stop = mapStop.stop
             if touchedStopIds.contains(stop.id)
                 || mapStop.routeTypes.isEmpty
@@ -100,7 +105,7 @@ class StopSourceGenerator {
         }
     }
 
-    static func generateStopFeature(
+    private static func generateStopFeature(
         _ mapStop: MapStop,
         _ stopData: StopSourceData,
         at overrideLocation: CLLocationCoordinate2D? = nil
@@ -112,19 +117,12 @@ class StopSourceGenerator {
         return stopFeature
     }
 
-    static func generateStopFeatures(_ stopData: StopSourceData) -> [StopFeatureData] {
-        var touchedStopIds: Set<String> = []
-        let routeStops = Self.generateRouteAssociatedStops(stopData, &touchedStopIds)
-        let otherStops = Self.generateRemainingStops(stopData, &touchedStopIds)
-        return otherStops + routeStops
-    }
-
-    static func generateStopFeatureProperties(_ mapStop: MapStop, _ stopData: StopSourceData) -> JSONObject {
+    private static func generateStopFeatureProperties(_ mapStop: MapStop, _ stopData: StopSourceData) -> JSONObject {
         var featureProps = JSONObject()
         let stop = mapStop.stop
         featureProps[Self.propIdKey] = JSONValue(String(describing: stop.id))
         featureProps[Self.propNameKey] = JSONValue(stop.name)
-        featureProps[Self.propIsSelectedKey] = JSONValue.boolean(stop.id == stopData.selectedStop?.id)
+        featureProps[Self.propIsSelectedKey] = JSONValue.boolean(stop.id == stopData.selectedStopId)
         featureProps[Self.propIsTerminalKey] = JSONValue.boolean(mapStop.isTerminal)
         featureProps[Self.propMapRoutesKey] = JSONValue.array(JSONArray(
             mapStop.routeTypes.map { route in JSONValue(route.name) }
@@ -152,13 +150,7 @@ class StopSourceGenerator {
         return featureProps
     }
 
-    static func generateStopSource(stopFeatures: [StopFeatureData]) -> GeoJSONSource {
-        var stopSource = GeoJSONSource(id: Self.stopSourceId)
-        stopSource.data = .featureCollection(FeatureCollection(features: stopFeatures.map(\.feature)))
-        return stopSource
-    }
-
-    static func serviceStatusValue(at mapStop: MapStop) -> JSONValue {
+    private static func serviceStatusValue(at mapStop: MapStop) -> JSONValue {
         var alertStatus = JSONObject()
         for (routeType, status) in mapStop.alerts ?? [:] {
             alertStatus[routeType.name] = JSONValue(status.name)

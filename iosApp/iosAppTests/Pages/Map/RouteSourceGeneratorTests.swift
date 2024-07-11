@@ -260,7 +260,7 @@ final class RouteSourceGeneratorTests: XCTestCase {
         XCTAssertEqual([MapFriendlyRouteResponse
                 .RouteWithSegmentedShapes(routeId: shapeWithStops.routeId,
                                           segmentedShapes: [
-                                              .init(sourceRoutePatternId: shapeWithStops.routeId,
+                                              .init(sourceRoutePatternId: shapeWithStops.routePatternId,
                                                     sourceRouteId: shapeWithStops.routeId,
                                                     directionId: shapeWithStops.directionId,
                                                     routeSegments:

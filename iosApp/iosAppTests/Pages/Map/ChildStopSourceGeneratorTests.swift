@@ -48,9 +48,9 @@ final class ChildStopSourceGeneratorTests: XCTestCase {
 
         let stops = [platform.id: platform, entrance.id: entrance, boardingArea.id: boardingArea, node.id: node]
 
-        let childStopSourceGenerator = ChildStopSourceGenerator(childStops: stops)
+        let source = ChildStopSourceGenerator.generateChildStopSource(childStops: stops)
 
-        if case let .featureCollection(collection) = childStopSourceGenerator.childStopSource.data! {
+        if case let .featureCollection(collection) = source.data! {
             XCTAssertEqual(collection.features.count, 3)
 
             XCTAssertEqual(collection.features[0].identifier, .string(platform.id))
