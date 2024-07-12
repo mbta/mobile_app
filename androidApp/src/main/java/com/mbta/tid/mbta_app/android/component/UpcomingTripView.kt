@@ -57,7 +57,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     Text(stringResource(R.string.arriving_abbr), modifier)
                 is TripInstantDisplay.Approaching ->
                     Text(stringResource(R.string.approaching_abbr), modifier)
-                is TripInstantDisplay.DistantFuture ->
+                is TripInstantDisplay.AsTime ->
                     Text(formatTime(state.trip.predictionTime), modifier)
                 is TripInstantDisplay.Schedule ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
