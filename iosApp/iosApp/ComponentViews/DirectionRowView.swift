@@ -56,11 +56,11 @@ struct DirectionRowView_Previews: PreviewProvider {
                                  predictions: RealtimePatterns.FormatSome(trips: [
                                      .init(
                                          trip: .init(trip: trip1, prediction: prediction1),
-                                         now: now.toKotlinInstant()
+                                         now: now.toKotlinInstant(), context: .nearbyTransit
                                      ),
                                      .init(
                                          trip: .init(trip: trip2, prediction: prediction2),
-                                         now: now.toKotlinInstant()
+                                         now: now.toKotlinInstant(), context: .nearbyTransit
                                      ),
                                  ]),
                                  routeType: .heavyRail)

@@ -99,6 +99,7 @@ struct VehicleCardView_Previews: PreviewProvider {
         }
         let vehicle = Vehicle(id: "y1234", bearing: nil,
                               currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
+                              currentStopSequence: 30,
                               directionId: 1,
                               latitude: 0.0,
                               longitude: 0.0,

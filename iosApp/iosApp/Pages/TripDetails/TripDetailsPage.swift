@@ -60,6 +60,7 @@ struct TripDetailsPage: View {
             if let globalResponse {
                 let vehicle = vehicleResponse?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
+                    tripId: tripId,
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictions,
                     vehicle: vehicle, globalData: globalResponse

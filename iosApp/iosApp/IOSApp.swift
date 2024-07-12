@@ -6,12 +6,14 @@ import SwiftPhoenixClient
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    private(set) static var instance: AppDelegate! = nil
     var appcues: Appcues?
 
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        AppDelegate.instance = self
         // Don't configure GA/Firebase for debug builds to reduce pollution of events
         #if !DEBUG
             FirebaseApp.configure()

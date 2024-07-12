@@ -43,6 +43,7 @@ struct NearbyStopView: View {
             patternsByStop: patternsAtStop,
             condenseHeadsignPredictions: condenseHeadsignPredictions,
             now: now,
+            context: .nearbyTransit,
             pushNavEntry: { entry in
                 pushNavEntry(entry)
                 analytics.tappedDeparture(

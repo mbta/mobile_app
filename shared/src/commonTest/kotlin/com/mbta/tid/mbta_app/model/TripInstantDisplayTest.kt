@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -9,7 +10,7 @@ import kotlinx.datetime.Clock
 
 class TripInstantDisplayTest {
     @Test
-    fun `status is non-null`() {
+    fun `status is non-null`() = parametricTest {
         assertEquals(
             TripInstantDisplay.Overridden("Custom Text"),
             TripInstantDisplay.from(
@@ -17,13 +18,13 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = Clock.System.now(),
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `scheduled trip skipped`() {
+    fun `scheduled trip skipped`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Skipped(now + 15.minutes),
@@ -36,13 +37,13 @@ class TripInstantDisplayTest {
                     ObjectCollectionBuilder.Single.schedule { departureTime = now + 15.minutes },
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `unscheduled trip skipped`() {
+    fun `unscheduled trip skipped`() = parametricTest {
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(
@@ -53,13 +54,13 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = Clock.System.now(),
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `departure_time and arrival_time are null`() {
+    fun `departure_time and arrival_time are null`() = parametricTest {
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(
@@ -71,7 +72,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = Clock.System.now(),
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
         assertEquals(
@@ -85,13 +86,13 @@ class TripInstantDisplayTest {
                     },
                 vehicle = null,
                 now = Clock.System.now(),
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `departure_time is null but arrival_time exists`() {
+    fun `departure_time is null but arrival_time exists`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Hidden,
@@ -104,7 +105,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
         )
         assertEquals(
@@ -118,11 +119,11 @@ class TripInstantDisplayTest {
                     },
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
         )
         assertEquals(
-            TripInstantDisplay.Minutes(3),
+            TripInstantDisplay.AsTime(now + 3.minutes),
             TripInstantDisplay.from(
                 prediction =
                     ObjectCollectionBuilder.Single.prediction {
@@ -132,7 +133,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = true
+                context = TripInstantDisplay.Context.TripDetails
             )
         )
         assertEquals(
@@ -146,13 +147,13 @@ class TripInstantDisplayTest {
                     },
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = true
+                context = TripInstantDisplay.Context.TripDetails
             )
         )
     }
 
     @Test
-    fun `schedule instead of prediction`() {
+    fun `schedule instead of prediction`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Schedule(now + 15.minutes),
@@ -162,13 +163,13 @@ class TripInstantDisplayTest {
                     ObjectCollectionBuilder.Single.schedule { departureTime = now + 15.minutes },
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `departure_time in the past`() {
+    fun `departure_time in the past`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Hidden,
@@ -181,13 +182,13 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `seconds less than 0`() {
+    fun `seconds less than 0`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Arriving,
@@ -200,13 +201,13 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun boarding() {
+    fun boarding() = parametricTest {
         val now = Clock.System.now()
         val vehicle =
             ObjectCollectionBuilder.Single.vehicle {
@@ -227,40 +228,41 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = vehicle,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `not boarding when stopped at stop but more than 90 seconds until departure`() {
-        val now = Clock.System.now()
-        val vehicle =
-            ObjectCollectionBuilder.Single.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = "12345"
-                tripId = "trip1"
-            }
-        assertEquals(
-            TripInstantDisplay.Minutes(2),
-            TripInstantDisplay.from(
-                prediction =
-                    ObjectCollectionBuilder.Single.prediction {
-                        departureTime = now.plus(95.seconds)
-                        stopId = "12345"
-                        tripId = "trip1"
-                        vehicleId = vehicle.id
-                    },
-                schedule = null,
-                vehicle = vehicle,
-                now = now,
-                allowArrivalOnly = false
+    fun `not boarding when stopped at stop but more than 90 seconds until departure`() =
+        parametricTest {
+            val now = Clock.System.now()
+            val vehicle =
+                ObjectCollectionBuilder.Single.vehicle {
+                    currentStatus = Vehicle.CurrentStatus.StoppedAt
+                    stopId = "12345"
+                    tripId = "trip1"
+                }
+            assertEquals(
+                TripInstantDisplay.Minutes(2),
+                TripInstantDisplay.from(
+                    prediction =
+                        ObjectCollectionBuilder.Single.prediction {
+                            departureTime = now.plus(95.seconds)
+                            stopId = "12345"
+                            tripId = "trip1"
+                            vehicleId = vehicle.id
+                        },
+                    schedule = null,
+                    vehicle = vehicle,
+                    now = now,
+                    context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
+                )
             )
-        )
-    }
+        }
 
     @Test
-    fun `not boarding`() {
+    fun `not boarding`() = parametricTest {
         val now = Clock.System.now()
         // wrong vehicle status
         var vehicle =
@@ -282,7 +284,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = vehicle,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
         // wrong stop ID
@@ -305,7 +307,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = vehicle,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
         // wrong trip ID
@@ -328,13 +330,13 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = vehicle,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `seconds less than 30`() {
+    fun `seconds less than 30`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Arriving,
@@ -347,7 +349,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
         assertEquals(
@@ -360,13 +362,13 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `seconds less than 60`() {
+    fun `seconds less than 60 outside trip details`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
             TripInstantDisplay.Approaching,
@@ -379,7 +381,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
         )
         assertEquals(
@@ -392,19 +394,51 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
         )
     }
 
     @Test
-    fun `minutes in the distant future`() {
+    fun `seconds less than 60 in trip details`() {
+        val now = Clock.System.now()
+        assertEquals(
+            TripInstantDisplay.AsTime(now + 45.seconds),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        arrivalTime = now.plus(45.seconds)
+                        departureTime = now.plus(50.seconds)
+                    },
+                schedule = null,
+                vehicle = null,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
+        )
+        assertEquals(
+            TripInstantDisplay.AsTime(now + 40.seconds),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(40.seconds)
+                    },
+                schedule = null,
+                vehicle = null,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
+        )
+    }
+
+    @Test
+    fun `minutes in the distant future`() = parametricTest {
         val now = Clock.System.now()
         val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
         val moreFuture = future.plus(38.minutes)
 
         assertEquals(
-            TripInstantDisplay.DistantFuture(future),
+            TripInstantDisplay.AsTime(future),
             TripInstantDisplay.from(
                 prediction =
                     ObjectCollectionBuilder.Single.prediction {
@@ -414,25 +448,26 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
         assertEquals(
-            TripInstantDisplay.DistantFuture(moreFuture),
+            TripInstantDisplay.AsTime(moreFuture),
             TripInstantDisplay.from(
                 prediction =
                     ObjectCollectionBuilder.Single.prediction { departureTime = moreFuture },
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = anyEnumValue()
             )
         )
     }
 
     @Test
-    fun `minutes less than 20`() {
+    fun `minutes less than 20 outside trip details`() = parametricTest {
         val now = Clock.System.now()
+        val context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
         assertEquals(
             TripInstantDisplay.Minutes(1),
             TripInstantDisplay.from(
@@ -443,7 +478,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = context
             )
         )
         assertEquals(
@@ -456,7 +491,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = context
             )
         )
         assertEquals(
@@ -469,7 +504,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = context
             )
         )
         assertEquals(
@@ -482,7 +517,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = context
             )
         )
         assertEquals(
@@ -495,7 +530,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = context
             )
         )
         assertEquals(
@@ -508,7 +543,51 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                allowArrivalOnly = false
+                context = context
+            )
+        )
+    }
+
+    @Test
+    fun `minutes less than 20 in trip details`() {
+        val now = Clock.System.now()
+        assertEquals(
+            TripInstantDisplay.AsTime(now + 90.seconds),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(90.seconds)
+                    },
+                schedule = null,
+                vehicle = null,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
+        )
+        assertEquals(
+            TripInstantDisplay.AsTime(now + 149.seconds),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(149.seconds)
+                    },
+                schedule = null,
+                vehicle = null,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
+        )
+        assertEquals(
+            TripInstantDisplay.AsTime(now + 45.minutes),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(45.minutes)
+                    },
+                schedule = null,
+                vehicle = null,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
             )
         )
     }

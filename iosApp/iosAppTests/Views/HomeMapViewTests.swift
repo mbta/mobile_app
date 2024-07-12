@@ -22,7 +22,7 @@ final class HomeMapViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    let mockGlobalRepository: IGlobalRepository = MockGlobalRepository(response: .init(
+    let mockedGlobalResponse: GlobalResponse = .init(
         lines: [:],
         patternIdsByStop: [:],
         routes: [
@@ -36,7 +36,7 @@ final class HomeMapViewTests: XCTestCase {
                 MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
                 MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter],
         trips: [:]
-    ))
+    )
 
     class FilteredStopRepository: IStopRepository {
         private var onGetStopMapData: () -> Void
@@ -243,7 +243,9 @@ final class HomeMapViewTests: XCTestCase {
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
                 FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.routeOrange.id],
                                        onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
-                global: mockGlobalRepository))
+                global: MockGlobalRepository(
+                    response: mockedGlobalResponse
+                )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
@@ -295,7 +297,9 @@ final class HomeMapViewTests: XCTestCase {
                     filteredRouteIds: [MapTestDataHelper.routeOrange.id],
                     onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
                 ),
-                global: mockGlobalRepository))
+                global: MockGlobalRepository(
+                    response: mockedGlobalResponse
+                )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
@@ -347,7 +351,9 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
                 FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
-                global: mockGlobalRepository))
+                global: MockGlobalRepository(
+                    response: mockedGlobalResponse
+                )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
@@ -416,6 +422,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testUpdatesSourcesWhenTripSelected() throws {
+        let globalLoadSubject = PassthroughSubject<Void, Never>()
         let tripShapeLoadSubject = PassthroughSubject<Void, Never>()
 
         class FakeTripRepository: IdleTripRepository {
@@ -439,7 +446,7 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
                 trip: FakeTripRepository(onGetTripShape: { tripShapeLoadSubject.send() }),
-                global: mockGlobalRepository
+                global: MockGlobalRepository(response: mockedGlobalResponse, onGet: { globalLoadSubject.send() })
             ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
@@ -459,7 +466,7 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { sut in
+        let globalDataLoaded = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
                 .tripDetails(tripId: "ol_trip_id",
                              vehicleId: "vehicle",
@@ -487,7 +494,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, routeDataSet, stopDataSet], timeout: 5)
+        wait(for: [globalDataLoaded, routeDataSet, stopDataSet], timeout: 5)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()

@@ -89,9 +89,11 @@ class TripDetailsStopListTest {
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle? = null,
-            patternIdsByStop: Map<String, List<String>> = emptyMap()
+            patternIdsByStop: Map<String, List<String>> = emptyMap(),
+            tripId: String = "trip"
         ) =
             TripDetailsStopList.fromPieces(
+                tripId,
                 tripSchedules,
                 tripPredictions,
                 vehicle,
@@ -341,7 +343,7 @@ class TripDetailsStopListTest {
 
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val list = TripDetailsStopList.fromPieces(schedules, predictions, null, globalData)
+        val list = TripDetailsStopList.fromPieces("trip", schedules, predictions, null, globalData)
 
         assertEquals(
             TripDetailsStopList(
@@ -390,7 +392,8 @@ class TripDetailsStopListTest {
         val predictions = PredictionsStreamDataResponse(objects)
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val list = TripDetailsStopList.fromPieces(schedules, predictions, vehicle, globalData)
+        val list =
+            TripDetailsStopList.fromPieces("trip", schedules, predictions, vehicle, globalData)
 
         assertEquals(
             TripDetailsStopList(
@@ -542,6 +545,47 @@ class TripDetailsStopListTest {
                 null,
                 mapOf(Pair(stopB.id, listOf(patternCurrent.id, patternOther.id)))
             )
+        )
+    }
+
+    @Test
+    fun `fromPieces discards stops vehicle has passed`() = test {
+        prediction("A", 10)
+        val pred2 = prediction("B", 20)
+        val pred3 = prediction("C", 30)
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                currentStopSequence = 20
+                tripId = "trip"
+            }
+        assertEquals(
+            stopListOf(
+                entry("B", 20, prediction = pred2, vehicle = vehicle),
+                entry("C", 30, prediction = pred3, vehicle = vehicle)
+            ),
+            fromPieces(null, predictions(), vehicle, tripId = "trip")
+        )
+    }
+
+    @Test
+    fun `fromPieces checks trip before discarding past stops`() = test {
+        val pred1 = prediction("A", 10)
+        val pred2 = prediction("B", 20)
+        val pred3 = prediction("C", 30)
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                currentStopSequence = 20
+                tripId = "trip1"
+            }
+        assertEquals(
+            stopListOf(
+                entry("A", 10, prediction = pred1, vehicle = vehicle),
+                entry("B", 20, prediction = pred2, vehicle = vehicle),
+                entry("C", 30, prediction = pred3, vehicle = vehicle)
+            ),
+            fromPieces(null, predictions(), vehicle, tripId = "trip2")
         )
     }
 

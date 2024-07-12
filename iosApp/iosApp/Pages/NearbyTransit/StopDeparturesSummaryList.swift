@@ -14,6 +14,7 @@ struct StopDeparturesSummaryList: View {
     let patternsByStop: PatternsByStop
     let condenseHeadsignPredictions: Bool
     let now: Instant
+    let context: TripInstantDisplay.Context
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
     var body: some View {
@@ -31,7 +32,7 @@ struct StopDeparturesSummaryList: View {
                 ) {
                     DestinationRowView(
                         patterns: patterns,
-                        now: now,
+                        now: now, context: context,
                         condenseHeadsignPredictions: condenseHeadsignPredictions
                     )
                 }

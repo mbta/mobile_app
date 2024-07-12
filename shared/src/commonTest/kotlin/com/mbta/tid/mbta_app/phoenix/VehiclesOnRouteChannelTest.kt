@@ -22,6 +22,7 @@ class VehiclesOnRouteChannelTest {
                             put("id", "y1886")
                             put("bearing", 315)
                             put("current_status", "in_transit_to")
+                            put("current_stop_sequence", 30)
                             put("direction_id", 0)
                             put("latitude", 42.359901428222656)
                             put("longitude", -71.09449005126953)
@@ -44,6 +45,7 @@ class VehiclesOnRouteChannelTest {
                             "y1886",
                             315.0,
                             Vehicle.CurrentStatus.InTransitTo,
+                            30,
                             0,
                             42.359901428222656,
                             -71.09449005126953,

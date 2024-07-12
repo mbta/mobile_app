@@ -15,7 +15,13 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         val routes: List<Route>
     ) {
         fun format(now: Instant) =
-            TripInstantDisplay.from(prediction, schedule, vehicle, now, allowArrivalOnly = true)
+            TripInstantDisplay.from(
+                prediction,
+                schedule,
+                vehicle,
+                now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
     }
 
     /**
@@ -116,6 +122,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         }
 
         fun fromPieces(
+            tripId: String,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
@@ -151,6 +158,17 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             return TripDetailsStopList(
                 entries.entries
                     .sortedBy { it.key }
+                    .dropWhile {
+                        if (
+                            vehicle == null ||
+                                vehicle.tripId != tripId ||
+                                vehicle.currentStopSequence == null
+                        ) {
+                            false
+                        } else {
+                            it.value.stopSequence < vehicle.currentStopSequence
+                        }
+                    }
                     .map {
                         Entry(
                             globalData.stops.getValue(it.value.stopId),
