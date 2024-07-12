@@ -29,6 +29,7 @@ struct ProductionAppView: View {
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var backendProvider: BackendProvider
+    @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
@@ -54,7 +55,7 @@ struct ProductionAppView: View {
     }
 
     var body: some View {
-        ContentView()
+        ContentView(contentVM: contentVM)
             .font(Typography.body)
             .environmentObject(locationDataManager)
             .environmentObject(backendProvider)

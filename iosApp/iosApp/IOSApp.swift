@@ -1,4 +1,6 @@
 import AppcuesKit
+import FirebaseAnalytics
+import FirebaseAppCheck
 import FirebaseCore
 import os
 import shared
@@ -10,10 +12,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Don't configure GA/Firebase for debug builds to reduce pollution of events
-        #if !DEBUG
-            FirebaseApp.configure()
+        #if DEBUG
+            // Don't configure GA/Firebase for debug builds to reduce pollution of events
+            Analytics.setAnalyticsCollectionEnabled(false)
+            let providerFactory = AppCheckDebugProviderFactory()
+            AppCheck.setAppCheckProviderFactory(providerFactory)
+        #else
+            let providerFactory = CustomAppCheckProviderFactory()
+            AppCheck.setAppCheckProviderFactory(providerFactory)
         #endif
+        FirebaseApp.configure()
 
         // Don't configure Appcues for debug builds to not waste active user slots
         #if !DEBUG
