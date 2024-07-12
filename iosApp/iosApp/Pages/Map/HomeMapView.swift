@@ -128,6 +128,9 @@ struct HomeMapView: View {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
             }
+            .onChange(of: mapVM.selectedVehicle) { [weak previousVehicle = mapVM.selectedVehicle] nextVehicle in
+                handleSelectedVehicleChange(previousVehicle, nextVehicle)
+            }
             .onChange(of: globalMapData) { _ in
                 updateGlobalMapDataSources()
             }

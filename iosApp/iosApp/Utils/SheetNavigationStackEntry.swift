@@ -16,7 +16,7 @@ struct StopDetailsFilter: Hashable {
 
 struct TripDetailsTarget: Hashable {
     let stopId: String
-    let stopSequence: Int
+    let stopSequence: Int?
 }
 
 enum SheetNavigationStackEntry: Hashable, Identifiable {

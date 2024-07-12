@@ -104,6 +104,7 @@ struct AnnotatedMap: View {
                             .padding(6)
                             .onTapGesture { handleTapVehicle(vehicle) }
                         }
+                        .selected(isSelected)
                         .allowOverlap(true)
                         .allowOverlapWithPuck(true)
                         .visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)
