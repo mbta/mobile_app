@@ -10,6 +10,7 @@ import shared
 import SwiftUI
 
 struct NearbyRouteView: View {
+    let analytics: NearbyTransitAnalytics
     let nearbyRoute: StopsAssociated.WithRoute
     let pinned: Bool
     let onPin: (String) -> Void
@@ -21,6 +22,7 @@ struct NearbyRouteView: View {
             ForEach(Array(nearbyRoute.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
                     NearbyStopView(
+                        analytics: analytics,
                         patternsAtStop: patternsAtStop,
                         now: now,
                         pushNavEntry: pushNavEntry,

@@ -14,7 +14,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
+    let analytics: StopDetailsAnalytics
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
@@ -31,6 +31,7 @@ struct StopDetailsView: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
+        analytics: StopDetailsAnalytics,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
@@ -38,6 +39,7 @@ struct StopDetailsView: View {
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
     ) {
+        self.analytics = analytics
         self.globalRepository = globalRepository
         self.stop = stop
         _filter = filter
@@ -75,6 +77,7 @@ struct StopDetailsView: View {
 
                 if let departures = nearbyVM.departures {
                     StopDetailsRoutesView(
+                        analytics: analytics,
                         departures: departures,
                         now: now.toKotlinInstant(),
                         filter: $filter,

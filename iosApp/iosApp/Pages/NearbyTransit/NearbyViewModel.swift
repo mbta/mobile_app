@@ -34,7 +34,7 @@ class NearbyViewModel: ObservableObject {
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
-        analytics: NearbyTransitAnalytics = AnalyticsProvider()
+        analytics: NearbyTransitAnalytics
     ) {
         self.departures = departures
         self.navigationStack = navigationStack

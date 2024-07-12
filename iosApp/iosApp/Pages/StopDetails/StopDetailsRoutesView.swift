@@ -11,6 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsRoutesView: View {
+    let analytics: StopDetailsAnalytics
     let departures: StopDetailsDepartures
     let now: Instant
     @Binding var filter: StopDetailsFilter?
@@ -21,6 +22,7 @@ struct StopDetailsRoutesView: View {
     var body: some View {
         if let filter {
             StopDetailsFilteredRouteView(
+                analytics: analytics,
                 departures: departures,
                 now: now,
                 filter: $filter,
@@ -34,6 +36,7 @@ struct StopDetailsRoutesView: View {
                     LazyVStack {
                         ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                             StopDetailsRouteView(
+                                analytics: analytics,
                                 patternsByStop: patternsByStop,
                                 now: now,
                                 pushNavEntry: pushNavEntry,
@@ -79,7 +82,9 @@ struct StopDetailsRoutesView: View {
         prediction.departureTime = (Date.now + 8 * 60).toKotlinInstant()
     }
 
-    return StopDetailsRoutesView(departures: .init(routes: [
+    return StopDetailsRoutesView(
+        analytics: AnalyticsProvider(),
+        departures: .init(routes: [
         .init(route: route1, stop: stop, patterns: [
             .ByHeadsign(
                 route: route1, headsign: "A", line: nil, patterns: [],

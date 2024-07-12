@@ -14,10 +14,10 @@ struct ContentView: View {
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
+    @EnvironmentObject var analyticsProvider: AnalyticsProvider
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
-    @StateObject var nearbyVM: NearbyViewModel = .init()
+    @StateObject var nearbyVM: NearbyViewModel
     @StateObject var mapVM = MapViewModel()
-    var screenTracker: ScreenTracker = AnalyticsProvider()
 
     private enum SelectedTab: Hashable {
         case nearby
@@ -36,7 +36,7 @@ struct ContentView: View {
                     .tag(SelectedTab.settings)
                     .tabItem { Label("Settings", systemImage: "gear") }
                     .onAppear {
-                        screenTracker.track(screen: .settings)
+                        analyticsProvider.track(screen: .settings)
                     }
             }
         } else {
@@ -53,6 +53,7 @@ struct ContentView: View {
         VStack {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
+                    analytics: analyticsProvider,
                     nearbyVM: nearbyVM,
                     viewportProvider: viewportProvider
                 )
@@ -82,6 +83,7 @@ struct ContentView: View {
                 Text("Location access state unknown")
             }
             HomeMapView(
+                analytics: analyticsProvider,
                 mapVM: mapVM,
                 nearbyVM: nearbyVM,
                 railRouteShapeFetcher: railRouteShapeFetcher,
@@ -110,12 +112,14 @@ struct ContentView: View {
                         switch entry {
                         case let .stopDetails(stop, _):
                             StopDetailsPage(
+                                analytics: analyticsProvider,
                                 viewportProvider: viewportProvider,
-                                stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                                stop: stop,
+                                filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                                 nearbyVM: nearbyVM
                             ).onAppear {
                                 visibleNearbySheet = entry
-                                screenTracker.track(screen: .stopDetails)
+                                analyticsProvider.track(screen: .stopDetails)
                             }
 
                         case let .tripDetails(
@@ -132,7 +136,7 @@ struct ContentView: View {
                                 nearbyVM: nearbyVM,
                                 mapVM: mapVM
                             ).onAppear {
-                                screenTracker.track(screen: .tripDetails)
+                                analyticsProvider.track(screen: .tripDetails)
                                 visibleNearbySheet = entry
                             }
 
@@ -140,7 +144,7 @@ struct ContentView: View {
                             nearbySheetContents
                                 .onAppear {
                                     visibleNearbySheet = entry
-                                    screenTracker.track(screen: .nearbyTransit)
+                                    analyticsProvider.track(screen: .nearbyTransit)
                                 }
                         }
                     }

@@ -11,7 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsFilteredRouteView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
+    let analytics: StopDetailsAnalytics
     let patternsByStop: PatternsByStop?
     let now: Instant
     @Binding var filter: StopDetailsFilter?
@@ -55,6 +55,7 @@ struct StopDetailsFilteredRouteView: View {
     let rows: [RowData]
 
     init(
+        analytics: StopDetailsAnalytics,
         departures: StopDetailsDepartures,
         now: Instant,
         filter filterBinding: Binding<StopDetailsFilter?>,
@@ -64,6 +65,7 @@ struct StopDetailsFilteredRouteView: View {
         _filter = filterBinding
         let filter = filterBinding.wrappedValue
         let patternsByStop = departures.routes.first(where: { $0.routeIdentifier == filter?.routeId })
+        self.analytics = analytics
         self.patternsByStop = patternsByStop
         self.now = now
         self.pushNavEntry = pushNavEntry

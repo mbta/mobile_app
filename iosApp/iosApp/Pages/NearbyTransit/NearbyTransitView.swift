@@ -15,7 +15,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
+    var analytics: NearbyTransitAnalytics
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
@@ -103,6 +103,7 @@ struct NearbyTransitView: View {
                         switch onEnum(of: nearbyTransit) {
                         case let .withRoute(nearbyRoute):
                             NearbyRouteView(
+                                analytics: analytics,
                                 nearbyRoute: nearbyRoute,
                                 pinned: pinnedRoutes.contains(nearbyRoute.route.id),
                                 onPin: { id in toggledPinnedRoute(id) },
@@ -111,6 +112,7 @@ struct NearbyTransitView: View {
                             )
                         case let .withLine(nearbyLine):
                             NearbyLineView(
+                                analytics: analytics,
                                 nearbyLine: nearbyLine,
                                 pinned: pinnedRoutes.contains(nearbyLine.line.id),
                                 onPin: { id in toggledPinnedRoute(id) },
@@ -389,6 +391,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
         )
         List {
             NearbyRouteView(
+                analytics: AnalyticsProvider(),
                 nearbyRoute: StopsAssociated.WithRoute(
                     route: busRoute,
                     patternsByStop: [
@@ -417,6 +420,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
+                analytics: AnalyticsProvider(),
                 nearbyRoute: StopsAssociated.WithRoute(
                     route: crRoute,
                     patternsByStop: [

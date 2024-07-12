@@ -14,6 +14,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitPageView: View {
+    let analytics: NearbyTransitAnalytics
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -22,9 +23,11 @@ struct NearbyTransitPageView: View {
     let inspection = Inspection<Self>()
 
     init(
+        analytics: NearbyTransitAnalytics,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider
     ) {
+        self.analytics = analytics
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
     }
@@ -38,6 +41,7 @@ struct NearbyTransitPageView: View {
                     LoadingCard { Text("select location") }
                 } else {
                     NearbyTransitView(
+                        analytics: analytics,
                         getNearby: { global, location in
                             nearbyVM.getNearby(global: global, location: location)
                         },

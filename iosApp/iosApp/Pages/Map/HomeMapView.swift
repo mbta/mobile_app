@@ -13,7 +13,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
+    var analytics: NearbyTransitAnalytics
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
@@ -45,6 +45,7 @@ struct HomeMapView: View {
     }
 
     init(
+        analytics: NearbyTransitAnalytics,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
@@ -56,6 +57,7 @@ struct HomeMapView: View {
         sheetHeight: Binding<CGFloat>,
         globalMapData: GlobalMapData? = nil
     ) {
+        self.analytics = analytics
         self.globalRepository = globalRepository
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM

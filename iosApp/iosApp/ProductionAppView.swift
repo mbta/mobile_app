@@ -33,6 +33,7 @@ struct ProductionAppView: View {
     @StateObject var socketProvider: SocketProvider
     @StateObject var vehiclesFetcher: VehiclesFetcher
     @StateObject var viewportProvider: ViewportProvider
+    @EnvironmentObject var analyticsProvider: AnalyticsProvider
 
     init() {
         Self.initSentry()
@@ -52,7 +53,7 @@ struct ProductionAppView: View {
     }
 
     var body: some View {
-        ContentView()
+        ContentView(nearbyVM: NearbyViewModel(analytics: analyticsProvider))
             .font(Typography.body)
             .environmentObject(locationDataManager)
             .environmentObject(backendProvider)

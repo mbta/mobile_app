@@ -11,7 +11,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsPage: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
+    var analytics: StopDetailsAnalytics
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     @ObservedObject var viewportProvider: ViewportProvider
@@ -35,6 +35,7 @@ struct StopDetailsPage: View {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
+        analytics: StopDetailsAnalytics,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
@@ -43,6 +44,7 @@ struct StopDetailsPage: View {
         self.globalRepository = globalRepository
         self.schedulesRepository = schedulesRepository
         self.predictionsRepository = predictionsRepository
+        self.analytics = analytics
         self.viewportProvider = viewportProvider
         self.stop = stop
         _filter = filter
@@ -50,31 +52,33 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        StopDetailsView(stop: stop,
-                        filter: $filter,
-                        nearbyVM: nearbyVM,
-                        pinnedRoutes: pinnedRoutes,
-                        togglePinnedRoute: togglePinnedRoute)
-            .onAppear {
-                loadGlobalData()
-                changeStop(stop)
-                loadPinnedRoutes()
-            }
-
-            .onChange(of: stop) { nextStop in changeStop(nextStop) }
-            .onChange(of: globalResponse) { _ in updateDepartures() }
-            .onChange(of: pinnedRoutes) { _ in updateDepartures() }
-            .onChange(of: predictions) { _ in updateDepartures() }
-            .onChange(of: schedulesResponse) { _ in updateDepartures() }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .onReceive(timer) { input in
-                now = input
-                updateDepartures()
-            }
-            .onDisappear { leavePredictions() }
-            .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
-                                    onInactive: leavePredictions,
-                                    onBackground: leavePredictions)
+        StopDetailsView(
+            analytics: analytics,
+            stop: stop,
+            filter: $filter,
+            nearbyVM: nearbyVM,
+            pinnedRoutes: pinnedRoutes,
+            togglePinnedRoute: togglePinnedRoute
+        )
+        .onAppear {
+            loadGlobalData()
+            changeStop(stop)
+            loadPinnedRoutes()
+        }
+        .onChange(of: stop) { nextStop in changeStop(nextStop) }
+        .onChange(of: globalResponse) { _ in updateDepartures() }
+        .onChange(of: pinnedRoutes) { _ in updateDepartures() }
+        .onChange(of: predictions) { _ in updateDepartures() }
+        .onChange(of: schedulesResponse) { _ in updateDepartures() }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onReceive(timer) { input in
+            now = input
+            updateDepartures()
+        }
+        .onDisappear { leavePredictions() }
+        .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
+                                onInactive: leavePredictions,
+                                onBackground: leavePredictions)
     }
 
     func loadGlobalData() {

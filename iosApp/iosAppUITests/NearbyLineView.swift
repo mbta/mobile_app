@@ -10,6 +10,7 @@ import shared
 import SwiftUI
 
 struct NearbyLineView: View {
+    let analytics: NearbyTransitAnalytics
     let nearbyLine: StopsAssociated.WithLine
     let pinned: Bool
     let onPin: (String) -> Void
@@ -21,6 +22,7 @@ struct NearbyLineView: View {
             ForEach(Array(nearbyLine.patternsByStop.enumerated()), id: \.element.stop.id) { index, patternsAtStop in
                 VStack(spacing: 0) {
                     NearbyStopView(
+                        analytics: analytics,
                         patternsAtStop: patternsAtStop,
                         condenseHeadsignPredictions: nearbyLine.condensePredictions,
                         now: now,

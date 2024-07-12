@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct NearbyStopView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
+    let analytics: NearbyTransitAnalytics
     let patternsAtStop: PatternsByStop
     let condenseHeadsignPredictions: Bool
     let now: Instant
@@ -18,12 +18,14 @@ struct NearbyStopView: View {
     let pinned: Bool
 
     init(
+        analytics: NearbyTransitAnalytics,
         patternsAtStop: PatternsByStop,
         condenseHeadsignPredictions: Bool = false,
         now: Instant,
         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
         pinned: Bool
     ) {
+        self.analytics = analytics
         self.patternsAtStop = patternsAtStop
         self.condenseHeadsignPredictions = condenseHeadsignPredictions
         self.now = now

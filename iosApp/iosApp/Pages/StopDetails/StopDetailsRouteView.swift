@@ -11,7 +11,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsRouteView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
+    let analytics: StopDetailsAnalytics
     let patternsByStop: PatternsByStop
     let now: Instant
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
