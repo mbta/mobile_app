@@ -48,9 +48,13 @@ class MockGlobalRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     val response: GlobalResponse =
-        GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap())
+        GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
+    val onGet: () -> Unit = {}
 ) : IGlobalRepository {
-    override suspend fun getGlobalData() = response
+    override suspend fun getGlobalData(): GlobalResponse {
+        onGet()
+        return response
+    }
 }
 
 class IdleGlobalRepository : IGlobalRepository {
