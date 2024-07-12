@@ -20,7 +20,7 @@ sealed class TripInstantDisplay {
 
     data object Approaching : TripInstantDisplay()
 
-    data class DistantFuture(val predictionTime: Instant) : TripInstantDisplay()
+    data class AsTime(val predictionTime: Instant) : TripInstantDisplay()
 
     data class Schedule(val scheduleTime: Instant) : TripInstantDisplay()
 
@@ -44,6 +44,7 @@ sealed class TripInstantDisplay {
             context: Context
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
+            val forceAsTime = context == Context.TripDetails
             prediction?.status?.let {
                 return Overridden(it)
             }
@@ -97,11 +98,11 @@ sealed class TripInstantDisplay {
             if (timeRemaining <= ARRIVAL_CUTOFF) {
                 return Arriving
             }
-            if (timeRemaining <= APPROACH_CUTOFF) {
+            if (timeRemaining <= APPROACH_CUTOFF && !forceAsTime) {
                 return Approaching
             }
-            if (timeRemaining > DISTANT_FUTURE_CUTOFF) {
-                return DistantFuture(prediction.predictionTime)
+            if (timeRemaining > DISTANT_FUTURE_CUTOFF || forceAsTime) {
+                return AsTime(prediction.predictionTime)
             }
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
             return Minutes(minutes)

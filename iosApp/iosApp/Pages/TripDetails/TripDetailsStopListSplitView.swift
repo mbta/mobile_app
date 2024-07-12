@@ -23,7 +23,7 @@ struct TripDetailsStopListSplitView: View {
                 }
             }
             TripDetailsStopView(stop: splitStops.targetStop, now: now)
-                .listRowBackground(Color.fill1)
+                .listRowBackground(Color.keyInverse.opacity(0.15))
             ForEach(splitStops.followingStops, id: \.stopSequence) { stop in
                 TripDetailsStopView(stop: stop, now: now)
             }

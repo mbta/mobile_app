@@ -279,7 +279,7 @@ class UpcomingTripTest {
             val moreFuture = future.plus(38.minutes)
 
             assertEquals(
-                TripInstantDisplay.DistantFuture(future),
+                TripInstantDisplay.AsTime(future),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -290,7 +290,7 @@ class UpcomingTripTest {
                     .format(now, anyContext())
             )
             assertEquals(
-                TripInstantDisplay.DistantFuture(moreFuture),
+                TripInstantDisplay.AsTime(moreFuture),
                 UpcomingTrip(trip {}, prediction { departureTime = moreFuture })
                     .format(now, anyContext())
             )
