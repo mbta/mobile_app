@@ -13,7 +13,6 @@ import SwiftUI
 
 protocol IMapLayerManager {
     func addLayers(
-        routeLayerGenerator: RouteLayerGenerator,
         stopLayerGenerator: StopLayerGenerator,
         childStopLayerGenerator: ChildStopLayerGenerator
     )
@@ -27,7 +26,6 @@ struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
-    var routeLayerGenerator: RouteLayerGenerator?
     var stopLayerGenerator: StopLayerGenerator?
     var childStopSourceGenerator: ChildStopSourceGenerator?
     var childStopLayerGenerator: ChildStopLayerGenerator?
@@ -54,12 +52,11 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addLayers(
-        routeLayerGenerator: RouteLayerGenerator,
         stopLayerGenerator: StopLayerGenerator,
         childStopLayerGenerator: ChildStopLayerGenerator
     ) {
-        let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator
-            .stopLayers + [childStopLayerGenerator.childStopLayer]
+        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.routeLayers.map { $0.toMapbox() }
+            + stopLayerGenerator.stopLayers + [childStopLayerGenerator.childStopLayer]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {

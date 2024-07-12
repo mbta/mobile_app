@@ -82,3 +82,14 @@ extension shared.Exp {
         try! JSONDecoder().decode(MapboxMaps.Exp.self, from: Data(toJsonString().utf8))
     }
 }
+
+extension shared.LineLayer {
+    func toMapbox() -> MapboxMaps.LineLayer {
+        // the json is supposed to be valid
+        // swiftlint:disable:next force_try
+        try! JSONDecoder().decode(
+            MapboxMaps.LineLayer.self,
+            from: Data(toJsonString().utf8)
+        )
+    }
+}

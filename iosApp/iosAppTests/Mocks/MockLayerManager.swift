@@ -11,7 +11,6 @@ import Foundation
 @_spi(Experimental) import MapboxMaps
 
 class MockLayerManager: IMapLayerManager {
-    var routeLayerGenerator: RouteLayerGenerator?
     var stopSourceGenerator: StopSourceGenerator?
     var stopLayerGenerator: StopLayerGenerator?
     var childStopSourceGenerator: ChildStopSourceGenerator?
@@ -32,7 +31,6 @@ class MockLayerManager: IMapLayerManager {
     }
 
     func addLayers(
-        routeLayerGenerator _: RouteLayerGenerator,
         stopLayerGenerator _: StopLayerGenerator,
         childStopLayerGenerator _: ChildStopLayerGenerator
     ) {

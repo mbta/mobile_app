@@ -22,6 +22,17 @@ import kotlinx.serialization.json.buildJsonArray
 sealed interface Exp<T> : MapboxStyleObject {
     data class Bare<T>(val body: JsonElement) : Exp<T> {
         override fun asJson() = body
+
+        companion object {
+            fun arrayOf(vararg elements: String) =
+                Bare<List<String>>(
+                    buildJsonArray {
+                        for (element in elements) {
+                            add(element)
+                        }
+                    }
+                )
+        }
     }
 
     companion object {
