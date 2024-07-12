@@ -23,7 +23,7 @@ protocol ScreenTracker {
 
 extension AnalyticsProvider: ScreenTracker {
     private var appcues: Appcues? {
-        (UIApplication.shared.delegate as? AppDelegate)?.appcues
+        AppDelegate.instance.appcues
     }
 
     func track(screen: AnalyticsScreen) {

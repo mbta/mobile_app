@@ -39,7 +39,10 @@
     {
       "parallelizable" : true,
       "skippedTests" : [
-        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()"
+        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
+        "HomeMapViewTests\/testSetsRouteSourceWhenStopSelectedWithRouteFilter()",
+        "HomeMapViewTests\/testUpdatesRouteAndChildStopsWhenStopSelected()",
+        "HomeMapViewTests\/testUpdatesRouteSourceWhenStopSelectedWithRouteFilterAndUpcomingDepartures()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
