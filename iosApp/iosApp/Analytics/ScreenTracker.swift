@@ -22,9 +22,6 @@ protocol ScreenTracker {
 }
 
 extension AnalyticsProvider: ScreenTracker {
-    private var appcues: Appcues? {
-        AppDelegate.instance.appcues
-    }
 
     func track(screen: AnalyticsScreen) {
         Analytics.logEvent(

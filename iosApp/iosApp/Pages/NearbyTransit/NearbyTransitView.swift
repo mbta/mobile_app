@@ -15,7 +15,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions

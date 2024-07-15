@@ -14,7 +14,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
+    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
