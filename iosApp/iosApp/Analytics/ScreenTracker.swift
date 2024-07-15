@@ -22,7 +22,6 @@ protocol ScreenTracker {
 }
 
 extension AnalyticsProvider: ScreenTracker {
-
     func track(screen: AnalyticsScreen) {
         Analytics.logEvent(
             AnalyticsEventScreenView,
@@ -30,6 +29,10 @@ extension AnalyticsProvider: ScreenTracker {
                 AnalyticsParameterScreenName: screen.rawValue,
             ]
         )
-        appcues?.screen(title: screen.rawValue)
+        if let appcues {
+            appcues.screen(title: screen.rawValue)
+        } else {
+            debugPrint("Appcues not initialized")
+        }
     }
 }
