@@ -17,7 +17,7 @@ struct ContentView: View {
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var nearbyVM: NearbyViewModel = .init()
     @StateObject var mapVM = MapViewModel()
-    var screenTracker: ScreenTracker = AnalyticsProvider()
+    var screenTracker: ScreenTracker = AnalyticsProvider.shared
 
     private enum SelectedTab: Hashable {
         case nearby

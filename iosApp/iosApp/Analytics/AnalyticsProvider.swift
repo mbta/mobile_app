@@ -10,7 +10,11 @@ import AppcuesKit
 import FirebaseAnalytics
 import Foundation
 
-struct AnalyticsProvider {
+class AnalyticsProvider {
+    static let shared = AnalyticsProvider()
+
+    var appcues: Appcues?
+
     /**
      * The `file` param is automatically populated with the call sites file path which we parse the class name from.
      * e.g.: `NearbyTransitAnalytics`
