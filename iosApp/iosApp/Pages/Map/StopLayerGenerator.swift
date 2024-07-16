@@ -43,7 +43,7 @@ class StopLayerGenerator {
 
         var stopSelectedPinLayer = SymbolLayer(id: Self.stopLayerSelectedPinId, source: sourceId)
         stopSelectedPinLayer.iconImage = .expression(Exp(.switchCase) {
-            MapExp.selectedExp
+            MapExp.shared.selectedExp.toMapbox()
             Exp(.image) { StopIcons.stopPinIcon }
             Exp(.image) { "" }
         })
@@ -82,7 +82,7 @@ class StopLayerGenerator {
     static func createStopLayer(id: String, forBus: Bool = false) -> SymbolLayer {
         var stopLayer = SymbolLayer(id: id, source: StopSourceGenerator.stopSourceId)
         stopLayer.iconImage = StopIcons.getStopLayerIcon(forBus: forBus)
-        stopLayer.textField = .expression(MapExp.stopLabelTextExp(forBus: forBus))
+        stopLayer.textField = .expression(MapExp.shared.stopLabelTextExp(forBus: forBus))
 
         stopLayer.textColor = .constant(.init(.text))
         stopLayer.textFont = .constant(["Inter Regular"])
@@ -93,14 +93,14 @@ class StopLayerGenerator {
         stopLayer.textJustify = .constant(.auto)
         stopLayer.textAllowOverlap = .constant(true)
         stopLayer.textOptional = .constant(true)
-        stopLayer.textOffset = .expression(MapExp.labelOffsetExp)
+        stopLayer.textOffset = .expression(MapExp.shared.labelOffsetExp.toMapbox())
 
         includeSharedProps(on: &stopLayer)
         return stopLayer
     }
 
     static func includeSharedProps(on layer: inout SymbolLayer) {
-        layer.iconSize = .expression(MapExp.selectedSizeExp)
+        layer.iconSize = .expression(MapExp.shared.selectedSizeExp.toMapbox())
 
         layer.iconAllowOverlap = .constant(true)
         layer.minZoom = stopZoomThreshold
@@ -110,27 +110,27 @@ class StopLayerGenerator {
     static func offsetAlertValue(index: Int) -> Value<[Double]> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            MapExp.offsetAlertExp(closeZoom: false, index)
-            MapDefaults.closeZoomThreshold
-            MapExp.offsetAlertExp(closeZoom: true, index)
+            MapExp.shared.offsetAlertExp(closeZoom: false, index: Int32(index)).toMapbox()
+            MapDefaults.shared.closeZoomThreshold
+            MapExp.shared.offsetAlertExp(closeZoom: true, index: Int32(index)).toMapbox()
         })
     }
 
     static func offsetTransferValue(index: Int) -> Value<[Double]> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            MapExp.offsetTransferExp(closeZoom: false, index)
-            MapDefaults.closeZoomThreshold
-            MapExp.offsetTransferExp(closeZoom: true, index)
+            MapExp.shared.offsetTransferExp(closeZoom: false, index: Int32(index)).toMapbox()
+            MapDefaults.shared.closeZoomThreshold
+            MapExp.shared.offsetTransferExp(closeZoom: true, index: Int32(index)).toMapbox()
         })
     }
 
     static func offsetPinValue() -> Value<[Double]> {
         .expression(Exp(.step) {
             Exp(.zoom)
-            MapExp.offsetPinExp(closeZoom: false)
-            MapDefaults.closeZoomThreshold
-            MapExp.offsetPinExp(closeZoom: true)
+            MapExp.shared.offsetPinExp(closeZoom: false).toMapbox()
+            MapDefaults.shared.closeZoomThreshold
+            MapExp.shared.offsetPinExp(closeZoom: true).toMapbox()
         })
     }
 }
