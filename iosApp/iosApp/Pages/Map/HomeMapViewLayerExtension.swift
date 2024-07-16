@@ -37,10 +37,11 @@ extension HomeMapView {
         mapVM.allRailSourceData = routeSourceData
         mapVM.routeSourceData = routeSourceData
 
-        let snappedStopRouteLines = RouteSourceGenerator.generateRouteLines(routeData: routeSourceData,
-                                                                            routesById: globalData?.routes,
-                                                                            stopsById: globalData?.stops,
-                                                                            alertsByStop: globalMapData?.alertsByStop)
+        let snappedStopRouteLines = RouteSourceGenerator.shared.generateRouteLines(routeData: routeSourceData,
+                                                                                   routesById: globalData?.routes,
+                                                                                   stopsById: globalData?.stops,
+                                                                                   alertsByStop: globalMapData?
+                                                                                       .alertsByStop)
         mapVM.snappedStopRouteLines = snappedStopRouteLines
 
         mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stop()?.id)
@@ -77,9 +78,9 @@ extension HomeMapView {
                 departures: departures
             )
         } else {
-            mapVM.routeSourceData = RouteSourceGenerator.forRailAtStop(stopMapData.routeShapes,
-                                                                       mapVM.allRailSourceData,
-                                                                       globalData?.routes)
+            mapVM.routeSourceData = RouteSourceGenerator.shared.forRailAtStop(stopShapes: stopMapData.routeShapes,
+                                                                              railShapes: mapVM.allRailSourceData,
+                                                                              routesById: globalData?.routes)
         }
     }
 
@@ -89,7 +90,7 @@ extension HomeMapView {
     }
 
     func updateRouteSources(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]) {
-        mapVM.updateRouteSource(routeLines: RouteSourceGenerator.generateRouteLines(
+        mapVM.updateRouteSource(routeLines: RouteSourceGenerator.shared.generateRouteLines(
             routeData: routeData,
             routesById: globalData?.routes,
             stopsById: globalData?.stops,

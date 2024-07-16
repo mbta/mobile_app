@@ -18,7 +18,7 @@ protocol IMapLayerManager {
         childStopLayerGenerator: ChildStopLayerGenerator
     )
 
-    func updateSourceData(routeSource: GeoJSONSource)
+    func updateSourceData(routeData: FeatureCollection)
     func updateSourceData(stopSource: GeoJSONSource)
     func updateSourceData(childStopSource: GeoJSONSource)
 }
@@ -88,8 +88,18 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(routeSource: GeoJSONSource) {
-        updateSourceData(source: routeSource)
+    func updateSourceData(sourceId: String, data: FeatureCollection) {
+        if map.sourceExists(withId: sourceId) {
+            map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
+        } else {
+            var source = GeoJSONSource(id: sourceId)
+            source.data = .featureCollection(data)
+            addSource(source: source)
+        }
+    }
+
+    func updateSourceData(routeData: FeatureCollection) {
+        updateSourceData(sourceId: RouteSourceGenerator.shared.routeSourceId, data: routeData)
     }
 
     func updateSourceData(stopSource: GeoJSONSource) {

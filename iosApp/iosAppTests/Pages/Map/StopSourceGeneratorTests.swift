@@ -129,7 +129,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
         ]
 
-        let routeLines = RouteSourceGenerator.generateRouteLines(
+        let routeLines = RouteSourceGenerator.shared.generateRouteLines(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: stops.mapValues { mapStop in mapStop.stop },
@@ -328,7 +328,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
         ]
 
-        let routeLines = RouteSourceGenerator.generateRouteLines(
+        let routeLines = RouteSourceGenerator.shared.generateRouteLines(
             routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
             routesById: MapTestDataHelper.routesById,
             stopsById: stops.mapValues { mapStop in mapStop.stop },

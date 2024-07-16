@@ -82,7 +82,7 @@ enum StopSourceGenerator {
 
                 if touchedStopIds.contains(stop.id) || mapStop.routeTypes.isEmpty { return nil }
 
-                let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
+                let snappedCoord = lineData.line.toMapbox().closestCoordinate(to: stop.coordinate)?.coordinate
                 touchedStopIds.insert(stop.id)
                 return .init(
                     stop: mapStop,

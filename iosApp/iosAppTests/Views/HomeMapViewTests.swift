@@ -664,7 +664,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let layerManger: IMapLayerManager = MockLayerManager(
             addLayersCallback: { addLayersCalledExpectation.fulfill() },
-            updateRouteSourceCallback: { _ in updateSourcesCalledExpectation.fulfill() }
+            updateRouteDataCallback: { _ in updateSourcesCalledExpectation.fulfill() }
         )
 
         var sut = HomeMapView(
@@ -692,7 +692,7 @@ final class HomeMapViewTests: XCTestCase {
         let updateStopSourceExpectation = XCTestExpectation(description: "Update stop source called")
 
         let layerManager = MockLayerManager(addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
-                                            updateRouteSourceCallback: { _ in
+                                            updateRouteDataCallback: { _ in
                                                 updateRouteSourcesExpectation.fulfill()
                                             },
                                             updateStopSourceCallback: { _ in
@@ -722,7 +722,7 @@ final class HomeMapViewTests: XCTestCase {
     func testUpdatesSourcesWhenRouteDataChanges() {
         let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
 
-        let layerManager = MockLayerManager(updateRouteSourceCallback: { _ in
+        let layerManager = MockLayerManager(updateRouteDataCallback: { _ in
             updateSourcesCalledExpectation.fulfill()
         })
 
