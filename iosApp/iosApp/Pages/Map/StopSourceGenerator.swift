@@ -6,7 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Polyline
 import shared
 @_spi(Experimental) import MapboxMaps
 
