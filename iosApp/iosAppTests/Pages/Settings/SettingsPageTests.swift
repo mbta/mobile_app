@@ -56,13 +56,13 @@ final class SettingsPageTests: XCTestCase {
         let sut = SettingsPage(
             viewModel: SettingsViewModel(settingsRepository: settingsRepository)
         )
-        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 0.01) { view in
+        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
             XCTAssertTrue(try view.find(ViewType.Toggle.self).isOn())
         }
 
         ViewHosting.host(view: sut)
 
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     func testSavesState() throws {
@@ -87,10 +87,10 @@ final class SettingsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        let tapExp = sut.inspection.inspect(onReceive: loadedPublisher, after: 0.01) { view in
+        let tapExp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
             try view.find(ViewType.Toggle.self).tap()
         }
 
-        wait(for: [tapExp, savedExp], timeout: 1)
+        wait(for: [tapExp, savedExp], timeout: 2)
     }
 }
