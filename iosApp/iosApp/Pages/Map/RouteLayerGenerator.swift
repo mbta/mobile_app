@@ -18,7 +18,7 @@ class RouteLayerGenerator {
     static let suspendedRouteLayerId = "route-layer-suspended"
     static let alertingBgRouteLayerId = "route-layer-alerting-bg"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
-    private static let closeZoomCutoff = MapDefaults.closeZoomThreshold
+    private static let closeZoomCutoff = MapDefaults.shared.closeZoomThreshold
 
     init() {
         routeLayers = Self.createAllRouteLayers()
@@ -115,7 +115,7 @@ class RouteLayerGenerator {
      Hardcoding offsets based on route properties to minimize the occurences of overlapping rail lines
      when drawn on the map
      */
-    private static func lineOffsetExpression() -> Exp {
+    private static func lineOffsetExpression() -> MapboxMaps.Exp {
         let maxLineWidth = 6.0
 
         return Expression(.switchCase) {

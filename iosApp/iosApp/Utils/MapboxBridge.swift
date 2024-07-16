@@ -74,3 +74,11 @@ extension GeojsonFeatureCollection {
         FeatureCollection(features: features.map { $0.toMapbox() })
     }
 }
+
+extension shared.Exp {
+    func toMapbox() -> MapboxMaps.Exp {
+        // the json is supposed to be valid
+        // swiftlint:disable:next force_try
+        try! JSONDecoder().decode(MapboxMaps.Exp.self, from: Data(toJsonString().utf8))
+    }
+}
