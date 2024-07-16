@@ -174,7 +174,6 @@
 		ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */; };
 		ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */; };
 		EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */; };
-		EDE92FA32C3D81D6007AD2F6 /* MacroUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA22C3D81D6007AD2F6 /* MacroUtils.swift */; };
 		EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */; };
 		EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */; };
 		EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA92C408A50007AD2F6 /* SettingsSection.swift */; };
@@ -399,7 +398,6 @@
 		ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketErrorExtension.swift; sourceTree = "<group>"; };
 		ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPinnedRoutesRepository.swift; sourceTree = "<group>"; };
 		EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCard.swift; sourceTree = "<group>"; };
-		EDE92FA22C3D81D6007AD2F6 /* MacroUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroUtils.swift; sourceTree = "<group>"; };
 		EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTracker.swift; sourceTree = "<group>"; };
 		EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		EDE92FA92C408A50007AD2F6 /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
@@ -878,7 +876,6 @@
 				8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */,
 				6EFEE42E2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift */,
 				9AAA26A42C2DBC5800A7745A /* GreenLineHelper.swift */,
-				EDE92FA22C3D81D6007AD2F6 /* MacroUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1224,7 +1221,6 @@
 				6E9DDFB72C388514009DD68A /* MockLayerManager.swift in Sources */,
 				9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */,
 				6E973DAB2C178C0200CBF341 /* SheetHeaderTests.swift in Sources */,
-				EDE92FA32C3D81D6007AD2F6 /* MacroUtils.swift in Sources */,
 				8C7FA86F2B5EEA34009B699D /* LocationDataManagerTests.swift in Sources */,
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
 				6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */,
