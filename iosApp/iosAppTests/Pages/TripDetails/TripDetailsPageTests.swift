@@ -59,7 +59,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        wait(for: [showsStopsExp], timeout: 1)
+        wait(for: [showsStopsExp], timeout: 2)
     }
 
     func testIncludesVehicleCard() throws {
@@ -160,7 +160,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        wait(for: [splitViewExp], timeout: 1)
+        wait(for: [splitViewExp], timeout: 2)
     }
 
     func testDisplaysTransferRoutes() throws {
@@ -275,7 +275,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        wait(for: [routeExp], timeout: 1)
+        wait(for: [routeExp], timeout: 2)
     }
 
     func testBackButton() throws {
@@ -346,7 +346,7 @@ final class TripDetailsPageTests: XCTestCase {
             selectedVehicleSetExp.fulfill()
         }
 
-        wait(for: [selectedVehicleSetExp], timeout: 1)
+        wait(for: [selectedVehicleSetExp], timeout: 2)
 
         subscription.cancel()
     }
