@@ -238,13 +238,17 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testUpdatesRouteAndChildStopsWhenStopSelected() throws {
+        let globalLoadSubject = PassthroughSubject<Void, Never>()
+
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
                 FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.routeOrange.id],
                                        onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
                 global: MockGlobalRepository(
-                    response: mockedGlobalResponse
+                    response: mockedGlobalResponse,
+                    onGet: { globalLoadSubject.send(
+                    ) }
                 )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
@@ -270,7 +274,7 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { sut in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
@@ -290,6 +294,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testSetsRouteSourceWhenStopSelectedWithRouteFilter() throws {
+        let globalLoadSubject = PassthroughSubject<Void, Never>()
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
@@ -298,7 +303,9 @@ final class HomeMapViewTests: XCTestCase {
                     onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
                 ),
                 global: MockGlobalRepository(
-                    response: mockedGlobalResponse
+                    response: mockedGlobalResponse,
+                    onGet: { globalLoadSubject.send(
+                    ) }
                 )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
@@ -325,7 +332,7 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { sut in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
                                          directionId: MapTestDataHelper.patternOrange30.directionId))
@@ -347,12 +354,16 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testUpdatesRouteSourceWhenStopSelectedWithRouteFilterAndUpcomingDepartures() throws {
+        let globalLoadSubject = PassthroughSubject<Void, Never>()
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
                 FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
                 global: MockGlobalRepository(
-                    response: mockedGlobalResponse
+                    response: mockedGlobalResponse,
+                    onGet: { globalLoadSubject.send(
+                    ) }
+
                 )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
@@ -398,7 +409,7 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { sut in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
                                          directionId: MapTestDataHelper.patternOrange30.directionId))
