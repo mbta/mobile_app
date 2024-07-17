@@ -50,4 +50,28 @@ final class NearbyViewModelTests: XCTestCase {
         nearbyVM.pushNavEntry(entry2)
         XCTAssertEqual(nearbyVM.navigationStack, [entry2])
     }
+
+    func testTargetStop() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [])
+
+        let mockGlobal = GlobalResponse(objects: objects, patternIdsByStop: [:])
+
+        nearbyVM.pushNavEntry(.nearby)
+
+        XCTAssertEqual(nearbyVM.getTargetStop(global: mockGlobal), nil)
+
+        let stopEntry: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: "Route1", directionId: 0))
+        nearbyVM.pushNavEntry(stopEntry)
+
+        XCTAssertEqual(nearbyVM.getTargetStop(global: mockGlobal), stop)
+
+        let tripEntry: SheetNavigationStackEntry = .tripDetails(
+            tripId: "", vehicleId: "", target: .init(stopId: stop.id, stopSequence: nil), routeId: "", directionId: 0
+        )
+        nearbyVM.pushNavEntry(tripEntry)
+
+        XCTAssertEqual(nearbyVM.getTargetStop(global: mockGlobal), stop)
+    }
 }

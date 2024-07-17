@@ -54,8 +54,8 @@ class ViewportProvider: ObservableObject {
     }
 
     func followVehicle(vehicle: Vehicle, target: Stop?) {
-        isFollowingVehicle = true
         followedVehicle = vehicle
+        isFollowingVehicle = true
         guard let target else {
             animateTo(coordinates: vehicle.coordinate)
             return
@@ -64,11 +64,12 @@ class ViewportProvider: ObservableObject {
     }
 
     func updateFollowedVehicle(vehicle: Vehicle?) {
-        followedVehicle = vehicle
         guard let vehicle else {
             isFollowingVehicle = false
+            followedVehicle = nil
             return
         }
+        followedVehicle = vehicle
         if isFollowingVehicle {
             animateTo(coordinates: vehicle.coordinate)
         }
