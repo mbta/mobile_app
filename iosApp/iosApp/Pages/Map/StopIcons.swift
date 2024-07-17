@@ -55,7 +55,7 @@ enum StopIcons {
                 0
                 Exp(.get) {
                     MapExp.shared.topRouteExp.toMapbox()
-                    Exp(.get) { StopSourceGenerator.propRouteIdsKey }
+                    Exp(.get) { StopFeaturesBuilder.shared.propRouteIdsKey }
                 }
             }
         }
@@ -75,7 +75,7 @@ enum StopIcons {
             Exp(.switchCase) {
                 // If at wide zoom, give terminal stops with no transfers distinct icons
                 Exp(.all) {
-                    Exp(.get) { StopSourceGenerator.propIsTerminalKey }
+                    Exp(.get) { StopFeaturesBuilder.shared.propIsTerminalKey }
                     MapExp.shared.singleRouteTypeExp.toMapbox()
                     Exp(.boolean) { zoomPrefix == stopZoomWidePrefix }
                 }
