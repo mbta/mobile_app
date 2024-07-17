@@ -10,21 +10,33 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISettingsRepository {
-    suspend fun getMapDebug(): Boolean
+    suspend fun getSettings(): Set<Setting>
 
-    suspend fun setMapDebug(mapDebug: Boolean)
+    suspend fun setSettings(settings: Set<Setting>)
 }
 
 class SettingsRepository : ISettingsRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
-    private val mapDebugKey = booleanPreferencesKey("map_debug")
-
-    override suspend fun getMapDebug(): Boolean {
-        return dataStore.data.map { it[mapDebugKey] ?: false }.first()
+    override suspend fun getSettings(): Set<Setting> {
+        return dataStore.data
+            .map { dataStore ->
+                Settings.entries.map { Setting(it, dataStore[it.dataStoreKey] ?: false) }
+            }
+            .first()
+            .toSet()
     }
 
-    override suspend fun setMapDebug(mapDebug: Boolean) {
-        dataStore.edit { it[mapDebugKey] = mapDebug }
+    override suspend fun setSettings(settings: Set<Setting>) {
+        dataStore.edit { dataStore ->
+            settings.forEach { dataStore[it.key.dataStoreKey] = it.isOn }
+        }
     }
 }
+
+enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
+    Map(booleanPreferencesKey("map_debug")),
+    Search(booleanPreferencesKey("search_featureFlag")),
+}
+
+data class Setting(val key: Settings, var isOn: Boolean)
