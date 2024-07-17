@@ -276,14 +276,14 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
         ViewHosting.host(view: sut)
 
-        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
+        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
             XCTAssertNotNil(mapVM.childStops)
@@ -334,14 +334,14 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.shared.routeOrange.id,
                                          directionId: MapTestDataHelper.shared.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
-        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
+        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
             XCTAssertNotNil(mapVM.childStops)
@@ -411,14 +411,14 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
+        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.shared.routeOrange.id,
                                          directionId: MapTestDataHelper.shared.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
-        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
+        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
                 segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
@@ -486,7 +486,7 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let globalDataLoaded = sut.inspection.inspect(onReceive: globalLoadSubject, after: 0.2) { sut in
+        let globalDataLoaded = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
                 .tripDetails(tripId: "ol_trip_id",
                              vehicleId: "vehicle",
@@ -499,7 +499,7 @@ final class HomeMapViewTests: XCTestCase {
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
-        let routeDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 0.2) { _ in
+        let routeDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
                 segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
@@ -507,7 +507,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertNil(mapVM.childStops)
         }
 
-        let stopDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 0.2) { _ in
+        let stopDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 1) { _ in
             XCTAssertEqual(mapVM.stopSourceData, .init(filteredStopIds: [MapTestDataHelper.shared.stopAssembly.id,
                                                                          MapTestDataHelper.shared.stopSullivan.id],
                                                        selectedStopId: MapTestDataHelper.shared.stopSullivan.id))

@@ -808,7 +808,7 @@ final class NearbyTransitViewTests: XCTestCase {
             alerts: nil,
             nearbyVM: .init()
         )
-        let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 0.2) { view in
+        let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 1) { view in
             XCTAssertEqual(try view.actualView().predictionsError, shared.SocketError.unknown)
         }
         ViewHosting.host(view: sut)

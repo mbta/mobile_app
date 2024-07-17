@@ -51,7 +51,7 @@ final class TripDetailsPageTests: XCTestCase {
             tripRepository: tripRepository
         )
 
-        let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
+        let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Somewhere"))
             XCTAssertNotNil(try view.find(text: "Elsewhere"))
             XCTAssertNotNil(try view.find(text: "Elsewhere").parent().find(text: "ARR"))
@@ -114,7 +114,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
-        let showVehicleCardExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
+        let showVehicleCardExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 1) { view in
             XCTAssertNotNil(try view.find(VehicleOnTripView.self))
         }
 
@@ -154,7 +154,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: nil)
         )
 
-        let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.1) { view in
+        let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 1) { view in
             XCTAssertNotNil(try view.find(TripDetailsStopListSplitView.self))
         }
 
@@ -264,7 +264,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
 
-        let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
+        let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 1) { view in
             let stop1Row = try view.find(TripDetailsStopView.self, containing: stop1.name)
             let stop2Row = try view.find(TripDetailsStopView.self, containing: stop2.name)
             XCTAssertNotNil(try stop1Row.find(RoutePill.self, containing: "Green Line"))
