@@ -28,7 +28,8 @@ class MapViewModel: ObservableObject {
     }
 
     func updateRouteSource(routeLines: [RouteLineData]) {
-        layerManager?.updateSourceData(routeSource: RouteSourceGenerator.generateSource(routeLines: routeLines))
+        layerManager?
+            .updateSourceData(routeData: RouteFeaturesBuilder.shared.buildCollection(routeLines: routeLines).toMapbox())
     }
 
     func updateStopSource(_ stopSource: GeoJSONSource) {

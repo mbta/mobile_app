@@ -101,9 +101,9 @@ extension HomeMapView {
                 case .error:
                     []
                 }
-                mapVM.routeSourceData = RouteSourceGenerator.shapesWithStopsToMapFriendly(
-                    shapesWithStops,
-                    globalData?.stops
+                mapVM.routeSourceData = RouteFeaturesBuilder.shared.shapesWithStopsToMapFriendly(
+                    shapesWithStops: shapesWithStops,
+                    stopsById: globalData?.stops
                 )
 
                 let filteredStopIds = shapesWithStops.flatMap(\.stopIds).map { stopId in

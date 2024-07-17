@@ -83,6 +83,7 @@
 		8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */; };
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
 		8CD58ECD2BEC115B0004E031 /* TripDetailsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD58ECC2BEC115B0004E031 /* TripDetailsPageTests.swift */; };
+		8CD79F112C46F6E200AFF17D /* MapboxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */; };
 		8CD81A242BE55B2C0090585F /* SettingsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD81A232BE55B2C0090585F /* SettingsPageTests.swift */; };
 		8CDF2C342BE9357E007FC912 /* OptionalNavigationLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CDF2C332BE9357E007FC912 /* OptionalNavigationLinkTests.swift */; };
 		8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */; };
@@ -108,15 +109,12 @@
 		9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830552BA3A2CE0039876E /* ViewportExtension.swift */; };
 		9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830572BA4A1A30039876E /* ViewportProvider.swift */; };
 		9A5B27522BB1EF45009A6FC6 /* StopSourceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27512BB1EF45009A6FC6 /* StopSourceGenerator.swift */; };
-		9A5B27542BB1EF53009A6FC6 /* RouteSourceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27532BB1EF53009A6FC6 /* RouteSourceGenerator.swift */; };
 		9A5B27562BB221C1009A6FC6 /* RouteLayerGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27552BB221C1009A6FC6 /* RouteLayerGenerator.swift */; };
 		9A5B27582BB22BF9009A6FC6 /* MapLayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */; };
 		9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */; };
 		9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */; };
 		9A5B27602BB31178009A6FC6 /* StopSourceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */; };
-		9A5B27622BB32621009A6FC6 /* RouteSourceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27612BB32621009A6FC6 /* RouteSourceGeneratorTests.swift */; };
 		9A5B27642BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */; };
-		9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */; };
 		9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */; };
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */; };
@@ -133,7 +131,6 @@
 		9A88AAC12BD0680C00A5BF88 /* StopDetailsFilterPills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */; };
 		9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC22BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift */; };
 		9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */; };
-		9A8B34B02B892C810018412C /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 9A8B34AF2B892C810018412C /* Polyline */; };
 		9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */; };
 		9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */; };
 		9A9E7DCF2C2200C9000DA1FD /* LineHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCE2C2200C9000DA1FD /* LineHeader.swift */; };
@@ -305,6 +302,7 @@
 		8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredRouteViewTests.swift; sourceTree = "<group>"; };
 		8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		8CD58ECC2BEC115B0004E031 /* TripDetailsPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsPageTests.swift; sourceTree = "<group>"; };
+		8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxBridge.swift; sourceTree = "<group>"; };
 		8CD81A232BE55B2C0090585F /* SettingsPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageTests.swift; sourceTree = "<group>"; };
 		8CDF2C332BE9357E007FC912 /* OptionalNavigationLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNavigationLinkTests.swift; sourceTree = "<group>"; };
 		8CE0140D2BBDB7C300918FAE /* RoutePillSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillSection.swift; sourceTree = "<group>"; };
@@ -331,15 +329,12 @@
 		9A5830552BA3A2CE0039876E /* ViewportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportExtension.swift; sourceTree = "<group>"; };
 		9A5830572BA4A1A30039876E /* ViewportProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportProvider.swift; sourceTree = "<group>"; };
 		9A5B27512BB1EF45009A6FC6 /* StopSourceGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSourceGenerator.swift; sourceTree = "<group>"; };
-		9A5B27532BB1EF53009A6FC6 /* RouteSourceGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSourceGenerator.swift; sourceTree = "<group>"; };
 		9A5B27552BB221C1009A6FC6 /* RouteLayerGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteLayerGenerator.swift; sourceTree = "<group>"; };
 		9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerManager.swift; sourceTree = "<group>"; };
 		9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopLayerGenerator.swift; sourceTree = "<group>"; };
 		9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecenterButton.swift; sourceTree = "<group>"; };
 		9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSourceGeneratorTests.swift; sourceTree = "<group>"; };
-		9A5B27612BB32621009A6FC6 /* RouteSourceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSourceGeneratorTests.swift; sourceTree = "<group>"; };
 		9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteLayerGeneratorTests.swift; sourceTree = "<group>"; };
-		9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTestDataHelper.swift; sourceTree = "<group>"; };
 		9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopLayerGeneratorTests.swift; sourceTree = "<group>"; };
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
@@ -430,7 +425,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E55C1822C2489030086A424 /* Collections in Frameworks */,
-				9A8B34B02B892C810018412C /* Polyline in Frameworks */,
 				8CB28DB52C2B2DEC0036258E /* AppcuesKit in Frameworks */,
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
@@ -748,7 +742,6 @@
 				9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */,
 				9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */,
 				9A5B27552BB221C1009A6FC6 /* RouteLayerGenerator.swift */,
-				9A5B27532BB1EF53009A6FC6 /* RouteSourceGenerator.swift */,
 				9AB446AF2BBDDCAF00D8C920 /* StopIcons.swift */,
 				9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */,
 				9A5B27512BB1EF45009A6FC6 /* StopSourceGenerator.swift */,
@@ -815,11 +808,9 @@
 		9A5B275E2BB24326009A6FC6 /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				9A5B27612BB32621009A6FC6 /* RouteSourceGeneratorTests.swift */,
 				9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */,
 				9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */,
 				9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */,
-				9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */,
 				9A6FA0242BC714360067769C /* HomeMapViewTest.swift */,
 				8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */,
 				6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */,
@@ -865,6 +856,7 @@
 				ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */,
 				6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */,
 				8C0923A62C210C8C00813454 /* Typography.swift */,
+				8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -962,7 +954,6 @@
 			name = iosApp;
 			packageProductDependencies = (
 				6E35D4CD2B72C74500A2BF95 /* MapboxMaps */,
-				9A8B34AF2B892C810018412C /* Polyline */,
 				6EE745802B965AEA0052227E /* SwiftPhoenixClient */,
 				9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				6E55C1812C2489030086A424 /* Collections */,
@@ -1008,7 +999,6 @@
 			packageReferences = (
 				6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
-				9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */,
 				6EE7457F2B965AEA0052227E /* XCRemoteSwiftPackageReference "SwiftPhoenixClient" */,
 				9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				6E55C1802C2489030086A424 /* XCRemoteSwiftPackageReference "swift-collections" */,
@@ -1203,13 +1193,11 @@
 				9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */,
 				6EF50F482B9889D600833070 /* MockSocket.swift in Sources */,
 				6E55C1862C249EF20086A424 /* StopDetailsViewTests.swift in Sources */,
-				9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */,
 				9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */,
 				6EE76D1D2BF535330051D608 /* VehicleCardViewTests.swift in Sources */,
 				9AAA26A72C2DC06700A7745A /* DirectionLabelTests.swift in Sources */,
 				8CB28DB22C2A288E0036258E /* ChildStopSourceGeneratorTests.swift in Sources */,
 				6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */,
-				9A5B27622BB32621009A6FC6 /* RouteSourceGeneratorTests.swift in Sources */,
 				9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */,
 				6E973DA92C178BF500CBF341 /* CloseButtonTests.swift in Sources */,
 				6EED5EAB2B3E1B550052A1B8 /* ContentViewTests.swift in Sources */,
@@ -1259,7 +1247,6 @@
 				9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */,
 				9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */,
 				9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */,
-				9A5B27542BB1EF53009A6FC6 /* RouteSourceGenerator.swift in Sources */,
 				6EE76D1B2BF532010051D608 /* RouteIcon.swift in Sources */,
 				ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */,
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,
@@ -1272,6 +1259,7 @@
 				6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
 				6EFEE42D2BED0FA800810319 /* ScenePhaseChangeModifier.swift in Sources */,
+				8CD79F112C46F6E200AFF17D /* MapboxBridge.swift in Sources */,
 				EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */,
 				9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */,
 				8CA485B82BDC679A00E84E1F /* VehicleExtension.swift in Sources */,
@@ -2060,14 +2048,6 @@
 				minimumVersion = 3.2.0;
 			};
 		};
-		9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/raphaelmor/Polyline.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.2;
-			};
-		};
 		9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -2103,11 +2083,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8CB28DB32C2B2DEC0036258E /* XCRemoteSwiftPackageReference "appcues-ios-sdk" */;
 			productName = AppcuesKit;
-		};
-		9A8B34AF2B892C810018412C /* Polyline */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9A8B34AE2B892C810018412C /* XCRemoteSwiftPackageReference "Polyline" */;
-			productName = Polyline;
 		};
 		9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
 			isa = XCSwiftPackageProductDependency;
