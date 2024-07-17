@@ -101,7 +101,7 @@ extension HomeMapView {
                 case .error:
                     []
                 }
-                mapVM.routeSourceData = RouteSourceGenerator.shared.shapesWithStopsToMapFriendly(
+                mapVM.routeSourceData = RouteFeaturesBuilder.shared.shapesWithStopsToMapFriendly(
                     shapesWithStops: shapesWithStops,
                     stopsById: globalData?.stops
                 )

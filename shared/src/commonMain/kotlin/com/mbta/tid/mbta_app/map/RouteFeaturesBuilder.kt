@@ -32,7 +32,7 @@ data class RouteLineData(
     val sortKey = route?.sortOrder?.unaryMinus() ?: Int.MIN_VALUE
 }
 
-object RouteSourceGenerator {
+object RouteFeaturesBuilder {
     val routeSourceId = "route-source"
 
     val propRouteId = "routeId"
@@ -57,7 +57,7 @@ object RouteSourceGenerator {
         }
     }
 
-    fun generateSource(
+    fun buildCollection(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         routesById: Map<String, Route>?,
         stopsById: Map<String, Stop>?,
@@ -70,10 +70,10 @@ object RouteSourceGenerator {
                 stopsById = stopsById,
                 alertsByStop = alertsByStop
             )
-        return generateSource(routeLines = routeLines)
+        return buildCollection(routeLines = routeLines)
     }
 
-    fun generateSource(routeLines: List<RouteLineData>): FeatureCollection {
+    fun buildCollection(routeLines: List<RouteLineData>): FeatureCollection {
         val routeFeatures = routeLines.map { lineToFeature(routeLineData = it) }
         return FeatureCollection(routeFeatures)
     }

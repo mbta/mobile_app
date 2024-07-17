@@ -21,11 +21,11 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.json.JsonPrimitive
 
 @OptIn(ExperimentalTurfApi::class)
-class RouteSourceGeneratorTest {
+class RouteFeaturesBuilderTest {
     @Test
-    fun testRouteSourceIsCreated() {
+    fun `creates route feature collection`() {
         val collection =
-            RouteSourceGenerator.generateSource(
+            RouteFeaturesBuilder.buildCollection(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 routesById = MapTestDataHelper.routesById,
                 stopsById =
@@ -46,7 +46,7 @@ class RouteSourceGeneratorTest {
             2,
             collection.features
                 .filter {
-                    it.properties[RouteSourceGenerator.propRouteId] ==
+                    it.properties[RouteFeaturesBuilder.propRouteId] ==
                         JsonPrimitive(MapTestDataHelper.routeRed.id)
                 }
                 .size
@@ -55,7 +55,7 @@ class RouteSourceGeneratorTest {
             1,
             collection.features
                 .filter {
-                    it.properties[RouteSourceGenerator.propRouteId] ==
+                    it.properties[RouteFeaturesBuilder.propRouteId] ==
                         JsonPrimitive(MapTestDataHelper.routeOrange.id)
                 }
                 .size
@@ -69,7 +69,7 @@ class RouteSourceGeneratorTest {
             ),
             collection.features
                 .first {
-                    it.properties[RouteSourceGenerator.propRouteId] ==
+                    it.properties[RouteFeaturesBuilder.propRouteId] ==
                         JsonPrimitive(MapTestDataHelper.routeRed.id)
                 }
                 .geometry
@@ -83,7 +83,7 @@ class RouteSourceGeneratorTest {
             ),
             collection.features
                 .first {
-                    it.properties[RouteSourceGenerator.propRouteId] ==
+                    it.properties[RouteFeaturesBuilder.propRouteId] ==
                         JsonPrimitive(MapTestDataHelper.routeOrange.id)
                 }
                 .geometry
@@ -91,9 +91,9 @@ class RouteSourceGeneratorTest {
     }
 
     @Test
-    fun testRouteSourcePreservesRouteProps() {
+    fun `preserves route properties`() {
         val collection =
-            RouteSourceGenerator.generateSource(
+            RouteFeaturesBuilder.buildCollection(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 routesById = MapTestDataHelper.routesById,
                 stopsById =
@@ -112,26 +112,26 @@ class RouteSourceGeneratorTest {
         val firstRedFeature =
             collection.features
                 .filter {
-                    it.properties[RouteSourceGenerator.propRouteId] ==
+                    it.properties[RouteFeaturesBuilder.propRouteId] ==
                         JsonPrimitive(MapTestDataHelper.routeRed.id)
                 }[0]
 
         assertEquals(
             JsonPrimitive("#DA291C"),
-            firstRedFeature.properties[RouteSourceGenerator.propRouteColor]
+            firstRedFeature.properties[RouteFeaturesBuilder.propRouteColor]
         )
         assertEquals(
             JsonPrimitive("HEAVY_RAIL"),
-            firstRedFeature.properties[RouteSourceGenerator.propRouteType]
+            firstRedFeature.properties[RouteFeaturesBuilder.propRouteType]
         )
         assertEquals(
             JsonPrimitive(-10010),
-            firstRedFeature.properties[RouteSourceGenerator.propRouteSortKey]
+            firstRedFeature.properties[RouteFeaturesBuilder.propRouteSortKey]
         )
     }
 
     @Test
-    fun testAlertingSourcesCreated() {
+    fun `splits for alerts`() {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -171,7 +171,7 @@ class RouteSourceGeneratorTest {
             )
 
         val collection =
-            RouteSourceGenerator.generateSource(
+            RouteFeaturesBuilder.buildCollection(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 routesById = MapTestDataHelper.routesById,
                 stopsById =
@@ -187,14 +187,14 @@ class RouteSourceGeneratorTest {
 
         val redFeatures =
             collection.features.filter {
-                it.properties[RouteSourceGenerator.propRouteId] ==
+                it.properties[RouteFeaturesBuilder.propRouteId] ==
                     JsonPrimitive(MapTestDataHelper.routeRed.id)
             }
 
         assertEquals(3, redFeatures.size)
         assertEquals(
             JsonPrimitive(SegmentAlertState.Normal.name),
-            redFeatures[0].properties[RouteSourceGenerator.propAlertStateKey]!!
+            redFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey]!!
         )
         assertEquals(
             lineSlice(
@@ -207,7 +207,7 @@ class RouteSourceGeneratorTest {
 
         assertEquals(
             JsonPrimitive(SegmentAlertState.Shuttle.name),
-            redFeatures[1].properties[RouteSourceGenerator.propAlertStateKey]!!
+            redFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey]!!
         )
         assertEquals(
             lineSlice(
@@ -219,7 +219,7 @@ class RouteSourceGeneratorTest {
         )
         assertEquals(
             JsonPrimitive(SegmentAlertState.Normal.name),
-            redFeatures[2].properties[RouteSourceGenerator.propAlertStateKey]!!
+            redFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey]!!
         )
         assertEquals(
             lineSlice(
@@ -232,7 +232,7 @@ class RouteSourceGeneratorTest {
     }
 
     @Test
-    fun testShapeWithStopsToMapFriendly() {
+    fun `transforms shapes with stops`() {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -285,7 +285,7 @@ class RouteSourceGeneratorTest {
             )
 
         val transformedShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> =
-            RouteSourceGenerator.shapesWithStopsToMapFriendly(
+            RouteFeaturesBuilder.shapesWithStopsToMapFriendly(
                 listOf(shapeWithStops),
                 mapOf(
                     MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,

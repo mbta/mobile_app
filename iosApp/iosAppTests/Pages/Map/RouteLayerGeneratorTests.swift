@@ -58,7 +58,7 @@ final class RouteLayerGeneratorTests: XCTestCase {
 
         let baseRouteLayer = routeLayers[0]
         XCTAssertEqual(baseRouteLayer.lineColor, .expression(Exp(.get) {
-            RouteSourceGenerator.shared.propRouteColor
+            RouteFeaturesBuilder.shared.propRouteColor
         }))
     }
 
@@ -68,7 +68,7 @@ final class RouteLayerGeneratorTests: XCTestCase {
 
         let baseRouteLayer = routeLayers[0]
         XCTAssertEqual(baseRouteLayer.lineSortKey, .expression(Exp(.get) {
-            RouteSourceGenerator.shared.propRouteSortKey
+            RouteFeaturesBuilder.shared.propRouteSortKey
         }))
     }
 }

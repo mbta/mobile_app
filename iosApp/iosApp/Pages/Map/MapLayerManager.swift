@@ -99,7 +99,7 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(routeData: FeatureCollection) {
-        updateSourceData(sourceId: RouteSourceGenerator.shared.routeSourceId, data: routeData)
+        updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
     func updateSourceData(stopSource: GeoJSONSource) {

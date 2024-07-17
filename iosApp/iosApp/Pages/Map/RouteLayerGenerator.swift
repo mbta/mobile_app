@@ -51,7 +51,7 @@ class RouteLayerGenerator {
         var shuttledLayer = baseRouteLayer(layerId: shuttledRouteLayerId)
 
         shuttledLayer.filter = Exp(.eq) {
-            Exp(.get) { RouteSourceGenerator.shared.propAlertStateKey }
+            Exp(.get) { RouteFeaturesBuilder.shared.propAlertStateKey }
             SegmentAlertState.shuttle.name
         }
         shuttledLayer.lineWidth = .expression(Exp(.step) {
@@ -65,7 +65,7 @@ class RouteLayerGenerator {
         var suspendedLayer = baseRouteLayer(layerId: suspendedRouteLayerId)
 
         suspendedLayer.filter = Exp(.eq) {
-            Exp(.get) { RouteSourceGenerator.shared.propAlertStateKey }
+            Exp(.get) { RouteFeaturesBuilder.shared.propAlertStateKey }
             SegmentAlertState.suspension.name
         }
         suspendedLayer.lineWidth = .expression(Exp(.step) {
@@ -80,7 +80,7 @@ class RouteLayerGenerator {
         var alertBackgroundLayer = baseRouteLayer(layerId: alertingBgRouteLayerId)
 
         alertBackgroundLayer.filter = Exp(.inExpression) {
-            Exp(.get) { RouteSourceGenerator.shared.propAlertStateKey }
+            Exp(.get) { RouteFeaturesBuilder.shared.propAlertStateKey }
             [SegmentAlertState.suspension.name, SegmentAlertState.shuttle.name]
         }
         alertBackgroundLayer.lineWidth = .expression(Exp(.step) {
@@ -97,15 +97,15 @@ class RouteLayerGenerator {
     private static func baseRouteLayer(layerId: String) -> LineLayer {
         var layer = LineLayer(
             id: layerId,
-            source: RouteSourceGenerator.shared.routeSourceId
+            source: RouteFeaturesBuilder.shared.routeSourceId
         )
         layer.lineColor = .expression(Exp(.get) {
-            RouteSourceGenerator.shared.propRouteColor
+            RouteFeaturesBuilder.shared.propRouteColor
         })
         layer.lineJoin = .constant(.round)
         layer.lineOffset = .expression(lineOffsetExpression())
         layer.lineSortKey = .expression(Exp(.get) {
-            RouteSourceGenerator.shared.propRouteSortKey
+            RouteFeaturesBuilder.shared.propRouteSortKey
         })
 
         return layer
