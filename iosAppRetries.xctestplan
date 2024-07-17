@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "FC56453B-7F2C-4FBF-9F10-44F46DA4829C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testRepetitionMode" : "retryOnFailure",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:iosApp.xcodeproj",
+        "identifier" : "6EED5E8B2B3DC69F0052A1B8",
+        "name" : "iosAppTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:iosApp.xcodeproj",
+        "identifier" : "6EED5E982B3DC6C10052A1B8",
+        "name" : "iosAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
