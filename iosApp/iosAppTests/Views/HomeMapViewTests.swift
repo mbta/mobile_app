@@ -26,15 +26,15 @@ final class HomeMapViewTests: XCTestCase {
         lines: [:],
         patternIdsByStop: [:],
         routes: [
-            MapTestDataHelper.routeOrange.id: MapTestDataHelper.routeOrange,
-            MapTestDataHelper.routeRed.id: MapTestDataHelper.routeRed,
+            MapTestDataHelper.shared.routeOrange.id: MapTestDataHelper.shared.routeOrange,
+            MapTestDataHelper.shared.routeRed.id: MapTestDataHelper.shared.routeRed,
 
         ],
         routePatterns: [:],
-        stops: [MapTestDataHelper.stopAssembly.id: MapTestDataHelper.stopAssembly,
-                MapTestDataHelper.stopAssemblyChild.id: MapTestDataHelper.stopAssemblyChild,
-                MapTestDataHelper.stopSullivan.id: MapTestDataHelper.stopSullivan,
-                MapTestDataHelper.stopPorter.id: MapTestDataHelper.stopPorter],
+        stops: [MapTestDataHelper.shared.stopAssembly.id: MapTestDataHelper.shared.stopAssembly,
+                MapTestDataHelper.shared.stopAssemblyChild.id: MapTestDataHelper.shared.stopAssemblyChild,
+                MapTestDataHelper.shared.stopSullivan.id: MapTestDataHelper.shared.stopSullivan,
+                MapTestDataHelper.shared.stopPorter.id: MapTestDataHelper.shared.stopPorter],
         trips: [:]
     )
 
@@ -51,7 +51,7 @@ final class HomeMapViewTests: XCTestCase {
             onGetStopMapData()
 
             return StopMapResponse(
-                routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+                routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
                     .filter { if let filteredRouteIds = self.filteredRouteIds {
                         filteredRouteIds.contains($0.routeId)
                     } else {
@@ -196,9 +196,11 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testUpdatesStopSourceWhenStopSelected() throws {
-        HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion
-                .buildWithDefaults(stop: FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.routeOrange.id])))
+        HelpersKt.loadKoinMocks(
+            repositories: MockRepositories.companion.buildWithDefaults(
+                stop: FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
+            )
+        )
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -210,7 +212,7 @@ final class HomeMapViewTests: XCTestCase {
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: mapVM,
@@ -241,14 +243,14 @@ final class HomeMapViewTests: XCTestCase {
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
-                FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.routeOrange.id],
+                FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
                                        onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
                 global: MockGlobalRepository(
                     response: mockedGlobalResponse
                 )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -258,7 +260,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: mapVM,
@@ -279,7 +281,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
-            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
+            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
             XCTAssertNotNil(mapVM.childStops)
         }
         wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
@@ -294,7 +296,7 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
                 FilteredStopRepository(
-                    filteredRouteIds: [MapTestDataHelper.routeOrange.id],
+                    filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
                     onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
                 ),
                 global: MockGlobalRepository(
@@ -302,7 +304,7 @@ final class HomeMapViewTests: XCTestCase {
                 )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -312,7 +314,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
@@ -327,14 +329,14 @@ final class HomeMapViewTests: XCTestCase {
 
         let hasAppeared = sut.on(\.didAppear) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
-                .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
-                                         directionId: MapTestDataHelper.patternOrange30.directionId))
+                .stopDetails(stop, .init(routeId: MapTestDataHelper.shared.routeOrange.id,
+                                         directionId: MapTestDataHelper.shared.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
-            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.routeOrange.id })
+            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
             XCTAssertNotNil(mapVM.childStops)
         }
 
@@ -356,10 +358,10 @@ final class HomeMapViewTests: XCTestCase {
                 )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -368,7 +370,7 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
         let trip = objectCollection.trip { trip in
-            trip.routePatternId = MapTestDataHelper.patternOrange30.id
+            trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
         }
 
         let prediction = objectCollection.prediction { prediction in
@@ -377,12 +379,12 @@ final class HomeMapViewTests: XCTestCase {
 
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
-            [.init(route: MapTestDataHelper.routeOrange, stop: stop,
+            [.init(route: MapTestDataHelper.shared.routeOrange, stop: stop,
                    patterns: [.ByHeadsign(
-                       route: MapTestDataHelper.routeOrange,
-                       headsign: MapTestDataHelper.tripOrangeC1.headsign,
+                       route: MapTestDataHelper.shared.routeOrange,
+                       headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                        line: nil,
-                       patterns: [MapTestDataHelper.patternOrange30],
+                       patterns: [MapTestDataHelper.shared.patternOrange30],
                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                        alertsHere: nil
                    )])]))
@@ -400,15 +402,15 @@ final class HomeMapViewTests: XCTestCase {
 
         let hasAppeared = sut.on(\.didAppear) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
-                .stopDetails(stop, .init(routeId: MapTestDataHelper.routeOrange.id,
-                                         directionId: MapTestDataHelper.patternOrange30.directionId))
+                .stopDetails(stop, .init(routeId: MapTestDataHelper.shared.routeOrange.id,
+                                         directionId: MapTestDataHelper.shared.patternOrange30.directionId))
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 0.2) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
-                segment.sourceRoutePatternId == MapTestDataHelper.patternOrange30.id
+                segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
             } })
             XCTAssertNotNil(mapVM.childStops)
         }
@@ -433,13 +435,20 @@ final class HomeMapViewTests: XCTestCase {
 
             override func __getTripShape(tripId _: String) async throws -> ApiResult<TripShape> {
                 onGetTripShape()
-                return ApiResultOk(data: .init(shapeWithStops: .init(directionId: 1,
-                                                                     routeId: MapTestDataHelper.routeOrange.id,
-                                                                     routePatternId: MapTestDataHelper.patternOrange30
-                                                                         .id,
-                                                                     shape: MapTestDataHelper.shapeOrangeC1,
-                                                                     stopIds: [MapTestDataHelper.stopAssemblyChild.id,
-                                                                               MapTestDataHelper.stopSullivan.id])))
+                return ApiResultOk(
+                    data: .init(
+                        shapeWithStops: .init(
+                            directionId: 1,
+                            routeId: MapTestDataHelper.shared.routeOrange.id,
+                            routePatternId: MapTestDataHelper.shared.patternOrange30.id,
+                            shape: MapTestDataHelper.shared.shapeOrangeC1,
+                            stopIds: [
+                                MapTestDataHelper.shared.stopAssemblyChild.id,
+                                MapTestDataHelper.shared.stopSullivan.id,
+                            ]
+                        )
+                    )
+                )
             }
         }
 
@@ -450,10 +459,10 @@ final class HomeMapViewTests: XCTestCase {
             ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.routeResponse
+        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
@@ -470,10 +479,10 @@ final class HomeMapViewTests: XCTestCase {
             let newNavStackEntry: SheetNavigationStackEntry =
                 .tripDetails(tripId: "ol_trip_id",
                              vehicleId: "vehicle",
-                             target: .init(stopId: MapTestDataHelper.stopSullivan.id,
+                             target: .init(stopId: MapTestDataHelper.shared.stopSullivan.id,
                                            stopSequence: 0),
-                             routeId: MapTestDataHelper.routeOrange.id,
-                             directionId: MapTestDataHelper
+                             routeId: MapTestDataHelper.shared.routeOrange.id,
+                             directionId: MapTestDataHelper.shared
                                  .patternOrange30
                                  .directionId)
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
@@ -482,15 +491,15 @@ final class HomeMapViewTests: XCTestCase {
         let routeDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 0.2) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
-                segment.sourceRoutePatternId == MapTestDataHelper.patternOrange30.id
+                segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
             }})
             XCTAssertNil(mapVM.childStops)
         }
 
         let stopDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 0.2) { _ in
-            XCTAssertEqual(mapVM.stopSourceData, .init(filteredStopIds: [MapTestDataHelper.stopAssembly.id,
-                                                                         MapTestDataHelper.stopSullivan.id],
-                                                       selectedStopId: MapTestDataHelper.stopSullivan.id))
+            XCTAssertEqual(mapVM.stopSourceData, .init(filteredStopIds: [MapTestDataHelper.shared.stopAssembly.id,
+                                                                         MapTestDataHelper.shared.stopSullivan.id],
+                                                       selectedStopId: MapTestDataHelper.shared.stopSullivan.id))
         }
 
         ViewHosting.host(view: sut)
@@ -504,7 +513,10 @@ final class HomeMapViewTests: XCTestCase {
     func testVehicleTapping() throws {
         class FakeStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
-                StopMapResponse(routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes, childStops: [:])
+                StopMapResponse(
+                    routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+                    childStops: [:]
+                )
             }
         }
         HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
@@ -516,7 +528,7 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
         let trip = objectCollection.trip { trip in
-            trip.routePatternId = MapTestDataHelper.patternOrange30.id
+            trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
             trip.id = "1"
             trip.directionId = 0
         }
@@ -530,17 +542,17 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.id = "1"
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = trip.id
-            vehicle.routeId = MapTestDataHelper.patternOrange30.routeId
+            vehicle.routeId = MapTestDataHelper.shared.patternOrange30.routeId
             vehicle.directionId = 0
         }
 
         let nearbyVM: NearbyViewModel = .init()
         nearbyVM.setDepartures(StopDetailsDepartures(routes:
-            [.init(route: MapTestDataHelper.routeOrange, stop: stop,
-                   patterns: [.ByHeadsign(route: MapTestDataHelper.routeOrange,
-                                          headsign: MapTestDataHelper.tripOrangeC1.headsign,
+            [.init(route: MapTestDataHelper.shared.routeOrange, stop: stop,
+                   patterns: [.ByHeadsign(route: MapTestDataHelper.shared.routeOrange,
+                                          headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                                           line: nil,
-                                          patterns: [MapTestDataHelper.patternOrange30],
+                                          patterns: [MapTestDataHelper.shared.patternOrange30],
                                           upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                                           alertsHere: nil)])]))
 
@@ -582,9 +594,11 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testShowsAllRailShapesWhenSelectedStopCleared() throws {
-        HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion
-                .buildWithDefaults(stop: FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.routeOrange.id])))
+        HelpersKt.loadKoinMocks(
+            repositories: MockRepositories.companion.buildWithDefaults(
+                stop: FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
+            )
+        )
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -593,8 +607,10 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let mapVM: MapViewModel = .init(allRailSourceData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                                        layerManager: MockLayerManager())
+        let mapVM: MapViewModel = .init(
+            allRailSourceData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+            layerManager: MockLayerManager()
+        )
 
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
@@ -610,7 +626,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let hasAppeared = sut.on(\.didAppear) { sut in
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as SheetNavigationStackEntry?)
-            XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.routeResponse.routesWithSegmentedShapes)
+            XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes)
             XCTAssertEqual(mapVM.stopSourceData, .init())
         }
 
@@ -726,7 +742,7 @@ final class HomeMapViewTests: XCTestCase {
             updateSourcesCalledExpectation.fulfill()
         })
 
-        let routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes
+        let routeData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),

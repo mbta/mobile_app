@@ -29,14 +29,14 @@ final class MapViewModelTests: XCTestCase {
 
     func testShapeFiltering() {
         let basicMapResponse = StopMapResponse(
-            routeShapes: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+            routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
             childStops: [:]
         )
         let filteredShapes = MapViewModel.filteredRouteShapesForStop(
             stopMapData: basicMapResponse,
             filter: .init(
-                routeId: MapTestDataHelper.routeRed.id,
-                directionId: MapTestDataHelper.patternRed10.directionId
+                routeId: MapTestDataHelper.shared.routeRed.id,
+                directionId: MapTestDataHelper.shared.patternRed10.directionId
             ),
             departures: nil
         )
