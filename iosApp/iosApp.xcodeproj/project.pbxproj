@@ -115,7 +115,6 @@
 		9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */; };
 		9A5B27602BB31178009A6FC6 /* StopSourceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */; };
 		9A5B27642BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */; };
-		9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */; };
 		9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */; };
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */; };
@@ -333,7 +332,6 @@
 		9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecenterButton.swift; sourceTree = "<group>"; };
 		9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSourceGeneratorTests.swift; sourceTree = "<group>"; };
 		9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteLayerGeneratorTests.swift; sourceTree = "<group>"; };
-		9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTestDataHelper.swift; sourceTree = "<group>"; };
 		9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopLayerGeneratorTests.swift; sourceTree = "<group>"; };
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
@@ -804,7 +802,6 @@
 				9A5B275F2BB31178009A6FC6 /* StopSourceGeneratorTests.swift */,
 				9A5B27632BB3621F009A6FC6 /* RouteLayerGeneratorTests.swift */,
 				9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */,
-				9A5B27652BB3631F009A6FC6 /* MapTestDataHelper.swift */,
 				9A6FA0242BC714360067769C /* HomeMapViewTest.swift */,
 				8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */,
 				6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */,
@@ -1187,7 +1184,6 @@
 				9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */,
 				6EF50F482B9889D600833070 /* MockSocket.swift in Sources */,
 				6E55C1862C249EF20086A424 /* StopDetailsViewTests.swift in Sources */,
-				9A5B27662BB3631F009A6FC6 /* MapTestDataHelper.swift in Sources */,
 				9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */,
 				6EE76D1D2BF535330051D608 /* VehicleCardViewTests.swift in Sources */,
 				9AAA26A72C2DC06700A7745A /* DirectionLabelTests.swift in Sources */,
