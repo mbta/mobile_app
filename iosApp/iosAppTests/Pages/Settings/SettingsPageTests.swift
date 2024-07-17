@@ -14,62 +14,83 @@ import XCTest
 
 final class SettingsPageTests: XCTestCase {
     class FakeSettingsRepository: ISettingsRepository {
-        var mapDebug: Bool
+        var settings: Set<Setting>
         let onGet: (() -> Void)?
-        let onSet: ((Bool) -> Void)?
+        let onSet: ((Set<Setting>) -> Void)?
 
-        init(mapDebug: Bool, onGet: (() -> Void)? = nil, onSet: ((Bool) -> Void)? = nil) {
-            self.mapDebug = mapDebug
+        init(
+            mapDebug: Bool,
+            searchFeatureFlag: Bool,
+            onGet: (() -> Void)? = nil,
+            onSet: ((Set<Setting>) -> Void)? = nil
+        ) {
+            settings = [
+                Setting(key: .map, isOn: mapDebug),
+                Setting(key: .search, isOn: searchFeatureFlag),
+            ]
             self.onGet = onGet
             self.onSet = onSet
         }
 
-        func __getMapDebug() async throws -> KotlinBoolean {
+        func __getSettings() async throws -> Set<Setting> {
             onGet?()
-            return KotlinBoolean(bool: mapDebug)
+            return settings
         }
 
-        func __setMapDebug(mapDebug: Bool) async throws {
-            onSet?(mapDebug)
-            self.mapDebug = mapDebug
+        func __setSettings(settings: Set<Setting>) async throws {
+            onSet?(settings)
+            self.settings = settings
         }
     }
 
     func testLoadsState() throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
 
-        let settingsRepository = FakeSettingsRepository(mapDebug: true, onGet: {
-            loadedPublisher.send(())
-        })
-        let sut = SettingsPage(settingsRepository: settingsRepository)
-
-        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 0.01) { view in
+        let settingsRepository = FakeSettingsRepository(
+            mapDebug: true,
+            searchFeatureFlag: false,
+            onGet: {
+                loadedPublisher.send(())
+            }
+        )
+        let sut = SettingsPage(
+            viewModel: SettingsViewModel(settingsRepository: settingsRepository)
+        )
+        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
             XCTAssertTrue(try view.find(ViewType.Toggle.self).isOn())
         }
 
         ViewHosting.host(view: sut)
 
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     func testSavesState() throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
         let savedExp = expectation(description: "saved state")
 
-        let settingsRepository = FakeSettingsRepository(mapDebug: false, onGet: {
-            loadedPublisher.send(())
-        }, onSet: {
-            XCTAssertTrue($0)
-            savedExp.fulfill()
-        })
-        let sut = SettingsPage(settingsRepository: settingsRepository)
+        let settingsRepository = FakeSettingsRepository(
+            mapDebug: false,
+            searchFeatureFlag: false,
+            onGet: {
+                loadedPublisher.send(())
+            },
+            onSet: {
+                let mapSetting = $0.first(where: { $0.key == .map })
+                XCTAssertTrue(mapSetting?.isOn == true)
+                savedExp.fulfill()
+            }
+        )
+        let sut = SettingsPage(
+            viewModel: SettingsViewModel(settingsRepository: settingsRepository)
+        )
 
         ViewHosting.host(view: sut)
 
-        let tapExp = sut.inspection.inspect(onReceive: loadedPublisher, after: 0.01) { view in
+        let tapExp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
             try view.find(ViewType.Toggle.self).tap()
         }
 
-        wait(for: [tapExp, savedExp], timeout: 1)
+        wait(for: [tapExp, savedExp], timeout: 2)
     }
 }
