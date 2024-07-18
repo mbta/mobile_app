@@ -7,6 +7,8 @@
 //
 
 import Combine
+import shared
+import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 class ViewportProvider: ObservableObject {
@@ -17,6 +19,8 @@ class ViewportProvider: ObservableObject {
     }
 
     @Published private(set) var isManuallyCentering: Bool
+    @Published private(set) var isFollowingVehicle: Bool = false
+    @Published private(set) var followedVehicle: Vehicle?
 
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
@@ -49,16 +53,45 @@ class ViewportProvider: ObservableObject {
         }
     }
 
+    func followVehicle(vehicle: Vehicle, target: Stop?) {
+        followedVehicle = vehicle
+        isFollowingVehicle = true
+        guard let target else {
+            animateTo(coordinates: vehicle.coordinate)
+            return
+        }
+        animateTo(viewport: Self.viewportAround(center: vehicle.coordinate, inView: [target.coordinate]))
+    }
+
+    func updateFollowedVehicle(vehicle: Vehicle?) {
+        guard let vehicle else {
+            isFollowingVehicle = false
+            followedVehicle = nil
+            return
+        }
+        followedVehicle = vehicle
+        if isFollowingVehicle {
+            animateTo(coordinates: vehicle.coordinate)
+        }
+    }
+
     func animateTo(
         coordinates: CLLocationCoordinate2D,
         animation: ViewportAnimation = Defaults.animation,
         zoom: CGFloat? = nil
     ) {
-        withViewportAnimation(animation) {
-            self.viewport = .camera(
+        animateTo(
+            viewport: .camera(
                 center: coordinates,
-                zoom: zoom == nil ? self.cameraStateSubject.value.zoom : zoom
-            )
+                zoom: zoom == nil ? cameraStateSubject.value.zoom : zoom
+            ),
+            animation: animation
+        )
+    }
+
+    func animateTo(viewport: Viewport, animation: ViewportAnimation = Defaults.animation) {
+        withViewportAnimation(animation) {
+            self.viewport = viewport
         }
     }
 
@@ -87,5 +120,28 @@ class ViewportProvider: ObservableObject {
 
     func setIsManuallyCentering(_ isManuallyCentering: Bool) {
         self.isManuallyCentering = isManuallyCentering
+        if isManuallyCentering {
+            isFollowingVehicle = false
+        }
     }
+
+    static func viewportAround(
+        center: CLLocationCoordinate2D,
+        inView: [CLLocationCoordinate2D],
+        // Insets with different horizontal/vertical values will result in the center point being off center
+        padding: EdgeInsets = .init(top: 75, leading: 50, bottom: 75, trailing: 50)
+    ) -> Viewport {
+        let reflectedPoints = inView.map { point in
+            CLLocationCoordinate2D(
+                latitude: reflect(point: center.latitude, reflected: point.latitude),
+                longitude: reflect(point: center.longitude, reflected: point.longitude)
+            )
+        }
+        return .overview(
+            geometry: MultiPoint([center] + inView + reflectedPoints),
+            geometryPadding: padding
+        )
+    }
+
+    private static func reflect(point: Double, reflected: Double) -> Double { (2 * point) - reflected }
 }

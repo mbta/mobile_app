@@ -15,7 +15,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
@@ -61,8 +61,7 @@ struct NearbyTransitView: View {
         .onChange(of: location) { newLocation in
             getNearby(location: newLocation, globalData: globalData)
         }
-        .onChange(of: state.nearbyByRouteAndStop) {
-            nearbyByRouteAndStop in
+        .onChange(of: state.nearbyByRouteAndStop) { nearbyByRouteAndStop in
             updateNearbyRoutes()
             getSchedule()
             joinPredictions(nearbyByRouteAndStop?.stopIds())

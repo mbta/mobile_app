@@ -18,7 +18,7 @@ struct CloseButton: View {
     @ScaledMetric private var tapSize: CGFloat = 32
 
     var body: some View {
-        Button(action: { action() }) {
+        Button(action: action) {
             ZStack {
                 Circle()
                     .fill(Color.contrast)

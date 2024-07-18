@@ -23,7 +23,7 @@ struct AnnotatedMap: View {
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
-    var settingsRepository: ISettingsRepository = RepositoryDI().settings
+    var getSettingUsecase = UsecaseDI().getSettingUsecase
     @State var mapDebug = false
 
     @ObservedObject var viewportProvider: ViewportProvider
@@ -51,7 +51,7 @@ struct AnnotatedMap: View {
             }
             .task {
                 do {
-                    mapDebug = try await settingsRepository.getMapDebug().boolValue
+                    mapDebug = try await getSettingUsecase.execute(setting: .map).boolValue
                 } catch {
                     debugPrint("Failed to load map debug", error)
                 }
@@ -104,6 +104,7 @@ struct AnnotatedMap: View {
                             .padding(6)
                             .onTapGesture { handleTapVehicle(vehicle) }
                         }
+                        .selected(isSelected)
                         .allowOverlap(true)
                         .allowOverlapWithPuck(true)
                         .visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)

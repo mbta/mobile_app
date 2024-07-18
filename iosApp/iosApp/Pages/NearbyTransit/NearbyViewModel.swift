@@ -34,7 +34,7 @@ class NearbyViewModel: ObservableObject {
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
-        analytics: NearbyTransitAnalytics = AnalyticsProvider()
+        analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     ) {
         self.departures = departures
         self.navigationStack = navigationStack
@@ -103,6 +103,19 @@ class NearbyViewModel: ObservableObject {
                     }
                 }
             }
+        }
+    }
+
+    func getTargetStop(global: GlobalResponse) -> Stop? {
+        switch navigationStack.last {
+        case .nearby:
+            nil
+        case let .stopDetails(stop, _):
+            stop
+        case let .tripDetails(tripId: _, vehicleId: _, target: target, routeId: _, directionId: _):
+            target != nil ? global.stops[target!.stopId] : nil
+        default:
+            nil
         }
     }
 

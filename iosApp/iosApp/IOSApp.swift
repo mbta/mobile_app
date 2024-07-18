@@ -6,8 +6,6 @@ import SwiftPhoenixClient
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var appcues: Appcues?
-
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -28,7 +26,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                     applicationID: appcuesAppID
                 )
 
-                appcues = Appcues(config: appcuesConfig)
+                AnalyticsProvider.shared.appcues = Appcues(config: appcuesConfig)
             } else {
                 Logger().info("Appcues config not set, skipping initialization")
             }
@@ -53,7 +51,7 @@ struct IOSApp: App {
             } else {
                 ProductionAppView()
                     .onAppear {
-                        delegate.appcues?.anonymous()
+                        AnalyticsProvider.shared.appcues?.anonymous()
                     }
             }
         }

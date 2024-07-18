@@ -8,16 +8,20 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let platform = Platform_iosKt.getPlatform().name
+    @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var nearbyVM: NearbyViewModel = .init()
     @StateObject var mapVM = MapViewModel()
-    var screenTracker: ScreenTracker = AnalyticsProvider()
+    var screenTracker: ScreenTracker = AnalyticsProvider.shared
+    var getSettingUsecase = UsecaseDI().getSettingUsecase
+    @State var searchEnabled = false
 
     private enum SelectedTab: Hashable {
         case nearby
@@ -69,6 +73,13 @@ struct ContentView: View {
 
     var nearbyTab: some View {
         VStack {
+            if searchEnabled {
+                TextField("Find nearby transit", text: $searchObserver.searchText)
+                SearchView(
+                    query: searchObserver.debouncedText,
+                    fetcher: searchResultFetcher
+                )
+            }
             switch locationDataManager.authorizationStatus {
             case .notDetermined:
                 Button("Allow Location", action: {
@@ -167,6 +178,13 @@ struct ContentView: View {
                 socketProvider.socket.attach()
             } else if newPhase == .background {
                 socketProvider.socket.detach()
+            }
+        }
+        .task {
+            do {
+                searchEnabled = try await getSettingUsecase.execute(setting: .search).boolValue
+            } catch {
+                debugPrint("Failed to load feature flags", error)
             }
         }
     }

@@ -123,15 +123,15 @@ final class StopSourceGeneratorTests: XCTestCase {
 
     func testStopsAreSnappedToRoutes() {
         let stops = [
-            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopAssembly,
-            MapTestDataHelper.stopSullivan.id: MapTestDataHelper.mapStopSullivan,
-            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
-            MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
+            MapTestDataHelper.shared.stopAssembly.id: MapTestDataHelper.shared.mapStopAssembly,
+            MapTestDataHelper.shared.stopSullivan.id: MapTestDataHelper.shared.mapStopSullivan,
+            MapTestDataHelper.shared.stopAlewife.id: MapTestDataHelper.shared.mapStopAlewife,
+            MapTestDataHelper.shared.stopDavis.id: MapTestDataHelper.shared.mapStopDavis,
         ]
 
-        let routeLines = RouteSourceGenerator.generateRouteLines(
-            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-            routesById: MapTestDataHelper.routesById,
+        let routeLines = RouteFeaturesBuilder.shared.generateRouteLines(
+            routeData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.shared.routesById,
             stopsById: stops.mapValues { mapStop in mapStop.stop },
             alertsByStop: [:]
         )
@@ -143,7 +143,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 4)
             if case let .point(point) = collection.features.first(where: {
-                $0.identifier == FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
+                $0.identifier == FeatureIdentifier(MapTestDataHelper.shared.stopAlewife.id)
             })!.geometry {
                 XCTAssertEqual(point.coordinates, snappedStopCoordinates)
             } else {
@@ -180,7 +180,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             ].mapValues { stop in
                 MapStop(
                     stop: stop,
-                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routes: [.red: [MapTestDataHelper.shared.routeRed]],
                     routeTypes: [.red],
                     isTerminal: false,
                     alerts: nil
@@ -216,12 +216,12 @@ final class StopSourceGeneratorTests: XCTestCase {
 
     func testFilteredStopIds() {
         let source = StopSourceGenerator.generateStopSource(stopData:
-            .init(filteredStopIds: [MapTestDataHelper.stopAlewife.id], selectedStopId: nil),
-            stops: [MapTestDataHelper.stopAlewife.id: MapTestDataHelper.stopAlewife,
-                    MapTestDataHelper.stopDavis.id: MapTestDataHelper.stopDavis].mapValues { stop in
+            .init(filteredStopIds: [MapTestDataHelper.shared.stopAlewife.id], selectedStopId: nil),
+            stops: [MapTestDataHelper.shared.stopAlewife.id: MapTestDataHelper.shared.stopAlewife,
+                    MapTestDataHelper.shared.stopDavis.id: MapTestDataHelper.shared.stopDavis].mapValues { stop in
                 MapStop(
                     stop: stop,
-                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routes: [.red: [MapTestDataHelper.shared.routeRed]],
                     routeTypes: [.red],
                     isTerminal: false,
                     alerts: nil
@@ -233,7 +233,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             XCTAssertEqual(collection.features.count, 1)
 
             XCTAssertNotNil(collection.features.first { feat in
-                feat.identifier == FeatureIdentifier(MapTestDataHelper.stopAlewife.id)
+                feat.identifier == FeatureIdentifier(MapTestDataHelper.shared.stopAlewife.id)
             })
         } else {
             XCTFail("Station source had no features")
@@ -241,7 +241,7 @@ final class StopSourceGeneratorTests: XCTestCase {
     }
 
     func testStopsFeaturesHaveServiceStatus() {
-        let objects = MapTestDataHelper.objects
+        let objects = MapTestDataHelper.shared.objects
 
         let stops = [
             "70061": objects.stop { stop in
@@ -274,21 +274,21 @@ final class StopSourceGeneratorTests: XCTestCase {
             stops: [
                 "70061": .init(
                     stop: stops["70061"]!,
-                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routes: [.red: [MapTestDataHelper.shared.routeRed]],
                     routeTypes: [.red],
                     isTerminal: true,
                     alerts: nil
                 ),
                 "place-alfcl": .init(
                     stop: stops["place-alfcl"]!,
-                    routes: [.red: [MapTestDataHelper.routeRed]],
+                    routes: [.red: [MapTestDataHelper.shared.routeRed]],
                     routeTypes: [.red],
                     isTerminal: true,
                     alerts: [.red: .shuttle]
                 ),
                 "place-astao": .init(
                     stop: stops["place-astao"]!,
-                    routes: [.orange: [MapTestDataHelper.routeOrange]],
+                    routes: [.orange: [MapTestDataHelper.shared.routeOrange]],
                     routeTypes: [.orange],
                     isTerminal: false,
                     alerts: [.orange: .suspension]
@@ -322,15 +322,15 @@ final class StopSourceGeneratorTests: XCTestCase {
 
     func testStopFeaturesHaveRoutes() {
         let stops = [
-            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopAssembly,
-            MapTestDataHelper.stopSullivan.id: MapTestDataHelper.mapStopSullivan,
-            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
-            MapTestDataHelper.stopDavis.id: MapTestDataHelper.mapStopDavis,
+            MapTestDataHelper.shared.stopAssembly.id: MapTestDataHelper.shared.mapStopAssembly,
+            MapTestDataHelper.shared.stopSullivan.id: MapTestDataHelper.shared.mapStopSullivan,
+            MapTestDataHelper.shared.stopAlewife.id: MapTestDataHelper.shared.mapStopAlewife,
+            MapTestDataHelper.shared.stopDavis.id: MapTestDataHelper.shared.mapStopDavis,
         ]
 
-        let routeLines = RouteSourceGenerator.generateRouteLines(
-            routeData: MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-            routesById: MapTestDataHelper.routesById,
+        let routeLines = RouteFeaturesBuilder.shared.generateRouteLines(
+            routeData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+            routesById: MapTestDataHelper.shared.routesById,
             stopsById: stops.mapValues { mapStop in mapStop.stop },
             alertsByStop: [:]
         )
@@ -343,7 +343,7 @@ final class StopSourceGeneratorTests: XCTestCase {
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 4)
             guard let assemblyFeature = collection.features.first(where: { feat in
-                propId(from: feat) == MapTestDataHelper.stopAssembly.id
+                propId(from: feat) == MapTestDataHelper.shared.stopAssembly.id
             }) else {
                 XCTFail("Assembly stop feature was not present in the source")
                 return
@@ -356,7 +356,7 @@ final class StopSourceGeneratorTests: XCTestCase {
             }
 
             guard let alewifeFeature = collection.features.first(where: { feat in
-                propId(from: feat) == MapTestDataHelper.stopAlewife.id
+                propId(from: feat) == MapTestDataHelper.shared.stopAlewife.id
             }) else {
                 XCTFail("Alewife stop feature was not present in the source")
                 return
@@ -370,8 +370,8 @@ final class StopSourceGeneratorTests: XCTestCase {
 
             if let alewifeRouteIds = propRouteIdObject(from: alewifeFeature) {
                 XCTAssertEqual(alewifeRouteIds, [
-                    MapStopRoute.red: [MapTestDataHelper.routeRed.id],
-                    MapStopRoute.bus: [MapTestDataHelper.route67.id],
+                    MapStopRoute.red: [MapTestDataHelper.shared.routeRed.id],
+                    MapStopRoute.bus: [MapTestDataHelper.shared.route67.id],
                 ])
             } else {
                 XCTFail("Alewife route ID map property was not set correctly")
@@ -383,8 +383,8 @@ final class StopSourceGeneratorTests: XCTestCase {
 
     func testStopFeaturesHaveNames() {
         let stops = [
-            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopAssembly,
-            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
+            MapTestDataHelper.shared.stopAssembly.id: MapTestDataHelper.shared.mapStopAssembly,
+            MapTestDataHelper.shared.stopAlewife.id: MapTestDataHelper.shared.mapStopAlewife,
         ]
 
         let source = StopSourceGenerator.generateStopSource(stopData: .init(),
@@ -394,27 +394,27 @@ final class StopSourceGeneratorTests: XCTestCase {
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
             guard let assemblyFeature = collection.features.first(where: { feat in
-                propId(from: feat) == MapTestDataHelper.stopAssembly.id
+                propId(from: feat) == MapTestDataHelper.shared.stopAssembly.id
             }) else {
                 XCTFail("Assembly stop feature was not present in the source")
                 return
             }
 
             if let assemblyName = propString(prop: StopSourceGenerator.propNameKey, from: assemblyFeature) {
-                XCTAssertEqual(assemblyName, MapTestDataHelper.stopAssembly.name)
+                XCTAssertEqual(assemblyName, MapTestDataHelper.shared.stopAssembly.name)
             } else {
                 XCTFail("Assembly name property was not set correctly")
             }
 
             guard let alewifeFeature = collection.features.first(where: { feat in
-                propId(from: feat) == MapTestDataHelper.stopAlewife.id
+                propId(from: feat) == MapTestDataHelper.shared.stopAlewife.id
             }) else {
                 XCTFail("Alewife stop feature was not present in the source")
                 return
             }
 
             if let alewifeName = propString(prop: StopSourceGenerator.propNameKey, from: alewifeFeature) {
-                XCTAssertEqual(alewifeName, MapTestDataHelper.stopAlewife.name)
+                XCTAssertEqual(alewifeName, MapTestDataHelper.shared.stopAlewife.name)
             } else {
                 XCTFail("Alewife name property was not set correctly")
             }
@@ -425,8 +425,8 @@ final class StopSourceGeneratorTests: XCTestCase {
 
     func testStopFeaturesHaveTerminals() {
         let stops = [
-            MapTestDataHelper.stopAlewife.id: MapTestDataHelper.mapStopAlewife,
-            MapTestDataHelper.stopAssembly.id: MapTestDataHelper.mapStopDavis,
+            MapTestDataHelper.shared.stopAlewife.id: MapTestDataHelper.shared.mapStopAlewife,
+            MapTestDataHelper.shared.stopAssembly.id: MapTestDataHelper.shared.mapStopDavis,
         ]
 
         let source = StopSourceGenerator.generateStopSource(stopData: .init(),
@@ -436,27 +436,27 @@ final class StopSourceGeneratorTests: XCTestCase {
         if case let .featureCollection(collection) = source.data.unsafelyUnwrapped {
             XCTAssertEqual(collection.features.count, 2)
             guard let alewifeFeature = collection.features.first(where: { feat in
-                propId(from: feat) == MapTestDataHelper.stopAlewife.id
+                propId(from: feat) == MapTestDataHelper.shared.stopAlewife.id
             }) else {
                 XCTFail("Alewife stop feature was not present in the source")
                 return
             }
 
             if let alewifeIsTerminal = propBool(prop: StopSourceGenerator.propIsTerminalKey, from: alewifeFeature) {
-                XCTAssertEqual(alewifeIsTerminal, MapTestDataHelper.mapStopAlewife.isTerminal)
+                XCTAssertEqual(alewifeIsTerminal, MapTestDataHelper.shared.mapStopAlewife.isTerminal)
             } else {
                 XCTFail("Alewife isTerminal property was not set correctly")
             }
 
             guard let davisFeature = collection.features.first(where: { feat in
-                propId(from: feat) == MapTestDataHelper.stopDavis.id
+                propId(from: feat) == MapTestDataHelper.shared.stopDavis.id
             }) else {
                 XCTFail("Davis stop feature was not present in the source")
                 return
             }
 
             if let davisIsTerminal = propBool(prop: StopSourceGenerator.propIsTerminalKey, from: davisFeature) {
-                XCTAssertEqual(davisIsTerminal, MapTestDataHelper.mapStopDavis.isTerminal)
+                XCTAssertEqual(davisIsTerminal, MapTestDataHelper.shared.mapStopDavis.isTerminal)
             } else {
                 XCTFail("Davis isTerminal property was not set correctly")
             }
