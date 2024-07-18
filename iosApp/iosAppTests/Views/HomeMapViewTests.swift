@@ -266,7 +266,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
+        let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -324,7 +324,7 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
+        let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -401,7 +401,7 @@ final class HomeMapViewTests: XCTestCase {
                    )])]))
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
+        let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -476,7 +476,7 @@ final class HomeMapViewTests: XCTestCase {
         railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
+        let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
             railRouteShapeFetcher: railRouteShapeFetcher,
@@ -540,6 +540,7 @@ final class HomeMapViewTests: XCTestCase {
         }
         let trip = objectCollection.trip { trip in
             trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
+            trip.routeId = MapTestDataHelper.shared.routeOrange.id
             trip.id = "1"
             trip.directionId = 0
         }
@@ -598,6 +599,153 @@ final class HomeMapViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
+
+        addTeardownBlock {
+            HelpersKt.loadDefaultRepoModules()
+        }
+    }
+
+    func testVehicleChanging() throws {
+        class FakeStopRepository: IStopRepository {
+            func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
+                StopMapResponse(
+                    routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+                    childStops: [:]
+                )
+            }
+        }
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
+
+        let objectCollection = ObjectCollectionBuilder()
+        let stop = objectCollection.stop { stop in
+            stop.id = "1"
+            stop.latitude = -1
+            stop.longitude = -1
+        }
+        let trip = objectCollection.trip { trip in
+            trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
+            trip.id = "1"
+            trip.directionId = 0
+        }
+
+        let prediction = objectCollection.prediction { prediction in
+            prediction.trip = trip
+            prediction.stopSequence = 100
+        }
+
+        let vehicle1 = objectCollection.vehicle { vehicle in
+            vehicle.id = "1"
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.routeId = MapTestDataHelper.shared.patternOrange30.routeId
+            vehicle.directionId = 0
+            vehicle.latitude = 0
+            vehicle.longitude = 0
+        }
+        let vehicle2 = objectCollection.vehicle { vehicle in
+            vehicle.id = "1"
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.routeId = MapTestDataHelper.shared.patternOrange30.routeId
+            vehicle.directionId = 0
+            vehicle.latitude = 1
+            vehicle.longitude = 1
+        }
+        let vehicle3 = objectCollection.vehicle { vehicle in
+            vehicle.id = "2"
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.routeId = MapTestDataHelper.shared.patternOrange30.routeId
+            vehicle.directionId = 0
+            vehicle.latitude = 2
+            vehicle.longitude = 2
+        }
+
+        let nearbyVM: NearbyViewModel = .init()
+        nearbyVM.setDepartures(StopDetailsDepartures(routes:
+            [.init(route: MapTestDataHelper.shared.routeOrange, stop: stop,
+                   patterns: [.ByHeadsign(route: MapTestDataHelper.shared.routeOrange,
+                                          headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
+                                          line: nil,
+                                          patterns: [MapTestDataHelper.shared.patternOrange30],
+                                          upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                                          alertsHere: nil)])]))
+
+        let initialNav: SheetNavigationStackEntry = .stopDetails(
+            stop,
+            .init(routeId: vehicle1.routeId!, directionId: vehicle1.directionId)
+        )
+        let mapVM: MapViewModel = .init(
+            allRailSourceData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+            layerManager: MockLayerManager()
+        )
+        nearbyVM.navigationStack = [initialNav]
+        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+
+        let viewportProvider = ViewportProvider()
+        var sut = HomeMapView(
+            mapVM: mapVM,
+            nearbyVM: nearbyVM,
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle1]),
+            viewportProvider: viewportProvider,
+            locationDataManager: locationDataManager,
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.actualView().globalData = GlobalResponse(objects: objectCollection, patternIdsByStop: [:])
+            XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
+            XCTAssertFalse(viewportProvider.isFollowingVehicle)
+            nearbyVM.navigationStack.append(.tripDetails(
+                tripId: trip.id,
+                vehicleId: vehicle1.id,
+                target: .some(.init(stopId: stop.id, stopSequence: 0)),
+                routeId: "",
+                directionId: 0
+            ))
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: vehicle1)
+        }
+
+        let following1 = sut.inspection.inspect(
+            onReceive: viewportProvider.$followedVehicle, after: 1.1
+        ) { sut in
+            XCTAssertTrue(viewportProvider.isFollowingVehicle)
+            XCTAssertEqual(viewportProvider.followedVehicle, vehicle1)
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: vehicle2)
+        }
+
+        let following2 = sut.inspection.inspect(
+            onReceive: viewportProvider.$followedVehicle.dropFirst(), after: 1.1
+        ) { sut in
+            // Viewport setting happens after the followed vehicle is set,
+            // so this is actually the viewport for vehicle 1
+            XCTAssertNotNil(viewportProvider.viewport.overview)
+            XCTAssertTrue(viewportProvider.isFollowingVehicle)
+            XCTAssertEqual(viewportProvider.followedVehicle, vehicle2)
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: vehicle3)
+        }
+
+        let following3 = sut.inspection.inspect(
+            onReceive: viewportProvider.$followedVehicle.dropFirst(2), after: 1.1
+        ) { sut in
+            XCTAssertTrue(viewportProvider.isFollowingVehicle)
+            XCTAssertEqual(viewportProvider.followedVehicle, vehicle3)
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as Vehicle?)
+        }
+
+        let following4 = sut.inspection.inspect(
+            onReceive: viewportProvider.$followedVehicle.dropFirst(3), after: 1.1
+        ) { _ in
+            // And this is checking the viewport for vehicle 3
+            XCTAssertNotNil(viewportProvider.viewport.overview)
+            XCTAssertFalse(viewportProvider.isFollowingVehicle)
+            XCTAssertEqual(viewportProvider.followedVehicle, nil)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, following1, following2, following3, following4], timeout: 15)
 
         addTeardownBlock {
             HelpersKt.loadDefaultRepoModules()
