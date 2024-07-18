@@ -45,7 +45,7 @@ class ChildStopLayerGenerator {
         layer.iconAllowOverlap = .constant(true)
         layer.textAllowOverlap = .constant(false)
         layer.symbolSortKey = .expression(Exp(.get) { ChildStopSourceGenerator.propSortOrderKey })
-        layer.minZoom = MapDefaults.closeZoomThreshold
+        layer.minZoom = MapDefaults.shared.closeZoomThreshold
         return layer
     }
 }
