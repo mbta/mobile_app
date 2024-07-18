@@ -99,7 +99,7 @@ extension HomeMapView {
     }
 
     func updateStopSource(stopData: StopSourceData) {
-        mapVM.updateStopSource(StopFeaturesBuilder.shared.generateStopSource(
+        mapVM.updateStopSource(StopFeaturesBuilder.shared.buildCollection(
             stopData: stopData,
             stops: globalMapData?.mapStops ?? [:],
             linesToSnap: mapVM.snappedStopRouteLines

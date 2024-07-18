@@ -35,7 +35,7 @@ object StopFeaturesBuilder {
     val propServiceStatusKey = "serviceStatus"
     val propSortOrderKey = "sortOrder"
 
-    fun generateStopSource(
+    fun buildCollection(
         stopData: StopSourceData,
         stops: Map<String, MapStop>,
         linesToSnap: List<RouteLineData>
@@ -47,10 +47,10 @@ object StopFeaturesBuilder {
                 stops
             }
         val stopFeatures = generateStopFeatures(stopData, filteredStops, linesToSnap)
-        return generateStopSource(stopFeatures = stopFeatures)
+        return buildCollection(stopFeatures = stopFeatures)
     }
 
-    fun generateStopSource(stopFeatures: List<StopFeatureData>): FeatureCollection {
+    fun buildCollection(stopFeatures: List<StopFeatureData>): FeatureCollection {
         return FeatureCollection(features = stopFeatures.map { it.feature })
     }
 
@@ -151,12 +151,10 @@ object StopFeaturesBuilder {
             put(propServiceStatusKey, serviceStatusValue(mapStop))
 
             // The symbolSortKey must be ascending, so higher priority icons need higher values.
-            // This takes the
-            // ordinal of the top route and makes it negative. If there are no routes it's set to
-            // the total number
-            // of route types so that the weird routeless stop is below everything else, and if it
-            // has multiple
-            // route types, it's set to positive 1 to put the route container above everything else.
+            // This takes the ordinal of the top route and makes it negative. If there are no routes
+            // it's set to the total number of route types so that the weird routeless stop is below
+            // everything else, and if it has multiple route types, it's set to positive 1 to put
+            // the route container above everything else.
             val topRouteOrdinal =
                 if (mapStop.routeTypes.isEmpty()) (MapStopRoute.entries.size)
                 else mapStop.routeTypes[0].ordinal

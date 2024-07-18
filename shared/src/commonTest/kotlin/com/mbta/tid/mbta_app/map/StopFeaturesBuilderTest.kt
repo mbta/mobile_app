@@ -73,7 +73,7 @@ class StopFeaturesBuilderTest {
             }
 
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(selectedStopId = null),
                 stops =
                     mapOf(
@@ -156,7 +156,7 @@ class StopFeaturesBuilderTest {
                 alertsByStop = emptyMap()
             )
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
                 linesToSnap = routeLines
@@ -193,7 +193,7 @@ class StopFeaturesBuilderTest {
             }
 
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(selectedStopId = selectedStop.id),
                 stops =
                     mapOf(selectedStop.id to selectedStop, otherStop.id to otherStop).mapValues {
@@ -225,7 +225,7 @@ class StopFeaturesBuilderTest {
     @Test
     fun `filtered stop ids`() {
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData =
                     StopSourceData(
                         filteredStopIds = listOf(MapTestDataHelper.stopAlewife.id),
@@ -289,7 +289,7 @@ class StopFeaturesBuilderTest {
             )
 
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops =
                     mapOf(
@@ -359,7 +359,7 @@ class StopFeaturesBuilderTest {
                 alertsByStop = emptyMap()
             )
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
                 linesToSnap = routeLines
@@ -398,7 +398,7 @@ class StopFeaturesBuilderTest {
             )
 
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
                 linesToSnap = emptyList()
@@ -426,7 +426,7 @@ class StopFeaturesBuilderTest {
             )
 
         val collection =
-            StopFeaturesBuilder.generateStopSource(
+            StopFeaturesBuilder.buildCollection(
                 stopData = StopSourceData(),
                 stops = stops,
                 linesToSnap = emptyList()
