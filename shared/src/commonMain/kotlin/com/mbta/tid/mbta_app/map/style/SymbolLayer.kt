@@ -26,6 +26,7 @@ data class SymbolLayer(override val id: String, override val source: String) : L
     var textJustify: TextJustify? = null
     var textOffset: Exp<List<Number>>? = null
     var textOptional: Boolean? = null
+    var textRadialOffset: Number? = null
     var textSize: Number? = null
     var textVariableAnchor: List<TextAnchor>? = null
 
@@ -44,6 +45,7 @@ data class SymbolLayer(override val id: String, override val source: String) : L
         textJustify?.let { put("text-justify", it) }
         textOffset?.let { put("text-offset", it) }
         textOptional?.let { put("text-optional", it) }
+        textRadialOffset?.let { put("text-radial-offset", it) }
         textSize?.let { put("text-size", it) }
         textVariableAnchor?.let {
             put("text-variable-anchor", JsonArray(it.map(MapboxStyleObject::asJson)))
