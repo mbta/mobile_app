@@ -7,7 +7,6 @@
 //
 
 import os
-import Polyline
 import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps

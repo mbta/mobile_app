@@ -1,5 +1,5 @@
 {
-  "originHash" : "a2b59b5f418a8d823aba805c1d48e270cea70150d3532564422dca3335b31290",
+  "originHash" : "a3020db9dca7e3d8c232ab638d2abfde463e0cd40e7692c77c9f65d84976c597",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -134,15 +134,6 @@
       "state" : {
         "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
         "version" : "2.30910.0"
-      }
-    },
-    {
-      "identity" : "polyline",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raphaelmor/Polyline.git",
-      "state" : {
-        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23",
-        "version" : "5.1.0"
       }
     },
     {
