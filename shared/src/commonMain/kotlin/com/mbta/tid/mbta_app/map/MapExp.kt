@@ -14,8 +14,8 @@ object MapExp {
     // Returns true if there is only a single type of route served at this stop
     val singleRouteTypeExp = Exp.eq(Exp(1), Exp.length(routesExp))
 
-    // Get the route type string ordered in the top position of the route type array,
-    // or an empty string if there's nothing in the array
+    // Get the route type string ordered in the top position of the route type array, or an empty
+    // string if there's nothing in the array
     val topRouteExp =
         Exp.string(
             Exp.case(Exp.eq(Exp.length(routesExp), Exp(0)) to Exp(""), Exp.at(Exp(0), routesExp))
@@ -36,8 +36,8 @@ object MapExp {
             )
         )
 
-    // Return true if the route type is a branching route, and there is only
-    // a single route ID served at this stop, that means we're on a branch
+    // Return true if the route type is a branching route, and there is only a single route ID
+    // served at this stop, that means we're on a branch
     val branchedRouteExp =
         Exp.all(
             Exp.any(
@@ -74,9 +74,9 @@ object MapExp {
             fallback = Exp(resizeWith[2])
         )
 
-    // MapBox requires the value at the base of every case in this expression to be a literal
-    // length 2 array of Doubles, since that's the type that iconOffset expects. This means
-    // that we can't use expressions for each Double, which is why this function is so convoluted.
+    // MapBox requires the value at the base of every case in this expression to be a literal length
+    // 2 array of Doubles, since that's the type that iconOffset expects. This means that we can't
+    // use expressions for each Double, which is why this function is so convoluted.
     fun offsetAlertExp(closeZoom: Boolean, index: Int): Exp<List<Number>> {
         val doubleRouteHeight = if (closeZoom) 13 else 8
         val tripleRouteHeight = if (closeZoom) 26 else 16
@@ -93,8 +93,7 @@ object MapExp {
                     xyExp(0, 0),
                 )[index],
             // At stops serving 3 routes, the first and third are moved up and down, and the center
-            // one
-            // remains at the same height.
+            // one remains at the same height.
             Exp(3) to
                 listOf(
                     offsetAlertPairExp(closeZoom = closeZoom, height = -tripleRouteHeight),
@@ -104,9 +103,9 @@ object MapExp {
         )
     }
 
-    // The provided height is determined by the position in the route type array,
-    // this function determines the width to offset the alert icon depending on
-    // the width of the type of icon that the stop is being displayed with.
+    // The provided height is determined by the position in the route type array, this function
+    // determines the width to offset the alert icon depending on the width of the type of icon that
+    // the stop is being displayed with.
     fun offsetAlertPairExp(closeZoom: Boolean, height: Int): Exp<List<Number>> {
         val pillWidth = 26
         val railStopWidth = if (closeZoom) pillWidth else 12
@@ -120,8 +119,8 @@ object MapExp {
         return Exp.step(
             Exp.length(routesExp),
             Exp.case(
-                // Branching routes need additional width because their pills are extra wide
-                // from the additional branch indicator
+                // Branching routes need additional width because their pills are extra wide from
+                // the additional branch indicator
                 branchedRouteExp to
                     Exp.case(
                         Exp.get<Boolean>(Exp(StopSourceGenerator.propIsTerminalKey)) to
@@ -133,9 +132,9 @@ object MapExp {
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
                     Exp.get(Exp(StopSourceGenerator.propIsTerminalKey))
                 ) to xyExp(terminalFerryWidth, height),
-                // Buses have an extra small dot at wide zoom, and at close zoom, the height
-                // is slightly repositioned to center the alert on the tombstone, ignoring the
-                // small pole rectangle at the bottom
+                // Buses have an extra small dot at wide zoom, and at close zoom, the height is
+                // slightly repositioned to center the alert on the tombstone, ignoring the small
+                // pole rectangle at the bottom
                 Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to
                     xyExp(busStopWidth, height - (if (closeZoom) 2 else 0)),
                 // Rail terminals at wide zoom have a special pill icon rather than the usual dot
@@ -172,9 +171,9 @@ object MapExp {
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
                     Exp.get(Exp(StopSourceGenerator.propIsTerminalKey))
                 ) to xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
-                // Buses have an extra small dot at wide zoom, and at close zoom, the height
-                // is slightly repositioned to center the alert on the tombstone, ignoring the
-                // small pole rectangle at the bottom
+                // Buses have an extra small dot at wide zoom, and at close zoom, the height is
+                // slightly repositioned to center the alert on the tombstone, ignoring the small
+                // pole rectangle at the bottom
                 Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to
                     xyExp(0, -singleRouteOffset - (if (closeZoom) 2 else 0)),
                 // Rail terminals at wide zoom have a special pill icon rather than the usual dot
@@ -188,9 +187,9 @@ object MapExp {
         )
     }
 
-    // Similar to offsetAlertExp, the labels are set to different height and width offsets
-    // based on the type of icon that they're next to. I'm not certain what units these values
-    // are in though, they definitely aren't pixels, and the docs don't specify.
+    // Similar to offsetAlertExp, the labels are set to different height and width offsets based on
+    // the type of icon that they're next to. I'm not certain what units these values are in though,
+    // they definitely aren't pixels, and the docs don't specify.
     val labelOffsetExp =
         Exp.interpolate(
             Interpolation.Exponential(1.5),
@@ -221,9 +220,9 @@ object MapExp {
         return Exp.product(
             Exp(base),
             modeSizeMultiplierExp(resizeWith = modeResize),
-            // TODO: We actually want to give the icon a halo rather than resize,
-            // but that is only supported for SDFs, which can only be one color.
-            // Alternates of stop icon SVGs with halo applied?
+            // TODO: We actually want to give the icon a halo rather than resize, but that is only
+            // supported for SDFs, which can only be one color. Alternates of stop icon SVGs with
+            // halo applied?
             Exp.case(selectedExp to Exp(1.25), Exp(1))
         )
     }
