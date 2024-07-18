@@ -42,8 +42,8 @@ struct AnnotatedMap: View {
             .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
-            .onLayerTapGesture(StopLayerGenerator.stopLayerId, perform: handleTapStopLayer)
-            .onLayerTapGesture(StopLayerGenerator.stopTouchTargetLayerId, perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
+            .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
@@ -107,7 +107,7 @@ struct AnnotatedMap: View {
                         .selected(isSelected)
                         .allowOverlap(true)
                         .allowOverlapWithPuck(true)
-                        .visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)
+                        .visible(zoomLevel >= StopLayerGenerator.shared.stopZoomThreshold)
                     }
                 }
             }

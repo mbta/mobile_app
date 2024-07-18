@@ -108,9 +108,7 @@
 		9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830552BA3A2CE0039876E /* ViewportExtension.swift */; };
 		9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5830572BA4A1A30039876E /* ViewportProvider.swift */; };
 		9A5B27582BB22BF9009A6FC6 /* MapLayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */; };
-		9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */; };
 		9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */; };
-		9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */; };
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */; };
 		9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */; };
@@ -321,9 +319,7 @@
 		9A5830552BA3A2CE0039876E /* ViewportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportExtension.swift; sourceTree = "<group>"; };
 		9A5830572BA4A1A30039876E /* ViewportProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportProvider.swift; sourceTree = "<group>"; };
 		9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerManager.swift; sourceTree = "<group>"; };
-		9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopLayerGenerator.swift; sourceTree = "<group>"; };
 		9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecenterButton.swift; sourceTree = "<group>"; };
-		9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopLayerGeneratorTests.swift; sourceTree = "<group>"; };
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
 		9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifier.swift; sourceTree = "<group>"; };
@@ -727,7 +723,6 @@
 				9A15DA3C2BF51BA7003A861C /* HomeMapViewLayerExtension.swift */,
 				9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */,
 				9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */,
-				9A5B27592BB22D91009A6FC6 /* StopLayerGenerator.swift */,
 				8CB28DAB2C29D6240036258E /* ChildStopSourceGenerator.swift */,
 				8CB28DAD2C29DCBF0036258E /* ChildStopLayerGenerator.swift */,
 				8CB28DAF2C29EE1F0036258E /* ChildStopIcons.swift */,
@@ -788,7 +783,6 @@
 		9A5B275E2BB24326009A6FC6 /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				9A5B27672BB36A23009A6FC6 /* StopLayerGeneratorTests.swift */,
 				9A6FA0242BC714360067769C /* HomeMapViewTest.swift */,
 				8CB28DB12C2A288E0036258E /* ChildStopSourceGeneratorTests.swift */,
 				6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */,
@@ -1162,7 +1156,6 @@
 				9A6FA0232BC70D0B0067769C /* InspectionEmissary.swift in Sources */,
 				6EE745842B965B9C0052227E /* SocketTests.swift in Sources */,
 				8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */,
-				9A5B27682BB36A23009A6FC6 /* StopLayerGeneratorTests.swift in Sources */,
 				9AAA26A52C2DBC5800A7745A /* GreenLineHelper.swift in Sources */,
 				8CD58ECD2BEC115B0004E031 /* TripDetailsPageTests.swift in Sources */,
 				6E9DDFB52C3884B7009DD68A /* MapViewModelTests.swift in Sources */,
@@ -1268,7 +1261,6 @@
 				EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */,
 				8C815AF32BF5257B009BB51C /* TripDetailsStopListView.swift in Sources */,
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
-				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
 				EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */,
 				8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */,

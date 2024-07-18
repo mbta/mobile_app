@@ -12,7 +12,6 @@ import Foundation
 import SwiftUI
 
 class MockLayerManager: IMapLayerManager {
-    var stopLayerGenerator: StopLayerGenerator?
     var childStopSourceGenerator: ChildStopSourceGenerator?
     var childStopLayerGenerator: ChildStopLayerGenerator?
     private let addLayersCallback: () -> Void
@@ -31,7 +30,6 @@ class MockLayerManager: IMapLayerManager {
     }
 
     func addLayers(
-        stopLayerGenerator _: StopLayerGenerator,
         childStopLayerGenerator _: ChildStopLayerGenerator,
         colorScheme _: ColorScheme
     ) {

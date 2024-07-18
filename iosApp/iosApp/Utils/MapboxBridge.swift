@@ -81,3 +81,14 @@ extension shared.LineLayer {
         )
     }
 }
+
+extension shared.SymbolLayer {
+    func toMapbox() -> MapboxMaps.SymbolLayer {
+        // the json is supposed to be valid
+        // swiftlint:disable:next force_try
+        try! JSONDecoder().decode(
+            MapboxMaps.SymbolLayer.self,
+            from: Data(toJsonString().utf8)
+        )
+    }
+}
