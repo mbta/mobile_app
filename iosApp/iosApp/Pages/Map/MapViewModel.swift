@@ -36,8 +36,8 @@ class MapViewModel: ObservableObject {
         layerManager?.updateSourceData(stopData: stopData)
     }
 
-    func updateChildStopSource(_ childStopSource: GeoJSONSource) {
-        layerManager?.updateSourceData(childStopSource: childStopSource)
+    func updateChildStopSource(_ childStopData: FeatureCollection) {
+        layerManager?.updateSourceData(childStopData: childStopData)
     }
 
     static func filteredRouteShapesForStop(

@@ -949,7 +949,7 @@ final class HomeMapViewTests: XCTestCase {
     func testUpdatesChildStopSourcesWhenDataChanges() {
         let updateChildStopSourcesCalledExpectation = XCTestExpectation(description: "Update child stop source called")
 
-        let layerManager = MockLayerManager(updateChildStopSourceCallback: { _ in
+        let layerManager = MockLayerManager(updateChildStopDataCallback: { _ in
             updateChildStopSourcesCalledExpectation.fulfill()
         })
 
