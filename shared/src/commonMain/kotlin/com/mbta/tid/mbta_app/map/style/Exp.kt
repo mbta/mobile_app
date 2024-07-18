@@ -180,6 +180,12 @@ sealed interface Exp<T> : MapboxStyleObject {
     }
 }
 
+fun Exp(value: Boolean): Exp<Boolean> = Exp.Bare(JsonPrimitive(value))
+
 fun Exp(value: Number): Exp<Number> = Exp.Bare(JsonPrimitive(value))
 
 fun Exp(value: String): Exp<String> = Exp.Bare(JsonPrimitive(value))
+
+fun Exp<String>.downcastToColor(): Exp<Color> = Exp.Bare(this.asJson())
+
+fun Exp<String>.downcastToResolvedImage(): Exp<ResolvedImage> = Exp.Bare(this.asJson())

@@ -240,4 +240,41 @@ object MapExp {
             )
         )
     }
+
+    // For the separate bus only stop and alert layers, this takes any arbitrary
+    // string expression, and returns the expression or an empty string, depending
+    // whether or not the stop is a bus stop and this is on the bus layer
+    fun busSwitchExp(forBus: Boolean, resultExpression: Exp<String>): Exp<String> {
+        return Exp.case(
+            Exp.all(singleRouteTypeExp, Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name))) to
+                if (forBus) resultExpression else Exp.string(Exp("")),
+            if (!forBus) resultExpression else Exp.string(Exp(""))
+        )
+    }
+
+    // Get the label to display for this stop
+    fun stopLabelTextExp(forBus: Boolean = false): Exp<String> {
+        return Exp.step(
+            Exp.zoom(),
+            // Above mid zoom, never display any labels
+            Exp(""),
+            // At mid zoom, only display labels for terminal rail stops
+            Exp(MapDefaults.midZoomThreshold) to
+                Exp.case(
+                    Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)) to Exp(""),
+                    Exp.get<Boolean>(Exp(StopFeaturesBuilder.propIsTerminalKey)) to
+                        busSwitchExp(
+                            forBus = forBus,
+                            Exp.get(Exp(StopFeaturesBuilder.propNameKey))
+                        ),
+                    fallback = Exp("")
+                ),
+            // At close zoom, display labels for all non-bus stops
+            Exp(MapDefaults.closeZoomThreshold) to
+                Exp.case(
+                    Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to Exp(""),
+                    busSwitchExp(forBus = forBus, Exp.get(Exp(StopFeaturesBuilder.propNameKey)))
+                )
+        )
+    }
 }
