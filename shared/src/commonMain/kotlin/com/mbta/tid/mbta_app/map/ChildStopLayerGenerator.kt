@@ -18,7 +18,7 @@ object ChildStopLayerGenerator {
             SymbolLayer(id = childStopLayerId, source = ChildStopFeaturesBuilder.childStopSourceId)
         layer.iconImage =
             Exp.match(
-                    Exp.get<String>(Exp(ChildStopFeaturesBuilder.propLocationTypeKey)),
+                    Exp.get(ChildStopFeaturesBuilder.propLocationTypeKey),
                     Exp(LocationType.ENTRANCE_EXIT.name) to Exp(ChildStopIcons.entranceIcon),
                     Exp.Bare.arrayOf(LocationType.BOARDING_AREA.name, LocationType.STOP.name) to
                         Exp(ChildStopIcons.platformIcon),
@@ -29,8 +29,7 @@ object ChildStopLayerGenerator {
             Exp.step(
                 Exp.zoom(),
                 Exp(""),
-                Exp(annotationTextZoomThreshold) to
-                    Exp.get(Exp(ChildStopFeaturesBuilder.propNameKey))
+                Exp(annotationTextZoomThreshold) to Exp.get(ChildStopFeaturesBuilder.propNameKey)
             )
 
         // TODO actually pick a color
@@ -46,7 +45,7 @@ object ChildStopLayerGenerator {
         layer.textRadialOffset = 1
         layer.iconAllowOverlap = true
         layer.textAllowOverlap = false
-        layer.symbolSortKey = Exp.get(Exp(ChildStopFeaturesBuilder.propSortOrderKey))
+        layer.symbolSortKey = Exp.get(ChildStopFeaturesBuilder.propSortOrderKey)
         layer.minZoom = MapDefaults.closeZoomThreshold
         return layer
     }

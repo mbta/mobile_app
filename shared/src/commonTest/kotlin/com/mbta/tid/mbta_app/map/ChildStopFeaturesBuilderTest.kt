@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.map
 
+import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 class ChildStopFeaturesBuilderTest {
@@ -60,7 +60,7 @@ class ChildStopFeaturesBuilderTest {
 
             assertEquals(platform.id, collection.features[0].id)
             assertEquals(
-                buildJsonObject {
+                buildFeatureProperties {
                     put(ChildStopFeaturesBuilder.propNameKey, "Headsign")
                     put(ChildStopFeaturesBuilder.propLocationTypeKey, LocationType.STOP.name)
                     put(ChildStopFeaturesBuilder.propSortOrderKey, 0)
@@ -70,7 +70,7 @@ class ChildStopFeaturesBuilderTest {
 
             assertEquals(entrance.id, collection.features[1].id)
             assertEquals(
-                buildJsonObject {
+                buildFeatureProperties {
                     put(ChildStopFeaturesBuilder.propNameKey, ("Entrance"))
                     put(
                         ChildStopFeaturesBuilder.propLocationTypeKey,
@@ -83,7 +83,7 @@ class ChildStopFeaturesBuilderTest {
 
             assertEquals(boardingArea.id, collection.features[2].id)
             assertEquals(
-                buildJsonObject {
+                buildFeatureProperties {
                     put(ChildStopFeaturesBuilder.propNameKey, "Other Headsign")
                     put(
                         ChildStopFeaturesBuilder.propLocationTypeKey,

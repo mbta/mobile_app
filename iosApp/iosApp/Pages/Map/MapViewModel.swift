@@ -32,11 +32,11 @@ class MapViewModel: ObservableObject {
             .updateSourceData(routeData: RouteFeaturesBuilder.shared.buildCollection(routeLines: routeLines).toMapbox())
     }
 
-    func updateStopSource(_ stopData: FeatureCollection) {
+    func updateStopSource(_ stopData: MapboxMaps.FeatureCollection) {
         layerManager?.updateSourceData(stopData: stopData)
     }
 
-    func updateChildStopSource(_ childStopData: FeatureCollection) {
+    func updateChildStopSource(_ childStopData: MapboxMaps.FeatureCollection) {
         layerManager?.updateSourceData(childStopData: childStopData)
     }
 

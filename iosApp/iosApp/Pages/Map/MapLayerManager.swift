@@ -14,9 +14,9 @@ import SwiftUI
 protocol IMapLayerManager {
     func addLayers(colorScheme: ColorScheme)
 
-    func updateSourceData(routeData: FeatureCollection)
-    func updateSourceData(stopData: FeatureCollection)
-    func updateSourceData(childStopData: FeatureCollection)
+    func updateSourceData(routeData: MapboxMaps.FeatureCollection)
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection)
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection)
 }
 
 struct MapImageError: Error {}
@@ -72,7 +72,7 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(sourceId: String, data: FeatureCollection) {
+    func updateSourceData(sourceId: String, data: MapboxMaps.FeatureCollection) {
         if map.sourceExists(withId: sourceId) {
             map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
         } else {
@@ -82,15 +82,15 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(routeData: FeatureCollection) {
+    func updateSourceData(routeData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
-    func updateSourceData(stopData: FeatureCollection) {
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 
-    func updateSourceData(childStopData: FeatureCollection) {
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: ChildStopFeaturesBuilder.shared.childStopSourceId, data: childStopData)
     }
 }

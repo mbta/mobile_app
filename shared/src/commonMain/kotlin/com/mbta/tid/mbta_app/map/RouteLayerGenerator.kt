@@ -37,7 +37,7 @@ object RouteLayerGenerator {
         val shuttledLayer = baseRouteLayer(shuttledRouteLayerId)
         shuttledLayer.filter =
             Exp.eq(
-                Exp.get(Exp(RouteFeaturesBuilder.propAlertStateKey)),
+                Exp.get(RouteFeaturesBuilder.propAlertStateKey),
                 Exp(SegmentAlertState.Shuttle.name)
             )
         shuttledLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
@@ -46,7 +46,7 @@ object RouteLayerGenerator {
         val suspendedLayer = baseRouteLayer(suspendedRouteLayerId)
         suspendedLayer.filter =
             Exp.eq(
-                Exp.get(Exp(RouteFeaturesBuilder.propAlertStateKey)),
+                Exp.get(RouteFeaturesBuilder.propAlertStateKey),
                 Exp(SegmentAlertState.Suspension.name)
             )
         suspendedLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
@@ -56,7 +56,7 @@ object RouteLayerGenerator {
         val alertBackgroundLayer = baseRouteLayer(alertingBgRouteLayerId)
         alertBackgroundLayer.filter =
             Exp.`in`(
-                Exp.get(Exp(RouteFeaturesBuilder.propAlertStateKey)),
+                Exp.get(RouteFeaturesBuilder.propAlertStateKey),
                 Exp.Bare.arrayOf(SegmentAlertState.Suspension.name, SegmentAlertState.Shuttle.name)
             )
         alertBackgroundLayer.lineWidth =
@@ -68,10 +68,10 @@ object RouteLayerGenerator {
 
     fun baseRouteLayer(layerId: String): LineLayer {
         val layer = LineLayer(id = layerId, source = RouteFeaturesBuilder.routeSourceId)
-        layer.lineColor = Exp.get(Exp(RouteFeaturesBuilder.propRouteColor))
+        layer.lineColor = Exp.get(RouteFeaturesBuilder.propRouteColor)
         layer.lineJoin = LineJoin.Round
         layer.lineOffset = lineOffsetExp()
-        layer.lineSortKey = Exp.get(Exp(RouteFeaturesBuilder.propRouteSortKey))
+        layer.lineSortKey = Exp.get(RouteFeaturesBuilder.propRouteSortKey)
         checkNotNull(layer.id)
         return layer
     }
@@ -85,17 +85,16 @@ object RouteLayerGenerator {
 
         return Exp.case(
             Exp.`in`(
-                Exp.get(Exp(RouteFeaturesBuilder.propRouteId)),
+                Exp.get(RouteFeaturesBuilder.propRouteId),
                 Exp.Bare.arrayOf("CR-Lowell", "CR-Fitchburg")
             ) to Exp(0),
             Exp.`in`(
-                Exp.get(Exp(RouteFeaturesBuilder.propRouteId)),
+                Exp.get(RouteFeaturesBuilder.propRouteId),
                 Exp.Bare.arrayOf("CR-Greenbush", "CR-Kingston", "CR-Middleborough")
             ) to Exp(maxLineWidth * 1.5),
-            Exp.eq(Exp.get(Exp(RouteFeaturesBuilder.propRouteType)), Exp("COMMUTER_RAIL")) to
+            Exp.eq(Exp.get(RouteFeaturesBuilder.propRouteType), Exp("COMMUTER_RAIL")) to
                 Exp(-maxLineWidth),
-            Exp.`in`(Exp("Green"), Exp.get(Exp(RouteFeaturesBuilder.propRouteId))) to
-                Exp(maxLineWidth),
+            Exp.`in`(Exp("Green"), Exp.get(RouteFeaturesBuilder.propRouteId)) to Exp(maxLineWidth),
             // Default to no offset
             fallback = Exp(0)
         )

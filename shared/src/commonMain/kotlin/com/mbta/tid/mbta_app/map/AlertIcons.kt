@@ -25,16 +25,13 @@ object AlertIcons {
     // Expression that's true if the specified route index has no service status set
     private fun alertEmpty(index: Int): Exp<Boolean> {
         return Exp.not(
-            Exp.has(MapExp.routeAt(index), Exp.get(Exp(StopFeaturesBuilder.propServiceStatusKey)))
+            Exp.has(MapExp.routeAt(index), Exp.get(StopFeaturesBuilder.propServiceStatusKey))
         )
     }
 
     // Expression that returns the alert status string for the given route index
     private fun alertStatus(index: Int): Exp<String> {
-        return Exp.get(
-            MapExp.routeAt(index),
-            Exp.get(Exp(StopFeaturesBuilder.propServiceStatusKey))
-        )
+        return Exp.get(MapExp.routeAt(index), Exp.get(StopFeaturesBuilder.propServiceStatusKey))
     }
 
     private fun getAlertIconName(zoomPrefix: String, index: Int, forBus: Boolean): Exp<String> {
