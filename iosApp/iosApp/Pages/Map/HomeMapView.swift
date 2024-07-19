@@ -19,6 +19,8 @@ struct HomeMapView: View {
     @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
+    @Environment(\.colorScheme) var colorScheme
+
     var globalRepository: IGlobalRepository
     @State var globalData: GlobalResponse?
 

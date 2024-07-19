@@ -53,9 +53,9 @@ extension HomeMapView {
 
     func addLayers(_ layerManager: IMapLayerManager) {
         layerManager.addLayers(
-            routeLayerGenerator: RouteLayerGenerator(),
             stopLayerGenerator: StopLayerGenerator(),
-            childStopLayerGenerator: ChildStopLayerGenerator()
+            childStopLayerGenerator: ChildStopLayerGenerator(),
+            colorScheme: colorScheme
         )
     }
 
