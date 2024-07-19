@@ -18,7 +18,7 @@ class RouteLayerGenerator {
     static let suspendedRouteLayerId = "route-layer-suspended"
     static let alertingBgRouteLayerId = "route-layer-alerting-bg"
     static func getRouteLayerId(_ routeId: String) -> String { "\(routeLayerId)-\(routeId)" }
-    private static let closeZoomCutoff = MapDefaults.closeZoomThreshold
+    private static let closeZoomCutoff = MapDefaults.shared.closeZoomThreshold
 
     init() {
         routeLayers = Self.createAllRouteLayers()
@@ -51,8 +51,8 @@ class RouteLayerGenerator {
         var shuttledLayer = baseRouteLayer(layerId: shuttledRouteLayerId)
 
         shuttledLayer.filter = Exp(.eq) {
-            Exp(.get) { RouteSourceGenerator.propAlertStateKey }
-            String(describing: SegmentAlertState.shuttle)
+            Exp(.get) { RouteFeaturesBuilder.shared.propAlertStateKey }
+            SegmentAlertState.shuttle.name
         }
         shuttledLayer.lineWidth = .expression(Exp(.step) {
             Exp(.zoom)
@@ -65,8 +65,8 @@ class RouteLayerGenerator {
         var suspendedLayer = baseRouteLayer(layerId: suspendedRouteLayerId)
 
         suspendedLayer.filter = Exp(.eq) {
-            Exp(.get) { RouteSourceGenerator.propAlertStateKey }
-            String(describing: SegmentAlertState.suspension)
+            Exp(.get) { RouteFeaturesBuilder.shared.propAlertStateKey }
+            SegmentAlertState.suspension.name
         }
         suspendedLayer.lineWidth = .expression(Exp(.step) {
             Exp(.zoom)
@@ -80,8 +80,8 @@ class RouteLayerGenerator {
         var alertBackgroundLayer = baseRouteLayer(layerId: alertingBgRouteLayerId)
 
         alertBackgroundLayer.filter = Exp(.inExpression) {
-            Exp(.get) { RouteSourceGenerator.propAlertStateKey }
-            [String(describing: SegmentAlertState.suspension), String(describing: SegmentAlertState.shuttle)]
+            Exp(.get) { RouteFeaturesBuilder.shared.propAlertStateKey }
+            [SegmentAlertState.suspension.name, SegmentAlertState.shuttle.name]
         }
         alertBackgroundLayer.lineWidth = .expression(Exp(.step) {
             Exp(.zoom)
@@ -97,15 +97,15 @@ class RouteLayerGenerator {
     private static func baseRouteLayer(layerId: String) -> LineLayer {
         var layer = LineLayer(
             id: layerId,
-            source: RouteSourceGenerator.routeSourceId
+            source: RouteFeaturesBuilder.shared.routeSourceId
         )
         layer.lineColor = .expression(Exp(.get) {
-            RouteSourceGenerator.propRouteColor
+            RouteFeaturesBuilder.shared.propRouteColor
         })
         layer.lineJoin = .constant(.round)
         layer.lineOffset = .expression(lineOffsetExpression())
         layer.lineSortKey = .expression(Exp(.get) {
-            RouteSourceGenerator.propRouteSortKey
+            RouteFeaturesBuilder.shared.propRouteSortKey
         })
 
         return layer
@@ -115,7 +115,7 @@ class RouteLayerGenerator {
      Hardcoding offsets based on route properties to minimize the occurences of overlapping rail lines
      when drawn on the map
      */
-    private static func lineOffsetExpression() -> Exp {
+    private static func lineOffsetExpression() -> MapboxMaps.Exp {
         let maxLineWidth = 6.0
 
         return Expression(.switchCase) {

@@ -101,9 +101,9 @@ extension HomeMapView {
                 case .error:
                     []
                 }
-                mapVM.routeSourceData = RouteSourceGenerator.shapesWithStopsToMapFriendly(
-                    shapesWithStops,
-                    globalData?.stops
+                mapVM.routeSourceData = RouteFeaturesBuilder.shared.shapesWithStopsToMapFriendly(
+                    shapesWithStops: shapesWithStops,
+                    stopsById: globalData?.stops
                 )
 
                 let filteredStopIds = shapesWithStops.flatMap(\.stopIds).map { stopId in
@@ -170,37 +170,45 @@ extension HomeMapView {
             _ = nearbyVM.navigationStack.popLast()
         }
 
-        guard let departures = nearbyVM.departures,
-              let patterns = departures.routes.first(where: { patterns in
-                  patterns.routes.contains { $0.id == vehicle.routeId }
-              }),
-              let trip = patterns.allUpcomingTrips().first(where: { upcoming in
-                  upcoming.trip.id == tripId
-              }),
-              let stopSequence = trip.stopSequence?.intValue
-        else {
-            // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
-            // page, but we won't be able to tell what the target stop was.
-            nearbyVM.navigationStack.append(.tripDetails(
-                tripId: tripId,
-                vehicleId: vehicle.id,
-                target: nil,
-                // TODO: figure out something to do if this is nil
-                routeId: vehicle.routeId!,
-                directionId: vehicle.directionId
-            ))
+        let departures = nearbyVM.departures
+        let patterns = departures?.routes.first(where: { patterns in
+            patterns.routes.contains { $0.id == vehicle.routeId }
+        })
+        let trip = patterns?.allUpcomingTrips().first(where: { upcoming in
+            upcoming.trip.id == tripId
+        })
+        let stopSequence = trip?.stopSequence?.intValue
+
+        guard let routeId = vehicle.routeId ?? trip?.trip.id else {
+            // TODO: figure out something to do if this is nil
             return
         }
 
+        // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
+        // page, but we won't be able to tell what the target stop was.
         nearbyVM.navigationStack.append(.tripDetails(
             tripId: tripId,
             vehicleId: vehicle.id,
-            target: .init(
-                stopId: patterns.stop.id,
+            target: patterns != nil ? .init(
+                stopId: patterns!.stop.id,
                 stopSequence: stopSequence
-            ),
-            routeId: trip.trip.routeId,
-            directionId: trip.trip.directionId
+            ) : nil,
+            routeId: routeId,
+            directionId: vehicle.directionId
         ))
+    }
+
+    func handleSelectedVehicleChange(_ previousVehicle: Vehicle?, _ nextVehicle: Vehicle?) {
+        guard let globalData else { return }
+        guard let nextVehicle else {
+            viewportProvider.updateFollowedVehicle(vehicle: nil)
+            return
+        }
+
+        if previousVehicle == nil || previousVehicle?.id != nextVehicle.id {
+            viewportProvider.followVehicle(vehicle: nextVehicle, target: nearbyVM.getTargetStop(global: globalData))
+        } else {
+            viewportProvider.updateFollowedVehicle(vehicle: nextVehicle)
+        }
     }
 }

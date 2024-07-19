@@ -18,16 +18,16 @@ class MockLayerManager: IMapLayerManager {
     var childStopLayerGenerator: ChildStopLayerGenerator?
     private let addLayersCallback: () -> Void
     private let updateChildStopSourceCallback: (GeoJSONSource) -> Void
-    private let updateRouteSourceCallback: (GeoJSONSource) -> Void
+    private let updateRouteDataCallback: (FeatureCollection) -> Void
     private let updateStopSourceCallback: (GeoJSONSource) -> Void
 
     init(addLayersCallback: @escaping () -> Void = {},
          updateChildStopSourceCallback: @escaping (GeoJSONSource) -> Void = { _ in },
-         updateRouteSourceCallback: @escaping (GeoJSONSource) -> Void = { _ in },
+         updateRouteDataCallback: @escaping (FeatureCollection) -> Void = { _ in },
          updateStopSourceCallback: @escaping (GeoJSONSource) -> Void = { _ in }) {
         self.addLayersCallback = addLayersCallback
         self.updateChildStopSourceCallback = updateChildStopSourceCallback
-        self.updateRouteSourceCallback = updateRouteSourceCallback
+        self.updateRouteDataCallback = updateRouteDataCallback
         self.updateStopSourceCallback = updateStopSourceCallback
     }
 
@@ -39,8 +39,8 @@ class MockLayerManager: IMapLayerManager {
         addLayersCallback()
     }
 
-    func updateSourceData(routeSource: GeoJSONSource) {
-        updateRouteSourceCallback(routeSource)
+    func updateSourceData(routeData: FeatureCollection) {
+        updateRouteDataCallback(routeData)
     }
 
     func updateSourceData(stopSource: GeoJSONSource) {

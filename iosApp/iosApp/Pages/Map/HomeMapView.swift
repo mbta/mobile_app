@@ -7,7 +7,6 @@
 //
 
 import os
-import Polyline
 import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
@@ -127,6 +126,9 @@ struct HomeMapView: View {
                 if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
+            }
+            .onChange(of: mapVM.selectedVehicle) { [weak previousVehicle = mapVM.selectedVehicle] nextVehicle in
+                handleSelectedVehicleChange(previousVehicle, nextVehicle)
             }
             .onChange(of: globalMapData) { _ in
                 updateGlobalMapDataSources()

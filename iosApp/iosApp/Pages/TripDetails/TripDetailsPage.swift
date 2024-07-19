@@ -65,9 +65,9 @@ struct TripDetailsPage: View {
                     vehicle: vehicle, globalData: globalResponse
                 ) {
                     vehicleCardView
-                    if let target, let splitStops = stops.splitForTarget(
+                    if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
-                        targetStopSequence: Int32(target.stopSequence),
+                        targetStopSequence: Int32(stopSequence),
                         globalData: globalResponse
                     ) {
                         TripDetailsStopListSplitView(splitStops: splitStops, now: now)

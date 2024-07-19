@@ -6,7 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Polyline
 import shared
 @_spi(Experimental) import MapboxMaps
 
@@ -82,7 +81,7 @@ enum StopSourceGenerator {
 
                 if touchedStopIds.contains(stop.id) || mapStop.routeTypes.isEmpty { return nil }
 
-                let snappedCoord = lineData.line.closestCoordinate(to: stop.coordinate)?.coordinate
+                let snappedCoord = lineData.line.toMapbox().closestCoordinate(to: stop.coordinate)?.coordinate
                 touchedStopIds.insert(stop.id)
                 return .init(
                     stop: mapStop,
