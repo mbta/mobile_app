@@ -9,6 +9,7 @@
 import Foundation
 @testable import iosApp
 @_spi(Experimental) import MapboxMaps
+import SwiftUI
 
 class MockLayerManager: IMapLayerManager {
     var stopSourceGenerator: StopSourceGenerator?
@@ -32,7 +33,8 @@ class MockLayerManager: IMapLayerManager {
 
     func addLayers(
         stopLayerGenerator _: StopLayerGenerator,
-        childStopLayerGenerator _: ChildStopLayerGenerator
+        childStopLayerGenerator _: ChildStopLayerGenerator,
+        colorScheme: ColorScheme
     ) {
         addLayersCallback()
     }

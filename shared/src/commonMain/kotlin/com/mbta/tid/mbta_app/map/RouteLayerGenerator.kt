@@ -13,15 +13,13 @@ object RouteLayerGenerator {
     val alertingBgRouteLayerId = "route-layer-alerting-bg"
     private val closeZoomCutoff = MapDefaults.closeZoomThreshold
 
-    val routeLayers: List<LineLayer> = createAllRouteLayers()
-
     fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
 
-    fun createAllRouteLayers(): List<LineLayer> =
+    fun createAllRouteLayers(colorPalette: ColorPalette): List<LineLayer> =
         listOf(createRouteLayer()) +
             // Draw all alerting layers on top so they are not covered by any overlapping route
             // shape
-            createAlertingRouteLayers()
+            createAlertingRouteLayers(colorPalette)
 
     fun createRouteLayer(): LineLayer {
         val layer = baseRouteLayer(routeLayerId)
@@ -35,7 +33,7 @@ object RouteLayerGenerator {
      * Creates separate layers for shuttle and suspension segments because `LineLayer.lineDasharray`
      * [doesn't support data-driven styling](https://docs.mapbox.com/style-spec/reference/layers/#paint-line-line-dasharray)
      */
-    fun createAlertingRouteLayers(): List<LineLayer> {
+    fun createAlertingRouteLayers(colorPalette: ColorPalette): List<LineLayer> {
         val shuttledLayer = baseRouteLayer(shuttledRouteLayerId)
         shuttledLayer.filter =
             Exp.eq(
@@ -53,8 +51,7 @@ object RouteLayerGenerator {
             )
         suspendedLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
         suspendedLayer.lineDasharray = listOf(1.33, 2.0)
-        // TODO actually resolve deemphasized
-        suspendedLayer.lineColor = Exp.Bare(JsonPrimitive("#8A9199"))
+        suspendedLayer.lineColor = Exp.Bare(JsonPrimitive(colorPalette.deemphasized))
 
         val alertBackgroundLayer = baseRouteLayer(alertingBgRouteLayerId)
         alertBackgroundLayer.filter =
@@ -64,8 +61,7 @@ object RouteLayerGenerator {
             )
         alertBackgroundLayer.lineWidth =
             Exp.step(Exp.zoom(), Exp(8), Exp(closeZoomCutoff) to Exp(10))
-        // TODO actually resolve fill3
-        alertBackgroundLayer.lineColor = Exp.Bare(JsonPrimitive("#FFFFFF"))
+        alertBackgroundLayer.lineColor = Exp.Bare(JsonPrimitive(colorPalette.fill3))
 
         return listOf(alertBackgroundLayer, shuttledLayer, suspendedLayer)
     }
