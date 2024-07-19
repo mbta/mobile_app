@@ -1,18 +1,18 @@
 //
-//  CloseButton.swift
+//  BackButton.swift
 //  iosApp
 //
-//  Created by Brady, Kayla on 6/6/24.
+//  Created by Brandon Rodriguez on 7/17/24.
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
 import Foundation
 import SwiftUI
 
-struct CloseButton: View {
+struct BackButton: View {
     let action: () -> Void
 
-    @ScaledMetric private var xSize: CGFloat = 10
+    @ScaledMetric private var chevronSize: CGFloat = 14
 
     @ScaledMetric private var circleSize: CGFloat = ActionButtonProperties.circleSize
     @ScaledMetric private var tapSize: CGFloat = ActionButtonProperties.tapSize
@@ -24,21 +24,21 @@ struct CloseButton: View {
                     .fill(Color.contrast)
                     .frame(width: circleSize, height: circleSize)
 
-                Image(.faXmark)
+                Image(.faChevronLeft)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: xSize, height: xSize)
+                    .frame(width: chevronSize, height: chevronSize)
                     .padding(5)
                     .foregroundStyle(Color.fill2)
             }
         }
         .frame(width: circleSize, height: circleSize)
-        .accessibilityLabel("Close")
+        .accessibilityLabel("Back")
     }
 }
 
-struct CloseButton_Previews: PreviewProvider {
+struct BackButton_Previews: PreviewProvider {
     static var previews: some View {
-        CloseButton(action: { print("Pressed") }).previewDisplayName("Close Button")
+        BackButton(action: { print("Pressed") }).previewDisplayName("Back Button")
     }
 }

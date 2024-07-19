@@ -169,6 +169,10 @@
 		ED24EADC2C1A95A900A7BE4D /* StopDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */; };
 		ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */; };
 		ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */; };
+		ED5C93F02C4969270086D017 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93EF2C4969270086D017 /* BackButton.swift */; };
+		ED5C93F22C496F8D0086D017 /* ActionButtonProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F12C496F8D0086D017 /* ActionButtonProperties.swift */; };
+		ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */; };
+		ED5C93F62C4A1AD70086D017 /* TripDetailsHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */; };
 		ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */; };
 		ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */; };
 		ED87C88F2C10F4B1009D398F /* SocketErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */; };
@@ -393,6 +397,10 @@
 		ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsAnalytics.swift; sourceTree = "<group>"; };
 		ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProvider.swift; sourceTree = "<group>"; };
 		ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationDetentExtension.swift; sourceTree = "<group>"; };
+		ED5C93EF2C4969270086D017 /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
+		ED5C93F12C496F8D0086D017 /* ActionButtonProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonProperties.swift; sourceTree = "<group>"; };
+		ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeader.swift; sourceTree = "<group>"; };
+		ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeaderTests.swift; sourceTree = "<group>"; };
 		ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoenixProtocolConformance.swift; sourceTree = "<group>"; };
 		ED87C88C2C10E754009D398F /* PhoenixChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoenixChannelError.swift; sourceTree = "<group>"; };
 		ED87C88E2C10F4B1009D398F /* SocketErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketErrorExtension.swift; sourceTree = "<group>"; };
@@ -523,6 +531,7 @@
 				6EF64C042C1B7FC6005F365D /* RouteHeaderTests.swift */,
 				6EA231742C21CF2100789173 /* LoadingCardTests.swift */,
 				9AAA26A62C2DC06600A7745A /* DirectionLabelTests.swift */,
+				ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -673,6 +682,7 @@
 				8C815AF22BF5257B009BB51C /* TripDetailsStopListView.swift */,
 				8CA1FB722BF7E69000384658 /* TripDetailsStopView.swift */,
 				8CA1FB742BF7EB3500384658 /* TripDetailsStopListSplitView.swift */,
+				ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */,
 			);
 			path = TripDetails;
 			sourceTree = "<group>";
@@ -796,6 +806,8 @@
 				9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */,
 				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
 				9AAA26A22C2DB79E00A7745A /* DirectionRowView.swift */,
+				ED5C93EF2C4969270086D017 /* BackButton.swift */,
+				ED5C93F12C496F8D0086D017 /* ActionButtonProperties.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1213,6 +1225,7 @@
 				9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */,
 				6E973DA92C178BF500CBF341 /* CloseButtonTests.swift in Sources */,
 				6EED5EAB2B3E1B550052A1B8 /* ContentViewTests.swift in Sources */,
+				ED5C93F62C4A1AD70086D017 /* TripDetailsHeaderTests.swift in Sources */,
 				9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */,
 				6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */,
 				9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */,
@@ -1251,6 +1264,7 @@
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
 				9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */,
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
+				ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */,
 				9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */,
 				9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */,
 				8CB28DB92C2CC5AD0036258E /* MapViewModel.swift in Sources */,
@@ -1308,6 +1322,7 @@
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
+				ED5C93F22C496F8D0086D017 /* ActionButtonProperties.swift in Sources */,
 				EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */,
 				8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */,
 				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
@@ -1337,6 +1352,7 @@
 				9A19CDDE2C10DFBC006F1059 /* AlertIcons.swift in Sources */,
 				6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
+				ED5C93F02C4969270086D017 /* BackButton.swift in Sources */,
 				6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */,
 				9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
