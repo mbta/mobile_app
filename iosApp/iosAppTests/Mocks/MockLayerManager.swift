@@ -34,7 +34,7 @@ class MockLayerManager: IMapLayerManager {
     func addLayers(
         stopLayerGenerator _: StopLayerGenerator,
         childStopLayerGenerator _: ChildStopLayerGenerator,
-        colorScheme: ColorScheme
+        colorScheme _: ColorScheme
     ) {
         addLayersCallback()
     }

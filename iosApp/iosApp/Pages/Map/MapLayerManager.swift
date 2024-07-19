@@ -62,7 +62,8 @@ class MapLayerManager: IMapLayerManager {
         case .dark: ColorPalette.companion.dark
         @unknown default: ColorPalette.companion.light
         }
-        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette).map { $0.toMapbox() }
+        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
+            .map { $0.toMapbox() }
             + stopLayerGenerator.stopLayers + [childStopLayerGenerator.childStopLayer]
         for layer in layers {
             do {
