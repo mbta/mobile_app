@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
 import android.app.Application
+import android.content.Context
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
 import com.mbta.tid.mbta_app.android.repositories.AppCheckRepository
@@ -18,5 +19,9 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin(appVariant, makeNativeModule(appCheck, socket.wrapped()))
+    }
+
+    companion object {
+        lateinit  var appContext: Context
     }
 }
