@@ -60,9 +60,7 @@ class ConfigRepositoryTests {
                 content =
                     ByteReadChannel(
                         """
-                        {
-                          "message": "oh no"
-                        }
+                  {"message": "oh no"}
                     """
                             .trimIndent()
                     ),
@@ -77,7 +75,10 @@ class ConfigRepositoryTests {
         runBlocking {
             val response = ConfigRepository().getConfig("token")
 
-            assertEquals(response, ApiResult.Error(ErrorDetails(code = null, message = "oh no")))
+            assertEquals(
+                response,
+                ApiResult.Error(ErrorDetails(code = 401, message = "{\"message\": \"oh no\"}"))
+            )
         }
     }
 }

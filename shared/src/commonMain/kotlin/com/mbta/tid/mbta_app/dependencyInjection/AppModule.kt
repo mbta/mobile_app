@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
-import com.mbta.tid.mbta_app.usecases.IConfigUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -57,6 +56,6 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IGlobalRepository> { repositories.global }
         single { TogglePinnedRouteUsecase(get()) }
         single { GetSettingUsecase(get()) }
-        single<IConfigUseCase> { ConfigUseCase(get(), get()) }
+        single { ConfigUseCase(get(), get()) }
     }
 }

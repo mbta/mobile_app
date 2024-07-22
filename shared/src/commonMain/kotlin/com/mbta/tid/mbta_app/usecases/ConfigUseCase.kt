@@ -7,16 +7,12 @@ import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import org.koin.core.component.KoinComponent
 
-interface IConfigUseCase {
-    suspend fun getConfig(): ApiResult<ConfigResponse>
-}
-
 class ConfigUseCase(
     private val appCheckRepo: IAppCheckRepository,
     private val configRepo: IConfigRepository
-) : IConfigUseCase, KoinComponent {
+) : KoinComponent {
 
-    override suspend fun getConfig(): ApiResult<ConfigResponse> {
+    suspend fun getConfig(): ApiResult<ConfigResponse> {
         try {
             when (val tokenResult = appCheckRepo.getToken()) {
                 is ApiResult.Error ->

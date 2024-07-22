@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.response.ErrorDetails
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.path
 import org.koin.core.component.KoinComponent
@@ -33,7 +34,7 @@ class ConfigRepository() : IConfigRepository, KoinComponent {
             if (response.status === HttpStatusCode.OK) {
                 return ApiResult.Ok(data = json.decodeFromString(response.body()))
             } else {
-                return ApiResult.Error(json.decodeFromString<ErrorDetails>(response.body()))
+                return ApiResult.Error(ErrorDetails(response.status.value, response.bodyAsText()))
             }
         } catch (e: Exception) {
             return ApiResult.Error(ErrorDetails(message = e.message ?: e.toString()))
