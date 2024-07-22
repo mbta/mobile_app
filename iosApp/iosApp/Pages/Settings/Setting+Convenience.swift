@@ -20,6 +20,8 @@ extension Setting: Identifiable {
             "Search"
         case .map:
             "Map Debug"
+        case .dynamicMapKey:
+            "Dynamic map API Key"
         }
     }
 
@@ -29,6 +31,8 @@ extension Setting: Identifiable {
             "magnifyingglass"
         case .map:
             "location.magnifyingglass"
+        case .dynamicMapKey:
+            ""
         }
     }
 
@@ -38,6 +42,8 @@ extension Setting: Identifiable {
             .featureFlags
         case .map:
             .debug
+        case .dynamicMapKey:
+            .featureFlags
         }
     }
 }

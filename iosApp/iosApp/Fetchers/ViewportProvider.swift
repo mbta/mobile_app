@@ -10,12 +10,13 @@ import Combine
 import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
+import shared
 
 class ViewportProvider: ObservableObject {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
         static let center: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
-        static let zoom: CGFloat = MapDefaults.defaultZoomThreshold
+        static let zoom: CGFloat = MapDefaults.shared.defaultZoomThreshold
     }
 
     @Published private(set) var isManuallyCentering: Bool

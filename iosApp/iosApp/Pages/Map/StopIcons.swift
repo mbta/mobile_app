@@ -48,13 +48,13 @@ enum StopIcons {
 
     // If this is a branching route, return a suffix to specify a distinct icon for it
     private static let branchingRouteSuffixExp = Exp(.switchCase) {
-        MapExp.branchedRouteExp
+        MapExp.shared.branchedRouteExp.toMapbox()
         Exp(.concat) {
             "-"
             Exp(.at) {
                 0
                 Exp(.get) {
-                    MapExp.topRouteExp
+                    MapExp.shared.topRouteExp.toMapbox()
                     Exp(.get) { StopSourceGenerator.propRouteIdsKey }
                 }
             }
@@ -67,16 +67,16 @@ enum StopIcons {
     }
 
     // Combine prefix and suffix strings to get the icon to display for the given zoom and index
-    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
+    private static func getRouteIconName(_ zoomPrefix: String, _ index: Int) -> MapboxMaps.Exp {
         Exp(.concat) {
             stopIconPrefix
             zoomPrefix
-            MapExp.routeAt(index)
+            MapExp.shared.routeAt(index: Int32(index)).toMapbox()
             Exp(.switchCase) {
                 // If at wide zoom, give terminal stops with no transfers distinct icons
                 Exp(.all) {
                     Exp(.get) { StopSourceGenerator.propIsTerminalKey }
-                    MapExp.singleRouteTypeExp
+                    MapExp.shared.singleRouteTypeExp.toMapbox()
                     Exp(.boolean) { zoomPrefix == stopZoomWidePrefix }
                 }
                 Exp(.concat) { stopTerminalSuffix; branchingRouteSuffixExp }
@@ -91,9 +91,9 @@ enum StopIcons {
     // If the stop serves a single type of route, display a regular stop icon,
     // if it serves 2 or 3, display a container icon, and the stop icons in it
     // will be displayed by the transfer layers.
-    static func getStopIconName(_ zoomPrefix: String, forBus: Bool) -> Exp {
-        MapExp.busSwitchExp(forBus: forBus, Exp(.step) {
-            Exp(.length) { MapExp.routesExp }
+    static func getStopIconName(_ zoomPrefix: String, forBus: Bool) -> MapboxMaps.Exp {
+        MapExp.shared.busSwitchExp(forBus: forBus, Exp(.step) {
+            Exp(.length) { MapExp.shared.routesExp.toMapbox() }
             getRouteIconName(zoomPrefix, 0)
             2
             Exp(.concat) { stopContainerPrefix; zoomPrefix; "2" }
@@ -106,14 +106,14 @@ enum StopIcons {
         .expression(Exp(.step) {
             Exp(.zoom)
             getStopIconName(stopZoomWidePrefix, forBus: forBus)
-            MapDefaults.closeZoomThreshold
+            MapDefaults.shared.closeZoomThreshold
             getStopIconName(stopZoomClosePrefix, forBus: forBus)
         })
     }
 
-    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> Exp {
+    static func getTransferIconName(_ zoomPrefix: String, _ index: Int) -> MapboxMaps.Exp {
         Exp(.step) {
-            Exp(.length) { MapExp.routesExp }
+            Exp(.length) { MapExp.shared.routesExp.toMapbox() }
             ""
             2
             Exp(.concat) {
@@ -122,7 +122,7 @@ enum StopIcons {
                     // Regular non-transfer bus icons are different than the other modes,
                     // and don't fit in the transfer stop containers, this adds a suffix
                     // to use a different icon when a bus is included in a transfer stack.
-                    Exp(.eq) { MapExp.routeAt(index); MapStopRoute.bus.name }
+                    Exp(.eq) { MapExp.shared.routeAt(index: Int32(index)).toMapbox(); MapStopRoute.bus.name }
                     stopTransferSuffix
                     ""
                 }
@@ -134,7 +134,7 @@ enum StopIcons {
         .expression(Exp(.step) {
             Exp(.zoom)
             getTransferIconName(stopZoomWidePrefix, index)
-            MapDefaults.closeZoomThreshold
+            MapDefaults.shared.closeZoomThreshold
             getTransferIconName(stopZoomClosePrefix, index)
         })
     }

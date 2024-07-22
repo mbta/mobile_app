@@ -26,26 +26,26 @@ enum AlertIcons {
         }
 
     // Expression that's true if the specified route index has no service status set
-    private static func alertEmpty(_ index: Int) -> Exp {
+    private static func alertEmpty(_ index: Int) -> MapboxMaps.Exp {
         Exp(.not) { Exp(.has) {
-            MapExp.routeAt(index)
+            MapExp.shared.routeAt(index: Int32(index)).toMapbox()
             Exp(.get) { StopSourceGenerator.propServiceStatusKey }
         }}
     }
 
     // Expression that returns the alert status string for the given route index
-    private static func alertStatus(_ index: Int) -> Exp {
+    private static func alertStatus(_ index: Int) -> MapboxMaps.Exp {
         Exp(.get) {
-            MapExp.routeAt(index)
+            MapExp.shared.routeAt(index: Int32(index)).toMapbox()
             Exp(.get) { StopSourceGenerator.propServiceStatusKey }
         }
     }
 
-    private static func getAlertIconName(_ zoomPrefix: String, _ index: Int, _ forBus: Bool) -> Exp {
-        MapExp.busSwitchExp(forBus: forBus, Exp(.switchCase) {
+    private static func getAlertIconName(_ zoomPrefix: String, _ index: Int, _ forBus: Bool) -> MapboxMaps.Exp {
+        MapExp.shared.busSwitchExp(forBus: forBus, Exp(.switchCase) {
             Exp(.any) {
                 // Check if the index is greater than the number of routes at this stop
-                Exp(.gte) { index; Exp(.length) { MapExp.routesExp } }
+                Exp(.gte) { index; Exp(.length) { MapExp.shared.routesExp.toMapbox() } }
                 // Or if the alert status at this index is empty
                 alertEmpty(index)
                 // Or if it's normal
@@ -57,7 +57,7 @@ enum AlertIcons {
             Exp(.concat) {
                 alertIconPrefix
                 zoomPrefix
-                Exp(.downcase) { MapExp.routeAt(index) }
+                Exp(.downcase) { MapExp.shared.routeAt(index: Int32(index)).toMapbox() }
                 "-"
                 Exp(.downcase) { alertStatus(index) }
             }
@@ -68,7 +68,7 @@ enum AlertIcons {
         .expression(Exp(.step) {
             Exp(.zoom)
             getAlertIconName(alertZoomWidePrefix, index, forBus)
-            MapDefaults.closeZoomThreshold
+            MapDefaults.shared.closeZoomThreshold
             getAlertIconName(alertZoomClosePrefix, index, forBus)
         })
     }
