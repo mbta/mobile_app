@@ -19,7 +19,7 @@ protocol IMapLayerManager {
     )
 
     func updateSourceData(routeData: FeatureCollection)
-    func updateSourceData(stopSource: GeoJSONSource)
+    func updateSourceData(stopData: FeatureCollection)
     func updateSourceData(childStopSource: GeoJSONSource)
 }
 
@@ -107,8 +107,8 @@ class MapLayerManager: IMapLayerManager {
         updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
-    func updateSourceData(stopSource: GeoJSONSource) {
-        updateSourceData(source: stopSource)
+    func updateSourceData(stopData: FeatureCollection) {
+        updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 
     func updateSourceData(childStopSource: GeoJSONSource) {

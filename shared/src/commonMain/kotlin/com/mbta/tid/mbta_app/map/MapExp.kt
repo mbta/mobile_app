@@ -9,7 +9,7 @@ import kotlinx.serialization.json.buildJsonArray
 
 object MapExp {
     // Get the array of MapStopRoute string values from a stop feature
-    val routesExp: Exp<List<String>> = Exp.get(Exp(StopSourceGenerator.propMapRoutesKey))
+    val routesExp: Exp<List<String>> = Exp.get(Exp(StopFeaturesBuilder.propMapRoutesKey))
 
     // Returns true if there is only a single type of route served at this stop
     val singleRouteTypeExp = Exp.eq(Exp(1), Exp.length(routesExp))
@@ -30,7 +30,7 @@ object MapExp {
                 Exp.length(
                     Exp.get<List<String>>(
                         topRouteExp,
-                        Exp.get(Exp(StopSourceGenerator.propRouteIdsKey))
+                        Exp.get(Exp(StopFeaturesBuilder.propRouteIdsKey))
                     )
                 )
             )
@@ -51,7 +51,7 @@ object MapExp {
     fun routeAt(index: Int) = Exp.string(Exp.at(Exp(index), routesExp))
 
     // Returns true if you're currently on the stop page for this stop
-    val selectedExp = Exp.boolean(Exp.get(Exp(StopSourceGenerator.propIsSelectedKey)))
+    val selectedExp = Exp.boolean(Exp.get(Exp(StopFeaturesBuilder.propIsSelectedKey)))
 
     // Returns the iconSize of the stop icon, interpolated by zoom level, and sized differently
     // depending on the route served by the stop.
@@ -123,14 +123,14 @@ object MapExp {
                 // the additional branch indicator
                 branchedRouteExp to
                     Exp.case(
-                        Exp.get<Boolean>(Exp(StopSourceGenerator.propIsTerminalKey)) to
+                        Exp.get<Boolean>(Exp(StopFeaturesBuilder.propIsTerminalKey)) to
                             xyExp(branchTerminalWidth, height),
                         xyExp(branchStopWidth, height)
                     ),
                 // Ferry terminals have a special larger icon at the wide zoom level
                 Exp.all(
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
-                    Exp.get(Exp(StopSourceGenerator.propIsTerminalKey))
+                    Exp.get(Exp(StopFeaturesBuilder.propIsTerminalKey))
                 ) to xyExp(terminalFerryWidth, height),
                 // Buses have an extra small dot at wide zoom, and at close zoom, the height is
                 // slightly repositioned to center the alert on the tombstone, ignoring the small
@@ -138,7 +138,7 @@ object MapExp {
                 Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to
                     xyExp(busStopWidth, height - (if (closeZoom) 2 else 0)),
                 // Rail terminals at wide zoom have a special pill icon rather than the usual dot
-                Exp.get<Boolean>(Exp(StopSourceGenerator.propIsTerminalKey)) to
+                Exp.get<Boolean>(Exp(StopFeaturesBuilder.propIsTerminalKey)) to
                     xyExp(terminalRailStopWidth, height),
                 // Regular rail stops, have a basic pill at close zoom and a dot at wide
                 fallback = xyExp(railStopWidth, height)
@@ -169,7 +169,7 @@ object MapExp {
                 // Ferry terminals have a special larger icon at the wide zoom level
                 Exp.all(
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
-                    Exp.get(Exp(StopSourceGenerator.propIsTerminalKey))
+                    Exp.get(Exp(StopFeaturesBuilder.propIsTerminalKey))
                 ) to xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
                 // Buses have an extra small dot at wide zoom, and at close zoom, the height is
                 // slightly repositioned to center the alert on the tombstone, ignoring the small
@@ -177,7 +177,7 @@ object MapExp {
                 Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to
                     xyExp(0, -singleRouteOffset - (if (closeZoom) 2 else 0)),
                 // Rail terminals at wide zoom have a special pill icon rather than the usual dot
-                Exp.get<Boolean>(Exp(StopSourceGenerator.propIsTerminalKey)) to
+                Exp.get<Boolean>(Exp(StopFeaturesBuilder.propIsTerminalKey)) to
                     xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
                 // Regular rail stops, have a basic pill at close zoom and a dot at wide
                 fallback = xyExp(0, -singleRouteOffset)
@@ -196,10 +196,10 @@ object MapExp {
             Exp.zoom(),
             Exp(MapDefaults.midZoomThreshold) to
                 Exp.step(
-                    Exp.length(Exp.get(Exp(StopSourceGenerator.propMapRoutesKey))),
+                    Exp.length(Exp.get(Exp(StopFeaturesBuilder.propMapRoutesKey))),
                     Exp.case(
                         branchedRouteExp to xyExp(1.15, 0.75),
-                        Exp.get<Boolean>(Exp(StopSourceGenerator.propIsTerminalKey)) to
+                        Exp.get<Boolean>(Exp(StopFeaturesBuilder.propIsTerminalKey)) to
                             xyExp(1, 0.75),
                         fallback = xyExp(0.75, 0.5)
                     ),
@@ -208,7 +208,7 @@ object MapExp {
                 ),
             Exp(MapDefaults.closeZoomThreshold) to
                 Exp.step(
-                    Exp.length(Exp.get(Exp(StopSourceGenerator.propMapRoutesKey))),
+                    Exp.length(Exp.get(Exp(StopFeaturesBuilder.propMapRoutesKey))),
                     Exp.case(branchedRouteExp to xyExp(2.5, 1.5), xyExp(2, 1.5)),
                     Exp(2) to xyExp(2, 2),
                     Exp(3) to xyExp(2, 2.5)

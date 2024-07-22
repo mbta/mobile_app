@@ -44,27 +44,15 @@ extension GeojsonLineString {
     }
 }
 
-extension Kotlinx_serialization_jsonJsonElement {
-    func toMapbox() -> JSONValue {
-        // we know it's a valid json value
-        // swiftlint:disable:next force_try
-        try! JSONDecoder().decode(JSONValue.self, from: Data(description.utf8))
-    }
-}
-
-extension [String: Kotlinx_serialization_jsonJsonElement] {
-    func toMapbox() -> JSONObject {
-        mapValues { $0.toMapbox() }
-    }
-}
-
 extension GeojsonFeature {
     func toMapbox() -> Feature {
         var result = Feature(geometry: geometry?.toMapbox())
         if let id {
             result.identifier = .string(id)
         }
-        result.properties = properties.toMapbox()
+        // the json is supposed to be valid
+        // swiftlint:disable:next force_try
+        result.properties = try! JSONDecoder().decode(JSONObject.self, from: Data(propertiesToString().utf8))
         return result
     }
 }
