@@ -1,6 +1,9 @@
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.repositories.ConfigRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
+import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -17,6 +20,8 @@ import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
+import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
+import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -30,6 +35,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface IRepositories {
+    val appCheck: IAppCheckRepository?
+    val config: IConfigRepository
     val pinnedRoutes: IPinnedRoutesRepository
     val schedules: ISchedulesRepository
     val settings: ISettingsRepository
@@ -44,6 +51,8 @@ interface IRepositories {
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
+    override val appCheck: IAppCheckRepository by inject()
+    override val config: IConfigRepository by inject()
     override val pinnedRoutes: IPinnedRoutesRepository by inject()
     override val schedules: ISchedulesRepository by inject()
     override val settings: ISettingsRepository by inject()
@@ -58,6 +67,10 @@ class RepositoryDI : IRepositories, KoinComponent {
 }
 
 class RealRepositories : IRepositories {
+    // initialize repositories with platform-specific dependencies as null.
+    // instantiate the real repositories in makeNativeModule
+    override val appCheck = null
+    override val config = ConfigRepository()
     override val pinnedRoutes = PinnedRoutesRepository()
     override val schedules = SchedulesRepository()
     override val settings = SettingsRepository()
@@ -72,6 +85,8 @@ class RealRepositories : IRepositories {
 }
 
 class MockRepositories(
+    override val appCheck: IAppCheckRepository,
+    override val config: IConfigRepository,
     override val pinnedRoutes: IPinnedRoutesRepository,
     override val schedules: ISchedulesRepository,
     override val settings: ISettingsRepository,
@@ -88,6 +103,7 @@ class MockRepositories(
         @DefaultArgumentInterop.Enabled
         @DefaultArgumentInterop.MaximumDefaultArgumentCount(99)
         fun buildWithDefaults(
+            configRepository: IConfigRepository = MockConfigRepository(),
             pinnedRoutes: IPinnedRoutesRepository = PinnedRoutesRepository(),
             schedules: ISchedulesRepository = IdleScheduleRepository(),
             settings: ISettingsRepository = SettingsRepository(),
@@ -101,6 +117,8 @@ class MockRepositories(
             global: IGlobalRepository = IdleGlobalRepository()
         ): MockRepositories {
             return MockRepositories(
+                appCheck = MockAppCheckRepository(),
+                config = configRepository,
                 pinnedRoutes = pinnedRoutes,
                 schedules = schedules,
                 settings = settings,

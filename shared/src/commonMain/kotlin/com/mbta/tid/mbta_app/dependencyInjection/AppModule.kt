@@ -6,6 +6,8 @@ import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.cache.GlobalCache
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
+import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -16,6 +18,7 @@ import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
+import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import org.koin.core.module.Module
@@ -34,6 +37,8 @@ fun cacheModule() = module { single { GlobalCache() } }
 
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {
+        repositories.appCheck?.let { appCheckRepo -> factory<IAppCheckRepository> { appCheckRepo } }
+        single<IConfigRepository> { repositories.config }
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }
         single<ISchedulesRepository> { repositories.schedules }
         single<ISettingsRepository> { repositories.settings }
@@ -51,5 +56,6 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IGlobalRepository> { repositories.global }
         single { TogglePinnedRouteUsecase(get()) }
         single { GetSettingUsecase(get()) }
+        single { ConfigUseCase(get(), get()) }
     }
 }
