@@ -43,7 +43,8 @@ fun MyApplicationTheme(
                 surfaceContainer = Color(0x1A192026)
             )
         }
-    val fontFamily = FontFamily(ResourcesCompat.getFont(MainApplication.appContext, R.font.inter_regular)!!)
+    val fontFamily =
+        FontFamily(ResourcesCompat.getFont(MainApplication.appContext, R.font.inter_regular)!!)
     val typography =
         Typography(
             bodySmall =
@@ -59,11 +60,7 @@ fun MyApplicationTheme(
                     fontSize = 17.sp
                 ),
             bodyLarge =
-                TextStyle(
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 24.sp
-                )
+                TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 24.sp)
         )
     val shapes =
         Shapes(

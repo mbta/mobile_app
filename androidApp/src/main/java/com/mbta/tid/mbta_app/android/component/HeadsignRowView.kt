@@ -37,14 +37,9 @@ fun HeadsignRowView(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(16.dp)) {
-            Text(headsign)
-        }
+        Column(modifier = Modifier.weight(1f).padding(16.dp)) { Text(headsign) }
         Row(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -55,14 +50,19 @@ fun HeadsignRowView(
                             UpcomingTripView(UpcomingTripViewState.Some(prediction.format))
                         }
                     }
-
                 is RealtimePatterns.Format.NoService ->
                     UpcomingTripView(UpcomingTripViewState.NoService(predictions.alert.effect))
                 is RealtimePatterns.Format.None -> UpcomingTripView(UpcomingTripViewState.None)
-                is RealtimePatterns.Format.Loading -> UpcomingTripView(UpcomingTripViewState.Loading)
+                is RealtimePatterns.Format.Loading ->
+                    UpcomingTripView(UpcomingTripViewState.Loading)
             }
-            Column(modifier = Modifier.padding(8.dp), ) {
-                Icon(painterResource(id = R.drawable.baseline_chevron_right_24), contentDescription = "Arrow Right")
+            Column(
+                modifier = Modifier.padding(8.dp),
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.baseline_chevron_right_24),
+                    contentDescription = "Arrow Right"
+                )
             }
         }
     }

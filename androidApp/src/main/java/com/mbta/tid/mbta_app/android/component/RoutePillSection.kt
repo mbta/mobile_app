@@ -15,10 +15,10 @@ import com.mbta.tid.mbta_app.model.Route
 @Composable
 fun RoutePillSection(route: Route, body: @Composable () -> Unit) {
     Column(
-        modifier = Modifier
-            .heightIn(min = 44.dp)
-            .background(color = Color.fromHex(route.color))
-            .fillMaxWidth(),
+        modifier =
+            Modifier.heightIn(min = 44.dp)
+                .background(color = Color.fromHex(route.color))
+                .fillMaxWidth(),
         verticalArrangement = Arrangement.Center
     ) {
         RoutePill(route)

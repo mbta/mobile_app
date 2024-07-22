@@ -18,7 +18,11 @@ fun NearbyStopView(
     patternsAtStop: PatternsByStop,
     now: Instant,
 ) {
-    Text(text = patternsAtStop.stop.name, fontWeight = FontWeight.Bold, modifier = Modifier.padding(8.dp))
+    Text(
+        text = patternsAtStop.stop.name,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(8.dp)
+    )
 
     for (patterns in patternsAtStop.patterns) {
         when (patterns) {

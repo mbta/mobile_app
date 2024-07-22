@@ -2,20 +2,12 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
-import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePillSection
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import kotlinx.datetime.Instant
@@ -25,7 +17,13 @@ fun NearbyRouteView(
     nearbyRoute: StopsAssociated.WithRoute,
     now: Instant,
 ) {
-    Card(modifier = Modifier.padding(16.dp).border(BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surfaceContainer))) {
+    Card(
+        modifier =
+            Modifier.padding(16.dp)
+                .border(
+                    BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surfaceContainer)
+                )
+    ) {
         RoutePillSection(nearbyRoute.route) {
             for (patternsAtStop in nearbyRoute.patternsByStop) {
                 NearbyStopView(patternsAtStop, now)
