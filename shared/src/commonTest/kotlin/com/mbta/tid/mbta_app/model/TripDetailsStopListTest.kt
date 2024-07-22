@@ -108,10 +108,10 @@ class TripDetailsStopListTest {
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle? = null,
             patternIdsByStop: Map<String, List<String>> = emptyMap(),
-            tripId: String = "trip"
+            trip: Trip = Trip("trip", 0, "", "")
         ) =
             TripDetailsStopList.fromPieces(
-                tripId,
+                trip,
                 tripSchedules,
                 tripPredictions,
                 vehicle,
@@ -360,12 +360,14 @@ class TripDetailsStopListTest {
                 parentStationId = "place-pktrm"
             }
 
+        val trip = objects.trip {}
+
         val alertsData = AlertsStreamDataResponse(objects)
         val globalData = GlobalResponse(objects, emptyMap())
 
         val list =
             TripDetailsStopList.fromPieces(
-                "trip",
+                trip,
                 schedules,
                 predictions,
                 null,
@@ -424,6 +426,7 @@ class TripDetailsStopListTest {
             }
         val prediction3 = objects.prediction(schedule3) { vehicleId = outOfDateVehicle.id }
 
+        val trip = objects.trip {}
         val schedules = TripSchedulesResponse.Schedules(listOf(schedule1, schedule2, schedule3))
         val predictions = PredictionsStreamDataResponse(objects)
         val alertsData = AlertsStreamDataResponse(objects)
@@ -431,7 +434,7 @@ class TripDetailsStopListTest {
 
         val list =
             TripDetailsStopList.fromPieces(
-                "trip",
+                trip,
                 schedules,
                 predictions,
                 vehicle,
@@ -621,18 +624,19 @@ class TripDetailsStopListTest {
         prediction("A", 10)
         val pred2 = prediction("B", 20)
         val pred3 = prediction("C", 30)
+        val trip = objects.trip {}
         val vehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
                 currentStopSequence = 20
-                tripId = "trip"
+                tripId = trip.id
             }
         assertEquals(
             stopListOf(
                 entry("B", 20, prediction = pred2, vehicle = vehicle),
                 entry("C", 30, prediction = pred3, vehicle = vehicle)
             ),
-            fromPieces(null, predictions(), vehicle, tripId = "trip")
+            fromPieces(null, predictions(), vehicle, trip = trip)
         )
     }
 
@@ -641,11 +645,12 @@ class TripDetailsStopListTest {
         val pred1 = prediction("A", 10)
         val pred2 = prediction("B", 20)
         val pred3 = prediction("C", 30)
+        val trip = objects.trip {}
         val vehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
                 currentStopSequence = 20
-                tripId = "trip1"
+                tripId = "differentTrip"
             }
         assertEquals(
             stopListOf(
@@ -653,7 +658,7 @@ class TripDetailsStopListTest {
                 entry("B", 20, prediction = pred2, vehicle = vehicle),
                 entry("C", 30, prediction = pred3, vehicle = vehicle)
             ),
-            fromPieces(null, predictions(), vehicle, tripId = "trip2")
+            fromPieces(null, predictions(), vehicle, trip = trip)
         )
     }
 

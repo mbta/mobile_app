@@ -23,6 +23,7 @@ struct TripDetailsPage: View {
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
     @State var tripRepository: ITripRepository
+    @State var trip: Trip?
     @State var tripSchedulesResponse: TripSchedulesResponse?
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
@@ -56,11 +57,10 @@ struct TripDetailsPage: View {
     var body: some View {
         VStack {
             SheetHeader(onClose: { nearbyVM.goBack() })
-
-            if let globalResponse {
+            if let trip, let globalResponse {
                 let vehicle = vehicleResponse?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
-                    tripId: tripId,
+                    trip: trip,
                     tripSchedules: tripSchedulesResponse,
                     tripPredictions: tripPredictions,
                     vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
@@ -97,6 +97,17 @@ struct TripDetailsPage: View {
             }
         }
         .task {
+            do {
+                let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripId)
+                trip = switch onEnum(of: response) {
+                case let .ok(okResponse): okResponse.data.trip
+                case .error: nil
+                }
+            } catch {
+                debugPrint(error)
+            }
+        }
+        .task {
             now = Date.now.toKotlinInstant()
             while !Task.isCancelled {
                 do {
@@ -107,10 +118,8 @@ struct TripDetailsPage: View {
                 now = Date.now.toKotlinInstant()
             }
         }
-        .onAppear { joinRealtime()
-        }
-        .onDisappear { leaveRealtime()
-        }
+        .onAppear { joinRealtime() }
+        .onDisappear { leaveRealtime() }
         .onChange(of: tripId) { joinPredictions(tripId: $0) }
         .onChange(of: vehicleId) { vehicleId in
             joinVehicle(vehicleId: vehicleId)

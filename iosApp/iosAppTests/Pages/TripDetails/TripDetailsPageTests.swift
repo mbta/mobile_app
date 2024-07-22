@@ -16,6 +16,8 @@ final class TripDetailsPageTests: XCTestCase {
     func testLoadsStopList() throws {
         let objects = ObjectCollectionBuilder()
 
+        let trip = objects.trip { _ in }
+
         let stop1 = objects.stop { stop in
             stop.name = "Somewhere"
         }
@@ -32,13 +34,14 @@ final class TripDetailsPageTests: XCTestCase {
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
+            tripResponse: TripResponse(trip: trip),
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
         let tripPredictionsRepository = FakeTripPredictionsRepository(response: .init(objects: objects))
 
-        let tripId = "123"
+        let tripId = trip.id
         let vehicleId = "999"
         let sut = TripDetailsPage(
             tripId: tripId,
@@ -94,7 +97,8 @@ final class TripDetailsPageTests: XCTestCase {
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            response: TripSchedulesResponse.StopIds(stopIds: [stop1.id]),
+            tripResponse: .init(trip: trip),
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
@@ -133,14 +137,17 @@ final class TripDetailsPageTests: XCTestCase {
             stop.name = "Elsewhere"
         }
 
+        let trip = objects.trip { _ in }
+
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
+            tripResponse: .init(trip: trip),
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
-        let tripId = "123"
+        let tripId = trip.id
         let vehicleId = "999"
         let sut = TripDetailsPage(
             tripId: tripId,
@@ -237,7 +244,8 @@ final class TripDetailsPageTests: XCTestCase {
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            response: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
+            tripResponse: .init(trip: trip),
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
@@ -280,7 +288,7 @@ final class TripDetailsPageTests: XCTestCase {
 
     func testCloseButton() throws {
         let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
+        objects.stop { _ in }
 
         class FakeNearbyVM: NearbyViewModel {
             let backExp: XCTestExpectation
@@ -303,8 +311,10 @@ final class TripDetailsPageTests: XCTestCase {
             nearbyVM: FakeNearbyVM(backExp),
             mapVM: .init(),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
-            tripRepository: FakeTripRepository(response: TripSchedulesResponse
-                .StopIds(stopIds: ["stop1"])),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: objects.trip { _ in }),
+                scheduleResponse: TripSchedulesResponse.StopIds(stopIds: ["stop1"])
+            ),
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
         )
 
@@ -364,17 +374,31 @@ final class TripDetailsPageTests: XCTestCase {
     }
 
     class FakeTripRepository: IdleTripRepository {
-        let response: TripSchedulesResponse
+        let tripResponse: ApiResult<TripResponse>
+        let scheduleResponse: TripSchedulesResponse
+        let onGetTrip: (() -> Void)?
         let onGetTripSchedules: (() -> Void)?
 
-        init(response: TripSchedulesResponse, onGetTripSchedules: (() -> Void)? = nil) {
-            self.response = response
+        init(
+            tripResponse: TripResponse,
+            scheduleResponse: TripSchedulesResponse,
+            onGetTrip: (() -> Void)? = nil,
+            onGetTripSchedules: (() -> Void)? = nil
+        ) {
+            self.tripResponse = ApiResultOk(data: tripResponse)
+            self.scheduleResponse = scheduleResponse
+            self.onGetTrip = onGetTrip
             self.onGetTripSchedules = onGetTripSchedules
+        }
+
+        override func __getTrip(tripId _: String) async throws -> ApiResult<TripResponse> {
+            onGetTrip?()
+            return tripResponse
         }
 
         override func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
             onGetTripSchedules?()
-            return response
+            return scheduleResponse
         }
     }
 

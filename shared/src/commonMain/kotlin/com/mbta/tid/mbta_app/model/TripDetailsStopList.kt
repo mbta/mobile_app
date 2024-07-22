@@ -125,7 +125,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         }
 
         fun fromPieces(
-            tripId: String,
+            trip: Trip,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
@@ -165,7 +165,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                     .dropWhile {
                         if (
                             vehicle == null ||
-                                vehicle.tripId != tripId ||
+                                vehicle.tripId != trip.id ||
                                 vehicle.currentStopSequence == null
                         ) {
                             false
@@ -177,7 +177,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                         Entry(
                             globalData.stops.getValue(it.value.stopId),
                             it.value.stopSequence,
-                            getAlert(it.value, alertsData, globalData, tripId),
+                            getAlert(it.value, alertsData, globalData, trip),
                             it.value.schedule,
                             it.value.prediction,
                             it.value.vehicle,
@@ -357,11 +357,9 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             entry: WorkingEntry,
             alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
-            tripId: String
+            trip: Trip
         ): Alert? {
             val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
-            // TODO add directionId to schedule
-            val directionId = null
             val entryRoute = entry.prediction?.routeId ?: entry.schedule?.routeId
             val entryRouteType =
                 globalData.routes[entry.prediction?.routeId ?: entry.schedule?.routeId]?.type
@@ -371,11 +369,11 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 alert.isActive(entryTime) &&
                     alert.anyInformedEntity {
                         it.appliesTo(
-                            directionId = directionId,
+                            directionId = trip.directionId,
                             routeId = entryRoute,
                             routeType = entryRouteType,
                             stopId = entry.stopId,
-                            tripId = tripId
+                            tripId = trip.id
                         )
                     } &&
                     Alert.serviceDisruptionEffects.contains(alert.effect)
