@@ -1,0 +1,11 @@
+//
+//  StagingDebugBase.xcconfig
+//  iosApp
+//
+//  Created by Brady, Kayla on 7/23/24.
+//  Copyright © 2024 MBTA. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+#include? "AppCheckCI.xcconfig"
