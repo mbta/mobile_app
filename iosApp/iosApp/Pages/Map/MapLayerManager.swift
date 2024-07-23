@@ -34,7 +34,7 @@ class MapLayerManager: IMapLayerManager {
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in StopIcons.all + AlertIcons.all + ChildStopIcons.all {
+        for iconId in StopIcons.shared.all + AlertIcons.shared.all + ChildStopIcons.all {
             do {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
                 try map.addImage(image, id: iconId)

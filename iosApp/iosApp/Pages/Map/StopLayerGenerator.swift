@@ -37,14 +37,14 @@ class StopLayerGenerator {
         let busLayer = createStopLayer(id: Self.busLayerId, forBus: true)
 
         var stopTouchTargetLayer = SymbolLayer(id: Self.stopTouchTargetLayerId, source: sourceId)
-        stopTouchTargetLayer.iconImage = .expression(Exp(.image) { StopIcons.stopDummyIcon })
+        stopTouchTargetLayer.iconImage = .expression(Exp(.image) { StopIcons.shared.stopDummyIcon })
         stopTouchTargetLayer.iconPadding = .constant(22.0)
         includeSharedProps(on: &stopTouchTargetLayer)
 
         var stopSelectedPinLayer = SymbolLayer(id: Self.stopLayerSelectedPinId, source: sourceId)
         stopSelectedPinLayer.iconImage = .expression(Exp(.switchCase) {
             MapExp.shared.selectedExp.toMapbox()
-            Exp(.image) { StopIcons.stopPinIcon }
+            Exp(.image) { StopIcons.shared.stopPinIcon }
             Exp(.image) { "" }
         })
         stopSelectedPinLayer.iconOffset = offsetPinValue()
@@ -52,7 +52,7 @@ class StopLayerGenerator {
 
         let transferLayers = (0 ..< Self.maxTransferLayers).map { index in
             var transferLayer = SymbolLayer(id: Self.getTransferLayerId(index), source: sourceId)
-            transferLayer.iconImage = StopIcons.getTransferLayerIcon(index)
+            transferLayer.iconImage = .expression(StopIcons.shared.getTransferLayerIcon(index: Int32(index)).toMapbox())
             transferLayer.iconOffset = offsetTransferValue(index: index)
             includeSharedProps(on: &transferLayer)
 
@@ -71,7 +71,9 @@ class StopLayerGenerator {
 
     static func createAlertLayer(id: String, index: Int = 0, forBus: Bool = false) -> SymbolLayer {
         var alertLayer = SymbolLayer(id: id, source: StopFeaturesBuilder.shared.stopSourceId)
-        alertLayer.iconImage = AlertIcons.getAlertLayerIcon(index, forBus: forBus)
+        alertLayer
+            .iconImage = .expression(AlertIcons.shared.getAlertLayerIcon(index: Int32(index), forBus: forBus)
+                .toMapbox())
         alertLayer.iconOffset = offsetAlertValue(index: index)
         alertLayer.iconAllowOverlap = .constant(true)
         includeSharedProps(on: &alertLayer)
@@ -81,8 +83,8 @@ class StopLayerGenerator {
 
     static func createStopLayer(id: String, forBus: Bool = false) -> SymbolLayer {
         var stopLayer = SymbolLayer(id: id, source: StopFeaturesBuilder.shared.stopSourceId)
-        stopLayer.iconImage = StopIcons.getStopLayerIcon(forBus: forBus)
-        stopLayer.textField = .expression(MapExp.shared.stopLabelTextExp(forBus: forBus))
+        stopLayer.iconImage = .expression(StopIcons.shared.getStopLayerIcon(forBus: forBus).toMapbox())
+        stopLayer.textField = .expression(MapExp.shared.stopLabelTextExp(forBus: forBus).toMapbox())
 
         stopLayer.textColor = .constant(.init(.text))
         stopLayer.textFont = .constant(["Inter Regular"])
