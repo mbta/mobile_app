@@ -37,6 +37,15 @@ class SettingsRepository : ISettingsRepository, KoinComponent {
 enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     Map(booleanPreferencesKey("map_debug")),
     Search(booleanPreferencesKey("search_featureFlag")),
+    DynamicMapKey(booleanPreferencesKey("map_dynamicKey_featureFlag")),
 }
 
 data class Setting(val key: Settings, var isOn: Boolean)
+
+class MockSettingsRepository(private var settings: Set<Setting> = setOf()) : ISettingsRepository {
+    override suspend fun getSettings(): Set<Setting> {
+        return settings
+    }
+
+    override suspend fun setSettings(settings: Set<Setting>) {}
+}

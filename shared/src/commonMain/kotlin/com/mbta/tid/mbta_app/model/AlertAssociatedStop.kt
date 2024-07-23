@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import kotlinx.serialization.Serializable
 
 class AlertAssociatedStop(val stop: Stop) {
     var relevantAlerts: List<Alert> = mutableListOf()
@@ -70,6 +71,7 @@ class AlertAssociatedStop(val stop: Stop) {
     }
 }
 
+@Serializable
 enum class StopAlertState {
     Issue,
     Normal,

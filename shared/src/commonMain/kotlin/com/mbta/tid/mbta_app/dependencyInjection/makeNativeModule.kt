@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.dependencyInjection
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.AlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
+import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
@@ -12,8 +13,9 @@ import com.mbta.tid.mbta_app.repositories.VehicleRepository
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-fun makeNativeModule(socket: PhoenixSocket): Module {
+fun makeNativeModule(appCheck: IAppCheckRepository, socket: PhoenixSocket): Module {
     return module {
+        single<IAppCheckRepository> { appCheck }
         single<PhoenixSocket> { socket }
         factory<IPredictionsRepository> { PredictionsRepository(get()) }
         factory<IAlertsRepository> { AlertsRepository(get()) }

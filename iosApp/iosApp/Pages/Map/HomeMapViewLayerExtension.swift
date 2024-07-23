@@ -53,9 +53,9 @@ extension HomeMapView {
 
     func addLayers(_ layerManager: IMapLayerManager) {
         layerManager.addLayers(
-            routeLayerGenerator: RouteLayerGenerator(),
             stopLayerGenerator: StopLayerGenerator(),
-            childStopLayerGenerator: ChildStopLayerGenerator()
+            childStopLayerGenerator: ChildStopLayerGenerator(),
+            colorScheme: colorScheme
         )
     }
 
@@ -99,9 +99,12 @@ extension HomeMapView {
     }
 
     func updateStopSource(stopData: StopSourceData) {
-        mapVM.updateStopSource(StopSourceGenerator.generateStopSource(stopData: stopData,
-                                                                      stops: globalMapData?.mapStops ?? [:],
-                                                                      linesToSnap: mapVM.snappedStopRouteLines))
+        mapVM.updateStopSource(StopFeaturesBuilder.shared.buildCollection(
+            stopData: stopData,
+            stops: globalMapData?.mapStops ?? [:],
+            linesToSnap: mapVM.snappedStopRouteLines
+        )
+        .toMapbox())
     }
 
     func updateChildStopSource(childStops: [String: Stop]?) {

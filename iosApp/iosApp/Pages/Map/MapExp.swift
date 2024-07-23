@@ -35,8 +35,8 @@ extension MapExp {
             Exp(.switchCase) {
                 Exp(.eq) { topRouteExp.toMapbox(); MapStopRoute.ferry.name }
                 ""
-                Exp(.get) { StopSourceGenerator.propIsTerminalKey }
-                busSwitchExp(forBus: forBus, Exp(.get) { StopSourceGenerator.propNameKey })
+                Exp(.get) { StopFeaturesBuilder.shared.propIsTerminalKey }
+                busSwitchExp(forBus: forBus, Exp(.get) { StopFeaturesBuilder.shared.propNameKey })
                 ""
             }
             // At close zoom, display labels for all non-bus stops
@@ -44,7 +44,7 @@ extension MapExp {
             Exp(.switchCase) {
                 Exp(.eq) { topRouteExp.toMapbox(); MapStopRoute.bus.name }
                 ""
-                busSwitchExp(forBus: forBus, Exp(.get) { StopSourceGenerator.propNameKey })
+                busSwitchExp(forBus: forBus, Exp(.get) { StopFeaturesBuilder.shared.propNameKey })
             }
         }
     }

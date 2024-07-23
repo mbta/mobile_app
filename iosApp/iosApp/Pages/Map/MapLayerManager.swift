@@ -13,13 +13,13 @@ import SwiftUI
 
 protocol IMapLayerManager {
     func addLayers(
-        routeLayerGenerator: RouteLayerGenerator,
         stopLayerGenerator: StopLayerGenerator,
-        childStopLayerGenerator: ChildStopLayerGenerator
+        childStopLayerGenerator: ChildStopLayerGenerator,
+        colorScheme: ColorScheme
     )
 
     func updateSourceData(routeData: FeatureCollection)
-    func updateSourceData(stopSource: GeoJSONSource)
+    func updateSourceData(stopData: FeatureCollection)
     func updateSourceData(childStopSource: GeoJSONSource)
 }
 
@@ -27,7 +27,6 @@ struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
-    var routeLayerGenerator: RouteLayerGenerator?
     var stopLayerGenerator: StopLayerGenerator?
     var childStopSourceGenerator: ChildStopSourceGenerator?
     var childStopLayerGenerator: ChildStopLayerGenerator?
@@ -54,12 +53,18 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addLayers(
-        routeLayerGenerator: RouteLayerGenerator,
         stopLayerGenerator: StopLayerGenerator,
-        childStopLayerGenerator: ChildStopLayerGenerator
+        childStopLayerGenerator: ChildStopLayerGenerator,
+        colorScheme: ColorScheme
     ) {
-        let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator
-            .stopLayers + [childStopLayerGenerator.childStopLayer]
+        let colorPalette = switch colorScheme {
+        case .light: ColorPalette.companion.light
+        case .dark: ColorPalette.companion.dark
+        @unknown default: ColorPalette.companion.light
+        }
+        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
+            .map { $0.toMapbox() }
+            + stopLayerGenerator.stopLayers + [childStopLayerGenerator.childStopLayer]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
@@ -102,8 +107,8 @@ class MapLayerManager: IMapLayerManager {
         updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
-    func updateSourceData(stopSource: GeoJSONSource) {
-        updateSourceData(source: stopSource)
+    func updateSourceData(stopData: FeatureCollection) {
+        updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 
     func updateSourceData(childStopSource: GeoJSONSource) {

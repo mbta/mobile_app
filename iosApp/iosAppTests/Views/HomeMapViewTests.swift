@@ -870,7 +870,7 @@ final class HomeMapViewTests: XCTestCase {
                                             updateRouteDataCallback: { _ in
                                                 updateRouteSourcesExpectation.fulfill()
                                             },
-                                            updateStopSourceCallback: { _ in
+                                            updateStopDataCallback: { _ in
                                                 updateStopSourceExpectation.fulfill()
                                             })
         var sut = HomeMapView(
@@ -923,7 +923,7 @@ final class HomeMapViewTests: XCTestCase {
     func testUpdatesStopSourcesWhenStopDataChanges() {
         let updateStopSourcesCalledExpectation = XCTestExpectation(description: "Update stop source called")
 
-        let layerManager = MockLayerManager(updateStopSourceCallback: { _ in
+        let layerManager = MockLayerManager(updateStopDataCallback: { _ in
             updateStopSourcesCalledExpectation.fulfill()
         })
 
