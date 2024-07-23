@@ -18,7 +18,7 @@ struct TripDetailsHeader: View {
 
     var body: some View {
         HStack {
-            BackButton(action: onBack)
+            ActionButton(kind: .back, action: onBack)
             Spacer().frame(width: 16)
             if let trip, let route {
                 RoutePill(route: route, line: line, type: .fixed)
@@ -44,7 +44,7 @@ struct TripDetailsHeader: View {
 
     func toHeadsign(_ headsign: String) -> some View {
         Text("to \(headsign)")
-            .font(Typography.title3Semibold)
+            .font(Typography.headlineBold)
             .accessibilityHeading(.h1)
     }
 }

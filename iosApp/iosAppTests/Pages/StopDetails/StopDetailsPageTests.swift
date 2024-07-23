@@ -185,7 +185,7 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: FakeNearbyVM(backExp)
         )
 
-        try sut.inspect().find(BackButton.self).button().tap()
+        try sut.inspect().find(ActionButton.self).button().tap()
 
         wait(for: [backExp], timeout: 2)
     }

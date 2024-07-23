@@ -308,7 +308,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
         )
 
-        try sut.inspect().find(BackButton.self).button().tap()
+        try sut.inspect().find(ActionButton.self).button().tap()
 
         wait(for: [backExp], timeout: 2)
     }

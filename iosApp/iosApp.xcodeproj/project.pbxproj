@@ -18,14 +18,14 @@
 		6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 6E35D4CD2B72C74500A2BF95 /* MapboxMaps */; };
 		6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */; };
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
-		6E3C8D7E2C11FDA80059C28C /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */; };
+		6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
 		6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C17E2C247D480086A424 /* StopDetailsView.swift */; };
 		6E55C1822C2489030086A424 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 6E55C1812C2489030086A424 /* Collections */; };
 		6E55C1862C249EF20086A424 /* StopDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C1852C249EF20086A424 /* StopDetailsViewTests.swift */; };
 		6E973DA52C17384C00CBF341 /* SheetHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA42C17384C00CBF341 /* SheetHeader.swift */; };
 		6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */; };
-		6E973DA92C178BF500CBF341 /* CloseButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA82C178BF500CBF341 /* CloseButtonTests.swift */; };
+		6E973DA92C178BF500CBF341 /* ActionButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA82C178BF500CBF341 /* ActionButtonTests.swift */; };
 		6E973DAB2C178C0200CBF341 /* SheetHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DAA2C178C0200CBF341 /* SheetHeaderTests.swift */; };
 		6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E99CBB62B9892C80047E78D /* SocketProvider.swift */; };
 		6E9DDFB52C3884B7009DD68A /* MapViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */; };
@@ -165,8 +165,6 @@
 		ED24EADC2C1A95A900A7BE4D /* StopDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */; };
 		ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */; };
 		ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */; };
-		ED5C93F02C4969270086D017 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93EF2C4969270086D017 /* BackButton.swift */; };
-		ED5C93F22C496F8D0086D017 /* ActionButtonProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F12C496F8D0086D017 /* ActionButtonProperties.swift */; };
 		ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */; };
 		ED5C93F62C4A1AD70086D017 /* TripDetailsHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */; };
 		ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */; };
@@ -233,13 +231,13 @@
 		6E20278F2BD989AC0037554F /* ProductionAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductionAppView.swift; sourceTree = "<group>"; };
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
-		6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
+		6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* StopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* StopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsViewTests.swift; sourceTree = "<group>"; };
 		6E973DA42C17384C00CBF341 /* SheetHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetHeader.swift; sourceTree = "<group>"; };
 		6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationLink.swift; sourceTree = "<group>"; };
-		6E973DA82C178BF500CBF341 /* CloseButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButtonTests.swift; sourceTree = "<group>"; };
+		6E973DA82C178BF500CBF341 /* ActionButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonTests.swift; sourceTree = "<group>"; };
 		6E973DAA2C178C0200CBF341 /* SheetHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetHeaderTests.swift; sourceTree = "<group>"; };
 		6E99CBB62B9892C80047E78D /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
 		6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iosApp.xctestplan; sourceTree = "<group>"; };
@@ -390,8 +388,6 @@
 		ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsAnalytics.swift; sourceTree = "<group>"; };
 		ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProvider.swift; sourceTree = "<group>"; };
 		ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationDetentExtension.swift; sourceTree = "<group>"; };
-		ED5C93EF2C4969270086D017 /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
-		ED5C93F12C496F8D0086D017 /* ActionButtonProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonProperties.swift; sourceTree = "<group>"; };
 		ED5C93F32C496FB90086D017 /* TripDetailsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeader.swift; sourceTree = "<group>"; };
 		ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsHeaderTests.swift; sourceTree = "<group>"; };
 		ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoenixProtocolConformance.swift; sourceTree = "<group>"; };
@@ -518,7 +514,7 @@
 				9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */,
 				8CDF2C332BE9357E007FC912 /* OptionalNavigationLinkTests.swift */,
 				6E9F4D372BFE851D00BFB3DA /* UpcomingTripViewTests.swift */,
-				6E973DA82C178BF500CBF341 /* CloseButtonTests.swift */,
+				6E973DA82C178BF500CBF341 /* ActionButtonTests.swift */,
 				6E973DAA2C178C0200CBF341 /* SheetHeaderTests.swift */,
 				6EF64C042C1B7FC6005F365D /* RouteHeaderTests.swift */,
 				6EA231742C21CF2100789173 /* LoadingCardTests.swift */,
@@ -781,7 +777,7 @@
 				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 				8C7726182BE5941E0088D423 /* OptionalNavigationLink.swift */,
 				6EE76D1A2BF532010051D608 /* RouteIcon.swift */,
-				6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */,
+				6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */,
 				6E973DA42C17384C00CBF341 /* SheetHeader.swift */,
 				6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */,
 				9A9E7DD22C2203BE000DA1FD /* TransitCard.swift */,
@@ -796,8 +792,6 @@
 				9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */,
 				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
 				9AAA26A22C2DB79E00A7745A /* DirectionRowView.swift */,
-				ED5C93EF2C4969270086D017 /* BackButton.swift */,
-				ED5C93F12C496F8D0086D017 /* ActionButtonProperties.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1208,7 +1202,7 @@
 				8CB28DB22C2A288E0036258E /* ChildStopSourceGeneratorTests.swift in Sources */,
 				6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */,
 				9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */,
-				6E973DA92C178BF500CBF341 /* CloseButtonTests.swift in Sources */,
+				6E973DA92C178BF500CBF341 /* ActionButtonTests.swift in Sources */,
 				6EED5EAB2B3E1B550052A1B8 /* ContentViewTests.swift in Sources */,
 				ED5C93F62C4A1AD70086D017 /* TripDetailsHeaderTests.swift in Sources */,
 				9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */,
@@ -1306,7 +1300,6 @@
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				9A5B275A2BB22D91009A6FC6 /* StopLayerGenerator.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
-				ED5C93F22C496F8D0086D017 /* ActionButtonProperties.swift in Sources */,
 				EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */,
 				8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */,
 				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
@@ -1315,7 +1308,7 @@
 				6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */,
 				EDE92FAC2C408A6A007AD2F6 /* Setting+Convenience.swift in Sources */,
 				8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */,
-				6E3C8D7E2C11FDA80059C28C /* CloseButton.swift in Sources */,
+				6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */,
 				9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */,
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
@@ -1336,7 +1329,6 @@
 				9A19CDDE2C10DFBC006F1059 /* AlertIcons.swift in Sources */,
 				6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
-				ED5C93F02C4969270086D017 /* BackButton.swift in Sources */,
 				6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */,
 				9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
