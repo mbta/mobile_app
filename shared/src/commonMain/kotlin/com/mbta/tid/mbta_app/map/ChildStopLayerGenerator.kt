@@ -37,12 +37,12 @@ object ChildStopLayerGenerator {
         layer.textFont = listOf("Inter Italic")
         layer.textHaloColor = Exp(colorPalette.fill3).downcastToColor()
         layer.textHaloWidth = 2.0
-        layer.textSize = 12
+        layer.textSize = 12.0
         layer.textVariableAnchor =
             listOf(TextAnchor.LEFT, TextAnchor.RIGHT, TextAnchor.BOTTOM, TextAnchor.TOP)
         layer.textJustify = TextJustify.AUTO
         layer.textOptional = true
-        layer.textRadialOffset = 1
+        layer.textRadialOffset = 1.0
         layer.iconAllowOverlap = true
         layer.textAllowOverlap = false
         layer.symbolSortKey = Exp.get(ChildStopFeaturesBuilder.propSortOrderKey)
