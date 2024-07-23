@@ -8,12 +8,12 @@
 
 import Foundation
 import shared
+@_spi(Experimental) import MapboxMaps
 
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
     @Published var searchEnabled: Bool
     @Published var dynamicMapKeyEnabled: Bool
-    @Published var mapboxTokenConfigured: Bool
     private var settings: Set<Setting> = []
 
     var configUseCase: ConfigUseCase
@@ -22,15 +22,17 @@ class ContentViewModel: ObservableObject {
     init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
          configResponse: ApiResult<ConfigResponse>? = nil,
          dynamicMapKeyEnabled: Bool = false,
-         mapboxTokenConfigured: Bool = false,
          searchEnabled: Bool = false,
          settingsRepo: ISettingsRepository = RepositoryDI().settings) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
         self.dynamicMapKeyEnabled = dynamicMapKeyEnabled
-        self.mapboxTokenConfigured = mapboxTokenConfigured
         self.searchEnabled = searchEnabled
         self.settingsRepo = settingsRepo
+    }
+
+    func configureMapboxToken(token: String) {
+        MapboxOptions.accessToken = token
     }
 
     @MainActor func loadSettings() async {

@@ -204,37 +204,21 @@ struct ContentView: View {
         }
         .onChange(of: contentVM.configResponse) { response in
             switch onEnum(of: response) {
-            case let .ok(response): MapboxOptions.accessToken = response.data.mapboxPublicToken
+            case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
             default: debugPrint("Skipping mapbox token configuration")
             }
-            contentVM.mapboxTokenConfigured = true
         }
     }
 
     @ViewBuilder var mapSection: some View {
-        if contentVM.dynamicMapKeyEnabled {
-            if contentVM.mapboxTokenConfigured {
-                HomeMapView(
-                    mapVM: mapVM,
-                    nearbyVM: nearbyVM,
-                    railRouteShapeFetcher: railRouteShapeFetcher,
-                    vehiclesFetcher: vehiclesFetcher,
-                    viewportProvider: viewportProvider,
-                    sheetHeight: $sheetHeight
-                )
-            } else {
-                LoadingCard().accessibilityIdentifier("mapLoadingCard")
-            }
-        } else {
-            HomeMapView(
-                mapVM: mapVM,
-                nearbyVM: nearbyVM,
-                railRouteShapeFetcher: railRouteShapeFetcher,
-                vehiclesFetcher: vehiclesFetcher,
-                viewportProvider: viewportProvider,
-                sheetHeight: $sheetHeight
-            )
-        }
+        HomeMapView(
+            mapVM: mapVM,
+            nearbyVM: nearbyVM,
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: vehiclesFetcher,
+            viewportProvider: viewportProvider,
+            sheetHeight: $sheetHeight
+        )
     }
 
     private func recordSheetHeight(_ newSheetHeight: CGFloat) {

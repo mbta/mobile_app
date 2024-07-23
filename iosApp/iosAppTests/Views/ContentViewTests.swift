@@ -97,9 +97,12 @@ final class ContentViewTests: XCTestCase {
     }
 
     func testSetsMapboxTokenConfigOnConfigChange() throws {
-        let configFetchedExpectation = XCTestExpectation(description: "config fetched")
+        let tokenConfigExpectation = XCTestExpectation(description: "mapbox token configured")
 
-        let fakeVM = FakeContentVM(dynamicMapKeyEnabled: true, mapboxTokenConfigured: false)
+        let fakeVM = FakeContentVM(
+            dynamicMapKeyEnabled: true,
+            configMapboxCallback: { tokenConfigExpectation.fulfill() }
+        )
         let sut = ContentView(contentVM: fakeVM)
 
         ViewHosting.host(view: sut
@@ -115,11 +118,16 @@ final class ContentViewTests: XCTestCase {
 
         try sut.inspect().vStack()
             .callOnChange(newValue: newConfig)
-        XCTAssertTrue(fakeVM.mapboxTokenConfigured)
+        wait(for: [tokenConfigExpectation], timeout: 5)
     }
 
-    func testShowsMapWhenFeatureFlagDisabled() throws {
-        let fakeVM: ContentViewModel = FakeContentVM(dynamicMapKeyEnabled: false)
+    func testShowsMapWithoutFetchingConfigWhenFeatureFlagDisabled() throws {
+        let configNotFetchedExpectation = XCTestExpectation(description: "config not fetched")
+        configNotFetchedExpectation.isInverted = true
+
+        let fakeVM = FakeContentVM(dynamicMapKeyEnabled: false,
+                                   loadConfigCallback: { configNotFetchedExpectation.fulfill() })
+
         let sut = ContentView(contentVM: fakeVM)
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
@@ -129,22 +137,12 @@ final class ContentViewTests: XCTestCase {
             .environmentObject(VehiclesFetcher(socket: FakeSocket()))
             .environmentObject(ViewportProvider())
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
+
+        wait(for: [configNotFetchedExpectation], timeout: 5)
     }
 
-    func testHidesMapBeforeTokenInitWhenFeatureFlagEnabled() throws {
-        let sut = ContentView(contentVM: FakeContentVM(dynamicMapKeyEnabled: true, mapboxTokenConfigured: false))
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket()))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider())
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityIdentifier: "mapLoadingCard"))
-    }
-
-    func testShowsMapWhenTokenInitAndFeatureFlagEnabled() throws {
-        let sut = ContentView(contentVM: FakeContentVM(dynamicMapKeyEnabled: true, mapboxTokenConfigured: true))
+    func testShowsMapWhenFeatureFlagEnabled() throws {
+        let sut = ContentView(contentVM: FakeContentVM(dynamicMapKeyEnabled: true))
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
             .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
@@ -158,23 +156,23 @@ final class ContentViewTests: XCTestCase {
 
     class FakeContentVM: ContentViewModel {
         let loadConfigCallback: () -> Void
-        let loadSettingsCallback: () -> Void
+        let configMapboxCallback: () -> Void
 
         init(
             dynamicMapKeyEnabled: Bool = false,
-            mapboxTokenConfigured: Bool = false,
+            mapboxTokenConfigured _: Bool = false,
             loadConfigCallback: @escaping () -> Void = {},
-            loadSettingsCallback: @escaping () -> Void = {}
+            configMapboxCallback: @escaping () -> Void = {}
         ) {
             self.loadConfigCallback = loadConfigCallback
-            self.loadSettingsCallback = loadSettingsCallback
-            super.init(dynamicMapKeyEnabled: dynamicMapKeyEnabled, mapboxTokenConfigured: mapboxTokenConfigured)
+            self.configMapboxCallback = configMapboxCallback
+            super.init(dynamicMapKeyEnabled: dynamicMapKeyEnabled)
         }
 
         override func loadConfig() async { loadConfigCallback() }
 
-        override func loadSettings() async {
-            loadSettingsCallback()
+        override func configureMapboxToken(token _: String) {
+            configMapboxCallback()
         }
     }
 
