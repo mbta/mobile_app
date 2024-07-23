@@ -12,7 +12,7 @@ data class SymbolLayer(override val id: String, override val source: String) : L
     var iconAllowOverlap: Boolean? = null
     var iconImage: Exp<ResolvedImage>? = null
     var iconOffset: Exp<List<Number>>? = null
-    var iconPadding: Number? = null
+    var iconPadding: Double? = null
     var iconSize: Exp<Number>? = null
 
     var symbolSortKey: Exp<Number>? = null
@@ -22,12 +22,12 @@ data class SymbolLayer(override val id: String, override val source: String) : L
     var textField: Exp<String>? = null
     var textFont: List<String>? = null
     var textHaloColor: Exp<Color>? = null
-    var textHaloWidth: Number? = null
+    var textHaloWidth: Double? = null
     var textJustify: TextJustify? = null
     var textOffset: Exp<List<Number>>? = null
     var textOptional: Boolean? = null
-    var textRadialOffset: Number? = null
-    var textSize: Number? = null
+    var textRadialOffset: Double? = null
+    var textSize: Double? = null
     var textVariableAnchor: List<TextAnchor>? = null
 
     override fun layoutAsJson() = buildJsonObject {

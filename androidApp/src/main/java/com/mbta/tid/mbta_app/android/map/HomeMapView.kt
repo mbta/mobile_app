@@ -1,10 +1,12 @@
 package com.mbta.tid.mbta_app.android.map
 
+import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.remember
@@ -34,6 +36,10 @@ import com.mbta.tid.mbta_app.android.util.followPuck
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
+import com.mbta.tid.mbta_app.map.ColorPalette
+import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
+import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
+import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -47,7 +53,7 @@ fun HomeMapView(
     backend: Backend,
     globalData: GlobalData,
     alertsData: AlertsStreamDataResponse?,
-    lastNearbyTransitLocation: Position?
+    lastNearbyTransitLocation: Position?,
 ) {
     var layerManager: MapLayerManager? by remember {
         mutableStateOf(null, referentialEqualityPolicy())
@@ -58,26 +64,25 @@ fun HomeMapView(
     val railRouteShapes = getRailRouteShapes(backend)
 
     val now = timer(updateInterval = 10.seconds)
-    val alertsByStop =
-        remember(globalData, alertsData, alertsData, now) {
+    val globalMapData =
+        remember(globalData, alertsData, now) {
             if (globalData.response != null) {
                 GlobalMapData(
-                        globalData.response,
-                        GlobalMapData.getAlertsByStop(globalData.response, alertsData, now)
-                    )
-                    .alertsByStop
+                    globalData.response,
+                    GlobalMapData.getAlertsByStop(globalData.response, alertsData, now)
+                )
             } else {
                 null
             }
         }
 
+    // TODO literally anything else
+    var styleLoadedPing by remember { mutableIntStateOf(0) }
+
     Box(modifier) {
         MapboxMap(
             Modifier.fillMaxSize(),
-            mapEvents =
-                MapEvents(
-                    onCameraChanged = { layerManager?.updateStopLayerZoom(it.cameraState.zoom) }
-                ),
+            mapEvents = MapEvents(onStyleLoaded = { styleLoadedPing++ }),
             gesturesSettings =
                 GesturesSettings {
                     rotateEnabled = false
@@ -105,38 +110,55 @@ fun HomeMapView(
 
             val context = LocalContext.current
 
-            MapEffect(railRouteShapes, globalData) { map ->
-                if (railRouteShapes == null || globalData.response == null) return@MapEffect
-
+            MapEffect(styleLoadedPing) { map ->
                 if (layerManager == null) layerManager = MapLayerManager(map.mapboxMap, context)
 
-                val routeSourceGenerator =
-                    RouteSourceGenerator(railRouteShapes, globalData.stops, alertsByStop)
-
-                layerManager!!.addSources(
-                    routeSourceGenerator,
-                    StopSourceGenerator(globalData.stops, routeSourceGenerator.routeSourceDetails)
-                )
-
                 layerManager!!.addLayers(
-                    RouteLayerGenerator(railRouteShapes, globalData.routes),
-                    StopLayerGenerator(MapLayerManager.stopLayerTypes)
+                    if (
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            context.resources.configuration.isNightModeActive
+                        } else {
+                            TODO("VERSION.SDK_INT < R")
+                        }
+                    )
+                        ColorPalette.dark
+                    else ColorPalette.light
                 )
             }
 
-            MapEffect(alertsByStop) {
-                if (railRouteShapes == null || alertsByStop == null) return@MapEffect
-                layerManager?.let { manager ->
-                    manager.updateSourceData(
-                        RouteSourceGenerator(railRouteShapes, globalData.stops, alertsByStop)
+            MapEffect(railRouteShapes, globalData, globalMapData, layerManager) {
+                if (railRouteShapes == null || globalData.response == null || layerManager == null)
+                    return@MapEffect
+
+                val routeSourceData = railRouteShapes.routesWithSegmentedShapes
+                val snappedStopRouteLines =
+                    RouteFeaturesBuilder.generateRouteLines(
+                        routeSourceData,
+                        globalData.routes,
+                        globalData.stops,
+                        globalMapData?.alertsByStop
                     )
-                    manager.updateSourceData(
-                        StopSourceGenerator(
-                            globalData.stops,
-                            manager.routeSourceGenerator?.routeSourceDetails
+
+                layerManager!!.updateStopSourceData(
+                    StopFeaturesBuilder.buildCollection(
+                            StopSourceData(),
+                            globalMapData?.mapStops.orEmpty(),
+                            snappedStopRouteLines
                         )
-                    )
-                }
+                        .toMapbox()
+                )
+
+                layerManager!!.updateRouteSourceData(
+                    RouteFeaturesBuilder.buildCollection(
+                            RouteFeaturesBuilder.generateRouteLines(
+                                routeSourceData,
+                                globalData.routes,
+                                globalData.stops,
+                                globalMapData?.alertsByStop
+                            )
+                        )
+                        .toMapbox()
+                )
             }
         }
 
