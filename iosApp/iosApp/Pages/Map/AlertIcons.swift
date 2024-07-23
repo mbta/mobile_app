@@ -29,7 +29,7 @@ enum AlertIcons {
     private static func alertEmpty(_ index: Int) -> MapboxMaps.Exp {
         Exp(.not) { Exp(.has) {
             MapExp.shared.routeAt(index: Int32(index)).toMapbox()
-            Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+            Exp(.get) { StopFeaturesBuilder.shared.propServiceStatusKey }
         }}
     }
 
@@ -37,7 +37,7 @@ enum AlertIcons {
     private static func alertStatus(_ index: Int) -> MapboxMaps.Exp {
         Exp(.get) {
             MapExp.shared.routeAt(index: Int32(index)).toMapbox()
-            Exp(.get) { StopSourceGenerator.propServiceStatusKey }
+            Exp(.get) { StopFeaturesBuilder.shared.propServiceStatusKey }
         }
     }
 

@@ -32,7 +32,7 @@ class StopLayerGenerator {
     }
 
     static func createStopLayers() -> [SymbolLayer] {
-        let sourceId = StopSourceGenerator.stopSourceId
+        let sourceId = StopFeaturesBuilder.shared.stopSourceId
         let stopLayer = createStopLayer(id: Self.stopLayerId)
         let busLayer = createStopLayer(id: Self.busLayerId, forBus: true)
 
@@ -70,7 +70,7 @@ class StopLayerGenerator {
     }
 
     static func createAlertLayer(id: String, index: Int = 0, forBus: Bool = false) -> SymbolLayer {
-        var alertLayer = SymbolLayer(id: id, source: StopSourceGenerator.stopSourceId)
+        var alertLayer = SymbolLayer(id: id, source: StopFeaturesBuilder.shared.stopSourceId)
         alertLayer.iconImage = AlertIcons.getAlertLayerIcon(index, forBus: forBus)
         alertLayer.iconOffset = offsetAlertValue(index: index)
         alertLayer.iconAllowOverlap = .constant(true)
@@ -80,7 +80,7 @@ class StopLayerGenerator {
     }
 
     static func createStopLayer(id: String, forBus: Bool = false) -> SymbolLayer {
-        var stopLayer = SymbolLayer(id: id, source: StopSourceGenerator.stopSourceId)
+        var stopLayer = SymbolLayer(id: id, source: StopFeaturesBuilder.shared.stopSourceId)
         stopLayer.iconImage = StopIcons.getStopLayerIcon(forBus: forBus)
         stopLayer.textField = .expression(MapExp.shared.stopLabelTextExp(forBus: forBus))
 
@@ -104,7 +104,7 @@ class StopLayerGenerator {
 
         layer.iconAllowOverlap = .constant(true)
         layer.minZoom = stopZoomThreshold
-        layer.symbolSortKey = .expression(Exp(.get) { StopSourceGenerator.propSortOrderKey })
+        layer.symbolSortKey = .expression(Exp(.get) { StopFeaturesBuilder.shared.propSortOrderKey })
     }
 
     static func offsetAlertValue(index: Int) -> Value<[Double]> {
