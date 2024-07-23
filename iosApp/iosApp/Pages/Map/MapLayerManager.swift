@@ -13,7 +13,6 @@ import SwiftUI
 
 protocol IMapLayerManager {
     func addLayers(
-        stopLayerGenerator: StopLayerGenerator,
         childStopLayerGenerator: ChildStopLayerGenerator,
         colorScheme: ColorScheme
     )
@@ -53,7 +52,6 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addLayers(
-        stopLayerGenerator: StopLayerGenerator,
         childStopLayerGenerator: ChildStopLayerGenerator,
         colorScheme: ColorScheme
     ) {
@@ -64,7 +62,8 @@ class MapLayerManager: IMapLayerManager {
         }
         let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
             .map { $0.toMapbox() }
-            + stopLayerGenerator.stopLayers + [childStopLayerGenerator.childStopLayer]
+            + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette)
+            .map { $0.toMapbox() } + [childStopLayerGenerator.childStopLayer]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {

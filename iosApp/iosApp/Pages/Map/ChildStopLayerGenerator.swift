@@ -10,14 +10,17 @@ import MapboxMaps
 import shared
 
 class ChildStopLayerGenerator {
-    let childStopLayer: SymbolLayer = createChildStopLayer()
+    let childStopLayer: MapboxMaps.SymbolLayer = createChildStopLayer()
 
     static let childStopLayerId = "child-stop-layer"
 
     static let annotationTextZoomThreshold = 19.0
 
-    static func createChildStopLayer() -> SymbolLayer {
-        var layer = SymbolLayer(id: Self.childStopLayerId, source: ChildStopSourceGenerator.childStopSourceId)
+    static func createChildStopLayer() -> MapboxMaps.SymbolLayer {
+        var layer = MapboxMaps.SymbolLayer(
+            id: Self.childStopLayerId,
+            source: ChildStopSourceGenerator.childStopSourceId
+        )
         layer.iconImage = .expression(Exp(.match) {
             Exp(.get) { ChildStopSourceGenerator.propLocationTypeKey }
             String(describing: LocationType.entranceExit)
