@@ -49,6 +49,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - run: sudo apt-get install librsvg2-bin
       - name: Read asdf versions
         id: asdf
         run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
@@ -100,6 +101,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+      - run: sudo apt-get install librsvg2-bin
       - name: Read asdf versions
         id: asdf
         run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"

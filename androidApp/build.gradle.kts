@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlinAndroid)
+    id("ios-assets")
 }
 
 android {
@@ -70,4 +71,6 @@ task("accessToken") {
     }
 }
 
-gradle.projectsEvaluated { tasks.getByPath("preBuild").dependsOn("accessToken") }
+gradle.projectsEvaluated {
+    tasks.getByPath("preBuild").dependsOn("accessToken", "convertIosIconsToAssets")
+}
