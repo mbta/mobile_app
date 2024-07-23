@@ -16,10 +16,10 @@ class ContentViewModel: ObservableObject {
     @Published var mapboxTokenConfigured: Bool
     private var settings: Set<Setting> = []
 
-    var configUseCase: IConfigUseCase
+    var configUseCase: ConfigUseCase
     var settingsRepo: ISettingsRepository
 
-    init(configUseCase: IConfigUseCase = UsecaseDI().configUsecase,
+    init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
          configResponse: ApiResult<ConfigResponse>? = nil,
          dynamicMapKeyEnabled: Bool = false,
          mapboxTokenConfigured: Bool = false,
