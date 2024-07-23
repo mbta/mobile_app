@@ -1,56 +1,33 @@
 package com.mbta.tid.mbta_app.android.map
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.GeoJSONSourceData
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.extension.style.layers.Layer as MapboxLayer
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.addLayerBelow
-import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
-import com.mapbox.maps.extension.style.layers.getLayerAs
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
-import com.mbta.tid.mbta_app.model.LocationType
+import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.map.AlertIcons
+import com.mbta.tid.mbta_app.map.ChildStopFeaturesBuilder
+import com.mbta.tid.mbta_app.map.ChildStopIcons
+import com.mbta.tid.mbta_app.map.ChildStopLayerGenerator
+import com.mbta.tid.mbta_app.map.ColorPalette
+import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
+import com.mbta.tid.mbta_app.map.RouteLayerGenerator
+import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
+import com.mbta.tid.mbta_app.map.StopIcons
+import com.mbta.tid.mbta_app.map.StopLayerGenerator
 
 class MapLayerManager(val map: MapboxMap, context: Context) {
-    var routeSourceGenerator: RouteSourceGenerator? = null
-    var stopSourceGenerator: StopSourceGenerator? = null
-    var routeLayerGenerator: RouteLayerGenerator? = null
-    var stopLayerGenerator: StopLayerGenerator? = null
-
     init {
-        for (icon in StopIcons.entries) {
-            val drawable = context.resources.getDrawable(icon.drawableId, null)
-            // Mapbox doesn't let us draw vectors in symbols, I guess.
-            // https://stackoverflow.com/a/10600736
-            val bitmap =
-                Bitmap.createBitmap(
-                    drawable.intrinsicWidth,
-                    drawable.intrinsicHeight,
-                    Bitmap.Config.ARGB_8888
-                )
+        for (icon in StopIcons.all + AlertIcons.all + ChildStopIcons.all) {
+            val drawable = context.resources.getDrawable(drawableByName(icon), null)
 
-            val canvas = Canvas(bitmap)
-            drawable.bounds = Rect(0, 0, bitmap.width, bitmap.height)
-            drawable.draw(canvas)
-
-            map.addImage(icon.name, bitmap)
-        }
-    }
-
-    fun addSources(
-        routeSourceGenerator: RouteSourceGenerator,
-        stopSourceGenerator: StopSourceGenerator
-    ) {
-        this.routeSourceGenerator = routeSourceGenerator
-        this.stopSourceGenerator = stopSourceGenerator
-
-        for (source in
-            routeSourceGenerator.routeSourceDetails.map(RouteSourceData::buildSource) +
-                stopSourceGenerator.stopSources.map(StopSourceData::buildSource)) {
-            addSource(source)
+            map.addImage(icon, (drawable as BitmapDrawable).bitmap)
         }
     }
 
@@ -58,14 +35,16 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         this.map.addSource(source)
     }
 
-    fun addLayers(
-        routeLayerGenerator: RouteLayerGenerator,
-        stopLayerGenerator: StopLayerGenerator
-    ) {
-        this.routeLayerGenerator = routeLayerGenerator
-        this.stopLayerGenerator = stopLayerGenerator
-
-        for (layer in routeLayerGenerator.routeLayers + stopLayerGenerator.stopLayers) {
+    fun addLayers(colorPalette: ColorPalette) {
+        val layers: List<MapboxLayer> =
+            RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
+                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() } +
+                listOf(ChildStopLayerGenerator.createChildStopLayer(colorPalette).toMapbox())
+        for (layer in layers) {
+            if (map.styleLayerExists(checkNotNull(layer.layerId))) {
+                // Skip attempting to add layer if it already exists
+                continue
+            }
             if (map.styleLayerExists("puck")) {
                 map.addLayerBelow(layer, below = "puck")
             } else {
@@ -74,47 +53,28 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    fun updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
-        this.routeSourceGenerator = routeSourceGenerator
-
-        for (routeSourceDetails in routeSourceGenerator.routeSourceDetails) {
-            if (map.styleSourceExists(routeSourceDetails.sourceId)) {
-                map.setStyleGeoJSONSourceData(
-                    routeSourceDetails.sourceId,
-                    "",
-                    GeoJSONSourceData(routeSourceDetails.features)
-                )
-            } else {
-                addSource(routeSourceDetails.buildSource())
-            }
+    private fun updateSourceData(sourceId: String, data: FeatureCollection) {
+        if (map.styleSourceExists(sourceId)) {
+            map.setStyleGeoJSONSourceData(
+                sourceId,
+                "",
+                GeoJSONSourceData(checkNotNull(data.features()))
+            )
+        } else {
+            val source = GeoJsonSource.Builder(sourceId).featureCollection(data).build()
+            addSource(source)
         }
     }
 
-    fun updateSourceData(stopSourceGenerator: StopSourceGenerator) {
-        this.stopSourceGenerator = stopSourceGenerator
-
-        for (stopSource in stopSourceGenerator.stopSources) {
-            if (map.styleSourceExists(stopSource.sourceId)) {
-                map.setStyleGeoJSONSourceData(
-                    stopSource.sourceId,
-                    "",
-                    GeoJSONSourceData(stopSource.features)
-                )
-            } else {
-                addSource(stopSource.buildSource())
-            }
-        }
+    fun updateRouteSourceData(routeData: FeatureCollection) {
+        updateSourceData(RouteFeaturesBuilder.routeSourceId, routeData)
     }
 
-    fun updateStopLayerZoom(zoomLevel: Double) {
-        val opacity = if (zoomLevel > StopIcons.stopZoomThreshold) 1.0 else 0.0
-        for (layerType in stopLayerTypes) {
-            val layerId = StopLayerGenerator.getStopLayerId(layerType)
-            map.getLayerAs<SymbolLayer>(layerId)?.iconOpacity(opacity)
-        }
+    fun updateStopSourceData(stopData: FeatureCollection) {
+        updateSourceData(StopFeaturesBuilder.stopSourceId, stopData)
     }
 
-    companion object {
-        val stopLayerTypes = listOf(LocationType.STOP, LocationType.STATION)
+    fun updateChildStopSourceData(childStopData: FeatureCollection) {
+        updateSourceData(ChildStopFeaturesBuilder.childStopSourceId, childStopData)
     }
 }
