@@ -15,6 +15,12 @@ final class MapViewModelTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    func testSetsHttpInterceptor() {
+        var interceptorSet = false
+        let mapVM = MapViewModel(setHttpInterceptor: { _ in interceptorSet = true })
+        XCTAssertTrue(interceptorSet)
+    }
+
     func testUpdatesSources() {
         let updateRouteSourceCalled = XCTestExpectation(description: "Update route source called")
         let layerManager: IMapLayerManager = MockLayerManager(updateRouteDataCallback: { _ in

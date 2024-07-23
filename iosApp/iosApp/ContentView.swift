@@ -183,6 +183,9 @@ struct ContentView: View {
             }
             Task {
                 if contentVM.dynamicMapKeyEnabled {
+                    // set a temporary token until the real token is dynamically loaded in
+                    // so that the map doesn't entirely break
+                    MapboxOptions.accessToken = "TEMPORARY_TOKEN"
                     await contentVM.loadConfig()
                 }
             }
@@ -206,6 +209,14 @@ struct ContentView: View {
             case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
             default: debugPrint("Skipping mapbox token configuration")
             }
+        }
+        .onReceive(mapVM.lastMapboxErrorSubject
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
+                Task {
+                    if contentVM.dynamicMapKeyEnabled {
+                        await contentVM.loadConfig()
+                    }
+                }
         }
     }
 
