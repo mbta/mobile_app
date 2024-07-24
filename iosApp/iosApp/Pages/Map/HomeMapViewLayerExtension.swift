@@ -52,10 +52,7 @@ extension HomeMapView {
     }
 
     func addLayers(_ layerManager: IMapLayerManager) {
-        layerManager.addLayers(
-            childStopLayerGenerator: ChildStopLayerGenerator(),
-            colorScheme: colorScheme
-        )
+        layerManager.addLayers(colorScheme: colorScheme)
     }
 
     func resetDefaultSources() {
