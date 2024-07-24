@@ -36,7 +36,6 @@ struct ContentView: View {
 
     var body: some View {
         contents
-
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
@@ -119,7 +118,7 @@ struct ContentView: View {
                             // When the visible sheet *doesn't* match the latest item in the nav stack, it is
                             // being dismissed so that it can be automatically replaced with the new one.
                             nearbyVM.goBack()
-                        } else {}
+                        }
                     }
                 ) { sheetIdentityEntry in
                     let entry = sheetIdentityEntry.stackEntry
