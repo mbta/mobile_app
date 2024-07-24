@@ -37,14 +37,15 @@ struct ProductionAppView: View {
     @StateObject var viewportProvider: ViewportProvider
 
     init() {
+        Self.initSentry()
         if CommandLine.arguments.contains("--default-mocks") {
             HelpersKt.startKoinIOSTestApp()
+            self.init(socket: MockSocket())
+        } else {
+            let socket = Self.initSocket()
+            Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
+            self.init(socket: socket)
         }
-
-        Self.initSentry()
-        let socket = Self.initSocket()
-        Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
-        self.init(socket: socket)
     }
 
     init(socket: PhoenixSocket) {

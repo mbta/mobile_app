@@ -35,14 +35,8 @@ final class ContentViewTests: XCTestCase {
         let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
                                                     disconnectedExpectation: disconnectedExpectation)
 
-        let sut = ContentView(contentVM: .init())
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider())
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init()),
+                                                socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
 
@@ -60,14 +54,8 @@ final class ContentViewTests: XCTestCase {
         let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
                                                     disconnectedExpectation: disconnectedExpectation)
 
-        let sut = ContentView(contentVM: .init())
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: fakeSocketWithExpectations))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider())
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init()),
+                                                socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
 
@@ -84,14 +72,7 @@ final class ContentViewTests: XCTestCase {
                                    loadConfigCallback: { configFetchedExpectation.fulfill() })
         let sut = ContentView(contentVM: fakeVM)
 
-        ViewHosting.host(view: sut
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket()))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider()))
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
 
         wait(for: [configFetchedExpectation], timeout: 5)
     }
@@ -105,14 +86,7 @@ final class ContentViewTests: XCTestCase {
         )
         let sut = ContentView(contentVM: fakeVM)
 
-        ViewHosting.host(view: sut
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket()))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider()))
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
 
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
@@ -128,28 +102,14 @@ final class ContentViewTests: XCTestCase {
         let fakeVM = FakeContentVM(dynamicMapKeyEnabled: false,
                                    loadConfigCallback: { configNotFetchedExpectation.fulfill() })
 
-        let sut = ContentView(contentVM: fakeVM)
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket()))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider())
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
 
         wait(for: [configNotFetchedExpectation], timeout: 5)
     }
 
     func testShowsMapWhenFeatureFlagEnabled() throws {
-        let sut = ContentView(contentVM: FakeContentVM(dynamicMapKeyEnabled: true))
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
-            .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
-            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
-            .environmentObject(SocketProvider(socket: FakeSocket()))
-            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
-            .environmentObject(ViewportProvider())
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM(dynamicMapKeyEnabled: true)))
 
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
     }
@@ -193,5 +153,19 @@ final class ContentViewTests: XCTestCase {
         override func detach() {
             disconnectedExpectation?.fulfill()
         }
+    }
+
+    private func withDefaultEnvironmentObjects(
+        sut: some View,
+        socketProvider: SocketProvider = SocketProvider(socket: FakeSocket())
+    ) -> some View {
+        sut
+            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
+            .environmentObject(BackendProvider(backend: IdleBackend()))
+            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
+            .environmentObject(SearchResultFetcher(backend: IdleBackend()))
+            .environmentObject(socketProvider)
+            .environmentObject(VehiclesFetcher(socket: FakeSocket()))
+            .environmentObject(ViewportProvider())
     }
 }
