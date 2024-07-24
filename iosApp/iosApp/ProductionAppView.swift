@@ -19,7 +19,7 @@ import SwiftUI
 
 struct ProductionAppView: View {
     let backend: BackendProtocol =
-        if CommandLine.arguments.contains("-testing") {
+        if CommandLine.arguments.contains("--default-mocks") {
             IdleBackend()
         } else {
             Backend(appVariant: appVariant)
@@ -37,6 +37,10 @@ struct ProductionAppView: View {
     @StateObject var viewportProvider: ViewportProvider
 
     init() {
+        if CommandLine.arguments.contains("--default-mocks") {
+            HelpersKt.startKoinIOSTestApp()
+        }
+
         Self.initSentry()
         let socket = Self.initSocket()
         Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
