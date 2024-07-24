@@ -107,6 +107,8 @@ extension HomeMapView {
     }
 
     func updateChildStopSource(childStops: [String: Stop]?) {
-        mapVM.updateChildStopSource(ChildStopSourceGenerator.generateChildStopSource(childStops: childStops))
+        mapVM
+            .updateChildStopSource(ChildStopFeaturesBuilder.shared.generateChildStopFeatures(childStops: childStops)
+                .toMapbox())
     }
 }

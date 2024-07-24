@@ -19,10 +19,10 @@ class ChildStopLayerGenerator {
     static func createChildStopLayer() -> MapboxMaps.SymbolLayer {
         var layer = MapboxMaps.SymbolLayer(
             id: Self.childStopLayerId,
-            source: ChildStopSourceGenerator.childStopSourceId
+            source: ChildStopFeaturesBuilder.shared.childStopSourceId
         )
         layer.iconImage = .expression(Exp(.match) {
-            Exp(.get) { ChildStopSourceGenerator.propLocationTypeKey }
+            Exp(.get) { ChildStopFeaturesBuilder.shared.propLocationTypeKey }
             String(describing: LocationType.entranceExit)
             ChildStopIcons.entranceIcon
             [String(describing: LocationType.boardingArea), String(describing: LocationType.stop)]
@@ -33,7 +33,7 @@ class ChildStopLayerGenerator {
             Exp(.zoom)
             ""
             Self.annotationTextZoomThreshold
-            Exp(.get) { ChildStopSourceGenerator.propNameKey }
+            Exp(.get) { ChildStopFeaturesBuilder.shared.propNameKey }
         })
 
         layer.textColor = .constant(.init(.gray))
@@ -47,7 +47,7 @@ class ChildStopLayerGenerator {
         layer.textRadialOffset = .constant(1)
         layer.iconAllowOverlap = .constant(true)
         layer.textAllowOverlap = .constant(false)
-        layer.symbolSortKey = .expression(Exp(.get) { ChildStopSourceGenerator.propSortOrderKey })
+        layer.symbolSortKey = .expression(Exp(.get) { ChildStopFeaturesBuilder.shared.propSortOrderKey })
         layer.minZoom = MapDefaults.shared.closeZoomThreshold
         return layer
     }

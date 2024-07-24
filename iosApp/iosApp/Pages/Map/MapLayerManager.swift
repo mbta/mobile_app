@@ -19,7 +19,7 @@ protocol IMapLayerManager {
 
     func updateSourceData(routeData: FeatureCollection)
     func updateSourceData(stopData: FeatureCollection)
-    func updateSourceData(childStopSource: GeoJSONSource)
+    func updateSourceData(childStopData: FeatureCollection)
 }
 
 struct MapImageError: Error {}
@@ -27,7 +27,6 @@ struct MapImageError: Error {}
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
     var stopLayerGenerator: StopLayerGenerator?
-    var childStopSourceGenerator: ChildStopSourceGenerator?
     var childStopLayerGenerator: ChildStopLayerGenerator?
 
     init(map: MapboxMap) {
@@ -81,17 +80,6 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(source: GeoJSONSource) {
-        if map.sourceExists(withId: source.id) {
-            guard let actualData = source.data else {
-                return
-            }
-            map.updateGeoJSONSource(withId: source.id, data: actualData)
-        } else {
-            addSource(source: source)
-        }
-    }
-
     func updateSourceData(sourceId: String, data: FeatureCollection) {
         if map.sourceExists(withId: sourceId) {
             map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
@@ -110,7 +98,7 @@ class MapLayerManager: IMapLayerManager {
         updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 
-    func updateSourceData(childStopSource: GeoJSONSource) {
-        updateSourceData(source: childStopSource)
+    func updateSourceData(childStopData: FeatureCollection) {
+        updateSourceData(sourceId: ChildStopFeaturesBuilder.shared.childStopSourceId, data: childStopData)
     }
 }
