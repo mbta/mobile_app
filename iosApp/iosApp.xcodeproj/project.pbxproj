@@ -42,11 +42,8 @@
 		6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */; };
 		6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */; };
 		6EA231752C21CF2100789173 /* LoadingCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231742C21CF2100789173 /* LoadingCardTests.swift */; };
-		6ECE8CBE2C4956C2001DD9FB /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 6ECE8CBD2C4956C2001DD9FB /* FirebaseAppCheck */; };
 		6ECE8CC02C495EDD001DD9FB /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */; };
-		6ECE8CC22C49B142001DD9FB /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 6ECE8CC12C49B142001DD9FB /* FirebaseAppCheck */; };
-		6ECE8CC42C49B1FB001DD9FB /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 6ECE8CC32C49B1FB001DD9FB /* FirebaseAppCheck */; };
-		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
+	    6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
 		6EE745842B965B9C0052227E /* SocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745832B965B9C0052227E /* SocketTests.swift */; };
 		6EE745882B965C2B0052227E /* MessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745872B965C2B0052227E /* MessageTests.swift */; };
@@ -422,15 +419,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6ECE8CBE2C4956C2001DD9FB /* FirebaseAppCheck in Frameworks */,
 				6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */,
 				6E55C1822C2489030086A424 /* Collections in Frameworks */,
 				8CB28DB52C2B2DEC0036258E /* AppcuesKit in Frameworks */,
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
 				6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */,
-				6ECE8CC22C49B142001DD9FB /* FirebaseAppCheck in Frameworks */,
-				6ECE8CC42C49B1FB001DD9FB /* FirebaseAppCheck in Frameworks */,
 				A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -957,9 +951,6 @@
 				6E55C1812C2489030086A424 /* Collections */,
 				8CB28DB42C2B2DEC0036258E /* AppcuesKit */,
 				6E45D8A82C4170890006934E /* FirebaseAppCheck */,
-				6ECE8CBD2C4956C2001DD9FB /* FirebaseAppCheck */,
-				6ECE8CC12C49B142001DD9FB /* FirebaseAppCheck */,
-				6ECE8CC32C49B1FB001DD9FB /* FirebaseAppCheck */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -2073,18 +2064,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6E55C1802C2489030086A424 /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = Collections;
-		};
-		6ECE8CBD2C4956C2001DD9FB /* FirebaseAppCheck */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = FirebaseAppCheck;
-		};
-		6ECE8CC12C49B142001DD9FB /* FirebaseAppCheck */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = FirebaseAppCheck;
-		};
-		6ECE8CC32C49B1FB001DD9FB /* FirebaseAppCheck */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = FirebaseAppCheck;
 		};
 		6EE745802B965AEA0052227E /* SwiftPhoenixClient */ = {
 			isa = XCSwiftPackageProductDependency;
