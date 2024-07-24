@@ -22,7 +22,9 @@ App Check is used to validate that requests to our backend are coming from real 
 
 ##### ios - [docs](https://firebase.google.com/docs/app-check/ios/custom-resource)
 
-For running in debug mode locally, be sure to configure `FIREBASE_APP_CHECK_CI_TOKEN` in `/iosApp/AppCheckCI.xcconfig`.
+For running in debug mode locally, be sure to populate `FIREBASE_APP_CHECK_CI_TOKEN` in `/iosApp/AppCheckCI.xcconfig`
+with the value found in 1pass. If you need to generate a new token, from the [App Check console](https://console.firebase.google.com/u/0/project/mbta-app-c574d/appcheck/apps)
+Go to "Manage debug tokens" for the relevant app.
 
 #### Mapbox - [docs](https://docs.mapbox.com/#maps)
 
