@@ -126,9 +126,6 @@
     "ferry" : {
       "comment" : "ferry"
     },
-    "last updated %.0fs ago" : {
-
-    },
     "Live" : {
 
     },
@@ -190,6 +187,9 @@
 
     },
     "This vehicle is completing another trip." : {
+
+    },
+    "to %@" : {
 
     },
     "train" : {

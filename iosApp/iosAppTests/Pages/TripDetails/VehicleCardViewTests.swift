@@ -34,36 +34,6 @@ final class VehicleCardViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "This vehicle is completing another trip."))
     }
 
-    func testTripDataDisplayed() throws {
-        let objects = ObjectCollectionBuilder()
-        let trip = objects.trip { trip in
-            trip.id = "target"
-            trip.headsign = "Alewife"
-        }
-        let now = Date()
-        let vehicle = objects.vehicle { vehicle in
-            vehicle.tripId = "target"
-            vehicle.currentStatus = .stoppedAt
-            vehicle.updatedAt = now.addingTimeInterval(-10).toKotlinInstant()
-        }
-
-        let route = objects.route { route in
-            route.type = .heavyRail
-            route.longName = "Red Line"
-        }
-        let stop = objects.stop { _ in }
-
-        let sut = VehicleCardView(vehicle: vehicle, route: route, line: nil, stop: stop, trip: trip, now: now)
-        XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
-        XCTAssertNotNil(try sut.inspect().find(text: "Red Line"))
-        let lastUpdated = try sut.inspect().find(
-            ViewType.Text.self,
-            where: { try $0.string().contains("last updated") }
-        )
-        XCTAssertNotNil(lastUpdated)
-        XCTAssertEqual("last updated 10s ago", try lastUpdated.string(locale: Locale(identifier: "en")))
-    }
-
     func testVehicleApproaching() {
         let objects = ObjectCollectionBuilder()
         let trip = objects.trip { trip in
