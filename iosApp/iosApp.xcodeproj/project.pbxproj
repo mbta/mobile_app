@@ -20,7 +20,6 @@
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
 		6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */; };
 		6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */; };
-		6E3C8D7E2C11FDA80059C28C /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */; };
 		6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 6E45D8A82C4170890006934E /* FirebaseAppCheck */; };
 		6E45D8AB2C4170D80006934E /* AppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */; };
 		6E4C37582C4AEF3E00EA67CF /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */; };
@@ -233,7 +232,6 @@
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
 		6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckRepository.swift; sourceTree = "<group>"; };
-		6E3C8D7D2C11FDA80059C28C /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
 		6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckProviderFactory.swift; sourceTree = "<group>"; };
 		6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModelTests.swift; sourceTree = "<group>"; };
