@@ -18,7 +18,7 @@ final class HomeMapViewUITests: XCTestCase {
 
     override func setUpWithError() throws {
         app.resetAuthorizationStatus(for: .location)
-        app.launchArguments = ["-testing"]
+        app.launchArguments = ["--default-mocks"]
         XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 42.356395, longitude: -71.062424))
         continueAfterFailure = false
     }

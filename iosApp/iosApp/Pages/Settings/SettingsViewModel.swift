@@ -35,7 +35,7 @@ class SettingsViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func getSettings() async {
+    @MainActor func getSettings() async {
         do {
             let storedSettings = try await settingsRepository.getSettings()
             settings = [

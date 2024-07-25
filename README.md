@@ -16,6 +16,17 @@ For iOS development, `brew install swiftlint`.
 
 ### External Dependencies
 
+#### Firebase App Check - [docs](https://firebase.google.com/docs/app-check)
+
+App Check is used to validate that requests to our backend are coming from real instances of our app.
+
+##### ios - [docs](https://firebase.google.com/docs/app-check/ios/custom-resource)
+
+For running in debug mode locally, be sure to populate `FIREBASE_APP_CHECK_CI_TOKEN` in `/iosApp/AppCheckCI.xcconfig`
+with the value found in 1pass (see `/iosApp/AppCheckCI.example.xcconfig` for an example).
+If you need to generate a new token, from the [App Check console](https://console.firebase.google.com/u/0/project/mbta-app-c574d/appcheck/apps),
+go to "Manage debug tokens" for the relevant app.
+
 #### Mapbox - [docs](https://docs.mapbox.com/#maps)
 
 We use mapbox for custom interactive maps.

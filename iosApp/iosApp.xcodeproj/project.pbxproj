@@ -20,6 +20,11 @@
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
 		6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */; };
 		6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */; };
+		6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 6E45D8A82C4170890006934E /* FirebaseAppCheck */; };
+		6E45D8AB2C4170D80006934E /* AppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */; };
+		6E4C37582C4AEF3E00EA67CF /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */; };
+		6E4C375E2C4BDC9F00EA67CF /* ContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */; };
+		6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
 		6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C17E2C247D480086A424 /* StopDetailsView.swift */; };
 		6E55C1822C2489030086A424 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 6E55C1812C2489030086A424 /* Collections */; };
@@ -32,11 +37,13 @@
 		6E9DDFB52C3884B7009DD68A /* MapViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9DDFB42C3884B7009DD68A /* MapViewModelTests.swift */; };
 		6E9DDFB72C388514009DD68A /* MockLayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9DDFB62C388514009DD68A /* MockLayerManager.swift */; };
 		6E9F4D382BFE851D00BFB3DA /* UpcomingTripViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F4D372BFE851D00BFB3DA /* UpcomingTripViewTests.swift */; };
+		6EA00B6A2C5137A800B1334C /* MockSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF50F472B9889D600833070 /* MockSocket.swift */; };
 		6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA2316E2C21BEB100789173 /* LoadingCard.swift */; };
 		6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */; };
 		6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */; };
 		6EA231752C21CF2100789173 /* LoadingCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231742C21CF2100789173 /* LoadingCardTests.swift */; };
-		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
+		6ECE8CC02C495EDD001DD9FB /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */; };
+	    6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
 		6EE745842B965B9C0052227E /* SocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745832B965B9C0052227E /* SocketTests.swift */; };
 		6EE745882B965C2B0052227E /* MessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745872B965C2B0052227E /* MessageTests.swift */; };
@@ -48,7 +55,6 @@
 		6EED5EAB2B3E1B550052A1B8 /* ContentViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED5EAA2B3E1B550052A1B8 /* ContentViewTests.swift */; };
 		6EED5EAE2B3E1BA80052A1B8 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 6EED5EAD2B3E1BA80052A1B8 /* ViewInspector */; };
 		6EEF219E2BF2927E0023A3E9 /* VehicleCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEF219D2BF2927E0023A3E9 /* VehicleCardView.swift */; };
-		6EF50F482B9889D600833070 /* MockSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF50F472B9889D600833070 /* MockSocket.swift */; };
 		6EF64C032C1B7C2E005F365D /* RouteCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF64C022C1B7C2E005F365D /* RouteCardTests.swift */; };
 		6EF64C052C1B7FC6005F365D /* RouteHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF64C042C1B7FC6005F365D /* RouteHeaderTests.swift */; };
 		6EFEE42B2BEC100100810319 /* NearbyViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEE42A2BEC100100810319 /* NearbyViewModelTests.swift */; };
@@ -221,7 +227,12 @@
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
 		6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckRepository.swift; sourceTree = "<group>"; };
+		6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckProviderFactory.swift; sourceTree = "<group>"; };
+		6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModelTests.swift; sourceTree = "<group>"; };
+		6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckRepository.swift; sourceTree = "<group>"; };
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
+		6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* StopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* StopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsViewTests.swift; sourceTree = "<group>"; };
 		6E973DA42C17384C00CBF341 /* SheetHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetHeader.swift; sourceTree = "<group>"; };
@@ -237,6 +248,8 @@
 		6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageViewTests.swift; sourceTree = "<group>"; };
 		6EA231742C21CF2100789173 /* LoadingCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCardTests.swift; sourceTree = "<group>"; };
+		6EB5861E2C4FC88500121728 /* AppCheckCI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppCheckCI.xcconfig; sourceTree = "<group>"; };
+		6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckRepository.swift; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		6EE745832B965B9C0052227E /* SocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTests.swift; sourceTree = "<group>"; };
 		6EE745872B965C2B0052227E /* MessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTests.swift; sourceTree = "<group>"; };
@@ -402,6 +415,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */,
 				6E55C1822C2489030086A424 /* Collections in Frameworks */,
 				8CB28DB52C2B2DEC0036258E /* AppcuesKit in Frameworks */,
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
@@ -426,7 +440,6 @@
 			isa = PBXGroup;
 			children = (
 				6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */,
-				6EF50F472B9889D600833070 /* MockSocket.swift */,
 				ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */,
 				6E9DDFB62C388514009DD68A /* MockLayerManager.swift */,
 			);
@@ -436,6 +449,7 @@
 		6EE7457C2B965AD40052227E /* Phoenix */ = {
 			isa = PBXGroup;
 			children = (
+				6EF50F472B9889D600833070 /* MockSocket.swift */,
 				6EE7457D2B965ADE0052227E /* Socket.swift */,
 				ED6C80342BF65CD90036B456 /* PhoenixProtocolConformance.swift */,
 			);
@@ -496,6 +510,7 @@
 				6EA231742C21CF2100789173 /* LoadingCardTests.swift */,
 				9AAA26A62C2DC06600A7745A /* DirectionLabelTests.swift */,
 				ED5C93F52C4A1AD70086D017 /* TripDetailsHeaderTests.swift */,
+				6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -528,6 +543,8 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */,
+				6EB5861E2C4FC88500121728 /* AppCheckCI.xcconfig */,
 				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
 				8C304C652B69C0C300263886 /* .swift-version */,
 				9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */,
@@ -573,6 +590,7 @@
 				7555FF82242A565900829871 /* ContentView.swift */,
 				8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
+				6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -846,6 +864,8 @@
 				ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */,
 				EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */,
 				6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */,
+				6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */,
+				6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -911,7 +931,6 @@
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				8E51C9A5DAABE639C0FD100E /* [CP] Embed Pods Frameworks */,
-				6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */,
 				6ECD29FE2BA31201005CD381 /* Configure Build Variables */,
 			);
 			buildRules = (
@@ -925,6 +944,7 @@
 				9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				6E55C1812C2489030086A424 /* Collections */,
 				8CB28DB42C2B2DEC0036258E /* AppcuesKit */,
+				6E45D8A82C4170890006934E /* FirebaseAppCheck */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -1035,25 +1055,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Configure Mapbox";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "token_file=secrets/mapbox\ntoken_file2=../mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
-		};
+        6E35D4D12B72C8E400A2BF95 /* Configure Mapbox */ = {
+        isa = PBXShellScriptBuildPhase;
+        alwaysOutOfDate = 1;
+        buildActionMask = 2147483647;
+        files = (
+        );
+        inputFileListPaths = (
+        );
+        inputPaths = (
+        );
+        name = "Configure Mapbox";
+        outputFileListPaths = (
+        );
+        outputPaths = (
+        );
+        runOnlyForDeploymentPostprocessing = 0;
+        shellPath = /bin/sh;
+        shellScript = "token_file=secrets/mapbox\ntoken_file2=../mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
+        };
 		6ECD29FE2BA31201005CD381 /* Configure Build Variables */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -1071,7 +1091,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Adding info.plist values from .envrc\"\ncat ../.envrc | while IFS=\"=\" read -r key value; do\n    key=$(echo $key | sed 's/export //')    \n    echo \"$key\"\n    case \"$key\" in\n        \"FIREBASE_KEY\")\n            if [ -n \"$value\" ]; then\n                    plutil -replace API_KEY -string $value \"$TARGET_BUILD_DIR/iosApp.app/GoogleService-Info.plist\"\n                echo \"Google plist entry for $key added\"\n            else\n                echo \"Skipping google plist entry for $key - no value set, this will crash the app\"\n            fi\n        ;;\n        \"\");;\n        *)\n            if [ -n \"$value\" ]; then\n                plutil -replace $key -string $value \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\n                echo \"plist entry for $key added\"\n            else\n                echo \"Skipping plist entry for $key - no value set\"\n            fi\n        ;;\n    esac\ndone\n";
+			shellScript = "echo \"Adding info.plist values from .envrc\"\ncat ../.envrc | while IFS=\"=\" read -r key value; do\n    key=$(echo $key | sed 's/export //')    \n    echo \"$key\"\n    case \"$key\" in\n        \"FIREBASE_KEY\" | \"GOOGLE_APP_ID\")\n            if [ -n \"$value\" ]; then\n                transformed_key=$key\n                if [[ \"$key\" == \"FIREBASE_KEY\" ]]; then\n                    transformed_key=\"API_KEY\"\n                fi\n                plutil -replace $transformed_key -string $value \"$TARGET_BUILD_DIR/iosApp.app/GoogleService-Info.plist\"\n                echo \"Google plist entry for $transformed_key added\"\n            else\n                echo \"Skipping google plist entry for $key - no value set, this will crash the app\"\n            fi\n        ;;\n        \"\");;\n        *)\n            if [ -n \"$value\" ]; then\n                plutil -replace $key -string $value \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\n                echo \"plist entry for $key added\"\n            else\n                echo \"Skipping plist entry for $key - no value set\"\n            fi\n        ;;\n    esac\ndone\n\necho \"Setting GoogleService-Info BUNDLE ID\"\nplutil -replace \"BUNDLE_ID\" -string $PRODUCT_BUNDLE_IDENTIFIER \"$TARGET_BUILD_DIR/iosApp.app/GoogleService-Info.plist\"\n";
 		};
 		7E1E3E807BCE8F2D4B7E5C7B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1156,12 +1176,12 @@
 				6E9F4D382BFE851D00BFB3DA /* UpcomingTripViewTests.swift in Sources */,
 				ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */,
 				9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */,
-				6EF50F482B9889D600833070 /* MockSocket.swift in Sources */,
 				6E55C1862C249EF20086A424 /* StopDetailsViewTests.swift in Sources */,
 				9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */,
 				6EE76D1D2BF535330051D608 /* VehicleCardViewTests.swift in Sources */,
 				9AAA26A72C2DC06700A7745A /* DirectionLabelTests.swift in Sources */,
 				6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */,
+				6E4C375E2C4BDC9F00EA67CF /* ContentViewModelTests.swift in Sources */,
 				9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */,
 				6E973DA92C178BF500CBF341 /* ActionButtonTests.swift in Sources */,
 				6EED5EAB2B3E1B550052A1B8 /* ContentViewTests.swift in Sources */,
@@ -1228,6 +1248,7 @@
 				6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */,
 				9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */,
 				9A9E7DD52C2203E8000DA1FD /* PinButton.swift in Sources */,
+				6EA00B6A2C5137A800B1334C /* MockSocket.swift in Sources */,
 				ED24EADC2C1A95A900A7BE4D /* StopDetailsAnalytics.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
 				6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */,
@@ -1266,6 +1287,7 @@
 				6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */,
 				9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */,
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,
+				6E45D8AB2C4170D80006934E /* AppCheckProviderFactory.swift in Sources */,
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
 				9AAA26A12C2DB43600A7745A /* PredictionRowView.swift in Sources */,
 				9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */,
@@ -1293,7 +1315,9 @@
 				8C7726192BE5941E0088D423 /* OptionalNavigationLink.swift in Sources */,
 				9A5830562BA3A2CE0039876E /* ViewportExtension.swift in Sources */,
 				9A5830582BA4A1A30039876E /* ViewportProvider.swift in Sources */,
+				6E4C37582C4AEF3E00EA67CF /* ContentViewModel.swift in Sources */,
 				6E973DA52C17384C00CBF341 /* SheetHeader.swift in Sources */,
+				6ECE8CC02C495EDD001DD9FB /* AppCheckRepository.swift in Sources */,
 				9A9E7DD32C2203BE000DA1FD /* TransitCard.swift in Sources */,
 				8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */,
 			);
@@ -1432,6 +1456,7 @@
 		};
 		7555FFA3242A565B00829871 /* ProdDebug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1493,6 +1518,7 @@
 		};
 		7555FFA4242A565B00829871 /* ProdRelease */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1616,6 +1642,7 @@
 		};
 		8C8F515B2BD98C1C0037A2D8 /* StagingDebug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1770,6 +1797,7 @@
 		};
 		8C8F515F2BD98C220037A2D8 /* StagingRelease */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2019,6 +2047,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
 			productName = MapboxMaps;
+		};
+		6E45D8A82C4170890006934E /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAppCheck;
 		};
 		6E55C1812C2489030086A424 /* Collections */ = {
 			isa = XCSwiftPackageProductDependency;
