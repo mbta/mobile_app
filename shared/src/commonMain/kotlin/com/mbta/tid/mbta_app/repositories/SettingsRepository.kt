@@ -37,7 +37,6 @@ class SettingsRepository : ISettingsRepository, KoinComponent {
 enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     Map(booleanPreferencesKey("map_debug")),
     Search(booleanPreferencesKey("search_featureFlag")),
-    DynamicMapKey(booleanPreferencesKey("map_dynamicKey_featureFlag")),
 }
 
 data class Setting(val key: Settings, var isOn: Boolean)

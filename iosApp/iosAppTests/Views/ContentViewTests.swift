@@ -66,11 +66,12 @@ final class ContentViewTests: XCTestCase {
         wait(for: [connectedExpectation], timeout: 1)
     }
 
-    func testFetchesConfigIfFeatureFlagEnabled() throws {
+    func testFetchesConfig() throws {
         let configFetchedExpectation = XCTestExpectation(description: "config fetched")
 
-        let fakeVM = FakeContentVM(dynamicMapKeyEnabled: true,
-                                   loadConfigCallback: { configFetchedExpectation.fulfill() })
+        let fakeVM = FakeContentVM(
+            loadConfigCallback: { configFetchedExpectation.fulfill() }
+        )
         let sut = ContentView(contentVM: fakeVM)
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
@@ -82,7 +83,6 @@ final class ContentViewTests: XCTestCase {
         let tokenConfigExpectation = XCTestExpectation(description: "mapbox token configured")
 
         let fakeVM = FakeContentVM(
-            dynamicMapKeyEnabled: true,
             configMapboxCallback: { tokenConfigExpectation.fulfill() }
         )
         let sut = ContentView(contentVM: fakeVM)
@@ -101,7 +101,6 @@ final class ContentViewTests: XCTestCase {
         loadConfigCallback.expectedFulfillmentCount = 2
 
         let fakeVM = FakeContentVM(
-            dynamicMapKeyEnabled: true,
             loadConfigCallback: { loadConfigCallback.fulfill() }
         )
         let sut = ContentView(contentVM: fakeVM)
@@ -118,21 +117,8 @@ final class ContentViewTests: XCTestCase {
         wait(for: [hasAppeared, loadConfigCallback], timeout: 5)
     }
 
-    func testShowsMapWithoutFetchingConfigWhenFeatureFlagDisabled() throws {
-        let configNotFetchedExpectation = XCTestExpectation(description: "config not fetched")
-        configNotFetchedExpectation.isInverted = true
-
-        let fakeVM = FakeContentVM(dynamicMapKeyEnabled: false,
-                                   loadConfigCallback: { configNotFetchedExpectation.fulfill() })
-
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
-        XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
-
-        wait(for: [configNotFetchedExpectation], timeout: 5)
-    }
-
-    func testShowsMapWhenFeatureFlagEnabled() throws {
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM(dynamicMapKeyEnabled: true)))
+    func testShowsMap() throws {
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM()))
 
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
     }
@@ -142,14 +128,13 @@ final class ContentViewTests: XCTestCase {
         let configMapboxCallback: () -> Void
 
         init(
-            dynamicMapKeyEnabled: Bool = false,
             mapboxTokenConfigured _: Bool = false,
             loadConfigCallback: @escaping () -> Void = {},
             configMapboxCallback: @escaping () -> Void = {}
         ) {
             self.loadConfigCallback = loadConfigCallback
             self.configMapboxCallback = configMapboxCallback
-            super.init(dynamicMapKeyEnabled: dynamicMapKeyEnabled)
+            super.init()
         }
 
         override func loadConfig() async { loadConfigCallback() }

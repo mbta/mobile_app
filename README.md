@@ -33,7 +33,8 @@ We use mapbox for custom interactive maps.
 
 ##### ios - [guide](https://docs.mapbox.com/ios/maps/guides/) - [docs](https://docs.mapbox.com/ios/maps/api/11.2.0/documentation/mapboxmaps/) - [keys](https://docs.mapbox.com/ios/maps/guides/install/#configure-your-secret-token)
 
-Mapbox requires 2 keys - a private key for installing the library and a public key for rendering map tiles. Follow the above keys link for instructions on how to configure the secret key. Add the public key to `/iosApp/secrets/mapbox`.
+Mapbox requires 2 keys - a private key for installing the library and a public key for rendering map tiles. Follow the above keys link for instructions on how to configure the secret key.
+The public key is fetched dynamically from the backend. Be sure to follow the Firebase App Check instructions for access to the protected endpoint while developing locally.
 
 ##### android - [guide](https://docs.mapbox.com/android/maps/guides/) - [docs](https://docs.mapbox.com/android/maps/api/11.3.0/) - [keys](https://docs.mapbox.com/android/maps/guides/install/#configure-your-secret-token)
 
