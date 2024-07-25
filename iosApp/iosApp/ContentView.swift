@@ -178,14 +178,12 @@ struct ContentView: View {
         }
         .onAppear {
             socketProvider.socket.attach()
+
             Task {
                 await contentVM.loadSettings()
             }
             Task {
                 if contentVM.dynamicMapKeyEnabled {
-                    // set a temporary token until the real token is dynamically loaded in
-                    // so that the map doesn't entirely break
-                    MapboxOptions.accessToken = "TEMPORARY_TOKEN"
                     await contentVM.loadConfig()
                 }
             }
