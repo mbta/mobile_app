@@ -13,6 +13,7 @@ import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
+@_spi(Experimental) import MapboxMaps
 
 final class ContentViewTests: XCTestCase {
     struct NotUnderTestError: Error {}
@@ -93,6 +94,28 @@ final class ContentViewTests: XCTestCase {
         try sut.inspect().vStack()
             .callOnChange(newValue: newConfig)
         wait(for: [tokenConfigExpectation], timeout: 5)
+    }
+
+    func testFetchesConfigOnMapboxError() throws {
+        let loadConfigCallback = XCTestExpectation(description: "load config called")
+        loadConfigCallback.expectedFulfillmentCount = 2
+
+        let fakeVM = FakeContentVM(
+            dynamicMapKeyEnabled: true,
+            loadConfigCallback: { loadConfigCallback.fulfill() }
+        )
+        let sut = ContentView(contentVM: fakeVM)
+
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+
+        let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
+
+        let hasAppeared = sut.inspection.inspect(after: 1) { view in
+
+            try view.actualView().mapVM.lastMapboxErrorSubject.send(Date.now)
+        }
+
+        wait(for: [hasAppeared, loadConfigCallback], timeout: 5)
     }
 
     func testShowsMapWithoutFetchingConfigWhenFeatureFlagDisabled() throws {

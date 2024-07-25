@@ -207,6 +207,14 @@ struct ContentView: View {
             default: debugPrint("Skipping mapbox token configuration")
             }
         }
+        .onReceive(mapVM.lastMapboxErrorSubject
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
+                Task {
+                    if contentVM.dynamicMapKeyEnabled {
+                        await contentVM.loadConfig()
+                    }
+                }
+        }
     }
 
     @ViewBuilder var mapSection: some View {
