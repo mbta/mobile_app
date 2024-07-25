@@ -16,7 +16,7 @@ struct SheetHeader: View {
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             if let onClose {
-                CloseButton(action: { onClose() })
+                ActionButton(kind: .back, action: { onClose() })
             }
             if let title {
                 Text(title)

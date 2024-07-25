@@ -3,8 +3,8 @@ package com.mbta.tid.mbta_app.map
 import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.LineJoin
 import com.mbta.tid.mbta_app.map.style.LineLayer
+import com.mbta.tid.mbta_app.map.style.downcastToColor
 import com.mbta.tid.mbta_app.model.SegmentAlertState
-import kotlinx.serialization.json.JsonPrimitive
 
 object RouteLayerGenerator {
     val routeLayerId = "route-layer"
@@ -51,7 +51,7 @@ object RouteLayerGenerator {
             )
         suspendedLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
         suspendedLayer.lineDasharray = listOf(1.33, 2.0)
-        suspendedLayer.lineColor = Exp.Bare(JsonPrimitive(colorPalette.deemphasized))
+        suspendedLayer.lineColor = Exp(colorPalette.deemphasized).downcastToColor()
 
         val alertBackgroundLayer = baseRouteLayer(alertingBgRouteLayerId)
         alertBackgroundLayer.filter =
@@ -61,7 +61,7 @@ object RouteLayerGenerator {
             )
         alertBackgroundLayer.lineWidth =
             Exp.step(Exp.zoom(), Exp(8), Exp(closeZoomCutoff) to Exp(10))
-        alertBackgroundLayer.lineColor = Exp.Bare(JsonPrimitive(colorPalette.fill3))
+        alertBackgroundLayer.lineColor = Exp(colorPalette.fill3).downcastToColor()
 
         return listOf(alertBackgroundLayer, shuttledLayer, suspendedLayer)
     }
