@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import MapboxCommon
 import shared
 @_spi(Experimental) import MapboxMaps
 
@@ -16,6 +15,7 @@ class ContentViewModel: ObservableObject {
     @Published var searchEnabled: Bool
     @Published var dynamicMapKeyEnabled: Bool
     private var settings: Set<Setting> = []
+
     var configUseCase: ConfigUseCase
     var settingsRepo: ISettingsRepository
 

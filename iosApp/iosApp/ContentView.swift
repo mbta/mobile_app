@@ -178,7 +178,6 @@ struct ContentView: View {
         }
         .onAppear {
             socketProvider.socket.attach()
-
             Task {
                 await contentVM.loadSettings()
             }
