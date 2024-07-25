@@ -24,7 +24,6 @@
 		6E45D8AB2C4170D80006934E /* AppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */; };
 		6E4C37582C4AEF3E00EA67CF /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */; };
 		6E4C375E2C4BDC9F00EA67CF /* ContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */; };
-		6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
 		6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C17E2C247D480086A424 /* StopDetailsView.swift */; };
 		6E55C1822C2489030086A424 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 6E55C1812C2489030086A424 /* Collections */; };

@@ -7,9 +7,8 @@
 //
 
 import Foundation
-@testable import iosApp
 import shared
-@testable import SwiftPhoenixClient
+import SwiftPhoenixClient
 
 open class MockSocket: PhoenixSocket {
     public var channels: [SwiftPhoenixClient.Channel] = []
