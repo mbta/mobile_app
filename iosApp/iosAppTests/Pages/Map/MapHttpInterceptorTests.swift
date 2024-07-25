@@ -23,8 +23,8 @@ final class MapHttpInterceptorTests: XCTestCase {
     func testOnRequest() throws {
         var requestUnchanged = false
         let interceptor = MapHttpInterceptor(updateLastErrorTimestamp: {})
-        interceptor.onRequest(for: fakeRequest) { request in
-            if request == self.fakeRequest {
+        interceptor.onRequest(for: fakeRequest) { requstOrResponse in
+            if requstOrResponse.getHttpRequest() == self.fakeRequest {
                 requestUnchanged = true
             }
         }
