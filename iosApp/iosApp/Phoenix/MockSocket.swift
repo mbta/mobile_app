@@ -11,7 +11,7 @@ import shared
 import SwiftPhoenixClient
 
 open class MockSocket: PhoenixSocket {
-    public var channels: [SwiftPhoenixClient.Channel] = []
+    public var channels: [PhoenixChannel] = []
     // Channel.socket is weak, so we need to maintain a reference to the Socket
     private let socket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
 
@@ -19,8 +19,8 @@ open class MockSocket: PhoenixSocket {
 
     public func detach() {}
 
-    public func getChannel(topic: String, params _: [String: Any]) -> any PhoenixChannel {
-        let channel = Channel(topic: topic, socket: socket)
+    public func getChannel(topic _: String, params _: [String: Any]) -> any PhoenixChannel {
+        let channel = MockChannel()
         channels.append(channel)
         return channel
     }
@@ -31,5 +31,34 @@ open class MockSocket: PhoenixSocket {
 
     public func onDetach(callback _: @escaping () -> Void) -> String {
         "Closed"
+    }
+}
+
+class MockPush: PhoenixPush {
+    func receive(status _: shared.PhoenixPushStatus,
+                 callback _: @escaping (any PhoenixMessage) -> Void) -> any PhoenixPush {
+        MockPush()
+    }
+}
+
+class MockChannel: PhoenixChannel {
+    func attach() -> any PhoenixPush {
+        MockPush()
+    }
+
+    func detach() -> any PhoenixPush {
+        MockPush()
+    }
+
+    func onDetach(callback _: @escaping (any PhoenixMessage) -> Void) {
+        // no-op
+    }
+
+    func onEvent(event _: String, callback _: @escaping (any PhoenixMessage) -> Void) {
+        // no-op
+    }
+
+    func onFailure(callback _: @escaping (any PhoenixMessage) -> Void) {
+        // no-op
     }
 }
