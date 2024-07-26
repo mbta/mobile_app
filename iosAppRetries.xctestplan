@@ -9,6 +9,11 @@
     }
   ],
   "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--dummy-test-app"
+      }
+    ],
     "testRepetitionMode" : "retryOnFailure",
     "testTimeoutsEnabled" : true
   },
