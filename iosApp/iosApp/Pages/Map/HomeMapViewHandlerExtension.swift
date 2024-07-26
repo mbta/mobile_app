@@ -142,7 +142,7 @@ extension HomeMapView {
     }
 
     func handleTapStopLayer(feature: QueriedFeature, _: MapContentGestureContext) -> Bool {
-        guard case let .string(stopId) = feature.feature.properties?[StopFeaturesBuilder.shared.propIdKey] else {
+        guard case let .string(stopId) = feature.feature.properties?[StopFeaturesBuilder.shared.propIdKey.key] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop. sourceId=\(feature.source)
