@@ -251,6 +251,14 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
 
     companion object {
 
+        /**
+         * Returns alerts that are applicable to the passed in routes and stops
+         *
+         * Criteria:
+         * - Route ID matches an alert [Alert.InformedEntity]
+         * - Stop ID matches an alert [Alert.InformedEntity]
+         * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
+         */
         fun applicableAlerts(
             routes: List<Route>,
             stopIds: Set<String>,
