@@ -23,7 +23,6 @@ struct NearbyTransitView: View {
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
-    let alerts: AlertsStreamDataResponse?
     var globalRepository = RepositoryDI().global
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -73,7 +72,7 @@ struct NearbyTransitView: View {
         .onChange(of: predictions) { predictions in
             updateNearbyRoutes(predictions: predictions)
         }
-        .onChange(of: alerts) { alerts in
+        .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
         .onReceive(timer) { input in
@@ -217,7 +216,7 @@ struct NearbyTransitView: View {
         nearbyWithRealtimeInfo = withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
             predictions: predictions ?? self.predictions,
-            alerts: alerts ?? self.alerts,
+            alerts: alerts ?? nearbyVM.alerts,
             filterAtTime: now.toKotlinInstant(),
             pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
         )

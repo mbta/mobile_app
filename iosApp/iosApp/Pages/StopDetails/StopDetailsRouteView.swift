@@ -24,7 +24,8 @@ struct StopDetailsRouteView: View {
                 StopDeparturesSummaryList(
                     patternsByStop: patternsByStop,
                     condenseHeadsignPredictions: patternsByStop.routes.count > 1,
-                    now: now, context: .stopDetailsUnfiltered,
+                    now: now,
+                    context: .stopDetailsUnfiltered,
                     pushNavEntry: { entry in pushNavEntry(entry) }
                 )
             }
@@ -33,7 +34,8 @@ struct StopDetailsRouteView: View {
                 StopDeparturesSummaryList(
                     patternsByStop: patternsByStop,
                     condenseHeadsignPredictions: false,
-                    now: now, context: .stopDetailsUnfiltered,
+                    now: now,
+                    context: .stopDetailsUnfiltered,
                     pushNavEntry: { entry in pushNavEntry(entry) }
                 )
             }

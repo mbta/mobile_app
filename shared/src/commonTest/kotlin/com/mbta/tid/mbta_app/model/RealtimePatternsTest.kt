@@ -332,4 +332,110 @@ class RealtimePatternsTest {
 
         assertEquals(directionPatterns.routesByTrip[trip2.id], route2)
     }
+
+    @Test
+    fun `filters applicable alerts`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+
+        val validAlert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+        val invalidAlert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                    route = "wrong",
+                    routeType = route.type,
+                    stop = "wrong"
+                )
+            }
+        assertEquals(
+            RealtimePatterns.applicableAlerts(
+                listOf(route),
+                setOf(stop.id),
+                listOf(validAlert, invalidAlert)
+            ),
+            listOf(validAlert)
+        )
+    }
+
+    @Test
+    fun `filters out alerts without Board activity`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+        assertEquals(
+            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), listOf(alert)),
+            emptyList()
+        )
+    }
+
+    @Test
+    fun `filters out alerts with non-matching route ID`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                    route = "not matching",
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+        assertEquals(
+            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), listOf(alert)),
+            emptyList()
+        )
+    }
+
+    @Test
+    fun `filters out alerts with non-matching stop ID`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = "not matching"
+                )
+            }
+        assertEquals(
+            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), listOf(alert)),
+            emptyList()
+        )
+    }
 }
