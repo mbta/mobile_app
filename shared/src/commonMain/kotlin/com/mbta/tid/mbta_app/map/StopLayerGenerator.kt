@@ -103,7 +103,7 @@ object StopLayerGenerator {
 
         layer.iconAllowOverlap = true
         layer.minZoom = stopZoomThreshold
-        layer.symbolSortKey = Exp.get(Exp(StopFeaturesBuilder.propSortOrderKey))
+        layer.symbolSortKey = Exp.get(StopFeaturesBuilder.propSortOrderKey)
     }
 
     fun offsetAlertValue(index: Int): Exp<List<Number>> {

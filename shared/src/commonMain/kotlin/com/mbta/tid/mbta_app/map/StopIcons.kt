@@ -69,10 +69,7 @@ object StopIcons {
                     Exp("-"),
                     Exp.at(
                         Exp(0),
-                        Exp.get(
-                            MapExp.topRouteExp,
-                            Exp.get(Exp(StopFeaturesBuilder.propRouteIdsKey))
-                        )
+                        Exp.get(MapExp.topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey))
                     )
                 ),
             Exp("")
@@ -93,7 +90,7 @@ object StopIcons {
             Exp.case(
                 // If at wide zoom, give terminal stops with no transfers distinct icons
                 Exp.all(
-                    Exp.get(Exp(StopFeaturesBuilder.propIsTerminalKey)),
+                    Exp.get(StopFeaturesBuilder.propIsTerminalKey),
                     MapExp.singleRouteTypeExp,
                     Exp.boolean(Exp(zoomPrefix == stopZoomWidePrefix))
                 ) to Exp.concat(Exp(stopTerminalSuffix), branchingRouteSuffixExp),
