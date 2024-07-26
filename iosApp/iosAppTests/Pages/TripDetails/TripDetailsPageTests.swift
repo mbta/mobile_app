@@ -286,6 +286,60 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [routeExp], timeout: 1)
     }
 
+    func testTripRequestError() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let trip = objects.trip { trip in
+            trip.routeId = "Red"
+        }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.currentStatus = .inTransitTo
+        }
+
+        let globalData = GlobalResponse(objects: objects, patternIdsByStop: [:])
+
+        let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
+
+        let tripRepository = FakeTripRepository(
+            tripError: .init(code: 404, message: "Bad response"),
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: []),
+            onGetTripSchedules: { tripSchedulesLoaded.send() }
+        )
+
+        let tripPredictionsLoaded = PassthroughSubject<Void, Never>()
+
+        let tripPredictionsRepository = FakeTripPredictionsRepository(
+            response: .init(objects: objects),
+            onConnect: { _ in tripPredictionsLoaded.send() }
+        )
+
+        let tripId = trip.id
+        let vehicleId = vehicle.id
+        let sut = TripDetailsPage(
+            tripId: tripId,
+            vehicleId: vehicleId,
+            target: nil,
+            nearbyVM: .init(),
+            mapVM: .init(),
+            globalRepository: FakeGlobalRepository(response: globalData),
+            tripPredictionsRepository: tripPredictionsRepository,
+            tripRepository: tripRepository,
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
+        )
+
+        let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
+
+        let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
+            XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
+        }
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [routeExp], timeout: 1)
+    }
+
     func testBackButton() throws {
         let objects = ObjectCollectionBuilder()
         objects.stop { _ in }
@@ -386,6 +440,18 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: (() -> Void)? = nil
         ) {
             self.tripResponse = ApiResultOk(data: tripResponse)
+            self.scheduleResponse = scheduleResponse
+            self.onGetTrip = onGetTrip
+            self.onGetTripSchedules = onGetTripSchedules
+        }
+
+        init(
+            tripError: ErrorDetails,
+            scheduleResponse: TripSchedulesResponse,
+            onGetTrip: (() -> Void)? = nil,
+            onGetTripSchedules: (() -> Void)? = nil
+        ) {
+            tripResponse = ApiResultError(error: tripError)
             self.scheduleResponse = scheduleResponse
             self.onGetTrip = onGetTrip
             self.onGetTripSchedules = onGetTripSchedules
