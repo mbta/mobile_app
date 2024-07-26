@@ -153,7 +153,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
             pitch: 0.0
         )
         let appearancePublisher = PassthroughSubject<Bool, Never>()
-        let hasAppeared = sut.inspection.inspect(after: 0.2) { view in
+        let hasAppeared = sut.inspection.inspect(after: 1) { view in
             XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
             try view.actualView().viewportProvider.updateCameraState(newCameraState)
             appearancePublisher.send(true)

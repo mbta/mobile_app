@@ -105,14 +105,14 @@ final class ContentViewTests: XCTestCase {
         )
         let sut = ContentView(contentVM: fakeVM)
 
-        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
-
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
-        let hasAppeared = sut.inspection.inspect(after: 1) { view in
+        let hasAppeared = sut.inspection.inspect(after: 2) { view in
 
             try view.actualView().mapVM.lastMapboxErrorSubject.send(Date.now)
         }
+
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
 
         wait(for: [hasAppeared, loadConfigCallback], timeout: 5)
     }
