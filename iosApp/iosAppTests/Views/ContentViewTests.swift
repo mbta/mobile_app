@@ -107,7 +107,7 @@ final class ContentViewTests: XCTestCase {
 
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
-        let hasAppeared = sut.inspection.inspect { view in
+        let hasAppeared = sut.inspection.inspect(after: 2) { view in
 
             try view.actualView().mapVM.lastMapboxErrorSubject.send(Date.now)
         }
