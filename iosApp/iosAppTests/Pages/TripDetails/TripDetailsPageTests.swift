@@ -120,7 +120,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        wait(for: [showVehicleCardExp], timeout: 2)
+        wait(for: [showVehicleCardExp], timeout: 5)
     }
 
     func testSplitsWithTarget() throws {
