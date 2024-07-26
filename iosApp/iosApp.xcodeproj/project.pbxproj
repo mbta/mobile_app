@@ -65,6 +65,7 @@
 		8C0923A72C210C8C00813454 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0923A62C210C8C00813454 /* Typography.swift */; };
 		8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */; };
 		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
+		8C5F47662C40842200FB71DA /* TripDetailsStopViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5F47652C40842200FB71DA /* TripDetailsStopViewTests.swift */; };
 		8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */; };
 		8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7726142BE58FE20088D423 /* TripDetailsPage.swift */; };
 		8C7726192BE5941E0088D423 /* OptionalNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C7726182BE5941E0088D423 /* OptionalNavigationLink.swift */; };
@@ -282,6 +283,7 @@
 		8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		8C42F06F2B890BC800F9A77B /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsPage.swift; sourceTree = "<group>"; };
+		8C5F47652C40842200FB71DA /* TripDetailsStopViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsStopViewTests.swift; sourceTree = "<group>"; };
 		8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredRouteView.swift; sourceTree = "<group>"; };
 		8C7726142BE58FE20088D423 /* TripDetailsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsPage.swift; sourceTree = "<group>"; };
 		8C7726182BE5941E0088D423 /* OptionalNavigationLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalNavigationLink.swift; sourceTree = "<group>"; };
@@ -690,6 +692,7 @@
 				8CD58ECC2BEC115B0004E031 /* TripDetailsPageTests.swift */,
 				6EE76D1C2BF535330051D608 /* VehicleCardViewTests.swift */,
 				8CA1FB762BF813F500384658 /* TripDetailsStopListSplitViewTests.swift */,
+				8C5F47652C40842200FB71DA /* TripDetailsStopViewTests.swift */,
 			);
 			path = TripDetails;
 			sourceTree = "<group>";
@@ -1182,6 +1185,7 @@
 				6EED5E8F2B3DC6A00052A1B8 /* IosAppTests.swift in Sources */,
 				6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */,
 				8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */,
+				8C5F47662C40842200FB71DA /* TripDetailsStopViewTests.swift in Sources */,
 				8CDF2C342BE9357E007FC912 /* OptionalNavigationLinkTests.swift in Sources */,
 				8CA1FB772BF813F500384658 /* TripDetailsStopListSplitViewTests.swift in Sources */,
 				8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */,

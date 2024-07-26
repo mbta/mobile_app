@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ErrorDetails
+import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
@@ -28,6 +29,8 @@ interface ITripRepository {
     )
     suspend fun getTripSchedules(tripId: String): TripSchedulesResponse
 
+    suspend fun getTrip(tripId: String): ApiResult<TripResponse>
+
     suspend fun getTripShape(tripId: String): ApiResult<TripShape>
 }
 
@@ -43,6 +46,26 @@ class TripRepository : ITripRepository, KoinComponent {
                 }
             }
             .body()
+
+    override suspend fun getTrip(tripId: String): ApiResult<TripResponse> {
+        try {
+            val response =
+                mobileBackendClient.get {
+                    url {
+                        path("api/trip")
+                        parameter("trip_id", tripId)
+                    }
+                }
+
+            if (response.status === HttpStatusCode.OK) {
+                return ApiResult.Ok(data = json.decodeFromString(response.body()))
+            } else {
+                return ApiResult.Error(json.decodeFromString<ErrorDetails>(response.body()))
+            }
+        } catch (e: Exception) {
+            return ApiResult.Error(ErrorDetails(message = e.message ?: e.toString()))
+        }
+    }
 
     override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
         try {
@@ -67,6 +90,10 @@ class TripRepository : ITripRepository, KoinComponent {
 
 open class IdleTripRepository : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): TripSchedulesResponse {
+        return suspendCancellableCoroutine {}
+    }
+
+    override suspend fun getTrip(tripId: String): ApiResult<TripResponse> {
         return suspendCancellableCoroutine {}
     }
 
