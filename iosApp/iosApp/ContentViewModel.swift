@@ -13,7 +13,6 @@ import shared
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
     @Published var searchEnabled: Bool
-    @Published var dynamicMapKeyEnabled: Bool
     private var settings: Set<Setting> = []
 
     var configUseCase: ConfigUseCase
@@ -21,12 +20,10 @@ class ContentViewModel: ObservableObject {
 
     init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
          configResponse: ApiResult<ConfigResponse>? = nil,
-         dynamicMapKeyEnabled: Bool = false,
          searchEnabled: Bool = false,
          settingsRepo: ISettingsRepository = RepositoryDI().settings) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
-        self.dynamicMapKeyEnabled = dynamicMapKeyEnabled
         self.searchEnabled = searchEnabled
         self.settingsRepo = settingsRepo
     }
@@ -39,7 +36,6 @@ class ContentViewModel: ObservableObject {
         do {
             let settings = try await settingsRepo.getSettings()
             searchEnabled = settings.first(where: { $0.key == .search })?.isOn ?? false
-            dynamicMapKeyEnabled = settings.first(where: { $0.key == .dynamicMapKey })?.isOn ?? false
         } catch {}
     }
 
