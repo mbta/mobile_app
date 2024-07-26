@@ -43,7 +43,6 @@ struct NearbyTransitPageView: View {
                         },
                         state: $nearbyVM.nearbyState,
                         location: $location,
-                        alerts: nearbyVM.alerts,
                         nearbyVM: nearbyVM
                     )
 
