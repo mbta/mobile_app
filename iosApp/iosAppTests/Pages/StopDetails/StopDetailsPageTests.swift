@@ -158,7 +158,7 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    func testCloseButton() throws {
+    func testBackButton() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
@@ -185,7 +185,7 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: FakeNearbyVM(backExp)
         )
 
-        try sut.inspect().find(CloseButton.self).button().tap()
+        try sut.inspect().find(ActionButton.self).button().tap()
 
         wait(for: [backExp], timeout: 2)
     }

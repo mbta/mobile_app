@@ -52,7 +52,7 @@ class RouteLayerGeneratorTest {
         assertEquals(
             buildJsonArray {
                 add("get")
-                add(RouteFeaturesBuilder.propRouteColor)
+                add(RouteFeaturesBuilder.propRouteColor.key)
             },
             baseRouteLayer.lineColor!!.asJson()
         )
@@ -66,7 +66,7 @@ class RouteLayerGeneratorTest {
         assertEquals(
             buildJsonArray {
                 add("get")
-                add(RouteFeaturesBuilder.propRouteSortKey)
+                add(RouteFeaturesBuilder.propRouteSortKey.key)
             },
             baseRouteLayer.lineSortKey!!.asJson()
         )

@@ -19,7 +19,7 @@ import SwiftUI
 
 struct ProductionAppView: View {
     let backend: BackendProtocol =
-        if CommandLine.arguments.contains("-testing") {
+        if CommandLine.arguments.contains("--default-mocks") {
             IdleBackend()
         } else {
             Backend(appVariant: appVariant)
@@ -29,6 +29,7 @@ struct ProductionAppView: View {
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var backendProvider: BackendProvider
+    @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
@@ -37,9 +38,14 @@ struct ProductionAppView: View {
 
     init() {
         Self.initSentry()
-        let socket = Self.initSocket()
-        Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
-        self.init(socket: socket)
+        if CommandLine.arguments.contains("--default-mocks") {
+            HelpersKt.startKoinIOSTestApp()
+            self.init(socket: MockSocket())
+        } else {
+            let socket = Self.initSocket()
+            Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
+            self.init(socket: socket)
+        }
     }
 
     init(socket: PhoenixSocket) {
@@ -54,7 +60,7 @@ struct ProductionAppView: View {
     }
 
     var body: some View {
-        ContentView()
+        ContentView(contentVM: contentVM)
             .font(Typography.body)
             .environmentObject(locationDataManager)
             .environmentObject(backendProvider)

@@ -10,11 +10,14 @@ sealed class Layer : MapboxStyleObject {
     abstract val filter: Exp<Boolean>?
     abstract val source: String?
 
+    var minZoom: Number? = null
+
     final override fun asJson() = buildJsonObject {
         put("id", id)
         put("type", type)
 
         filter?.let { put("filter", it) }
+        minZoom?.let { put("minzoom", it) }
 
         put("layout", layoutAsJson())
         put("paint", paintAsJson())

@@ -1,19 +1,16 @@
 package com.mbta.tid.mbta_app.map
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.map.style.Feature
+import com.mbta.tid.mbta_app.map.style.FeatureCollection
+import com.mbta.tid.mbta_app.map.style.FeatureProperty
+import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
-import io.github.dellisd.spatialk.geojson.Feature
-import io.github.dellisd.spatialk.geojson.FeatureCollection
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.nearestPointOnLine
-import kotlinx.serialization.json.add
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonArray
-import kotlinx.serialization.json.putJsonObject
 
 data class StopFeatureData(val stop: MapStop, val feature: Feature)
 
@@ -24,16 +21,16 @@ constructor(val filteredStopIds: List<String>? = null, val selectedStopId: Strin
 object StopFeaturesBuilder {
     val stopSourceId = "stop-source"
 
-    val propIdKey = "id"
-    val propIsSelectedKey = "isSelected"
-    val propIsTerminalKey = "isTerminal"
+    val propIdKey = FeatureProperty<String>("id")
+    val propIsSelectedKey = FeatureProperty<Boolean>("isSelected")
+    val propIsTerminalKey = FeatureProperty<Boolean>("isTerminal")
     // Map routes is an array of MapStopRoute enum names
-    val propMapRoutesKey = "mapRoutes"
-    val propNameKey = "name"
+    val propMapRoutesKey = FeatureProperty<List<String>>("mapRoutes")
+    val propNameKey = FeatureProperty<String>("name")
     // Route IDs are in a map keyed by MapStopRoute enum names, each with a list of IDs
-    val propRouteIdsKey = "routeIds"
-    val propServiceStatusKey = "serviceStatus"
-    val propSortOrderKey = "sortOrder"
+    val propRouteIdsKey = FeatureProperty<Map<String, List<String>>>("routeIds")
+    val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
+    val propSortOrderKey = FeatureProperty<Number>("sortOrder")
 
     fun buildCollection(
         stopData: StopSourceData,
@@ -125,30 +122,33 @@ object StopFeaturesBuilder {
     ): Feature {
         val stop = mapStop.stop
         return Feature(
+            id = stop.id,
             geometry = Point(overrideLocation ?: stop.position),
             properties = generateStopFeatureProperties(mapStop, stopData),
-            id = stop.id
         )
     }
 
     private fun generateStopFeatureProperties(mapStop: MapStop, stopData: StopSourceData) =
-        buildJsonObject {
+        buildFeatureProperties {
             val stop = mapStop.stop
             put(propIdKey, stop.id)
             put(propNameKey, stop.name)
             put(propIsSelectedKey, stop.id == stopData.selectedStopId)
             put(propIsTerminalKey, mapStop.isTerminal)
-            putJsonArray(propMapRoutesKey) {
-                for (route in mapStop.routeTypes) {
-                    add(route.name)
-                }
-            }
-            putJsonObject(propRouteIdsKey) {
-                for ((routeType, routes) in mapStop.routes) {
-                    putJsonArray(routeType.name) { routes.forEach { add(it.id) } }
-                }
-            }
-            put(propServiceStatusKey, serviceStatusValue(mapStop))
+            put(propMapRoutesKey, mapStop.routeTypes.map { it.name })
+            put(
+                propRouteIdsKey,
+                mapStop.routes
+                    .map { (routeType, routes) -> Pair(routeType.name, routes.map { it.id }) }
+                    .toMap()
+            )
+            put(
+                propServiceStatusKey,
+                mapStop.alerts
+                    .orEmpty()
+                    .map { (routeType, alertState) -> Pair(routeType.name, alertState.name) }
+                    .toMap()
+            )
 
             // The symbolSortKey must be ascending, so higher priority icons need higher values.
             // This takes the ordinal of the top route and makes it negative. If there are no routes
@@ -160,10 +160,4 @@ object StopFeaturesBuilder {
                 else mapStop.routeTypes[0].ordinal
             put(propSortOrderKey, if (mapStop.routeTypes.count() > 1) 1 else -topRouteOrdinal)
         }
-
-    private fun serviceStatusValue(mapStop: MapStop) = buildJsonObject {
-        for ((routeType, status) in mapStop.alerts.orEmpty()) {
-            put(routeType.name, status.name)
-        }
-    }
 }

@@ -18,7 +18,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
-import kotlinx.serialization.json.JsonPrimitive
 
 @OptIn(ExperimentalTurfApi::class)
 class RouteFeaturesBuilderTest {
@@ -46,8 +45,7 @@ class RouteFeaturesBuilderTest {
             2,
             collection.features
                 .filter {
-                    it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        JsonPrimitive(MapTestDataHelper.routeRed.id)
+                    it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
                 }
                 .size
         )
@@ -56,7 +54,7 @@ class RouteFeaturesBuilderTest {
             collection.features
                 .filter {
                     it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        JsonPrimitive(MapTestDataHelper.routeOrange.id)
+                        MapTestDataHelper.routeOrange.id
                 }
                 .size
         )
@@ -69,8 +67,7 @@ class RouteFeaturesBuilderTest {
             ),
             collection.features
                 .first {
-                    it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        JsonPrimitive(MapTestDataHelper.routeRed.id)
+                    it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
                 }
                 .geometry
         )
@@ -84,7 +81,7 @@ class RouteFeaturesBuilderTest {
             collection.features
                 .first {
                     it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        JsonPrimitive(MapTestDataHelper.routeOrange.id)
+                        MapTestDataHelper.routeOrange.id
                 }
                 .geometry
         )
@@ -112,22 +109,12 @@ class RouteFeaturesBuilderTest {
         val firstRedFeature =
             collection.features
                 .filter {
-                    it.properties[RouteFeaturesBuilder.propRouteId] ==
-                        JsonPrimitive(MapTestDataHelper.routeRed.id)
+                    it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
                 }[0]
 
-        assertEquals(
-            JsonPrimitive("#DA291C"),
-            firstRedFeature.properties[RouteFeaturesBuilder.propRouteColor]
-        )
-        assertEquals(
-            JsonPrimitive("HEAVY_RAIL"),
-            firstRedFeature.properties[RouteFeaturesBuilder.propRouteType]
-        )
-        assertEquals(
-            JsonPrimitive(-10010),
-            firstRedFeature.properties[RouteFeaturesBuilder.propRouteSortKey]
-        )
+        assertEquals("#DA291C", firstRedFeature.properties[RouteFeaturesBuilder.propRouteColor])
+        assertEquals("HEAVY_RAIL", firstRedFeature.properties[RouteFeaturesBuilder.propRouteType])
+        assertEquals(-10010.0, firstRedFeature.properties[RouteFeaturesBuilder.propRouteSortKey])
     }
 
     @Test
@@ -187,14 +174,13 @@ class RouteFeaturesBuilderTest {
 
         val redFeatures =
             collection.features.filter {
-                it.properties[RouteFeaturesBuilder.propRouteId] ==
-                    JsonPrimitive(MapTestDataHelper.routeRed.id)
+                it.properties[RouteFeaturesBuilder.propRouteId] == MapTestDataHelper.routeRed.id
             }
 
         assertEquals(3, redFeatures.size)
         assertEquals(
-            JsonPrimitive(SegmentAlertState.Normal.name),
-            redFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey]!!
+            SegmentAlertState.Normal.name,
+            redFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey]
         )
         assertEquals(
             lineSlice(
@@ -206,8 +192,8 @@ class RouteFeaturesBuilderTest {
         )
 
         assertEquals(
-            JsonPrimitive(SegmentAlertState.Shuttle.name),
-            redFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey]!!
+            SegmentAlertState.Shuttle.name,
+            redFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey]
         )
         assertEquals(
             lineSlice(
@@ -218,8 +204,8 @@ class RouteFeaturesBuilderTest {
             redFeatures[1].geometry,
         )
         assertEquals(
-            JsonPrimitive(SegmentAlertState.Normal.name),
-            redFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey]!!
+            SegmentAlertState.Normal.name,
+            redFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey]
         )
         assertEquals(
             lineSlice(

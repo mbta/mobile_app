@@ -12,29 +12,22 @@ import Foundation
 import SwiftUI
 
 class MockLayerManager: IMapLayerManager {
-    var stopLayerGenerator: StopLayerGenerator?
-    var childStopSourceGenerator: ChildStopSourceGenerator?
-    var childStopLayerGenerator: ChildStopLayerGenerator?
     private let addLayersCallback: () -> Void
-    private let updateChildStopSourceCallback: (GeoJSONSource) -> Void
+    private let updateChildStopDataCallback: (FeatureCollection) -> Void
     private let updateRouteDataCallback: (FeatureCollection) -> Void
     private let updateStopDataCallback: (FeatureCollection) -> Void
 
     init(addLayersCallback: @escaping () -> Void = {},
-         updateChildStopSourceCallback: @escaping (GeoJSONSource) -> Void = { _ in },
+         updateChildStopDataCallback: @escaping (FeatureCollection) -> Void = { _ in },
          updateRouteDataCallback: @escaping (FeatureCollection) -> Void = { _ in },
          updateStopDataCallback: @escaping (FeatureCollection) -> Void = { _ in }) {
         self.addLayersCallback = addLayersCallback
-        self.updateChildStopSourceCallback = updateChildStopSourceCallback
+        self.updateChildStopDataCallback = updateChildStopDataCallback
         self.updateRouteDataCallback = updateRouteDataCallback
         self.updateStopDataCallback = updateStopDataCallback
     }
 
-    func addLayers(
-        stopLayerGenerator _: StopLayerGenerator,
-        childStopLayerGenerator _: ChildStopLayerGenerator,
-        colorScheme _: ColorScheme
-    ) {
+    func addLayers(colorScheme _: ColorScheme) {
         addLayersCallback()
     }
 
@@ -46,7 +39,7 @@ class MockLayerManager: IMapLayerManager {
         updateStopDataCallback(stopData)
     }
 
-    func updateSourceData(childStopSource: GeoJSONSource) {
-        updateChildStopSourceCallback(childStopSource)
+    func updateSourceData(childStopData: FeatureCollection) {
+        updateChildStopDataCallback(childStopData)
     }
 }

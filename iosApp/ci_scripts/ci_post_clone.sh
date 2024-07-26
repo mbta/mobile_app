@@ -52,23 +52,12 @@ if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   ./gradlew shared:iosX64Test
 fi
 
-
-
-# Skip adding mapbox API key when testing
-if [ $CI_XCODEBUILD_ACTION != "build-for-testing" ]; then
-  echo "configuring mapbox public key"
-  cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-  mkdir -p secrets
-  cd secrets
-  touch mapbox
-  echo "${MAPBOX_PUBLIC_TOKEN}" >> mapbox
-fi
-
 echo "Adding build environment variables"
 cd ${CI_PRIMARY_REPOSITORY_PATH}
 touch .envrc
 echo "export SENTRY_DSN=${SENTRY_DSN}" >> .envrc
 echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}" >> .envrc
 echo "export FIREBASE_KEY=${FIREBASE_KEY}" >> .envrc
+echo "export GOOGLE_APP_ID=${GOOGLE_APP_ID}" >> .envrc
 echo "export APPCUES_ACCOUNT_ID=${APPCUES_ACCOUNT_ID}" >> .envrc
 echo "export APPCUES_APP_ID=${APPCUES_APP_ID}" >> .envrc

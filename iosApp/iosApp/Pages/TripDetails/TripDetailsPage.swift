@@ -56,7 +56,7 @@ struct TripDetailsPage: View {
 
     var body: some View {
         VStack {
-            SheetHeader(onClose: { nearbyVM.goBack() })
+            header
             if let trip, let globalResponse {
                 let vehicle = vehicleResponse?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
@@ -190,11 +190,28 @@ struct TripDetailsPage: View {
         } else {
             nil
         }
-        VehicleCardView(vehicle: vehicle,
-                        route: route,
-                        line: globalResponse?.getLine(lineId: route?.lineId),
-                        stop: vehicleStop,
-                        trip: trip,
-                        now: now.toNSDate())
+        VehicleCardView(
+            vehicle: vehicle,
+            route: route,
+            line: globalResponse?.getLine(lineId: route?.lineId),
+            stop: vehicleStop,
+            trip: trip
+        )
+    }
+
+    @ViewBuilder
+    var header: some View {
+        let trip: Trip? = tripPredictions?.trips[tripId]
+        let route: Route? = if let routeId = trip?.routeId {
+            globalResponse?.routes[routeId]
+        } else {
+            nil
+        }
+        TripDetailsHeader(
+            onBack: nearbyVM.goBack,
+            route: route,
+            line: globalResponse?.getLine(lineId: route?.lineId),
+            trip: trip
+        )
     }
 }

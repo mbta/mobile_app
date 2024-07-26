@@ -3,6 +3,7 @@ import CoreLocation
 import shared
 import SwiftPhoenixClient
 import SwiftUI
+@_spi(Experimental) import MapboxMaps
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -16,12 +17,15 @@ struct ContentView: View {
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
+
+    @ObservedObject var contentVM: ContentViewModel
+
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var nearbyVM: NearbyViewModel = .init()
     @StateObject var mapVM = MapViewModel()
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
-    var getSettingUsecase = UsecaseDI().getSettingUsecase
-    @State var searchEnabled = false
+
+    let inspection = Inspection<Self>()
 
     private enum SelectedTab: Hashable {
         case nearby
@@ -31,6 +35,12 @@ struct ContentView: View {
     @State private var selectedTab = SelectedTab.nearby
 
     var body: some View {
+        contents
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+    }
+
+    @ViewBuilder
+    var contents: some View {
         if selectedTab == .settings {
             TabView(selection: $selectedTab) {
                 nearbyTab
@@ -43,6 +53,7 @@ struct ContentView: View {
                         screenTracker.track(screen: .settings)
                     }
             }
+
         } else {
             nearbyTab
         }
@@ -71,9 +82,10 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            if searchEnabled {
+            if contentVM.searchEnabled {
                 TextField("Find nearby transit", text: $searchObserver.searchText)
                 SearchView(
                     query: searchObserver.debouncedText,
@@ -92,86 +104,86 @@ struct ContentView: View {
             @unknown default:
                 Text("Location access state unknown")
             }
-            HomeMapView(
-                mapVM: mapVM,
-                nearbyVM: nearbyVM,
-                railRouteShapeFetcher: railRouteShapeFetcher,
-                vehiclesFetcher: vehiclesFetcher,
-                viewportProvider: viewportProvider,
-                sheetHeight: $sheetHeight
-            )
-            .sheet(
-                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
-                onDismiss: {
-                    selectedDetent = .halfScreen
 
-                    if visibleNearbySheet == nearbyVM.navigationStack.last {
-                        // When the visible sheet matches the last nav entry, then a dismissal indicates
-                        // an intentional action remove the sheet and replace it with the previous one.
+            mapSection
+                .sheet(
+                    item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
+                    onDismiss: {
+                        selectedDetent = .halfScreen
 
-                        // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                        // being dismissed so that it can be automatically replaced with the new one.
-                        nearbyVM.goBack()
-                    } else {}
-                }
-            ) { sheetIdentityEntry in
-                let entry = sheetIdentityEntry.stackEntry
-                GeometryReader { proxy in
-                    NavigationStack {
-                        switch entry {
-                        case let .stopDetails(stop, _):
-                            StopDetailsPage(
-                                viewportProvider: viewportProvider,
-                                stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                                nearbyVM: nearbyVM
-                            ).onAppear {
-                                visibleNearbySheet = entry
-                                screenTracker.track(screen: .stopDetails)
-                            }
+                        if visibleNearbySheet == nearbyVM.navigationStack.last {
+                            // When the visible sheet matches the last nav entry, then a dismissal indicates
+                            // an intentional action remove the sheet and replace it with the previous one.
 
-                        case let .tripDetails(
-                            tripId: tripId,
-                            vehicleId: vehicleId,
-                            target: target,
-                            routeId: _,
-                            directionId: _
-                        ):
-                            TripDetailsPage(
+                            // When the visible sheet *doesn't* match the latest item in the nav stack, it is
+                            // being dismissed so that it can be automatically replaced with the new one.
+                            nearbyVM.goBack()
+                        }
+                    }
+                ) { sheetIdentityEntry in
+                    let entry = sheetIdentityEntry.stackEntry
+                    GeometryReader { proxy in
+                        NavigationStack {
+                            switch entry {
+                            case let .stopDetails(stop, _):
+                                StopDetailsPage(
+                                    viewportProvider: viewportProvider,
+                                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                                    nearbyVM: nearbyVM
+                                ).onAppear {
+                                    visibleNearbySheet = entry
+                                    screenTracker.track(screen: .stopDetails)
+                                }
+
+                            case let .tripDetails(
                                 tripId: tripId,
                                 vehicleId: vehicleId,
                                 target: target,
-                                nearbyVM: nearbyVM,
-                                mapVM: mapVM
-                            ).onAppear {
-                                screenTracker.track(screen: .tripDetails)
-                                visibleNearbySheet = entry
-                            }
-
-                        case .nearby:
-                            nearbySheetContents
-                                .onAppear {
+                                routeId: _,
+                                directionId: _
+                            ):
+                                TripDetailsPage(
+                                    tripId: tripId,
+                                    vehicleId: vehicleId,
+                                    target: target,
+                                    nearbyVM: nearbyVM,
+                                    mapVM: mapVM
+                                ).onAppear {
+                                    screenTracker.track(screen: .tripDetails)
                                     visibleNearbySheet = entry
-                                    screenTracker.track(screen: .nearbyTransit)
                                 }
+
+                            case .nearby:
+                                nearbySheetContents
+                                    .onAppear {
+                                        visibleNearbySheet = entry
+                                        screenTracker.track(screen: .nearbyTransit)
+                                    }
+                            }
                         }
+                        .onAppear {
+                            recordSheetHeight(proxy.size.height)
+                        }
+                        .onChange(of: proxy.size.height) { newValue in
+                            recordSheetHeight(newValue)
+                        }
+                        // Adding id here prevents the next sheet from opening at the large detent.
+                        // https://stackoverflow.com/a/77429540
+                        .id(sheetIdentityEntry.id)
+                        .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                        .interactiveDismissDisabled(visibleNearbySheet == .nearby)
+                        .modifier(AllowsBackgroundInteraction())
                     }
-                    .onAppear {
-                        recordSheetHeight(proxy.size.height)
-                    }
-                    .onChange(of: proxy.size.height) { newValue in
-                        recordSheetHeight(newValue)
-                    }
-                    // Adding id here prevents the next sheet from opening at the large detent.
-                    // https://stackoverflow.com/a/77429540
-                    .id(sheetIdentityEntry.id)
-                    .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                    .interactiveDismissDisabled(visibleNearbySheet == .nearby)
-                    .modifier(AllowsBackgroundInteraction())
                 }
-            }
         }
         .onAppear {
             socketProvider.socket.attach()
+            Task {
+                await contentVM.loadSettings()
+            }
+            Task {
+                await contentVM.loadConfig()
+            }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -180,13 +192,29 @@ struct ContentView: View {
                 socketProvider.socket.detach()
             }
         }
-        .task {
-            do {
-                searchEnabled = try await getSettingUsecase.execute(setting: .search).boolValue
-            } catch {
-                debugPrint("Failed to load feature flags", error)
+        .onChange(of: contentVM.configResponse) { response in
+            switch onEnum(of: response) {
+            case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
+            default: debugPrint("Skipping mapbox token configuration")
             }
         }
+        .onReceive(mapVM.lastMapboxErrorSubject
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
+                Task {
+                    await contentVM.loadConfig()
+                }
+        }
+    }
+
+    @ViewBuilder var mapSection: some View {
+        HomeMapView(
+            mapVM: mapVM,
+            nearbyVM: nearbyVM,
+            railRouteShapeFetcher: railRouteShapeFetcher,
+            vehiclesFetcher: vehiclesFetcher,
+            viewportProvider: viewportProvider,
+            sheetHeight: $sheetHeight
+        )
     }
 
     private func recordSheetHeight(_ newSheetHeight: CGFloat) {

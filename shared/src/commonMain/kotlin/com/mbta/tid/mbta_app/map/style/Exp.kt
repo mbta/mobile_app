@@ -4,7 +4,6 @@ import kotlin.jvm.JvmName
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonArrayBuilder
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
@@ -72,16 +71,20 @@ sealed interface Exp<T> : MapboxStyleObject {
 
         fun <T> at(index: Exp<Number>, array: Exp<List<T>>): Exp<T> = op("at", index, array)
 
-        fun <T> get(property: Exp<String>, inObject: Exp<JsonObject>? = null): Exp<T> =
+        fun <T> get(property: FeatureProperty<T>): Exp<T> = op("get") { add(property.key) }
+
+        fun <K, V> get(property: Exp<K>, inObject: Exp<Map<K, V>>): Exp<V> =
             op("get") {
                 add(property)
-                inObject?.let { add(it) }
+                add(inObject)
             }
 
-        fun has(property: Exp<String>, inObject: Exp<JsonObject>? = null): Exp<Boolean> =
+        fun has(property: FeatureProperty<*>): Exp<Boolean> = op("has") { add(property.key) }
+
+        fun <K, V> has(property: Exp<K>, inObject: Exp<Map<K, V>>): Exp<Boolean> =
             op("has") {
                 add(property)
-                inObject?.let { add(it) }
+                add(inObject)
             }
 
         @JvmName("inArray")
@@ -180,6 +183,12 @@ sealed interface Exp<T> : MapboxStyleObject {
     }
 }
 
+fun Exp(value: Boolean): Exp<Boolean> = Exp.Bare(JsonPrimitive(value))
+
 fun Exp(value: Number): Exp<Number> = Exp.Bare(JsonPrimitive(value))
 
 fun Exp(value: String): Exp<String> = Exp.Bare(JsonPrimitive(value))
+
+fun Exp<String>.downcastToColor(): Exp<Color> = Exp.Bare(this.asJson())
+
+fun Exp<String>.downcastToResolvedImage(): Exp<ResolvedImage> = Exp.Bare(this.asJson())

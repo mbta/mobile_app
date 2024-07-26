@@ -12,29 +12,22 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
-    func addLayers(
-        stopLayerGenerator: StopLayerGenerator,
-        childStopLayerGenerator: ChildStopLayerGenerator,
-        colorScheme: ColorScheme
-    )
+    func addLayers(colorScheme: ColorScheme)
 
-    func updateSourceData(routeData: FeatureCollection)
-    func updateSourceData(stopData: FeatureCollection)
-    func updateSourceData(childStopSource: GeoJSONSource)
+    func updateSourceData(routeData: MapboxMaps.FeatureCollection)
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection)
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection)
 }
 
 struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
     let map: MapboxMap
-    var stopLayerGenerator: StopLayerGenerator?
-    var childStopSourceGenerator: ChildStopSourceGenerator?
-    var childStopLayerGenerator: ChildStopLayerGenerator?
 
     init(map: MapboxMap) {
         self.map = map
 
-        for iconId in StopIcons.all + AlertIcons.all + ChildStopIcons.all {
+        for iconId in StopIcons.shared.all + AlertIcons.shared.all + ChildStopIcons.shared.all {
             do {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
                 try map.addImage(image, id: iconId)
@@ -52,11 +45,7 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func addLayers(
-        stopLayerGenerator: StopLayerGenerator,
-        childStopLayerGenerator: ChildStopLayerGenerator,
-        colorScheme: ColorScheme
-    ) {
+    func addLayers(colorScheme: ColorScheme) {
         let colorPalette = switch colorScheme {
         case .light: ColorPalette.companion.light
         case .dark: ColorPalette.companion.dark
@@ -64,7 +53,8 @@ class MapLayerManager: IMapLayerManager {
         }
         let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
             .map { $0.toMapbox() }
-            + stopLayerGenerator.stopLayers + [childStopLayerGenerator.childStopLayer]
+            + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette).map { $0.toMapbox() }
+            + [ChildStopLayerGenerator.shared.createChildStopLayer(colorPalette: colorPalette).toMapbox()]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
@@ -82,18 +72,7 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(source: GeoJSONSource) {
-        if map.sourceExists(withId: source.id) {
-            guard let actualData = source.data else {
-                return
-            }
-            map.updateGeoJSONSource(withId: source.id, data: actualData)
-        } else {
-            addSource(source: source)
-        }
-    }
-
-    func updateSourceData(sourceId: String, data: FeatureCollection) {
+    func updateSourceData(sourceId: String, data: MapboxMaps.FeatureCollection) {
         if map.sourceExists(withId: sourceId) {
             map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
         } else {
@@ -103,15 +82,15 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(routeData: FeatureCollection) {
+    func updateSourceData(routeData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
-    func updateSourceData(stopData: FeatureCollection) {
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 
-    func updateSourceData(childStopSource: GeoJSONSource) {
-        updateSourceData(source: childStopSource)
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection) {
+        updateSourceData(sourceId: ChildStopFeaturesBuilder.shared.childStopSourceId, data: childStopData)
     }
 }

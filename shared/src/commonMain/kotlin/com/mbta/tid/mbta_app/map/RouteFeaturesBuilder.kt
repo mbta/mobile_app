@@ -1,5 +1,10 @@
 package com.mbta.tid.mbta_app.map
 
+import com.mbta.tid.mbta_app.map.style.Color
+import com.mbta.tid.mbta_app.map.style.Feature
+import com.mbta.tid.mbta_app.map.style.FeatureCollection
+import com.mbta.tid.mbta_app.map.style.FeatureProperty
+import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.AlertAwareRouteSegment
 import com.mbta.tid.mbta_app.model.Route
@@ -10,12 +15,9 @@ import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
-import io.github.dellisd.spatialk.geojson.Feature
-import io.github.dellisd.spatialk.geojson.FeatureCollection
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
-import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 data class RouteLineData(
@@ -35,11 +37,11 @@ data class RouteLineData(
 object RouteFeaturesBuilder {
     val routeSourceId = "route-source"
 
-    val propRouteId = "routeId"
-    val propRouteType = "routeType"
-    val propRouteSortKey = "routeSortKey"
-    val propRouteColor = "routeColor"
-    val propAlertStateKey = "alertState"
+    val propRouteId = FeatureProperty<String>("routeId")
+    val propRouteType = FeatureProperty<String>("routeType")
+    val propRouteSortKey = FeatureProperty<Number>("routeSortKey")
+    val propRouteColor = FeatureProperty<Color>("routeColor")
+    val propAlertStateKey = FeatureProperty<String>("alertState")
 
     fun generateRouteLines(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
@@ -123,7 +125,7 @@ object RouteFeaturesBuilder {
         Feature(
             geometry = routeLineData.line,
             properties =
-                buildJsonObject {
+                buildFeatureProperties {
                     put(propRouteId, routeLineData.routeId)
                     routeLineData.routeType?.let { put(propRouteType, it) }
                     routeLineData.color?.let { put(propRouteColor, it) }

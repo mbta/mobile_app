@@ -1,5 +1,5 @@
 //
-//  CloseButtonTests.swift
+//  ActionButtonTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/10/24.
@@ -14,14 +14,14 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class CloseButtonTests: XCTestCase {
+final class ActionButtonTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
 
-    func testCloseButtonTap() throws {
-        let exp = XCTestExpectation(description: "Close button pressed")
-        let sut = CloseButton {
+    func testActionButtonTap() throws {
+        let exp = XCTestExpectation(description: "Action button pressed")
+        let sut = ActionButton(kind: .close) {
             exp.fulfill()
         }
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Close"))
