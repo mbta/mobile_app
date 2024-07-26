@@ -1,21 +1,17 @@
 package com.mbta.tid.mbta_app.map
 
-import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.map.MapTestDataHelper.routesById
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.StopAlertState
-import io.github.dellisd.spatialk.geojson.Feature
 import io.github.dellisd.spatialk.geojson.Point
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.decodeFromJsonElement
 
 class StopFeaturesBuilderTest {
     @Test
@@ -214,12 +210,9 @@ class StopFeaturesBuilderTest {
         val selectedFeature = collection.features.find { it.id == selectedStop.id }
         val otherFeature = collection.features.find { it.id == otherStop.id }
         assertNotNull(selectedFeature)
-        assertEquals(
-            true,
-            selectedFeature.getBooleanProperty(StopFeaturesBuilder.propIsSelectedKey)
-        )
+        assertEquals(true, selectedFeature.properties[StopFeaturesBuilder.propIsSelectedKey])
 
-        assertEquals(false, otherFeature?.getBooleanProperty(StopFeaturesBuilder.propIsSelectedKey))
+        assertEquals(false, otherFeature?.properties?.get(StopFeaturesBuilder.propIsSelectedKey))
     }
 
     @Test
@@ -330,15 +323,18 @@ class StopFeaturesBuilderTest {
 
         val alewifeFeature = collection.features.find { it.id == "place-alfcl" }
         assertNotNull(alewifeFeature)
-        val alewifeServiceStatus: Map<MapStopRoute, StopAlertState> =
-            alewifeFeature.getDecodedJsonProperty(StopFeaturesBuilder.propServiceStatusKey)
-        assertEquals(StopAlertState.Shuttle, alewifeServiceStatus[MapStopRoute.RED])
+        val alewifeServiceStatus =
+            alewifeFeature.properties.get(StopFeaturesBuilder.propServiceStatusKey)
+        assertEquals(StopAlertState.Shuttle.name, alewifeServiceStatus[MapStopRoute.RED.name])
 
         val assemblyFeature = collection.features.find { it.id == "place-astao" }
         assertNotNull(assemblyFeature)
-        val assemblyServiceStatus: Map<MapStopRoute, StopAlertState> =
-            assemblyFeature.getDecodedJsonProperty(StopFeaturesBuilder.propServiceStatusKey)
-        assertEquals(StopAlertState.Suspension, assemblyServiceStatus[MapStopRoute.ORANGE])
+        val assemblyServiceStatus =
+            assemblyFeature.properties.get(StopFeaturesBuilder.propServiceStatusKey)
+        assertEquals(
+            StopAlertState.Suspension.name,
+            assemblyServiceStatus[MapStopRoute.ORANGE.name]
+        )
     }
 
     @Test
@@ -369,21 +365,18 @@ class StopFeaturesBuilderTest {
         val assemblyFeature =
             collection.features.find { it.id == MapTestDataHelper.stopAssembly.id }
 
-        val assemblyRoutes: List<MapStopRoute>? =
-            assemblyFeature?.getDecodedJsonProperty(StopFeaturesBuilder.propMapRoutesKey)
-        assertEquals(listOf(MapStopRoute.ORANGE), assemblyRoutes)
+        val assemblyRoutes = assemblyFeature?.properties?.get(StopFeaturesBuilder.propMapRoutesKey)
+        assertEquals(listOf(MapStopRoute.ORANGE.name), assemblyRoutes)
 
         val alewifeFeature = collection.features.find { it.id == MapTestDataHelper.stopAlewife.id }
 
-        val alewifeRoutes: List<MapStopRoute>? =
-            alewifeFeature?.getDecodedJsonProperty(StopFeaturesBuilder.propMapRoutesKey)
-        assertEquals(listOf(MapStopRoute.RED, MapStopRoute.BUS), alewifeRoutes)
-        val alewifeRouteIds: Map<MapStopRoute, List<String>>? =
-            alewifeFeature?.getDecodedJsonProperty(StopFeaturesBuilder.propRouteIdsKey)
+        val alewifeRoutes = alewifeFeature?.properties?.get(StopFeaturesBuilder.propMapRoutesKey)
+        assertEquals(listOf(MapStopRoute.RED.name, MapStopRoute.BUS.name), alewifeRoutes)
+        val alewifeRouteIds = alewifeFeature?.properties?.get(StopFeaturesBuilder.propRouteIdsKey)
         assertEquals(
             mapOf(
-                MapStopRoute.RED to listOf(MapTestDataHelper.routeRed.id),
-                MapStopRoute.BUS to listOf(MapTestDataHelper.route67.id)
+                MapStopRoute.RED.name to listOf(MapTestDataHelper.routeRed.id),
+                MapStopRoute.BUS.name to listOf(MapTestDataHelper.route67.id)
             ),
             alewifeRouteIds
         )
@@ -408,12 +401,12 @@ class StopFeaturesBuilderTest {
         val assemblyFeature =
             collection.features.find { it.id == MapTestDataHelper.stopAssembly.id }
 
-        val assemblyName = assemblyFeature?.getStringProperty(StopFeaturesBuilder.propNameKey)
+        val assemblyName = assemblyFeature?.properties?.get(StopFeaturesBuilder.propNameKey)
         assertEquals(MapTestDataHelper.stopAssembly.name, assemblyName)
 
         val alewifeFeature = collection.features.find { it.id == MapTestDataHelper.stopAlewife.id }
 
-        val alewifeName = alewifeFeature?.getStringProperty(StopFeaturesBuilder.propNameKey)
+        val alewifeName = alewifeFeature?.properties?.get(StopFeaturesBuilder.propNameKey)
         assertEquals(MapTestDataHelper.stopAlewife.name, alewifeName)
     }
 
@@ -436,16 +429,12 @@ class StopFeaturesBuilderTest {
         val alewifeFeature = collection.features.find { it.id == MapTestDataHelper.stopAlewife.id }
 
         val alewifeIsTerminal =
-            alewifeFeature?.getBooleanProperty(StopFeaturesBuilder.propIsTerminalKey)
+            alewifeFeature?.properties?.get(StopFeaturesBuilder.propIsTerminalKey)
         assertEquals(MapTestDataHelper.mapStopAlewife.isTerminal, alewifeIsTerminal)
 
         val davisFeature = collection.features.find { it.id == MapTestDataHelper.stopDavis.id }
 
-        val davisIsTerminal =
-            davisFeature?.getBooleanProperty(StopFeaturesBuilder.propIsTerminalKey)
+        val davisIsTerminal = davisFeature?.properties?.get(StopFeaturesBuilder.propIsTerminalKey)
         assertEquals(MapTestDataHelper.mapStopDavis.isTerminal, davisIsTerminal)
     }
-
-    private inline fun <reified T> Feature.getDecodedJsonProperty(key: String) =
-        json.decodeFromJsonElement<T>(getJsonProperty(key) ?: JsonNull)
 }

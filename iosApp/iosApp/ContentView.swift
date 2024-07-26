@@ -182,9 +182,7 @@ struct ContentView: View {
                 await contentVM.loadSettings()
             }
             Task {
-                if contentVM.dynamicMapKeyEnabled {
-                    await contentVM.loadConfig()
-                }
+                await contentVM.loadConfig()
             }
         }
         .onChange(of: scenePhase) { newPhase in
@@ -194,18 +192,17 @@ struct ContentView: View {
                 socketProvider.socket.detach()
             }
         }
-        .onChange(of: contentVM.dynamicMapKeyEnabled) { isEnabled in
-            if isEnabled {
-                Task {
-                    await contentVM.loadConfig()
-                }
-            }
-        }
         .onChange(of: contentVM.configResponse) { response in
             switch onEnum(of: response) {
             case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
             default: debugPrint("Skipping mapbox token configuration")
             }
+        }
+        .onReceive(mapVM.lastMapboxErrorSubject
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
+                Task {
+                    await contentVM.loadConfig()
+                }
         }
     }
 

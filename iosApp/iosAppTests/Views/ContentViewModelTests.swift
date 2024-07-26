@@ -26,10 +26,9 @@ final class ContentViewModelTests: XCTestCase {
     }
 
     func testLoadSettingsSetsSettings() async {
-        let expectedResult: Set<Setting> = [.init(key: .dynamicMapKey, isOn: true), .init(key: .search, isOn: true)]
+        let expectedResult: Set<Setting> = [.init(key: .search, isOn: true)]
         let contentVM = ContentViewModel(settingsRepo: MockSettingsRepository(settings: expectedResult))
         await contentVM.loadSettings()
-        XCTAssertTrue(contentVM.dynamicMapKeyEnabled)
         XCTAssertTrue(contentVM.searchEnabled)
     }
 }
