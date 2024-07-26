@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
@@ -81,8 +82,9 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
+                null,
                 setOf(),
-                filterAtTime = time1
+                filterAtTime = time1,
             )
         )
     }
@@ -276,8 +278,9 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
+                null,
                 setOf(),
-                filterAtTime = time
+                filterAtTime = time,
             )
         )
     }
@@ -359,6 +362,7 @@ class StopDetailsDeparturesTest {
                 GlobalResponse(objects, mapOf(stop.id to objects.routePatterns.keys.toList())),
                 ScheduleResponse(objects).takeIf { includeSchedules },
                 PredictionsStreamDataResponse(objects).takeIf { includePredictions },
+                null,
                 setOf(),
                 filterAtTime = time
             )
@@ -497,9 +501,76 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
+                null,
                 setOf(routePinned.id),
-                filterAtTime = time1
+                filterAtTime = time1,
             )
+        )
+    }
+
+    @Test
+    fun `StopDetailsDepartures picks out alerts`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route { sortOrder = 1 }
+        val routePattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        val alert =
+            objects.alert {
+                activePeriod(
+                    Instant.parse("2024-03-18T04:30:00-04:00"),
+                    Instant.parse("2024-03-22T02:30:00-04:00")
+                )
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = stop.id
+                )
+            }
+
+        val departures =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                emptySet(),
+                time
+            )
+
+        assertEquals(
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        route,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                route,
+                                "A",
+                                null,
+                                listOf(routePattern),
+                                emptyList(),
+                                alertsHere = listOf(alert)
+                            )
+                        )
+                    )
+                )
+            ),
+            departures
         )
     }
 }

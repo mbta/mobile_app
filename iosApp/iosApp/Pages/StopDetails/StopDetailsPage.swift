@@ -149,6 +149,7 @@ struct StopDetailsPage: View {
                 global: globalResponse,
                 schedules: schedulesResponse,
                 predictions: predictions,
+                alerts: nearbyVM.alerts,
                 pinnedRoutes: pinnedRoutes,
                 filterAtTime: now.toKotlinInstant()
             )

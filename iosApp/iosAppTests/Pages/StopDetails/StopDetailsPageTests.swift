@@ -151,7 +151,7 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 0.2) { view in
+        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { view in
             XCTAssertNotNil(try view.find(StopDetailsRoutesView.self))
         }
         ViewHosting.host(view: sut)

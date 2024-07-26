@@ -58,17 +58,12 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             } else {
                 null
             },
-            if (alerts != null) {
-                stopIds.flatMap { stopId ->
-                    alerts.filter { alert ->
-                        alert.anyInformedEntity {
-                            it.appliesTo(routeId = staticData.route.id, stopId = stopId) &&
-                                it.activities.contains(Alert.InformedEntity.Activity.Board)
-                        }
-                    }
-                }
-            } else {
-                null
+            alerts?.let {
+                applicableAlerts(
+                    routes = listOf(staticData.route),
+                    stopIds = stopIds,
+                    alerts = alerts
+                )
             }
         )
     }
@@ -126,18 +121,8 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             } else {
                 null
             },
-            if (alerts != null) {
-                stopIds.flatMap { stopId ->
-                    alerts.filter { alert ->
-                        alert.anyInformedEntity {
-                            staticData.routes.any { route ->
-                                it.appliesTo(routeId = route.id, stopId = stopId)
-                            } && it.activities.contains(Alert.InformedEntity.Activity.Board)
-                        }
-                    }
-                }
-            } else {
-                null
+            alerts?.let {
+                applicableAlerts(routes = staticData.routes, stopIds = stopIds, alerts = alerts)
             }
         )
     }
@@ -262,5 +247,30 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         }
 
         data class NoService(val alert: Alert) : Format()
+    }
+
+    companion object {
+
+        /**
+         * Returns alerts that are applicable to the passed in routes and stops
+         *
+         * Criteria:
+         * - Route ID matches an alert [Alert.InformedEntity]
+         * - Stop ID matches an alert [Alert.InformedEntity]
+         * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
+         */
+        fun applicableAlerts(
+            routes: List<Route>,
+            stopIds: Set<String>,
+            alerts: Collection<Alert>
+        ): List<Alert> =
+            stopIds.flatMap { stopId ->
+                alerts.filter { alert ->
+                    alert.anyInformedEntity {
+                        routes.any { route -> it.appliesTo(routeId = route.id, stopId = stopId) } &&
+                            it.activities.contains(Alert.InformedEntity.Activity.Board)
+                    }
+                }
+            }
     }
 }
