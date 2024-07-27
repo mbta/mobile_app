@@ -50,31 +50,32 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        StopDetailsView(stop: stop,
-                        filter: $filter,
-                        nearbyVM: nearbyVM,
-                        pinnedRoutes: pinnedRoutes,
-                        togglePinnedRoute: togglePinnedRoute)
-            .onAppear {
-                loadGlobalData()
-                changeStop(stop)
-                loadPinnedRoutes()
-            }
-
-            .onChange(of: stop) { nextStop in changeStop(nextStop) }
-            .onChange(of: globalResponse) { _ in updateDepartures() }
-            .onChange(of: pinnedRoutes) { _ in updateDepartures() }
-            .onChange(of: predictions) { _ in updateDepartures() }
-            .onChange(of: schedulesResponse) { _ in updateDepartures() }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .onReceive(timer) { input in
-                now = input
-                updateDepartures()
-            }
-            .onDisappear { leavePredictions() }
-            .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
-                                    onInactive: leavePredictions,
-                                    onBackground: leavePredictions)
+        StopDetailsView(
+            stop: stop,
+            filter: $filter,
+            nearbyVM: nearbyVM,
+            pinnedRoutes: pinnedRoutes,
+            togglePinnedRoute: togglePinnedRoute
+        )
+        .onAppear {
+            loadGlobalData()
+            changeStop(stop)
+            loadPinnedRoutes()
+        }
+        .onChange(of: stop) { nextStop in changeStop(nextStop) }
+        .onChange(of: globalResponse) { _ in updateDepartures() }
+        .onChange(of: pinnedRoutes) { _ in updateDepartures() }
+        .onChange(of: predictions) { _ in updateDepartures() }
+        .onChange(of: schedulesResponse) { _ in updateDepartures() }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onReceive(timer) { input in
+            now = input
+            updateDepartures()
+        }
+        .onDisappear { leavePredictions() }
+        .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
+                                onInactive: leavePredictions,
+                                onBackground: leavePredictions)
     }
 
     func loadGlobalData() {

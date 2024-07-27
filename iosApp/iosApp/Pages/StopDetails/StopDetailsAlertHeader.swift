@@ -1,0 +1,28 @@
+//
+//  StopDetailsAlertHeader.swift
+//  iosApp
+//
+//  Created by Simon, Emma on 7/26/24.
+//  Copyright © 2024 MBTA. All rights reserved.
+//
+
+import shared
+import SwiftUI
+
+struct StopDetailsAlertHeader: View {
+    let alert: shared.Alert
+    let routeColor: Color?
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            AlertIcon(alertState: alert.alertState, color: routeColor)
+                .frame(width: 36, height: 36)
+                .padding(6)
+            Text(alert.header ?? "")
+                .font(.callout)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.vertical, 3)
+        }.padding(.horizontal, 8).padding(.vertical, 12)
+    }
+}

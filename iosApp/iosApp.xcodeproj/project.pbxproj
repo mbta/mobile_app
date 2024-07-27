@@ -119,6 +119,8 @@
 		9A6FA0252BC714360067769C /* HomeMapViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0242BC714360067769C /* HomeMapViewTest.swift */; };
 		9A6FA0282BC72F110067769C /* StopDetailsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0272BC72F110067769C /* StopDetailsPageTests.swift */; };
 		9A74A2112BE2D71400E57102 /* AnnotationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A74A2102BE2D71400E57102 /* AnnotationLabel.swift */; };
+		9A76022D2C5468C300B69A35 /* AlertIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A76022C2C5468C300B69A35 /* AlertIcon.swift */; };
+		9A76022F2C546CE300B69A35 /* StopDetailsAlertHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */; };
 		9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7AC5C12BE139FB0036126F /* AnnotatedMap.swift */; };
 		9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7B7CA82B98E41B0045214F /* NonNilModifierTests.swift */; };
 		9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D562B683103006F5B80 /* SearchResultView.swift */; };
@@ -337,6 +339,8 @@
 		9A6FA0242BC714360067769C /* HomeMapViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTest.swift; sourceTree = "<group>"; };
 		9A6FA0272BC72F110067769C /* StopDetailsPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StopDetailsPageTests.swift; sourceTree = "<group>"; };
 		9A74A2102BE2D71400E57102 /* AnnotationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationLabel.swift; sourceTree = "<group>"; };
+		9A76022C2C5468C300B69A35 /* AlertIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertIcon.swift; sourceTree = "<group>"; };
+		9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsAlertHeader.swift; sourceTree = "<group>"; };
 		9A7AC5C12BE139FB0036126F /* AnnotatedMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotatedMap.swift; sourceTree = "<group>"; };
 		9A7B7CA82B98E41B0045214F /* NonNilModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonNilModifierTests.swift; sourceTree = "<group>"; };
 		9A887D562B683103006F5B80 /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
@@ -655,6 +659,7 @@
 				9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */,
 				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
 				6E55C17E2C247D480086A424 /* StopDetailsView.swift */,
+				9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -782,6 +787,7 @@
 				9AAA26A02C2DB43600A7745A /* PredictionRowView.swift */,
 				9A2005C82B97B65900F562E1 /* HeadsignRowView.swift */,
 				9AAA26A22C2DB79E00A7745A /* DirectionRowView.swift */,
+				9A76022C2C5468C300B69A35 /* AlertIcon.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1263,6 +1269,7 @@
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
 				9A887D572B683103006F5B80 /* SearchResultView.swift in Sources */,
 				EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */,
+				9A76022D2C5468C300B69A35 /* AlertIcon.swift in Sources */,
 				8C815AF32BF5257B009BB51C /* TripDetailsStopListView.swift in Sources */,
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
@@ -1298,6 +1305,7 @@
 				9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */,
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
 				9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */,
+				9A76022F2C546CE300B69A35 /* StopDetailsAlertHeader.swift in Sources */,
 				9AB619AC2BF29FC6007E7191 /* PredictionText.swift in Sources */,
 				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
 				9A9E7DD72C220812000DA1FD /* LineCard.swift in Sources */,

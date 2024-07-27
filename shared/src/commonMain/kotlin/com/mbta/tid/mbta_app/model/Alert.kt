@@ -8,11 +8,24 @@ import kotlinx.serialization.Serializable
 data class Alert(
     override val id: String,
     @SerialName("active_period") val activePeriod: List<ActivePeriod>,
+    val description: String?,
     val effect: Effect,
     @SerialName("effect_name") val effectName: String?,
+    val header: String?,
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle
 ) : BackendObject {
+    val alertState: StopAlertState =
+        if (this.effect == Alert.Effect.Shuttle) {
+            StopAlertState.Shuttle
+        } else if (
+            this.effect != Alert.Effect.Detour && serviceDisruptionEffects.contains(this.effect)
+        ) {
+            StopAlertState.Suspension
+        } else {
+            StopAlertState.Issue
+        }
+
     companion object {
         val serviceDisruptionEffects =
             setOf(
@@ -20,7 +33,8 @@ data class Alert(
                 Alert.Effect.Shuttle,
                 Alert.Effect.Suspension,
                 Alert.Effect.Detour,
-                Alert.Effect.StopClosure
+                Alert.Effect.StopClosure,
+                Alert.Effect.DockClosure
             )
     }
 
