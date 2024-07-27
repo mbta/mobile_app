@@ -32,8 +32,10 @@ class AlertsChannelTest {
                                     put("end", JsonNull)
                                 }
                             }
+                            put("description", "Description")
                             put("effect", "station_issue")
                             put("effect_name", JsonNull)
+                            put("header", "Header")
                             putJsonArray("informed_entity") {
                                 addJsonObject {
                                     putJsonArray("activities") { add("board") }
@@ -65,8 +67,10 @@ class AlertsChannelTest {
                             listOf(
                                 Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
                             ),
+                            "Description",
                             Alert.Effect.StationIssue,
                             null,
+                            "Header",
                             listOf(
                                 Alert.InformedEntity(
                                     listOf(Alert.InformedEntity.Activity.Board),

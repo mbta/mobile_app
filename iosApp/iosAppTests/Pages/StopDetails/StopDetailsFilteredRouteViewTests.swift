@@ -162,6 +162,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         let sut = StopDetailsFilteredRouteView(
             departures: data.departures,
+            global: nil,
             now: data.now,
             filter: .constant(.init(routeId: data.routeId, directionId: 0)),
             pushNavEntry: { _ in },
@@ -177,6 +178,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         let sut = StopDetailsFilteredRouteView(
             departures: data.departures,
+            global: nil,
             now: data.now,
             filter: .constant(.init(routeId: data.lineId, directionId: 0)),
             pushNavEntry: { _ in },
@@ -209,6 +211,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         let sut = StopDetailsFilteredRouteView(
             departures: data.departures,
+            global: nil,
             now: data.now,
             filter: .constant(.init(routeId: data.routeId, directionId: 0)),
             pushNavEntry: pushNavEntry,

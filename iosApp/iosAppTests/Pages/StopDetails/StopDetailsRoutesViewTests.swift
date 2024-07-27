@@ -31,6 +31,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let (departures: departures, routeId: _) = testData()
 
         let sut = StopDetailsRoutesView(departures: departures,
+                                        global: .none,
                                         now: Date.now.toKotlinInstant(),
                                         filter: .constant(nil),
                                         pushNavEntry: { _ in },
@@ -47,6 +48,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let filter = StopDetailsFilter(routeId: routeId, directionId: 0)
         let sut = StopDetailsRoutesView(
             departures: departures,
+            global: .none,
             now: Date.now.toKotlinInstant(),
             filter: .constant(filter),
             pushNavEntry: { _ in },
