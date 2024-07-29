@@ -1,8 +1,10 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 
 class PatternsByStopTest {
@@ -84,5 +86,112 @@ class PatternsByStopTest {
             ),
             patternsByStop.allUpcomingTrips()
         )
+    }
+
+    @Test
+    fun `alertsHereFor returns directional alerts`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val stop = objects.stop()
+        val routePatternAshmont =
+            objects.routePattern(route) {
+                representativeTrip {
+                    headsign = "Ashmont"
+                    stopIds = listOf(stop.id)
+                }
+            }
+        val routePatternBraintree =
+            objects.routePattern(route) {
+                representativeTrip {
+                    headsign = "Braintree"
+                    stopIds = listOf(stop.id)
+                }
+            }
+
+        val time = Clock.System.now()
+
+        val tripBraintree = objects.trip(routePatternBraintree)
+        val scheduleBraintree =
+            objects.schedule {
+                trip = tripBraintree
+                departureTime = time + 2.minutes
+            }
+        val upcomingTripBraintree = objects.upcomingTrip(scheduleBraintree)
+
+        val tripAshmont = objects.trip(routePatternAshmont)
+        val scheduleAshmont =
+            objects.schedule {
+                trip = tripAshmont
+                departureTime = time + 10.minutes
+            }
+        val upcomingTripAshmont = objects.upcomingTrip(scheduleAshmont)
+
+        val alert1 =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Exit),
+                    route = route.id,
+                    stop = stop.id
+                )
+            }
+        val alert2 =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = stop.id
+                )
+            }
+        val alert3 =
+            objects.alert {
+                effect = Alert.Effect.Detour
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = "other stop"
+                )
+            }
+
+        val patternsByStop =
+            PatternsByStop(
+                route,
+                stop,
+                listOf(
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Ashmont",
+                        null,
+                        listOf(routePatternAshmont),
+                        listOf(upcomingTripAshmont),
+                        listOf(alert1)
+                    ),
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Braintree",
+                        null,
+                        listOf(routePatternBraintree),
+                        listOf(upcomingTripBraintree),
+                        listOf(alert2, alert3)
+                    )
+                )
+            )
+
+        val global =
+            GlobalResponse(
+                objects,
+                mapOf(Pair(stop.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
+            )
+        val alerts =
+            patternsByStop.alertsHereFor(
+                directionId = routePatternAshmont.directionId,
+                global = global
+            )
+        assertEquals(listOf(alert2), alerts)
     }
 }
