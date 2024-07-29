@@ -10,11 +10,12 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.res.ResourcesCompat
 
 @Composable
 fun MyApplicationTheme(
@@ -44,23 +45,15 @@ fun MyApplicationTheme(
             )
         }
     val fontFamily =
-        FontFamily(ResourcesCompat.getFont(MainApplication.appContext, R.font.inter_regular)!!)
+        FontFamily(
+            Font(R.font.inter_regular, FontWeight.Normal, FontStyle.Normal),
+            Font(R.font.inter_bold, FontWeight.Bold, FontStyle.Normal)
+        )
     val typography =
         Typography(
-            bodySmall =
-                TextStyle(
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp
-                ),
-            bodyMedium =
-                TextStyle(
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 17.sp
-                ),
-            bodyLarge =
-                TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 24.sp)
+            bodySmall = TextStyle(fontFamily = fontFamily, fontSize = 16.sp),
+            bodyMedium = TextStyle(fontFamily = fontFamily, fontSize = 17.sp),
+            bodyLarge = TextStyle(fontFamily = fontFamily, fontSize = 24.sp)
         )
     val shapes =
         Shapes(

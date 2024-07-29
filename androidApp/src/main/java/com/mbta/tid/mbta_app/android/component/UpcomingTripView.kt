@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -12,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,28 +51,61 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {
-                is TripInstantDisplay.Overridden -> Text(state.trip.text, modifier)
+                is TripInstantDisplay.Overridden ->
+                    Text(state.trip.text, modifier, fontSize = 13.sp)
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
                 is TripInstantDisplay.Boarding ->
-                    Text(stringResource(R.string.boarding_abbr), modifier)
+                    Text(
+                        stringResource(R.string.boarding_abbr),
+                        modifier,
+                        fontWeight = FontWeight.Bold
+                    )
                 is TripInstantDisplay.Arriving ->
-                    Text(stringResource(R.string.arriving_abbr), modifier)
+                    Text(
+                        stringResource(R.string.arriving_abbr),
+                        modifier,
+                        fontWeight = FontWeight.Bold
+                    )
                 is TripInstantDisplay.Approaching ->
-                    Text(stringResource(R.string.approaching_abbr), modifier)
+                    Row(modifier) {
+                        val resourceParts = stringResource(R.string.approaching_abbr).split(" ")
+                        Text(resourceParts.first(), fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            resourceParts
+                                .slice(IntRange(start = 1, endInclusive = 1))
+                                .joinToString(" ")
+                        )
+                    }
                 is TripInstantDisplay.AsTime ->
-                    Text(formatTime(state.trip.predictionTime), modifier)
+                    Text(
+                        formatTime(state.trip.predictionTime),
+                        modifier,
+                        fontWeight = FontWeight.Bold
+                    )
                 is TripInstantDisplay.Schedule ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Text(formatTime(state.trip.scheduleTime))
+                        Text(formatTime(state.trip.scheduleTime), fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(8.dp))
                         Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")
                     }
                 is TripInstantDisplay.Minutes ->
-                    Text(stringResource(R.string.minutes_abbr, state.trip.minutes), modifier)
+                    Row(modifier) {
+                        val resourceParts =
+                            stringResource(R.string.minutes_abbr, state.trip.minutes).split(" ")
+                        Text(resourceParts.first(), fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            resourceParts
+                                .slice(IntRange(start = 1, endInclusive = 1))
+                                .joinToString(" ")
+                        )
+                    }
             }
         is UpcomingTripViewState.NoService ->
             NoServiceView(NoServiceViewEffect.from(state.effect), modifier)
-        is UpcomingTripViewState.None -> Text("No Predictions", modifier)
+        is UpcomingTripViewState.None -> Text("No Predictions", modifier, fontSize = 13.sp)
         is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
     }
 }
