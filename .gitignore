@@ -17,3 +17,4 @@ iosApp/AppCheckCI.xcconfig
 /iosApp/secrets/*
 /iosApp/Pods/*
 /androidApp/src/main/res/values/secrets.xml
+/androidApp/src/main/java/com/mbta/tid/mbta_app/android/generated

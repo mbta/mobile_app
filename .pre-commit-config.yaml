@@ -14,8 +14,12 @@ repos:
     hooks:
       - id: gradle-spotless
         entry: gradle-spotless -w
+      - id: gradle-task
+        alias: gradle-spotless-buildSrc
+        name: "gradle spotless buildSrc"
+        entry: gradle-task :buildSrc:spotlessCheck :buildSrc:spotlessApply -w
   - repo: https://github.com/nicklockwood/SwiftFormat
     rev: 0.53.1
     hooks:
       - id: swiftformat
-        args: ["--config","config.swiftformat"]
+        args: [ "--config","config.swiftformat" ]
