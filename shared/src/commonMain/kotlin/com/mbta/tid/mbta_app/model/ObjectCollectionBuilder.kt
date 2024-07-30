@@ -38,9 +38,11 @@ class ObjectCollectionBuilder {
     class AlertBuilder : ObjectBuilder<Alert> {
         var id = uuid()
         var activePeriod = mutableListOf<Alert.ActivePeriod>()
+        var description: String? = null
         var effect = Alert.Effect.UnknownEffect
         var effectName: String? = null
         var informedEntity = mutableListOf<Alert.InformedEntity>()
+        var header: String? = null
         var lifecycle = Alert.Lifecycle.New
 
         fun activePeriod(start: Instant, end: Instant?) {
@@ -70,7 +72,16 @@ class ObjectCollectionBuilder {
         }
 
         override fun built() =
-            Alert(id, activePeriod, effect, effectName, informedEntity, lifecycle)
+            Alert(
+                id,
+                activePeriod,
+                description,
+                effect,
+                effectName,
+                header,
+                informedEntity,
+                lifecycle
+            )
     }
 
     fun alert(block: AlertBuilder.() -> Unit) = build(alerts, AlertBuilder(), block)

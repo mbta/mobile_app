@@ -13,6 +13,7 @@ import SwiftUI
 struct StopDetailsFilteredRouteView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop?
+    let alerts: [shared.Alert]
     let now: Instant
     @Binding var filter: StopDetailsFilter?
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
@@ -56,6 +57,7 @@ struct StopDetailsFilteredRouteView: View {
 
     init(
         departures: StopDetailsDepartures,
+        global: GlobalResponse?,
         now: Instant,
         filter filterBinding: Binding<StopDetailsFilter?>,
         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
@@ -69,7 +71,14 @@ struct StopDetailsFilteredRouteView: View {
         self.pushNavEntry = pushNavEntry
         self.pinned = pinned
         let expectedDirection: Int32? = filter?.directionId
+
         if let patternsByStop {
+            if let expectedDirection, let global {
+                alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, global: global)
+            } else {
+                alerts = []
+            }
+
             rows = patternsByStop.allUpcomingTrips().compactMap { upcoming in
                 guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
                     Logger().error("""
@@ -87,6 +96,7 @@ struct StopDetailsFilteredRouteView: View {
                 )
             }
         } else {
+            alerts = []
             rows = []
         }
     }
@@ -94,9 +104,10 @@ struct StopDetailsFilteredRouteView: View {
     var body: some View {
         if let patternsByStop {
             let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
+            let routeColor: Color? = routeHex != nil ? Color(hex: routeHex!) : nil
             ZStack {
-                if let routeHex {
-                    Color(hex: routeHex)
+                if let routeColor {
+                    routeColor
                 }
                 ScrollView {
                     VStack {
@@ -113,8 +124,15 @@ struct StopDetailsFilteredRouteView: View {
                         ZStack {
                             Color.fill3.ignoresSafeArea(.all)
                             VStack(spacing: 0) {
+                                ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
+                                    VStack(spacing: 0) {
+                                        StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
+                                        if index < alerts.count - 1 || !rows.isEmpty {
+                                            Divider().background(Color.halo)
+                                        }
+                                    }
+                                }
                                 ForEach(Array(rows.enumerated()), id: \.element.tripId) { index, row in
-
                                     VStack(spacing: 0) {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             pushNavEntry(entry)

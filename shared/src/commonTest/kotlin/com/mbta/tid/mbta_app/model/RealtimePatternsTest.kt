@@ -367,6 +367,7 @@ class RealtimePatternsTest {
             RealtimePatterns.applicableAlerts(
                 listOf(route),
                 setOf(stop.id),
+                null,
                 listOf(validAlert, invalidAlert)
             ),
             listOf(validAlert)
@@ -390,7 +391,7 @@ class RealtimePatternsTest {
                 )
             }
         assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), listOf(alert)),
+            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
             emptyList()
         )
     }
@@ -412,7 +413,7 @@ class RealtimePatternsTest {
                 )
             }
         assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), listOf(alert)),
+            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
             emptyList()
         )
     }
@@ -434,7 +435,7 @@ class RealtimePatternsTest {
                 )
             }
         assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), listOf(alert)),
+            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
             emptyList()
         )
     }

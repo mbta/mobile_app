@@ -76,6 +76,7 @@ struct StopDetailsView: View {
                 if let departures = nearbyVM.departures {
                     StopDetailsRoutesView(
                         departures: departures,
+                        global: globalResponse,
                         now: now.toKotlinInstant(),
                         filter: $filter,
                         pushNavEntry: nearbyVM.pushNavEntry,

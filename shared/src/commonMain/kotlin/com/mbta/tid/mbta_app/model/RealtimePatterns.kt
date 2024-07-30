@@ -141,6 +141,27 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             { it.patterns.first() }
         )
 
+    fun alertsHereFor(stopIds: Set<String>, directionId: Int): List<Alert>? {
+        return alertsHere?.let {
+            when (this) {
+                is ByHeadsign ->
+                    applicableAlerts(
+                        routes = listOf(route),
+                        stopIds = stopIds,
+                        directionId = directionId,
+                        alerts = it
+                    )
+                is ByDirection ->
+                    applicableAlerts(
+                        routes = routes,
+                        stopIds = stopIds,
+                        directionId = directionId,
+                        alerts = it
+                    )
+            }
+        }
+    }
+
     fun format(now: Instant, context: TripInstantDisplay.Context): Format {
         return this.format(
             now,
@@ -262,13 +283,19 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         fun applicableAlerts(
             routes: List<Route>,
             stopIds: Set<String>,
+            directionId: Int? = null,
             alerts: Collection<Alert>
         ): List<Alert> =
             stopIds.flatMap { stopId ->
                 alerts.filter { alert ->
                     alert.anyInformedEntity {
-                        routes.any { route -> it.appliesTo(routeId = route.id, stopId = stopId) } &&
-                            it.activities.contains(Alert.InformedEntity.Activity.Board)
+                        routes.any { route ->
+                            it.appliesTo(
+                                directionId = directionId,
+                                routeId = route.id,
+                                stopId = stopId
+                            )
+                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
@@ -70,4 +71,25 @@ data class PatternsByStop(
 
     fun allUpcomingTrips(): List<UpcomingTrip> =
         this.patterns.flatMap { it.upcomingTrips ?: emptyList() }.sorted()
+
+    fun alertsHereFor(directionId: Int, global: GlobalResponse): List<Alert> {
+        val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
+        val stopIds = arrayOf(this.stop.id) + this.stop.childStopIds
+        val stopsInDirection =
+            patternsInDirection
+                .flatMap { realtime ->
+                    realtime.patterns.mapNotNull { pattern ->
+                        stopIds.firstOrNull {
+                            global.trips[pattern.representativeTripId]?.stopIds?.contains(it)
+                                ?: false
+                        }
+                    }
+                }
+                .toSet()
+        return stopsInDirection.flatMap { stopId ->
+            patternsInDirection
+                .flatMap { it.alertsHereFor(setOf(stopId), directionId) ?: emptyList() }
+                .toSet()
+        }
+    }
 }

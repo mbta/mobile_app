@@ -12,6 +12,7 @@ import SwiftUI
 
 struct StopDetailsRoutesView: View {
     let departures: StopDetailsDepartures
+    let global: GlobalResponse?
     let now: Instant
     @Binding var filter: StopDetailsFilter?
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
@@ -22,6 +23,7 @@ struct StopDetailsRoutesView: View {
         if let filter {
             StopDetailsFilteredRouteView(
                 departures: departures,
+                global: global,
                 now: now,
                 filter: $filter,
                 pushNavEntry: pushNavEntry,
@@ -99,6 +101,6 @@ struct StopDetailsRoutesView: View {
                 alertsHere: nil
             ),
         ]),
-    ]), now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
+    ]), global: nil, now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
     pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)
 }
