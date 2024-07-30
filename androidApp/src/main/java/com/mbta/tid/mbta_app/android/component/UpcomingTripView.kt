@@ -86,7 +86,11 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     )
                 is TripInstantDisplay.Schedule ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Text(formatTime(state.trip.scheduleTime), fontWeight = FontWeight.Bold)
+                        Text(
+                            formatTime(state.trip.scheduleTime),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")
                     }

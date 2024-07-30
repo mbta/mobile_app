@@ -25,23 +25,24 @@ fun MyApplicationTheme(
     val colors =
         if (darkTheme) {
             darkColorScheme(
-                surface = Color(0xFF192026),
-                surfaceVariant = Color(0xFF192026),
-                background = Color(0xFF000000),
-                primary = Color(0xFFE5E5E3),
-                secondary = Color(0xFF03DAC5),
-                tertiary = Color(0xFF3700B3),
-                surfaceContainer = Color(0x26FFFFFF)
+                surface = Color(0xFF3E454D), // Fill 1
+                surfaceVariant = Color(0xFF192026), // Fill 2
+                background = Color(0xFF000000), // Fill 3
+                primary = Color(0xFF66B2FF), // Key
+                primaryContainer = Color(0xFF3E454D), // Fill 1
+                secondary = Color(0xFF006CD9), // Key Inverse
+                tertiary = Color(0xFF8A9199), // De-emphasized
+                outline = Color(0x26FFFFFF) // Halo
             )
         } else {
             lightColorScheme(
-                surface = Color(0xFFE5E5E3),
-                surfaceVariant = Color(0xFFF5F4F2),
-                background = Color(0xFFFFFFFF),
-                primary = Color(0xFF6200EE),
-                secondary = Color(0xFF03DAC5),
-                tertiary = Color(0xFF3700B3),
-                surfaceContainer = Color(0x1A192026)
+                surface = Color(0xFFE5E5E3), // Fill 1
+                surfaceVariant = Color(0xFFF5F4F2), // Fill 2
+                background = Color(0xFFFFFFFF), // Fill 3
+                primary = Color(0xFF006CD9), // Key
+                secondary = Color(0xFF66B2FF), // Key Inverse
+                tertiary = Color(0xFF8A9199), // De-emphasized
+                outline = Color(0x1A192026) // Halo
             )
         }
     val fontFamily =
