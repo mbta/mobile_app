@@ -1,9 +1,14 @@
 package com.mbta.tid.mbta_app.android
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -14,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mapbox.geojson.Point
@@ -79,9 +85,17 @@ fun ContentView(
     }
 
     BottomSheetScaffold(
+        sheetDragHandle = {
+            Column(
+                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                BottomSheetDefaults.DragHandle()
+            }
+        },
         sheetContent = {
             NearbyTransitPage(
-                Modifier.fillMaxSize(),
+                Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
                 alertData = alertData,
                 globalData = globalData,
                 targetLocation = mapCenter,
