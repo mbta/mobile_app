@@ -28,14 +28,14 @@ fun RouteCardHeader(route: Route, body: @Composable () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         val textColor = route.textColor
-        val pillText =
+        val routeName =
             when (route.type) {
                 RouteType.BUS -> route.shortName
                 else -> route.longName
             }
 
         Text(
-            text = pillText.uppercase(),
+            text = routeName,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
             style =

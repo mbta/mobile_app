@@ -68,16 +68,10 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                         fontWeight = FontWeight.Bold
                     )
                 is TripInstantDisplay.Approaching ->
-                    Row(modifier) {
-                        val resourceParts = stringResource(R.string.approaching_abbr).split(" ")
-                        Text(resourceParts.first(), fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            resourceParts
-                                .slice(IntRange(start = 1, endInclusive = 1))
-                                .joinToString(" ")
-                        )
-                    }
+                    BoldedTripStatus(
+                        text = stringResource(R.string.approaching_abbr),
+                        modifier = modifier
+                    )
                 is TripInstantDisplay.AsTime ->
                     Text(
                         formatTime(state.trip.predictionTime),
@@ -95,17 +89,10 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                         Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")
                     }
                 is TripInstantDisplay.Minutes ->
-                    Row(modifier) {
-                        val resourceParts =
-                            stringResource(R.string.minutes_abbr, state.trip.minutes).split(" ")
-                        Text(resourceParts.first(), fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            resourceParts
-                                .slice(IntRange(start = 1, endInclusive = 1))
-                                .joinToString(" ")
-                        )
-                    }
+                    BoldedTripStatus(
+                        text = stringResource(R.string.minutes_abbr, state.trip.minutes),
+                        modifier = modifier
+                    )
             }
         is UpcomingTripViewState.NoService ->
             NoServiceView(NoServiceViewEffect.from(state.effect), modifier)
