@@ -139,7 +139,8 @@ struct StopDetailsFilteredRouteView: View {
                                             analytics.tappedDepartureRow(
                                                 routeId: patternsByStop.routeIdentifier,
                                                 stopId: patternsByStop.stop.id,
-                                                pinned: pinned
+                                                pinned: pinned,
+                                                alert: alerts.count > 0
                                             )
                                         }) {
                                             HeadsignRowView(

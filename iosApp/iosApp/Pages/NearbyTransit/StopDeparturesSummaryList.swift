@@ -15,7 +15,7 @@ struct StopDeparturesSummaryList: View {
     let condenseHeadsignPredictions: Bool
     let now: Instant
     let context: TripInstantDisplay.Context
-    let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let pushNavEntry: (SheetNavigationStackEntry, Bool) -> Void
 
     var body: some View {
         ForEach(
@@ -28,7 +28,7 @@ struct StopDeparturesSummaryList: View {
                         patternsByStop.stop,
                         filterFor(patterns: patterns)
                     ),
-                    action: pushNavEntry
+                    action: { entry in pushNavEntry(entry, (patterns.alertsHere?.count ?? 0) > 0) }
                 ) {
                     DestinationRowView(
                         patterns: patterns,
