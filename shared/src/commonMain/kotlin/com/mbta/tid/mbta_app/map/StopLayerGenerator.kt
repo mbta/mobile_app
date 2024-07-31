@@ -86,7 +86,7 @@ object StopLayerGenerator {
         stopLayer.textFont = listOf("Inter Regular")
         stopLayer.textHaloColor = Exp(colorPalette.fill3).downcastToColor()
         stopLayer.textHaloWidth = 2.0
-        stopLayer.textSize = 13
+        stopLayer.textSize = 13.0
         stopLayer.textVariableAnchor =
             listOf(TextAnchor.RIGHT, TextAnchor.BOTTOM, TextAnchor.TOP, TextAnchor.LEFT)
         stopLayer.textJustify = TextJustify.AUTO

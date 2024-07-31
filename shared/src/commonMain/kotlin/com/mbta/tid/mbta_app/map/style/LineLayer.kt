@@ -9,7 +9,7 @@ data class LineLayer(override val id: String, override val source: String) : Lay
     override var filter: Exp<Boolean>? = null
 
     var lineColor: Exp<Color>? = null
-    var lineDasharray: List<Number>? = null
+    var lineDasharray: List<Double>? = null
     var lineJoin: LineJoin? = null
     var lineOffset: Exp<Number>? = null
     var lineSortKey: Exp<Number>? = null
