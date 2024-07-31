@@ -11,7 +11,7 @@ import Foundation
 
 protocol NearbyTransitAnalytics {
     func toggledPinnedRoute(pinned: Bool, routeId: String)
-    func tappedDeparture(routeId: String, stopId: String, pinned: Bool)
+    func tappedDeparture(routeId: String, stopId: String, pinned: Bool, alert: Bool)
     func refetchedNearbyTransit()
     func tappedOnStop(stopId: String)
 }
@@ -26,13 +26,14 @@ extension AnalyticsProvider: NearbyTransitAnalytics {
         )
     }
 
-    func tappedDeparture(routeId: String, stopId: String, pinned: Bool) {
+    func tappedDeparture(routeId: String, stopId: String, pinned: Bool, alert: Bool) {
         logEvent(
             "tapped_departure",
             parameters: [
                 "route_id": routeId,
                 "stop_id": stopId,
-                "pinned": pinned,
+                "pinned": pinned ? "true" : "false",
+                "alert": alert ? "true" : "false",
             ]
         )
     }

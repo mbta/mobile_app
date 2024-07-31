@@ -13,7 +13,8 @@ import Foundation
 enum AnalyticsScreen: String {
     case nearbyTransit = "NearbyTransitPage"
     case tripDetails = "TripDetailsPage"
-    case stopDetails = "StopDetailsPage"
+    case stopDetailsFiltered = "StopDetailsFilteredPage"
+    case stopDetailsUnfiltered = "StopDetailsUnfilteredPage"
     case settings = "SettingsPage"
 }
 
