@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlinAndroid)
     id("ios-assets")
+    id("check-mapbox-bridge")
 }
 
 android {
@@ -73,4 +74,5 @@ task("accessToken") {
 
 gradle.projectsEvaluated {
     tasks.getByPath("preBuild").dependsOn("accessToken", "convertIosIconsToAssets")
+    tasks.getByPath("check").dependsOn("checkMapboxBridge")
 }
