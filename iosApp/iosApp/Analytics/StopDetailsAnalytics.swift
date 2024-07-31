@@ -21,8 +21,8 @@ extension AnalyticsProvider: StopDetailsAnalytics {
             parameters: [
                 "route_id": routeId,
                 "stop_id": stopId,
-                "pinned": pinned,
-                "alert": alert,
+                "pinned": pinned ? "true" : "false",
+                "alert": alert ? "true" : "false",
             ]
         )
     }
