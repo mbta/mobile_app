@@ -12,7 +12,8 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
-    func addLayers(colorScheme: ColorScheme)
+    func addIcons(recreate: Bool)
+    func addLayers(colorScheme: ColorScheme, recreate: Bool)
 
     func updateSourceData(routeData: MapboxMaps.FeatureCollection)
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
@@ -26,10 +27,20 @@ class MapLayerManager: IMapLayerManager {
 
     init(map: MapboxMap) {
         self.map = map
+        addIcons()
+    }
 
+    func addIcons(recreate: Bool = false) {
         for iconId in StopIcons.shared.all + AlertIcons.shared.all + ChildStopIcons.shared.all {
             do {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
+                if map.imageExists(withId: iconId) {
+                    if recreate {
+                        try map.removeImage(withId: iconId)
+                    } else {
+                        continue
+                    }
+                }
                 try map.addImage(image, id: iconId)
             } catch {
                 Logger().error("Failed to add map icon image \(iconId)")
@@ -45,7 +56,7 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func addLayers(colorScheme: ColorScheme) {
+    func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
         let colorPalette = switch colorScheme {
         case .light: ColorPalette.companion.light
         case .dark: ColorPalette.companion.dark
@@ -58,8 +69,12 @@ class MapLayerManager: IMapLayerManager {
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
-                    // Skip attempting to add layer if it already exists
-                    continue
+                    if recreate {
+                        try map.removeLayer(withId: layer.id)
+                    } else {
+                        // Skip attempting to add layer if it already exists
+                        continue
+                    }
                 }
                 if map.layerExists(withId: "puck") {
                     try map.addLayer(layer, layerPosition: .below("puck"))

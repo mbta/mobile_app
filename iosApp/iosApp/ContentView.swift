@@ -131,7 +131,7 @@ struct ContentView: View {
                                     stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                                     nearbyVM: nearbyVM
                                 ).onAppear {
-                                    let filtered = $nearbyVM.navigationStack.lastStopDetailsFilter != nil
+                                    let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
                                     visibleNearbySheet = entry
                                     screenTracker.track(
                                         screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
