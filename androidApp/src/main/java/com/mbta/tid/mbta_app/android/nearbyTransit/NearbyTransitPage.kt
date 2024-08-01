@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -11,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.fetcher.GlobalData
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Coordinate
@@ -83,6 +86,13 @@ fun NearbyTransitPage(
 
     if (nearbyWithRealtimeInfo != null) {
         LazyColumn(modifier) {
+            item {
+                Text(
+                    text = "Nearby transit",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
             items(nearbyWithRealtimeInfo) {
                 when (it) {
                     is StopsAssociated.WithRoute -> NearbyRouteView(it, now)

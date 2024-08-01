@@ -40,7 +40,11 @@ fun HeadsignRowView(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f).padding(16.dp)) {
-            Text(headsign, fontWeight = FontWeight.Bold)
+            Text(
+                headsign,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
         Row(
             modifier = Modifier.weight(1f),
@@ -62,11 +66,12 @@ fun HeadsignRowView(
             }
 
             Column(
-                modifier = Modifier.padding(8.dp).widthIn(max = 24.dp),
+                modifier = Modifier.padding(8.dp).widthIn(max = 8.dp),
             ) {
                 Icon(
                     painterResource(id = R.drawable.baseline_chevron_right_24),
-                    contentDescription = "Arrow Right"
+                    contentDescription = "Arrow Right",
+                    tint = MaterialTheme.colorScheme.tertiary
                 )
             }
         }
