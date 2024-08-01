@@ -17,6 +17,6 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initKoin(appVariant, makeNativeModule(appCheck, socket.wrapped()))
+        initKoin(appVariant, makeNativeModule(appCheck, socket.wrapped()), this)
     }
 }
