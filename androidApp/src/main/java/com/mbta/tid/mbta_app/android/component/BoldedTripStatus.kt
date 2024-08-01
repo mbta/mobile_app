@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoldedTripStatus(text: String, modifier: Modifier) {
+fun BoldedTripStatus(text: String, modifier: Modifier = Modifier) {
     Row(modifier) {
         val textParts = text.split(" ")
         Text(
