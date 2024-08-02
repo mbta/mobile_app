@@ -40,14 +40,22 @@ fun HeadsignRowView(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f).padding(16.dp)) {
-            Text(headsign, fontWeight = FontWeight.Bold)
+            Text(
+                headsign,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 when (predictions) {
                     is RealtimePatterns.Format.Some ->
                         for (prediction in predictions.trips) {
@@ -62,11 +70,12 @@ fun HeadsignRowView(
             }
 
             Column(
-                modifier = Modifier.padding(8.dp).widthIn(max = 24.dp),
+                modifier = Modifier.padding(8.dp).widthIn(max = 8.dp),
             ) {
                 Icon(
                     painterResource(id = R.drawable.baseline_chevron_right_24),
-                    contentDescription = "Arrow Right"
+                    contentDescription = "Arrow Right",
+                    tint = MaterialTheme.colorScheme.tertiary
                 )
             }
         }

@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +18,11 @@ fun NearbyStopView(
     patternsAtStop: PatternsByStop,
     now: Instant,
 ) {
-    Text(text = patternsAtStop.stop.name, modifier = Modifier.padding(16.dp))
+    Text(
+        text = patternsAtStop.stop.name,
+        modifier = Modifier.padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp),
+        style = MaterialTheme.typography.headlineSmall
+    )
 
     for (patterns in patternsAtStop.patterns) {
         when (patterns) {
@@ -30,7 +35,7 @@ fun NearbyStopView(
             is RealtimePatterns.ByDirection -> {}
         }
         if (patterns != patternsAtStop.patterns.last()) {
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.surface)
         }
     }
 }
