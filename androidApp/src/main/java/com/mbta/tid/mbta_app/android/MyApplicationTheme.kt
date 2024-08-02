@@ -54,12 +54,17 @@ fun MyApplicationTheme(
         Typography(
             bodySmall = TextStyle(fontFamily = fontFamily, fontSize = 16.sp),
             bodyMedium = TextStyle(fontFamily = fontFamily, fontSize = 17.sp),
-            bodyLarge = TextStyle(fontFamily = fontFamily, fontSize = 24.sp)
+            bodyLarge = TextStyle(fontFamily = fontFamily, fontSize = 24.sp),
+            headlineSmall = TextStyle(fontFamily = fontFamily, fontSize = 16.sp),
+            headlineMedium = TextStyle(fontFamily = fontFamily, fontSize = 17.sp),
+            headlineLarge = TextStyle(fontFamily = fontFamily, fontSize = 20.sp),
+            titleLarge =
+                TextStyle(fontFamily = fontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold)
         )
     val shapes =
         Shapes(
             small = RoundedCornerShape(4.dp),
-            medium = RoundedCornerShape(4.dp),
+            medium = RoundedCornerShape(8.dp),
             large = RoundedCornerShape(0.dp)
         )
 

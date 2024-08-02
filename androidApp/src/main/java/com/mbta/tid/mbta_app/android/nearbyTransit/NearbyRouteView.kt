@@ -19,8 +19,12 @@ fun NearbyRouteView(
 ) {
     Card(
         modifier =
-            Modifier.padding(16.dp)
-                .border(BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline))
+            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .border(
+                    BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
+                    shape = MaterialTheme.shapes.medium
+                ),
+        shape = MaterialTheme.shapes.medium
     ) {
         RouteCardHeader(nearbyRoute.route) {
             for (patternsAtStop in nearbyRoute.patternsByStop) {
