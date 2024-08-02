@@ -26,7 +26,11 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 
 @Composable
-fun RouteCardHeader(route: Route, body: @Composable () -> Unit) {
+fun RouteCardHeader(
+    route: Route,
+    rightContent: (@Composable () -> Unit)? = null,
+    body: @Composable () -> Unit
+) {
     Column(
         modifier =
             Modifier.heightIn(min = 44.dp)
@@ -76,6 +80,10 @@ fun RouteCardHeader(route: Route, body: @Composable () -> Unit) {
                         fontWeight = FontWeight.Bold
                     )
             )
+            if (rightContent != null) {
+                Spacer(modifier = Modifier.weight(1.0F))
+                rightContent()
+            }
         }
     }
     body()

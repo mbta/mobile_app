@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.javaPhoenixClient)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.koin.androidxCompose)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.datetime)

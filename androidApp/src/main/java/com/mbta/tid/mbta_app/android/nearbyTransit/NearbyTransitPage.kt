@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,10 +25,13 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
@@ -39,7 +43,9 @@ fun NearbyTransitPage(
     setLastLocation: (Position) -> Unit,
     nearbyRepository: INearbyRepository = koinInject(),
     predictionsRepository: IPredictionsRepository = koinInject(),
-    schedulesRepository: ISchedulesRepository = koinInject()
+    schedulesRepository: ISchedulesRepository = koinInject(),
+    pinnedRoutesRepository: IPinnedRoutesRepository = koinInject(),
+    togglePinnedRouteUsecase: TogglePinnedRouteUsecase = koinInject()
 ) {
     var nearby: NearbyStaticData? by remember { mutableStateOf(null) }
     val stopIds = remember(nearby) { nearby?.stopIds()?.toList() }
@@ -57,15 +63,19 @@ fun NearbyTransitPage(
         }
         onDispose { predictionsRepository.disconnect() }
     }
+
+    var pinnedRoutes: Set<String>? by remember { mutableStateOf(null) }
+    LaunchedEffect(null) { pinnedRoutes = pinnedRoutesRepository.getPinnedRoutes() }
+
     val nearbyWithRealtimeInfo =
-        remember(nearby, targetLocation, schedules, predictions, alertData, now) {
+        remember(nearby, targetLocation, schedules, predictions, alertData, now, pinnedRoutes) {
             nearby?.withRealtimeInfo(
                 sortByDistanceFrom = targetLocation,
                 schedules,
                 predictions,
                 alertData,
                 now,
-                pinnedRoutes = setOf()
+                pinnedRoutes.orEmpty()
             )
         }
 
@@ -84,6 +94,15 @@ fun NearbyTransitPage(
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
+    val togglePinnedRoute: (String) -> Unit = { routeId ->
+        coroutineScope.launch {
+            togglePinnedRouteUsecase.execute(routeId)
+            pinnedRoutes = pinnedRoutesRepository.getPinnedRoutes()
+        }
+    }
+
     if (nearbyWithRealtimeInfo != null) {
         LazyColumn(modifier) {
             item {
@@ -95,7 +114,13 @@ fun NearbyTransitPage(
             }
             items(nearbyWithRealtimeInfo) {
                 when (it) {
-                    is StopsAssociated.WithRoute -> NearbyRouteView(it, now)
+                    is StopsAssociated.WithRoute ->
+                        NearbyRouteView(
+                            it,
+                            pinnedRoutes.orEmpty().contains(it.id),
+                            togglePinnedRoute,
+                            now
+                        )
                     is StopsAssociated.WithLine -> {}
                 }
             }
