@@ -13,26 +13,45 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.Route
+
+sealed interface PillDecoration {
+    data class OnRow(val route: Route) : PillDecoration
+
+    data class OnPrediction(val routesByTrip: Map<String, Route>) : PillDecoration
+}
 
 @Composable
 fun PredictionRowView(
     predictions: RealtimePatterns.Format,
     modifier: Modifier = Modifier,
+    pillDecoration: PillDecoration? = null,
     destination: @Composable () -> Unit
 ) {
     Row(
         modifier
             .fillMaxWidth()
             .heightIn(min = 74.dp)
+            .padding(4.dp)
             .background(color = MaterialTheme.colorScheme.background),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f).padding(16.dp)) { destination() }
+        if (pillDecoration is PillDecoration.OnRow) {
+            RoutePill(
+                pillDecoration.route,
+                line = null,
+                RoutePillType.Flex,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+
+        Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) { destination() }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.End,
@@ -46,7 +65,18 @@ fun PredictionRowView(
                 when (predictions) {
                     is RealtimePatterns.Format.Some ->
                         for (prediction in predictions.trips) {
-                            UpcomingTripView(UpcomingTripViewState.Some(prediction.format))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                UpcomingTripView(UpcomingTripViewState.Some(prediction.format))
+                                if (pillDecoration is PillDecoration.OnPrediction) {
+                                    val route = pillDecoration.routesByTrip.getValue(prediction.id)
+                                    RoutePill(
+                                        route,
+                                        null,
+                                        RoutePillType.Flex,
+                                        modifier = Modifier.scale(0.75f).padding(start = 2.dp)
+                                    )
+                                }
+                            }
                         }
                     is RealtimePatterns.Format.NoService ->
                         UpcomingTripView(UpcomingTripViewState.NoService(predictions.alert.effect))
