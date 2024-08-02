@@ -20,7 +20,7 @@ fun NearbyStopView(
 ) {
     Text(
         text = patternsAtStop.stop.name,
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp),
         style = MaterialTheme.typography.headlineSmall
     )
 
@@ -35,7 +35,7 @@ fun NearbyStopView(
             is RealtimePatterns.ByDirection -> {}
         }
         if (patterns != patternsAtStop.patterns.last()) {
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.surface)
         }
     }
 }

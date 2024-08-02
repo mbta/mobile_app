@@ -89,7 +89,7 @@ fun NearbyTransitPage(
             item {
                 Text(
                     text = "Nearby transit",
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }

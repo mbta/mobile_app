@@ -51,7 +51,11 @@ fun HeadsignRowView(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 when (predictions) {
                     is RealtimePatterns.Format.Some ->
                         for (prediction in predictions.trips) {

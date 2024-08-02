@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,7 +49,7 @@ fun formatTime(time: Instant): String =
 
 @Composable
 fun UpcomingTripView(state: UpcomingTripViewState) {
-    val modifier = Modifier.widthIn(min = 48.dp)
+    val modifier = Modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {
