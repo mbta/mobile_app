@@ -56,10 +56,14 @@ extension HomeMapView {
         layerManager.addLayers(colorScheme: colorScheme, recreate: recreate)
     }
 
-    func refreshLayers() {
+    func refreshMap() {
         if let layerManager = mapVM.layerManager {
-            layerManager.addIcons(recreate: true)
-            addLayers(layerManager, recreate: true)
+            if layerManager.currentScheme != colorScheme {
+                layerManager.addIcons(recreate: true)
+                addLayers(layerManager, recreate: true)
+            } else {
+                addLayers(layerManager)
+            }
             updateGlobalMapDataSources()
         }
     }

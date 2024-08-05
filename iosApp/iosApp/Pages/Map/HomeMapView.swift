@@ -109,10 +109,9 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
-            .withScenePhaseHandlers(onActive: {
-                // Layers are removed when the app is backgrounded, add them back.
-                refreshLayers()
-            })
+            .onDisappear {
+                mapVM.layerManager = nil
+            }
     }
 
     @ViewBuilder
@@ -178,7 +177,7 @@ struct HomeMapView: View {
             vehicles: vehicles,
             viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
-            handleMapLoaded: refreshLayers,
+            handleStyleLoaded: refreshMap,
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle
         )

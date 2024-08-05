@@ -12,6 +12,7 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
+    var currentScheme: ColorScheme? { get }
     func addIcons(recreate: Bool)
     func addLayers(colorScheme: ColorScheme, recreate: Bool)
 
@@ -23,6 +24,7 @@ protocol IMapLayerManager {
 struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
+    var currentScheme: ColorScheme?
     let map: MapboxMap
 
     init(map: MapboxMap) {
@@ -43,7 +45,7 @@ class MapLayerManager: IMapLayerManager {
                 }
                 try map.addImage(image, id: iconId)
             } catch {
-                Logger().error("Failed to add map icon image \(iconId)")
+                Logger().error("Failed to add map icon image \(iconId)\n\(error)")
             }
         }
     }
@@ -62,6 +64,7 @@ class MapLayerManager: IMapLayerManager {
         case .dark: ColorPalette.companion.dark
         @unknown default: ColorPalette.companion.light
         }
+        currentScheme = colorScheme
         let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
             .map { $0.toMapbox() }
             + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette).map { $0.toMapbox() }

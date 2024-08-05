@@ -30,7 +30,7 @@ struct AnnotatedMap: View {
     @Environment(\.colorScheme) var colorScheme
 
     var handleCameraChange: (CameraChanged) -> Void
-    var handleMapLoaded: () -> Void
+    var handleStyleLoaded: () -> Void
     var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
     var handleTapVehicle: (Vehicle) -> Void
 
@@ -45,11 +45,11 @@ struct AnnotatedMap: View {
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
             .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
-            .onMapLoaded { _ in
+            .onStyleLoaded { _ in
                 // The initial run of this happens before any required data is loaded, so it does nothing and
                 // handleTryLayerInit always performs the first layer creation, but once the data is in place,
                 // this handles any time the map is reloaded again, like for a light/dark mode switch.
-                handleMapLoaded()
+                handleStyleLoaded()
             }
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")

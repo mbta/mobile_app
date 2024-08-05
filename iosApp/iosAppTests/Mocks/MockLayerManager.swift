@@ -12,6 +12,7 @@ import Foundation
 import SwiftUI
 
 class MockLayerManager: IMapLayerManager {
+    var currentScheme: ColorScheme?
     private let addIconsCallback: () -> Void
     private let addLayersCallback: () -> Void
     private let updateChildStopDataCallback: (FeatureCollection) -> Void
@@ -34,7 +35,8 @@ class MockLayerManager: IMapLayerManager {
         addIconsCallback()
     }
 
-    func addLayers(colorScheme _: ColorScheme, recreate _: Bool = false) {
+    func addLayers(colorScheme: ColorScheme, recreate _: Bool = false) {
+        currentScheme = colorScheme
         addLayersCallback()
     }
 
