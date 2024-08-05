@@ -1,12 +1,17 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
@@ -18,11 +23,13 @@ fun NearbyStopView(
     patternsAtStop: PatternsByStop,
     now: Instant,
 ) {
-    Text(
-        text = patternsAtStop.stop.name,
-        modifier = Modifier.padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp),
-        style = MaterialTheme.typography.headlineSmall
-    )
+    Row(modifier = Modifier.background(colorResource(id = R.color.fill2)).fillMaxWidth()) {
+        Text(
+            text = patternsAtStop.stop.name,
+            modifier = Modifier.padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp),
+            style = MaterialTheme.typography.headlineSmall
+        )
+    }
 
     for (patterns in patternsAtStop.patterns) {
         when (patterns) {
