@@ -109,6 +109,9 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
+            .onDisappear {
+                mapVM.layerManager = nil
+            }
     }
 
     @ViewBuilder
