@@ -1,0 +1,90 @@
+package com.mbta.tid.mbta_app.android.util
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
+import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import org.koin.compose.koinInject
+
+@Composable
+fun getGlobalData(globalRepository: IGlobalRepository = koinInject()): GlobalResponse? {
+    var globalResponse: GlobalResponse? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(null) { globalResponse = globalRepository.getGlobalData() }
+
+    return globalResponse
+}
+
+@Composable
+fun getSchedule(
+    stopIds: List<String>?,
+    now: Instant,
+    schedulesRepository: ISchedulesRepository = koinInject()
+): ScheduleResponse? {
+    var schedules: ScheduleResponse? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(stopIds, now) {
+        if (stopIds != null) {
+            schedules = schedulesRepository.getSchedule(stopIds, now)
+        }
+    }
+
+    return schedules
+}
+
+data class ManagedPinnedRoutes(
+    val pinnedRoutes: Set<String>?,
+    val togglePinnedRoute: (String) -> Unit
+)
+
+@Composable
+fun managePinnedRoutes(
+    pinnedRoutesRepository: IPinnedRoutesRepository = koinInject(),
+    togglePinnedRouteUsecase: TogglePinnedRouteUsecase = koinInject()
+): ManagedPinnedRoutes {
+    var pinnedRoutes: Set<String>? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(null) { pinnedRoutes = pinnedRoutesRepository.getPinnedRoutes() }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val togglePinnedRoute: (String) -> Unit = { routeId ->
+        coroutineScope.launch {
+            togglePinnedRouteUsecase.execute(routeId)
+            pinnedRoutes = pinnedRoutesRepository.getPinnedRoutes()
+        }
+    }
+
+    return ManagedPinnedRoutes(pinnedRoutes, togglePinnedRoute)
+}
+
+@Composable
+fun subscribeToPredictions(
+    stopIds: List<String>?,
+    predictionsRepository: IPredictionsRepository = koinInject()
+): PredictionsStreamDataResponse? {
+    var predictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
+
+    DisposableEffect(stopIds) {
+        if (stopIds != null) {
+            predictionsRepository.connect(stopIds) { predictions = it.data }
+        }
+        onDispose { predictionsRepository.disconnect() }
+    }
+
+    return predictions
+}
