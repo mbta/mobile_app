@@ -36,22 +36,17 @@ fun PredictionRowView(
     Row(
         modifier
             .fillMaxWidth()
-            .heightIn(min = 74.dp)
-            .padding(4.dp)
+            .heightIn(min = 44.dp)
+            .padding(8.dp)
             .background(color = MaterialTheme.colorScheme.background),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (pillDecoration is PillDecoration.OnRow) {
-            RoutePill(
-                pillDecoration.route,
-                line = null,
-                RoutePillType.Flex,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+            RoutePill(pillDecoration.route, line = null, RoutePillType.Flex)
         }
 
-        Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) { destination() }
+        Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) { destination() }
         Row(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.End,
