@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -107,7 +106,7 @@ fun RoutePill(
             }
 
     val isRectangle = route?.type == RouteType.BUS && !route.id.startsWith("Shuttle")
-    val shape = if (isRectangle) RectangleShape else RoundedCornerShape(percent = 100)
+    val shape = if (isRectangle) RoundedCornerShape(4.dp) else RoundedCornerShape(percent = 100)
 
     fun Modifier.withSizePadding() =
         if (type == RoutePillType.Fixed) {
