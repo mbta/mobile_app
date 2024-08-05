@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.fetcher.GlobalData
+import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.getSchedule
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.subscribeToPredictions
@@ -35,6 +36,7 @@ fun NearbyTransitView(
     globalData: GlobalData,
     targetLocation: Position,
     setLastLocation: (Position) -> Unit,
+    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     nearbyRepository: INearbyRepository = koinInject(),
 ) {
     var nearby: NearbyStaticData? by remember { mutableStateOf(null) }
@@ -88,14 +90,16 @@ fun NearbyTransitView(
                             it,
                             pinnedRoutes.orEmpty().contains(it.id),
                             togglePinnedRoute,
-                            now
+                            now,
+                            onOpenStopDetails
                         )
                     is StopsAssociated.WithLine ->
                         NearbyLineView(
                             it,
                             pinnedRoutes.orEmpty().contains(it.id),
                             togglePinnedRoute,
-                            now
+                            now,
+                            onOpenStopDetails
                         )
                 }
             }

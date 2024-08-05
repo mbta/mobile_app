@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
@@ -17,9 +18,14 @@ import kotlinx.datetime.Clock
 fun DirectionRowView(
     direction: Direction,
     predictions: RealtimePatterns.Format,
+    modifier: Modifier = Modifier,
     pillDecoration: PillDecoration? = null
 ) {
-    PredictionRowView(predictions = predictions, pillDecoration = pillDecoration) {
+    PredictionRowView(
+        predictions = predictions,
+        modifier = modifier,
+        pillDecoration = pillDecoration
+    ) {
         DirectionLabel(direction)
     }
 }
