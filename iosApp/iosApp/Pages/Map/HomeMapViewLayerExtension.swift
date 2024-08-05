@@ -37,11 +37,12 @@ extension HomeMapView {
         mapVM.allRailSourceData = routeSourceData
         mapVM.routeSourceData = routeSourceData
 
-        let snappedStopRouteLines = RouteFeaturesBuilder.shared.generateRouteLines(routeData: routeSourceData,
-                                                                                   routesById: globalData?.routes,
-                                                                                   stopsById: globalData?.stops,
-                                                                                   alertsByStop: globalMapData?
-                                                                                       .alertsByStop)
+        let snappedStopRouteLines = RouteFeaturesBuilder.shared.generateRouteLines(
+            routeData: routeSourceData,
+            routesById: globalData?.routes,
+            stopsById: globalData?.stops,
+            alertsByStop: globalMapData?.alertsByStop
+        )
         mapVM.snappedStopRouteLines = snappedStopRouteLines
 
         mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stop()?.id)
@@ -51,8 +52,16 @@ extension HomeMapView {
         addLayers(layerManager)
     }
 
-    func addLayers(_ layerManager: IMapLayerManager) {
-        layerManager.addLayers(colorScheme: colorScheme)
+    func addLayers(_ layerManager: IMapLayerManager, recreate: Bool = false) {
+        layerManager.addLayers(colorScheme: colorScheme, recreate: recreate)
+    }
+
+    func refreshLayers() {
+        if let layerManager = mapVM.layerManager {
+            layerManager.addIcons(recreate: true)
+            addLayers(layerManager, recreate: true)
+            updateGlobalMapDataSources()
+        }
     }
 
     func resetDefaultSources() {
@@ -74,9 +83,11 @@ extension HomeMapView {
                 departures: departures
             )
         } else {
-            mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(stopShapes: stopMapData.routeShapes,
-                                                                              railShapes: mapVM.allRailSourceData,
-                                                                              routesById: globalData?.routes)
+            mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(
+                stopShapes: stopMapData.routeShapes,
+                railShapes: mapVM.allRailSourceData,
+                routesById: globalData?.routes
+            )
         }
     }
 

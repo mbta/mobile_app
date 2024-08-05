@@ -111,10 +111,7 @@ struct HomeMapView: View {
             }
             .withScenePhaseHandlers(onActive: {
                 // Layers are removed when the app is backgrounded, add them back.
-                if let layerManager = mapVM.layerManager {
-                    addLayers(layerManager)
-                    updateGlobalMapDataSources()
-                }
+                refreshLayers()
             })
     }
 
@@ -181,6 +178,7 @@ struct HomeMapView: View {
             vehicles: vehicles,
             viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
+            handleMapLoaded: refreshLayers,
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle
         )
