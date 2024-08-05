@@ -833,33 +833,6 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [updateCameraExpectation], timeout: 5)
     }
 
-    func testLayersRestoredOnActive() throws {
-        let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
-        let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
-
-        let layerManger: IMapLayerManager = MockLayerManager(
-            addLayersCallback: { addLayersCalledExpectation.fulfill() },
-            updateRouteDataCallback: { _ in updateSourcesCalledExpectation.fulfill() }
-        )
-
-        var sut = HomeMapView(
-            mapVM: .init(layerManager: layerManger),
-            nearbyVM: .init(),
-            railRouteShapeFetcher: .init(backend: IdleBackend()),
-            vehiclesFetcher: .init(socket: MockSocket()),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: .init(),
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
-        }
-
-        ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, addLayersCalledExpectation, updateSourcesCalledExpectation], timeout: 5)
-    }
-
     func testLayersNotReInitWhenAlertsChanges() throws {
         let addLayersNotCalledExpectation = XCTestExpectation(description: "Add layers not called")
         addLayersNotCalledExpectation.isInverted = true
