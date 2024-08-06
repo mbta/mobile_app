@@ -28,7 +28,7 @@ extension HomeMapView {
         }.eraseToSignal())
 
         // If location data is provided, follow the user's location
-        if locationDataManager.currentLocation != nil {
+        if locationDataManager.currentLocation != nil, viewportProvider.isDefault() {
             viewportProvider.follow(animation: .easeInOut(duration: .zero))
         }
 
