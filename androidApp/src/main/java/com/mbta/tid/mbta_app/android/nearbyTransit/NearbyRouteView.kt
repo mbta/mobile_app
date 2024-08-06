@@ -14,7 +14,7 @@ fun NearbyRouteView(
 ) {
     RouteCard(nearbyRoute.route, pinned, onPin) {
         for (patternsAtStop in nearbyRoute.patternsByStop) {
-            NearbyStopView(patternsAtStop, now)
+            NearbyStopView(patternsAtStop, now = now)
         }
     }
 }
