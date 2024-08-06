@@ -38,4 +38,6 @@ rootProject.name = "MBTA_App"
 
 include(":androidApp")
 
+include(":integrationTests")
+
 include(":shared")

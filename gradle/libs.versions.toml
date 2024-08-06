@@ -2,6 +2,7 @@
 accompanist = "0.34.0"
 agp = "8.5.1"
 datastorePreferencesCore = "1.1.1"
+appium-javaClient = "9.3.0"
 kotlin = "2.0.10"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
@@ -25,6 +26,7 @@ mokkery = "2.1.1"
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
+appium-javaClient = { module = "io.appium:java-client", version.ref = "appium-javaClient" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
