@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.DirectionRowView
 import com.mbta.tid.mbta_app.android.component.HeadsignRowView
+import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
@@ -21,6 +23,7 @@ import kotlinx.datetime.Instant
 @Composable
 fun NearbyStopView(
     patternsAtStop: PatternsByStop,
+    condenseHeadsignPredictions: Boolean = false,
     now: Instant,
 ) {
     Row(modifier = Modifier.background(colorResource(id = R.color.fill2)).fillMaxWidth()) {
@@ -36,10 +39,23 @@ fun NearbyStopView(
             is RealtimePatterns.ByHeadsign -> {
                 HeadsignRowView(
                     patterns.headsign,
-                    patterns.format(now, TripInstantDisplay.Context.NearbyTransit),
+                    patterns.format(
+                        now,
+                        if (condenseHeadsignPredictions) 1 else 2,
+                        TripInstantDisplay.Context.NearbyTransit
+                    ),
+                    pillDecoration =
+                        if (patternsAtStop.line != null) PillDecoration.OnRow(patterns.route)
+                        else null
                 )
             }
-            is RealtimePatterns.ByDirection -> {}
+            is RealtimePatterns.ByDirection -> {
+                DirectionRowView(
+                    patterns.direction,
+                    patterns.format(now, TripInstantDisplay.Context.NearbyTransit),
+                    pillDecoration = PillDecoration.OnPrediction(patterns.routesByTrip)
+                )
+            }
         }
         if (patterns != patternsAtStop.patterns.last()) {
             HorizontalDivider(color = MaterialTheme.colorScheme.surface)

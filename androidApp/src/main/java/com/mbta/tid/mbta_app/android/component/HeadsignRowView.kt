@@ -17,9 +17,14 @@ import com.mbta.tid.mbta_app.model.TripInstantDisplay
 fun HeadsignRowView(
     headsign: String,
     predictions: RealtimePatterns.Format,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    pillDecoration: PillDecoration? = null,
 ) {
-    PredictionRowView(predictions = predictions, modifier = modifier) {
+    PredictionRowView(
+        predictions = predictions,
+        modifier = modifier,
+        pillDecoration = pillDecoration
+    ) {
         Text(
             headsign,
             style = MaterialTheme.typography.headlineMedium,

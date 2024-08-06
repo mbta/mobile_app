@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,6 +62,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     Text(
                         stringResource(R.string.boarding_abbr),
                         modifier,
+                        textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -68,6 +70,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     Text(
                         stringResource(R.string.arriving_abbr),
                         modifier,
+                        textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -80,6 +83,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     Text(
                         formatTime(state.trip.predictionTime),
                         modifier,
+                        textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -87,9 +91,10 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             formatTime(state.trip.scheduleTime),
+                            textAlign = TextAlign.End,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp
+                            fontSize = 13.sp,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")

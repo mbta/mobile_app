@@ -121,7 +121,13 @@ fun NearbyTransitPage(
                             togglePinnedRoute,
                             now
                         )
-                    is StopsAssociated.WithLine -> {}
+                    is StopsAssociated.WithLine ->
+                        NearbyLineView(
+                            it,
+                            pinnedRoutes.orEmpty().contains(it.id),
+                            togglePinnedRoute,
+                            now
+                        )
                 }
             }
         }
