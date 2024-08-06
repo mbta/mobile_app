@@ -176,4 +176,30 @@ final class ViewportProviderTest: XCTestCase {
             XCTFail("Viewport wasn't set to an overview containing a multipoint geometry")
         }
     }
+
+    func testViewportIsDefault() throws {
+        let provider = ViewportProvider()
+        XCTAssert(provider.isDefault())
+        provider.animateTo(coordinates: .init(latitude: 0.0, longitude: 0.0))
+        XCTAssertFalse(provider.isDefault())
+
+        let initializedProvider = ViewportProvider(viewport: .followPuck(zoom: 12.0))
+        XCTAssertFalse(initializedProvider.isDefault())
+    }
+
+    func testViewportSaving() throws {
+        let provider = ViewportProvider()
+        provider.viewport = .idle
+        provider.updateCameraState(.init(
+            center: .init(latitude: 1.1, longitude: 1.1),
+            padding: .zero, zoom: 14.0, bearing: 0, pitch: 0
+        ))
+
+        provider.saveCurrentViewport()
+        XCTAssertEqual(provider.viewport, .camera(center: .init(latitude: 1.1, longitude: 1.1), zoom: 14.0))
+
+        provider.viewport = .followPuck(zoom: 12.0)
+        provider.saveCurrentViewport()
+        XCTAssertEqual(provider.viewport, .followPuck(zoom: 14.0))
+    }
 }
