@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -19,7 +18,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomNavIconButton(onClick: () -> Unit, icon: Int, label: String, active: Boolean) {
+fun BottomNavIconButton(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    icon: Int,
+    label: String,
+    active: Boolean = false
+) {
     val iconButtonColors =
         IconButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -29,8 +34,8 @@ fun BottomNavIconButton(onClick: () -> Unit, icon: Int, label: String, active: B
         )
 
     IconButton(
+        modifier = modifier,
         onClick = onClick,
-        modifier = Modifier.fillMaxSize(),
         colors = iconButtonColors,
         enabled = !active
     ) {

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -102,10 +103,18 @@ fun ContentView(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         actions = {
                             BottomNavIconButton(
+                                modifier = Modifier.fillMaxSize().weight(1f),
                                 onClick = { navController.navigate(Routes.nearbyTransit) },
                                 icon = R.drawable.map_pin,
                                 label = "Nearby",
                                 active = true,
+                            )
+
+                            BottomNavIconButton(
+                                modifier = Modifier.fillMaxSize().weight(1f),
+                                onClick = {},
+                                icon = R.drawable.gear,
+                                label = "Settings",
                             )
                         }
                     )
