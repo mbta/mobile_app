@@ -27,7 +27,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-androidx-navigation-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3" }

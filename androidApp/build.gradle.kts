@@ -36,7 +36,7 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.javaPhoenixClient)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.koin.androidxCompose)
