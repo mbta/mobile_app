@@ -76,6 +76,10 @@ class ViewportProvider: ObservableObject {
         }
     }
 
+    func isDefault() -> Bool {
+        viewport.camera?.center == Defaults.center
+    }
+
     func animateTo(
         coordinates: CLLocationCoordinate2D,
         animation: ViewportAnimation = Defaults.animation,
@@ -98,6 +102,15 @@ class ViewportProvider: ObservableObject {
 
     func updateCameraState(_ state: CameraState) {
         cameraStateSubject.send(state)
+    }
+
+    func saveCurrentViewport() {
+        let camera = cameraStateSubject.value
+        if viewport.isFollowing {
+            viewport = .followPuck(zoom: camera.zoom)
+        } else {
+            viewport = .camera(center: camera.center, zoom: camera.zoom)
+        }
     }
 
     func saveNearbyTransitViewport() {

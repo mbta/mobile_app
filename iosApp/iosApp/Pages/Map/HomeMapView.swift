@@ -133,6 +133,7 @@ struct HomeMapView: View {
             }
             .onDisappear {
                 vehiclesFetcher.leave()
+                viewportProvider.saveCurrentViewport()
             }
             .onReceive(timer) { input in
                 now = input
@@ -153,7 +154,8 @@ struct HomeMapView: View {
             handleGlobalMapDataChange(now: now)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
-            guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+            guard status == .authorizedAlways || status == .authorizedWhenInUse,
+                  viewportProvider.isDefault() else { return }
             viewportProvider.follow(animation: .easeInOut(duration: 0))
         }
         .onChange(of: nearbyVM.navigationStack) { nextNavStack in
