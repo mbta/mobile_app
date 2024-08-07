@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-fun NearbyTransitPage(
+fun NearbyTransitView(
     modifier: Modifier = Modifier,
     alertData: AlertsStreamDataResponse?,
     globalData: GlobalData,
