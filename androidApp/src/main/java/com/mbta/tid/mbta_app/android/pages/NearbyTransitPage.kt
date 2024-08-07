@@ -10,6 +10,7 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,35 +42,40 @@ constructor(
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
-fun NearbyTransitPage(nearbyTransit: NearbyTransit) {
-    BottomSheetScaffold(
-        sheetDragHandle = {
-            Column(
-                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                BottomSheetDefaults.DragHandle()
-            }
-        },
-        sheetContent = {
-            NearbyTransitView(
-                Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
-                alertData = nearbyTransit.alertData,
+fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () -> Unit) {
+    Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
+        BottomSheetScaffold(
+            sheetDragHandle = {
+                Column(
+                    modifier =
+                        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    BottomSheetDefaults.DragHandle()
+                }
+            },
+            sheetContent = {
+                NearbyTransitView(
+                    Modifier.fillMaxSize()
+                        .padding(outerSheetPadding)
+                        .background(MaterialTheme.colorScheme.surface),
+                    alertData = nearbyTransit.alertData,
+                    globalData = nearbyTransit.globalData,
+                    targetLocation = nearbyTransit.mapCenter,
+                    setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                )
+            },
+            scaffoldState = nearbyTransit.scaffoldState,
+            sheetPeekHeight = 422.dp,
+        ) { sheetPadding ->
+            HomeMapView(
+                Modifier.padding(sheetPadding),
+                nearbyTransit.mapViewportState,
+                backend = nearbyTransit.backend,
                 globalData = nearbyTransit.globalData,
-                targetLocation = nearbyTransit.mapCenter,
-                setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                alertsData = nearbyTransit.alertData,
+                lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation
             )
-        },
-        scaffoldState = nearbyTransit.scaffoldState,
-        sheetPeekHeight = 339.dp,
-    ) { sheetPadding ->
-        HomeMapView(
-            Modifier.padding(sheetPadding),
-            nearbyTransit.mapViewportState,
-            backend = nearbyTransit.backend,
-            globalData = nearbyTransit.globalData,
-            alertsData = nearbyTransit.alertData,
-            lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation
-        )
+        }
     }
 }

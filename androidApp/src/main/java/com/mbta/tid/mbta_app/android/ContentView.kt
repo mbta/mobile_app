@@ -1,6 +1,9 @@
 package com.mbta.tid.mbta_app.android
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -11,6 +14,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,6 +24,7 @@ import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.Backend
+import com.mbta.tid.mbta_app.android.component.BottomNavIconButton
 import com.mbta.tid.mbta_app.android.fetcher.fetchGlobalData
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
@@ -89,7 +95,21 @@ fun ContentView(
                     scaffoldState = scaffoldState,
                     mapViewportState = mapViewportState,
                     backend = backend
-                )
+                ),
+                bottomBar = {
+                    BottomAppBar(
+                        modifier = Modifier.height(83.dp),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        actions = {
+                            BottomNavIconButton(
+                                onClick = { navController.navigate(Routes.nearbyTransit) },
+                                icon = R.drawable.map_pin,
+                                label = "Nearby",
+                                active = true,
+                            )
+                        }
+                    )
+                }
             )
         }
     }
