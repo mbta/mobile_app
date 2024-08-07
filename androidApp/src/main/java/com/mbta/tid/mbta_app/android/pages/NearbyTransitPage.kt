@@ -25,6 +25,7 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.serialization.Serializable
 
 @Serializable
+@OptIn(ExperimentalMaterial3Api::class)
 data class NearbyTransit
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 constructor(
