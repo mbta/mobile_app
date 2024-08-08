@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -106,7 +107,7 @@ fun ContentView(
                                 modifier = Modifier.fillMaxSize().weight(1f),
                                 onClick = { navController.navigate(Routes.nearbyTransit) },
                                 icon = R.drawable.map_pin,
-                                label = "Nearby",
+                                label = stringResource(R.string.nearby_transit_link),
                                 active = true,
                             )
 
@@ -114,7 +115,7 @@ fun ContentView(
                                 modifier = Modifier.fillMaxSize().weight(1f),
                                 onClick = {},
                                 icon = R.drawable.gear,
-                                label = "Settings",
+                                label = stringResource(R.string.settings_link),
                             )
                         }
                     )
