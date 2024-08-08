@@ -119,6 +119,7 @@ class ObjectCollectionBuilder {
             set(trip) {
                 routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
                 tripId = trip.id
+                directionId = trip.directionId
             }
 
         override fun built() =
