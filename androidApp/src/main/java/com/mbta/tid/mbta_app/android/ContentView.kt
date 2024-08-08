@@ -105,7 +105,7 @@ fun ContentView(
                         actions = {
                             BottomNavIconButton(
                                 modifier = Modifier.fillMaxSize().weight(1f),
-                                onClick = { navController.navigate(Routes.nearbyTransit) },
+                                onClick = { navController.navigate(Routes.NearbyTransit) },
                                 icon = R.drawable.map_pin,
                                 label = stringResource(R.string.nearby_transit_link),
                                 active = true,
