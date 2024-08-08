@@ -77,8 +77,8 @@ fun ContentView(
         onDispose { socket.detach() }
     }
 
-    NavHost(navController = navController, startDestination = Routes.nearbyTransit) {
-        composable(Routes.nearbyTransit) {
+    NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
+        composable<Routes.NearbyTransit> {
             NearbyTransitPage(
                 NearbyTransit(
                     alertData = alertData,
