@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
+import kotlinx.serialization.Serializable
+
 object Routes {
-    val nearbyTransit = "nearbyTransit"
+    @Serializable object NearbyTransit
 }

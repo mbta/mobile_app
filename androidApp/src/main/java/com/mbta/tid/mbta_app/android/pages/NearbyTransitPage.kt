@@ -22,9 +22,7 @@ import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import io.github.dellisd.spatialk.geojson.Position
-import kotlinx.serialization.Serializable
 
-@Serializable
 @OptIn(ExperimentalMaterial3Api::class)
 data class NearbyTransit
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)

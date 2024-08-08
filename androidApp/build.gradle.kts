@@ -2,13 +2,14 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.serialization)
     id("ios-assets")
     id("check-mapbox-bridge")
 }
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
