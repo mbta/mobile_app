@@ -59,7 +59,8 @@ fun MyApplicationTheme(
             headlineMedium = TextStyle(fontFamily = fontFamily, fontSize = 17.sp),
             headlineLarge = TextStyle(fontFamily = fontFamily, fontSize = 20.sp),
             titleLarge =
-                TextStyle(fontFamily = fontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                TextStyle(fontFamily = fontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold),
+            labelSmall = TextStyle(fontFamily = fontFamily, fontSize = 11.sp),
         )
     val shapes =
         Shapes(

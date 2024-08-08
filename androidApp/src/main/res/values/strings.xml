@@ -10,4 +10,6 @@
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
     <string name="no_service">No Service</string>
+    <string name="nearby_transit_link">Nearby</string>
+    <string name="settings_link">Settings</string>
 </resources>
