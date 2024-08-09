@@ -19,6 +19,13 @@ data class Route(
 ) : Comparable<Route>, BackendObject {
     override fun compareTo(other: Route) = sortOrder.compareTo(other.sortOrder)
 
+    val label: String =
+        when (type) {
+            RouteType.BUS -> shortName
+            RouteType.COMMUTER_RAIL -> longName.replace("/", " / ")
+            else -> longName
+        }
+
     companion object {
         val subwayFirstComparator =
             Comparator<Route> { route1, route2 ->
