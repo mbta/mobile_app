@@ -34,6 +34,7 @@ data class AlertsStreamDataResponse(val alerts: Map<String, Alert>) {
                                 Alert(
                                     id = "566172.1",
                                     activePeriod = alert566172.activePeriod,
+                                    cause = null,
                                     description = null,
                                     effect = Alert.Effect.Shuttle,
                                     effectName = null,
@@ -42,12 +43,14 @@ data class AlertsStreamDataResponse(val alerts: Map<String, Alert>) {
                                             it.stop in shuttledStops
                                         },
                                     header = null,
-                                    lifecycle = alert566172.lifecycle
+                                    lifecycle = alert566172.lifecycle,
+                                    updatedAt = alert566172.updatedAt
                                 ),
                             "566172.2" to
                                 Alert(
                                     id = "566172.2",
                                     activePeriod = alert566172.activePeriod,
+                                    cause = null,
                                     description = null,
                                     effect = Alert.Effect.Suspension,
                                     effectName = null,
@@ -56,7 +59,8 @@ data class AlertsStreamDataResponse(val alerts: Map<String, Alert>) {
                                             it.stop in suspendedStops
                                         },
                                     header = null,
-                                    lifecycle = alert566172.lifecycle
+                                    lifecycle = alert566172.lifecycle,
+                                    updatedAt = alert566172.updatedAt
                                 )
                         )
                 )

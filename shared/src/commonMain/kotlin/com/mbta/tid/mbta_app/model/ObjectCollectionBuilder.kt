@@ -38,12 +38,14 @@ class ObjectCollectionBuilder {
     class AlertBuilder : ObjectBuilder<Alert> {
         var id = uuid()
         var activePeriod = mutableListOf<Alert.ActivePeriod>()
+        var cause: Alert.Cause? = null
         var description: String? = null
         var effect = Alert.Effect.UnknownEffect
         var effectName: String? = null
         var informedEntity = mutableListOf<Alert.InformedEntity>()
         var header: String? = null
         var lifecycle = Alert.Lifecycle.New
+        var updatedAt = Instant.fromEpochMilliseconds(0)
 
         fun activePeriod(start: Instant, end: Instant?) {
             activePeriod.add(Alert.ActivePeriod(start, end))
@@ -75,12 +77,14 @@ class ObjectCollectionBuilder {
             Alert(
                 id,
                 activePeriod,
+                cause,
                 description,
                 effect,
                 effectName,
                 header,
                 informedEntity,
-                lifecycle
+                lifecycle,
+                updatedAt
             )
     }
 
