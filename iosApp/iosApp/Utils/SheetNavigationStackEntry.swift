@@ -23,6 +23,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case stopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?, routeId: String, directionId: Int32)
     case nearby
+    case alertDetails(alertId: String, line: Line?, routes: [Route]?)
 
     var id: Int {
         hashValue
@@ -35,8 +36,14 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         }
     }
 
-    func sheetItemIdentifiable() -> NearbySheetItem {
-        NearbySheetItem(stackEntry: self)
+    func sheetItemIdentifiable() -> NearbySheetItem? {
+        let item = NearbySheetItem(stackEntry: self)
+        return item.id == "" ? nil : item
+    }
+
+    func coverItemIdentifiable() -> NearbyCoverItem? {
+        let item = NearbyCoverItem(stackEntry: self)
+        return item.id == "" ? nil : item
     }
 }
 
@@ -53,6 +60,18 @@ struct NearbySheetItem: Identifiable {
         case let .stopDetails(stop, _): stop.id
         case let .tripDetails(tripId, _, _, _, _): tripId
         case .nearby: "nearby"
+        default: ""
+        }
+    }
+}
+
+struct NearbyCoverItem: Identifiable {
+    let stackEntry: SheetNavigationStackEntry
+
+    var id: String {
+        switch stackEntry {
+        case let .alertDetails(alertId, _, _): alertId
+        default: ""
         }
     }
 }

@@ -127,6 +127,13 @@ struct StopDetailsFilteredRouteView: View {
                                 ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
                                     VStack(spacing: 0) {
                                         StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
+                                            .onTapGesture {
+                                                pushNavEntry(.alertDetails(
+                                                    alertId: alert.id,
+                                                    line: patternsByStop.line,
+                                                    routes: patternsByStop.routes
+                                                ))
+                                            }
                                         if index < alerts.count - 1 || !rows.isEmpty {
                                             Divider().background(Color.halo)
                                         }
