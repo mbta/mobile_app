@@ -1,12 +1,8 @@
 package com.mbta.tid.mbta_app.android
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -19,17 +15,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.Backend
+import com.mbta.tid.mbta_app.android.component.BottomNavIconButton
 import com.mbta.tid.mbta_app.android.fetcher.fetchGlobalData
-import com.mbta.tid.mbta_app.android.map.HomeMapView
-import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.pages.NearbyTransit
+import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -49,6 +49,7 @@ fun ContentView(
     alertsRepository: IAlertsRepository = koinInject(),
     socket: PhoenixSocket = koinInject(),
 ) {
+    val navController = rememberNavController()
     val backend = remember { Backend(appVariant) }
     var alertData: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
     DisposableEffect(null) {
@@ -84,34 +85,42 @@ fun ContentView(
         onDispose { socket.detach() }
     }
 
-    BottomSheetScaffold(
-        sheetDragHandle = {
-            Column(
-                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                BottomSheetDefaults.DragHandle()
-            }
-        },
-        sheetContent = {
+    NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
+        composable<Routes.NearbyTransit> {
             NearbyTransitPage(
-                Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
-                alertData = alertData,
-                globalData = globalData,
-                targetLocation = mapCenter,
-                setLastLocation = { lastNearbyTransitLocation = it },
+                NearbyTransit(
+                    alertData = alertData,
+                    globalData = globalData,
+                    targetLocation = mapCenter,
+                    mapCenter = mapCenter,
+                    lastNearbyTransitLocation = lastNearbyTransitLocation,
+                    scaffoldState = scaffoldState,
+                    mapViewportState = mapViewportState,
+                    backend = backend
+                ),
+                bottomBar = {
+                    BottomAppBar(
+                        modifier = Modifier.height(83.dp),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        actions = {
+                            BottomNavIconButton(
+                                modifier = Modifier.fillMaxSize().weight(1f),
+                                onClick = { navController.navigate(Routes.NearbyTransit) },
+                                icon = R.drawable.map_pin,
+                                label = stringResource(R.string.nearby_transit_link),
+                                active = true,
+                            )
+
+                            BottomNavIconButton(
+                                modifier = Modifier.fillMaxSize().weight(1f),
+                                onClick = {},
+                                icon = R.drawable.gear,
+                                label = stringResource(R.string.settings_link),
+                            )
+                        }
+                    )
+                }
             )
-        },
-        scaffoldState = scaffoldState,
-        sheetPeekHeight = 200.dp,
-    ) { sheetPadding ->
-        HomeMapView(
-            Modifier.padding(sheetPadding),
-            mapViewportState,
-            backend = backend,
-            globalData = globalData,
-            alertsData = alertData,
-            lastNearbyTransitLocation = lastNearbyTransitLocation
-        )
+        }
     }
 }
