@@ -101,7 +101,7 @@ sealed class TripInstantDisplay {
             if (timeRemaining <= APPROACH_CUTOFF && !forceAsTime) {
                 return Approaching
             }
-            if (timeRemaining > DISTANT_FUTURE_CUTOFF || forceAsTime) {
+            if (forceAsTime) {
                 return AsTime(prediction.predictionTime)
             }
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()

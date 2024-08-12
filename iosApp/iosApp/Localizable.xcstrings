@@ -54,6 +54,17 @@
     "%@ Bus" : {
       "extractionState" : "manual"
     },
+    "%@ hr %@ min" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hr %1$@ min"
+          }
+        }
+      }
+    },
     "%@ to" : {
 
     },

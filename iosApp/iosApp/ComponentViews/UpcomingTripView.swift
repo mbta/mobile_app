@@ -90,40 +90,42 @@ struct UpcomingTripView: View {
                         : accessibilityFormatters.distantFutureOther(date: format.predictionTime.toNSDate()))
                     .font(Typography.footnoteSemibold)
             case let .schedule(schedule):
-                if routeType == .commuterRail {
+                HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
                         .accessibilityLabel(isFirst
                             ? accessibilityFormatters.scheduledFirst(
                                 date: schedule.scheduleTime.toNSDate(),
                                 vehicleText: vehicleTypeText
                             )
-                            : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
+                            : accessibilityFormatters
+                            .scheduledOther(date: schedule.scheduleTime.toNSDate()))
+                        .font(Typography.footnoteSemibold)
+                    Image(.faClock)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: iconSize, height: iconSize)
+                        .padding(4)
+                        .foregroundStyle(Color.deemphasized)
+                }
+
+            case let .minutes(format):
+                if routeType == .commuterRail {
+                    let predictionAsDate = Date() + TimeInterval(format.minutes)
+                    Text(predictionAsDate, style: .time)
+                        .accessibilityLabel(isFirst
+                            ? accessibilityFormatters.scheduledFirst(
+                                date: predictionAsDate,
+                                vehicleText: vehicleTypeText
+                            )
+                            : accessibilityFormatters.scheduledOther(date: predictionAsDate))
                         .font(Typography.headlineBold)
                 } else {
-                    HStack(spacing: Self.subjectSpacing) {
-                        Text(schedule.scheduleTime.toNSDate(), style: .time)
-                            .accessibilityLabel(isFirst
-                                ? accessibilityFormatters.scheduledFirst(
-                                    date: schedule.scheduleTime.toNSDate(),
-                                    vehicleText: vehicleTypeText
-                                )
-                                : accessibilityFormatters
-                                .scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                            .font(Typography.footnoteSemibold)
-                        Image(.faClock)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: iconSize, height: iconSize)
-                            .padding(4)
-                            .foregroundStyle(Color.deemphasized)
-                    }
+                    PredictionText(minutes: format.minutes)
+                        .accessibilityLabel(isFirst
+                            ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
+                                                                             vehicleText: vehicleTypeText)
+                            : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
                 }
-            case let .minutes(format):
-                PredictionText(minutes: format.minutes)
-                    .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
-                                                                         vehicleText: vehicleTypeText)
-                        : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
