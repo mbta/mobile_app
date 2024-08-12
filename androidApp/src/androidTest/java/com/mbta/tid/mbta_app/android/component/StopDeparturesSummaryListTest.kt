@@ -2,8 +2,6 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.printToLog
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
@@ -38,14 +36,17 @@ class StopDeparturesSummaryListTest {
                     "Alewife",
                     null,
                     listOf(routePattern),
-                    listOf(UpcomingTrip(trip, prediction))))
+                    listOf(UpcomingTrip(trip, prediction))
+                )
+            )
 
         composeTestRule.setContent {
             StopDeparturesSummaryList(
                 patternsAtStop = PatternsByStop(route, stop, patterns),
                 condenseHeadsignPredictions = false,
                 now = now,
-                context = TripInstantDisplay.Context.NearbyTransit)
+                context = TripInstantDisplay.Context.NearbyTransit
+            )
         }
 
         composeTestRule.onNodeWithText("Alewife").assertExists()
