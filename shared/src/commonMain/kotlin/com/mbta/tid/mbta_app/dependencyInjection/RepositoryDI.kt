@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
@@ -17,6 +18,7 @@ import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IdleNearbyRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
+import com.mbta.tid.mbta_app.repositories.IdleSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
@@ -28,6 +30,7 @@ import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
+import com.mbta.tid.mbta_app.repositories.SearchResultRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
 import com.mbta.tid.mbta_app.repositories.TripRepository
@@ -48,6 +51,7 @@ interface IRepositories {
     val tripPredictions: ITripPredictionsRepository?
     val vehicle: IVehicleRepository?
     val global: IGlobalRepository
+    val searchResults: ISearchResultRepository
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -64,6 +68,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val tripPredictions: ITripPredictionsRepository by inject()
     override val vehicle: IVehicleRepository by inject()
     override val global: IGlobalRepository by inject()
+    override val searchResults: ISearchResultRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -82,6 +87,7 @@ class RealRepositories : IRepositories {
     override val tripPredictions = null
     override val vehicle = null
     override val global = GlobalRepository()
+    override val searchResults = SearchResultRepository()
 }
 
 class MockRepositories(
@@ -97,7 +103,8 @@ class MockRepositories(
     override val nearby: INearbyRepository,
     override val tripPredictions: ITripPredictionsRepository,
     override val vehicle: IVehicleRepository,
-    override val global: IGlobalRepository
+    override val global: IGlobalRepository,
+    override val searchResults: ISearchResultRepository
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
@@ -114,7 +121,8 @@ class MockRepositories(
             nearby: INearbyRepository = IdleNearbyRepository(),
             tripPredictions: ITripPredictionsRepository = MockTripPredictionsRepository(),
             vehicle: IVehicleRepository = MockVehicleRepository(),
-            global: IGlobalRepository = IdleGlobalRepository()
+            global: IGlobalRepository = IdleGlobalRepository(),
+            searchResults: ISearchResultRepository = IdleSearchResultRepository()
         ): MockRepositories {
             return MockRepositories(
                 appCheck = MockAppCheckRepository(),
@@ -129,7 +137,8 @@ class MockRepositories(
                 nearby = nearby,
                 tripPredictions = tripPredictions,
                 vehicle = vehicle,
-                global = global
+                global = global,
+                searchResults = searchResults
             )
         }
     }

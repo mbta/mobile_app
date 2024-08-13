@@ -31,7 +31,6 @@ struct ProductionAppView: View {
     @StateObject var backendProvider: BackendProvider
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @StateObject var searchResultFetcher: SearchResultFetcher
     @StateObject var socketProvider: SocketProvider
     @StateObject var vehiclesFetcher: VehiclesFetcher
     @StateObject var viewportProvider: ViewportProvider
@@ -53,7 +52,6 @@ struct ProductionAppView: View {
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
         _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
         _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
-        _searchResultFetcher = StateObject(wrappedValue: SearchResultFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
@@ -65,7 +63,6 @@ struct ProductionAppView: View {
             .environmentObject(locationDataManager)
             .environmentObject(backendProvider)
             .environmentObject(railRouteShapeFetcher)
-            .environmentObject(searchResultFetcher)
             .environmentObject(socketProvider)
             .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)

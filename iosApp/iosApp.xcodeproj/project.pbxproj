@@ -129,7 +129,6 @@
 		9A88AAC12BD0680C00A5BF88 /* StopDetailsFilterPills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */; };
 		9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC22BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift */; };
 		9A8B34AD2B88E5090018412C /* RailRouteShapeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */; };
-		9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */; };
 		9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */; };
 		9A9E7DCF2C2200C9000DA1FD /* LineHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCE2C2200C9000DA1FD /* LineHeader.swift */; };
 		9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */; };
@@ -350,7 +349,6 @@
 		9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilterPills.swift; sourceTree = "<group>"; };
 		9A88AAC22BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilterPillsTests.swift; sourceTree = "<group>"; };
 		9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailRouteShapeFetcher.swift; sourceTree = "<group>"; };
-		9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultFetcher.swift; sourceTree = "<group>"; };
 		9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NearbyLineView.swift; path = iosAppUITests/NearbyLineView.swift; sourceTree = SOURCE_ROOT; };
 		9A9E7DCE2C2200C9000DA1FD /* LineHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineHeader.swift; sourceTree = "<group>"; };
 		9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitHeader.swift; sourceTree = "<group>"; };
@@ -821,7 +819,6 @@
 			isa = PBXGroup;
 			children = (
 				8C7FA8722B5F36D6009B699D /* Backend.swift */,
-				9A9E05F32B6D6DEA0086B437 /* SearchResultFetcher.swift */,
 				9A8B34AC2B88E5080018412C /* RailRouteShapeFetcher.swift */,
 				6E99CBB62B9892C80047E78D /* SocketProvider.swift */,
 				9A5830572BA4A1A30039876E /* ViewportProvider.swift */,
@@ -1265,7 +1262,6 @@
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */,
 				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
-				9A9E05F42B6D6DEA0086B437 /* SearchResultFetcher.swift in Sources */,
 				ED24EAD82C1A941E00A7BE4D /* NearbyTransitAnalytics.swift in Sources */,
 				9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */,

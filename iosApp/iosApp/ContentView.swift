@@ -13,7 +13,6 @@ struct ContentView: View {
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -88,8 +87,7 @@ struct ContentView: View {
             if contentVM.searchEnabled {
                 TextField("Find nearby transit", text: $searchObserver.searchText)
                 SearchView(
-                    query: searchObserver.debouncedText,
-                    fetcher: searchResultFetcher
+                    query: searchObserver.debouncedText
                 )
             }
             switch locationDataManager.authorizationStatus {
