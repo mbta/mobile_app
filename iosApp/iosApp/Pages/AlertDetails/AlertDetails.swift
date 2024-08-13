@@ -87,10 +87,11 @@ struct AlertDetails: View {
     private var alertTitle: some View {
         VStack(alignment: .leading, spacing: 10) {
             if let effectLabel {
-                Text(
-                    "\(routeLabel) \(effectLabel)",
-                    comment: "First value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'"
-                ).font(.title2).bold()
+                Text("\(routeLabel) \(effectLabel)",
+                     comment: """
+                     First value is the route label, second value is an alert effect, \
+                     resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'
+                     """).font(.title2).bold()
             }
             if let causeLabel { Text(causeLabel).font(.body).bold() }
         }
@@ -143,7 +144,6 @@ struct AlertDetails: View {
                             .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
                     }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
                 }
-
             ).foregroundStyle(Color.text, .clear))
         }
     }

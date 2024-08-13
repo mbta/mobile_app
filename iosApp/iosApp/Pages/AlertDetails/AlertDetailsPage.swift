@@ -23,6 +23,8 @@ struct AlertDetailsPage: View {
     @ScaledMetric private var modeIconHeight: CGFloat = 24
     private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
+    let inspection = Inspection<Self>()
+
     private var affectedStops: [Stop] {
         guard let globalResponse, let alert, let routes else { return [] }
         let routeEntities = alert.matchingEntities { entity in
@@ -105,15 +107,10 @@ struct AlertDetailsPage: View {
                 debugPrint(error)
             }
         }
-        .onAppear {
-            updateAlert()
-        }
-        .onChange(of: nearbyVM.alerts) { _ in
-            updateAlert()
-        }
-        .onReceive(timer) { input in
-            now = input
-        }
+        .onAppear { updateAlert() }
+        .onChange(of: nearbyVM.alerts) { _ in updateAlert() }
+        .onReceive(timer) { input in now = input }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     private func updateAlert() {
