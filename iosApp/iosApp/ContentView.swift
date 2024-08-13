@@ -11,7 +11,6 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var backendProvider: BackendProvider
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider

@@ -18,17 +18,9 @@ import SwiftUI
 #endif
 
 struct ProductionAppView: View {
-    let backend: BackendProtocol =
-        if CommandLine.arguments.contains("--default-mocks") {
-            IdleBackend()
-        } else {
-            Backend(appVariant: appVariant)
-        }
-
     // ignore updates less than 0.1km
     @StateObject var locationDataManager: LocationDataManager
 
-    @StateObject var backendProvider: BackendProvider
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
     @StateObject var vehiclesFetcher: VehiclesFetcher
@@ -47,9 +39,7 @@ struct ProductionAppView: View {
     }
 
     init(socket: PhoenixSocket) {
-        let backend = backend
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
-        _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
@@ -59,7 +49,6 @@ struct ProductionAppView: View {
         ContentView(contentVM: contentVM)
             .font(Typography.body)
             .environmentObject(locationDataManager)
-            .environmentObject(backendProvider)
             .environmentObject(socketProvider)
             .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)
