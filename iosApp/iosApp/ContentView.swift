@@ -12,7 +12,6 @@ struct ContentView: View {
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var backendProvider: BackendProvider
-    @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -211,7 +210,6 @@ struct ContentView: View {
         HomeMapView(
             mapVM: mapVM,
             nearbyVM: nearbyVM,
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: vehiclesFetcher,
             viewportProvider: viewportProvider,
             sheetHeight: $sheetHeight

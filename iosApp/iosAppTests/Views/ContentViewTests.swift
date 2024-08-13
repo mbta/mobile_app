@@ -170,7 +170,6 @@ final class ContentViewTests: XCTestCase {
         sut
             .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
             .environmentObject(BackendProvider(backend: IdleBackend()))
-            .environmentObject(RailRouteShapeFetcher(backend: IdleBackend()))
             .environmentObject(socketProvider)
             .environmentObject(VehiclesFetcher(socket: FakeSocket()))
             .environmentObject(ViewportProvider())

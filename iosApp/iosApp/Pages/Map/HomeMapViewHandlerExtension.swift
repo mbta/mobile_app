@@ -17,7 +17,7 @@ extension HomeMapView {
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
-            try await railRouteShapeFetcher.getRailRouteShapes()
+            railRouteShapes = try await railRouteShapeRepository.getRailRouteShapes()
         }
 
         // Set MapBox to use the current location to display puck

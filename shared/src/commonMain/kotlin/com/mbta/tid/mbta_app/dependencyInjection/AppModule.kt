@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
@@ -56,6 +57,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         single<IGlobalRepository> { repositories.global }
         single<ISearchResultRepository> { repositories.searchResults }
+        single<IRailRouteShapeRepository> { repositories.railRouteShapes }
         single { TogglePinnedRouteUsecase(get()) }
         single { GetSettingUsecase(get()) }
         single { ConfigUseCase(get(), get()) }

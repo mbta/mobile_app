@@ -16,8 +16,6 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 final class HomeMapViewTests: XCTestCase {
-    struct NotUnderTestError: Error {}
-
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -64,12 +62,10 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testNoLocationDefaultCenter() throws {
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
@@ -79,7 +75,6 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFollowsPuckWhenUserLocationIsKnown() throws {
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationFetcher = MockLocationFetcher()
         locationFetcher.authorizationStatus = .authorizedAlways
 
@@ -89,7 +84,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
@@ -107,30 +101,15 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testFetchData() throws {
-        class FakeRailRouteShapeFetcher: RailRouteShapeFetcher {
-            let getRailRouteShapeExpectation: XCTestExpectation
-
-            init(getRailRouteShapeExpectation: XCTestExpectation) {
-                self.getRailRouteShapeExpectation = getRailRouteShapeExpectation
-                super.init(backend: IdleBackend())
-            }
-
-            override func getRailRouteShapes() async throws {
-                getRailRouteShapeExpectation.fulfill()
-                throw NotUnderTestError()
-            }
-        }
-
         let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
+        let railRouteShapeRepository = MockRailRouteShapeRepository(onGet: { getRailRouteShapeExpectation.fulfill() })
 
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            railRouteShapeFetcher: FakeRailRouteShapeFetcher(
-                getRailRouteShapeExpectation: getRailRouteShapeExpectation
-            ),
             vehiclesFetcher: VehiclesFetcher(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
+            railRouteShapeRepository: railRouteShapeRepository,
             sheetHeight: .constant(0)
         )
         let hasAppeared = sut.on(\.didAppear) { _ in }
@@ -146,12 +125,10 @@ final class HomeMapViewTests: XCTestCase {
             stop.latitude = 1
             stop.longitude = 1
         }
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
@@ -171,12 +148,10 @@ final class HomeMapViewTests: XCTestCase {
             stop.latitude = 1
             stop.longitude = 1
         }
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
@@ -211,15 +186,14 @@ final class HomeMapViewTests: XCTestCase {
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
 
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
+        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
+            railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -263,15 +237,14 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
+        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
+            railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -320,16 +293,15 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
+        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
+            railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -371,8 +343,7 @@ final class HomeMapViewTests: XCTestCase {
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
+        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
 
         let objectCollection = ObjectCollectionBuilder()
         let stop = objectCollection.stop { stop in
@@ -404,9 +375,9 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
+            railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -472,16 +443,15 @@ final class HomeMapViewTests: XCTestCase {
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
-        railRouteShapeFetcher.response = MapTestDataHelper.shared.routeResponse
+        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
+            railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -573,12 +543,10 @@ final class HomeMapViewTests: XCTestCase {
             .init(routeId: vehicle.routeId!, directionId: vehicle.directionId)
         )
         nearbyVM.navigationStack = [initialNav]
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: nearbyVM,
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle]),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
@@ -680,14 +648,12 @@ final class HomeMapViewTests: XCTestCase {
             layerManager: MockLayerManager()
         )
         nearbyVM.navigationStack = [initialNav]
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
 
         let viewportProvider = ViewportProvider()
         var sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: nearbyVM,
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle1]),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
@@ -771,12 +737,10 @@ final class HomeMapViewTests: XCTestCase {
             layerManager: MockLayerManager()
         )
 
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
@@ -811,13 +775,11 @@ final class HomeMapViewTests: XCTestCase {
                 updateCameraExpectation.fulfill()
             }
         }
-        let railRouteShapeFetcher: RailRouteShapeFetcher = .init(backend: IdleBackend())
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
         let sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            railRouteShapeFetcher: railRouteShapeFetcher,
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
@@ -849,7 +811,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
@@ -878,7 +839,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
@@ -904,7 +864,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
@@ -930,7 +889,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            railRouteShapeFetcher: .init(backend: IdleBackend()),
             vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
