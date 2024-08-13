@@ -110,14 +110,14 @@ struct UpcomingTripView: View {
 
             case let .minutes(format):
                 if routeType == .commuterRail {
-                    let predictionAsDate = Date() + TimeInterval(format.minutes)
+                    let predictionAsDate = (NSDate() as Date) + TimeInterval(format.minutes)
                     Text(predictionAsDate, style: .time)
                         .accessibilityLabel(isFirst
-                            ? accessibilityFormatters.scheduledFirst(
+                            ? accessibilityFormatters.predictionTimeFirst(
                                 date: predictionAsDate,
                                 vehicleText: vehicleTypeText
                             )
-                            : accessibilityFormatters.scheduledOther(date: predictionAsDate))
+                            : accessibilityFormatters.predictionTimeOther(date: predictionAsDate))
                         .font(Typography.headlineBold)
                 } else {
                     PredictionText(minutes: format.minutes)
@@ -178,6 +178,14 @@ class UpcomingTripAccessibilityFormatters {
 
     public func predictionMinutesOther(minutes: Int32) -> Text {
         Text("and in \(minutes) min")
+    }
+
+    public func predictionTimeFirst(date: Date, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))")
+    }
+
+    public func predictionTimeOther(date: Date) -> Text {
+        Text("and at \(timeFormatter.string(from: date))")
     }
 }
 

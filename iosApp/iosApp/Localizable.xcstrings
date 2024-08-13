@@ -60,7 +60,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ hr %1$@ min"
+            "value" : "%1$@ hr %2$@ min"
           }
         }
       }
@@ -195,6 +195,9 @@
     },
     "ferry" : {
       "comment" : "ferry"
+    },
+    "in" : {
+      "extractionState" : "manual"
     },
     "Fire" : {
       "comment" : "Possible alert cause"

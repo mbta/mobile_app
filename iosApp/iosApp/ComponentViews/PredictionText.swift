@@ -10,16 +10,21 @@ import SwiftUI
 
 struct PredictionText: View {
     var minutes: Int32
-    var predictionString: AttributedString {
+    var predictionKey: String.LocalizationValue {
         let hours = Int32(
             (Float(minutes) / 60).rounded(FloatingPointRoundingRule.down)
         )
         let remainingMinutes = minutes - (hours * 60)
-        var prediction = if hours >= 1 {
-            AttributedString(localized: "\(hours, specifier: "%1d") hr \(remainingMinutes, specifier: "%2d") min")
+        let prediction: String.LocalizationValue = if hours >= 1 {
+            "\(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
         } else {
-            AttributedString(localized: "\(minutes, specifier: "%ld") min")
+            "\(minutes, specifier: "%ld") min"
         }
+        return prediction
+    }
+
+    var predictionString: AttributedString {
+        var prediction = AttributedString(localized: predictionKey)
         for run in prediction.runs {
             if run.localizedNumericArgument != nil {
                 prediction[run.range].font = Typography.headlineBold
@@ -30,8 +35,16 @@ struct PredictionText: View {
         return prediction
     }
 
+    var accessibilityString: NSMutableAttributedString {
+        var string = NSMutableAttributedString()
+        string.append(NSAttributedString(AttributedString(localized: "in")))
+        string.append(NSAttributedString(" "))
+        string.append(NSAttributedString(predictionString))
+        return string
+    }
+
     var body: some View {
         Text(predictionString)
-            .accessibilityLabel("in \(minutes) min")
+            .accessibilityLabel(accessibilityString.string)
     }
 }
