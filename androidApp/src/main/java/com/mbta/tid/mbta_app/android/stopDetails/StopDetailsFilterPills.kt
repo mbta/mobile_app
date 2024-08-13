@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -107,7 +108,10 @@ fun StopDetailsFilterPills(
                     ),
                 border = BorderStroke(2.dp, colorResource(R.color.halo))
             ) {
-                Text("All", Modifier.padding(horizontal = 16.dp, vertical = 7.dp))
+                Text(
+                    stringResource(R.string.filterShowAll),
+                    Modifier.padding(horizontal = 16.dp, vertical = 7.dp)
+                )
             }
         }
     }
