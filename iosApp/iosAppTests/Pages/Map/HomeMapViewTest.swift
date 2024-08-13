@@ -26,7 +26,6 @@ final class HomeMapViewTest: XCTestCase {
         let sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: viewportProvider,
             sheetHeight: sheetHeight
         )

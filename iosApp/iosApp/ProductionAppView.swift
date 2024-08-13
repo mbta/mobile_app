@@ -23,7 +23,6 @@ struct ProductionAppView: View {
 
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
-    @StateObject var vehiclesFetcher: VehiclesFetcher
     @StateObject var viewportProvider: ViewportProvider
 
     init() {
@@ -41,7 +40,6 @@ struct ProductionAppView: View {
     init(socket: PhoenixSocket) {
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
-        _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }
 
@@ -50,7 +48,6 @@ struct ProductionAppView: View {
             .font(Typography.body)
             .environmentObject(locationDataManager)
             .environmentObject(socketProvider)
-            .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)
     }
 

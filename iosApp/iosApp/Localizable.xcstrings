@@ -114,12 +114,6 @@
     "Dummy app for launching unit tests" : {
 
     },
-    "Failed to load new vehicles, something went wrong" : {
-
-    },
-    "Failed to load vehicles, could not connect to the server" : {
-
-    },
     "ferries" : {
       "comment" : "ferries"
     },

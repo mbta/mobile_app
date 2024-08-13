@@ -66,7 +66,6 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
@@ -84,7 +83,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
@@ -107,7 +105,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            vehiclesFetcher: VehiclesFetcher(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             sheetHeight: .constant(0)
@@ -129,7 +126,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
@@ -152,7 +148,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
@@ -191,7 +186,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -242,7 +236,6 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -299,7 +292,6 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -375,7 +367,6 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -449,7 +440,6 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -547,8 +537,8 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: nearbyVM,
-            vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle]),
             viewportProvider: ViewportProvider(),
+            vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle]),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -654,8 +644,8 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: nearbyVM,
-            vehiclesFetcher: .init(socket: MockSocket(), vehicles: [vehicle1]),
             viewportProvider: viewportProvider,
+            vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle1]),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
         )
@@ -741,7 +731,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: mapVM,
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
@@ -780,7 +769,6 @@ final class HomeMapViewTests: XCTestCase {
         let sut = HomeMapView(
             mapVM: .init(),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0)
@@ -811,7 +799,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
             sheetHeight: .constant(0)
@@ -839,7 +826,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
             sheetHeight: .constant(0)
@@ -864,7 +850,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
             sheetHeight: .constant(0)
@@ -889,7 +874,6 @@ final class HomeMapViewTests: XCTestCase {
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
-            vehiclesFetcher: .init(socket: MockSocket()),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
             sheetHeight: .constant(0)
