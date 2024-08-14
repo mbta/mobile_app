@@ -15,8 +15,6 @@ struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
 
     @Environment(\.colorScheme) var colorScheme
@@ -24,9 +22,16 @@ struct HomeMapView: View {
     var globalRepository: IGlobalRepository
     @State var globalData: GlobalResponse?
 
+    var railRouteShapeRepository: IRailRouteShapeRepository
+    @State var railRouteShapes: MapFriendlyRouteResponse?
+
     var stopRepository: IStopRepository
     @State var globalMapData: GlobalMapData?
     @State var stopMapData: StopMapResponse?
+
+    var vehiclesRepository: IVehiclesRepository
+    @State var vehiclesData: [Vehicle]?
+
     @State var upcomingRoutePatterns: Set<String> = .init()
 
     @StateObject var locationDataManager: LocationDataManager
@@ -49,10 +54,10 @@ struct HomeMapView: View {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
-        railRouteShapeFetcher: RailRouteShapeFetcher,
-        vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
+        railRouteShapeRepository: IRailRouteShapeRepository = RepositoryDI().railRouteShapes,
         stopRepository: IStopRepository = RepositoryDI().stop,
+        vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         sheetHeight: Binding<CGFloat>,
         globalMapData: GlobalMapData? = nil
@@ -60,10 +65,10 @@ struct HomeMapView: View {
         self.globalRepository = globalRepository
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
-        self.railRouteShapeFetcher = railRouteShapeFetcher
-        self.vehiclesFetcher = vehiclesFetcher
         self.viewportProvider = viewportProvider
+        self.railRouteShapeRepository = railRouteShapeRepository
         self.stopRepository = stopRepository
+        self.vehiclesRepository = vehiclesRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
         _globalMapData = State(wrappedValue: globalMapData)
@@ -132,7 +137,7 @@ struct HomeMapView: View {
                 updateGlobalMapDataSources()
             }
             .onDisappear {
-                vehiclesFetcher.leave()
+                vehiclesRepository.disconnect()
                 viewportProvider.saveCurrentViewport()
             }
             .onReceive(timer) { input in
@@ -147,7 +152,6 @@ struct HomeMapView: View {
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
-            railRouteShapeFetcher: railRouteShapeFetcher,
             globalMapData: globalMapData
         )
         .onChange(of: globalData) { _ in
@@ -168,7 +172,7 @@ struct HomeMapView: View {
         let selectedVehicle: Vehicle? = if case .tripDetails = nearbyVM.navigationStack.last {
             mapVM.selectedVehicle
         } else { nil }
-        let vehicles: [Vehicle]? = vehiclesFetcher.vehicles?.filter { $0.id != selectedVehicle?.id }
+        let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
@@ -201,7 +205,7 @@ struct ProxyModifiedMap: View {
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
     var handleTryLayerInit: (_ map: MapboxMap?) -> Void
     var globalData: GlobalResponse?
-    var railRouteShapeFetcher: RailRouteShapeFetcher
+    var railRouteShapes: MapFriendlyRouteResponse?
     var globalMapData: GlobalMapData?
 
     var body: some View {
@@ -213,7 +217,7 @@ struct ProxyModifiedMap: View {
                 .onChange(of: globalData) { _ in
                     handleTryLayerInit(proxy.map)
                 }
-                .onChange(of: railRouteShapeFetcher.response) { _ in
+                .onChange(of: railRouteShapes) { _ in
                     handleTryLayerInit(proxy.map)
                 }
                 .onChange(of: globalMapData) { _ in

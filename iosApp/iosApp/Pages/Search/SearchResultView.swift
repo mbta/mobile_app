@@ -29,15 +29,28 @@ class TextFieldObserver: ObservableObject {
 
 struct SearchView: View {
     let query: String
-    @ObservedObject var fetcher: SearchResultFetcher
+    let searchResultsRepository: ISearchResultRepository
+    @State var searchResults: SearchResults?
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
 
+    init(
+        query: String,
+        searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
+        didAppear: ((Self) -> Void)? = nil,
+        didChange: ((Self) -> Void)? = nil
+    ) {
+        self.query = query
+        self.searchResultsRepository = searchResultsRepository
+        self.didAppear = didAppear
+        self.didChange = didChange
+    }
+
     func loadResults(query: String) {
         Task {
             do {
-                try await fetcher.getSearchResults(query: query)
+                searchResults = try await searchResultsRepository.getSearchResults(query: query)
             } catch {
                 debugPrint(error)
             }
@@ -47,7 +60,7 @@ struct SearchView: View {
     var body: some View {
         VStack {
             if !query.isEmpty {
-                SearchResultView(results: fetcher.results)
+                SearchResultView(results: searchResults)
             }
         }
         .onAppear {

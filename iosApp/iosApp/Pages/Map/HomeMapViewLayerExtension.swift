@@ -17,7 +17,7 @@ extension HomeMapView {
     func handleTryLayerInit(map: MapboxMap?) {
         guard let map,
               globalData != nil,
-              railRouteShapeFetcher.response != nil,
+              railRouteShapes != nil,
               globalMapData?.mapStops != nil,
               mapVM.layerManager == nil
         else {
@@ -33,7 +33,7 @@ extension HomeMapView {
     }
 
     func initializeLayers(_ layerManager: IMapLayerManager) {
-        let routeSourceData = railRouteShapeFetcher.response?.routesWithSegmentedShapes ?? []
+        let routeSourceData = railRouteShapes?.routesWithSegmentedShapes ?? []
         mapVM.allRailSourceData = routeSourceData
         mapVM.routeSourceData = routeSourceData
 
