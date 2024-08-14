@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
@@ -9,7 +8,6 @@ import kotlinx.serialization.Serializable
 val ARRIVAL_CUTOFF = 30.seconds
 val APPROACH_CUTOFF = 60.seconds
 val BOARDING_CUTOFF = 90.seconds
-val DISTANT_FUTURE_CUTOFF = 60.minutes
 
 @Serializable
 data class Prediction(

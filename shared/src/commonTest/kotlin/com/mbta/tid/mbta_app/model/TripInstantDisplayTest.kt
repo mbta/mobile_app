@@ -434,16 +434,16 @@ class TripInstantDisplayTest {
     @Test
     fun `minutes in the distant future`() = parametricTest {
         val now = Clock.System.now()
-        val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
-        val moreFuture = future.plus(38.minutes)
+        val futureMinutes = 61
+        val moreFutureMinutes = 38
 
         assertEquals(
-            TripInstantDisplay.AsTime(future),
+            TripInstantDisplay.Minutes(futureMinutes),
             TripInstantDisplay.from(
                 prediction =
                     ObjectCollectionBuilder.Single.prediction {
-                        arrivalTime = future
-                        departureTime = future.plus(1.minutes)
+                        arrivalTime = now.plus(futureMinutes.minutes)
+                        departureTime = now.plus(futureMinutes.minutes).plus(1.minutes)
                     },
                 schedule = null,
                 vehicle = null,
@@ -452,10 +452,12 @@ class TripInstantDisplayTest {
             )
         )
         assertEquals(
-            TripInstantDisplay.AsTime(moreFuture),
+            TripInstantDisplay.Minutes(moreFutureMinutes),
             TripInstantDisplay.from(
                 prediction =
-                    ObjectCollectionBuilder.Single.prediction { departureTime = moreFuture },
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(moreFutureMinutes.minutes)
+                    },
                 schedule = null,
                 vehicle = null,
                 now = now,

@@ -275,23 +275,26 @@ class UpcomingTripTest {
         @Test
         fun `minutes in the distant future`() = parametricTest {
             val now = Clock.System.now()
-            val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
-            val moreFuture = future.plus(38.minutes)
+            val futureMinutes = 61
+            val moreFutureMinutes = futureMinutes + 38
 
             assertEquals(
-                TripInstantDisplay.AsTime(future),
+                TripInstantDisplay.Minutes(futureMinutes),
                 UpcomingTrip(
                         trip {},
                         prediction {
-                            arrivalTime = future
-                            departureTime = future.plus(1.minutes)
+                            arrivalTime = now.plus(futureMinutes.minutes)
+                            departureTime = now.plus(futureMinutes.minutes).plus(1.minutes)
                         }
                     )
                     .format(now, anyContext())
             )
             assertEquals(
-                TripInstantDisplay.AsTime(moreFuture),
-                UpcomingTrip(trip {}, prediction { departureTime = moreFuture })
+                TripInstantDisplay.Minutes(moreFutureMinutes),
+                UpcomingTrip(
+                        trip {},
+                        prediction { departureTime = now.plus(moreFutureMinutes.minutes) }
+                    )
                     .format(now, anyContext())
             )
         }
