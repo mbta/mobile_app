@@ -156,13 +156,16 @@
       "comment" : "Possible alert cause"
     },
     "Detour" : {
-
+      "comment" : "Possible alert effect"
     },
     "Disabled Bus" : {
       "comment" : "Possible alert cause"
     },
     "Disabled Train" : {
       "comment" : "Possible alert cause"
+    },
+    "Dock Closure" : {
+      "comment" : "Possible alert effect"
     },
     "Drawbridge Being Raised" : {
       "comment" : "Possible alert cause"
@@ -291,7 +294,7 @@
       "comment" : "Possible alert cause"
     },
     "Shuttle" : {
-
+      "comment" : "Possible alert effect"
     },
     "Shuttle buses replace service" : {
 
@@ -314,8 +317,17 @@
     "Start" : {
       "comment" : "Label for the start date of a disruption"
     },
+    "Station Closure" : {
+      "comment" : "Possible alert effect"
+    },
+    "Station Moved" : {
+      "comment" : "Possible alert effect"
+    },
     "Stop Closed" : {
 
+    },
+    "Stop Closure" : {
+      "comment" : "Possible alert effect"
     },
     "Stops" : {
 
@@ -324,7 +336,7 @@
       "comment" : "Possible alert cause"
     },
     "Suspension" : {
-
+      "comment" : "Possible alert effect"
     },
     "Switch Problem" : {
       "comment" : "Possible alert cause"

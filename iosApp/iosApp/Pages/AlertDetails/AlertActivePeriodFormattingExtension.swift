@@ -1,5 +1,5 @@
 //
-//  AlertActivePeriodExtension.swift
+//  AlertActivePeriodFormattingExtension.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 8/8/24.
@@ -9,6 +9,7 @@
 import Foundation
 import shared
 
+// This is for performing iOS specific date string formatting and localization for AlertDetails
 extension shared.Alert.ActivePeriod {
     private func format(instant: Instant) -> AttributedString {
         let date = instant.toNSDate()

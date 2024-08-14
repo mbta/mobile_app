@@ -115,8 +115,11 @@ struct AlertDetailsPage: View {
 
     private func updateAlert() {
         guard let alerts = nearbyVM.alerts else { return }
-        alert = alerts.alerts[alertId]
-        if alert == nil {
+        let nextAlert = alerts.alerts[alertId]
+        // If no alert is already set, and no alert was found with the provided ID,
+        // something went wrong, and the alert didn't exist in the data to begin with,
+        // navigate back to the previous page.
+        if alert == nil, nextAlert == nil {
             nearbyVM.navigationStack.removeAll { nav in
                 if case let .alertDetails(alertId, _, _) = nav {
                     alertId == self.alertId
@@ -125,5 +128,10 @@ struct AlertDetailsPage: View {
                 }
             }
         }
+        // If an alert is already set on the page, but doesn't exist in the data,
+        // it probably expired while the page was open, so don't change anything and
+        // keep displaying the expired alert as is.
+        guard let nextAlert else { return }
+        alert = nextAlert
     }
 }

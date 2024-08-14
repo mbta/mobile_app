@@ -117,7 +117,7 @@
 		9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */; };
 		9A60E8E72B8501BD008A8D5C /* RoutePillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */; };
 		9A635D1F2B99103200A43C51 /* EmptyWhenModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */; };
-		9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodExtension.swift */; };
+		9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift */; };
 		9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */; };
 		9A6FA0232BC70D0B0067769C /* InspectionEmissary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0222BC70D0A0067769C /* InspectionEmissary.swift */; };
 		9A6FA0252BC714360067769C /* HomeMapViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0242BC714360067769C /* HomeMapViewTest.swift */; };
@@ -343,7 +343,7 @@
 		9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecenterButton.swift; sourceTree = "<group>"; };
 		9A60E8E62B8501BD008A8D5C /* RoutePillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePillTests.swift; sourceTree = "<group>"; };
 		9A635D1E2B99103200A43C51 /* EmptyWhenModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifierTests.swift; sourceTree = "<group>"; };
-		9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActivePeriodExtension.swift; sourceTree = "<group>"; };
+		9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActivePeriodFormattingExtension.swift; sourceTree = "<group>"; };
 		9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyWhenModifier.swift; sourceTree = "<group>"; };
 		9A6FA0222BC70D0A0067769C /* InspectionEmissary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionEmissary.swift; sourceTree = "<group>"; };
 		9A6FA0242BC714360067769C /* HomeMapViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTest.swift; sourceTree = "<group>"; };
@@ -858,7 +858,7 @@
 			children = (
 				9A9E3DC12C62AE11004AADC7 /* AlertDetailsPage.swift */,
 				9A9E3DC32C640071004AADC7 /* AlertDetails.swift */,
-				9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodExtension.swift */,
+				9A6A51EE2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift */,
 			);
 			path = AlertDetails;
 			sourceTree = "<group>";
@@ -1252,7 +1252,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodExtension.swift in Sources */,
+				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
 				6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
 				9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */,

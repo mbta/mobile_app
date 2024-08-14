@@ -26,7 +26,17 @@ struct AlertDetails: View {
     }
 
     private var effectLabel: String? {
-        alert.effectName ?? alert.effect.name
+        // TODO: Add all possible alert effects if/when we start displaying non-disruption alerts here
+        switch alert.effect {
+        case .detour: NSLocalizedString("Detour", comment: "Possible alert effect")
+        case .dockClosure: NSLocalizedString("Dock Closure", comment: "Possible alert effect")
+        case .shuttle: NSLocalizedString("Shuttle", comment: "Possible alert effect")
+        case .stationClosure: NSLocalizedString("Station Closure", comment: "Possible alert effect")
+        case .stopClosure: NSLocalizedString("Stop Closure", comment: "Possible alert effect")
+        case .stopMove, .stopMoved: NSLocalizedString("Station Moved", comment: "Possible alert effect")
+        case .suspension: NSLocalizedString("Suspension", comment: "Possible alert effect")
+        default: nil
+        }
     }
 
     private var causeLabel: String? {
@@ -102,8 +112,6 @@ struct AlertDetails: View {
         return alert.activePeriod.first { period in period.activeAt(instant: nowInstant) }
     }
 
-    private let periodColumns = [GridItem(.flexible()), GridItem(.flexible(minimum: 200))]
-
     @ViewBuilder
     private var alertPeriod: some View {
         if let currentPeriod {
@@ -167,9 +175,10 @@ struct AlertDetails: View {
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 1))
     }
 
-    private func splitDetails(_ details: String) -> [String] {
-        details
-            .split(separator: "\n")
+    private func splitDetails(_ details: String, separator: String? = nil) -> [String] {
+        (separator != nil
+            ? details.components(separatedBy: separator!)
+            : details.components(separatedBy: .newlines))
             .filter { !$0.isEmpty }
             .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
     }
@@ -180,10 +189,8 @@ struct AlertDetails: View {
             paragraphs += splitDetails(header)
         }
         if let description = alert.description_ {
-            paragraphs += description
-                .split(separator: "\n\n")
-                .filter { section in affectedStops.isEmpty || !section.contains("Affected stops:") }
-                .flatMap { section in splitDetails(String(section)) }
+            paragraphs += splitDetails(description, separator: "\n\n")
+                .filter { section in affectedStops.isEmpty || !section.hasPrefix("Affected stops:") }
         }
         return paragraphs
     }
