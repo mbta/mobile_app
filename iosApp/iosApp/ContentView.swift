@@ -11,11 +11,7 @@ struct ContentView: View {
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var backendProvider: BackendProvider
-    @EnvironmentObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @EnvironmentObject var searchResultFetcher: SearchResultFetcher
     @EnvironmentObject var socketProvider: SocketProvider
-    @EnvironmentObject var vehiclesFetcher: VehiclesFetcher
     @EnvironmentObject var viewportProvider: ViewportProvider
 
     @ObservedObject var contentVM: ContentViewModel
@@ -104,8 +100,7 @@ struct ContentView: View {
             if contentVM.searchEnabled {
                 TextField("Find nearby transit", text: $searchObserver.searchText)
                 SearchView(
-                    query: searchObserver.debouncedText,
-                    fetcher: searchResultFetcher
+                    query: searchObserver.debouncedText
                 )
             }
             locationAuthHeader
@@ -145,8 +140,6 @@ struct ContentView: View {
         HomeMapView(
             mapVM: mapVM,
             nearbyVM: nearbyVM,
-            railRouteShapeFetcher: railRouteShapeFetcher,
-            vehiclesFetcher: vehiclesFetcher,
             viewportProvider: viewportProvider,
             sheetHeight: $sheetHeight
         )
