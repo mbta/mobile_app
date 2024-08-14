@@ -121,41 +121,29 @@ class MockRepositories(
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
-        @DefaultArgumentInterop.MaximumDefaultArgumentCount(99)
         fun buildWithDefaults(
-            configRepository: IConfigRepository = MockConfigRepository(),
-            pinnedRoutes: IPinnedRoutesRepository = PinnedRoutesRepository(),
             schedules: ISchedulesRepository = IdleScheduleRepository(),
-            settings: ISettingsRepository = SettingsRepository(),
             stop: IStopRepository = IdleStopRepository(),
             trip: ITripRepository = IdleTripRepository(),
-            predictions: IPredictionsRepository = MockPredictionsRepository(),
-            alerts: IAlertsRepository = MockAlertsRepository(),
-            nearby: INearbyRepository = IdleNearbyRepository(),
-            tripPredictions: ITripPredictionsRepository = MockTripPredictionsRepository(),
-            vehicle: IVehicleRepository = MockVehicleRepository(),
             global: IGlobalRepository = IdleGlobalRepository(),
-            searchResults: ISearchResultRepository = IdleSearchResultRepository(),
-            railRouteShapes: IRailRouteShapeRepository = IdleRailRouteShapeRepository(),
-            vehicles: IVehiclesRepository = MockVehiclesRepository()
         ): MockRepositories {
             return MockRepositories(
                 appCheck = MockAppCheckRepository(),
-                config = configRepository,
-                pinnedRoutes = pinnedRoutes,
+                config = MockConfigRepository(),
+                pinnedRoutes = PinnedRoutesRepository(),
                 schedules = schedules,
-                settings = settings,
+                settings = SettingsRepository(),
                 stop = stop,
                 trip = trip,
-                predictions = predictions,
-                alerts = alerts,
-                nearby = nearby,
-                tripPredictions = tripPredictions,
-                vehicle = vehicle,
+                predictions = MockPredictionsRepository(),
+                alerts = MockAlertsRepository(),
+                nearby = IdleNearbyRepository(),
+                tripPredictions = MockTripPredictionsRepository(),
+                vehicle = MockVehicleRepository(),
                 global = global,
-                searchResults = searchResults,
-                railRouteShapes = railRouteShapes,
-                vehicles = vehicles
+                searchResults = IdleSearchResultRepository(),
+                railRouteShapes = IdleRailRouteShapeRepository(),
+                vehicles = MockVehiclesRepository()
             )
         }
     }
