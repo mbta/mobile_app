@@ -179,12 +179,6 @@
     "End" : {
       "comment" : "Label for the end date of a disruption"
     },
-    "Failed to load new vehicles, something went wrong" : {
-
-    },
-    "Failed to load vehicles, could not connect to the server" : {
-
-    },
     "ferries" : {
       "comment" : "ferries"
     },

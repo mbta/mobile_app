@@ -26,15 +26,14 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testResultLoad() throws {
-        class FakeFetcher: SearchResultFetcher {
+        class FakeRepo: ISearchResultRepository {
             let getSearchResultsExpectation: XCTestExpectation
 
             init(getSearchResultsExpectation: XCTestExpectation) {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
-                super.init(backend: IdleBackend())
             }
 
-            override func getSearchResults(query _: String) async throws {
+            func __getSearchResults(query _: String) async throws -> SearchResults? {
                 getSearchResultsExpectation.fulfill()
                 throw NotUnderTestError()
             }
@@ -44,7 +43,7 @@ final class SearchResultViewTests: XCTestCase {
 
         var sut = SearchView(
             query: "hay",
-            fetcher: FakeFetcher(getSearchResultsExpectation: getSearchResultsExpectation)
+            searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in }

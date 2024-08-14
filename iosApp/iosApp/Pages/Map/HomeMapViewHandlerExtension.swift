@@ -17,7 +17,7 @@ extension HomeMapView {
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
-            try await railRouteShapeFetcher.getRailRouteShapes()
+            railRouteShapes = try await railRouteShapeRepository.getRailRouteShapes()
         }
 
         // Set MapBox to use the current location to display puck
@@ -54,14 +54,22 @@ extension HomeMapView {
 
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
         if let filter = navigationStack.lastStopDetailsFilter {
-            vehiclesFetcher.leave()
-            vehiclesFetcher.run(routeId: filter.routeId, directionId: Int(filter.directionId))
+            vehiclesRepository.disconnect()
+            vehiclesRepository.connect(routeId: filter.routeId, directionId: filter.directionId) { outcome in
+                if let data = outcome.data {
+                    vehiclesData = Array(data.vehicles.values)
+                }
+            }
         } else if case let .tripDetails(tripId: _, vehicleId: _, target: _, routeId: routeId,
                                         directionId: directionId) = navigationStack.last {
-            vehiclesFetcher.leave()
-            vehiclesFetcher.run(routeId: routeId, directionId: Int(directionId))
+            vehiclesRepository.disconnect()
+            vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
+                if let data = outcome.data {
+                    vehiclesData = Array(data.vehicles.values)
+                }
+            }
         } else {
-            vehiclesFetcher.leave()
+            vehiclesRepository.disconnect()
         }
 
         lastNavEntry = navigationStack.last
