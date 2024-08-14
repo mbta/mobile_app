@@ -125,6 +125,8 @@ struct AlertDetails: View {
                     Text(currentPeriod.formatEnd())
                 }.layoutPriority(1)
             }
+        } else {
+            Text("Alert is no longer in effect")
         }
     }
 

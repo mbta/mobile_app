@@ -84,6 +84,32 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[1].formatStart().characters)))
     }
 
+    func testNoCurrentActivePeriod() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = Date.now
+
+        let alert = objects.alert { alert in
+            alert.activePeriod(
+                start: now.addingTimeInterval(-10).toKotlinInstant(),
+                end: now.addingTimeInterval(-5).toKotlinInstant()
+            )
+            alert.activePeriod(
+                start: now.addingTimeInterval(5).toKotlinInstant(),
+                end: now.addingTimeInterval(10).toKotlinInstant()
+            )
+            alert.cause = .unrulyPassenger
+            alert.effect = .stopClosure
+            alert.effectName = "Closure"
+            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
+
+        XCTAssertNotNil(try? sut.inspect().find(text: "Alert is no longer in effect"))
+        XCTAssertNil(try? sut.inspect().find(text: "Start"))
+    }
+
     func testNoDescription() throws {
         let objects = ObjectCollectionBuilder()
 
