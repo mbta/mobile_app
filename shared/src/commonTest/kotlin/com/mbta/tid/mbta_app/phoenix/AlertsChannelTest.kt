@@ -32,6 +32,7 @@ class AlertsChannelTest {
                                     put("end", JsonNull)
                                 }
                             }
+                            put("cause", "parade")
                             put("description", "Description")
                             put("effect", "station_issue")
                             put("effect_name", JsonNull)
@@ -51,6 +52,7 @@ class AlertsChannelTest {
                                 }
                             }
                             put("lifecycle", "ongoing")
+                            put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
                 }
@@ -67,6 +69,7 @@ class AlertsChannelTest {
                             listOf(
                                 Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
                             ),
+                            Alert.Cause.Parade,
                             "Description",
                             Alert.Effect.StationIssue,
                             null,
@@ -85,7 +88,8 @@ class AlertsChannelTest {
                                     stop = "place-lech"
                                 )
                             ),
-                            Alert.Lifecycle.Ongoing
+                            Alert.Lifecycle.Ongoing,
+                            Instant.parse("2023-05-26T16:46:13-04:00")
                         )
                 )
             ),
