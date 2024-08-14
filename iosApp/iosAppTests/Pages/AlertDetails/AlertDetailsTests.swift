@@ -20,7 +20,10 @@ final class AlertDetailsTests: XCTestCase {
         let stop2 = objects.stop { stop in stop.name = "Stop 2" }
         let stop3 = objects.stop { stop in stop.name = "Stop 3" }
 
-        let route = objects.route { route in route.longName = "Red Line" }
+        let route = objects.route { route in
+            route.type = .heavyRail
+            route.longName = "Red Line"
+        }
 
         let now = Date.now
 
@@ -39,7 +42,7 @@ final class AlertDetailsTests: XCTestCase {
 
         let sut = AlertDetails(alert: alert, line: nil, routes: [route], affectedStops: [stop1, stop2, stop3], now: now)
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Red Line Closure"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Red Line Stop Closure"))
         XCTAssertNotNil(try sut.inspect().find(text: "Unruly Passenger"))
         XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[0].formatStart().characters)))
         XCTAssertNotNil(try sut.inspect().find(text: "**3** affected stops"))
@@ -129,11 +132,10 @@ final class AlertDetailsTests: XCTestCase {
             affectedStops: [], now: now
         )
 
-        XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Alert description"))
+        try print(sutWithoutStops.inspect().findAll(ViewType.Text.self).map { text in try text.string() })
         XCTAssertNil(try? sutWithoutStops.inspect().find(text: "**3** affected stops"))
-        XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Affected stops:"))
-        XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Stop 1"))
-        XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Stop 3"))
+        XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Alert description"))
+        XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "More details"))
 
         let sutWithStops = AlertDetails(
@@ -143,7 +145,7 @@ final class AlertDetailsTests: XCTestCase {
 
         XCTAssertNotNil(try? sutWithStops.inspect().find(text: "Alert description"))
         XCTAssertNotNil(try? sutWithStops.inspect().find(text: "**3** affected stops"))
-        XCTAssertNil(try? sutWithStops.inspect().find(text: "Affected stops:"))
+        XCTAssertNil(try? sutWithStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))
         XCTAssertNotNil(try? sutWithStops.inspect().find(text: "More details"))
     }
 }
