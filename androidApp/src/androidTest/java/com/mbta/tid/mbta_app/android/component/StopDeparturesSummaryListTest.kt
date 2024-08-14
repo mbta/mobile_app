@@ -45,7 +45,8 @@ class StopDeparturesSummaryListTest {
                 patternsAtStop = PatternsByStop(route, stop, patterns),
                 condenseHeadsignPredictions = false,
                 now = now,
-                context = TripInstantDisplay.Context.NearbyTransit
+                context = TripInstantDisplay.Context.NearbyTransit,
+                onClick = {}
             )
         }
 
