@@ -79,9 +79,11 @@ class SearchResultRepositoryTest : KoinTest {
     ]
   }
 }
-                        """),
+                        """
+                    ),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json"))
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
         }
 
         startKoin {
@@ -97,8 +99,10 @@ class SearchResultRepositoryTest : KoinTest {
                             5,
                             "Redstone Shopping Center - Malden Center Station",
                             "132",
-                            RouteType.BUS),
-                        RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL)),
+                            RouteType.BUS
+                        ),
+                        RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL)
+                    ),
                     listOf(
                         StopResult(
                             "25989",
@@ -106,14 +110,18 @@ class SearchResultRepositoryTest : KoinTest {
                             "Redstone Shopping Center Access Rd",
                             null,
                             false,
-                            listOf(StopResultRoute(RouteType.BUS, "bus"))),
+                            listOf(StopResultRoute(RouteType.BUS, "bus"))
+                        ),
                         StopResult(
                             "15989",
                             5,
                             "Redstone Shopping Center",
                             null,
                             false,
-                            listOf(StopResultRoute(RouteType.BUS, "bus")))))
+                            listOf(StopResultRoute(RouteType.BUS, "bus"))
+                        )
+                    )
+                )
             assertEquals(expectedResponse, response)
         }
     }
