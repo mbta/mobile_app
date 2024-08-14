@@ -4,26 +4,14 @@ import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.response.SearchResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.expectSuccess
 import io.ktor.http.path
-import io.ktor.serialization.JsonConvertException
-import io.ktor.utils.io.errors.IOException
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISearchResultRepository {
-    @Throws(
-        IOException::class,
-        CancellationException::class,
-        JsonConvertException::class,
-        ResponseException::class,
-        HttpRequestTimeoutException::class
-    )
-    suspend fun getSearchResults(query: String): SearchResults?
+    @Throws(Exception::class) suspend fun getSearchResults(query: String): SearchResults?
 }
 
 class SearchResultRepository : KoinComponent, ISearchResultRepository {
