@@ -8,15 +8,20 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
+import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IdleNearbyRepository
+import com.mbta.tid.mbta_app.repositories.IdleRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.IdleScheduleRepository
+import com.mbta.tid.mbta_app.repositories.IdleSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
@@ -25,9 +30,12 @@ import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
+import com.mbta.tid.mbta_app.repositories.RailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
+import com.mbta.tid.mbta_app.repositories.SearchResultRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
 import com.mbta.tid.mbta_app.repositories.TripRepository
@@ -48,6 +56,9 @@ interface IRepositories {
     val tripPredictions: ITripPredictionsRepository?
     val vehicle: IVehicleRepository?
     val global: IGlobalRepository
+    val searchResults: ISearchResultRepository
+    val railRouteShapes: IRailRouteShapeRepository
+    val vehicles: IVehiclesRepository?
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -64,6 +75,9 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val tripPredictions: ITripPredictionsRepository by inject()
     override val vehicle: IVehicleRepository by inject()
     override val global: IGlobalRepository by inject()
+    override val searchResults: ISearchResultRepository by inject()
+    override val railRouteShapes: IRailRouteShapeRepository by inject()
+    override val vehicles: IVehiclesRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -82,6 +96,9 @@ class RealRepositories : IRepositories {
     override val tripPredictions = null
     override val vehicle = null
     override val global = GlobalRepository()
+    override val searchResults = SearchResultRepository()
+    override val railRouteShapes = RailRouteShapeRepository()
+    override val vehicles = null
 }
 
 class MockRepositories(
@@ -97,39 +114,36 @@ class MockRepositories(
     override val nearby: INearbyRepository,
     override val tripPredictions: ITripPredictionsRepository,
     override val vehicle: IVehicleRepository,
-    override val global: IGlobalRepository
+    override val global: IGlobalRepository,
+    override val searchResults: ISearchResultRepository,
+    override val railRouteShapes: IRailRouteShapeRepository,
+    override val vehicles: IVehiclesRepository
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
-        @DefaultArgumentInterop.MaximumDefaultArgumentCount(99)
         fun buildWithDefaults(
-            configRepository: IConfigRepository = MockConfigRepository(),
-            pinnedRoutes: IPinnedRoutesRepository = PinnedRoutesRepository(),
             schedules: ISchedulesRepository = IdleScheduleRepository(),
-            settings: ISettingsRepository = SettingsRepository(),
             stop: IStopRepository = IdleStopRepository(),
             trip: ITripRepository = IdleTripRepository(),
-            predictions: IPredictionsRepository = MockPredictionsRepository(),
-            alerts: IAlertsRepository = MockAlertsRepository(),
-            nearby: INearbyRepository = IdleNearbyRepository(),
-            tripPredictions: ITripPredictionsRepository = MockTripPredictionsRepository(),
-            vehicle: IVehicleRepository = MockVehicleRepository(),
-            global: IGlobalRepository = IdleGlobalRepository()
+            global: IGlobalRepository = IdleGlobalRepository(),
         ): MockRepositories {
             return MockRepositories(
                 appCheck = MockAppCheckRepository(),
-                config = configRepository,
-                pinnedRoutes = pinnedRoutes,
+                config = MockConfigRepository(),
+                pinnedRoutes = PinnedRoutesRepository(),
                 schedules = schedules,
-                settings = settings,
+                settings = SettingsRepository(),
                 stop = stop,
                 trip = trip,
-                predictions = predictions,
-                alerts = alerts,
-                nearby = nearby,
-                tripPredictions = tripPredictions,
-                vehicle = vehicle,
-                global = global
+                predictions = MockPredictionsRepository(),
+                alerts = MockAlertsRepository(),
+                nearby = IdleNearbyRepository(),
+                tripPredictions = MockTripPredictionsRepository(),
+                vehicle = MockVehicleRepository(),
+                global = global,
+                searchResults = IdleSearchResultRepository(),
+                railRouteShapes = IdleRailRouteShapeRepository(),
+                vehicles = MockVehiclesRepository()
             )
         }
     }
