@@ -434,8 +434,10 @@ class TripInstantDisplayTest {
     @Test
     fun `minutes in the distant future`() = parametricTest {
         val now = Clock.System.now()
+        val context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
+
         val futureMinutes = 61
-        val moreFutureMinutes = 38
+        val moreFutureMinutes = futureMinutes + 38
 
         assertEquals(
             TripInstantDisplay.Minutes(futureMinutes),
@@ -448,7 +450,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                context = anyEnumValue()
+                context = context
             )
         )
         assertEquals(
@@ -461,7 +463,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                context = anyEnumValue()
+                context = context
             )
         )
     }
