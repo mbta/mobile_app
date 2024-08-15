@@ -28,6 +28,8 @@ struct TripDetailsPage: View {
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
+    let analytics: TripDetailsAnalytics
+
     @State var now = Date.now.toKotlinInstant()
 
     let inspection = Inspection<Self>()
@@ -41,7 +43,8 @@ struct TripDetailsPage: View {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
-        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
+        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle,
+        analytics: TripDetailsAnalytics = AnalyticsProvider.shared
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
@@ -52,6 +55,7 @@ struct TripDetailsPage: View {
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
+        self.analytics = analytics
     }
 
     var body: some View {
@@ -71,9 +75,9 @@ struct TripDetailsPage: View {
                         targetStopSequence: Int32(stopSequence),
                         globalData: globalResponse
                     ) {
-                        TripDetailsStopListSplitView(splitStops: splitStops, now: now)
+                        TripDetailsStopListSplitView(splitStops: splitStops, now: now, onTapLink: onTapStop)
                     } else {
-                        TripDetailsStopListView(stops: stops, now: now)
+                        TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop)
                     }
                 } else {
                     Text("Couldn't load stop list")
@@ -212,6 +216,28 @@ struct TripDetailsPage: View {
             route: route,
             line: globalResponse?.getLine(lineId: route?.lineId),
             trip: trip
+        )
+    }
+
+    func onTapStop(
+        entry: SheetNavigationStackEntry,
+        stop: TripDetailsStopList.Entry,
+        connectingRouteId: String?
+    ) {
+        // resolve parent stop before following link
+        let realEntry = switch entry {
+        case let .stopDetails(stop, filter): SheetNavigationStackEntry.stopDetails(
+                stop.resolveParent(stops: globalResponse?.stops ?? [:]),
+                filter
+            )
+        default: entry
+        }
+        nearbyVM.pushNavEntry(realEntry)
+        analytics.tappedDownstreamStop(
+            routeId: trip?.routeId ?? "",
+            stopId: stop.stop.id,
+            tripId: tripId,
+            connectingRouteId: connectingRouteId
         )
     }
 }

@@ -12,14 +12,21 @@ import SwiftUI
 struct TripDetailsStopView: View {
     let stop: TripDetailsStopList.Entry
     let now: Instant
+    let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(stop.stop.name)
-                Spacer()
-                UpcomingTripView(prediction: upcomingTripViewState, routeType: nil)
-            }
+            SheetNavigationLink(
+                value: .stopDetails(stop.stop, nil),
+                action: { entry in onTapLink(entry, stop, nil) },
+                label: {
+                    HStack {
+                        Text(stop.stop.name).foregroundStyle(Color.text)
+                        Spacer()
+                        UpcomingTripView(prediction: upcomingTripViewState, routeType: nil)
+                    }
+                }
+            )
             scrollRoutes
         }
     }
@@ -37,9 +44,14 @@ struct TripDetailsStopView: View {
             HStack {
                 ForEach(stop.routes, id: \.id) { route in
                     RoutePill(route: route, line: nil, type: .flex)
+                        .onTapGesture {
+                            onTapLink(.stopDetails(stop.stop, nil), stop, route.id)
+                        }
                 }
             }.padding(.horizontal, 20)
-        }.padding(.horizontal, -20)
+        }.padding(.horizontal, -20).onTapGesture {
+            onTapLink(.stopDetails(stop.stop, nil), stop, nil)
+        }
         if #available(iOS 16.4, *) {
             return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
         }
@@ -70,6 +82,7 @@ struct TripDetailsStopView: View {
                 },
             ]
         ),
-        now: Date.now.toKotlinInstant()
+        now: Date.now.toKotlinInstant(),
+        onTapLink: { _, _, _ in }
     ).font(Typography.body)
 }
