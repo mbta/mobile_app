@@ -219,12 +219,20 @@ struct TripDetailsPage: View {
         )
     }
 
-    private func onTapStop(
+    func onTapStop(
         entry: SheetNavigationStackEntry,
         stop: TripDetailsStopList.Entry,
         connectingRouteId: String?
     ) {
-        nearbyVM.pushNavEntry(entry)
+        // resolve parent stop before following link
+        let realEntry = switch entry {
+        case let .stopDetails(stop, filter): SheetNavigationStackEntry.stopDetails(
+                stop.resolveParent(stops: globalResponse?.stops ?? [:]),
+                filter
+            )
+        default: entry
+        }
+        nearbyVM.pushNavEntry(realEntry)
         analytics.tappedDownstreamStop(
             routeId: trip?.routeId ?? "",
             stopId: stop.stop.id,
