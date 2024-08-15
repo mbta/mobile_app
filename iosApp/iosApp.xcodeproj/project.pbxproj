@@ -1990,7 +1990,7 @@
 			repositoryURL = "https://github.com/davidstump/SwiftPhoenixClient";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.3.2;
+				minimumVersion = 5.3.3;
 			};
 		};
 		6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
