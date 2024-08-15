@@ -16,7 +16,7 @@
       }
     },
     "%@ arriving at %@" : {
-      "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users. \nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
+      "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -59,7 +59,7 @@
       }
     },
     "%@ arriving now" : {
-      "comment" : "Describe that a vehicle is arriving now, as read aloud for VoiceOver users. \nFirst value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'"
+      "comment" : "Describe that a vehicle is arriving now, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'"
     },
     "%@ boarding now" : {
       "comment" : "Describe that a vehicle is boarding now, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry). For example, 'bus boarding now'"
@@ -150,13 +150,13 @@
       "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife"
     },
     "ARR" : {
-
+      "comment" : "Shorthand for arriving"
     },
     "Autos Impeding Service" : {
       "comment" : "Possible alert cause"
     },
     "BRD" : {
-
+      "comment" : "Shorthand for boarding"
     },
     "bus" : {
       "comment" : "bus"
@@ -277,7 +277,7 @@
       }
     },
     "Live" : {
-
+      "comment" : "real-time"
     },
     "loading" : {
 
