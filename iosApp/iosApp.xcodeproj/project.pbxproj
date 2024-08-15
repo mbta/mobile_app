@@ -1016,6 +1016,11 @@
 				en,
 				es,
 				Base,
+				"pt-BR",
+				vi,
+				ht,
+				"zh-Hans-CN",
+				"zh-Hant-TW",
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (

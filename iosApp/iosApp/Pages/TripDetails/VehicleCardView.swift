@@ -90,9 +90,15 @@ struct VehicleOnTripView: View {
         _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
     ) -> some View {
         switch vehicleStatus {
-        case .incomingAt: Text("Approaching")
-        case .inTransitTo: Text("Next stop")
-        case .stoppedAt: Text("Now at")
+        case .incomingAt: Text(
+                "Approaching",
+                comment: "Label for a vehicle's next stop. For example: Approaching Alewife"
+            )
+        case .inTransitTo: Text("Next stop", comment: "Label for a vehicle's next stop. For example: Next stop Alewife")
+        case .stoppedAt: Text(
+                "Now at",
+                comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
+            )
         }
     }
 
