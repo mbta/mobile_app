@@ -286,7 +286,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures shows partial data and filters after loading`() {
+    fun `StopDetailsDepartures shows partial data`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val stop = objects.stop()
@@ -407,7 +407,8 @@ class StopDetailsDeparturesTest {
                     listOf(scheduledPredicted.scheduledTrip, scheduledPredicted.predictedTrip)
                 ),
                 scheduledUnpredicted.patternsByHeadsign(listOf(scheduledUnpredicted.scheduledTrip)),
-                unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip))
+                unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip)),
+                unscheduledUnpredicted.patternsByHeadsign(listOf())
             ),
             actual(includeSchedules = true, includePredictions = true)
         )
