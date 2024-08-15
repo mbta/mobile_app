@@ -114,29 +114,11 @@
     "Dummy app for launching unit tests" : {
 
     },
-    "Failed to load data for vehicle %@, something went wrong" : {
-
-    },
-    "Failed to load new predictions, something went wrong" : {
-
-    },
-    "Failed to load new vehicles, something went wrong" : {
-
-    },
-    "Failed to load predictions, could not connect to the server" : {
-
-    },
-    "Failed to load vehicles, could not connect to the server" : {
-
-    },
     "ferries" : {
       "comment" : "ferries"
     },
     "ferry" : {
       "comment" : "ferry"
-    },
-    "last updated %.0fs ago" : {
-
     },
     "Live" : {
 
@@ -199,6 +181,9 @@
 
     },
     "This vehicle is completing another trip." : {
+
+    },
+    "to %@" : {
 
     },
     "train" : {

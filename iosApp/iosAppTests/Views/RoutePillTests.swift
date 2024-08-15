@@ -244,4 +244,39 @@ final class RoutePillTests: XCTestCase {
         XCTAssertEqual(glShuttleFixed.routeColor, Color(hex: "00843D"))
         XCTAssertEqual(glShuttleFlex.routeColor, Color(hex: "00843D"))
     }
+
+    @MainActor func testLines() throws {
+        let redLine = Line(
+            id: "line-Red",
+            color: "DA291C",
+            longName: "Red Line",
+            shortName: "",
+            sortOrder: 10010,
+            textColor: "FFFFFF"
+        )
+
+        let greenLine = Line(
+            id: "line-Green",
+            color: "00843D",
+            longName: "Green Line",
+            shortName: "",
+            sortOrder: 10032,
+            textColor: "FFFFFF"
+        )
+
+        let rlFixed = RoutePill(route: nil, line: redLine, type: .fixed)
+        let rlFlex = RoutePill(route: nil, line: redLine, type: .flex)
+        let glFixed = RoutePill(route: nil, line: greenLine, type: .fixed)
+        let glFlex = RoutePill(route: nil, line: greenLine, type: .flex)
+
+        XCTAssertEqual(try rlFixed.inspect().view(RoutePill.self).text().string(), "Red Line")
+        XCTAssertEqual(try rlFlex.inspect().view(RoutePill.self).text().string(), "Red Line")
+        XCTAssertEqual(try glFixed.inspect().view(RoutePill.self).text().string(), "GL")
+        XCTAssertEqual(try glFlex.inspect().view(RoutePill.self).text().string(), "Green Line")
+
+        XCTAssertEqual(rlFixed.routeColor, Color(hex: "DA291C"))
+        XCTAssertEqual(rlFlex.routeColor, Color(hex: "DA291C"))
+        XCTAssertEqual(glFixed.routeColor, Color(hex: "00843D"))
+        XCTAssertEqual(glFlex.routeColor, Color(hex: "00843D"))
+    }
 }

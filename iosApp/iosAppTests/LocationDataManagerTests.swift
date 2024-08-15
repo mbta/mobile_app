@@ -37,7 +37,7 @@ final class LocationDataManagerTests: XCTestCase {
 
         locationFetcher.authorizationStatus = .authorizedWhenInUse
 
-        await fulfillment(of: [updateLocationExpectation], timeout: 0.1)
+        await fulfillment(of: [updateLocationExpectation], timeout: 1)
 
         XCTAssertEqual(manager.authorizationStatus, .authorizedWhenInUse)
         XCTAssertNil(manager.currentLocation)

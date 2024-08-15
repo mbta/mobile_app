@@ -8,11 +8,26 @@ import kotlinx.serialization.Serializable
 data class Alert(
     override val id: String,
     @SerialName("active_period") val activePeriod: List<ActivePeriod>,
+    val cause: Cause?,
+    val description: String?,
     val effect: Effect,
     @SerialName("effect_name") val effectName: String?,
+    val header: String?,
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
-    val lifecycle: Lifecycle
+    val lifecycle: Lifecycle,
+    @SerialName("updated_at") val updatedAt: Instant
 ) : BackendObject {
+    val alertState: StopAlertState =
+        if (this.effect == Alert.Effect.Shuttle) {
+            StopAlertState.Shuttle
+        } else if (
+            this.effect != Alert.Effect.Detour && serviceDisruptionEffects.contains(this.effect)
+        ) {
+            StopAlertState.Suspension
+        } else {
+            StopAlertState.Issue
+        }
+
     companion object {
         val serviceDisruptionEffects =
             setOf(
@@ -20,11 +35,63 @@ data class Alert(
                 Alert.Effect.Shuttle,
                 Alert.Effect.Suspension,
                 Alert.Effect.Detour,
-                Alert.Effect.StopClosure
+                Alert.Effect.StopClosure,
+                Alert.Effect.DockClosure
             )
     }
 
     @Serializable data class ActivePeriod(val start: Instant, val end: Instant?)
+
+    @Serializable
+    enum class Cause {
+        @SerialName("accident") Accident,
+        @SerialName("amtrak") Amtrak,
+        @SerialName("an_earlier_mechanical_problem") AnEarlierMechanicalProblem,
+        @SerialName("an_earlier_signal_problem") AnEarlierSignalProblem,
+        @SerialName("autos_impeding_service") AutosImpedingService,
+        @SerialName("coast_guard_restriction") CoastGuardRestriction,
+        @SerialName("congestion") Congestion,
+        @SerialName("construction") Construction,
+        @SerialName("crossing_malfunction") CrossingMalfunction,
+        @SerialName("demonstration") Demonstration,
+        @SerialName("disabled_bus") DisabledBus,
+        @SerialName("disabled_train") DisabledTrain,
+        @SerialName("drawbridge_being_raised") DrawbridgeBeingRaised,
+        @SerialName("electrical_work") ElectricalWork,
+        @SerialName("fire") Fire,
+        @SerialName("fog") Fog,
+        @SerialName("freight_train_interference") FreightTrainInterference,
+        @SerialName("hazmat_condition") HazmatCondition,
+        @SerialName("heavy_ridership") HeavyRidership,
+        @SerialName("high_winds") HighWinds,
+        @SerialName("holiday") Holiday,
+        @SerialName("hurricane") Hurricane,
+        @SerialName("ice_in_harbor") IceInHarbor,
+        @SerialName("maintenance") Maintenance,
+        @SerialName("mechanical_problem") MechanicalProblem,
+        @SerialName("medical_emergency") MedicalEmergency,
+        @SerialName("other_cause") OtherCause,
+        @SerialName("parade") Parade,
+        @SerialName("police_action") PoliceAction,
+        @SerialName("police_activity") PoliceActivity,
+        @SerialName("power_problem") PowerProblem,
+        @SerialName("severe_weather") SevereWeather,
+        @SerialName("signal_problem") SignalProblem,
+        @SerialName("slippery_rail") SlipperyRail,
+        @SerialName("snow") Snow,
+        @SerialName("special_event") SpecialEvent,
+        @SerialName("speed_restriction") SpeedRestriction,
+        @SerialName("strike") Strike,
+        @SerialName("switch_problem") SwitchProblem,
+        @SerialName("technical_problem") TechnicalProblem,
+        @SerialName("tie_replacement") TieReplacement,
+        @SerialName("track_problem") TrackProblem,
+        @SerialName("track_work") TrackWork,
+        @SerialName("traffic") Traffic,
+        @SerialName("unruly_passenger") UnrulyPassenger,
+        @SerialName("unknown_cause") UnknownCause,
+        @SerialName("weather") Weather,
+    }
 
     @Serializable
     enum class Effect {
@@ -56,6 +123,7 @@ data class Alert(
         @SerialName("stop_closure") StopClosure,
         @SerialName("stop_move") StopMove,
         @SerialName("stop_moved") StopMoved,
+        @SerialName("stop_shoveling") StopShoveling,
         @SerialName("summary") Summary,
         @SerialName("suspension") Suspension,
         @SerialName("track_change") TrackChange,

@@ -59,7 +59,6 @@ final class StopDetailsPageTests: XCTestCase {
         }
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: FakeSchedulesRepository(callback: callback),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
@@ -87,7 +86,6 @@ final class StopDetailsPageTests: XCTestCase {
         ))
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
@@ -140,11 +138,8 @@ final class StopDetailsPageTests: XCTestCase {
             directionId: routePattern.directionId
         ))
 
-        let globalFetcher: GlobalFetcher = .init(backend: IdleBackend())
-        globalFetcher.response = .init(objects: objects, patternIdsByStop: [:])
-
         let sut = StopDetailsPage(
-            globalFetcher: globalFetcher,
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             schedulesRepository: FakeSchedulesRepository(
                 objects: objects,
                 callback: { schedulesLoadedPublisher.send(true) }
@@ -156,14 +151,14 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 0.2) { view in
+        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { view in
             XCTAssertNotNil(try view.find(StopDetailsRoutesView.self))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)
     }
 
-    func testCloseButton() throws {
+    func testBackButton() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
@@ -182,7 +177,6 @@ final class StopDetailsPageTests: XCTestCase {
         let backExp = XCTestExpectation(description: "goBack called")
 
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: .init(),
@@ -191,7 +185,7 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: FakeNearbyVM(backExp)
         )
 
-        try sut.inspect().find(CloseButton.self).button().tap()
+        try sut.inspect().find(ActionButton.self).button().tap()
 
         wait(for: [backExp], timeout: 2)
     }
@@ -233,7 +227,6 @@ final class StopDetailsPageTests: XCTestCase {
 
         let predictionsRepo = FakePredictionsRepo(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
         let sut = StopDetailsPage(
-            globalFetcher: .init(backend: IdleBackend()),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,

@@ -3,6 +3,10 @@
 # Firebase - used for Google Analytics collection, required because the library crashes without it
 # Find at https://console.firebase.google.com/u/0/project/mbta-app-c574d/settings/general
 export FIREBASE_KEY=
+export GOOGLE_APP_ID=
+
+# Running Firebase App Check locally requires configuring a special debug key.
+# Be sure to populate that separately in `/iosApp/AppCheckCI.xcconfig`
 
 # Optional Variables
 
@@ -10,3 +14,7 @@ export FIREBASE_KEY=
 # Find DSN under the Client Keys settings of the mobile_app_ios project in Sentry
 export SENTRY_DSN=
 export SENTRY_ENVIRONMENT=debug
+
+# Appcues - needed only to show surveys via Appcues
+export APPCUES_ACCOUNT_ID=
+export APPCUES_APP_ID=

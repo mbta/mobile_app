@@ -1,4 +1,5 @@
 {
+  "originHash" : "a3020db9dca7e3d8c232ab638d2abfde463e0cd40e7692c77c9f65d84976c597",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -19,12 +20,21 @@
       }
     },
     {
+      "identity" : "appcues-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/appcues/appcues-ios-sdk",
+      "state" : {
+        "revision" : "5b3668a18154dcfc37a5b551658c29985a5f80e1",
+        "version" : "3.2.0"
+      }
+    },
+    {
       "identity" : "firebase-ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
       "state" : {
-        "revision" : "97940381e57703c07f31a8058d8f39ec53b7c272",
-        "version" : "10.25.0"
+        "revision" : "eca84fd638116dd6adb633b5a3f31cc7befcbb7d",
+        "version" : "10.29.0"
       }
     },
     {
@@ -32,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "16244d177c4e989f87b25e9db1012b382cfedc55",
-        "version" : "10.25.0"
+        "revision" : "fe727587518729046fc1465625b9afd80b5ab361",
+        "version" : "10.28.0"
       }
     },
     {
@@ -127,15 +137,6 @@
       }
     },
     {
-      "identity" : "polyline",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raphaelmor/Polyline.git",
-      "state" : {
-        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23",
-        "version" : "5.1.0"
-      }
-    },
-    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
@@ -190,5 +191,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

@@ -11,19 +11,19 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsPage: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
-    @ObservedObject var globalFetcher: GlobalFetcher
+    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    let globalRepository: IGlobalRepository
+    @State var globalResponse: GlobalResponse?
     @ObservedObject var viewportProvider: ViewportProvider
     let schedulesRepository: ISchedulesRepository
     @State var schedulesResponse: ScheduleResponse?
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
 
-    let predictionsRepository: IPredictionsRepository
+    @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
     @State var now = Date.now
-    @State var servedRoutes: [(route: Route, line: Line?)] = []
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
@@ -32,7 +32,7 @@ struct StopDetailsPage: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        globalFetcher: GlobalFetcher,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         viewportProvider: ViewportProvider,
@@ -40,7 +40,7 @@ struct StopDetailsPage: View {
         filter: Binding<StopDetailsFilter?>,
         nearbyVM: NearbyViewModel
     ) {
-        self.globalFetcher = globalFetcher
+        self.globalRepository = globalRepository
         self.schedulesRepository = schedulesRepository
         self.predictionsRepository = predictionsRepository
         self.viewportProvider = viewportProvider
@@ -50,31 +50,42 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        StopDetailsView(globalFetcher: globalFetcher,
-                        stop: stop,
-                        filter: $filter,
-                        nearbyVM: nearbyVM,
-                        pinnedRoutes: pinnedRoutes,
-                        togglePinnedRoute: togglePinnedRoute)
-            .onAppear {
-                changeStop(stop)
-                loadPinnedRoutes()
-            }
+        StopDetailsView(
+            stop: stop,
+            filter: $filter,
+            nearbyVM: nearbyVM,
+            pinnedRoutes: pinnedRoutes,
+            togglePinnedRoute: togglePinnedRoute
+        )
+        .onAppear {
+            loadGlobalData()
+            changeStop(stop)
+            loadPinnedRoutes()
+        }
+        .onChange(of: stop) { nextStop in changeStop(nextStop) }
+        .onChange(of: globalResponse) { _ in updateDepartures() }
+        .onChange(of: pinnedRoutes) { _ in updateDepartures() }
+        .onChange(of: predictions) { _ in updateDepartures() }
+        .onChange(of: schedulesResponse) { _ in updateDepartures() }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onReceive(timer) { input in
+            now = input
+            updateDepartures()
+        }
+        .onDisappear { leavePredictions() }
+        .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
+                                onInactive: leavePredictions,
+                                onBackground: leavePredictions)
+    }
 
-            .onChange(of: stop) { nextStop in changeStop(nextStop) }
-            .onChange(of: globalFetcher.response) { _ in updateDepartures() }
-            .onChange(of: pinnedRoutes) { _ in updateDepartures() }
-            .onChange(of: predictions) { _ in updateDepartures() }
-            .onChange(of: schedulesResponse) { _ in updateDepartures() }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .onReceive(timer) { input in
-                now = input
-                updateDepartures()
+    func loadGlobalData() {
+        Task {
+            do {
+                globalResponse = try await globalRepository.getGlobalData()
+            } catch {
+                debugPrint(error)
             }
-            .onDisappear { leavePredictions() }
-            .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
-                                    onInactive: leavePredictions,
-                                    onBackground: leavePredictions)
+        }
     }
 
     func loadPinnedRoutes() {
@@ -132,14 +143,14 @@ struct StopDetailsPage: View {
 
     func updateDepartures(_ stop: Stop? = nil) {
         let stop = stop ?? self.stop
-        servedRoutes = []
 
-        let newDepartures: StopDetailsDepartures? = if let globalResponse = globalFetcher.response {
+        let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures(
                 stop: stop,
                 global: globalResponse,
                 schedules: schedulesResponse,
                 predictions: predictions,
+                alerts: nearbyVM.alerts,
                 pinnedRoutes: pinnedRoutes,
                 filterAtTime: now.toKotlinInstant()
             )

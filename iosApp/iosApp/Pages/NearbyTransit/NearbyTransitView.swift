@@ -15,27 +15,27 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
-    var predictionsRepository = RepositoryDI().predictions
+    @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
-    let alerts: AlertsStreamDataResponse?
-    @ObservedObject var globalFetcher: GlobalFetcher
+    var globalRepository = RepositoryDI().global
+    @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
-    @State var nearbyWithRealtimeInfo: [StopAssociatedRoute]?
+    @State var nearbyWithRealtimeInfo: [StopsAssociated]?
     @State var now = Date.now
-    @State var scrollPosition: String?
     @State var pinnedRoutes: Set<String> = []
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsError: SocketError?
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
+    let scrollSubject = PassthroughSubject<String, Never>()
 
     var body: some View {
         VStack {
@@ -46,21 +46,21 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getNearby(location: location)
+            getGlobal()
+            getNearby(location: location, globalData: globalData)
             joinPredictions(state.nearbyByRouteAndStop?.stopIds())
             updateNearbyRoutes()
             updatePinnedRoutes()
             getSchedule()
             didAppear?(self)
         }
-        .onChange(of: globalFetcher.response) { _ in
-            getNearby(location: location)
+        .onChange(of: globalData) { globalData in
+            getNearby(location: location, globalData: globalData)
         }
         .onChange(of: location) { newLocation in
-            getNearby(location: newLocation)
+            getNearby(location: newLocation, globalData: globalData)
         }
-        .onChange(of: state.nearbyByRouteAndStop) {
-            nearbyByRouteAndStop in
+        .onChange(of: state.nearbyByRouteAndStop) { nearbyByRouteAndStop in
             updateNearbyRoutes()
             getSchedule()
             joinPredictions(nearbyByRouteAndStop?.stopIds())
@@ -72,7 +72,7 @@ struct NearbyTransitView: View {
         .onChange(of: predictions) { predictions in
             updateNearbyRoutes(predictions: predictions)
         }
-        .onChange(of: alerts) { alerts in
+        .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
         .onReceive(timer) { input in
@@ -93,26 +93,35 @@ struct NearbyTransitView: View {
         }
     }
 
-    private func nearbyList(_ routes: [StopAssociatedRoute]) -> some View {
+    private func nearbyList(_ transit: [StopsAssociated]) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack {
-                    ForEach(routes, id: \.route.id) { nearbyRoute in
-                        NearbyRouteView(
-                            nearbyRoute: nearbyRoute,
-                            pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                            onPin: { id in toggledPinnedRoute(id) },
-                            pushNavEntry: nearbyVM.pushNavEntry,
-                            now: now.toKotlinInstant()
-                        )
+                    ForEach(transit, id: \.id) { nearbyTransit in
+                        switch onEnum(of: nearbyTransit) {
+                        case let .withRoute(nearbyRoute):
+                            NearbyRouteView(
+                                nearbyRoute: nearbyRoute,
+                                pinned: pinnedRoutes.contains(nearbyRoute.route.id),
+                                onPin: { id in toggledPinnedRoute(id) },
+                                pushNavEntry: nearbyVM.pushNavEntry,
+                                now: now.toKotlinInstant()
+                            )
+                        case let .withLine(nearbyLine):
+                            NearbyLineView(
+                                nearbyLine: nearbyLine,
+                                pinned: pinnedRoutes.contains(nearbyLine.line.id),
+                                onPin: { id in toggledPinnedRoute(id) },
+                                pushNavEntry: nearbyVM.pushNavEntry,
+                                now: now.toKotlinInstant()
+                            )
+                        }
                     }
                 }
             }
-            .onChange(of: scrollPosition) { id in
-                guard let id else { return }
+            .onReceive(scrollSubject) { id in
                 withAnimation {
-                    proxy.scrollTo(id, anchor: .center)
-                    scrollPosition = nil
+                    proxy.scrollTo(id, anchor: .top)
                 }
             }
             .putAboveWhen(predictionsError) { error in
@@ -123,13 +132,23 @@ struct NearbyTransitView: View {
 
     private func errorCard(_ errorText: String) -> some View {
         IconCard(iconName: "network.slash", details: Text(errorText))
-            .refreshable(state.loading) { getNearby(location: location) }
+            .refreshable(state.loading) { getNearby(location: location, globalData: globalData) }
     }
 
     var didAppear: ((Self) -> Void)?
 
-    func getNearby(location: CLLocationCoordinate2D?) {
-        guard let location, let globalData = globalFetcher.response else { return }
+    func getGlobal() {
+        Task {
+            globalData = try await globalRepository.getGlobalData()
+            // this should be handled by the onChange but in tests it just isn't
+            getNearby(location: location, globalData: globalData)
+        }
+    }
+
+    func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
+        self.location = location
+        self.globalData = globalData
+        guard let location, let globalData else { return }
         getNearby(globalData, location)
     }
 
@@ -184,8 +203,8 @@ struct NearbyTransitView: View {
     }
 
     private func scrollToTop() {
-        guard let id = nearbyWithRealtimeInfo?.first?.route.id else { return }
-        scrollPosition = id
+        guard let id = nearbyWithRealtimeInfo?.first?.sortRoute().id else { return }
+        scrollSubject.send(id)
     }
 
     private func updateNearbyRoutes(
@@ -197,7 +216,7 @@ struct NearbyTransitView: View {
         nearbyWithRealtimeInfo = withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
             predictions: predictions ?? self.predictions,
-            alerts: alerts ?? self.alerts,
+            alerts: alerts ?? nearbyVM.alerts,
             filterAtTime: now.toKotlinInstant(),
             pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes
         )
@@ -209,7 +228,7 @@ struct NearbyTransitView: View {
         alerts: AlertsStreamDataResponse?,
         filterAtTime: Instant,
         pinnedRoutes: Set<String>
-    ) -> [StopAssociatedRoute]? {
+    ) -> [StopsAssociated]? {
         guard let loadedLocation = state.loadedLocation else { return nil }
         return state.nearbyByRouteAndStop?.withRealtimeInfo(
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
@@ -368,16 +387,17 @@ struct NearbyTransitView_Previews: PreviewProvider {
         )
         List {
             NearbyRouteView(
-                nearbyRoute: StopAssociatedRoute(
+                nearbyRoute: StopsAssociated.WithRoute(
                     route: busRoute,
                     patternsByStop: [
                         PatternsByStop(
                             route: busRoute,
                             stop: busStop,
-                            patternsByHeadsign: [
-                                PatternsByHeadsign(
+                            patterns: [
+                                RealtimePatterns.ByHeadsign(
                                     route: busRoute,
                                     headsign: "Houghs Neck",
+                                    line: nil,
                                     patterns: [busPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
@@ -395,16 +415,17 @@ struct NearbyTransitView_Previews: PreviewProvider {
                 now: Date.now.toKotlinInstant()
             )
             NearbyRouteView(
-                nearbyRoute: StopAssociatedRoute(
+                nearbyRoute: StopsAssociated.WithRoute(
                     route: crRoute,
                     patternsByStop: [
                         PatternsByStop(
                             route: crRoute,
                             stop: crStop,
-                            patternsByHeadsign: [
-                                PatternsByHeadsign(
+                            patterns: [
+                                RealtimePatterns.ByHeadsign(
                                     route: crRoute,
                                     headsign: "Houghs Neck",
+                                    line: nil,
                                     patterns: [crPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),

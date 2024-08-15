@@ -1,0 +1,17 @@
+//
+//  AppCheckCI.xcconfig
+//  iosApp
+//
+//  Created by Brady, Kayla on 7/23/24.
+//  Copyright © 2024 MBTA. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// Token required for passing app check when developing locally.
+// See https://firebase.google.com/docs/app-check/ios/debug-provider#ci for more details.
+// Find FIREBASE_APP_CHECK_CI_TOKEN in 1pass.
+// Copy this file to `AppCheckCI.xcconfig` and populate the secret. You may need to restart
+// Xcode for this to be picked up.
+FIREBASE_APP_CHECK_CI_TOKEN =

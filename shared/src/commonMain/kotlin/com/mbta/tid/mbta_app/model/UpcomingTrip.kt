@@ -2,8 +2,6 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import kotlin.math.roundToInt
-import kotlin.time.DurationUnit
 import kotlinx.datetime.Instant
 
 /**
@@ -81,72 +79,8 @@ data class UpcomingTrip(
         } else !hasDeparture
     }
 
-    /**
-     * The state in which a prediction should be shown.
-     *
-     * Can be localized in the frontend layer, except for `Overridden` which is always English.
-     */
-    sealed class Format {
-        data class Overridden(val text: String) : Format()
-
-        data object Hidden : Format()
-
-        data object Boarding : Format()
-
-        data object Arriving : Format()
-
-        data object Approaching : Format()
-
-        data class DistantFuture(val predictionTime: Instant) : Format()
-
-        data class Schedule(val scheduleTime: Instant) : Format()
-
-        data class Minutes(val minutes: Int) : Format()
-    }
-
-    fun format(now: Instant): Format {
-        prediction?.status?.let {
-            return Format.Overridden(it)
-        }
-        val departureTime =
-            if (prediction != null) {
-                prediction.departureTime
-            } else {
-                schedule?.departureTime
-            }
-        if (departureTime == null || departureTime < now) {
-            return Format.Hidden
-        }
-        if (prediction == null) {
-            val scheduleTime = schedule?.scheduleTime
-            return if (scheduleTime == null) {
-                Format.Hidden
-            } else {
-                Format.Schedule(scheduleTime)
-            }
-        }
-        // since we checked departureTime as non-null, we don't have to also check predictionTime
-        val timeRemaining = prediction.predictionTime!!.minus(now)
-        if (
-            vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
-                vehicle.stopId == prediction.stopId &&
-                vehicle.tripId == prediction.tripId &&
-                timeRemaining <= BOARDING_CUTOFF
-        ) {
-            return Format.Boarding
-        }
-        if (timeRemaining <= ARRIVAL_CUTOFF) {
-            return Format.Arriving
-        }
-        if (timeRemaining <= APPROACH_CUTOFF) {
-            return Format.Approaching
-        }
-        if (timeRemaining > DISTANT_FUTURE_CUTOFF) {
-            return Format.DistantFuture(prediction.predictionTime)
-        }
-        val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
-        return Format.Minutes(minutes)
-    }
+    fun format(now: Instant, context: TripInstantDisplay.Context) =
+        TripInstantDisplay.from(prediction, schedule, vehicle, now, context = context)
 
     companion object {
         fun <Key> tripsMappedBy(
@@ -155,6 +89,7 @@ data class UpcomingTrip(
             scheduleKey: (Schedule, ScheduleResponse) -> Key,
             predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key
         ): Map<Key, List<UpcomingTrip>>? {
+
             val schedulesMap =
                 schedules?.let { scheduleData ->
                     scheduleData.schedules.groupBy { schedule ->

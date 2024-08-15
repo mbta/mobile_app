@@ -13,6 +13,7 @@ xcuserdata
 
 fastlane/report.xml
 
+iosApp/AppCheckCI.xcconfig
 /iosApp/secrets/*
 /iosApp/Pods/*
 /androidApp/src/main/res/values/secrets.xml

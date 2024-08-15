@@ -1,8 +1,5 @@
 package com.mbta.tid.mbta_app.android.util
 
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.phoenixframework.Message
@@ -12,23 +9,17 @@ class SocketMessageTest {
     fun testDecode() {
         // examples from https://hexdocs.pm/phoenix/writing_a_channels_client.html
         assertEquals(
-            Message(
-                "0",
-                "0",
-                "miami:weather",
-                "phx_join",
-                buildJsonObject { put("some", "param") }
-            ),
+            Message("0", "0", "miami:weather", "phx_join", emptyMap(), """{"some":"param"}"""),
             decodeMessage("""["0","0","miami:weather","phx_join",{"some":"param"}]""")
         )
 
         assertEquals(
-            Message(null, "1", "miami:weather", "phx_leave"),
+            Message(null, "1", "miami:weather", "phx_leave", emptyMap(), "{}"),
             decodeMessage("""[null,"1","miami:weather","phx_leave",{}]""")
         )
 
         assertEquals(
-            Message(null, "2", "phoenix", "heartbeat"),
+            Message(null, "2", "phoenix", "heartbeat", emptyMap(), "{}"),
             decodeMessage("""[null,"2","phoenix","heartbeat",{}]""")
         )
 
@@ -38,7 +29,8 @@ class SocketMessageTest {
                 "3",
                 "miami:weather",
                 "report_emergency",
-                buildJsonObject { put("category", "sharknado") }
+                emptyMap(),
+                """{"category":"sharknado"}"""
             ),
             decodeMessage(
                 """[null,"3","miami:weather","report_emergency",{"category":"sharknado"}]"""
@@ -52,10 +44,8 @@ class SocketMessageTest {
                 "0",
                 "predictions:stops",
                 "phx_reply",
-                buildJsonObject {
-                    put("status", "ok")
-                    putJsonObject("response") {}
-                }
+                emptyMap(),
+                """{"status":"ok","response":{}}"""
             ),
             decodeMessage(
                 """["0","0","predictions:stops","phx_reply",{"status":"ok","response":{}}]"""
@@ -63,7 +53,7 @@ class SocketMessageTest {
         )
 
         assertEquals(
-            Message("0", "", "predictions:stops", "stream_data"),
+            Message("0", "", "predictions:stops", "stream_data", emptyMap(), "{}"),
             decodeMessage("""["0",null,"predictions:stops","stream_data",{}]""")
         )
     }

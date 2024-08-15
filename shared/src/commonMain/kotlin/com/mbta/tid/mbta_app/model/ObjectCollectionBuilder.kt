@@ -38,10 +38,14 @@ class ObjectCollectionBuilder {
     class AlertBuilder : ObjectBuilder<Alert> {
         var id = uuid()
         var activePeriod = mutableListOf<Alert.ActivePeriod>()
+        var cause: Alert.Cause? = null
+        var description: String? = null
         var effect = Alert.Effect.UnknownEffect
         var effectName: String? = null
         var informedEntity = mutableListOf<Alert.InformedEntity>()
+        var header: String? = null
         var lifecycle = Alert.Lifecycle.New
+        var updatedAt = Instant.fromEpochMilliseconds(0)
 
         fun activePeriod(start: Instant, end: Instant?) {
             activePeriod.add(Alert.ActivePeriod(start, end))
@@ -70,7 +74,18 @@ class ObjectCollectionBuilder {
         }
 
         override fun built() =
-            Alert(id, activePeriod, effect, effectName, informedEntity, lifecycle)
+            Alert(
+                id,
+                activePeriod,
+                cause,
+                description,
+                effect,
+                effectName,
+                header,
+                informedEntity,
+                lifecycle,
+                updatedAt
+            )
     }
 
     fun alert(block: AlertBuilder.() -> Unit) = build(alerts, AlertBuilder(), block)
@@ -86,7 +101,8 @@ class ObjectCollectionBuilder {
         override fun built() = Line(id, color, longName, shortName, sortOrder, textColor)
     }
 
-    fun line(block: LineBuilder.() -> Unit) = build(lines, LineBuilder(), block)
+    @DefaultArgumentInterop.Enabled
+    fun line(block: LineBuilder.() -> Unit = {}) = build(lines, LineBuilder(), block)
 
     inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
@@ -126,6 +142,7 @@ class ObjectCollectionBuilder {
             )
     }
 
+    @DefaultArgumentInterop.Enabled
     fun prediction(block: PredictionBuilder.() -> Unit = {}) =
         build(predictions, PredictionBuilder(), block)
 
@@ -261,6 +278,7 @@ class ObjectCollectionBuilder {
             trips,
             TripBuilder().apply {
                 directionId = routePattern.directionId
+                routeId = routePattern.routeId
                 routePatternId = routePattern.id
                 val representativeTrip = trips[routePattern.representativeTripId]
                 if (representativeTrip != null) {
@@ -313,6 +331,7 @@ class ObjectCollectionBuilder {
         var id: String = uuid()
         var bearing = 0.0
         lateinit var currentStatus: Vehicle.CurrentStatus
+        var currentStopSequence: Int? = null
         var directionId = 0
         var latitude = 1.2
         var longitude = 3.4
@@ -326,6 +345,7 @@ class ObjectCollectionBuilder {
                 id,
                 bearing,
                 currentStatus,
+                currentStopSequence,
                 directionId,
                 latitude,
                 longitude,
@@ -362,6 +382,8 @@ class ObjectCollectionBuilder {
 
     object Single {
         fun alert(block: AlertBuilder.() -> Unit = {}) = ObjectCollectionBuilder().alert(block)
+
+        fun line(block: LineBuilder.() -> Unit = {}) = ObjectCollectionBuilder().line(block)
 
         fun prediction(block: PredictionBuilder.() -> Unit = {}) =
             ObjectCollectionBuilder().prediction(block)

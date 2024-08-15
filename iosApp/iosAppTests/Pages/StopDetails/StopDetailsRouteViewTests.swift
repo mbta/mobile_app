@@ -24,16 +24,18 @@ final class StopDetailsRouteViewTests: XCTestCase {
 
         let northPattern = objects.routePattern(route: route) { $0.directionId = 0 }
         let southPattern = objects.routePattern(route: route) { $0.directionId = 1 }
-        let patternsByHeadsignNorth = PatternsByHeadsign(
+        let patternsByHeadsignNorth = RealtimePatterns.ByHeadsign(
             route: route,
             headsign: "North",
+            line: nil,
             patterns: [northPattern],
             upcomingTrips: nil,
             alertsHere: nil
         )
-        let patternsByHeadsignSouth = PatternsByHeadsign(
+        let patternsByHeadsignSouth = RealtimePatterns.ByHeadsign(
             route: route,
             headsign: "South",
+            line: nil,
             patterns: [southPattern],
             upcomingTrips: nil,
             alertsHere: nil
@@ -41,7 +43,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let patternsByStop = PatternsByStop(
             route: route,
             stop: stop,
-            patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth]
+            patterns: [patternsByHeadsignNorth, patternsByHeadsignSouth]
         )
 
         let pushExpNorth = XCTestExpectation(description: "Push Nav Entry called for north")
@@ -84,16 +86,18 @@ final class StopDetailsRouteViewTests: XCTestCase {
 
         let northPattern = objects.routePattern(route: route) { $0.directionId = 0 }
         let southPattern = objects.routePattern(route: route) { $0.directionId = 1 }
-        let patternsByHeadsignNorth = PatternsByHeadsign(
+        let patternsByHeadsignNorth = RealtimePatterns.ByHeadsign(
             route: route,
             headsign: "North",
+            line: nil,
             patterns: [northPattern],
             upcomingTrips: nil,
             alertsHere: nil
         )
-        let patternsByHeadsignSouth = PatternsByHeadsign(
+        let patternsByHeadsignSouth = RealtimePatterns.ByHeadsign(
             route: route,
             headsign: "South",
+            line: nil,
             patterns: [southPattern],
             upcomingTrips: nil,
             alertsHere: nil
@@ -101,7 +105,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let patternsByStop = PatternsByStop(
             route: route,
             stop: stop,
-            patternsByHeadsign: [patternsByHeadsignNorth, patternsByHeadsignSouth]
+            patterns: [patternsByHeadsignNorth, patternsByHeadsignSouth]
         )
 
         let onPinCalledExp = XCTestExpectation(description: "On pin called")

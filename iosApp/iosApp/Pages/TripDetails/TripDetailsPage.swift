@@ -16,12 +16,17 @@ struct TripDetailsPage: View {
     let vehicleId: String
     let target: TripDetailsTarget?
 
-    @ObservedObject var tripPredictionsFetcher: TripPredictionsFetcher
-    @ObservedObject var globalFetcher: GlobalFetcher
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var vehicleFetcher: VehicleFetcher
-    var tripSchedulesRepository: ITripSchedulesRepository
+    @ObservedObject var mapVM: MapViewModel
+    var globalRepository: IGlobalRepository
+    @State var globalResponse: GlobalResponse?
+    @State var tripPredictionsRepository: ITripPredictionsRepository
+    @State var tripPredictions: PredictionsStreamDataResponse?
+    @State var tripRepository: ITripRepository
+    @State var trip: Trip?
     @State var tripSchedulesResponse: TripSchedulesResponse?
+    @State var vehicleRepository: IVehicleRepository
+    @State var vehicleResponse: VehicleStreamDataResponse?
 
     @State var now = Date.now.toKotlinInstant()
 
@@ -31,38 +36,40 @@ struct TripDetailsPage: View {
         tripId: String,
         vehicleId: String,
         target: TripDetailsTarget?,
-        globalFetcher: GlobalFetcher,
         nearbyVM: NearbyViewModel,
-        tripPredictionsFetcher: TripPredictionsFetcher,
-        tripSchedulesRepository: ITripSchedulesRepository = RepositoryDI().tripSchedules,
-        vehicleFetcher: VehicleFetcher
+        mapVM: MapViewModel,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
+        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
+        tripRepository: ITripRepository = RepositoryDI().trip,
+        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
         self.target = target
-        self.globalFetcher = globalFetcher
         self.nearbyVM = nearbyVM
-        self.tripPredictionsFetcher = tripPredictionsFetcher
-        self.tripSchedulesRepository = tripSchedulesRepository
-        self.vehicleFetcher = vehicleFetcher
+        self.mapVM = mapVM
+        self.globalRepository = globalRepository
+        self.tripPredictionsRepository = tripPredictionsRepository
+        self.tripRepository = tripRepository
+        self.vehicleRepository = vehicleRepository
     }
 
     var body: some View {
         VStack {
-            SheetHeader(onClose: { nearbyVM.goBack() })
-
-            if let globalData = globalFetcher.response {
-                let vehicle = vehicleFetcher.response?.vehicle
+            header
+            if let trip, let globalResponse {
+                let vehicle = vehicleResponse?.vehicle
                 if let stops = TripDetailsStopList.companion.fromPieces(
+                    trip: trip,
                     tripSchedules: tripSchedulesResponse,
-                    tripPredictions: tripPredictionsFetcher.predictions,
-                    vehicle: vehicle, globalData: globalData
+                    tripPredictions: tripPredictions,
+                    vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
                 ) {
                     vehicleCardView
-                    if let target, let splitStops = stops.splitForTarget(
+                    if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
-                        targetStopSequence: Int32(target.stopSequence),
-                        globalData: globalData
+                        targetStopSequence: Int32(stopSequence),
+                        globalData: globalResponse
                     ) {
                         TripDetailsStopListSplitView(splitStops: splitStops, now: now)
                     } else {
@@ -74,12 +81,28 @@ struct TripDetailsPage: View {
             } else {
                 ProgressView()
             }
-
-            tripPredictionsFetcher.errorText
         }
         .task {
             do {
-                tripSchedulesResponse = try await tripSchedulesRepository.getTripSchedules(tripId: tripId)
+                globalResponse = try await globalRepository.getGlobalData()
+            } catch {
+                debugPrint(error)
+            }
+        }
+        .task {
+            do {
+                tripSchedulesResponse = try await tripRepository.getTripSchedules(tripId: tripId)
+            } catch {
+                debugPrint(error)
+            }
+        }
+        .task {
+            do {
+                let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripId)
+                trip = switch onEnum(of: response) {
+                case let .ok(okResponse): okResponse.data.trip
+                case .error: nil
+                }
             } catch {
                 debugPrint(error)
             }
@@ -95,13 +118,11 @@ struct TripDetailsPage: View {
                 now = Date.now.toKotlinInstant()
             }
         }
-        .onAppear { joinRealtime()
-        }
-        .onDisappear { leaveRealtime()
-        }
+        .onAppear { joinRealtime() }
+        .onDisappear { leaveRealtime() }
         .onChange(of: tripId) { joinPredictions(tripId: $0) }
         .onChange(of: vehicleId) { vehicleId in
-            vehicleFetcher.run(vehicleId: vehicleId)
+            joinVehicle(vehicleId: vehicleId)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .withScenePhaseHandlers(onActive: joinRealtime,
@@ -111,41 +132,86 @@ struct TripDetailsPage: View {
 
     private func joinRealtime() {
         joinPredictions(tripId: tripId)
-        vehicleFetcher.run(vehicleId: vehicleId)
+        joinVehicle(vehicleId: vehicleId)
     }
 
     private func leaveRealtime() {
         leavePredictions()
-        vehicleFetcher.leave()
+        leaveVehicle()
     }
 
     private func joinPredictions(tripId: String) {
-        tripPredictionsFetcher.run(tripId: tripId)
+        tripPredictionsRepository.connect(tripId: tripId) { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    tripPredictions = data
+                } else {
+                    tripPredictions = nil
+                }
+            }
+        }
     }
 
     private func leavePredictions() {
-        tripPredictionsFetcher.leave()
+        tripPredictionsRepository.disconnect()
+    }
+
+    private func joinVehicle(vehicleId: String) {
+        vehicleRepository.connect(vehicleId: vehicleId) { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    vehicleResponse = data
+                    mapVM.selectedVehicle = data.vehicle
+                } else {
+                    vehicleResponse = nil
+                }
+            }
+        }
+    }
+
+    private func leaveVehicle() {
+        vehicleRepository.disconnect()
+        if mapVM.selectedVehicle?.id == vehicleId {
+            mapVM.selectedVehicle = nil
+        }
     }
 
     @ViewBuilder
     var vehicleCardView: some View {
-        let trip: Trip? = tripPredictionsFetcher.predictions?.trips[tripId]
-        let vehicle: Vehicle? = vehicleFetcher.response?.vehicle
-        let vehicleStop: Stop? = if let stopId = vehicle?.stopId {
-            globalFetcher.stops[stopId]?.resolveParent(stops: globalFetcher.stops)
+        let trip: Trip? = tripPredictions?.trips[tripId]
+        let vehicle: Vehicle? = vehicleResponse?.vehicle
+        let vehicleStop: Stop? = if let stopId = vehicle?.stopId, let allStops = globalResponse?.stops {
+            allStops[stopId]?.resolveParent(stops: allStops)
         } else {
             nil
         }
         let route: Route? = if let routeId = trip?.routeId {
-            globalFetcher.routes[routeId]
+            globalResponse?.routes[routeId]
         } else {
             nil
         }
-        VehicleCardView(vehicle: vehicle,
-                        route: route,
-                        line: globalFetcher.lookUpLine(lineId: route?.lineId),
-                        stop: vehicleStop,
-                        trip: trip,
-                        now: now.toNSDate())
+        VehicleCardView(
+            vehicle: vehicle,
+            route: route,
+            line: globalResponse?.getLine(lineId: route?.lineId),
+            stop: vehicleStop,
+            trip: trip
+        )
+    }
+
+    @ViewBuilder
+    var header: some View {
+        let trip: Trip? = tripPredictions?.trips[tripId]
+        let route: Route? = if let routeId = trip?.routeId {
+            globalResponse?.routes[routeId]
+        } else {
+            nil
+        }
+        TripDetailsHeader(
+            onBack: nearbyVM.goBack,
+            route: route,
+            line: globalResponse?.getLine(lineId: route?.lineId),
+            trip: trip
+        )
     }
 }

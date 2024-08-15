@@ -3,21 +3,27 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.time.Duration.Companion.minutes
@@ -34,7 +40,7 @@ sealed interface UpcomingTripViewState {
 
     data class NoService(val effect: Alert.Effect) : UpcomingTripViewState
 
-    data class Some(val trip: UpcomingTrip.Format) : UpcomingTripViewState
+    data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
 }
 
 val format: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
@@ -44,31 +50,64 @@ fun formatTime(time: Instant): String =
 
 @Composable
 fun UpcomingTripView(state: UpcomingTripViewState) {
-    val modifier = Modifier.widthIn(min = 48.dp)
+    val modifier = Modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {
-                is UpcomingTrip.Format.Overridden -> Text(state.trip.text, modifier)
-                is UpcomingTrip.Format.Hidden -> {}
-                is UpcomingTrip.Format.Boarding ->
-                    Text(stringResource(R.string.boarding_abbr), modifier)
-                is UpcomingTrip.Format.Arriving ->
-                    Text(stringResource(R.string.arriving_abbr), modifier)
-                is UpcomingTrip.Format.Approaching ->
-                    Text(stringResource(R.string.approaching_abbr), modifier)
-                is UpcomingTrip.Format.DistantFuture ->
-                    Text(formatTime(state.trip.predictionTime), modifier)
-                is UpcomingTrip.Format.Schedule ->
+                is TripInstantDisplay.Overridden ->
+                    Text(state.trip.text, modifier, fontSize = 13.sp)
+                is TripInstantDisplay.Hidden -> {}
+                is TripInstantDisplay.Skipped -> {}
+                is TripInstantDisplay.Boarding ->
+                    Text(
+                        stringResource(R.string.boarding_abbr),
+                        modifier,
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                is TripInstantDisplay.Arriving ->
+                    Text(
+                        stringResource(R.string.arriving_abbr),
+                        modifier,
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                is TripInstantDisplay.Approaching ->
+                    BoldedTripStatus(
+                        text = stringResource(R.string.approaching_abbr),
+                        modifier = modifier
+                    )
+                is TripInstantDisplay.AsTime ->
+                    Text(
+                        formatTime(state.trip.predictionTime),
+                        modifier,
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                is TripInstantDisplay.Schedule ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Text(formatTime(state.trip.scheduleTime))
+                        Text(
+                            formatTime(state.trip.scheduleTime),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")
                     }
-                is UpcomingTrip.Format.Minutes ->
-                    Text(stringResource(R.string.minutes_abbr, state.trip.minutes), modifier)
+                is TripInstantDisplay.Minutes ->
+                    BoldedTripStatus(
+                        text = stringResource(R.string.minutes_abbr, state.trip.minutes),
+                        modifier = modifier
+                    )
             }
         is UpcomingTripViewState.NoService ->
             NoServiceView(NoServiceViewEffect.from(state.effect), modifier)
-        is UpcomingTripViewState.None -> Text("No Predictions", modifier)
+        is UpcomingTripViewState.None -> Text("No Predictions", modifier, fontSize = 13.sp)
         is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
     }
 }
@@ -126,11 +165,9 @@ fun NoServiceView(effect: NoServiceViewEffect, modifier: Modifier = Modifier) {
 @Composable
 fun UpcomingTripViewPreview() {
     Row {
-        UpcomingTripView(UpcomingTripViewState.Some(UpcomingTrip.Format.Minutes(5)))
+        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
         UpcomingTripView(
-            UpcomingTripViewState.Some(
-                UpcomingTrip.Format.Schedule(Clock.System.now() + 10.minutes)
-            )
+            UpcomingTripViewState.Some(TripInstantDisplay.Schedule(Clock.System.now() + 10.minutes))
         )
     }
 }

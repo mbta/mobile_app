@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-extension UpcomingTrip.FormatOverridden {
+extension TripInstantDisplay.Overridden {
     func textWithLocale() -> AttributedString {
         var result = AttributedString(text)
         result.languageIdentifier = "en-US"
@@ -32,7 +32,7 @@ struct UpcomingTripView: View {
         case loading
         case none
         case noService(shared.Alert.Effect)
-        case some(UpcomingTrip.Format)
+        case some(TripInstantDisplay)
     }
 
     var body: some View {
@@ -65,7 +65,7 @@ struct UpcomingTripView: View {
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
                 Text(overridden.textWithLocale())
-            case .hidden:
+            case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")
             case .boarding:
@@ -80,7 +80,7 @@ struct UpcomingTripView: View {
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
                 PredictionText(minutes: 1)
-            case let .distantFuture(format):
+            case let .asTime(format):
                 Text(Date(instant: format.predictionTime), style: .time)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(

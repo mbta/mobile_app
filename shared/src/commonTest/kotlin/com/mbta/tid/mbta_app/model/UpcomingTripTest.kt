@@ -4,7 +4,8 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.schedule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
-import com.mbta.tid.mbta_app.model.UpcomingTrip.Format
+import com.mbta.tid.mbta_app.parametric.ParametricTest
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -16,42 +17,78 @@ import kotlinx.datetime.Clock
 
 class UpcomingTripTest {
     class FormatTest {
+        // trip details doesn't use UpcomingTrip
+        private fun ParametricTest.anyContext() =
+            anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
+
         @Test
-        fun `status is non-null`() {
+        fun `status is non-null`() = parametricTest {
             assertEquals(
-                Format.Overridden("Custom Text"),
+                TripInstantDisplay.Overridden("Custom Text"),
                 UpcomingTrip(trip {}, prediction { status = "Custom Text" })
-                    .format(Clock.System.now())
+                    .format(Clock.System.now(), anyContext())
             )
         }
 
         @Test
-        fun `departure_time is null`() {
+        fun `scheduled trip skipped`() = parametricTest {
+            val now = Clock.System.now()
             assertEquals(
-                Format.Hidden,
+                TripInstantDisplay.Skipped(now + 15.minutes),
+                UpcomingTrip(
+                        trip {},
+                        schedule { departureTime = now + 15.minutes },
+                        prediction {
+                            scheduleRelationship = Prediction.ScheduleRelationship.Skipped
+                        },
+                    )
+                    .format(now, anyContext())
+            )
+        }
+
+        @Test
+        fun `unscheduled trip skipped`() = parametricTest {
+            assertEquals(
+                TripInstantDisplay.Hidden,
+                UpcomingTrip(
+                        trip {},
+                        prediction {
+                            scheduleRelationship = Prediction.ScheduleRelationship.Skipped
+                        }
+                    )
+                    .format(Clock.System.now(), anyContext())
+            )
+        }
+
+        @Test
+        fun `departure_time is null`() = parametricTest {
+            assertEquals(
+                TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, prediction { departureTime = null })
-                    .format(Clock.System.now())
+                    .format(Clock.System.now(), anyContext())
             )
             assertEquals(
-                Format.Hidden,
-                UpcomingTrip(trip {}, schedule { departureTime = null }).format(Clock.System.now())
-            )
-        }
-
-        @Test
-        fun `schedule instead of prediction`() {
-            val now = Clock.System.now()
-            assertEquals(
-                Format.Schedule(now + 15.minutes),
-                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes }).format(now)
+                TripInstantDisplay.Hidden,
+                UpcomingTrip(trip {}, schedule { departureTime = null })
+                    .format(Clock.System.now(), anyContext())
             )
         }
 
         @Test
-        fun `departure_time in the past`() {
+        fun `schedule instead of prediction`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
-                Format.Hidden,
+                TripInstantDisplay.Schedule(now + 15.minutes),
+                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes })
+                    .format(now, anyContext())
+            )
+        }
+
+        @Test
+        fun `departure_time in the past`() = parametricTest {
+            val now = Clock.System.now()
+            assertEquals(
+                TripInstantDisplay.Hidden,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -59,15 +96,15 @@ class UpcomingTripTest {
                             departureTime = now.minus(2.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun `seconds less than 0`() {
+        fun `seconds less than 0`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
-                Format.Arriving,
+                TripInstantDisplay.Arriving,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -75,12 +112,12 @@ class UpcomingTripTest {
                             departureTime = now.plus(10.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun boarding() {
+        fun boarding() = parametricTest {
             val now = Clock.System.now()
             val vehicle = vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -88,7 +125,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertEquals(
-                Format.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -99,36 +136,37 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun `not boarding when stopped at stop but more than 90 seconds until departure`() {
-            val now = Clock.System.now()
-            val vehicle = vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = "12345"
-                tripId = "trip1"
+        fun `not boarding when stopped at stop but more than 90 seconds until departure`() =
+            parametricTest {
+                val now = Clock.System.now()
+                val vehicle = vehicle {
+                    currentStatus = Vehicle.CurrentStatus.StoppedAt
+                    stopId = "12345"
+                    tripId = "trip1"
+                }
+                assertEquals(
+                    TripInstantDisplay.Minutes(2),
+                    UpcomingTrip(
+                            trip {},
+                            prediction {
+                                departureTime = now.plus(95.seconds)
+                                stopId = "12345"
+                                tripId = "trip1"
+                                vehicleId = vehicle.id
+                            },
+                            vehicle
+                        )
+                        .format(now, anyContext())
+                )
             }
-            assertEquals(
-                Format.Minutes(2),
-                UpcomingTrip(
-                        trip {},
-                        prediction {
-                            departureTime = now.plus(95.seconds)
-                            stopId = "12345"
-                            tripId = "trip1"
-                            vehicleId = vehicle.id
-                        },
-                        vehicle
-                    )
-                    .format(now)
-            )
-        }
 
         @Test
-        fun `not boarding`() {
+        fun `not boarding`() = parametricTest {
             val now = Clock.System.now()
             // wrong vehicle status
             var vehicle = vehicle {
@@ -137,7 +175,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertNotEquals(
-                Format.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -148,7 +186,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
             // wrong stop ID
             vehicle = vehicle {
@@ -157,7 +195,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertNotEquals(
-                Format.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -168,7 +206,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
             // wrong trip ID
             vehicle = vehicle {
@@ -177,7 +215,7 @@ class UpcomingTripTest {
                 tripId = "trip2"
             }
             assertNotEquals(
-                Format.Boarding,
+                TripInstantDisplay.Boarding,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -188,15 +226,15 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun `seconds less than 30`() {
+        fun `seconds less than 30`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
-                Format.Arriving,
+                TripInstantDisplay.Arriving,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -204,20 +242,20 @@ class UpcomingTripTest {
                             departureTime = now.plus(20.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
             assertEquals(
-                Format.Arriving,
+                TripInstantDisplay.Arriving,
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
-                    .format(now)
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun `seconds less than 60`() {
+        fun `seconds less than 60`() = parametricTest {
             val now = Clock.System.now()
             assertEquals(
-                Format.Approaching,
+                TripInstantDisplay.Approaching,
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -225,23 +263,23 @@ class UpcomingTripTest {
                             departureTime = now.plus(50.seconds)
                         }
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
             assertEquals(
-                Format.Approaching,
+                TripInstantDisplay.Approaching,
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
-                    .format(now)
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun `minutes in the distant future`() {
+        fun `minutes in the distant future`() = parametricTest {
             val now = Clock.System.now()
             val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
             val moreFuture = future.plus(38.minutes)
 
             assertEquals(
-                Format.DistantFuture(future),
+                TripInstantDisplay.AsTime(future),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -249,46 +287,48 @@ class UpcomingTripTest {
                             departureTime = future.plus(1.minutes)
                         }
                     )
-                    .format(now)
+                    .format(now, anyContext())
             )
             assertEquals(
-                Format.DistantFuture(moreFuture),
-                UpcomingTrip(trip {}, prediction { departureTime = moreFuture }).format(now)
+                TripInstantDisplay.AsTime(moreFuture),
+                UpcomingTrip(trip {}, prediction { departureTime = moreFuture })
+                    .format(now, anyContext())
             )
         }
 
         @Test
-        fun `minutes less than 20`() {
+        fun `minutes less than 20`() = parametricTest {
             val now = Clock.System.now()
+            val context = anyContext()
             assertEquals(
-                Format.Minutes(1),
+                TripInstantDisplay.Minutes(1),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
-                    .format(now)
+                    .format(now, context)
             )
             assertEquals(
-                Format.Minutes(2),
+                TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
-                    .format(now)
+                    .format(now, context)
             )
             assertEquals(
-                Format.Minutes(2),
+                TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
-                    .format(now)
+                    .format(now, context)
             )
             assertEquals(
-                Format.Minutes(3),
+                TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
-                    .format(now)
+                    .format(now, context)
             )
             assertEquals(
-                Format.Minutes(3),
+                TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
-                    .format(now)
+                    .format(now, context)
             )
             assertEquals(
-                Format.Minutes(45),
+                TripInstantDisplay.Minutes(45),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
-                    .format(now)
+                    .format(now, context)
             )
         }
     }

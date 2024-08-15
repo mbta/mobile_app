@@ -12,46 +12,42 @@ import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
-    var routeSourceGenerator: RouteSourceGenerator? { get }
-    var routeLayerGenerator: RouteLayerGenerator? { get }
-    var stopSourceGenerator: StopSourceGenerator? { get }
-    var stopLayerGenerator: StopLayerGenerator? { get }
+    var currentScheme: ColorScheme? { get }
+    func addIcons(recreate: Bool)
+    func addLayers(colorScheme: ColorScheme, recreate: Bool)
 
-    func addSources(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
-    func addLayers(routeLayerGenerator: RouteLayerGenerator, stopLayerGenerator: StopLayerGenerator)
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator)
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator)
-    func updateSourceData(stopSourceGenerator: StopSourceGenerator)
+    func updateSourceData(routeData: MapboxMaps.FeatureCollection)
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection)
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection)
 }
 
 struct MapImageError: Error {}
 
 class MapLayerManager: IMapLayerManager {
+    var currentScheme: ColorScheme?
     let map: MapboxMap
-    var routeSourceGenerator: RouteSourceGenerator?
-    var routeLayerGenerator: RouteLayerGenerator?
-    var stopSourceGenerator: StopSourceGenerator?
-    var stopLayerGenerator: StopLayerGenerator?
 
     init(map: MapboxMap) {
         self.map = map
-
-        for iconId in StopIcons.all + AlertIcons.all {
-            do {
-                guard let image = UIImage(named: iconId) else { throw MapImageError() }
-                try map.addImage(image, id: iconId)
-            } catch {
-                Logger().error("Failed to add map icon image \(iconId)")
-            }
-        }
+        addIcons()
     }
 
-    func addSources(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
-        self.routeSourceGenerator = routeSourceGenerator
-        self.stopSourceGenerator = stopSourceGenerator
-
-        updateSourceData(source: routeSourceGenerator.routeSource)
-        updateSourceData(source: stopSourceGenerator.stopSource)
+    func addIcons(recreate: Bool = false) {
+        for iconId in StopIcons.shared.all + AlertIcons.shared.all + ChildStopIcons.shared.all {
+            do {
+                guard let image = UIImage(named: iconId) else { throw MapImageError() }
+                if map.imageExists(withId: iconId) {
+                    if recreate {
+                        try map.removeImage(withId: iconId)
+                    } else {
+                        continue
+                    }
+                }
+                try map.addImage(image, id: iconId)
+            } catch {
+                Logger().error("Failed to add map icon image \(iconId)\n\(error)")
+            }
+        }
     }
 
     private func addSource(source: GeoJSONSource) {
@@ -62,16 +58,26 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func addLayers(routeLayerGenerator: RouteLayerGenerator, stopLayerGenerator: StopLayerGenerator) {
-        self.routeLayerGenerator = routeLayerGenerator
-        self.stopLayerGenerator = stopLayerGenerator
-
-        let layers: [Layer] = routeLayerGenerator.routeLayers + stopLayerGenerator.stopLayers
+    func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
+        let colorPalette = switch colorScheme {
+        case .light: ColorPalette.companion.light
+        case .dark: ColorPalette.companion.dark
+        @unknown default: ColorPalette.companion.light
+        }
+        currentScheme = colorScheme
+        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
+            .map { $0.toMapbox() }
+            + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette).map { $0.toMapbox() }
+            + [ChildStopLayerGenerator.shared.createChildStopLayer(colorPalette: colorPalette).toMapbox()]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
-                    // Skip attempting to add layer if it already exists
-                    continue
+                    if recreate {
+                        try map.removeLayer(withId: layer.id)
+                    } else {
+                        // Skip attempting to add layer if it already exists
+                        continue
+                    }
                 }
                 if map.layerExists(withId: "puck") {
                     try map.addLayer(layer, layerPosition: .below("puck"))
@@ -84,27 +90,25 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
-    func updateSourceData(source: GeoJSONSource) {
-        if map.sourceExists(withId: source.id) {
-            guard let actualData = source.data else { return }
-            map.updateGeoJSONSource(withId: source.id, data: actualData)
+    func updateSourceData(sourceId: String, data: MapboxMaps.FeatureCollection) {
+        if map.sourceExists(withId: sourceId) {
+            map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
         } else {
+            var source = GeoJSONSource(id: sourceId)
+            source.data = .featureCollection(data)
             addSource(source: source)
         }
     }
 
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator) {
-        self.routeSourceGenerator = routeSourceGenerator
-        updateSourceData(source: routeSourceGenerator.routeSource)
+    func updateSourceData(routeData: MapboxMaps.FeatureCollection) {
+        updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
-    func updateSourceData(stopSourceGenerator: StopSourceGenerator) {
-        self.stopSourceGenerator = stopSourceGenerator
-        updateSourceData(source: stopSourceGenerator.stopSource)
+    func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
+        updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 
-    func updateSourceData(routeSourceGenerator: RouteSourceGenerator, stopSourceGenerator: StopSourceGenerator) {
-        updateSourceData(routeSourceGenerator: routeSourceGenerator)
-        updateSourceData(stopSourceGenerator: stopSourceGenerator)
+    func updateSourceData(childStopData: MapboxMaps.FeatureCollection) {
+        updateSourceData(sourceId: ChildStopFeaturesBuilder.shared.childStopSourceId, data: childStopData)
     }
 }

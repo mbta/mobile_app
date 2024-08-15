@@ -1,14 +1,11 @@
 package com.mbta.tid.mbta_app.android.map
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,10 +27,15 @@ import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSetti
 import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.android.fetcher.GlobalData
 import com.mbta.tid.mbta_app.android.fetcher.getRailRouteShapes
+import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.followPuck
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
+import com.mbta.tid.mbta_app.map.ColorPalette
+import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
+import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
+import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -47,36 +49,39 @@ fun HomeMapView(
     backend: Backend,
     globalData: GlobalData,
     alertsData: AlertsStreamDataResponse?,
-    lastNearbyTransitLocation: Position?
+    lastNearbyTransitLocation: Position?,
 ) {
-    var layerManager: MapLayerManager? by remember {
-        mutableStateOf(null, referentialEqualityPolicy())
-    }
+    val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     val locationPermissionState =
         rememberPermissionState(permission = android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     val railRouteShapes = getRailRouteShapes(backend)
 
     val now = timer(updateInterval = 10.seconds)
-    val alertsByStop =
-        remember(globalData, alertsData, alertsData, now) {
+    val globalMapData =
+        remember(globalData, alertsData, now) {
             if (globalData.response != null) {
                 GlobalMapData(
-                        globalData.response,
-                        GlobalMapData.getAlertsByStop(globalData.response, alertsData, now)
-                    )
-                    .alertsByStop
+                    globalData.response,
+                    GlobalMapData.getAlertsByStop(globalData.response, alertsData, now)
+                )
             } else {
                 null
             }
         }
+
+    val isDarkMode = isSystemInDarkTheme()
 
     Box(modifier) {
         MapboxMap(
             Modifier.fillMaxSize(),
             mapEvents =
                 MapEvents(
-                    onCameraChanged = { layerManager?.updateStopLayerZoom(it.cameraState.zoom) }
+                    onStyleLoaded = {
+                        layerManager.run {
+                            addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
+                        }
+                    }
                 ),
             gesturesSettings =
                 GesturesSettings {
@@ -92,7 +97,7 @@ fun HomeMapView(
             compass = {},
             scaleBar = {},
             mapViewportState = mapViewportState,
-            style = { MapStyle(style = Style.LIGHT) }
+            style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
         ) {
             MapEffect(key1 = null) { mapViewportState.followPuck() }
             if (!mapViewportState.isFollowingPuck && lastNearbyTransitLocation != null) {
@@ -105,36 +110,45 @@ fun HomeMapView(
 
             val context = LocalContext.current
 
-            MapEffect(railRouteShapes, globalData) { map ->
-                if (railRouteShapes == null || globalData.response == null) return@MapEffect
-
-                if (layerManager == null) layerManager = MapLayerManager(map.mapboxMap, context)
-
-                val routeSourceGenerator =
-                    RouteSourceGenerator(railRouteShapes, globalData.stops, alertsByStop)
-
-                layerManager!!.addSources(
-                    routeSourceGenerator,
-                    StopSourceGenerator(globalData.stops, routeSourceGenerator.routeSourceDetails)
-                )
-
-                layerManager!!.addLayers(
-                    RouteLayerGenerator(railRouteShapes, globalData.routes),
-                    StopLayerGenerator(MapLayerManager.stopLayerTypes)
-                )
+            MapEffect { map ->
+                if (layerManager.`object` == null)
+                    layerManager.`object` = MapLayerManager(map.mapboxMap, context)
             }
 
-            MapEffect(alertsByStop) {
-                if (railRouteShapes == null || alertsByStop == null) return@MapEffect
-                layerManager?.let { manager ->
-                    manager.updateSourceData(
-                        RouteSourceGenerator(railRouteShapes, globalData.stops, alertsByStop)
+            MapEffect(railRouteShapes, globalData, globalMapData) {
+                if (railRouteShapes == null || globalData.response == null) return@MapEffect
+
+                val routeSourceData = railRouteShapes.routesWithSegmentedShapes
+                val snappedStopRouteLines =
+                    RouteFeaturesBuilder.generateRouteLines(
+                        routeSourceData,
+                        globalData.routes,
+                        globalData.stops,
+                        globalMapData?.alertsByStop
                     )
-                    manager.updateSourceData(
-                        StopSourceGenerator(
-                            globalData.stops,
-                            manager.routeSourceGenerator?.routeSourceDetails
-                        )
+
+                layerManager.run {
+                    updateStopSourceData(
+                        StopFeaturesBuilder.buildCollection(
+                                StopSourceData(),
+                                globalMapData?.mapStops.orEmpty(),
+                                snappedStopRouteLines
+                            )
+                            .toMapbox()
+                    )
+                }
+
+                layerManager.run {
+                    updateRouteSourceData(
+                        RouteFeaturesBuilder.buildCollection(
+                                RouteFeaturesBuilder.generateRouteLines(
+                                    routeSourceData,
+                                    globalData.routes,
+                                    globalData.stops,
+                                    globalMapData?.alertsByStop
+                                )
+                            )
+                            .toMapbox()
                     )
                 }
             }

@@ -16,15 +16,16 @@ struct VehicleCardView: View {
     let line: Line?
     let stop: Stop?
     let trip: Trip?
-    var now: Date = .now
 
     var body: some View {
         if let vehicle, let route, let stop, let trip {
-            if vehicle.tripId == trip.id {
-                VehicleOnTripView(vehicle: vehicle, route: route, line: line, stop: stop, trip: trip, now: now)
-            } else {
-                Text("This vehicle is completing another trip.")
-            }
+            VehicleOnTripView(
+                vehicle: vehicle,
+                route: route,
+                line: line,
+                stop: stop,
+                trip: trip
+            )
         } else {
             Text("Loading...")
         }
@@ -37,40 +38,57 @@ struct VehicleOnTripView: View {
     let line: Line?
     let stop: Stop
     let trip: Trip
-    let now: Date
+
+    var backgroundColor: Color {
+        if route.id.starts(with: "Shuttle"), let line {
+            Color(hex: line.color)
+        } else {
+            Color(hex: route.color)
+        }
+    }
+
+    var textColor: Color {
+        if route.id.starts(with: "Shuttle"), let line {
+            Color(hex: line.textColor)
+        } else {
+            Color(hex: route.textColor)
+        }
+    }
+
     var body: some View {
-        VStack {
-            HStack {
-                VStack {
-                    RoutePill(route: route, line: line, type: .flex)
-                    routeIcon(route)
-                }.padding([.trailing], 8)
-                VStack {
-                    HStack {
-                        Text(trip.headsign).padding([.bottom], 8)
-                        Spacer()
-                        Text("Live")
-                        Image(.liveData)
-                    }
+        HStack {
+            routeVehicle
+                .padding([.leading], 8)
+            description
+        }
+        .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+        .background(backgroundColor)
+        .withRoundedBorder(width: 2)
+        .padding([.horizontal], 8)
+    }
 
-                    VStack(alignment: .leading) {
-                        vehicleStatusDescription(vehicle.currentStatus)
-                            .font(Typography.caption)
-                        Text(stop.name).font(Typography.bodySemibold)
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }.frame(maxWidth: .infinity, alignment: .leading)
-
-            HStack {
-                Text("last updated \(lastUpdatedSeconds(), specifier: "%.0f")s ago")
-                    .font(Typography.caption2)
-
-            }.frame(maxWidth: .infinity, alignment: .leading)
+    @ViewBuilder
+    private var description: some View {
+        if vehicle.tripId == trip.id {
+            VStack(alignment: .leading, spacing: 2) {
+                vehicleStatusDescription(vehicle.currentStatus)
+                    .font(Typography.caption)
+                    .foregroundColor(textColor)
+                Text(stop.name)
+                    .font(Typography.headlineBold)
+                    .foregroundColor(textColor)
+            }
+        } else {
+            Text("This vehicle is completing another trip.")
+                .font(Typography.headlineBold)
+                .foregroundColor(textColor)
         }
     }
 
     @ViewBuilder
-    func vehicleStatusDescription(_ vehicleStatus: __Bridge__Vehicle_CurrentStatus) -> some View {
+    private func vehicleStatusDescription(
+        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
+    ) -> some View {
         switch vehicleStatus {
         case .incomingAt: Text("Approaching")
         case .inTransitTo: Text("Next stop")
@@ -78,8 +96,21 @@ struct VehicleOnTripView: View {
         }
     }
 
-    private func lastUpdatedSeconds() -> TimeInterval {
-        now.timeIntervalSince(vehicle.updatedAt.toNSDate())
+    private var routeVehicle: some View {
+        ZStack {
+            Group {
+                Image(.vehicleHalo)
+                Image(.vehiclePuck).foregroundStyle(Color(hex: route.color))
+            }
+            .frame(width: 28, height: 28)
+            .rotationEffect(.degrees(225))
+            routeIcon(route)
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundColor(textColor)
+        }
+        .padding([.bottom], 4)
+        .frame(width: 56, height: 56)
     }
 }
 
@@ -99,6 +130,7 @@ struct VehicleCardView_Previews: PreviewProvider {
         }
         let vehicle = Vehicle(id: "y1234", bearing: nil,
                               currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
+                              currentStopSequence: 30,
                               directionId: 1,
                               latitude: 0.0,
                               longitude: 0.0,
@@ -113,7 +145,7 @@ struct VehicleCardView_Previews: PreviewProvider {
 
         List {
             VehicleCardView(vehicle: vehicle, route: red, line: nil, stop: stop, trip: trip)
-        }.font(Typography.body)
-            .previewDisplayName("VehicleCard")
+        }
+        .previewDisplayName("VehicleCard")
     }
 }

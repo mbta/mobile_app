@@ -423,6 +423,92 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `Green Line routes are grouped together`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
+        val stop3 = objects.stop()
+
+        val line = objects.line { id = "line-Green" }
+
+        val route1 =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Park St & North")
+            }
+        val route2 =
+            objects.route {
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Cleveland Circle", "Park St & North")
+            }
+
+        val route1rp1 =
+            objects.routePattern(route1) {
+                representativeTrip { headsign = "Boston College" }
+                directionId = 0
+                sortOrder = 1
+            }
+        val route1rp2 =
+            objects.routePattern(route1) {
+                representativeTrip { headsign = "Government Center" }
+                directionId = 1
+                sortOrder = 2
+            }
+        val route2rp1 =
+            objects.routePattern(route2) {
+                representativeTrip { headsign = "Cleveland Circle" }
+                directionId = 0
+                sortOrder = 3
+            }
+        val route2rp2 =
+            objects.routePattern(route2) {
+                representativeTrip { headsign = "Government Center" }
+                directionId = 1
+                sortOrder = 4
+            }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        stop1.id to listOf(route1rp1.id),
+                        stop2.id to listOf(route2rp1.id),
+                        stop3.id to listOf(route1rp2.id, route2rp2.id),
+                    ),
+            )
+        val nearby = NearbyResponse(objects)
+
+        val cDir = Direction("West", "Cleveland Circle", 0)
+        val bDir = Direction("West", "Boston College", 0)
+        val parkDir = Direction("East", "Park St & North", 1)
+
+        assertEquals(
+            NearbyStaticData.build {
+                line(line, listOf(route1, route2)) {
+                    stop(stop1, routes = listOf(route1), directions = listOf(bDir, parkDir)) {
+                        headsign(route1, "Boston College", listOf(route1rp1))
+                    }
+                    stop(
+                        stop3,
+                        routes = listOf(route1, route2),
+                        directions = listOf(bDir, parkDir)
+                    ) {
+                        direction(parkDir, listOf(route1, route2), listOf(route1rp2, route2rp2))
+                    }
+                    stop(stop2, listOf(route2), directions = listOf(cDir, parkDir)) {
+                        headsign(route2, "Cleveland Circle", listOf(route2rp1))
+                    }
+                }
+            },
+            NearbyStaticData(global, nearby)
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo includes predictions filtered to the correct stop and pattern`() {
         val objects = ObjectCollectionBuilder()
 
@@ -498,16 +584,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop1,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Harvard",
+                                    null,
                                     listOf(pattern1, pattern2),
                                     listOf(
                                         objects.upcomingTrip(stop1Pattern2Prediction),
@@ -520,9 +607,10 @@ class NearbyResponseTest {
                             route1,
                             stop2,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Nubian",
+                                    null,
                                     listOf(pattern3),
                                     listOf(objects.upcomingTrip(stop2Pattern3Prediction))
                                 )
@@ -646,34 +734,38 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop1,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical Out",
+                                    null,
                                     listOf(typicalOutbound),
                                     listOf(objects.upcomingTrip(typicalOutboundPrediction))
                                 ),
-                                PatternsByHeadsign(
-                                    route1,
-                                    "Typical In",
-                                    listOf(typicalInbound),
-                                    emptyList()
-                                ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Deviation Out",
+                                    null,
                                     listOf(deviationOutbound),
                                     listOf(objects.upcomingTrip(deviationOutboundPrediction))
                                 ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Typical In",
+                                    null,
+                                    listOf(typicalInbound),
+                                    emptyList()
+                                ),
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Atypical In",
+                                    null,
                                     listOf(atypicalInbound),
                                     listOf(objects.upcomingTrip(atypicalInboundPrediction))
                                 )
@@ -768,24 +860,26 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop1,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical Out",
+                                    null,
                                     listOf(typicalOutbound),
-                                    null
+                                    emptyList()
                                 ),
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical In",
+                                    null,
                                     listOf(typicalInbound),
-                                    null
+                                    emptyList()
                                 ),
                             )
                         )
@@ -919,7 +1013,12 @@ class NearbyResponseTest {
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
-            realtimeRoutesSorted.map { it.route }
+            realtimeRoutesSorted.flatMap {
+                when (it) {
+                    is StopsAssociated.WithRoute -> listOf(it.route)
+                    is StopsAssociated.WithLine -> it.routes
+                }
+            }
         )
     }
 
@@ -1035,7 +1134,12 @@ class NearbyResponseTest {
             )
         assertEquals(
             listOf(farSubwayRoute, farBusRoute, closeSubwayRoute, closeBusRoute),
-            realtimeRoutesSorted.map { it.route }
+            realtimeRoutesSorted.flatMap {
+                when (it) {
+                    is StopsAssociated.WithRoute -> listOf(it.route)
+                    is StopsAssociated.WithLine -> it.routes
+                }
+            }
         )
     }
 
@@ -1066,16 +1170,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             parentStop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Harvard",
+                                    null,
                                     listOf(pattern1),
                                     listOf(objects.upcomingTrip(prediction1))
                                 )
@@ -1131,16 +1236,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route,
                     listOf(
                         PatternsByStop(
                             route,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route,
                                     "A",
+                                    null,
                                     listOf(routePattern),
                                     listOf(
                                         objects.upcomingTrip(sched1, pred1),
@@ -1203,16 +1309,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route1,
                     listOf(
                         PatternsByStop(
                             route1,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route1,
                                     "A",
+                                    null,
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1, pred1))
                                 )
@@ -1220,16 +1327,17 @@ class NearbyResponseTest {
                         )
                     )
                 ),
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route2,
                     listOf(
                         PatternsByStop(
                             route2,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route2,
                                     "A",
+                                    null,
                                     listOf(routePattern2),
                                     listOf(objects.upcomingTrip(sched2, pred2))
                                 )
@@ -1288,16 +1396,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route,
                     listOf(
                         PatternsByStop(
                             route,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route,
                                     "A",
+                                    null,
                                     listOf(routePattern),
                                     emptyList(),
                                     alertsHere = listOf(alert)
@@ -1360,16 +1469,17 @@ class NearbyResponseTest {
 
         assertEquals(
             listOf(
-                StopAssociatedRoute(
+                StopsAssociated.WithRoute(
                     route,
                     listOf(
                         PatternsByStop(
                             route,
                             stop,
                             listOf(
-                                PatternsByHeadsign(
+                                RealtimePatterns.ByHeadsign(
                                     route,
                                     "A",
+                                    null,
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1))
                                 )
@@ -1378,6 +1488,211 @@ class NearbyResponseTest {
                     )
                 )
             ),
+            staticData.withRealtimeInfo(
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo groups lines by direction`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val line = objects.line { id = "line-Green" }
+        val routeB =
+            objects.route {
+                id = "B"
+                sortOrder = 1
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Kenmore & West", "Park St & North")
+            }
+        val routePatternB1 =
+            objects.routePattern(routeB) {
+                representativeTrip { headsign = "B" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternB2 =
+            objects.routePattern(routeB) {
+                representativeTrip { headsign = "B" }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripB1 = objects.trip(routePatternB1)
+        val tripB2 = objects.trip(routePatternB2)
+
+        val routeC =
+            objects.route {
+                id = "C"
+                sortOrder = 2
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Kenmore & West", "Park St & North")
+            }
+        val routePatternC1 =
+            objects.routePattern(routeC) {
+                representativeTrip { headsign = "C" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternC2 =
+            objects.routePattern(routeC) {
+                representativeTrip { headsign = "C" }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripC1 = objects.trip(routePatternC1)
+        val tripC2 = objects.trip(routePatternC2)
+
+        val routeE =
+            objects.route {
+                id = "E"
+                sortOrder = 3
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Heath Street", "Park St & North")
+            }
+        val routePatternE1 =
+            objects.routePattern(routeE) {
+                representativeTrip { headsign = "Heath Street" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePatternE2 =
+            objects.routePattern(routeE) {
+                representativeTrip { headsign = "Medford/Tufts" }
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripE1 = objects.trip(routePatternE1)
+        val tripE2 = objects.trip(routePatternE2)
+
+        val time = Instant.parse("2024-03-18T10:41:13-04:00")
+
+        val schedB1 =
+            objects.schedule {
+                trip = tripB1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+        val schedB2 =
+            objects.schedule {
+                trip = tripB2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 4.minutes
+            }
+        val schedC1 =
+            objects.schedule {
+                trip = tripC1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+            }
+        val schedC2 =
+            objects.schedule {
+                trip = tripC2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 5.minutes
+            }
+        val schedE1 =
+            objects.schedule {
+                trip = tripE1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 3.minutes
+            }
+        val schedE2 =
+            objects.schedule {
+                trip = tripE2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 6.minutes
+            }
+
+        val predB1 = objects.prediction(schedB1) { departureTime = time + 1.5.minutes }
+        val predB2 = objects.prediction(schedB2) { departureTime = time + 4.5.minutes }
+        val predC1 = objects.prediction(schedC1) { departureTime = time + 2.3.minutes }
+        val predC2 = objects.prediction(schedC2) { departureTime = time + 5.3.minutes }
+        val predE1 = objects.prediction(schedE1) { departureTime = time + 2.3.minutes }
+        val predE2 = objects.prediction(schedE2) { departureTime = time + 6.3.minutes }
+
+        val directionWest = Direction("West", "Kenmore & West", 0)
+        val directionEast = Direction("East", "Park St & North", 1)
+
+        val staticData =
+            NearbyStaticData.build {
+                line(line, listOf(routeB, routeC, routeE)) {
+                    stop(stop, listOf(routeB, routeC, routeE)) {
+                        direction(
+                            directionWest,
+                            listOf(routeB, routeC),
+                            listOf(routePatternB1, routePatternC1)
+                        )
+                        headsign(routeE, "Heath Street", listOf(routePatternE1))
+                        direction(
+                            directionEast,
+                            listOf(routeB, routeC, routeE),
+                            listOf(routePatternB2, routePatternC2, routePatternE2)
+                        )
+                    }
+                }
+            }
+
+        val expected =
+            StopsAssociated.WithLine(
+                line,
+                listOf(routeB, routeC, routeE),
+                listOf(
+                    PatternsByStop(
+                        listOf(routeB, routeC, routeE),
+                        line,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByDirection(
+                                line,
+                                listOf(routeB, routeC),
+                                directionWest,
+                                listOf(routePatternB1, routePatternC1),
+                                listOf(
+                                    objects.upcomingTrip(schedB1, predB1),
+                                    objects.upcomingTrip(schedC1, predC1),
+                                )
+                            ),
+                            RealtimePatterns.ByHeadsign(
+                                routeE,
+                                "Heath Street",
+                                line,
+                                listOf(routePatternE1),
+                                listOf(objects.upcomingTrip(schedE1, predE1))
+                            ),
+                            RealtimePatterns.ByDirection(
+                                line,
+                                listOf(routeB, routeC, routeE),
+                                directionEast,
+                                listOf(routePatternB2, routePatternC2, routePatternE2),
+                                listOf(
+                                    objects.upcomingTrip(schedB2, predB2),
+                                    objects.upcomingTrip(schedC2, predC2),
+                                    objects.upcomingTrip(schedE2, predE2),
+                                )
+                            ),
+                        ),
+                        listOf(directionWest, directionEast)
+                    )
+                )
+            )
+
+        assertEquals(
+            listOf(expected),
             staticData.withRealtimeInfo(
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),

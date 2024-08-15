@@ -2,11 +2,14 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.serialization)
+    id("ios-assets")
+    id("check-mapbox-bridge")
 }
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
@@ -29,11 +32,15 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(platform(libs.compose.bom))
+    implementation(platform(libs.koin.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.javaPhoenixClient)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.koin.androidxCompose)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.datetime)
     implementation(libs.mapbox.android)
@@ -68,4 +75,7 @@ task("accessToken") {
     }
 }
 
-gradle.projectsEvaluated { tasks.getByPath("preBuild").dependsOn("accessToken") }
+gradle.projectsEvaluated {
+    tasks.getByPath("preBuild").dependsOn("accessToken", "convertIosIconsToAssets")
+    tasks.getByPath("check").dependsOn("checkMapboxBridge")
+}

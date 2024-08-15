@@ -20,8 +20,8 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let wrongRoute = objects.route()
 
         let departures = StopDetailsDepartures(routes: [
-            PatternsByStop(route: route, stop: stop, patternsByHeadsign: []),
-            PatternsByStop(route: wrongRoute, stop: stop, patternsByHeadsign: []),
+            PatternsByStop(route: route, stop: stop, patterns: []),
+            PatternsByStop(route: wrongRoute, stop: stop, patterns: []),
         ])
 
         return (departures: departures, routeId: route.id)
@@ -31,6 +31,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let (departures: departures, routeId: _) = testData()
 
         let sut = StopDetailsRoutesView(departures: departures,
+                                        global: .none,
                                         now: Date.now.toKotlinInstant(),
                                         filter: .constant(nil),
                                         pushNavEntry: { _ in },
@@ -47,6 +48,7 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let filter = StopDetailsFilter(routeId: routeId, directionId: 0)
         let sut = StopDetailsRoutesView(
             departures: departures,
+            global: .none,
             now: Date.now.toKotlinInstant(),
             filter: .constant(filter),
             pushNavEntry: { _ in },

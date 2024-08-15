@@ -34,25 +34,33 @@ data class AlertsStreamDataResponse(val alerts: Map<String, Alert>) {
                                 Alert(
                                     id = "566172.1",
                                     activePeriod = alert566172.activePeriod,
+                                    cause = null,
+                                    description = null,
                                     effect = Alert.Effect.Shuttle,
                                     effectName = null,
                                     informedEntity =
                                         alert566172.informedEntity.filter {
                                             it.stop in shuttledStops
                                         },
-                                    lifecycle = alert566172.lifecycle
+                                    header = null,
+                                    lifecycle = alert566172.lifecycle,
+                                    updatedAt = alert566172.updatedAt
                                 ),
                             "566172.2" to
                                 Alert(
                                     id = "566172.2",
                                     activePeriod = alert566172.activePeriod,
+                                    cause = null,
+                                    description = null,
                                     effect = Alert.Effect.Suspension,
                                     effectName = null,
                                     informedEntity =
                                         alert566172.informedEntity.filter {
                                             it.stop in suspendedStops
                                         },
-                                    lifecycle = alert566172.lifecycle
+                                    header = null,
+                                    lifecycle = alert566172.lifecycle,
+                                    updatedAt = alert566172.updatedAt
                                 )
                         )
                 )

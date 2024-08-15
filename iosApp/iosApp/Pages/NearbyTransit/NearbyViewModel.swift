@@ -23,6 +23,7 @@ class NearbyViewModel: ObservableObject {
     @Published var navigationStack: [SheetNavigationStackEntry] = []
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
+    @Published var selectingLocation = false
     private let alertsRepository: IAlertsRepository
     private let nearbyRepository: INearbyRepository
     private var fetchNearbyTask: Task<Void, Never>?
@@ -33,7 +34,7 @@ class NearbyViewModel: ObservableObject {
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
-        analytics: NearbyTransitAnalytics = AnalyticsProvider()
+        analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     ) {
         self.departures = departures
         self.navigationStack = navigationStack
@@ -79,7 +80,10 @@ class NearbyViewModel: ObservableObject {
                 self.analytics.refetchedNearbyTransit()
             }
             self.nearbyState.loading = true
-            defer { self.nearbyState.loading = false }
+            defer {
+                self.nearbyState.loading = false
+                self.selectingLocation = false
+            }
             do {
                 let response = try await self.nearbyRepository.getNearby(
                     global: global,
@@ -99,6 +103,19 @@ class NearbyViewModel: ObservableObject {
                     }
                 }
             }
+        }
+    }
+
+    func getTargetStop(global: GlobalResponse) -> Stop? {
+        switch navigationStack.last {
+        case .nearby:
+            nil
+        case let .stopDetails(stop, _):
+            stop
+        case let .tripDetails(tripId: _, vehicleId: _, target: target, routeId: _, directionId: _):
+            target != nil ? global.stops[target!.stopId] : nil
+        default:
+            nil
         }
     }
 

@@ -10,43 +10,27 @@ import shared
 import SwiftUI
 
 struct SettingsPage: View {
-    var settingsRepository: ISettingsRepository
-    @State var mapDebug = false
-
     let inspection = Inspection<Self>()
 
-    init(settingsRepository: ISettingsRepository = RepositoryDI().settings) {
-        self.settingsRepository = settingsRepository
-        mapDebug = false
-    }
+    @StateObject var viewModel = SettingsViewModel()
 
     var body: some View {
         VStack {
             Text("Settings")
                 .font(Typography.title1)
 
-            List {
-                Toggle(isOn: $mapDebug) { Label("Map Debug", systemImage: "location.magnifyingglass") }
-            }
-        }
-        .onChange(of: mapDebug) { mapDebug in
-            Task {
-                do {
-                    try await settingsRepository.setMapDebug(mapDebug: mapDebug)
-                } catch {
-                    debugPrint("failed to save mapDebug", error)
+            List($viewModel.settings) { $section in
+                if !(section.requiresStaging && !(appVariant == .staging)) {
+                    Section(section.name) {
+                        ForEach($section.settings) { $row in
+                            Toggle(isOn: $row.isOn) { Label(row.name, systemImage: row.icon) }
+                        }
+                    }
                 }
             }
         }
-        .task {
-            do {
-                mapDebug = try await settingsRepository.getMapDebug().boolValue
-            } catch {
-                debugPrint("failed to load mapDebug", error)
-                mapDebug = false
-            }
-        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .task { await viewModel.getSettings() }
     }
 }
 

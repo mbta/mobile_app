@@ -1,18 +1,22 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.runtime.Composable
-import com.mbta.tid.mbta_app.android.component.RoutePillSection
-import com.mbta.tid.mbta_app.model.StopAssociatedRoute
+import com.mbta.tid.mbta_app.android.component.RouteCard
+import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.StopsAssociated
 import kotlinx.datetime.Instant
 
 @Composable
 fun NearbyRouteView(
-    nearbyRoute: StopAssociatedRoute,
+    nearbyRoute: StopsAssociated.WithRoute,
+    pinned: Boolean,
+    onPin: (String) -> Unit,
     now: Instant,
+    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
 ) {
-    RoutePillSection(nearbyRoute.route) {
+    RouteCard(nearbyRoute.route, pinned, onPin) {
         for (patternsAtStop in nearbyRoute.patternsByStop) {
-            NearbyStopView(patternsAtStop, now)
+            NearbyStopView(patternsAtStop, now = now, onOpenStopDetails = onOpenStopDetails)
         }
     }
 }

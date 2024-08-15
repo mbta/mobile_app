@@ -6,21 +6,24 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Foundation
+import os
 import shared
 import SwiftUI
 
 struct StopDetailsFilteredRouteView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider()
+    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop?
+    let alerts: [shared.Alert]
     let now: Instant
     @Binding var filter: StopDetailsFilter?
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let pinned: Bool
 
     struct RowData {
         let tripId: String
+        let route: Route
         let headsign: String
-        let formatted: PatternsByHeadsign.Format
+        let formatted: RealtimePatterns.Format
         let navigationTarget: SheetNavigationStackEntry?
 
         init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
@@ -30,19 +33,21 @@ struct StopDetailsFilteredRouteView: View {
             }
 
             tripId = trip.id
+            self.route = route
             headsign = trip.headsign
-            formatted = PatternsByHeadsign(
-                route: route, headsign: headsign, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
-            ).format(now: now)
+            formatted = RealtimePatterns.ByHeadsign(
+                route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
+            ).format(now: now, context: .stopDetailsFiltered)
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
-                                                target: .init(stopId: stopId, stopSequence: stopSequence.intValue))
+                                                target: .init(stopId: stopId, stopSequence: stopSequence.intValue),
+                                                routeId: upcoming.trip.routeId, directionId: upcoming.trip.directionId)
             } else {
                 navigationTarget = nil
             }
 
-            if !(formatted is PatternsByHeadsign.FormatSome) {
+            if !(formatted is RealtimePatterns.FormatSome) {
                 return nil
             }
         }
@@ -50,41 +55,67 @@ struct StopDetailsFilteredRouteView: View {
 
     let rows: [RowData]
 
-    init(departures: StopDetailsDepartures, now: Instant, filter filterBinding: Binding<StopDetailsFilter?>,
-         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void) {
+    init(
+        departures: StopDetailsDepartures,
+        global: GlobalResponse?,
+        now: Instant,
+        filter filterBinding: Binding<StopDetailsFilter?>,
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
+        pinned: Bool
+    ) {
         _filter = filterBinding
         let filter = filterBinding.wrappedValue
-        let patternsByStop = departures.routes.first(where: { $0.route.id == filter?.routeId })
+        let patternsByStop = departures.routes.first(where: { $0.routeIdentifier == filter?.routeId })
         self.patternsByStop = patternsByStop
         self.now = now
         self.pushNavEntry = pushNavEntry
-
+        self.pinned = pinned
         let expectedDirection: Int32? = filter?.directionId
+
         if let patternsByStop {
-            rows = patternsByStop.allUpcomingTrips().compactMap {
-                RowData(
-                    upcoming: $0,
-                    route: patternsByStop.route,
+            if let expectedDirection, let global {
+                alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, global: global)
+            } else {
+                alerts = []
+            }
+
+            rows = patternsByStop.allUpcomingTrips().compactMap { upcoming in
+                guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
+                    Logger().error("""
+                    Failed to find route ID \(upcoming.trip.routeId) from upcoming \
+                    trip in patternsByStop.routes (\(patternsByStop.routes.map(\.id)))
+                    """)
+                    return nil
+                }
+                return RowData(
+                    upcoming: upcoming,
+                    route: route,
                     stopId: patternsByStop.stop.id,
                     expectedDirection: expectedDirection,
                     now: now
                 )
             }
         } else {
+            alerts = []
             rows = []
         }
     }
 
     var body: some View {
         if let patternsByStop {
-            let routeHex: String? = patternsByStop.route.color
+            let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
+            let routeColor: Color? = routeHex != nil ? Color(hex: routeHex!) : nil
             ZStack {
-                if let routeHex {
-                    Color(hex: routeHex)
+                if let routeColor {
+                    routeColor
                 }
                 ScrollView {
                     VStack {
-                        RouteHeader(route: patternsByStop.route)
+                        if let line = patternsByStop.line {
+                            LineHeader(line: line, routes: patternsByStop.routes)
+                        } else {
+                            RouteHeader(route: patternsByStop.representativeRoute)
+                        }
                         DirectionPicker(
                             patternsByStop: patternsByStop,
                             filter: $filter
@@ -93,18 +124,32 @@ struct StopDetailsFilteredRouteView: View {
                         ZStack {
                             Color.fill3.ignoresSafeArea(.all)
                             VStack(spacing: 0) {
+                                ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
+                                    VStack(spacing: 0) {
+                                        StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
+                                        if index < alerts.count - 1 || !rows.isEmpty {
+                                            Divider().background(Color.halo)
+                                        }
+                                    }
+                                }
                                 ForEach(Array(rows.enumerated()), id: \.element.tripId) { index, row in
-
                                     VStack(spacing: 0) {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             pushNavEntry(entry)
                                             analytics.tappedDepartureRow(
-                                                routeId: patternsByStop.route.id,
-                                                stopId: patternsByStop.stop.id
+                                                routeId: patternsByStop.routeIdentifier,
+                                                stopId: patternsByStop.stop.id,
+                                                pinned: pinned,
+                                                alert: alerts.count > 0
                                             )
                                         }) {
-                                            HeadsignRowView(headsign: row.headsign, predictions: row.formatted,
-                                                            routeType: patternsByStop.route.type)
+                                            HeadsignRowView(
+                                                headsign: row.headsign,
+                                                predictions: row.formatted,
+                                                routeType: patternsByStop.representativeRoute.type,
+                                                pillDecoration: patternsByStop.line != nil ?
+                                                    .onRow(route: row.route) : .none
+                                            )
                                         }
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 16)

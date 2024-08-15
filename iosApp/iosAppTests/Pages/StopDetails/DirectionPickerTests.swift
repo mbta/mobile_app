@@ -28,15 +28,22 @@ final class DirectionPickerTests: XCTestCase {
         }
 
         let patternsByStop = PatternsByStop(
-            route: route,
+            routes: [route],
+            line: nil,
             stop: stop,
-            patternsByHeadsign: [
-                .init(route: route, headsign: "North", patterns: [patternNorth], upcomingTrips: [], alertsHere: nil),
-                .init(route: route, headsign: "South", patterns: [patternSouth], upcomingTrips: [], alertsHere: nil),
+            patterns: [
+                .ByHeadsign(
+                    route: route, headsign: "North", line: nil,
+                    patterns: [patternNorth], upcomingTrips: [], alertsHere: nil
+                ),
+                .ByHeadsign(
+                    route: route, headsign: "South", line: nil,
+                    patterns: [patternSouth], upcomingTrips: [], alertsHere: nil
+                ),
             ],
             directions: [
-                Direction(name: "North", destination: "Selected Destination"),
-                Direction(name: "South", destination: "Other Destination"),
+                Direction(name: "North", destination: "Selected Destination", id: 0),
+                Direction(name: "South", destination: "Other Destination", id: 1),
             ]
         )
 
@@ -47,7 +54,7 @@ final class DirectionPickerTests: XCTestCase {
         let patternsByStop = testData()
 
         let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
-            routeId: patternsByStop.route.id,
+            routeId: patternsByStop.routeIdentifier,
             directionId: 0
         ))
 
@@ -65,7 +72,7 @@ final class DirectionPickerTests: XCTestCase {
         let patternsByStop = testData()
 
         let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
-            routeId: patternsByStop.route.id,
+            routeId: patternsByStop.routeIdentifier,
             directionId: 0
         ))
 

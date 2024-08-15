@@ -18,56 +18,36 @@ import SwiftUI
 #endif
 
 struct ProductionAppView: View {
-    let backend: BackendProtocol =
-        if CommandLine.arguments.contains("-testing") {
-            IdleBackend()
-        } else {
-            Backend(appVariant: appVariant)
-        }
-
     // ignore updates less than 0.1km
     @StateObject var locationDataManager: LocationDataManager
 
-    @StateObject var backendProvider: BackendProvider
-    @StateObject var globalFetcher: GlobalFetcher
-    @StateObject var railRouteShapeFetcher: RailRouteShapeFetcher
+    @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
-    @StateObject var tripPredictionsFetcher: TripPredictionsFetcher
-    @StateObject var vehicleFetcher: VehicleFetcher
-    @StateObject var vehiclesFetcher: VehiclesFetcher
     @StateObject var viewportProvider: ViewportProvider
 
     init() {
         Self.initSentry()
-        let socket = Self.initSocket()
-        Self.initKoin(socket: socket)
-        self.init(socket: socket)
+        if CommandLine.arguments.contains("--default-mocks") {
+            HelpersKt.startKoinIOSTestApp()
+            self.init(socket: MockSocket())
+        } else {
+            let socket = Self.initSocket()
+            Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
+            self.init(socket: socket)
+        }
     }
 
     init(socket: PhoenixSocket) {
-        let backend = backend
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 100))
-        _backendProvider = StateObject(wrappedValue: BackendProvider(backend: backend))
-        _globalFetcher = StateObject(wrappedValue: GlobalFetcher(backend: backend))
-        _railRouteShapeFetcher = StateObject(wrappedValue: RailRouteShapeFetcher(backend: backend))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
-        _tripPredictionsFetcher = StateObject(wrappedValue: TripPredictionsFetcher(socket: socket))
-        _vehicleFetcher = StateObject(wrappedValue: VehicleFetcher(socket: socket))
-        _vehiclesFetcher = StateObject(wrappedValue: VehiclesFetcher(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }
 
     var body: some View {
-        ContentView()
+        ContentView(contentVM: contentVM)
             .font(Typography.body)
             .environmentObject(locationDataManager)
-            .environmentObject(backendProvider)
-            .environmentObject(globalFetcher)
-            .environmentObject(railRouteShapeFetcher)
             .environmentObject(socketProvider)
-            .environmentObject(tripPredictionsFetcher)
-            .environmentObject(vehicleFetcher)
-            .environmentObject(vehiclesFetcher)
             .environmentObject(viewportProvider)
     }
 
@@ -83,8 +63,8 @@ struct ProductionAppView: View {
         return socket
     }
 
-    private static func initKoin(socket: PhoenixSocket) {
-        let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(socket: socket)
+    private static func initKoin(appCheck: IAppCheckRepository, socket: PhoenixSocket) {
+        let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(appCheck: appCheck, socket: socket)
         HelpersKt.doInitKoin(appVariant: appVariant, nativeModule: nativeModule)
     }
 

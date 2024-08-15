@@ -68,7 +68,12 @@ kotlin {
                 implementation(libs.ktor.client.mock)
             }
         }
-        val androidMain by getting { dependencies { implementation(libs.ktor.client.okhttp) } }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.koin.androidxCompose)
+                implementation(libs.ktor.client.okhttp)
+            }
+        }
         val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
     }
 }

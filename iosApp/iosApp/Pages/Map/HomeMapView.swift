@@ -7,28 +7,36 @@
 //
 
 import os
-import Polyline
 import shared
 import SwiftUI
 @_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider()
-    @ObservedObject var globalFetcher: GlobalFetcher
+    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var railRouteShapeFetcher: RailRouteShapeFetcher
-    @ObservedObject var vehiclesFetcher: VehiclesFetcher
     @ObservedObject var viewportProvider: ViewportProvider
+
+    @Environment(\.colorScheme) var colorScheme
+
+    var globalRepository: IGlobalRepository
+    @State var globalData: GlobalResponse?
+
+    var railRouteShapeRepository: IRailRouteShapeRepository
+    @State var railRouteShapes: MapFriendlyRouteResponse?
 
     var stopRepository: IStopRepository
     @State var globalMapData: GlobalMapData?
     @State var stopMapData: StopMapResponse?
+
+    var vehiclesRepository: IVehiclesRepository
+    @State var vehiclesData: [Vehicle]?
+
     @State var upcomingRoutePatterns: Set<String> = .init()
 
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
-    @State var layerManager: IMapLayerManager?
     @State private var recenterButton: ViewAnnotation?
     @State private var now = Date.now
     @State var lastNavEntry: SheetNavigationStackEntry?
@@ -43,37 +51,72 @@ struct HomeMapView: View {
     }
 
     init(
-        globalFetcher: GlobalFetcher,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
+        mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
-        railRouteShapeFetcher: RailRouteShapeFetcher,
-        vehiclesFetcher: VehiclesFetcher,
         viewportProvider: ViewportProvider,
+        railRouteShapeRepository: IRailRouteShapeRepository = RepositoryDI().railRouteShapes,
         stopRepository: IStopRepository = RepositoryDI().stop,
+        vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         sheetHeight: Binding<CGFloat>,
-        layerManager: IMapLayerManager? = nil
+        globalMapData: GlobalMapData? = nil
     ) {
-        self.globalFetcher = globalFetcher
+        self.globalRepository = globalRepository
+        self.mapVM = mapVM
         self.nearbyVM = nearbyVM
-        self.railRouteShapeFetcher = railRouteShapeFetcher
-        self.vehiclesFetcher = vehiclesFetcher
         self.viewportProvider = viewportProvider
+        self.railRouteShapeRepository = railRouteShapeRepository
         self.stopRepository = stopRepository
+        self.vehiclesRepository = vehiclesRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
-        _layerManager = State(wrappedValue: layerManager)
+        _globalMapData = State(wrappedValue: globalMapData)
     }
 
     var body: some View {
-        realtimeResponsiveMap.overlay(alignment: .topTrailing) {
-            if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                RecenterButton { Task { viewportProvider.follow() } }
+        realtimeResponsiveMap
+            .overlay(alignment: .topTrailing) {
+                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                    RecenterButton { Task { viewportProvider.follow() } }
+                }
             }
-        }
-        .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
-            handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
-        }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .overlay(alignment: .center) {
+                if nearbyVM.selectingLocation {
+                    crosshairs
+                }
+            }
+            .task {
+                do {
+                    globalData = try await globalRepository.getGlobalData()
+                } catch {
+                    debugPrint(error)
+                }
+            }
+            .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
+                handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
+            }
+            .onChange(of: mapVM.routeSourceData) { routeData in
+                updateRouteSources(routeData: routeData)
+            }
+            .onChange(of: mapVM.stopSourceData) { stopData in
+                updateStopSource(stopData: stopData)
+            }
+            .onChange(of: mapVM.childStops) { childStops in
+                updateChildStopSource(childStops: childStops)
+            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
+                guard isManuallyCentering else { return }
+                /*
+                 This will be set to false after nearby is loaded to avoid the crosshair
+                 dissapearing and re-appearing
+                 */
+                nearbyVM.selectingLocation = true
+            }
+            .onDisappear {
+                mapVM.layerManager = nil
+            }
     }
 
     @ViewBuilder
@@ -87,11 +130,15 @@ struct HomeMapView: View {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
             }
+            .onChange(of: mapVM.selectedVehicle) { [weak previousVehicle = mapVM.selectedVehicle] nextVehicle in
+                handleSelectedVehicleChange(previousVehicle, nextVehicle)
+            }
             .onChange(of: globalMapData) { _ in
                 updateGlobalMapDataSources()
             }
             .onDisappear {
-                vehiclesFetcher.leave()
+                vehiclesRepository.disconnect()
+                viewportProvider.saveCurrentViewport()
             }
             .onReceive(timer) { input in
                 now = input
@@ -105,15 +152,14 @@ struct HomeMapView: View {
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
-            globalFetcher: globalFetcher,
-            railRouteShapeFetcher: railRouteShapeFetcher,
             globalMapData: globalMapData
         )
-        .onChange(of: globalFetcher.response) { _ in
+        .onChange(of: globalData) { _ in
             handleGlobalMapDataChange(now: now)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
-            guard status == .authorizedAlways || status == .authorizedWhenInUse else { return }
+            guard status == .authorizedAlways || status == .authorizedWhenInUse,
+                  viewportProvider.isDefault() else { return }
             viewportProvider.follow(animation: .easeInOut(duration: 0))
         }
         .onChange(of: nearbyVM.navigationStack) { nextNavStack in
@@ -123,18 +169,32 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var annotatedMap: some View {
+        let selectedVehicle: Vehicle? = if case .tripDetails = nearbyVM.navigationStack.last {
+            mapVM.selectedVehicle
+        } else { nil }
+        let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
-            routes: globalFetcher.routes,
+            routes: globalData?.routes,
+            selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
-            vehicles: vehiclesFetcher.vehicles,
+            vehicles: vehicles,
             viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
+            handleStyleLoaded: refreshMap,
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle
         )
+    }
+
+    private var crosshairs: some View {
+        VStack {
+            Image("map-nearby-location-cursor")
+            Spacer()
+                .frame(height: sheetHeight)
+        }
     }
 
     var didAppear: ((Self) -> Void)?
@@ -144,8 +204,8 @@ struct ProxyModifiedMap: View {
     var mapContent: AnyView
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
     var handleTryLayerInit: (_ map: MapboxMap?) -> Void
-    var globalFetcher: GlobalFetcher
-    var railRouteShapeFetcher: RailRouteShapeFetcher
+    var globalData: GlobalResponse?
+    var railRouteShapes: MapFriendlyRouteResponse?
     var globalMapData: GlobalMapData?
 
     var body: some View {
@@ -154,18 +214,15 @@ struct ProxyModifiedMap: View {
                 .onAppear {
                     handleAppear(proxy.location, proxy.map)
                 }
-                .onChange(of: globalFetcher.response) { _ in
+                .onChange(of: globalData) { _ in
                     handleTryLayerInit(proxy.map)
                 }
-                .onChange(of: railRouteShapeFetcher.response) { _ in
+                .onChange(of: railRouteShapes) { _ in
                     handleTryLayerInit(proxy.map)
                 }
                 .onChange(of: globalMapData) { _ in
                     handleTryLayerInit(proxy.map)
                 }
-                .withScenePhaseHandlers(onActive: {
-                    handleTryLayerInit(proxy.map)
-                })
         }
     }
 }
