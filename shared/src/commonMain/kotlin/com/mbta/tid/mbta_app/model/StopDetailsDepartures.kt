@@ -55,7 +55,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             tripMapByHeadsignOrDirection(tripMapByHeadsign, schedules, predictions),
                             allStopIds,
                             loading,
-                            filterAtTime,
                             global,
                             activeRelevantAlerts
                         )
@@ -68,7 +67,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         tripMapByHeadsign,
                         allStopIds,
                         loading,
-                        filterAtTime,
                         global,
                         activeRelevantAlerts
                     )
@@ -153,7 +151,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             tripMap: Map<RealtimePatterns.UpcomingTripKey.ByHeadsign, List<UpcomingTrip>>?,
             allStopIds: Set<String>,
             loading: Boolean,
-            filterAtTime: Instant,
             global: GlobalResponse,
             alerts: Collection<Alert>?
         ): PatternsByStop {
@@ -201,9 +198,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             )
                         }
                         .filter {
-                            loading ||
-                                ((it.isTypical() || it.isUpcomingAfter(filterAtTime)) &&
-                                    !it.isArrivalOnly())
+                            loading || ((it.isTypical() || it.isUpcoming()) && !it.isArrivalOnly())
                         }
                         .sorted(),
                     Direction.getDirections(global, stop, route, routePatterns)
@@ -218,7 +213,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             tripMap: Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>?,
             allStopIds: Set<String>,
             loading: Boolean,
-            filterAtTime: Instant,
             global: GlobalResponse,
             alerts: Collection<Alert>?
         ): PatternsByStop {
@@ -245,9 +239,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             }
                         }
                         .filter {
-                            loading ||
-                                ((it.isTypical() || it.isUpcomingAfter(filterAtTime)) &&
-                                    !it.isArrivalOnly())
+                            loading || ((it.isTypical() || it.isUpcoming()) && !it.isArrivalOnly())
                         }
                         .sorted()
 

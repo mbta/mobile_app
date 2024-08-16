@@ -219,15 +219,15 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             ?: false
 
     /**
-     * Checks if a trip exists after the given cutoff time.
+     * Checks if a trip exists.
      *
      * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
      * should be hidden until data is available.
      */
-    fun isUpcomingAfter(cutoffTime: Instant) =
+    fun isUpcoming() =
         upcomingTrips?.any {
             val tripTime = it.time
-            tripTime != null && tripTime > cutoffTime
+            tripTime != null
         }
             ?: false
 

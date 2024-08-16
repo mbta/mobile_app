@@ -415,7 +415,6 @@ class StopDetailsDeparturesTest {
 
     @Test
     fun `StopDetailsDepartures keeps late patterns but drops early patterns after loading`() {
-        val early = Instant.parse("2024-08-16T08:00:00-04:00")
         val now = Instant.parse("2024-08-16T10:32:38-04:00")
         val late = Instant.parse("2024-08-16T20:00:00-04:00")
 
@@ -433,13 +432,8 @@ class StopDetailsDeparturesTest {
                 representativeTrip { headsign = "Late" }
             }
 
-        val earlyTrip = objects.trip(earlyPattern)
-        val earlyPrediction =
-            objects.prediction {
-                trip = earlyTrip
-                stopId = stop.id
-                departureTime = early
-            }
+        // since we only request schedules in the future and predictions get removed once they're
+        // far enough in the past, there will be no schedule or prediction for the early pattern
         val lateTrip = objects.trip(latePattern)
         val latePrediction =
             objects.prediction {
@@ -449,13 +443,7 @@ class StopDetailsDeparturesTest {
             }
 
         val expectedEarly =
-            RealtimePatterns.ByHeadsign(
-                route,
-                "Early",
-                null,
-                listOf(earlyPattern),
-                listOf(UpcomingTrip(earlyTrip, earlyPrediction))
-            )
+            RealtimePatterns.ByHeadsign(route, "Early", null, listOf(earlyPattern), emptyList())
         val expectedLate =
             RealtimePatterns.ByHeadsign(
                 route,
@@ -484,7 +472,7 @@ class StopDetailsDeparturesTest {
                 null,
                 PredictionsStreamDataResponse(objects),
                 null,
-                setOf(),
+                emptySet(),
                 now
             )
         assertEquals(expectedBeforeLoaded, actualBeforeLoaded)
