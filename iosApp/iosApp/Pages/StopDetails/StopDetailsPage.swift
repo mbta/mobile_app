@@ -158,6 +158,14 @@ struct StopDetailsPage: View {
             nil
         }
 
+        if filter == nil, let routes = newDepartures?.routes, routes.count == 1,
+           let route = newDepartures?.routes.first {
+            let directionIds = Set(route.patterns.map { $0.directionId() }).sorted()
+            if directionIds.count == 1, let directionId = directionIds.first {
+                filter = .init(routeId: route.routeIdentifier, directionId: directionId)
+            }
+        }
+
         nearbyVM.setDepartures(newDepartures)
     }
 }
