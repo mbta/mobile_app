@@ -176,6 +176,7 @@ struct ContentView: View {
         }
         .onAppear {
             socketProvider.socket.attach()
+            nearbyVM.joinAlertsChannel()
             Task {
                 await contentVM.loadSettings()
             }
@@ -186,7 +187,10 @@ struct ContentView: View {
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.attach()
+                nearbyVM.joinAlertsChannel()
+
             } else if newPhase == .background {
+                nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
             }
         }
