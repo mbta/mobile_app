@@ -286,7 +286,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures shows partial data`() {
+    fun `StopDetailsDepartures shows partial data and filters after loading`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val stop = objects.stop()
@@ -408,10 +408,110 @@ class StopDetailsDeparturesTest {
                 ),
                 scheduledUnpredicted.patternsByHeadsign(listOf(scheduledUnpredicted.scheduledTrip)),
                 unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip)),
-                unscheduledUnpredicted.patternsByHeadsign(listOf())
             ),
             actual(includeSchedules = true, includePredictions = true)
         )
+    }
+
+    @Test
+    fun `StopDetailsDepartures keeps late patterns but drops early patterns after loading`() {
+        val early = Instant.parse("2024-08-16T08:00:00-04:00")
+        val now = Instant.parse("2024-08-16T10:32:38-04:00")
+        val late = Instant.parse("2024-08-16T20:00:00-04:00")
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop()
+        val earlyPattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Early" }
+            }
+        val latePattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Late" }
+            }
+
+        val earlyTrip = objects.trip(earlyPattern)
+        val earlyPrediction =
+            objects.prediction {
+                trip = earlyTrip
+                stopId = stop.id
+                departureTime = early
+            }
+        val lateTrip = objects.trip(latePattern)
+        val latePrediction =
+            objects.prediction {
+                trip = lateTrip
+                stopId = stop.id
+                departureTime = late
+            }
+
+        val expectedEarly =
+            RealtimePatterns.ByHeadsign(
+                route,
+                "Early",
+                null,
+                listOf(earlyPattern),
+                listOf(UpcomingTrip(earlyTrip, earlyPrediction))
+            )
+        val expectedLate =
+            RealtimePatterns.ByHeadsign(
+                route,
+                "Late",
+                null,
+                listOf(latePattern),
+                listOf(UpcomingTrip(lateTrip, latePrediction))
+            )
+
+        val expectedBeforeLoaded =
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        listOf(route),
+                        null,
+                        stop,
+                        listOf(expectedEarly, expectedLate),
+                        listOf(Direction("", "", 0), Direction("", "", 1))
+                    )
+                )
+            )
+        val actualBeforeLoaded =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(objects, mapOf(stop.id to listOf(earlyPattern.id, latePattern.id))),
+                null,
+                PredictionsStreamDataResponse(objects),
+                null,
+                setOf(),
+                now
+            )
+        assertEquals(expectedBeforeLoaded, actualBeforeLoaded)
+
+        val expectedAfterLoaded =
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        listOf(route),
+                        null,
+                        stop,
+                        listOf(expectedLate),
+                        listOf(Direction("", "", 0), Direction("", "", 1))
+                    )
+                )
+            )
+        val actualAfterLoaded =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(objects, mapOf(stop.id to listOf(earlyPattern.id, latePattern.id))),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                null,
+                setOf(),
+                now
+            )
+        assertEquals(expectedAfterLoaded, actualAfterLoaded)
     }
 
     @Test
