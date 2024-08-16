@@ -407,10 +407,99 @@ class StopDetailsDeparturesTest {
                     listOf(scheduledPredicted.scheduledTrip, scheduledPredicted.predictedTrip)
                 ),
                 scheduledUnpredicted.patternsByHeadsign(listOf(scheduledUnpredicted.scheduledTrip)),
-                unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip))
+                unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip)),
             ),
             actual(includeSchedules = true, includePredictions = true)
         )
+    }
+
+    @Test
+    fun `StopDetailsDepartures keeps late patterns but drops early patterns after loading`() {
+        val now = Instant.parse("2024-08-16T10:32:38-04:00")
+        val late = Instant.parse("2024-08-16T20:00:00-04:00")
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop()
+        val earlyPattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Early" }
+            }
+        val latePattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Late" }
+            }
+
+        // since we only request schedules in the future and predictions get removed once they're
+        // far enough in the past, there will be no schedule or prediction for the early pattern
+        val lateTrip = objects.trip(latePattern)
+        val latePrediction =
+            objects.prediction {
+                trip = lateTrip
+                stopId = stop.id
+                departureTime = late
+            }
+
+        val expectedEarly =
+            RealtimePatterns.ByHeadsign(route, "Early", null, listOf(earlyPattern), emptyList())
+        val expectedLate =
+            RealtimePatterns.ByHeadsign(
+                route,
+                "Late",
+                null,
+                listOf(latePattern),
+                listOf(UpcomingTrip(lateTrip, latePrediction))
+            )
+
+        val expectedBeforeLoaded =
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        listOf(route),
+                        null,
+                        stop,
+                        listOf(expectedEarly, expectedLate),
+                        listOf(Direction("", "", 0), Direction("", "", 1))
+                    )
+                )
+            )
+        val actualBeforeLoaded =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(objects, mapOf(stop.id to listOf(earlyPattern.id, latePattern.id))),
+                null,
+                PredictionsStreamDataResponse(objects),
+                null,
+                emptySet(),
+                now
+            )
+        assertEquals(expectedBeforeLoaded, actualBeforeLoaded)
+
+        val expectedAfterLoaded =
+            StopDetailsDepartures(
+                listOf(
+                    PatternsByStop(
+                        listOf(route),
+                        null,
+                        stop,
+                        listOf(expectedLate),
+                        listOf(Direction("", "", 0), Direction("", "", 1))
+                    )
+                )
+            )
+        val actualAfterLoaded =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(objects, mapOf(stop.id to listOf(earlyPattern.id, latePattern.id))),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                null,
+                setOf(),
+                now
+            )
+        assertEquals(expectedAfterLoaded, actualAfterLoaded)
     }
 
     @Test
