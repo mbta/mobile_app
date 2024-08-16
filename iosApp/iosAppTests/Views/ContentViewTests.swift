@@ -66,6 +66,38 @@ final class ContentViewTests: XCTestCase {
         wait(for: [connectedExpectation], timeout: 1)
     }
 
+    func testJoinsAlertsOnActive() throws {
+        let joinAlertsExp = expectation(description: "Alerts channel joined")
+        // joins in onAppear & on active
+        joinAlertsExp.expectedFulfillmentCount = 2
+        joinAlertsExp.assertForOverFulfill = true
+
+        let fakeNearbyVM: NearbyViewModel = .init(alertsRepository: CallbackAlertsRepository(connectExp: joinAlertsExp))
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init(), nearbyVM: fakeNearbyVM),
+                                                socketProvider: SocketProvider(socket: MockSocket()))
+
+        ViewHosting.host(view: sut)
+
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        wait(for: [joinAlertsExp], timeout: 5)
+    }
+
+    func testLeavesAlertsAfterBackgrounding() throws {
+        let leavesAlertsExp = expectation(description: "Alerts channel left")
+
+        let fakeNearbyVM: NearbyViewModel = .init(alertsRepository:
+            CallbackAlertsRepository(disconnectExp: leavesAlertsExp))
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init(), nearbyVM: fakeNearbyVM),
+                                                socketProvider: SocketProvider(socket: MockSocket()))
+
+        ViewHosting.host(view: sut)
+
+        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        wait(for: [leavesAlertsExp], timeout: 5)
+    }
+
     func testFetchesConfig() throws {
         let configFetchedExpectation = XCTestExpectation(description: "config fetched")
 
@@ -160,6 +192,26 @@ final class ContentViewTests: XCTestCase {
 
         override func detach() {
             disconnectedExpectation?.fulfill()
+        }
+    }
+
+    class CallbackAlertsRepository: IAlertsRepository {
+        var connectExp: XCTestExpectation?
+        var disconnectExp: XCTestExpectation?
+        init(connectExp: XCTestExpectation? = nil, disconnectExp: XCTestExpectation? = nil) {
+            self.connectExp = connectExp
+            self.disconnectExp = disconnectExp
+        }
+
+        func connect(
+            onReceive _: @escaping (Outcome<AlertsStreamDataResponse, shared.SocketError._ObjectiveCType>)
+                -> Void
+        ) {
+            connectExp?.fulfill()
+        }
+
+        func disconnect() {
+            disconnectExp?.fulfill()
         }
     }
 

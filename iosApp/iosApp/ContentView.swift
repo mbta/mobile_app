@@ -188,7 +188,6 @@ struct ContentView: View {
             if newPhase == .active {
                 socketProvider.socket.attach()
                 nearbyVM.joinAlertsChannel()
-
             } else if newPhase == .background {
                 nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
