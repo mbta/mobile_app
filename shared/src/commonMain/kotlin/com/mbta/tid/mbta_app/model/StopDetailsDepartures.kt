@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
 data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
@@ -20,7 +19,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         global.run {
             val loading = schedules == null || predictions == null
             val tripMapByHeadsign = tripMapByHeadsign(schedules, predictions)
-            val cutoffTime = filterAtTime.plus(90.minutes)
 
             val allStopIds =
                 if (patternIdsByStop.containsKey(stop.id)) {
@@ -57,7 +55,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             tripMapByHeadsignOrDirection(tripMapByHeadsign, schedules, predictions),
                             allStopIds,
                             loading,
-                            cutoffTime,
                             global,
                             activeRelevantAlerts
                         )
@@ -70,7 +67,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         tripMapByHeadsign,
                         allStopIds,
                         loading,
-                        cutoffTime,
                         global,
                         activeRelevantAlerts
                     )
@@ -155,7 +151,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             tripMap: Map<RealtimePatterns.UpcomingTripKey.ByHeadsign, List<UpcomingTrip>>?,
             allStopIds: Set<String>,
             loading: Boolean,
-            cutoffTime: Instant,
             global: GlobalResponse,
             alerts: Collection<Alert>?
         ): PatternsByStop {
@@ -203,9 +198,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             )
                         }
                         .filter {
-                            loading ||
-                                ((it.isTypical() || it.isUpcomingBefore(cutoffTime)) &&
-                                    !it.isArrivalOnly())
+                            loading || ((it.isTypical() || it.isUpcoming()) && !it.isArrivalOnly())
                         }
                         .sorted(),
                     Direction.getDirections(global, stop, route, routePatterns)
@@ -220,7 +213,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             tripMap: Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>?,
             allStopIds: Set<String>,
             loading: Boolean,
-            cutoffTime: Instant,
             global: GlobalResponse,
             alerts: Collection<Alert>?
         ): PatternsByStop {
@@ -247,9 +239,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             }
                         }
                         .filter {
-                            loading ||
-                                ((it.isTypical() || it.isUpcomingBefore(cutoffTime)) &&
-                                    !it.isArrivalOnly())
+                            loading || ((it.isTypical() || it.isUpcoming()) && !it.isArrivalOnly())
                         }
                         .sorted()
 
