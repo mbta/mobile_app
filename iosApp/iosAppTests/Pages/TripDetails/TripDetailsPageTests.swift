@@ -415,6 +415,73 @@ final class TripDetailsPageTests: XCTestCase {
         subscription.cancel()
     }
 
+    func testResolvesParentStop() {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { _ in }
+        let trip = objects.trip { $0.routeId = route.id }
+        let vehicle = objects.vehicle { $0.currentStatus = .inTransitTo }
+        let nearbyVM = NearbyViewModel()
+        let parentStop = objects.stop { $0.childStopIds = ["child"] }
+        let childStop = objects.stop {
+            $0.id = "child"
+            $0.parentStationId = parentStop.id
+        }
+
+        struct FakeAnalytics: TripDetailsAnalytics {
+            let onTappedDownstreamStop: (String, String, String, String?) -> Void
+
+            func tappedDownstreamStop(routeId: String, stopId: String, tripId: String, connectingRouteId: String?) {
+                onTappedDownstreamStop(routeId, stopId, tripId, connectingRouteId)
+            }
+        }
+
+        let tripLoaded = PassthroughSubject<Void, Never>()
+
+        let analyticsExp = expectation(description: "sends analytics event")
+
+        let sut = TripDetailsPage(
+            tripId: trip.id,
+            vehicleId: vehicle.id,
+            target: nil,
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: trip),
+                scheduleResponse: .Unknown.shared,
+                onGetTrip: { tripLoaded.send() }
+            ),
+            analytics: FakeAnalytics { routeId, stopId, tripId, connectingRouteId in
+                XCTAssertEqual(routeId, route.id)
+                XCTAssertEqual(stopId, childStop.id)
+                XCTAssertEqual(tripId, trip.id)
+                XCTAssertEqual(connectingRouteId, "connectingRoute")
+                analyticsExp.fulfill()
+            }
+        )
+
+        ViewHosting.host(view: sut)
+
+        sut.inspection.inspect(onReceive: tripLoaded, after: 1) { view in
+            try view.actualView().onTapStop(
+                entry: .stopDetails(childStop, nil),
+                stop: .init(
+                    stop: childStop,
+                    stopSequence: 1,
+                    alert: nil,
+                    schedule: nil,
+                    prediction: nil,
+                    vehicle: nil,
+                    routes: []
+                ),
+                connectingRouteId: "connectingRoute"
+            )
+            XCTAssertEqual(nearbyVM.navigationStack, [.stopDetails(parentStop, nil)])
+        }
+
+        wait(for: [analyticsExp], timeout: 5)
+    }
+
     class FakeGlobalRepository: IGlobalRepository {
         let response: GlobalResponse
 

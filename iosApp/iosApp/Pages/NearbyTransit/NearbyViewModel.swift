@@ -41,7 +41,6 @@ class NearbyViewModel: ObservableObject {
         self.alertsRepository = alertsRepository
         self.nearbyRepository = nearbyRepository
         self.analytics = analytics
-        setUpSubscriptions()
     }
 
     func setDepartures(_ newDepartures: StopDetailsDepartures?) {
@@ -134,7 +133,7 @@ class NearbyViewModel: ObservableObject {
         }
     }
 
-    private func setUpSubscriptions() {
+    func joinAlertsChannel() {
         alertsRepository.connect { outcome in
             DispatchQueue.main.async { [weak self] in
                 if let data = outcome.data {
@@ -142,6 +141,10 @@ class NearbyViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    func leaveAlertsChannel() {
+        alertsRepository.disconnect()
     }
 }
 
