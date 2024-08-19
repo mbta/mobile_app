@@ -89,11 +89,9 @@ jobs:
         with:
           name: android-android-reports
           path: androidApp/build/reports
-  deploy-android:
-    name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
+  build-android:
+    name: Build for Android
     if: github.actor != 'dependabot[bot]'
-    needs:
-      - test-android
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -149,7 +147,7 @@ jobs:
           bundler-cache: true
       - name: Patch Fastlane to pick up application default credentials
         run: bin/patch-fastlane.sh
-      - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+      - name: Build Android app
         env:
           KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
           KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
@@ -157,5 +155,51 @@ jobs:
           KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
+        run: |
+          bundle exec fastlane android build validate_only:${{ github.event_name == 'pull_request' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: androidApp/build/outputs/apk/release/androidApp-release.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/release/androidApp-release.aab
+  deploy-android:
+    name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
+    if: github.actor != 'dependabot[bot]'
+    concurrency:
+      group: deploy-android
+      cancel-in-progress: false
+    needs:
+      - build-android
+      - test-android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/release
+      - name: Read asdf versions
+        id: asdf
+        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+      - name: Configure GCP Credentials
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Patch Fastlane to pick up application default credentials
+        run: bin/patch-fastlane.sh
+      - name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
         run: |
           bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}
