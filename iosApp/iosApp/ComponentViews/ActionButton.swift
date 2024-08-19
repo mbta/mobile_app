@@ -14,15 +14,6 @@ struct ActionButton: View {
         case back
         case close
 
-        var iconSize: CGFloat {
-            switch self {
-            case .back:
-                14
-            case .close:
-                10
-            }
-        }
-
         var accessibilityLabel: String {
             switch self {
             case .back:
@@ -46,7 +37,18 @@ struct ActionButton: View {
     let action: () -> Void
 
     @ScaledMetric private var circleSize: CGFloat = 32
-    @ScaledMetric private var tapSize: CGFloat = 32
+
+    @ScaledMetric private var backIconSize: CGFloat = 14
+    @ScaledMetric private var closeIconSize: CGFloat = 10
+
+    var iconSize: CGFloat {
+        switch kind {
+        case .back:
+            backIconSize
+        case .close:
+            closeIconSize
+        }
+    }
 
     var body: some View {
         Button(action: { action() }) {
@@ -58,7 +60,7 @@ struct ActionButton: View {
                 Image(kind.image)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: kind.iconSize, height: kind.iconSize)
+                    .frame(width: iconSize, height: iconSize)
                     .padding(5)
                     .foregroundStyle(Color.fill2)
             }
