@@ -298,7 +298,7 @@ class ObjectCollectionBuilder {
 
     fun shape(block: ShapeBuilder.() -> Unit = {}) = build(shapes, ShapeBuilder(), block)
 
-    class StopBuilder : ObjectBuilder<Stop> {
+    inner class StopBuilder : ObjectBuilder<Stop> {
         var id = uuid()
         var latitude = 1.2
         var longitude = 3.4
@@ -309,6 +309,13 @@ class ObjectCollectionBuilder {
         var childStopIds: List<String> = emptyList()
         var connectingStopIds: List<String> = emptyList()
         var parentStationId: String? = null
+
+        fun childStop(block: StopBuilder.() -> Unit = {}) =
+            this@ObjectCollectionBuilder.stop {
+                    parentStationId = this@StopBuilder.id
+                    block()
+                }
+                .also { childStopIds += listOf(it.id) }
 
         override fun built() =
             Stop(

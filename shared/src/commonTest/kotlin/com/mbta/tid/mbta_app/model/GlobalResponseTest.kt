@@ -221,7 +221,7 @@ class GlobalResponseTest {
         val alertingParent = alertsByStop?.get(parentStop.id)
         assertNotNull(alertingParent)
         assertTrue(alertingParent.relevantAlerts.isEmpty())
-        assertEquals(StopAlertState.Issue, alertingParent.stateByRoute[routeType])
+        assertEquals(StopAlertState.Suspension, alertingParent.stateByRoute[routeType])
 
         val child1Alert = alertingParent.childAlerts[childStop1.id]
         assertNotNull(child1Alert)
@@ -366,6 +366,6 @@ class GlobalResponseTest {
 
         val boundaryParent = alertsByStop[parent3Stop.id]
         assertNotNull(boundaryParent)
-        assertEquals(StopAlertState.Issue, boundaryParent.stateByRoute[routeType])
+        assertEquals(StopAlertState.Suspension, boundaryParent.stateByRoute[routeType])
     }
 }
