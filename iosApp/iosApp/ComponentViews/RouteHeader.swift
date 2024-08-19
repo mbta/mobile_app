@@ -22,22 +22,11 @@ struct RouteHeader<Content: View>: View {
 
     var body: some View {
         TransitHeader(
-            name: routeName,
+            name: route.label,
             backgroundColor: Color(hex: route.color),
             textColor: Color(hex: route.textColor),
             modeIcon: routeIcon(route),
             rightContent: rightContent
         )
-    }
-
-    private var routeName: String {
-        switch route.type {
-        case .bus:
-            route.shortName
-        case .commuterRail:
-            route.longName.replacingOccurrences(of: "/", with: " / ")
-        default:
-            route.longName
-        }
     }
 }

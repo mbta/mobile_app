@@ -133,6 +133,11 @@ struct StopDetailsFilteredRouteView: View {
                                                     line: patternsByStop.line,
                                                     routes: patternsByStop.routes
                                                 ))
+                                                analytics.tappedAlertDetails(
+                                                    routeId: patternsByStop.routeIdentifier,
+                                                    stopId: patternsByStop.stop.id,
+                                                    alertId: alert.id
+                                                )
                                             }
                                         if index < alerts.count - 1 || !rows.isEmpty {
                                             Divider().background(Color.halo)

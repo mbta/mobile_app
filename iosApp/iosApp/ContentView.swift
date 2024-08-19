@@ -182,7 +182,7 @@ struct ContentView: View {
         return NavigationStack {
             switch entry {
             case let .alertDetails(alertId, line, routes):
-                Text("Alert details placeholder")
+                AlertDetailsPage(alertId: alertId, line: line, routes: routes, nearbyVM: nearbyVM)
             default:
                 EmptyView()
             }

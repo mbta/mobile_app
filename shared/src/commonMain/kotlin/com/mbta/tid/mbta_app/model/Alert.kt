@@ -40,7 +40,15 @@ data class Alert(
             )
     }
 
-    @Serializable data class ActivePeriod(val start: Instant, val end: Instant?)
+    @Serializable
+    data class ActivePeriod(val start: Instant, val end: Instant?) {
+        fun activeAt(instant: Instant): Boolean {
+            if (end == null) {
+                return start <= instant
+            }
+            return instant in start..end
+        }
+    }
 
     @Serializable
     enum class Cause {

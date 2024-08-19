@@ -1,6 +1,20 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "**%@** affected stops" : {
+
+    },
+    "%@ %@" : {
+      "comment" : "First value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "%@ arriving at %@" : {
       "localizations" : {
         "en" : {
@@ -69,8 +83,23 @@
         }
       }
     },
+    "Accident" : {
+      "comment" : "Possible alert cause"
+    },
+    "Alert Details" : {
+
+    },
     "All" : {
 
+    },
+    "Amtrak" : {
+      "comment" : "Possible alert cause"
+    },
+    "An Earlier Mechanical Problem" : {
+      "comment" : "Possible alert cause"
+    },
+    "An Earlier Signal Problem" : {
+      "comment" : "Possible alert cause"
     },
     "and arriving now" : {
 
@@ -93,6 +122,9 @@
     "ARR" : {
 
     },
+    "Autos Impeding Service" : {
+      "comment" : "Possible alert cause"
+    },
     "BRD" : {
 
     },
@@ -102,23 +134,86 @@
     "buses" : {
       "comment" : "buses"
     },
+    "Coast Guard Restriction" : {
+      "comment" : "Possible alert cause"
+    },
+    "Congestion" : {
+      "comment" : "Possible alert cause"
+    },
+    "Construction" : {
+      "comment" : "Possible alert cause"
+    },
     "Couldn't load stop list" : {
 
+    },
+    "Crossing Malfunction" : {
+      "comment" : "Possible alert cause"
     },
     "Custom message" : {
 
     },
+    "Demonstration" : {
+      "comment" : "Possible alert cause"
+    },
     "Detour" : {
-
+      "comment" : "Possible alert effect"
+    },
+    "Disabled Bus" : {
+      "comment" : "Possible alert cause"
+    },
+    "Disabled Train" : {
+      "comment" : "Possible alert cause"
+    },
+    "Dock Closure" : {
+      "comment" : "Possible alert effect"
+    },
+    "Drawbridge Being Raised" : {
+      "comment" : "Possible alert cause"
     },
     "Dummy app for launching unit tests" : {
 
+    },
+    "Electrical Work" : {
+      "comment" : "Possible alert cause"
+    },
+    "End" : {
+      "comment" : "Label for the end date of a disruption"
     },
     "ferries" : {
       "comment" : "ferries"
     },
     "ferry" : {
       "comment" : "ferry"
+    },
+    "Fire" : {
+      "comment" : "Possible alert cause"
+    },
+    "Fog" : {
+      "comment" : "Possible alert cause"
+    },
+    "Freight Train Interference" : {
+      "comment" : "Possible alert cause"
+    },
+    "Full Description" : {
+      "comment" : "Header for the details of a disruption"
+    },
+    "Hazmat Condition" : {
+      "comment" : "Possible alert cause"
+    },
+    "Heavy Ridership" : {
+      "comment" : "Possible alert cause"
+    },
+    "High Winds" : {
+      "comment" : "Possible alert cause"
+    },
+    "Holiday" : {
+      "comment" : "Possible alert cause"
+    },
+    "Hurricane" : {
+      "comment" : "Possible alert cause"
+    },
+    "Ice In Harbor" : {
+      "comment" : "Possible alert cause"
     },
     "Live" : {
 
@@ -134,6 +229,15 @@
     },
     "Location access state unknown" : {
 
+    },
+    "Maintenance" : {
+      "comment" : "Possible alert cause"
+    },
+    "Mechanical Problem" : {
+      "comment" : "Possible alert cause"
+    },
+    "Medical Emergency" : {
+      "comment" : "Possible alert cause"
     },
     "Next stop" : {
 
@@ -153,6 +257,21 @@
     "Open for more arrivals" : {
 
     },
+    "Parade" : {
+      "comment" : "Possible alert cause"
+    },
+    "Plan a route with Trip Planner" : {
+
+    },
+    "Police Action" : {
+      "comment" : "Possible alert cause"
+    },
+    "Police Activity" : {
+      "comment" : "Possible alert cause"
+    },
+    "Power Problem" : {
+      "comment" : "Possible alert cause"
+    },
     "Routes" : {
 
     },
@@ -165,32 +284,95 @@
     "Settings" : {
 
     },
+    "Severe Weather" : {
+      "comment" : "Possible alert cause"
+    },
     "Shuttle" : {
-
+      "comment" : "Possible alert effect"
     },
     "Shuttle buses replace service" : {
 
     },
+    "Signal Problem" : {
+      "comment" : "Possible alert cause"
+    },
+    "Slippery Rail" : {
+      "comment" : "Possible alert cause"
+    },
+    "Snow" : {
+      "comment" : "Possible alert cause"
+    },
+    "Special Event" : {
+      "comment" : "Possible alert cause"
+    },
+    "Speed Restriction" : {
+      "comment" : "Possible alert cause"
+    },
+    "Start" : {
+      "comment" : "Label for the start date of a disruption"
+    },
+    "Station Closure" : {
+      "comment" : "Possible alert effect"
+    },
+    "Station Moved" : {
+      "comment" : "Possible alert effect"
+    },
     "Stop Closed" : {
 
+    },
+    "Stop Closure" : {
+      "comment" : "Possible alert effect"
     },
     "Stops" : {
 
     },
+    "Strike" : {
+      "comment" : "Possible alert cause"
+    },
     "Suspension" : {
-
+      "comment" : "Possible alert effect"
+    },
+    "Switch Problem" : {
+      "comment" : "Possible alert cause"
+    },
+    "Technical Problem" : {
+      "comment" : "Possible alert cause"
     },
     "This vehicle is completing another trip." : {
 
     },
+    "Tie Replacement" : {
+      "comment" : "Possible alert cause"
+    },
     "to %@" : {
 
+    },
+    "Track Problem" : {
+      "comment" : "Possible alert cause"
+    },
+    "Track Work" : {
+      "comment" : "Possible alert cause"
+    },
+    "Traffic" : {
+      "comment" : "Possible alert cause"
     },
     "train" : {
       "comment" : "train"
     },
     "trains" : {
       "comment" : "trains"
+    },
+    "Unruly Passenger" : {
+      "comment" : "Possible alert cause"
+    },
+    "Until further notice" : {
+      "comment" : "Used when the end of an alert is indefinite"
+    },
+    "Updated: %@" : {
+      "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"
+    },
+    "Weather" : {
+      "comment" : "Possible alert cause"
     }
   },
   "version" : "1.0"
