@@ -23,13 +23,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.android.SheetRoutes
-import com.mbta.tid.mbta_app.android.fetcher.GlobalData
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,13 +36,12 @@ data class NearbyTransit
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 constructor(
     val alertData: AlertsStreamDataResponse?,
-    val globalData: GlobalData,
+    val globalResponse: GlobalResponse?,
     val targetLocation: Position,
     val mapCenter: Position,
     var lastNearbyTransitLocation: Position?,
     val scaffoldState: BottomSheetScaffoldState,
-    val mapViewportState: MapViewportState,
-    val backend: Backend
+    val mapViewportState: MapViewportState
 )
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
@@ -73,7 +71,7 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                     composable<SheetRoutes.NearbyTransit> {
                         NearbyTransitView(
                             alertData = nearbyTransit.alertData,
-                            globalData = nearbyTransit.globalData,
+                            globalResponse = nearbyTransit.globalResponse,
                             targetLocation = nearbyTransit.mapCenter,
                             setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
                             onOpenStopDetails = { stopId, filter ->
@@ -89,7 +87,7 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                     }
                     composable<SheetRoutes.StopDetails> { backStackEntry ->
                         val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-                        val stop = nearbyTransit.globalData.stops[navRoute.stopId]
+                        val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
                         val filterState = remember {
                             val filter =
                                 if (
@@ -120,8 +118,7 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
             HomeMapView(
                 Modifier.padding(sheetPadding),
                 nearbyTransit.mapViewportState,
-                backend = nearbyTransit.backend,
-                globalData = nearbyTransit.globalData,
+                globalResponse = nearbyTransit.globalResponse,
                 alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation
             )

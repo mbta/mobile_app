@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mbta.tid.mbta_app.android.fetcher.GlobalData
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.getSchedule
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
@@ -23,6 +22,7 @@ import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
@@ -33,7 +33,7 @@ import org.koin.compose.koinInject
 fun NearbyTransitView(
     modifier: Modifier = Modifier,
     alertData: AlertsStreamDataResponse?,
-    globalData: GlobalData,
+    globalResponse: GlobalResponse?,
     targetLocation: Position,
     setLastLocation: (Position) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
@@ -60,10 +60,10 @@ fun NearbyTransitView(
         }
 
     LaunchedEffect(targetLocation) {
-        if (globalData.response != null) {
+        if (globalResponse != null) {
             nearby =
                 nearbyRepository.getNearby(
-                    global = globalData.response,
+                    global = globalResponse,
                     location =
                         Coordinate(
                             latitude = targetLocation.latitude,
