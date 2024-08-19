@@ -56,10 +56,31 @@ struct ProductionAppView: View {
         socket.withRawMessages()
         socket.onOpen {
             Logger().debug("Socket opened")
+
+            Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
+                                                          type: nil,
+                                                          message: "socket opened",
+                                                          category: "socket",
+                                                          data: nil))
         }
         socket.onClose {
             Logger().debug("Socket closed")
+            Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
+                                                          type: nil,
+                                                          message: "socket closed",
+                                                          category: "socket",
+                                                          data: nil))
         }
+
+        socket.onError { error, response in
+            Logger().debug("socket error: \(error) \(response)")
+            Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
+                                                          type: nil,
+                                                          message: "socket error",
+                                                          category: "socket",
+                                                          data: ["error": error, "response": response]))
+        }
+
         return socket
     }
 

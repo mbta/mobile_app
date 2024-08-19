@@ -54,25 +54,42 @@ extension HomeMapView {
 
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
         if let filter = navigationStack.lastStopDetailsFilter {
-            vehiclesRepository.disconnect()
-            vehiclesRepository.connect(routeId: filter.routeId, directionId: filter.directionId) { outcome in
-                if let data = outcome.data {
-                    vehiclesData = Array(data.vehicles.values)
-                }
-            }
+            joinVehiclesChannel(routeId: filter.routeId, directionId: filter.directionId)
+
         } else if case let .tripDetails(tripId: _, vehicleId: _, target: _, routeId: routeId,
                                         directionId: directionId) = navigationStack.last {
-            vehiclesRepository.disconnect()
-            vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
-                if let data = outcome.data {
-                    vehiclesData = Array(data.vehicles.values)
-                }
-            }
+            joinVehiclesChannel(routeId: routeId, directionId: directionId)
+
         } else {
-            vehiclesRepository.disconnect()
+            leaveVehiclesChannel()
         }
 
         lastNavEntry = navigationStack.last
+    }
+
+    func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
+        if case let .stopDetails(stop, filter) = entry, let filter {
+            joinVehiclesChannel(routeId: filter.routeId,
+                                directionId: filter.directionId)
+        }
+        if case let .tripDetails(tripId: _, vehicleId: _, target: _, routeId: routeId,
+                                 directionId: directionId) = entry {
+            joinVehiclesChannel(routeId: routeId,
+                                directionId: directionId)
+        }
+    }
+
+    func joinVehiclesChannel(routeId: String, directionId: Int32) {
+        leaveVehiclesChannel()
+        vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
+            if let data = outcome.data {
+                vehiclesData = Array(data.vehicles.values)
+            }
+        }
+    }
+
+    func leaveVehiclesChannel() {
+        vehiclesRepository.disconnect()
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
