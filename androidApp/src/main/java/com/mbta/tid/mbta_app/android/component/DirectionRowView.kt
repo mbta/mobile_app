@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import kotlin.time.Duration.Companion.minutes
@@ -57,11 +58,13 @@ private fun DirectionRowViewPreview() {
                             listOf(
                                 RealtimePatterns.Format.Some.FormatWithId(
                                     trip = UpcomingTrip(trip = trip1, prediction = prediction1),
+                                    routeType = RouteType.LIGHT_RAIL,
                                     now = now,
                                     context = TripInstantDisplay.Context.NearbyTransit
                                 ),
                                 RealtimePatterns.Format.Some.FormatWithId(
                                     trip = UpcomingTrip(trip = trip2, prediction = prediction2),
+                                    routeType = RouteType.LIGHT_RAIL,
                                     now = now,
                                     context = TripInstantDisplay.Context.NearbyTransit
                                 ),

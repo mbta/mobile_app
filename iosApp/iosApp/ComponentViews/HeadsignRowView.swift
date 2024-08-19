@@ -12,23 +12,20 @@ import SwiftUI
 struct HeadsignRowView: View {
     var headsign: String
     let predictions: RealtimePatterns.Format
-    let routeType: RouteType
     let pillDecoration: PredictionRowView.PillDecoration
 
     init(
         headsign: String,
         predictions: RealtimePatterns.Format,
-        routeType: RouteType,
         pillDecoration: PredictionRowView.PillDecoration = .none
     ) {
         self.headsign = headsign
         self.predictions = predictions
-        self.routeType = routeType
         self.pillDecoration = pillDecoration
     }
 
     var body: some View {
-        PredictionRowView(predictions: predictions, routeType: routeType, pillDecoration: pillDecoration) {
+        PredictionRowView(predictions: predictions, pillDecoration: pillDecoration) {
             Text(headsign)
                 .foregroundStyle(Color.text)
                 .font(Typography.bodySemibold)
@@ -58,27 +55,25 @@ struct HeadsignRowView_Previews: PreviewProvider {
                                 predictions: RealtimePatterns.FormatSome(trips: [
                                     .init(
                                         trip: .init(trip: trip1, prediction: prediction1),
+                                        routeType: RouteType.lightRail,
                                         now: now.toKotlinInstant(), context: .nearbyTransit
                                     ),
                                     .init(
                                         trip: .init(trip: trip2, prediction: prediction2),
+                                        routeType: .heavyRail,
                                         now: now.toKotlinInstant(), context: .nearbyTransit
                                     ),
-                                ]),
-                                routeType: .heavyRail)
+                                ]))
                 HeadsignRowView(headsign: "None",
-                                predictions: RealtimePatterns.FormatNone.shared,
-                                routeType: .heavyRail)
+                                predictions: RealtimePatterns.FormatNone.shared)
                 HeadsignRowView(headsign: "Loading",
-                                predictions: RealtimePatterns.FormatLoading.shared,
-                                routeType: .heavyRail)
+                                predictions: RealtimePatterns.FormatLoading.shared)
                 HeadsignRowView(headsign: "No Service",
                                 predictions: RealtimePatterns.FormatNoService(
                                     alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                                         alert.effect = .suspension
                                     }
-                                ),
-                                routeType: .heavyRail)
+                                ))
             }
         }.font(Typography.body)
     }

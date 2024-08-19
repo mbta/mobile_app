@@ -23,7 +23,12 @@ fun StopDeparturesSummaryList(
             is RealtimePatterns.ByHeadsign -> {
                 HeadsignRowView(
                     patterns.headsign,
-                    patterns.format(now, if (condenseHeadsignPredictions) 1 else 2, context),
+                    patterns.format(
+                        now,
+                        patternsAtStop.representativeRoute.type,
+                        if (condenseHeadsignPredictions) 1 else 2,
+                        context
+                    ),
                     modifier = Modifier.clickable { onClick(patterns) },
                     pillDecoration =
                         if (patternsAtStop.line != null) PillDecoration.OnRow(patterns.route)
@@ -33,7 +38,7 @@ fun StopDeparturesSummaryList(
             is RealtimePatterns.ByDirection -> {
                 DirectionRowView(
                     patterns.direction,
-                    patterns.format(now, context),
+                    patterns.format(now, patternsAtStop.representativeRoute.type, context),
                     modifier = Modifier.clickable { onClick(patterns) },
                     pillDecoration = PillDecoration.OnPrediction(patterns.routesByTrip)
                 )

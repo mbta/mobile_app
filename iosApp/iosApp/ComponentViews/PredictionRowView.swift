@@ -17,18 +17,15 @@ struct PredictionRowView: View {
     }
 
     let predictions: RealtimePatterns.Format
-    let routeType: RouteType
     let pillDecoration: PillDecoration
     let destination: () -> any View
 
     init(
         predictions: RealtimePatterns.Format,
-        routeType: RouteType,
         pillDecoration: PillDecoration = .none,
         destination: @escaping () -> any View
     ) {
         self.predictions = predictions
-        self.routeType = routeType
         self.pillDecoration = pillDecoration
         self.destination = destination
     }
@@ -47,7 +44,6 @@ struct PredictionRowView: View {
                         HStack(spacing: 0) {
                             UpcomingTripView(
                                 prediction: .some(trip.format),
-                                routeType: routeType,
                                 isFirst: index == 0,
                                 isOnly: index == 0 && trips.trips.count == 1
                             )
@@ -59,14 +55,13 @@ struct PredictionRowView: View {
             case let .noService(alert):
                 UpcomingTripView(
                     prediction: .noService(alert.alert.effect),
-                    routeType: routeType,
                     isFirst: true,
                     isOnly: true
                 )
             case .none:
-                UpcomingTripView(prediction: .none, routeType: routeType, isFirst: true, isOnly: true)
+                UpcomingTripView(prediction: .none, isFirst: true, isOnly: true)
             case .loading:
-                UpcomingTripView(prediction: .loading, routeType: routeType, isFirst: true, isOnly: true)
+                UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
             }
         }
         .background(Color.fill3)

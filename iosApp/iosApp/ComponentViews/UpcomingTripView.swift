@@ -87,7 +87,8 @@ struct UpcomingTripView: View {
                             date: format.predictionTime.toNSDate(),
                             vehicleText: vehicleTypeText
                         )
-                        : accessibilityFormatters.distantFutureOther(date: format.predictionTime.toNSDate()))
+                        : accessibilityFormatters
+                        .distantFutureOther(date: format.predictionTime.toNSDate()))
                     .font(Typography.footnoteSemibold)
             case let .schedule(schedule):
                 HStack(spacing: Self.subjectSpacing) {
@@ -109,23 +110,11 @@ struct UpcomingTripView: View {
                 }
 
             case let .minutes(format):
-                if routeType == .commuterRail {
-                    let predictionAsDate = (NSDate() as Date) + TimeInterval(format.minutes)
-                    Text(predictionAsDate, style: .time)
-                        .accessibilityLabel(isFirst
-                            ? accessibilityFormatters.predictionTimeFirst(
-                                date: predictionAsDate,
-                                vehicleText: vehicleTypeText
-                            )
-                            : accessibilityFormatters.predictionTimeOther(date: predictionAsDate))
-                        .font(Typography.headlineBold)
-                } else {
-                    PredictionText(minutes: format.minutes)
-                        .accessibilityLabel(isFirst
-                            ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
-                                                                             vehicleText: vehicleTypeText)
-                            : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
-                }
+                PredictionText(minutes: format.minutes)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
+                                                                         vehicleText: vehicleTypeText)
+                        : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))

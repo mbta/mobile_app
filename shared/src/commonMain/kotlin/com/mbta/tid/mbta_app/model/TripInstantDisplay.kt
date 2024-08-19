@@ -40,6 +40,7 @@ sealed class TripInstantDisplay {
             prediction: Prediction?,
             schedule: com.mbta.tid.mbta_app.model.Schedule?,
             vehicle: Vehicle?,
+            routeType: RouteType?,
             now: Instant,
             context: Context
         ): TripInstantDisplay {
@@ -101,7 +102,7 @@ sealed class TripInstantDisplay {
             if (timeRemaining <= APPROACH_CUTOFF && !forceAsTime) {
                 return Approaching
             }
-            if (forceAsTime) {
+            if (routeType == RouteType.COMMUTER_RAIL || forceAsTime) {
                 return AsTime(prediction.predictionTime)
             }
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
