@@ -123,7 +123,8 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                 backend = nearbyTransit.backend,
                 globalData = nearbyTransit.globalData,
                 alertsData = nearbyTransit.alertData,
-                lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation
+                lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
+                navController = navController
             )
         }
     }
