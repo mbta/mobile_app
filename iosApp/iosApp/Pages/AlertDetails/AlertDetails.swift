@@ -10,10 +10,12 @@ import shared
 import SwiftUI
 
 struct AlertDetails: View {
+    var analytics: AlertDetailsAnalytics = AnalyticsProvider.shared
     var alert: shared.Alert
     var line: Line?
     var routes: [Route]?
     var affectedStops: [Stop]
+    var stopId: String?
     var now: Date
 
     @ScaledMetric()
@@ -154,7 +156,15 @@ struct AlertDetails: View {
                             .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
                     }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
                 }
-            ).foregroundStyle(Color.text, .clear))
+            ).foregroundStyle(Color.text, .clear).onChange(of: areStopsExpanded) { expanded in
+                if expanded {
+                    analytics.tappedAffectedStops(
+                        routeId: line?.id ?? routes?.first?.id ?? "",
+                        stopId: stopId ?? "",
+                        alertId: alert.id
+                    )
+                }
+            })
         }
     }
 
@@ -166,7 +176,14 @@ struct AlertDetails: View {
             Text("Plan a route with Trip Planner").multilineTextAlignment(.leading).padding(16)
             Spacer()
             Image(.faRoute).resizable().frame(width: iconSize, height: iconSize).padding(16)
-        })
+        }.environment(\.openURL, OpenURLAction { _ in
+            analytics.tappedTripPlanner(
+                routeId: line?.id ?? routes?.first?.id ?? "",
+                stopId: stopId ?? "",
+                alertId: alert.id
+            )
+            return .systemAction
+        }))
     }
 
     private func asTile(_ view: some View) -> some View {

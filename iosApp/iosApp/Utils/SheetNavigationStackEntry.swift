@@ -99,6 +99,17 @@ extension [SheetNavigationStackEntry] {
         }
     }
 
+    var lastStop: Stop? {
+        let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
+            if case let .stopDetails = entry { true } else { false }
+        }
+        guard let lastStopEntry else { return nil }
+        if case let .stopDetails(stop, _) = lastStopEntry {
+            return stop
+        }
+        return nil
+    }
+
     func lastSafe() -> SheetNavigationStackEntry {
         self.last ?? .nearby
     }
