@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.map
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +18,11 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.RenderedQueryGeometry
+import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapEvents
@@ -25,10 +30,12 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.style.MapStyle
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
 import com.mbta.tid.mbta_app.Backend
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.fetcher.GlobalData
 import com.mbta.tid.mbta_app.android.fetcher.getRailRouteShapes
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
@@ -39,6 +46,7 @@ import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
+import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -80,6 +88,32 @@ fun HomeMapView(
         }
 
     val isDarkMode = isSystemInDarkTheme()
+
+    fun handleStopClick(map: MapView, point: Point): Boolean {
+        val pixel = map.mapboxMap.pixelForCoordinate(point)
+        map.mapboxMap.queryRenderedFeatures(
+            RenderedQueryGeometry(pixel),
+            RenderedQueryOptions(
+                listOf(
+                    StopLayerGenerator.stopLayerId,
+                    StopLayerGenerator.busLayerId,
+                    StopLayerGenerator.stopTouchTargetLayerId
+                ),
+                null
+            )
+        ) { result ->
+            if (result.isError) {
+                Log.e("Map", "Failed handling tap feature query:\n${result.error}")
+                return@queryRenderedFeatures
+            }
+            val tapped = result.value?.firstOrNull() ?: return@queryRenderedFeatures
+            val stopId = tapped.queriedFeature.feature.id() ?: return@queryRenderedFeatures
+            navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
+                popUpTo(SheetRoutes.NearbyTransit)
+            }
+        }
+        return false
+    }
 
     fun refreshSources(railRouteShapes: MapFriendlyRouteResponse?, globalData: GlobalData) {
         if (railRouteShapes == null || globalData.response == null) return
@@ -147,7 +181,10 @@ fun HomeMapView(
             mapViewportState = mapViewportState,
             style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
         ) {
-            MapEffect(key1 = null) { mapViewportState.followPuck() }
+            MapEffect(key1 = null) { map ->
+                mapViewportState.followPuck()
+                map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+            }
             MapEffect(key1 = currentNavEntry) { refreshSources(railRouteShapes, globalData) }
 
             if (!mapViewportState.isFollowingPuck && lastNearbyTransitLocation != null) {
