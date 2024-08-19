@@ -17,7 +17,7 @@ class TripInstantDisplayTest {
                 prediction = ObjectCollectionBuilder.Single.prediction { status = "Custom Text" },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = Clock.System.now(),
                 context = anyEnumValue()
             )
@@ -37,7 +37,7 @@ class TripInstantDisplayTest {
                 schedule =
                     ObjectCollectionBuilder.Single.schedule { departureTime = now + 15.minutes },
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -55,7 +55,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = Clock.System.now(),
                 context = anyEnumValue()
             )
@@ -74,7 +74,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = Clock.System.now(),
                 context = anyEnumValue()
             )
@@ -89,7 +89,7 @@ class TripInstantDisplayTest {
                         arrivalTime = null
                     },
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = Clock.System.now(),
                 context = anyEnumValue()
             )
@@ -109,7 +109,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
@@ -125,7 +125,7 @@ class TripInstantDisplayTest {
                     },
                 vehicle = null,
                 now = now,
-                routeType = anyEnumValue(),
+                routeType = null,
                 context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
         )
@@ -139,7 +139,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = TripInstantDisplay.Context.TripDetails
             )
@@ -154,7 +154,7 @@ class TripInstantDisplayTest {
                         arrivalTime = now + 3.minutes
                     },
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = TripInstantDisplay.Context.TripDetails
             )
@@ -171,7 +171,7 @@ class TripInstantDisplayTest {
                 schedule =
                     ObjectCollectionBuilder.Single.schedule { departureTime = now + 15.minutes },
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -191,7 +191,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -211,7 +211,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -240,7 +240,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = vehicle,
                 now = now,
-                routeType = anyEnumValue(),
+                routeType = null,
                 context = anyEnumValue()
             )
         )
@@ -297,7 +297,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = vehicle,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -320,7 +320,7 @@ class TripInstantDisplayTest {
                         vehicleId = vehicle.id
                     },
                 schedule = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 vehicle = vehicle,
                 now = now,
                 context = anyEnumValue()
@@ -345,7 +345,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = vehicle,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -365,7 +365,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -379,7 +379,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValue()
             )
@@ -399,7 +399,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
@@ -413,7 +413,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
             )
@@ -433,7 +433,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = TripInstantDisplay.Context.TripDetails
             )
@@ -447,7 +447,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = TripInstantDisplay.Context.TripDetails
             )
@@ -472,7 +472,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValue(),
+                routeType = null,
                 now = now,
                 context = context
             )
