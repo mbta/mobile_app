@@ -95,21 +95,12 @@ struct AnnotatedMap: View {
                        let route = routes?[routeId] {
                         let isSelected = vehicle.id == selectedVehicle?.id
                         MapViewAnnotation(coordinate: vehicle.coordinate) {
-                            ZStack {
-                                ZStack {
-                                    Image(.vehicleHalo)
-                                    Image(.vehiclePuck).foregroundStyle(Color(hex: route.color))
-                                }
-                                .frame(width: 32, height: 32)
-                                .rotationEffect(.degrees(45))
-                                .rotationEffect(.degrees(vehicle.bearing?.doubleValue ?? 0))
-                                routeIcon(route)
-                                    .foregroundStyle(Color(hex: route.textColor))
-                                    .frame(height: 18)
-                            }
-                            .scaleEffect(isSelected ? 2 : 1, anchor: .center)
-                            .padding(6)
-                            .onTapGesture { handleTapVehicle(vehicle) }
+                            VehicleMarkerView(
+                                route: route,
+                                vehicle: vehicle,
+                                isSelected: isSelected,
+                                onTap: { handleTapVehicle(vehicle) }
+                            )
                         }
                         .selected(isSelected)
                         .allowOverlap(true)

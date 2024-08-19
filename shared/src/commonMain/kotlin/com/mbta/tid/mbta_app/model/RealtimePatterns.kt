@@ -219,6 +219,19 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             ?: false
 
     /**
+     * Checks if a trip exists.
+     *
+     * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
+     * should be hidden until data is available.
+     */
+    fun isUpcoming() =
+        upcomingTrips?.any {
+            val tripTime = it.time
+            tripTime != null
+        }
+            ?: false
+
+    /**
      * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
      *
      * Criteria:

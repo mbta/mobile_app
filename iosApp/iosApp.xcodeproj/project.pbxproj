@@ -63,6 +63,7 @@
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		8C0923A52C21054100813454 /* Inter.ttc in Resources */ = {isa = PBXBuildFile; fileRef = 8C0923A42C21054100813454 /* Inter.ttc */; };
 		8C0923A72C210C8C00813454 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0923A62C210C8C00813454 /* Typography.swift */; };
+		8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */; };
 		8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */; };
 		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
 		8C5F47662C40842200FB71DA /* TripDetailsStopViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5F47652C40842200FB71DA /* TripDetailsStopViewTests.swift */; };
@@ -92,6 +93,7 @@
 		8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */; };
 		8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */; };
 		8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */; };
+		8CF5ABF72C70001200CF26B0 /* VehicleMarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */; };
 		9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A03F3652BA9E68500DA40DC /* Debouncer.swift */; };
 		9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A15DA3C2BF51BA7003A861C /* HomeMapViewLayerExtension.swift */; };
 		9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A15DA3E2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift */; };
@@ -281,6 +283,7 @@
 		84B5D164E49C6058407CC984 /* Pods-iosApp.stagingrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingrelease.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingrelease.xcconfig"; sourceTree = "<group>"; };
 		8C0923A42C21054100813454 /* Inter.ttc */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttc; sourceTree = "<group>"; };
 		8C0923A62C210C8C00813454 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsAnalytics.swift; sourceTree = "<group>"; };
 		8C304C652B69C0C300263886 /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
 		8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
@@ -312,6 +315,7 @@
 		8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesView.swift; sourceTree = "<group>"; };
 		8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteView.swift; sourceTree = "<group>"; };
 		8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntry.swift; sourceTree = "<group>"; };
+		8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarkerView.swift; sourceTree = "<group>"; };
 		95F035057D97B7CC51A0583A /* Pods-iosAppTests.staging release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.staging release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.staging release.xcconfig"; sourceTree = "<group>"; };
 		9A03F3652BA9E68500DA40DC /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		9A15DA3C2BF51BA7003A861C /* HomeMapViewLayerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewLayerExtension.swift; sourceTree = "<group>"; };
@@ -754,6 +758,7 @@
 				9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */,
 				8CB28DB82C2CC5AD0036258E /* MapViewModel.swift */,
 				6EA00B6B2C513D1600B1334C /* MapHttpInterceptor.swift */,
+				8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -896,6 +901,7 @@
 				6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */,
 				6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */,
 				6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */,
+				8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -1232,6 +1238,7 @@
 				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
 				6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
+				8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */,
 				9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */,
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
 				ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */,
@@ -1318,6 +1325,7 @@
 				9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */,
 				9A37F3052BACCC40001714FE /* DoubleRoundedExtension.swift in Sources */,
 				9A76022F2C546CE300B69A35 /* StopDetailsAlertHeader.swift in Sources */,
+				8CF5ABF72C70001200CF26B0 /* VehicleMarkerView.swift in Sources */,
 				9AB619AC2BF29FC6007E7191 /* PredictionText.swift in Sources */,
 				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
 				9A9E7DD72C220812000DA1FD /* LineCard.swift in Sources */,
@@ -2022,7 +2030,7 @@
 			repositoryURL = "https://github.com/davidstump/SwiftPhoenixClient";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.3.2;
+				minimumVersion = 5.3.3;
 			};
 		};
 		6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {

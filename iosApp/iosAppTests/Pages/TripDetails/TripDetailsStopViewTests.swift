@@ -34,9 +34,83 @@ final class TripDetailsStopViewTests: XCTestCase {
         let sut = TripDetailsStopView(
             stop: .init(stop: stop, stopSequence: 1, alert: alert, schedule: nil, prediction: prediction, vehicle: nil,
                         routes: []),
-            now: Date.now.toKotlinInstant()
+            now: Date.now.toKotlinInstant(),
+            onTapLink: { _, _, _ in }
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Stop Closed"))
+    }
+
+    func testHandlesTapOnBody() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.name = "Boylston"
+        }
+        let now = Date.now
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(60).toKotlinInstant()
+        }
+        let connectingRoute = objects.route()
+        let stopListEntry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 1,
+            alert: nil,
+            schedule: nil,
+            prediction: prediction,
+            vehicle: nil,
+            routes: [connectingRoute]
+        )
+        let exp = expectation(description: "calls onTapLink")
+        let sut = TripDetailsStopView(
+            stop: stopListEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { navStackEntry, actualStopListEntry, connectingRoute in
+                XCTAssertEqual(navStackEntry, .stopDetails(stop, nil))
+                XCTAssertEqual(stopListEntry, actualStopListEntry)
+                XCTAssertNil(connectingRoute)
+                exp.fulfill()
+            }
+        )
+
+        try sut.inspect().find(button: "Boylston").tap()
+        wait(for: [exp], timeout: 5)
+    }
+
+    func testHandlesTapOnConnectingRoute() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.name = "Boylston"
+        }
+        let now = Date.now
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.addingTimeInterval(60).toKotlinInstant()
+        }
+        let connectingRoute = objects.route { route in
+            route.shortName = "28"
+            route.type = .bus
+        }
+        let stopListEntry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 1,
+            alert: nil,
+            schedule: nil,
+            prediction: prediction,
+            vehicle: nil,
+            routes: [connectingRoute]
+        )
+        let exp = expectation(description: "calls onTapLink")
+        let sut = TripDetailsStopView(
+            stop: stopListEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { navStackEntry, actualStopListEntry, connectingRouteId in
+                XCTAssertEqual(navStackEntry, .stopDetails(stop, nil))
+                XCTAssertEqual(stopListEntry, actualStopListEntry)
+                XCTAssertEqual(connectingRouteId, connectingRoute.id)
+                exp.fulfill()
+            }
+        )
+
+        try sut.inspect().find(text: "28").find(RoutePill.self, relation: .parent).callOnTapGesture()
+        wait(for: [exp], timeout: 5)
     }
 }
