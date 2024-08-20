@@ -272,7 +272,7 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
         let now = Date.now
-        let distantInstant = now.addingTimeInterval((5 * 60) * 2)
+        let distantInstant = now.addingTimeInterval(10 * 60)
             .toKotlinInstant()
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
@@ -361,7 +361,7 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testLineGrouping() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let distantInstant = Date.now.addingTimeInterval((5 * 60) * 2)
+        let distantInstant = Date.now.addingTimeInterval(10 * 60)
             .toKotlinInstant()
         typealias Green = GreenLineHelper
         let objects = Green.objects
