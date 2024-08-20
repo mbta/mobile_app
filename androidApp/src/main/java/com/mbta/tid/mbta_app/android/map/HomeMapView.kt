@@ -24,6 +24,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.RenderedQueryGeometry
@@ -41,12 +42,16 @@ import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
+import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
+import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
 import com.mbta.tid.mbta_app.android.util.followPuck
 import com.mbta.tid.mbta_app.android.util.getRailRouteShapes
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
+import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.ColorPalette
+import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLineData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
@@ -72,14 +77,17 @@ fun HomeMapView(
 
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
+    val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
+
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     val locationPermissionState =
         rememberPermissionState(permission = android.Manifest.permission.ACCESS_FINE_LOCATION)
+    var savedNearbyViewport: ViewportSnapshot? by rememberSaveable { mutableStateOf(null) }
+    var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val railRouteShapes = getRailRouteShapes()
     var railRouteLineData: List<RouteLineData>? by rememberSaveable { mutableStateOf(null) }
     var stopSourceData: FeatureCollection? by rememberSaveable { mutableStateOf(null) }
-    var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val now = timer(updateInterval = 10.seconds)
     val globalMapData =
@@ -95,6 +103,21 @@ fun HomeMapView(
         }
 
     val isDarkMode = isSystemInDarkTheme()
+
+    fun handleNearbyNavRestoration() {
+        if (
+            previousNavEntry?.destination?.route.equals("nearby") &&
+                currentNavEntry?.destination?.route?.startsWith("stop_details") == true
+        ) {
+            savedNearbyViewport = ViewportSnapshot(mapViewportState)
+        } else if (
+            previousNavEntry?.destination?.route?.startsWith("stop_details") == true &&
+                currentNavEntry?.destination?.route.equals("nearby")
+        ) {
+            savedNearbyViewport?.restoreOn(mapViewportState)
+            savedNearbyViewport = null
+        }
+    }
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -197,6 +220,7 @@ fun HomeMapView(
             style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
         ) {
             LaunchedEffect(currentNavEntry) {
+                handleNearbyNavRestoration()
                 val stopId = currentNavEntry?.arguments?.getString("stopId")
                 if (stopId == null) {
                     selectedStop = null

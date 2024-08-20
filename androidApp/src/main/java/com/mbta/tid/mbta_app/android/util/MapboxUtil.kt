@@ -9,14 +9,14 @@ import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import io.github.dellisd.spatialk.geojson.Position
 
 @OptIn(MapboxExperimental::class)
-fun MapViewportState.followPuck() {
+fun MapViewportState.followPuck(zoom: Double? = null) {
     this.transitionToFollowPuckState(
         followPuckViewportStateOptions =
             FollowPuckViewportStateOptions.Builder()
                 .apply {
                     bearing(null)
                     pitch(null)
-                    zoom(null)
+                    zoom(zoom)
                 }
                 .build()
     )
