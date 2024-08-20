@@ -25,7 +25,7 @@ final class PredictionTextTests: XCTestCase {
 
         XCTAssertEqual(
             "in 24 min",
-            try sut.inspect().find(text: "in 24 min")
+            try sut.inspect().find(text: "24 min")
                 .accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
@@ -36,7 +36,7 @@ final class PredictionTextTests: XCTestCase {
         )
         XCTAssertEqual(
             "in 2 hr 4 min",
-            try sut.inspect().find(text: "in 2 hr 4 min")
+            try sut.inspect().find(text: "2 hr 4 min")
                 .accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }

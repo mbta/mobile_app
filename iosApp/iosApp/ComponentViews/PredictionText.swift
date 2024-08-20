@@ -10,15 +10,22 @@ import SwiftUI
 
 struct PredictionText: View {
     var minutes: Int32
-    var predictionKey: String.LocalizationValue {
-        let hours = Int32(
+
+    var hours: Int32 {
+        Int32(
             (Float(minutes) / 60).rounded(FloatingPointRoundingRule.down)
         )
-        let remainingMinutes = minutes - (hours * 60)
+    }
+
+    var remainingMinutes: Int32 {
+        minutes - (hours * 60)
+    }
+
+    var predictionKey: String.LocalizationValue {
         let prediction: String.LocalizationValue = if hours >= 1 {
-            "in \(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
+            "\(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
         } else {
-            "in \(minutes, specifier: "%ld") min"
+            "\(minutes, specifier: "%ld") min"
         }
         return prediction
     }
@@ -35,8 +42,21 @@ struct PredictionText: View {
         return prediction
     }
 
+    var accessibilityKey: String.LocalizationValue {
+        let prediction: String.LocalizationValue = if hours >= 1 {
+            "in \(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
+        } else {
+            "in \(minutes, specifier: "%ld") min"
+        }
+        return prediction
+    }
+
+    var accessibilityString: String {
+        String(localized: accessibilityKey)
+    }
+
     var body: some View {
         Text(predictionString)
-            .accessibilityLabel(String(localized: predictionKey))
+            .accessibilityLabel(accessibilityString)
     }
 }
