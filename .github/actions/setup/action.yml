@@ -52,7 +52,7 @@ runs:
       if: inputs.rsvg
       shell: bash
     - name: Configure GCP Credentials
-      if: inputs.gcp-provider != "" && inputs.gcp-service-account != ""
+      if: inputs.gcp-provider != '' && inputs.gcp-service-account != ''
       uses: google-github-actions/auth@v2
       with:
         create_credentials_file: true
