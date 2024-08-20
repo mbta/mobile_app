@@ -16,9 +16,9 @@ struct PredictionText: View {
         )
         let remainingMinutes = minutes - (hours * 60)
         let prediction: String.LocalizationValue = if hours >= 1 {
-            "\(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
+            "in \(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
         } else {
-            "\(minutes, specifier: "%ld") min"
+            "in \(minutes, specifier: "%ld") min"
         }
         return prediction
     }
@@ -35,16 +35,8 @@ struct PredictionText: View {
         return prediction
     }
 
-    var accessibilityString: NSMutableAttributedString {
-        var string = NSMutableAttributedString()
-        string.append(NSAttributedString(AttributedString(localized: "in")))
-        string.append(NSAttributedString(" "))
-        string.append(NSAttributedString(predictionString))
-        return string
-    }
-
     var body: some View {
         Text(predictionString)
-            .accessibilityLabel(accessibilityString.string)
+            .accessibilityLabel(String(localized: predictionKey))
     }
 }

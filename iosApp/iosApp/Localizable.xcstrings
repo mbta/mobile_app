@@ -100,6 +100,9 @@
     "Alert Details" : {
 
     },
+    "Alert is no longer in effect" : {
+
+    },
     "All" : {
 
     },
@@ -196,9 +199,6 @@
     "ferry" : {
       "comment" : "ferry"
     },
-    "in" : {
-      "extractionState" : "manual"
-    },
     "Fire" : {
       "comment" : "Possible alert cause"
     },
@@ -228,6 +228,28 @@
     },
     "Ice In Harbor" : {
       "comment" : "Possible alert cause"
+    },
+    "in %@ hr %@ min\n" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in %1$@ hr %2$@ min\n"
+          }
+        }
+      }
+    },
+    "in %@ min" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in %1$@ min"
+          }
+        }
+      }
     },
     "Live" : {
 
