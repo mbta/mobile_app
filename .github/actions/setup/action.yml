@@ -1,0 +1,66 @@
+name: Set up build environment
+description: Installs Java and/or Ruby
+inputs:
+  java:
+    default: false
+    description: Install Java
+  kotlin-cache:
+    default: false
+    description: Cache the Kotlin compiler directory
+  rsvg:
+    default: false
+    description: Install rsvg-convert (needed for Android builds)
+  ruby:
+    default: false
+    description: Install Ruby
+  gcp:
+    default: false
+    description: Authenticate with Google Cloud Platform
+runs:
+  using: composite
+  steps:
+    - name: Read asdf versions
+      id: asdf
+      shell: bash
+      run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+    - name: Parse java version
+      if: inputs.java
+      id: java-spec
+      shell: bash
+      run: |
+        DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
+        VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
+        echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
+        echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+    - name: Set up Java
+      if: inputs.java
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{steps.java-spec.outputs.java-distribution}}
+        java-version: ${{steps.java-spec.outputs.java-version}}
+        cache: gradle
+    - uses: actions/cache@v4
+      if: inputs.kotlin-cache
+      with:
+        path: ~/.konan
+        key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
+        restore-keys: konan-${{ runner.os }}
+    - run: sudo apt-get install librsvg2-bin
+      if: inputs.rsvg
+      shell: bash
+    - name: Configure GCP Credentials
+      if: inputs.gcp
+      uses: google-github-actions/auth@v2
+      with:
+        create_credentials_file: true
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+    - name: Set up Ruby
+      if: inputs.ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+    - name: Patch Fastlane to pick up application default credentials
+      if: inputs.ruby
+      run: bin/patch-fastlane.sh
+      shell: bash
