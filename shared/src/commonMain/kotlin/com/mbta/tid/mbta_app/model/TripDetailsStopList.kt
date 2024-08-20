@@ -16,11 +16,12 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         val vehicle: Vehicle?,
         val routes: List<Route>
     ) {
-        fun format(now: Instant) =
+        fun format(now: Instant, routeType: RouteType?) =
             TripInstantDisplay.from(
                 prediction,
                 schedule,
                 vehicle,
+                routeType,
                 now,
                 context = TripInstantDisplay.Context.TripDetails
             )

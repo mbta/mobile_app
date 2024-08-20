@@ -87,37 +87,28 @@ struct UpcomingTripView: View {
                             date: format.predictionTime.toNSDate(),
                             vehicleText: vehicleTypeText
                         )
-                        : accessibilityFormatters.distantFutureOther(date: format.predictionTime.toNSDate()))
+                        : accessibilityFormatters
+                        .distantFutureOther(date: format.predictionTime.toNSDate()))
                     .font(Typography.footnoteSemibold)
             case let .schedule(schedule):
-                if routeType == .commuterRail {
+                HStack(spacing: Self.subjectSpacing) {
                     Text(schedule.scheduleTime.toNSDate(), style: .time)
                         .accessibilityLabel(isFirst
                             ? accessibilityFormatters.scheduledFirst(
                                 date: schedule.scheduleTime.toNSDate(),
                                 vehicleText: vehicleTypeText
                             )
-                            : accessibilityFormatters.scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(Typography.headlineBold)
-                } else {
-                    HStack(spacing: Self.subjectSpacing) {
-                        Text(schedule.scheduleTime.toNSDate(), style: .time)
-                            .accessibilityLabel(isFirst
-                                ? accessibilityFormatters.scheduledFirst(
-                                    date: schedule.scheduleTime.toNSDate(),
-                                    vehicleText: vehicleTypeText
-                                )
-                                : accessibilityFormatters
-                                .scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                            .font(Typography.footnoteSemibold)
-                        Image(.faClock)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: iconSize, height: iconSize)
-                            .padding(4)
-                            .foregroundStyle(Color.deemphasized)
-                    }
+                            : accessibilityFormatters
+                            .scheduledOther(date: schedule.scheduleTime.toNSDate()))
+                        .font(Typography.footnoteSemibold)
+                    Image(.faClock)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: iconSize, height: iconSize)
+                        .padding(4)
+                        .foregroundStyle(Color.deemphasized)
                 }
+
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
                     .accessibilityLabel(isFirst
@@ -176,6 +167,14 @@ class UpcomingTripAccessibilityFormatters {
 
     public func predictionMinutesOther(minutes: Int32) -> Text {
         Text("and in \(minutes) min")
+    }
+
+    public func predictionTimeFirst(date: Date, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))")
+    }
+
+    public func predictionTimeOther(date: Date) -> Text {
+        Text("and at \(timeFormatter.string(from: date))")
     }
 }
 

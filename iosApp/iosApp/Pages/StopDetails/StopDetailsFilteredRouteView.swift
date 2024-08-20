@@ -37,7 +37,7 @@ struct StopDetailsFilteredRouteView: View {
             headsign = trip.headsign
             formatted = RealtimePatterns.ByHeadsign(
                 route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
-            ).format(now: now, context: .stopDetailsFiltered)
+            ).format(now: now, routeType: route.type, context: .stopDetailsFiltered)
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
@@ -158,7 +158,6 @@ struct StopDetailsFilteredRouteView: View {
                                             HeadsignRowView(
                                                 headsign: row.headsign,
                                                 predictions: row.formatted,
-                                                routeType: patternsByStop.representativeRoute.type,
                                                 pillDecoration: patternsByStop.line != nil ?
                                                     .onRow(route: row.route) : .none
                                             )

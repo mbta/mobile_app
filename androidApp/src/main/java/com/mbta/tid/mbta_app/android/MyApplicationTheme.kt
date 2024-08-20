@@ -9,6 +9,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -25,7 +26,7 @@ fun MyApplicationTheme(
     val colors =
         if (darkTheme) {
             darkColorScheme(
-                surface = Color(0xFF3E454D), // Fill 1
+                surface = colorResource(R.color.fill1), // Fill 1
                 surfaceVariant = Color(0xFF192026), // Fill 2
                 background = Color(0xFF000000), // Fill 3
                 primary = Color(0xFF66B2FF), // Key

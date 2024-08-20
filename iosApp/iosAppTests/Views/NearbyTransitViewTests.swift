@@ -271,9 +271,9 @@ final class NearbyTransitViewTests: XCTestCase {
 
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-
-        let distantInstant = Date.now.addingTimeInterval(5 * 60)
-            .toKotlinInstant().plus(duration: DISTANT_FUTURE_CUTOFF)
+        let now = Date.now
+        let distantInstant = now.addingTimeInterval(10 * 60)
+            .toKotlinInstant()
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
 
@@ -341,9 +341,13 @@ final class NearbyTransitViewTests: XCTestCase {
 
             XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
                 .parent().parent().find(text: "1 min"))
-
+            let expectedMinutes = Calendar.current.dateComponents(
+                [.minute],
+                from: now,
+                to: distantInstant.toNSDate() as Date
+            ).minute!
             let expectedState = UpcomingTripView.State
-                .some(.AsTime(predictionTime: distantInstant))
+                .some(.Minutes(minutes: Int32(expectedMinutes)))
             XCTAssert(try !stops[1].find(text: "Watertown Yard").parent().parent()
                 .findAll(UpcomingTripView.self, where: { sut in
                     try debugPrint(sut.actualView())
@@ -357,8 +361,8 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testLineGrouping() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
-        let distantInstant = Date.now.addingTimeInterval(5 * 60)
-            .toKotlinInstant().plus(duration: DISTANT_FUTURE_CUTOFF)
+        let distantInstant = Date.now.addingTimeInterval(10 * 60)
+            .toKotlinInstant()
         typealias Green = GreenLineHelper
         let objects = Green.objects
 
