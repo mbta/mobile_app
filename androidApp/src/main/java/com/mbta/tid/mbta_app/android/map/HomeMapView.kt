@@ -122,6 +122,19 @@ fun HomeMapView(
         return false
     }
 
+    fun positionViewportToStop() {
+        if (selectedStop != null) {
+            mapViewportState.easeTo(
+                cameraOptions =
+                    CameraOptions.Builder()
+                        .center(Point.fromLngLat(selectedStop!!.longitude, selectedStop!!.latitude))
+                        .zoom(MapDefaults.stopPageZoom)
+                        .build(),
+                animationOptions = MapAnimationDefaults.options
+            )
+        }
+    }
+
     fun refreshRouteLineData() {
         if (railRouteShapes == null || globalResponse == null) return
         railRouteLineData =
@@ -199,7 +212,10 @@ fun HomeMapView(
                 refreshRouteLineSource()
                 refreshStopFeatures()
             }
-            LaunchedEffect(selectedStop) { refreshStopFeatures() }
+            LaunchedEffect(selectedStop) {
+                positionViewportToStop()
+                refreshStopFeatures()
+            }
             LaunchedEffect(stopSourceData) { refreshStopSource() }
 
             val context = LocalContext.current
