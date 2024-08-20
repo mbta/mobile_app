@@ -159,6 +159,7 @@ struct HomeMapView: View {
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
+            handleAccessTokenLoaded: handleAccessTokenLoaded,
             globalMapData: globalMapData
         )
         .onChange(of: globalData) { _ in
@@ -211,6 +212,7 @@ struct ProxyModifiedMap: View {
     var mapContent: AnyView
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
     var handleTryLayerInit: (_ map: MapboxMap?) -> Void
+    var handleAccessTokenLoaded: (_ map: MapboxMap?) -> Void
     var globalData: GlobalResponse?
     var railRouteShapes: MapFriendlyRouteResponse?
     var globalMapData: GlobalMapData?
@@ -229,6 +231,9 @@ struct ProxyModifiedMap: View {
                 }
                 .onChange(of: globalMapData) { _ in
                     handleTryLayerInit(proxy.map)
+                }
+                .onChange(of: MapboxOptions.accessToken) { _ in
+                    handleAccessTokenLoaded(proxy.map)
                 }
         }
     }

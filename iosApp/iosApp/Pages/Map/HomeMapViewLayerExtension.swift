@@ -26,6 +26,10 @@ extension HomeMapView {
         handleLayerInit(map)
     }
 
+    func handleAccessTokenLoaded(_ map: MapboxMap?) {
+        map?.mapStyle = .init(uri: appVariant.styleUri(colorScheme: colorScheme))
+    }
+
     func handleLayerInit(_ map: MapboxMap) {
         let layerManager = MapLayerManager(map: map)
         initializeLayers(layerManager)

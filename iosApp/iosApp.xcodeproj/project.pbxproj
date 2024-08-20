@@ -63,6 +63,7 @@
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		8C0923A52C21054100813454 /* Inter.ttc in Resources */ = {isa = PBXBuildFile; fileRef = 8C0923A42C21054100813454 /* Inter.ttc */; };
 		8C0923A72C210C8C00813454 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0923A62C210C8C00813454 /* Typography.swift */; };
+		8C1587042C76524600AB5036 /* AppVariantExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1587032C76524600AB5036 /* AppVariantExtension.swift */; };
 		8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */; };
 		8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */; };
 		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
@@ -285,6 +286,7 @@
 		84B5D164E49C6058407CC984 /* Pods-iosApp.stagingrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingrelease.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingrelease.xcconfig"; sourceTree = "<group>"; };
 		8C0923A42C21054100813454 /* Inter.ttc */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttc; sourceTree = "<group>"; };
 		8C0923A62C210C8C00813454 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		8C1587032C76524600AB5036 /* AppVariantExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVariantExtension.swift; sourceTree = "<group>"; };
 		8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsAnalytics.swift; sourceTree = "<group>"; };
 		8C304C652B69C0C300263886 /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
@@ -881,6 +883,7 @@
 				6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */,
 				8C0923A62C210C8C00813454 /* Typography.swift */,
 				8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */,
+				8C1587032C76524600AB5036 /* AppVariantExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1249,6 +1252,7 @@
 				9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */,
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
 				ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */,
+				8C1587042C76524600AB5036 /* AppVariantExtension.swift in Sources */,
 				9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */,
 				9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */,
 				8CB28DB92C2CC5AD0036258E /* MapViewModel.swift in Sources */,
