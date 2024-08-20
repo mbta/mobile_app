@@ -6,10 +6,12 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
@@ -17,6 +19,7 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
@@ -36,10 +39,7 @@ import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
-import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
-import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
@@ -176,13 +176,32 @@ fun endToEndModule(): Module {
                 override suspend fun getGlobalData() =
                     GlobalResponse(
                         objects,
-                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
-                    )
+                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id)))
             }
         }
-        single<ISearchResultRepository> { MockSearchResultRepository() }
-        single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
-        single<IVehiclesRepository> { MockVehiclesRepository() }
+        single<ISearchResultRepository> {
+            object : ISearchResultRepository {
+                override suspend fun getSearchResults(query: String): SearchResults? {
+                    TODO("Not yet implemented")
+                }
+            }
+        }
+        single<IRailRouteShapeRepository> {
+            object : IRailRouteShapeRepository {
+                override suspend fun getRailRouteShapes() = MapFriendlyRouteResponse(emptyList())
+            }
+        }
+        single<IVehiclesRepository> {
+            object : IVehiclesRepository {
+                override fun connect(
+                    routeId: String,
+                    directionId: Int,
+                    onReceive: (Outcome<VehiclesStreamDataResponse?, SocketError>) -> Unit
+                ) {}
+
+                override fun disconnect() {}
+            }
+        }
         single { TogglePinnedRouteUsecase(get()) }
         single { GetSettingUsecase(get()) }
         single { ConfigUseCase(get(), get()) }
