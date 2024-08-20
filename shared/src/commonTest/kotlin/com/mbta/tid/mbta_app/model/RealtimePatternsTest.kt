@@ -114,13 +114,13 @@ class RealtimePatternsTest {
 
         val upcomingTrip1 = objects.upcomingTrip(prediction1)
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
-
+        val routeType = anyNonCommuterRailRouteType()
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
-                        anyNonCommuterRailRouteType(),
+                        routeType,
                         TripInstantDisplay.Minutes(5)
                     )
                 )
@@ -132,7 +132,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
+                .format(now, routeType, anyContext())
         )
     }
 
@@ -166,7 +166,7 @@ class RealtimePatternsTest {
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
-                        anyNonCommuterRailRouteType(),
+                        RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(5)
                     )
                 )
@@ -178,19 +178,19 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
+                .format(now, RouteType.LIGHT_RAIL, anyContext())
         )
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip1.id,
-                        anyNonCommuterRailRouteType(),
+                        RouteType.BUS,
                         TripInstantDisplay.Schedule(now + 5.minutes)
                     ),
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
-                        anyNonCommuterRailRouteType(),
+                        RouteType.BUS,
                         TripInstantDisplay.Minutes(5)
                     )
                 )
@@ -202,7 +202,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
+                .format(now, RouteType.BUS, anyContext())
         )
     }
 
@@ -317,27 +317,28 @@ class RealtimePatternsTest {
                 listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3, upcomingTrip4)
             )
 
+        val routeType = anyNonCommuterRailRouteType()
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip1.id,
-                        anyNonCommuterRailRouteType(),
+                        routeType,
                         TripInstantDisplay.Minutes(3)
                     ),
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
-                        anyNonCommuterRailRouteType(),
+                        routeType,
                         TripInstantDisplay.Minutes(5)
                     ),
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip3.id,
-                        anyNonCommuterRailRouteType(),
+                        routeType,
                         TripInstantDisplay.Minutes(7)
                     )
                 )
             ),
-            directionPatterns.format(now, anyNonCommuterRailRouteType(), anyContext())
+            directionPatterns.format(now, routeType, anyContext())
         )
 
         assertEquals(directionPatterns.routesByTrip[trip2.id], route2)
