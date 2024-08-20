@@ -75,7 +75,8 @@ jobs:
           kotlin-cache: true
           rsvg: true
           ruby: true
-          gcp: true
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -130,7 +131,8 @@ jobs:
           path: androidApp/build/outputs/bundle/release
       - uses: ./.github/actions/setup
         with:
-          gcp: true
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           ruby: true
       - name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
         run: |

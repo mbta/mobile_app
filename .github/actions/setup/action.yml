@@ -13,9 +13,12 @@ inputs:
   ruby:
     default: false
     description: Install Ruby
-  gcp:
-    default: false
-    description: Authenticate with Google Cloud Platform
+  gcp-provider:
+    description: Google Cloud Platform Workload Identity Provider
+    required: false
+  gcp-service-account:
+    description: Google Cloud Platform service account
+    required: false
 runs:
   using: composite
   steps:
@@ -49,12 +52,12 @@ runs:
       if: inputs.rsvg
       shell: bash
     - name: Configure GCP Credentials
-      if: inputs.gcp
+      if: inputs.gcp-provider != "" && inputs.gcp-service-account != ""
       uses: google-github-actions/auth@v2
       with:
         create_credentials_file: true
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        workload_identity_provider: ${{ inputs.gcp-provider }}
+        service_account: ${{ inputs.gcp-service-account }}
     - name: Set up Ruby
       if: inputs.ruby
       uses: ruby/setup-ruby@v1
