@@ -12,7 +12,7 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
     let app = XCUIApplication()
 
     override func setUpWithError() throws {
-        app.launchArguments = ["--e2e-mocks"]
+        // app.launchArguments = ["--e2e-mocks"]
         app.resetAuthorizationStatus(for: .location)
         XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 42.356395, longitude: -71.062424))
 
