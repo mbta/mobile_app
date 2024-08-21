@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 
 @Composable
@@ -44,10 +45,12 @@ fun HeadsignRowViewPreview() {
                     listOf(
                         RealtimePatterns.Format.Some.FormatWithId(
                             "1",
+                            RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(5)
                         ),
                         RealtimePatterns.Format.Some.FormatWithId(
                             "2",
+                            RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(15)
                         )
                     )

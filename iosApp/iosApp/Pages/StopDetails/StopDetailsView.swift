@@ -64,13 +64,15 @@ struct StopDetailsView: View {
             VStack(spacing: 0) {
                 VStack {
                     SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
-                    StopDetailsFilterPills(
-                        servedRoutes: servedRoutes,
-                        tapRoutePill: tapRoutePill,
-                        filter: $filter
-                    )
+                    if servedRoutes.count > 1 {
+                        StopDetailsFilterPills(
+                            servedRoutes: servedRoutes,
+                            tapRoutePill: tapRoutePill,
+                            filter: $filter
+                        )
+                        .padding([.bottom], 8)
+                    }
                 }
-                .padding([.bottom], 8)
                 .border(Color.halo.opacity(0.15), width: 2)
 
                 if let departures = nearbyVM.departures {

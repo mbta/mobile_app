@@ -128,4 +128,31 @@ final class UpcomingTripViewTests: XCTestCase {
                 .accessibilityLabel().string(locale: Locale(identifier: "en"))
         )
     }
+
+    func testFirstCommuterRailAccessibilityLabel() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let text: any View = UpcomingTripAccessibilityFormatters().predictionTimeFirst(
+            date: date,
+            vehicleText: "trains"
+        )
+        let foundText: String = try text.inspect().text()
+            .string(locale: Locale(identifier: "en"))
+
+        XCTAssertEqual(
+            "trains arriving at 4:00 PM",
+            foundText
+        )
+    }
+
+    func testCommuterRailAccessibilityLabel() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let text: any View = UpcomingTripAccessibilityFormatters().predictionTimeOther(date: date)
+        let foundText: String = try text.inspect().text()
+            .string(locale: Locale(identifier: "en"))
+
+        XCTAssertEqual(
+            "and at 4:00 PM",
+            foundText
+        )
+    }
 }

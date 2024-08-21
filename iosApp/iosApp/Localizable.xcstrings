@@ -54,6 +54,17 @@
     "%@ Bus" : {
       "extractionState" : "manual"
     },
+    "%@ hr %@ min" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hr %2$@ min"
+          }
+        }
+      }
+    },
     "%@ to" : {
 
     },
@@ -87,6 +98,9 @@
       "comment" : "Possible alert cause"
     },
     "Alert Details" : {
+
+    },
+    "Alert is no longer in effect" : {
 
     },
     "All" : {
@@ -214,6 +228,28 @@
     },
     "Ice In Harbor" : {
       "comment" : "Possible alert cause"
+    },
+    "in %@ hr %@ min\n" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in %1$@ hr %2$@ min\n"
+          }
+        }
+      }
+    },
+    "in %@ min" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in %1$@ min"
+          }
+        }
+      }
     },
     "Live" : {
 

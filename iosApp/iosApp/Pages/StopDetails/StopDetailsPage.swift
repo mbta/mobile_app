@@ -158,6 +158,17 @@ struct StopDetailsPage: View {
             nil
         }
 
+        if filter == nil, let newFilter = Self.autoFilterFor(departures: newDepartures) {
+            filter = newFilter
+        }
+
         nearbyVM.setDepartures(newDepartures)
+    }
+
+    private static func autoFilterFor(departures: StopDetailsDepartures?) -> StopDetailsFilter? {
+        guard let routes = departures?.routes, routes.count == 1, let route = routes.first else { return nil }
+        let directionIds = Set(route.patterns.map { $0.directionId() }).sorted()
+        guard directionIds.count == 1, let directionId = directionIds.first else { return nil }
+        return .init(routeId: route.routeIdentifier, directionId: directionId)
     }
 }

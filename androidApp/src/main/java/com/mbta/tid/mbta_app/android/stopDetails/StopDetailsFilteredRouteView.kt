@@ -129,7 +129,7 @@ private data class RowData(
                         upcomingTrips = listOf(upcoming),
                         alertsHere = null
                     )
-                    .format(now, TripInstantDisplay.Context.StopDetailsFiltered)
+                    .format(now, route.type, TripInstantDisplay.Context.StopDetailsFiltered)
 
             if (formatted !is RealtimePatterns.Format.Some) return null
 
