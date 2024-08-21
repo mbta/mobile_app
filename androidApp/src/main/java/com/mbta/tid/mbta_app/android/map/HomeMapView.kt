@@ -146,16 +146,15 @@ fun HomeMapView(
     }
 
     fun positionViewportToStop() {
-        if (selectedStop != null) {
-            mapViewportState.easeTo(
-                cameraOptions =
-                    CameraOptions.Builder()
-                        .center(Point.fromLngLat(selectedStop!!.longitude, selectedStop!!.latitude))
-                        .zoom(MapDefaults.stopPageZoom)
-                        .build(),
-                animationOptions = MapAnimationDefaults.options
-            )
-        }
+        val stop = selectedStop ?: return
+        val stopFeature = stopSourceData?.features()?.find { it.id().equals(stop.id) }
+        val stopPoint =
+            stopFeature?.geometry() as? Point ?: Point.fromLngLat(stop.longitude, stop.latitude)
+        mapViewportState.easeTo(
+            cameraOptions =
+                CameraOptions.Builder().center(stopPoint).zoom(MapDefaults.stopPageZoom).build(),
+            animationOptions = MapAnimationDefaults.options
+        )
     }
 
     fun refreshRouteLineData() {
