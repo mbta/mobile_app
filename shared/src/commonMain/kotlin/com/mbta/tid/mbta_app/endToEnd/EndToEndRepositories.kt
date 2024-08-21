@@ -176,7 +176,8 @@ fun endToEndModule(): Module {
                 override suspend fun getGlobalData() =
                     GlobalResponse(
                         objects,
-                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id)))
+                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
+                    )
             }
         }
         single<ISearchResultRepository> {
