@@ -46,4 +46,23 @@ final class StopDetailsViewTests: XCTestCase {
         XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
         XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
     }
+
+    func testSkipsPillsIfOneRoute() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.shortName = "57"
+        }
+        let stop = objects.stop { _ in }
+
+        let sut = StopDetailsView(stop: stop,
+                                  filter: .constant(nil),
+                                  nearbyVM: .init(departures: .init(routes: [
+                                      .init(route: route, stop: stop, patterns: []),
+                                  ])),
+                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+
+        ViewHosting.host(view: sut)
+        XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
+        XCTAssertNil(try? sut.inspect().find(button: "All"))
+    }
 }

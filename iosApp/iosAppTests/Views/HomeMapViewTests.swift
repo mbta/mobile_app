@@ -886,4 +886,119 @@ final class HomeMapViewTests: XCTestCase {
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared, updateChildStopSourcesCalledExpectation], timeout: 5)
     }
+
+    func testJoinsVehiclesChannelOnActiveWhenTripDetails() {
+        var joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(navigationStack: [.tripDetails(tripId: "t",
+                                                           vehicleId: "v",
+                                                           target: nil,
+                                                           routeId: "r",
+                                                           directionId: 0)]),
+
+            viewportProvider: ViewportProvider(),
+            vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
+    }
+
+    func testJoinsVehiclesChannelOnActiveWhenFilteredStopDetails() {
+        var joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+
+        let stop = ObjectCollectionBuilder().stop { _ in }
+
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
+
+            viewportProvider: ViewportProvider(),
+            vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
+    }
+
+    func testDoesntJoinsVehiclesChannelOnActiveWhenUnfilteredtopDetails() {
+        var joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+
+        joinsVehiclesExp.isInverted = true
+
+        let stop = ObjectCollectionBuilder().stop { _ in }
+
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
+            viewportProvider: ViewportProvider(),
+            vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
+    }
+
+    func testLeavesVehiclesChannelOnbackground() {
+        var leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
+
+        let stop = ObjectCollectionBuilder().stop { _ in }
+
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
+
+            viewportProvider: ViewportProvider(),
+            vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { sut in
+            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.background)
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared, leavesVehiclesExp], timeout: 5)
+    }
+
+    class CallbackVehiclesRepo: IVehiclesRepository {
+        var connectExp: XCTestExpectation?
+        var disconnectExp: XCTestExpectation?
+
+        init(connectExp: XCTestExpectation? = nil, disconnectExp: XCTestExpectation? = nil) {
+            self.connectExp = connectExp
+            self.disconnectExp = disconnectExp
+        }
+
+        func connect(routeId _: String,
+                     directionId _: Int32,
+                     onReceive _: @escaping (Outcome<VehiclesStreamDataResponse, __SocketError>) -> Void) {
+            connectExp?.fulfill()
+        }
+
+        func disconnect() {
+            disconnectExp?.fulfill()
+        }
+    }
 }

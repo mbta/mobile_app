@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.34.0"
-agp = "8.5.1"
+agp = "8.5.2"
 datastorePreferencesCore = "1.1.1"
 kotlin = "2.0.10"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
@@ -20,7 +20,7 @@ okhttp = "4.12.0"
 sentry = "0.5.0"
 skie = "0.8.4"
 spatialk = "0.3.0"
-mokkery = "2.1.1"
+mokkery = "2.2.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }

@@ -37,7 +37,7 @@ struct StopDetailsFilteredRouteView: View {
             headsign = trip.headsign
             formatted = RealtimePatterns.ByHeadsign(
                 route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
-            ).format(now: now, context: .stopDetailsFiltered)
+            ).format(now: now, routeType: route.type, context: .stopDetailsFiltered)
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
@@ -127,6 +127,18 @@ struct StopDetailsFilteredRouteView: View {
                                 ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
                                     VStack(spacing: 0) {
                                         StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
+                                            .onTapGesture {
+                                                pushNavEntry(.alertDetails(
+                                                    alertId: alert.id,
+                                                    line: patternsByStop.line,
+                                                    routes: patternsByStop.routes
+                                                ))
+                                                analytics.tappedAlertDetails(
+                                                    routeId: patternsByStop.routeIdentifier,
+                                                    stopId: patternsByStop.stop.id,
+                                                    alertId: alert.id
+                                                )
+                                            }
                                         if index < alerts.count - 1 || !rows.isEmpty {
                                             Divider().background(Color.halo)
                                         }
@@ -146,7 +158,6 @@ struct StopDetailsFilteredRouteView: View {
                                             HeadsignRowView(
                                                 headsign: row.headsign,
                                                 predictions: row.formatted,
-                                                routeType: patternsByStop.representativeRoute.type,
                                                 pillDecoration: patternsByStop.line != nil ?
                                                     .onRow(route: row.route) : .none
                                             )

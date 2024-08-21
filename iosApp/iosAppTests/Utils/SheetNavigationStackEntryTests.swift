@@ -83,7 +83,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         XCTAssertEqual(stack, prevStack)
     }
 
-    func testNearbySheetItemIdentifable() throws {
+    func testNavStackEntryIdentifables() throws {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         let stopEntry: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: "A", directionId: 1))
         let tripEntry: SheetNavigationStackEntry = .tripDetails(
@@ -95,9 +95,41 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         )
 
         let nearbyEntry: SheetNavigationStackEntry = .nearby
+        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil)
 
-        XCTAssertEqual(stopEntry.sheetItemIdentifiable().id, stop.id)
-        XCTAssertEqual(tripEntry.sheetItemIdentifiable().id, "tripId")
-        XCTAssertEqual(nearbyEntry.sheetItemIdentifiable().id, "nearby")
+        XCTAssertEqual(stopEntry.sheetItemIdentifiable()!.id, stop.id)
+        XCTAssertEqual(tripEntry.sheetItemIdentifiable()!.id, "tripId")
+        XCTAssertEqual(nearbyEntry.sheetItemIdentifiable()!.id, "nearby")
+        XCTAssertNil(alertEntry.sheetItemIdentifiable())
+
+        XCTAssertNil(stopEntry.coverItemIdentifiable())
+        XCTAssertNil(tripEntry.coverItemIdentifiable())
+        XCTAssertNil(nearbyEntry.coverItemIdentifiable())
+        XCTAssertEqual(alertEntry.coverItemIdentifiable()!.id, "0")
+    }
+
+    func testNavStackLastStop() throws {
+        let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
+        let stopEntry: SheetNavigationStackEntry = .stopDetails(stop, .init(routeId: "A", directionId: 1))
+        let tripEntry: SheetNavigationStackEntry = .tripDetails(
+            tripId: "tripId",
+            vehicleId: "vehicleId",
+            target: nil,
+            routeId: "routeId",
+            directionId: 0
+        )
+        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil)
+
+        var stack: [SheetNavigationStackEntry] = []
+        XCTAssertNil(stack.lastStop)
+        stack.append(.nearby)
+        XCTAssertNil(stack.lastStop)
+        stack.append(stopEntry)
+        XCTAssertEqual(stop, stack.lastStop)
+        stack.append(alertEntry)
+        XCTAssertEqual(stop, stack.lastStop)
+        stack.remove(at: stack.count - 1)
+        stack.append(tripEntry)
+        XCTAssertEqual(stop, stack.lastStop)
     }
 }

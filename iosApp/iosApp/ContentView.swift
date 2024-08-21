@@ -79,6 +79,22 @@ struct ContentView: View {
     }
 
     @ViewBuilder
+    var locationAuthHeader: some View {
+        switch locationDataManager.authorizationStatus {
+        case .notDetermined:
+            Button("Allow Location", action: {
+                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+            })
+        case .authorizedAlways, .authorizedWhenInUse:
+            EmptyView()
+        case .denied, .restricted:
+            Text("Location access denied or restricted")
+        @unknown default:
+            Text("Location access state unknown")
+        }
+    }
+
+    @ViewBuilder
     var nearbyTab: some View {
         VStack {
             if contentVM.searchEnabled {
@@ -87,95 +103,12 @@ struct ContentView: View {
                     query: searchObserver.debouncedText
                 )
             }
-            switch locationDataManager.authorizationStatus {
-            case .notDetermined:
-                Button("Allow Location", action: {
-                    locationDataManager.locationFetcher.requestWhenInUseAuthorization()
-                })
-            case .authorizedAlways, .authorizedWhenInUse:
-                EmptyView()
-            case .denied, .restricted:
-                Text("Location access denied or restricted")
-            @unknown default:
-                Text("Location access state unknown")
-            }
-
-            mapSection
-                .sheet(
-                    item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
-                    onDismiss: {
-                        selectedDetent = .halfScreen
-
-                        if visibleNearbySheet == nearbyVM.navigationStack.last {
-                            // When the visible sheet matches the last nav entry, then a dismissal indicates
-                            // an intentional action remove the sheet and replace it with the previous one.
-
-                            // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                            // being dismissed so that it can be automatically replaced with the new one.
-                            nearbyVM.goBack()
-                        }
-                    }
-                ) { sheetIdentityEntry in
-                    let entry = sheetIdentityEntry.stackEntry
-                    GeometryReader { proxy in
-                        NavigationStack {
-                            switch entry {
-                            case let .stopDetails(stop, _):
-                                StopDetailsPage(
-                                    viewportProvider: viewportProvider,
-                                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                                    nearbyVM: nearbyVM
-                                ).onAppear {
-                                    let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
-                                    visibleNearbySheet = entry
-                                    screenTracker.track(
-                                        screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                                    )
-                                }
-
-                            case let .tripDetails(
-                                tripId: tripId,
-                                vehicleId: vehicleId,
-                                target: target,
-                                routeId: _,
-                                directionId: _
-                            ):
-                                TripDetailsPage(
-                                    tripId: tripId,
-                                    vehicleId: vehicleId,
-                                    target: target,
-                                    nearbyVM: nearbyVM,
-                                    mapVM: mapVM
-                                ).onAppear {
-                                    screenTracker.track(screen: .tripDetails)
-                                    visibleNearbySheet = entry
-                                }
-
-                            case .nearby:
-                                nearbySheetContents
-                                    .onAppear {
-                                        visibleNearbySheet = entry
-                                        screenTracker.track(screen: .nearbyTransit)
-                                    }
-                            }
-                        }
-                        .onAppear {
-                            recordSheetHeight(proxy.size.height)
-                        }
-                        .onChange(of: proxy.size.height) { newValue in
-                            recordSheetHeight(newValue)
-                        }
-                        // Adding id here prevents the next sheet from opening at the large detent.
-                        // https://stackoverflow.com/a/77429540
-                        .id(sheetIdentityEntry.id)
-                        .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                        .interactiveDismissDisabled(visibleNearbySheet == .nearby)
-                        .modifier(AllowsBackgroundInteraction())
-                    }
-                }
+            locationAuthHeader
+            mapWithSheets
         }
         .onAppear {
             socketProvider.socket.attach()
+            nearbyVM.joinAlertsChannel()
             Task {
                 await contentVM.loadSettings()
             }
@@ -186,7 +119,9 @@ struct ContentView: View {
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.attach()
+                nearbyVM.joinAlertsChannel()
             } else if newPhase == .background {
+                nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
             }
         }
@@ -211,6 +146,113 @@ struct ContentView: View {
             viewportProvider: viewportProvider,
             sheetHeight: $sheetHeight
         )
+    }
+
+    @ViewBuilder var mapWithSheets: some View {
+        mapSection
+            .fullScreenCover(
+                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().coverItemIdentifiable()),
+                onDismiss: {
+                    if case .alertDetails = nearbyVM.navigationStack.last {
+                        nearbyVM.goBack()
+                    }
+                },
+                content: coverContents
+            )
+            .sheet(
+                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
+                onDismiss: {
+                    selectedDetent = .halfScreen
+
+                    if visibleNearbySheet == nearbyVM.navigationStack.last {
+                        // When the visible sheet matches the last nav entry, then a dismissal indicates
+                        // an intentional action remove the sheet and replace it with the previous one.
+
+                        // When the visible sheet *doesn't* match the latest item in the nav stack, it is
+                        // being dismissed so that it can be automatically replaced with the new one.
+                        nearbyVM.goBack()
+                    }
+                },
+                content: sheetContents
+            )
+    }
+
+    private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {
+        let entry = coverIdentityEntry.stackEntry
+        return NavigationStack {
+            switch entry {
+            case let .alertDetails(alertId, line, routes):
+                AlertDetailsPage(alertId: alertId, line: line, routes: routes, nearbyVM: nearbyVM)
+            default:
+                EmptyView()
+            }
+        }
+    }
+
+    private func sheetContents(sheetIdentityEntry: NearbySheetItem) -> some View {
+        let entry = sheetIdentityEntry.stackEntry
+        return GeometryReader { proxy in
+            sheetSwitch(entry: entry)
+                .onAppear {
+                    recordSheetHeight(proxy.size.height)
+                }
+                .onChange(of: proxy.size.height) { newValue in
+                    recordSheetHeight(newValue)
+                }
+                // Adding id here prevents the next sheet from opening at the large detent.
+                // https://stackoverflow.com/a/77429540
+                .id(sheetIdentityEntry.id)
+                .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                .interactiveDismissDisabled(visibleNearbySheet == .nearby)
+                .modifier(AllowsBackgroundInteraction())
+        }
+    }
+
+    private func sheetSwitch(entry: SheetNavigationStackEntry) -> some View {
+        NavigationStack {
+            switch entry {
+            case .alertDetails:
+                EmptyView()
+
+            case let .stopDetails(stop, _):
+                StopDetailsPage(
+                    viewportProvider: viewportProvider,
+                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                    nearbyVM: nearbyVM
+                ).onAppear {
+                    let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
+                    visibleNearbySheet = entry
+                    screenTracker.track(
+                        screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                    )
+                }
+
+            case let .tripDetails(
+                tripId: tripId,
+                vehicleId: vehicleId,
+                target: target,
+                routeId: _,
+                directionId: _
+            ):
+                TripDetailsPage(
+                    tripId: tripId,
+                    vehicleId: vehicleId,
+                    target: target,
+                    nearbyVM: nearbyVM,
+                    mapVM: mapVM
+                ).onAppear {
+                    screenTracker.track(screen: .tripDetails)
+                    visibleNearbySheet = entry
+                }
+
+            case .nearby:
+                nearbySheetContents
+                    .onAppear {
+                        visibleNearbySheet = entry
+                        screenTracker.track(screen: .nearbyTransit)
+                    }
+            }
+        }
     }
 
     private func recordSheetHeight(_ newSheetHeight: CGFloat) {

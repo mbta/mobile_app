@@ -34,18 +34,21 @@ struct DestinationRowView: View {
                 headsign: patternsByHeadsign.headsign,
                 predictions: patternsByHeadsign.format(
                     now: now,
+                    routeType: patternsByHeadsign.route.type,
                     count: condenseHeadsignPredictions ? 1 : 2,
                     context: context
                 ),
-                routeType: patternsByHeadsign.route.type,
                 pillDecoration: patternsByHeadsign.line != nil ?
                     .onRow(route: patternsByHeadsign.route) : .none
             )
         case let .byDirection(patternsByDirection):
             DirectionRowView(
                 direction: patternsByDirection.direction,
-                predictions: patternsByDirection.format(now: now, context: context),
-                routeType: patternsByDirection.representativeRoute.type,
+                predictions: patternsByDirection.format(
+                    now: now,
+                    routeType: patternsByDirection.representativeRoute.type,
+                    context: context
+                ),
                 pillDecoration: .onPrediction(routesByTrip: patternsByDirection.routesByTrip)
             )
         }

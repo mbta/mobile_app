@@ -29,7 +29,6 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
         directionId: Int,
         onReceive: (Outcome<VehiclesStreamDataResponse?, SocketError>) -> Unit
     ) {
-        socket.attach()
         val joinPayload = VehiclesOnRouteChannel.joinPayload(routeId, directionId)
         channel = socket.getChannel(VehiclesOnRouteChannel.topic, joinPayload)
 

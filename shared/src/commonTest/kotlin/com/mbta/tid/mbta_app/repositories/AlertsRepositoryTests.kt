@@ -13,26 +13,12 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
-import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class AlertsRepositoryTests {
-
-    @Test
-    fun testSocketConnectCalledOnRun() {
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val channel = mock<PhoenixChannel>(MockMode.autofill)
-        val push = mock<PhoenixPush>(MockMode.autofill)
-        every { channel.attach() } returns push
-        every { push.receive(any(), any()) } returns push
-        every { socket.getChannel(any(), any()) } returns channel
-        val alertsRepo = AlertsRepository(socket)
-        alertsRepo.connect(onReceive = { /* no-op */})
-        verify { socket.attach() }
-    }
 
     @Test
     fun testChannelSetOnRun() {

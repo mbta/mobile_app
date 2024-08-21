@@ -135,24 +135,20 @@ private fun getAlertStateByRoute(
                 return@mapNotNull null
             }
 
-            // Check if the stop is disrupted but still has service running in one direction
-            if (
-                patternStates.isEmpty() &&
-                    serviceAlerts.any { alert ->
-                        isPartiallyDisrupted(stop, alert, mapRoute, global)
-                    }
-            ) {
-                return@mapNotNull mapRoute to StopAlertState.Issue
-            }
-
-            // Check if all the parent and child alert states are the same, if they are, return
-            // that state, otherwise return a more generic Issue state.
-            val representativeState = patternStates.getOrNull(0) ?: childStates.first()
+            val distinctStates = (patternStates + childStates).distinct()
             val finalState =
-                if ((patternStates + childStates).all { it == representativeState }) {
-                    representativeState
+                if (distinctStates.size == 1) {
+                    // If all the parent and child alert states are the same, return that state
+                    distinctStates.single()
+                } else if (
+                    distinctStates.size == 2 && distinctStates.contains(StopAlertState.Normal)
+                ) {
+                    // If there's one alert that's only present on some patterns/children, return
+                    // that alert
+                    distinctStates.filterNot { it == StopAlertState.Normal }.single()
                 } else {
-                    return@mapNotNull mapRoute to StopAlertState.Issue
+                    // If there are multiple kinds of alert, return a generic Issue
+                    StopAlertState.Issue
                 }
             return@mapNotNull mapRoute to finalState
         }
@@ -186,107 +182,4 @@ private fun statesForPattern(
         return StopAlertState.Issue
     }
     return StopAlertState.Suspension
-}
-
-// This function returns true if the alert applies to the stop for the given mapRoute in one
-// direction but not the other. Terminal stops will always return false, but if a stop is in the
-// middle of a route and at the boundary of the alert, it will return true.
-private fun isPartiallyDisrupted(
-    stop: Stop,
-    alert: Alert,
-    mapRoute: MapStopRoute,
-    global: GlobalResponse
-): Boolean {
-    if (stop.parentStationId != null) {
-        return false
-    }
-
-    // We only want to check for a specific MapStopRoute, so this gets all the informed entities
-    // on the provided alert which have a route matching that MapStopRoute.
-    val entitiesAtStopAndRoute =
-        alert.matchingEntities {
-            val entityRoute = global.routes[it.route] ?: return@matchingEntities false
-            it.appliesTo(stopId = stop.id) && MapStopRoute.matching(entityRoute) == mapRoute
-        }
-
-    if (entitiesAtStopAndRoute.isEmpty()) {
-        return false
-    }
-
-    // Then we need to associate each child stop with all their patterns on routes matching the
-    // provided MapStopRoute that are typical or canonical
-    val patternsByStop =
-        (stop.childStopIds + stop.id)
-            .map { stopId ->
-                stopId to
-                    (global.patternIdsByStop[stopId] ?: emptyList())
-                        .mapNotNull { patternId -> global.routePatterns[patternId] }
-                        .filter { pattern ->
-                            val route = global.routes[pattern.routeId] ?: return@filter false
-                            return@filter setOf(
-                                    RoutePattern.Typicality.Typical,
-                                    RoutePattern.Typicality.CanonicalOnly
-                                )
-                                .contains(pattern.typicality) &&
-                                mapRoute == MapStopRoute.matching(route)
-                        }
-            }
-            .filter { (_, patterns) -> patterns.isNotEmpty() }
-            .toMap()
-
-    // If this stop is the terminal at all patterns found above, we don't want to consider it as
-    // being on the alert boundary. If we don't return separately, it will fulfill the entity check.
-    if (isTerminalStop(patternsByStop, global)) {
-        return false
-    }
-
-    return isServingBothDirections(stop, alert, entitiesAtStopAndRoute, patternsByStop)
-}
-
-// If the alert has an entity at the parent stop, it should also have entities for any child stops
-// on the same route, and if those children have service in one direction but not the other, it
-// should be missing either the Board or Exit activity depending which direction its for.
-// There do seem to be some poorly understood edge cases where even if a child has service in one
-// direction, it will still have both Board and Exit activities (for example, alerts at Kenmore).
-private fun isServingBothDirections(
-    stop: Stop,
-    alert: Alert,
-    entitiesAtStopAndRoute: List<Alert.InformedEntity>,
-    patternsByStop: Map<String, List<RoutePattern>>
-): Boolean {
-    return entitiesAtStopAndRoute.any { entity ->
-        val childEntities =
-            stop.childStopIds.associateWith { childId ->
-                alert.informedEntity.find { it.appliesTo(routeId = entity.route, stopId = childId) }
-            }
-        return@any patternsByStop.keys.any { stopId ->
-            stopId == stop.id ||
-                childEntities[stopId]
-                    ?.activities
-                    ?.containsAll(
-                        setOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit
-                        )
-                    ) == false
-        }
-    }
-}
-
-// Check if a stop is a terminal if all the provided patterns, associated with their stop IDs,
-// have that stop ID as either the first or last item in the representative trip stop list
-private fun isTerminalStop(
-    patternsByStop: Map<String, List<RoutePattern>>,
-    global: GlobalResponse
-): Boolean {
-    return patternsByStop.all { (stopId, patterns) ->
-        patterns.all terminalCheck@{ pattern ->
-            val trip = global.trips[pattern.representativeTripId] ?: return@terminalCheck false
-            val stopIds = trip.stopIds ?: return@terminalCheck false
-            if (stopIds.isEmpty()) {
-                return@terminalCheck false
-            }
-            return@terminalCheck stopIds.first() == stopId || stopIds.last() == stopId
-        }
-    }
 }

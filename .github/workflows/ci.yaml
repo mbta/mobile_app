@@ -15,22 +15,9 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Read asdf versions
-        id: asdf
-        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
-      - name: Parse java version
-        id: java-spec
-        run: |
-          DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
-          VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
-          echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
-          echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: ./.github/actions/setup
         with:
-          distribution: ${{steps.java-spec.outputs.java-distribution}}
-          java-version: ${{steps.java-spec.outputs.java-version}}
-          cache: gradle
+          java: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -49,28 +36,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get install librsvg2-bin
-      - name: Read asdf versions
-        id: asdf
-        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
-      - name: Parse java version
-        id: java-spec
-        run: |
-          DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
-          VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
-          echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
-          echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: ./.github/actions/setup
         with:
-          distribution: ${{steps.java-spec.outputs.java-distribution}}
-          java-version: ${{steps.java-spec.outputs.java-version}}
-          cache: gradle
-      - uses: actions/cache@v4
-        with:
-          path: ~/.konan
-          key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
-          restore-keys: konan-${{ runner.os }}
+          java: true
+          kotlin-cache: true
+          rsvg: true
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check
@@ -89,11 +59,9 @@ jobs:
         with:
           name: android-android-reports
           path: androidApp/build/reports
-  deploy-android:
-    name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
+  build-android:
+    name: Build for Android
     if: github.actor != 'dependabot[bot]'
-    needs:
-      - test-android
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -101,39 +69,19 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get install librsvg2-bin
-      - name: Read asdf versions
-        id: asdf
-        run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
-      - name: Parse java version
-        id: java-spec
-        run: |
-          DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
-          VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
-          echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
-          echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/setup
+        with:
+          java: true
+          kotlin-cache: true
+          rsvg: true
+          ruby: true
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-      - name: Configure GCP Credentials
-        uses: google-github-actions/auth@v2
-        with:
-          create_credentials_file: true
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: ${{steps.java-spec.outputs.java-distribution}}
-          java-version: ${{steps.java-spec.outputs.java-version}}
-          cache: gradle
-      - uses: actions/cache@v4
-        with:
-          path: ~/.konan
-          key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
-          restore-keys: konan-${{ runner.os }}
       - name: Fetch AWS secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
@@ -143,13 +91,7 @@ jobs:
         run: |
           cd androidApp
           aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Patch Fastlane to pick up application default credentials
-        run: bin/patch-fastlane.sh
-      - name: Build and ${{ github.event_name == 'pull_request' && 'validate on' || 'upload to' }} Google Play
+      - name: Build Android app
         env:
           KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
           KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
@@ -157,5 +99,41 @@ jobs:
           KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
+        run: |
+          bundle exec fastlane android build validate_only:${{ github.event_name == 'pull_request' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: androidApp/build/outputs/apk/release/androidApp-release.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/release/androidApp-release.aab
+  deploy-android:
+    name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
+    if: github.actor != 'dependabot[bot]'
+    concurrency:
+      group: deploy-android
+      cancel-in-progress: false
+    needs:
+      - build-android
+      - test-android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/release
+      - uses: ./.github/actions/setup
+        with:
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          ruby: true
+      - name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
         run: |
           bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}

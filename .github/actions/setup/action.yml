@@ -1,0 +1,70 @@
+name: Set up build environment
+description: Installs Java and/or Ruby
+inputs:
+  java:
+    default: false
+    description: Install Java
+  kotlin-cache:
+    default: false
+    description: Cache the Kotlin compiler directory
+  rsvg:
+    default: false
+    description: Install rsvg-convert (needed for Android builds)
+  ruby:
+    default: false
+    description: Install Ruby
+  gcp-provider:
+    description: Google Cloud Platform Workload Identity Provider
+    required: false
+  gcp-service-account:
+    description: Google Cloud Platform service account
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Read asdf versions
+      if: inputs.java == 'true'
+      id: asdf
+      shell: bash
+      run: cat .tool-versions | sed 's/ /=/' | tee -a "$GITHUB_OUTPUT"
+    - name: Parse java version
+      if: inputs.java == 'true'
+      id: java-spec
+      shell: bash
+      run: |
+        DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
+        VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
+        echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
+        echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+    - name: Set up Java
+      if: inputs.java == 'true'
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{steps.java-spec.outputs.java-distribution}}
+        java-version: ${{steps.java-spec.outputs.java-version}}
+        cache: gradle
+    - uses: actions/cache@v4
+      if: inputs.kotlin-cache == 'true'
+      with:
+        path: ~/.konan
+        key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
+        restore-keys: konan-${{ runner.os }}
+    - run: sudo apt-get install librsvg2-bin
+      if: inputs.rsvg == 'true'
+      shell: bash
+    - name: Configure GCP Credentials
+      if: inputs.gcp-provider != '' && inputs.gcp-service-account != ''
+      uses: google-github-actions/auth@v2
+      with:
+        create_credentials_file: true
+        workload_identity_provider: ${{ inputs.gcp-provider }}
+        service_account: ${{ inputs.gcp-service-account }}
+    - name: Set up Ruby
+      if: inputs.ruby == 'true'
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+    - name: Patch Fastlane to pick up application default credentials
+      if: inputs.ruby == 'true'
+      run: bin/patch-fastlane.sh
+      shell: bash

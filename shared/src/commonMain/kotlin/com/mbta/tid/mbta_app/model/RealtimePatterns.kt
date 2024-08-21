@@ -162,9 +162,10 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         }
     }
 
-    fun format(now: Instant, context: TripInstantDisplay.Context): Format {
+    fun format(now: Instant, routeType: RouteType, context: TripInstantDisplay.Context): Format {
         return this.format(
             now,
+            routeType,
             when (this) {
                 is ByHeadsign -> 2
                 is ByDirection -> 3
@@ -173,14 +174,19 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         )
     }
 
-    fun format(now: Instant, count: Int, context: TripInstantDisplay.Context): Format {
+    fun format(
+        now: Instant,
+        routeType: RouteType,
+        count: Int,
+        context: TripInstantDisplay.Context
+    ): Format {
         val alert = alertsHere?.firstOrNull()
         if (alert != null) return Format.NoService(alert)
         if (this.upcomingTrips == null) return Format.Loading
         val allTrips = upcomingTrips ?: emptyList()
         val tripsToShow =
             allTrips
-                .map { Format.Some.FormatWithId(it, now, context) }
+                .map { Format.Some.FormatWithId(it, routeType, now, context) }
                 .filterNot {
                     it.format is TripInstantDisplay.Hidden ||
                         it.format is TripInstantDisplay.Skipped ||
@@ -215,6 +221,19 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         upcomingTrips?.any {
             val tripTime = it.time
             tripTime != null && tripTime < cutoffTime
+        }
+            ?: false
+
+    /**
+     * Checks if a trip exists.
+     *
+     * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
+     * should be hidden until data is available.
+     */
+    fun isUpcoming() =
+        upcomingTrips?.any {
+            val tripTime = it.time
+            tripTime != null
         }
             ?: false
 
@@ -258,12 +277,17 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         data object None : Format()
 
         data class Some(val trips: List<FormatWithId>) : Format() {
-            data class FormatWithId(val id: String, val format: TripInstantDisplay) {
+            data class FormatWithId(
+                val id: String,
+                val routeType: RouteType,
+                val format: TripInstantDisplay
+            ) {
                 constructor(
                     trip: UpcomingTrip,
+                    routeType: RouteType,
                     now: Instant,
                     context: TripInstantDisplay.Context
-                ) : this(trip.trip.id, trip.format(now, context))
+                ) : this(trip.trip.id, routeType, trip.format(now, routeType, context))
             }
         }
 

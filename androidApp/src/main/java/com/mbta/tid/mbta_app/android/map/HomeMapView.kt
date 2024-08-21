@@ -39,12 +39,10 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
-import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.android.SheetRoutes
-import com.mbta.tid.mbta_app.android.fetcher.GlobalData
-import com.mbta.tid.mbta_app.android.fetcher.getRailRouteShapes
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.followPuck
+import com.mbta.tid.mbta_app.android.util.getRailRouteShapes
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -57,6 +55,7 @@ import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
@@ -65,8 +64,7 @@ import kotlin.time.Duration.Companion.seconds
 fun HomeMapView(
     modifier: Modifier = Modifier,
     mapViewportState: MapViewportState,
-    backend: Backend,
-    globalData: GlobalData,
+    globalResponse: GlobalResponse?,
     alertsData: AlertsStreamDataResponse?,
     lastNearbyTransitLocation: Position?,
     navController: NavHostController,
@@ -78,18 +76,18 @@ fun HomeMapView(
     val locationPermissionState =
         rememberPermissionState(permission = android.Manifest.permission.ACCESS_FINE_LOCATION)
 
-    val railRouteShapes = getRailRouteShapes(backend)
+    val railRouteShapes = getRailRouteShapes()
     var railRouteLineData: List<RouteLineData>? by rememberSaveable { mutableStateOf(null) }
     var stopSourceData: FeatureCollection? by rememberSaveable { mutableStateOf(null) }
     var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val now = timer(updateInterval = 10.seconds)
     val globalMapData =
-        remember(globalData, alertsData, now) {
-            if (globalData.response != null) {
+        remember(globalResponse, alertsData, now) {
+            if (globalResponse != null) {
                 GlobalMapData(
-                    globalData.response,
-                    GlobalMapData.getAlertsByStop(globalData.response, alertsData, now)
+                    globalResponse,
+                    GlobalMapData.getAlertsByStop(globalResponse, alertsData, now)
                 )
             } else {
                 null
@@ -125,12 +123,12 @@ fun HomeMapView(
     }
 
     fun refreshRouteLineData() {
-        if (railRouteShapes == null || globalData.response == null) return
+        if (railRouteShapes == null || globalResponse == null) return
         railRouteLineData =
             RouteFeaturesBuilder.generateRouteLines(
                 railRouteShapes.routesWithSegmentedShapes,
-                globalData.routes,
-                globalData.stops,
+                globalResponse.routes,
+                globalResponse.stops,
                 globalMapData?.alertsByStop
             )
     }
@@ -191,10 +189,12 @@ fun HomeMapView(
                     selectedStop = null
                     return@LaunchedEffect
                 }
-                selectedStop = globalData.stops[stopId]
+                selectedStop = globalResponse?.stops?.get(stopId)
             }
 
-            LaunchedEffect(railRouteShapes, globalData, globalMapData) { refreshRouteLineData() }
+            LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
+                refreshRouteLineData()
+            }
             LaunchedEffect(railRouteLineData) {
                 refreshRouteLineSource()
                 refreshStopFeatures()

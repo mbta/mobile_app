@@ -75,15 +75,42 @@ final class StopDetailsPageTests: XCTestCase {
 
     func testClearsFilter() throws {
         let objects = ObjectCollectionBuilder()
-        let route = objects.route()
+        let route1 = objects.route()
+        let route2 = objects.route()
         let stop = objects.stop { _ in }
-        let routePattern = objects.routePattern(route: route) { _ in }
+        let routePattern1 = objects.routePattern(route: route1) { _ in }
+        let routePattern2 = objects.routePattern(route: route2) { _ in }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
-            routeId: route.id,
-            directionId: routePattern.directionId
+            routeId: route1.id,
+            directionId: routePattern1.directionId
         ))
+
+        let route1Departures = PatternsByStop(
+            route: route1,
+            stop: stop,
+            patterns: [.ByHeadsign(
+                route: route1,
+                headsign: "",
+                line: nil,
+                patterns: [routePattern1],
+                upcomingTrips: nil,
+                alertsHere: nil
+            )]
+        )
+        let route2Departures = PatternsByStop(
+            route: route2,
+            stop: stop,
+            patterns: [.ByHeadsign(
+                route: route2,
+                headsign: "",
+                line: nil,
+                patterns: [routePattern2],
+                upcomingTrips: nil,
+                alertsHere: nil
+            )]
+        )
 
         let sut = StopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
@@ -91,7 +118,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
-            nearbyVM: .init()
+            nearbyVM: .init(departures: .init(routes: [route1Departures, route2Departures]))
         )
 
         try sut.inspect().find(button: "All").tap()
@@ -244,5 +271,42 @@ final class StopDetailsPageTests: XCTestCase {
         try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
+    }
+
+    func testAppliesFilterAutomatically() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+        let routePattern = objects.routePattern(route: route) {
+            $0.typicality = .typical
+            $0.representativeTrip { _ in }
+        }
+
+        let schedulesLoadedPublisher = PassthroughSubject<Bool, Never>()
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: nil)
+
+        let sut = StopDetailsPage(
+            globalRepository: MockGlobalRepository(response: .init(
+                objects: objects,
+                patternIdsByStop: [stop.id: [routePattern.id]]
+            )),
+            schedulesRepository: MockScheduleRepository(
+                scheduleResponse: .init(objects: objects),
+                callback: { _ in schedulesLoadedPublisher.send(true) }
+            ),
+            predictionsRepository: MockPredictionsRepository(),
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter,
+            nearbyVM: .init()
+        )
+
+        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { _ in
+            XCTAssertEqual(filter.wrappedValue, .init(routeId: route.id, directionId: routePattern.directionId))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 2)
     }
 }

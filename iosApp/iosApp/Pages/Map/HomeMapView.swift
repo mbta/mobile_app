@@ -29,7 +29,7 @@ struct HomeMapView: View {
     @State var globalMapData: GlobalMapData?
     @State var stopMapData: StopMapResponse?
 
-    var vehiclesRepository: IVehiclesRepository
+    @State var vehiclesRepository: IVehiclesRepository
     @State var vehiclesData: [Vehicle]?
 
     @State var upcomingRoutePatterns: Set<String> = .init()
@@ -137,9 +137,16 @@ struct HomeMapView: View {
                 updateGlobalMapDataSources()
             }
             .onDisappear {
-                vehiclesRepository.disconnect()
+                leaveVehiclesChannel()
                 viewportProvider.saveCurrentViewport()
             }
+            .withScenePhaseHandlers(onActive: {
+                                        if let lastNavEntry {
+                                            joinVehiclesChannel(navStackEntry: lastNavEntry)
+                                        }
+                                    },
+                                    onInactive: leaveVehiclesChannel,
+                                    onBackground: leaveVehiclesChannel)
             .onReceive(timer) { input in
                 now = input
                 handleGlobalMapDataChange(now: now)
