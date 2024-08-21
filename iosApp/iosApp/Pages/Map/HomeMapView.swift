@@ -57,6 +57,7 @@ struct HomeMapView: View {
         viewportProvider: ViewportProvider,
         railRouteShapeRepository: IRailRouteShapeRepository = RepositoryDI().railRouteShapes,
         stopRepository: IStopRepository = RepositoryDI().stop,
+        vehiclesData: [Vehicle]? = nil,
         vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
         locationDataManager: LocationDataManager = .init(distanceFilter: 1),
         sheetHeight: Binding<CGFloat>,
@@ -68,6 +69,7 @@ struct HomeMapView: View {
         self.viewportProvider = viewportProvider
         self.railRouteShapeRepository = railRouteShapeRepository
         self.stopRepository = stopRepository
+        self.vehiclesData = vehiclesData
         self.vehiclesRepository = vehiclesRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
