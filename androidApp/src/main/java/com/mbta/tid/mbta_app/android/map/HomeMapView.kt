@@ -6,8 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,6 +22,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
@@ -45,12 +50,13 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
+import com.mbta.tid.mbta_app.map.RouteLineData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
@@ -73,6 +79,9 @@ fun HomeMapView(
         rememberPermissionState(permission = android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     val railRouteShapes = getRailRouteShapes(backend)
+    var railRouteLineData: List<RouteLineData>? by rememberSaveable { mutableStateOf(null) }
+    var stopSourceData: FeatureCollection? by rememberSaveable { mutableStateOf(null) }
+    var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val now = timer(updateInterval = 10.seconds)
     val globalMapData =
@@ -115,43 +124,38 @@ fun HomeMapView(
         return false
     }
 
-    fun refreshSources(railRouteShapes: MapFriendlyRouteResponse?, globalData: GlobalData) {
+    fun refreshRouteLineData() {
         if (railRouteShapes == null || globalData.response == null) return
-
-        val routeSourceData = railRouteShapes.routesWithSegmentedShapes
-        val snappedStopRouteLines =
+        railRouteLineData =
             RouteFeaturesBuilder.generateRouteLines(
-                routeSourceData,
+                railRouteShapes.routesWithSegmentedShapes,
                 globalData.routes,
                 globalData.stops,
                 globalMapData?.alertsByStop
             )
-        val selectedStopId = currentNavEntry?.arguments?.getString("stopId")
+    }
 
+    fun refreshRouteLineSource() {
+        val routeData = railRouteLineData ?: return
         layerManager.run {
-            updateStopSourceData(
-                StopFeaturesBuilder.buildCollection(
-                        StopSourceData(selectedStopId = selectedStopId),
-                        globalMapData?.mapStops.orEmpty(),
-                        snappedStopRouteLines
-                    )
-                    .toMapbox()
-            )
+            updateRouteSourceData(RouteFeaturesBuilder.buildCollection(routeData).toMapbox())
         }
+    }
 
-        layerManager.run {
-            updateRouteSourceData(
-                RouteFeaturesBuilder.buildCollection(
-                        RouteFeaturesBuilder.generateRouteLines(
-                            routeSourceData,
-                            globalData.routes,
-                            globalData.stops,
-                            globalMapData?.alertsByStop
-                        )
-                    )
-                    .toMapbox()
-            )
-        }
+    fun refreshStopFeatures() {
+        val routeLineData = railRouteLineData ?: return
+        stopSourceData =
+            StopFeaturesBuilder.buildCollection(
+                    StopSourceData(selectedStopId = selectedStop?.id),
+                    globalMapData?.mapStops.orEmpty(),
+                    routeLineData
+                )
+                .toMapbox()
+    }
+
+    fun refreshStopSource() {
+        val sourceData = stopSourceData ?: return
+        layerManager.run { updateStopSourceData(sourceData) }
     }
 
     Box(modifier) {
@@ -181,11 +185,34 @@ fun HomeMapView(
             mapViewportState = mapViewportState,
             style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
         ) {
-            MapEffect(key1 = null) { map ->
+            LaunchedEffect(currentNavEntry) {
+                val stopId = currentNavEntry?.arguments?.getString("stopId")
+                if (stopId == null) {
+                    selectedStop = null
+                    return@LaunchedEffect
+                }
+                selectedStop = globalData.stops[stopId]
+            }
+
+            LaunchedEffect(railRouteShapes, globalData, globalMapData) { refreshRouteLineData() }
+            LaunchedEffect(railRouteLineData) {
+                refreshRouteLineSource()
+                refreshStopFeatures()
+            }
+            LaunchedEffect(selectedStop) { refreshStopFeatures() }
+            LaunchedEffect(stopSourceData) { refreshStopSource() }
+
+            val context = LocalContext.current
+
+            MapEffect(true) { map ->
                 mapViewportState.followPuck()
                 map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
             }
-            MapEffect(key1 = currentNavEntry) { refreshSources(railRouteShapes, globalData) }
+
+            MapEffect { map ->
+                if (layerManager.`object` == null)
+                    layerManager.`object` = MapLayerManager(map.mapboxMap, context)
+            }
 
             if (!mapViewportState.isFollowingPuck && lastNearbyTransitLocation != null) {
                 CircleAnnotation(
@@ -193,17 +220,6 @@ fun HomeMapView(
                     circleColorString = "#ba75c7",
                     circleRadius = 10.0
                 )
-            }
-
-            val context = LocalContext.current
-
-            MapEffect { map ->
-                if (layerManager.`object` == null)
-                    layerManager.`object` = MapLayerManager(map.mapboxMap, context)
-            }
-
-            MapEffect(railRouteShapes, globalData, globalMapData) {
-                refreshSources(railRouteShapes, globalData)
             }
         }
 
