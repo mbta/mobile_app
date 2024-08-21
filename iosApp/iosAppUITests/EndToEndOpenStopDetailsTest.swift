@@ -13,6 +13,7 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
 
     override func setUpWithError() throws {
         app.launchArguments = ["--e2e-mocks"]
+        app.resetAuthorizationStatus(for: .location)
         XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 42.356395, longitude: -71.062424))
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
@@ -29,6 +30,8 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
     func testOpenStopDetails() throws {
         // UI tests must launch the application that they test.
         app.launch()
+
+        acceptLocationPermissionAlert(timeout: 10)
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         app.staticTexts["Alewife"].tap()
