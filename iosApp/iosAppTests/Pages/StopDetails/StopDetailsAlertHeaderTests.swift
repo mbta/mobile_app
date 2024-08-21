@@ -23,7 +23,12 @@ final class StopDetailsAlertHeaderTests: XCTestCase {
         let sut = try StopDetailsAlertHeader(alert: alert, routeColor: Color.pink).inspect()
 
         XCTAssertNotNil(try sut.find(text: "No service"))
-        XCTAssertEqual(try sut.find(ViewType.Image.self).actualImage().name(), "alert-borderless-suspension")
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "alert-borderless-suspension"
+        }))
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
     }
 
     func testShuttleAlertHeader() throws {
@@ -37,7 +42,12 @@ final class StopDetailsAlertHeaderTests: XCTestCase {
         let sut = try StopDetailsAlertHeader(alert: alert, routeColor: Color(hex: "ffffff")).inspect()
 
         XCTAssertNotNil(try sut.find(text: "Shuttle"))
-        XCTAssertEqual(try sut.find(ViewType.Image.self).actualImage().name(), "alert-borderless-shuttle")
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "alert-borderless-shuttle"
+        }))
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
     }
 
     func testOtherAlertHeader() throws {
@@ -49,6 +59,11 @@ final class StopDetailsAlertHeaderTests: XCTestCase {
         let sut = try StopDetailsAlertHeader(alert: alert, routeColor: nil).inspect()
 
         XCTAssertNotNil(try sut.find(text: ""))
-        XCTAssertEqual(try sut.find(ViewType.Image.self).actualImage().name(), "alert-borderless-issue")
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "alert-borderless-issue"
+        }))
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in try
+                image.actualImage().name() == "fa-circle-info"
+        }))
     }
 }

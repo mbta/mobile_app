@@ -79,8 +79,8 @@ data class UpcomingTrip(
         } else !hasDeparture
     }
 
-    fun format(now: Instant, context: TripInstantDisplay.Context) =
-        TripInstantDisplay.from(prediction, schedule, vehicle, now, context = context)
+    fun format(now: Instant, routeType: RouteType?, context: TripInstantDisplay.Context) =
+        TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
 
     companion object {
         fun <Key> tripsMappedBy(

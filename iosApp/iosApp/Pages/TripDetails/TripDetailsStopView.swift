@@ -35,7 +35,7 @@ struct TripDetailsStopView: View {
         if let alert = stop.alert {
             .noService(alert.effect)
         } else {
-            .some(stop.format(now: now))
+            .some(stop.format(now: now, routeType: nil))
         }
     }
 

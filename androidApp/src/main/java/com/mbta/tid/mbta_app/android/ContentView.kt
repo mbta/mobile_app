@@ -24,13 +24,11 @@ import androidx.navigation.compose.rememberNavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
-import com.mbta.tid.mbta_app.AppVariant
-import com.mbta.tid.mbta_app.Backend
 import com.mbta.tid.mbta_app.android.component.BottomNavIconButton
-import com.mbta.tid.mbta_app.android.fetcher.fetchGlobalData
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
+import com.mbta.tid.mbta_app.android.util.getGlobalData
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
@@ -45,18 +43,16 @@ import org.koin.compose.koinInject
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun ContentView(
-    appVariant: AppVariant,
     alertsRepository: IAlertsRepository = koinInject(),
     socket: PhoenixSocket = koinInject(),
 ) {
     val navController = rememberNavController()
-    val backend = remember { Backend(appVariant) }
     var alertData: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
     DisposableEffect(null) {
         alertsRepository.connect { alertData = it.data }
         onDispose { alertsRepository.disconnect() }
     }
-    val globalData = fetchGlobalData(backend = backend)
+    val globalResponse = getGlobalData()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
             center(Point.fromLngLat(-71.062424, 42.356395))
@@ -90,13 +86,12 @@ fun ContentView(
             NearbyTransitPage(
                 NearbyTransit(
                     alertData = alertData,
-                    globalData = globalData,
+                    globalResponse = globalResponse,
                     targetLocation = mapCenter,
                     mapCenter = mapCenter,
                     lastNearbyTransitLocation = lastNearbyTransitLocation,
                     scaffoldState = scaffoldState,
-                    mapViewportState = mapViewportState,
-                    backend = backend
+                    mapViewportState = mapViewportState
                 ),
                 bottomBar = {
                     BottomAppBar(

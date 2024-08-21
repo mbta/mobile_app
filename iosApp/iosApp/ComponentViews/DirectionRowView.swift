@@ -12,23 +12,20 @@ import SwiftUI
 struct DirectionRowView: View {
     var direction: Direction
     let predictions: RealtimePatterns.Format
-    let routeType: RouteType
     let pillDecoration: PredictionRowView.PillDecoration
 
     init(
         direction: Direction,
         predictions: RealtimePatterns.Format,
-        routeType: RouteType,
         pillDecoration: PredictionRowView.PillDecoration = .none
     ) {
         self.direction = direction
         self.predictions = predictions
-        self.routeType = routeType
         self.pillDecoration = pillDecoration
     }
 
     var body: some View {
-        PredictionRowView(predictions: predictions, routeType: routeType, pillDecoration: pillDecoration) {
+        PredictionRowView(predictions: predictions, pillDecoration: pillDecoration) {
             DirectionLabel(direction: direction)
                 .foregroundStyle(Color.text)
         }
@@ -56,27 +53,25 @@ struct DirectionRowView_Previews: PreviewProvider {
                                  predictions: RealtimePatterns.FormatSome(trips: [
                                      .init(
                                          trip: .init(trip: trip1, prediction: prediction1),
+                                         routeType: RouteType.heavyRail,
                                          now: now.toKotlinInstant(), context: .nearbyTransit
                                      ),
                                      .init(
                                          trip: .init(trip: trip2, prediction: prediction2),
+                                         routeType: RouteType.heavyRail,
                                          now: now.toKotlinInstant(), context: .nearbyTransit
                                      ),
-                                 ]),
-                                 routeType: .heavyRail)
+                                 ]))
                 DirectionRowView(direction: Direction(name: "North", destination: "None", id: 0),
-                                 predictions: RealtimePatterns.FormatNone.shared,
-                                 routeType: .heavyRail)
+                                 predictions: RealtimePatterns.FormatNone.shared)
                 DirectionRowView(direction: Direction(name: "South", destination: "Loading", id: 1),
-                                 predictions: RealtimePatterns.FormatLoading.shared,
-                                 routeType: .heavyRail)
+                                 predictions: RealtimePatterns.FormatLoading.shared)
                 DirectionRowView(direction: Direction(name: "East", destination: "No Service", id: 1),
                                  predictions: RealtimePatterns.FormatNoService(
                                      alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                                          alert.effect = .suspension
                                      }
-                                 ),
-                                 routeType: .heavyRail)
+                                 ))
             }
         }.font(Typography.body)
     }

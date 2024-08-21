@@ -21,12 +21,15 @@ class UpcomingTripTest {
         private fun ParametricTest.anyContext() =
             anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
 
+        private fun ParametricTest.anyNonCommuterRail() =
+            anyEnumValueExcept(RouteType.COMMUTER_RAIL)
+
         @Test
         fun `status is non-null`() = parametricTest {
             assertEquals(
                 TripInstantDisplay.Overridden("Custom Text"),
                 UpcomingTrip(trip {}, prediction { status = "Custom Text" })
-                    .format(Clock.System.now(), anyContext())
+                    .format(Clock.System.now(), anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -42,7 +45,7 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         },
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -56,7 +59,7 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         }
                     )
-                    .format(Clock.System.now(), anyContext())
+                    .format(Clock.System.now(), anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -65,12 +68,12 @@ class UpcomingTripTest {
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, prediction { departureTime = null })
-                    .format(Clock.System.now(), anyContext())
+                    .format(Clock.System.now(), anyNonCommuterRail(), anyContext())
             )
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, schedule { departureTime = null })
-                    .format(Clock.System.now(), anyContext())
+                    .format(Clock.System.now(), anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -80,7 +83,7 @@ class UpcomingTripTest {
             assertEquals(
                 TripInstantDisplay.Schedule(now + 15.minutes),
                 UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes })
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -96,7 +99,7 @@ class UpcomingTripTest {
                             departureTime = now.minus(2.seconds)
                         }
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -112,7 +115,7 @@ class UpcomingTripTest {
                             departureTime = now.plus(10.seconds)
                         }
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -136,7 +139,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -161,7 +164,7 @@ class UpcomingTripTest {
                             },
                             vehicle
                         )
-                        .format(now, anyContext())
+                        .format(now, anyNonCommuterRail(), anyContext())
                 )
             }
 
@@ -186,7 +189,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
             // wrong stop ID
             vehicle = vehicle {
@@ -206,7 +209,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
             // wrong trip ID
             vehicle = vehicle {
@@ -226,7 +229,7 @@ class UpcomingTripTest {
                         },
                         vehicle
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -242,12 +245,12 @@ class UpcomingTripTest {
                             departureTime = now.plus(20.seconds)
                         }
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
             assertEquals(
                 TripInstantDisplay.Arriving,
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
@@ -263,72 +266,76 @@ class UpcomingTripTest {
                             departureTime = now.plus(50.seconds)
                         }
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
             assertEquals(
                 TripInstantDisplay.Approaching,
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
         @Test
         fun `minutes in the distant future`() = parametricTest {
             val now = Clock.System.now()
-            val future = now.plus(DISTANT_FUTURE_CUTOFF).plus(1.minutes)
-            val moreFuture = future.plus(38.minutes)
+            val futureMinutes = 61
+            val moreFutureMinutes = futureMinutes + 38
 
             assertEquals(
-                TripInstantDisplay.AsTime(future),
+                TripInstantDisplay.Minutes(futureMinutes),
                 UpcomingTrip(
                         trip {},
                         prediction {
-                            arrivalTime = future
-                            departureTime = future.plus(1.minutes)
+                            arrivalTime = now.plus(futureMinutes.minutes)
+                            departureTime = now.plus(futureMinutes.minutes).plus(1.minutes)
                         }
                     )
-                    .format(now, anyContext())
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
             assertEquals(
-                TripInstantDisplay.AsTime(moreFuture),
-                UpcomingTrip(trip {}, prediction { departureTime = moreFuture })
-                    .format(now, anyContext())
+                TripInstantDisplay.Minutes(moreFutureMinutes),
+                UpcomingTrip(
+                        trip {},
+                        prediction { departureTime = now.plus(moreFutureMinutes.minutes) }
+                    )
+                    .format(now, anyNonCommuterRail(), anyContext())
             )
         }
 
         @Test
         fun `minutes less than 20`() = parametricTest {
             val now = Clock.System.now()
+            val routeType = anyNonCommuterRail()
             val context = anyContext()
             assertEquals(
                 TripInstantDisplay.Minutes(1),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
-                    .format(now, context)
+                    .format(now, routeType, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
-                    .format(now, context)
+                    .format(now, routeType, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(2),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
-                    .format(now, context)
+                    .format(now, routeType, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
-                    .format(now, context)
+                    .format(now, routeType, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(3),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
-                    .format(now, context)
+                    .format(now, routeType, context)
             )
             assertEquals(
                 TripInstantDisplay.Minutes(45),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
-                    .format(now, context)
+                    .format(now, routeType, context)
             )
         }
     }
