@@ -39,7 +39,7 @@ struct AnnotatedMap: View {
     var body: some View {
         map
             .gestureOptions(.init(rotateEnabled: false, pitchEnabled: false))
-            .mapStyle(colorScheme == .light ? .light : .dark)
+            .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
             .debugOptions(mapDebug ? .camera : [])
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
