@@ -65,8 +65,10 @@ fun drawableByName(name: String): Int =
         "fa-chevron-left" -> R.drawable.fa_chevron_left
         "fa-chevron-right" -> R.drawable.fa_chevron_right
         "fa-chevron-up" -> R.drawable.fa_chevron_up
+        "fa-circle-info" -> R.drawable.fa_circle_info
         "fa-clock" -> R.drawable.fa_clock
         "fa-location-arrow-solid" -> R.drawable.fa_location_arrow_solid
+        "fa-route" -> R.drawable.fa_route
         "fa-xmark" -> R.drawable.fa_xmark
         "live-data" -> R.drawable.live_data
         "location-dot" -> R.drawable.location_dot
