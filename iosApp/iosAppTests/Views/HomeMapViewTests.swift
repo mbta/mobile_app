@@ -982,6 +982,35 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared, leavesVehiclesExp], timeout: 5)
     }
 
+    func testClearsVehiclesOnNavClear() {
+        var leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
+
+        let stop = ObjectCollectionBuilder().stop { _ in }
+        let vehicle = ObjectCollectionBuilder().vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
+        }
+
+        var sut = HomeMapView(
+            mapVM: .init(),
+            nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
+
+            viewportProvider: ViewportProvider(),
+            vehiclesData: [vehicle],
+            vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
+
+            locationDataManager: .init(),
+            sheetHeight: .constant(0)
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { view in
+            try view.find(ProxyModifiedMap.self).callOnChange(newValue: nil as SheetNavigationStackEntry?)
+            XCTAssertEqual(try view.actualView().vehiclesData, [vehicle])
+        }
+
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared], timeout: 5)
+    }
+
     class CallbackVehiclesRepo: IVehiclesRepository {
         var connectExp: XCTestExpectation?
         var disconnectExp: XCTestExpectation?
