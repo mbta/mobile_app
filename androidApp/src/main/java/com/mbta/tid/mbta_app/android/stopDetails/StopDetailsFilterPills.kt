@@ -3,7 +3,9 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -20,6 +22,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -54,13 +57,22 @@ fun StopDetailsFilterPills(
 ) {
     var filter by filterState
 
-    Row {
+    Box(Modifier.fillMaxWidth().padding(end = 16.dp)) {
         val scrollState = rememberScrollState()
 
-        Row(Modifier.horizontalScroll(scrollState).padding(horizontal = 15.dp)) {
+        Row(
+            Modifier.horizontalScroll(scrollState)
+                .padding(horizontal = 15.dp)
+                .align(Alignment.CenterStart)
+        ) {
             for (filterBy in servedRoutes) {
                 val isActive = filter == null || filter?.routeId == filterBy.id
                 val requester = remember { BringIntoViewRequester() }
+                val pillModifier =
+                    Modifier.padding(end = 8.dp)
+                        .minimumInteractiveComponentSize()
+                        .bringIntoViewRequester(requester)
+                        .toggleable(isActive) { onTapRoutePill(filterBy) }
                 when (filterBy) {
                     is PillFilter.ByRoute -> {
                         RoutePill(
@@ -68,10 +80,7 @@ fun StopDetailsFilterPills(
                             line = filterBy.line,
                             type = RoutePillType.Flex,
                             isActive = isActive,
-                            modifier =
-                                Modifier.minimumInteractiveComponentSize()
-                                    .bringIntoViewRequester(requester)
-                                    .toggleable(isActive) { onTapRoutePill(filterBy) }
+                            modifier = pillModifier
                         )
                     }
                     is PillFilter.ByLine -> {
@@ -80,10 +89,7 @@ fun StopDetailsFilterPills(
                             line = filterBy.line,
                             type = RoutePillType.Flex,
                             isActive = isActive,
-                            modifier =
-                                Modifier.minimumInteractiveComponentSize()
-                                    .bringIntoViewRequester(requester)
-                                    .toggleable(isActive) { onTapRoutePill(filterBy) }
+                            modifier = pillModifier
                         )
                     }
                 }
@@ -98,8 +104,8 @@ fun StopDetailsFilterPills(
 
         if (filter != null) {
             Button(
+                modifier = Modifier.align(Alignment.CenterEnd),
                 onClick = { filter = null },
-                modifier = Modifier.padding(end = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors =
                     ButtonDefaults.buttonColors(
@@ -110,7 +116,7 @@ fun StopDetailsFilterPills(
             ) {
                 Text(
                     stringResource(R.string.filterShowAll),
-                    Modifier.padding(horizontal = 16.dp, vertical = 7.dp)
+                    Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                 )
             }
         }
