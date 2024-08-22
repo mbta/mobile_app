@@ -2,7 +2,13 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -40,8 +46,12 @@ fun DirectionPicker(patternsByStop: PatternsByStop, filterState: MutableState<St
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor = colorResource(deselectedBackgroundColor(route))
         Row(
-            Modifier.padding(2.dp).background(deselectedBackgroundColor, RoundedCornerShape(6.dp)),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.background(deselectedBackgroundColor, RoundedCornerShape(6.dp))
+                .border(2.dp, deselectedBackgroundColor, RoundedCornerShape(6.dp))
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             for (direction in availableDirections) {
                 val isSelected = filter?.directionId == direction
@@ -51,6 +61,7 @@ fun DirectionPicker(patternsByStop: PatternsByStop, filterState: MutableState<St
                 }
 
                 Button(
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                     onClick = action,
                     shape = RoundedCornerShape(6.dp),
                     colors =

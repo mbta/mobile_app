@@ -2,8 +2,10 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -28,6 +30,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsView(
+    modifier: Modifier = Modifier,
     stop: Stop,
     filterState: MutableState<StopDetailsFilter?>,
     departures: StopDetailsDepartures?,
@@ -77,13 +80,18 @@ fun StopDetailsView(
         }
     }
 
-    Column {
-        Column(Modifier.padding(bottom = 8.dp).border(2.dp, colorResource(R.color.halo))) {
+    Column(modifier) {
+        Column {
             SheetHeader(onClose = onClose, title = stop.name)
             StopDetailsFilterPills(
                 servedRoutes = servedRoutes,
                 filterState = filterState,
                 onTapRoutePill = onTapRoutePill
+            )
+            HorizontalDivider(
+                Modifier.fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .border(2.dp, colorResource(R.color.halo))
             )
         }
 

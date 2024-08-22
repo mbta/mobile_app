@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
@@ -16,18 +17,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.android.component.BottomNavIconButton
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
+import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.getGlobalData
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -80,10 +85,11 @@ fun ContentView(
         (socket as? PhoenixSocketWrapper)?.attachLogging()
         onDispose { socket.detach() }
     }
-
+    val sheetModifier = Modifier.fillMaxSize().background(colorResource(id = R.color.fill1))
     NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
         composable<Routes.NearbyTransit> {
             NearbyTransitPage(
+                modifier = sheetModifier,
                 NearbyTransit(
                     alertData = alertData,
                     globalResponse = globalResponse,
@@ -91,7 +97,8 @@ fun ContentView(
                     mapCenter = mapCenter,
                     lastNearbyTransitLocation = lastNearbyTransitLocation,
                     scaffoldState = scaffoldState,
-                    mapViewportState = mapViewportState
+                    mapViewportState = mapViewportState,
+                    navController = navController
                 ),
                 bottomBar = {
                     BottomAppBar(
@@ -116,6 +123,29 @@ fun ContentView(
                     )
                 }
             )
+        }
+        composable<Routes.StopDetails> { backStackEntry ->
+            val navRoute: Routes.StopDetails = backStackEntry.toRoute()
+            val stop = globalResponse?.stops?.get(navRoute.stopId)
+            val filterState = remember {
+                val filter =
+                    if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
+                        StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
+                    else null
+                mutableStateOf(filter)
+            }
+            if (stop != null) {
+                StopDetailsPage(
+                    modifier = sheetModifier,
+                    stop,
+                    filterState,
+                    alertData,
+                    lastNearbyTransitLocation = lastNearbyTransitLocation,
+                    scaffoldState = scaffoldState,
+                    mapViewportState = mapViewportState,
+                    onClose = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
