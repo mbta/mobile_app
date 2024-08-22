@@ -90,6 +90,7 @@ extension HomeMapView {
 
     func leaveVehiclesChannel() {
         vehiclesRepository.disconnect()
+        vehiclesData = []
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {

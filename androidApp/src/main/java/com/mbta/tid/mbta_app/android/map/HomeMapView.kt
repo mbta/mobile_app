@@ -16,9 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -40,7 +38,6 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
@@ -72,11 +69,9 @@ fun HomeMapView(
     globalResponse: GlobalResponse?,
     alertsData: AlertsStreamDataResponse?,
     lastNearbyTransitLocation: Position?,
-    navController: NavHostController,
+    currentNavEntry: NavBackStackEntry?,
+    handleStopNavigation: (String) -> Unit,
 ) {
-
-    val currentNavEntry: NavBackStackEntry? by
-        navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
@@ -138,9 +133,7 @@ fun HomeMapView(
             }
             val tapped = result.value?.firstOrNull() ?: return@queryRenderedFeatures
             val stopId = tapped.queriedFeature.feature.id() ?: return@queryRenderedFeatures
-            navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
-                popUpTo(SheetRoutes.NearbyTransit)
-            }
+            handleStopNavigation(stopId)
         }
         return false
     }
