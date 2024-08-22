@@ -12,11 +12,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -48,6 +51,15 @@ constructor(
 @Composable
 fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () -> Unit) {
     val navController = rememberNavController()
+    val currentNavEntry: NavBackStackEntry? by
+        navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
+
+    fun handleStopNavigation(stopId: String) {
+        navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
+            popUpTo(SheetRoutes.NearbyTransit)
+        }
+    }
+
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         BottomSheetScaffold(
             sheetDragHandle = {
@@ -121,7 +133,8 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                 globalResponse = nearbyTransit.globalResponse,
                 alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
-                navController = navController
+                currentNavEntry = currentNavEntry,
+                handleStopNavigation = ::handleStopNavigation,
             )
         }
     }
