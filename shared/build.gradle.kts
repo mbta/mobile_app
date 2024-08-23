@@ -27,7 +27,11 @@ kotlin {
         version = "1.0"
         ios.deploymentTarget = "15.0"
         podfile = project.file("../iosApp/Podfile")
-        pod("Sentry", "~> 8.20.0")
+        pod("Sentry") {
+            version = "~> 8.25.0"
+            // These extra options are required
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
 
         framework {
             baseName = "shared"

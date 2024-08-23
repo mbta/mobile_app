@@ -71,7 +71,7 @@ fun ContentView(
         mapCenterFlow.collectAsState(
             initial = Position(longitude = -71.062424, latitude = 42.356395)
         )
-    var lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
+    val lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
 
