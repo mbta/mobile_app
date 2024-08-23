@@ -89,7 +89,7 @@ fun StopDetailsFilteredRouteView(
             }
             for ((index, row) in rows.withIndex()) {
                 val modifier =
-                    if (index == 0)
+                    if (index == 0 || index == rows.size - 1)
                         Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
                     else Modifier.background(colorResource(R.color.fill3))
                 Column(modifier.border(1.dp, colorResource(R.color.halo))) {

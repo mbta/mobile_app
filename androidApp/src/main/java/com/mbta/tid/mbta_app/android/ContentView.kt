@@ -23,16 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.android.component.BottomNavIconButton
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
-import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
-import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.getGlobalData
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -79,6 +76,7 @@ fun ContentView(
     val lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
+    var navBarVisible by remember { mutableStateOf(true) }
 
     DisposableEffect(null) {
         socket.attach()
@@ -100,52 +98,34 @@ fun ContentView(
                     mapViewportState = mapViewportState,
                     navController = navController
                 ),
+                navBarVisible = navBarVisible,
+                showNavBar = { navBarVisible = true },
+                hideNavBar = { navBarVisible = false },
                 bottomBar = {
-                    BottomAppBar(
-                        modifier = Modifier.height(83.dp),
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        actions = {
-                            BottomNavIconButton(
-                                modifier = Modifier.fillMaxSize().weight(1f),
-                                onClick = { navController.navigate(Routes.NearbyTransit) },
-                                icon = R.drawable.map_pin,
-                                label = stringResource(R.string.nearby_transit_link),
-                                active = true,
-                            )
+                    if (navBarVisible) {
+                        BottomAppBar(
+                            modifier = Modifier.height(83.dp),
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            actions = {
+                                BottomNavIconButton(
+                                    modifier = Modifier.fillMaxSize().weight(1f),
+                                    onClick = { navController.navigate(Routes.NearbyTransit) },
+                                    icon = R.drawable.map_pin,
+                                    label = stringResource(R.string.nearby_transit_link),
+                                    active = true,
+                                )
 
-                            BottomNavIconButton(
-                                modifier = Modifier.fillMaxSize().weight(1f),
-                                onClick = {},
-                                icon = R.drawable.gear,
-                                label = stringResource(R.string.settings_link),
-                            )
-                        }
-                    )
+                                BottomNavIconButton(
+                                    modifier = Modifier.fillMaxSize().weight(1f),
+                                    onClick = {},
+                                    icon = R.drawable.gear,
+                                    label = stringResource(R.string.settings_link),
+                                )
+                            }
+                        )
+                    }
                 }
             )
-        }
-        composable<Routes.StopDetails> { backStackEntry ->
-            val navRoute: Routes.StopDetails = backStackEntry.toRoute()
-            val stop = globalResponse?.stops?.get(navRoute.stopId)
-            val filterState = remember {
-                val filter =
-                    if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
-                        StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
-                    else null
-                mutableStateOf(filter)
-            }
-            if (stop != null) {
-                StopDetailsPage(
-                    modifier = sheetModifier,
-                    stop,
-                    filterState,
-                    alertData,
-                    lastNearbyTransitLocation = lastNearbyTransitLocation,
-                    scaffoldState = scaffoldState,
-                    mapViewportState = mapViewportState,
-                    onClose = { navController.popBackStack() }
-                )
-            }
         }
     }
 }
