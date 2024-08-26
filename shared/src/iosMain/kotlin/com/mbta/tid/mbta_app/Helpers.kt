@@ -62,8 +62,12 @@ fun startKoinIOSTestApp() {
     loadDefaultRepoModules()
 }
 
-fun startKoinE2E() {
+fun startKoinE2E(appVariant: AppVariant, nativeModule: Module) {
     startKoin {
-        modules(module { single { MobileBackendClient(AppVariant.Staging) } }, endToEndModule())
+        modules(
+            module { single { MobileBackendClient(appVariant) } },
+            endToEndModule(),
+            nativeModule,
+        )
     }
 }
