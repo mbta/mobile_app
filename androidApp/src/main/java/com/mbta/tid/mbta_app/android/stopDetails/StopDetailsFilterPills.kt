@@ -64,7 +64,7 @@ fun StopDetailsFilterPills(
                 .align(Alignment.CenterStart)
         ) {
             for (filterBy in servedRoutes) {
-                val isActive = filter == null || filter?.routeId == filterBy.id
+                val isActive = filter == null || filter.routeId == filterBy.id
                 val requester = remember { BringIntoViewRequester() }
                 val pillModifier =
                     Modifier.padding(end = 8.dp)
