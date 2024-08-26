@@ -56,6 +56,7 @@ import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -71,6 +72,7 @@ fun HomeMapView(
     lastNearbyTransitLocation: Position?,
     currentNavEntry: NavBackStackEntry?,
     handleStopNavigation: (String) -> Unit,
+    vehiclesData: List<Vehicle>,
 ) {
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
@@ -112,6 +114,16 @@ fun HomeMapView(
             savedNearbyViewport?.restoreOn(mapViewportState)
             savedNearbyViewport = null
         }
+    }
+
+    fun handleNavChange() {
+        handleNearbyNavRestoration()
+        val stopId = currentNavEntry?.arguments?.getString("stopId")
+        if (stopId == null) {
+            selectedStop = null
+            return
+        }
+        selectedStop = globalResponse?.stops?.get(stopId)
     }
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
@@ -211,16 +223,7 @@ fun HomeMapView(
             mapViewportState = mapViewportState,
             style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
         ) {
-            LaunchedEffect(currentNavEntry) {
-                handleNearbyNavRestoration()
-                val stopId = currentNavEntry?.arguments?.getString("stopId")
-                if (stopId == null) {
-                    selectedStop = null
-                    return@LaunchedEffect
-                }
-                selectedStop = globalResponse?.stops?.get(stopId)
-            }
-
+            LaunchedEffect(currentNavEntry) { handleNavChange() }
             LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
                 refreshRouteLineData()
             }
@@ -252,6 +255,10 @@ fun HomeMapView(
                     circleColorString = "#ba75c7",
                     circleRadius = 10.0
                 )
+            }
+
+            for (vehicle in vehiclesData) {
+                CircleAnnotation(point = Point.fromLngLat(vehicle.longitude, vehicle.latitude))
             }
         }
 

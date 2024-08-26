@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,9 +10,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,9 +33,15 @@ import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.Outcome
+import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import io.github.dellisd.spatialk.geojson.Position
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 data class NearbyTransit
@@ -56,17 +65,42 @@ fun NearbyTransitPage(
     navBarVisible: Boolean,
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
+    vehiclesRepository: IVehiclesRepository = koinInject(),
     bottomBar: @Composable () -> Unit
 ) {
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
     var stopDetailsFilter by rememberSaveable { mutableStateOf<StopDetailsFilter?>(null) }
+    var vehiclesData: List<Vehicle> by remember { mutableStateOf(emptyList()) }
 
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
+    }
+
+    fun handleReceiveVehicles(response: Outcome<VehiclesStreamDataResponse?, SocketError>) {
+        if (response.error != null) {
+            Log.e("Map", "Vehicle stream failed: ${response.error}")
+            return
+        }
+
+        val vehicleResponse = response.data ?: return
+        vehiclesData = vehicleResponse.vehicles.values.toList()
+    }
+
+    fun handleRouteChange(route: SheetRoutes?) {
+        if (route is SheetRoutes.StopDetails) {
+            val routeId = stopDetailsFilter?.routeId
+            val directionId = stopDetailsFilter?.directionId
+            if (routeId != null && directionId != null) {
+                vehiclesData = emptyList()
+                vehiclesRepository.connect(routeId, directionId, ::handleReceiveVehicles)
+                return
+            }
+        }
+        vehiclesRepository.disconnect()
     }
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
@@ -107,6 +141,11 @@ fun NearbyTransitPage(
                             )
                         }
 
+                        DisposableEffect(navRoute, stopDetailsFilter) {
+                            handleRouteChange(navRoute)
+
+                            onDispose { handleRouteChange(null) }
+                        }
                         if (stop != null) {
                             StopDetailsPage(
                                 modifier = modifier,
@@ -118,11 +157,10 @@ fun NearbyTransitPage(
                             )
                         }
                     }
-                    composable<SheetRoutes.NearbyTransit> {
+                    composable<SheetRoutes.NearbyTransit> { backStackEntry ->
                         if (!navBarVisible) {
                             showNavBar()
                         }
-
                         LaunchedEffect(true) { stopDetailsFilter = null }
 
                         NearbyTransitView(
@@ -153,7 +191,8 @@ fun NearbyTransitPage(
                 alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                 currentNavEntry = currentNavEntry,
-                handleStopNavigation = ::handleStopNavigation
+                handleStopNavigation = ::handleStopNavigation,
+                vehiclesData = vehiclesData
             )
         }
     }
