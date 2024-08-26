@@ -9,10 +9,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.android.Routes
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.map.HomeMapView
@@ -55,6 +57,14 @@ fun NearbyTransitPage(
     bottomBar: @Composable () -> Unit
 ) {
     val navController = rememberNavController()
+    val currentNavEntry: NavBackStackEntry? by
+        navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
+
+    fun handleStopNavigation(stopId: String) {
+        navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
+            popUpTo(SheetRoutes.NearbyTransit)
+        }
+    }
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         BottomSheetScaffold(
             sheetDragHandle = { DragHandle() },
@@ -72,7 +82,7 @@ fun NearbyTransitPage(
                             hideNavBar()
                         }
 
-                        val navRoute: Routes.StopDetails = backStackEntry.toRoute()
+                        val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                         val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
                         val filterState = remember {
                             val filter =
@@ -128,7 +138,9 @@ fun NearbyTransitPage(
                 nearbyTransit.mapViewportState,
                 globalResponse = nearbyTransit.globalResponse,
                 alertsData = nearbyTransit.alertData,
-                lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation
+                lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
+                currentNavEntry = currentNavEntry,
+                handleStopNavigation = ::handleStopNavigation
             )
         }
     }
