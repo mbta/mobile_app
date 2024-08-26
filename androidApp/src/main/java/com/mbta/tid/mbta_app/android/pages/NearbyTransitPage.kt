@@ -123,6 +123,8 @@ fun NearbyTransitPage(
                             showNavBar()
                         }
 
+                        LaunchedEffect(true) { stopDetailsFilter = null }
+
                         NearbyTransitView(
                             alertData = nearbyTransit.alertData,
                             globalResponse = nearbyTransit.globalResponse,
