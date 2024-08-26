@@ -38,6 +38,8 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         app.staticTexts["Alewife"].tap()
 
+        XCTAssertTrue(app.staticTexts["Northbound to"].waitForExistence(timeout: 10))
+
         XCTAssertFalse(app.staticTexts["Nearby Transit"].exists)
         XCTAssertTrue(app.staticTexts["Northbound to"].exists)
         XCTAssertTrue(app.staticTexts["Southbound to"].exists)
