@@ -11,7 +11,6 @@ import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
@@ -40,6 +39,7 @@ import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.RailRouteShapeRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
@@ -187,11 +187,7 @@ fun endToEndModule(): Module {
                 }
             }
         }
-        single<IRailRouteShapeRepository> {
-            object : IRailRouteShapeRepository {
-                override suspend fun getRailRouteShapes() = MapFriendlyRouteResponse(emptyList())
-            }
-        }
+        single<IRailRouteShapeRepository> { RailRouteShapeRepository() }
         single<IVehiclesRepository> {
             object : IVehiclesRepository {
                 override fun connect(
