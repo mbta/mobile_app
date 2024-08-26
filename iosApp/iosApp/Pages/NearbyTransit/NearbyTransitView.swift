@@ -264,6 +264,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             locationType: LocationType.stop,
             description: nil,
             platformName: nil,
+            vehicleType: .bus,
             childStopIds: [],
             connectingStopIds: [],
             parentStationId: nil
@@ -335,6 +336,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
             locationType: LocationType.stop,
             description: nil,
             platformName: nil,
+            vehicleType: nil,
             childStopIds: [],
             connectingStopIds: [],
             parentStationId: nil
