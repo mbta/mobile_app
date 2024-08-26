@@ -33,6 +33,8 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
 
         acceptLocationPermissionAlert(timeout: 10)
 
+        XCTAssert(app.staticTexts["Alewife"].waitForExistence(timeout: 10))
+
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         app.staticTexts["Alewife"].tap()
 
