@@ -9,9 +9,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -59,12 +61,14 @@ fun NearbyTransitPage(
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
+    var stopDetailsFilter by rememberSaveable { mutableStateOf<StopDetailsFilter?>(null) }
 
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
     }
+
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         BottomSheetScaffold(
             sheetDragHandle = { DragHandle() },
@@ -84,8 +88,13 @@ fun NearbyTransitPage(
 
                         val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                         val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
-                        val filterState = remember {
-                            val filter =
+
+                        fun updateStopFilter(filter: StopDetailsFilter?) {
+                            stopDetailsFilter = filter
+                        }
+
+                        LaunchedEffect(navRoute) {
+                            updateStopFilter(
                                 if (
                                     navRoute.filterRouteId != null &&
                                         navRoute.filterDirectionId != null
@@ -95,15 +104,17 @@ fun NearbyTransitPage(
                                         navRoute.filterDirectionId
                                     )
                                 else null
-                            mutableStateOf(filter)
+                            )
                         }
+
                         if (stop != null) {
                             StopDetailsPage(
                                 modifier = modifier,
                                 stop,
-                                filterState,
+                                stopDetailsFilter,
                                 nearbyTransit.alertData,
-                                onClose = { navController.popBackStack() }
+                                onClose = { navController.popBackStack() },
+                                updateStopFilter = ::updateStopFilter
                             )
                         }
                     }

@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -39,9 +38,9 @@ fun StopDetailsFilteredRouteView(
     departures: StopDetailsDepartures,
     global: GlobalResponse?,
     now: Instant,
-    filterState: MutableState<StopDetailsFilter?>
+    filter: StopDetailsFilter?,
+    updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
-    val filter by filterState
     val patternsByStop = departures.routes.find { it.routeIdentifier == filter?.routeId }
     val expectedDirection = filter?.directionId
     if (patternsByStop == null) {
@@ -74,7 +73,7 @@ fun StopDetailsFilteredRouteView(
         } else {
             RouteHeader(patternsByStop.representativeRoute)
         }
-        DirectionPicker(patternsByStop, filterState)
+        DirectionPicker(patternsByStop, filter, updateStopFilter)
 
         Spacer(modifier = Modifier.padding(8.dp))
 

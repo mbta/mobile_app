@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
@@ -24,9 +23,10 @@ import kotlin.time.Duration.Companion.seconds
 fun StopDetailsPage(
     modifier: Modifier = Modifier,
     stop: Stop,
-    filterState: MutableState<StopDetailsFilter?>,
+    filter: StopDetailsFilter?,
     alertData: AlertsStreamDataResponse?,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
 ) {
     val globalResponse = getGlobalData()
 
@@ -64,10 +64,11 @@ fun StopDetailsPage(
     StopDetailsView(
         modifier,
         stop,
-        filterState,
+        filter,
         departures,
         pinnedRoutes.orEmpty(),
         togglePinnedRoute,
-        onClose
+        onClose,
+        updateStopFilter,
     )
 }

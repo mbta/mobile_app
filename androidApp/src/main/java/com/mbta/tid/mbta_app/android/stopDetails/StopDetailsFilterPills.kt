@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,11 +51,10 @@ sealed interface PillFilter {
 @Composable
 fun StopDetailsFilterPills(
     servedRoutes: List<PillFilter>,
-    filterState: MutableState<StopDetailsFilter?>,
-    onTapRoutePill: (PillFilter) -> Unit
+    filter: StopDetailsFilter?,
+    onTapRoutePill: (PillFilter) -> Unit,
+    onClearFilter: () -> Unit
 ) {
-    var filter by filterState
-
     Box(Modifier.fillMaxWidth().padding(end = 16.dp)) {
         val scrollState = rememberScrollState()
 
@@ -105,7 +103,7 @@ fun StopDetailsFilterPills(
         if (filter != null) {
             Button(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                onClick = { filter = null },
+                onClick = onClearFilter,
                 shape = RoundedCornerShape(8.dp),
                 colors =
                     ButtonDefaults.buttonColors(
