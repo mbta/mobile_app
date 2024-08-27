@@ -31,12 +31,8 @@ struct ProductionAppView: View {
             HelpersKt.startKoinIOSTestApp()
             self.init(socket: MockSocket())
         } else if CommandLine.arguments.contains("--e2e-mocks") {
-            let socket = Self.initSocket()
-            HelpersKt.startKoinE2E(
-                appVariant: appVariant,
-                nativeModule: makeNativeModule(appCheck: AppCheckRepository(), socket: socket)
-            )
-            self.init(socket: socket)
+            HelpersKt.startKoinE2E()
+            self.init(socket: MockSocket())
         } else {
             let socket = Self.initSocket()
             Self.initKoin(appCheck: AppCheckRepository(), socket: socket)

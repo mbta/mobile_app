@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.endToEnd.endToEndModule
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -59,6 +60,6 @@ fun startKoinIOSTestApp() {
     loadDefaultRepoModules()
 }
 
-fun startKoinE2E(appVariant: AppVariant, nativeModule: Module) {
-    startKoin { modules(appModule(appVariant) + platformModule() + nativeModule) }
+fun startKoinE2E() {
+    startKoin { modules(endToEndModule()) }
 }
