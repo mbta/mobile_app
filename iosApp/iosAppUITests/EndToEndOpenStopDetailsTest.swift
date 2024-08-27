@@ -28,10 +28,16 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
     }
 
     func testOpenStopDetails() throws {
+        addUIInterruptionMonitor(
+            withDescription: "Location alert",
+            handler: { (_: XCUIElement) -> Bool in self.acceptLocationPermissionAlert(timeout: 10)
+                return true
+            }
+        )
         // UI tests must launch the application that they test.
         app.launch()
 
-        acceptLocationPermissionAlert(timeout: 10)
+//        acceptLocationPermissionAlert(timeout: 10)
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         app.staticTexts["Alewife"].tap()
