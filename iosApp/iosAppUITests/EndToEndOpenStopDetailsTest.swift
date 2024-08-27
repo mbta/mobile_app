@@ -27,18 +27,18 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testOpenStopDetails() throws {
+    @MainActor func testOpenStopDetails() async throws {
         // UI tests must launch the application that they test.
         app.launch()
 
         acceptLocationPermissionAlert(timeout: 10)
 
-        XCTAssert(app.staticTexts["Alewife"].waitForExistence(timeout: 10))
+        try await Task.sleep(for: .seconds(5))
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         app.staticTexts["Alewife"].tap()
 
-        XCTAssertTrue(app.staticTexts["Northbound to"].waitForExistence(timeout: 10))
+        try await Task.sleep(for: .seconds(5))
 
         XCTAssertFalse(app.staticTexts["Nearby Transit"].exists)
         XCTAssertTrue(app.staticTexts["Northbound to"].exists)
