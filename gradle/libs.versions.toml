@@ -20,7 +20,7 @@ okhttp = "4.12.0"
 sentry = "0.7.1"
 skie = "0.8.4"
 spatialk = "0.3.0"
-mokkery = "2.2.0"
+mokkery = "2.3.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
