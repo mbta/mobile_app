@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -43,7 +42,6 @@ constructor(
     var lastNearbyTransitLocation: Position?,
     val scaffoldState: BottomSheetScaffoldState,
     val mapViewportState: MapViewportState,
-    val navController: NavController
 )
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)

@@ -96,7 +96,6 @@ fun ContentView(
                     lastNearbyTransitLocation = lastNearbyTransitLocation,
                     scaffoldState = scaffoldState,
                     mapViewportState = mapViewportState,
-                    navController = navController
                 ),
                 navBarVisible = navBarVisible,
                 showNavBar = { navBarVisible = true },
