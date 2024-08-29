@@ -28,16 +28,21 @@ import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
+import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapEvents
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
+import com.mapbox.maps.viewannotation.annotationAnchor
+import com.mapbox.maps.viewannotation.geometry
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
@@ -258,7 +263,18 @@ fun HomeMapView(
             }
 
             for (vehicle in vehiclesData) {
-                CircleAnnotation(point = Point.fromLngLat(vehicle.longitude, vehicle.latitude))
+                val route = globalResponse?.routes?.get(vehicle.routeId) ?: continue
+                ViewAnnotation(
+                    options =
+                        viewAnnotationOptions {
+                            geometry(Point.fromLngLat(vehicle.longitude, vehicle.latitude))
+                            annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
+                            allowOverlap(true)
+                            allowOverlapWithPuck(true)
+                        }
+                ) {
+                    VehiclePuck(vehicle = vehicle, route = route)
+                }
             }
         }
 

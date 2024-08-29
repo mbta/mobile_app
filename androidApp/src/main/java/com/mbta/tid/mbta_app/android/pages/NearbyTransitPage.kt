@@ -89,11 +89,11 @@ fun NearbyTransitPage(
     }
 
     fun handleRouteChange(route: SheetRoutes?) {
+        vehiclesData = emptyList()
         if (route is SheetRoutes.StopDetails) {
             val routeId = stopDetailsFilter?.routeId
             val directionId = stopDetailsFilter?.directionId
             if (routeId != null && directionId != null) {
-                vehiclesData = emptyList()
                 vehiclesRepository.connect(routeId, directionId, ::handleReceiveVehicles)
                 return
             }
