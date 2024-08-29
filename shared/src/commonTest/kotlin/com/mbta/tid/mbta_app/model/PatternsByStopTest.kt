@@ -64,12 +64,14 @@ class PatternsByStopTest {
                         route,
                         "Ashmont",
                         null,
+                        null,
                         listOf(routePatternAshmont),
                         listOf(upcomingTripAshmont1, upcomingTripAshmont2)
                     ),
                     RealtimePatterns.ByHeadsign(
                         route,
                         "Braintree",
+                        null,
                         null,
                         listOf(routePatternBraintree),
                         listOf(upcomingTripBraintree1, upcomingTripBraintree2)
@@ -167,6 +169,7 @@ class PatternsByStopTest {
                         route,
                         "Ashmont",
                         null,
+                        null,
                         listOf(routePatternAshmont),
                         listOf(upcomingTripAshmont),
                         listOf(alert1)
@@ -174,6 +177,7 @@ class PatternsByStopTest {
                     RealtimePatterns.ByHeadsign(
                         route,
                         "Braintree",
+                        null,
                         null,
                         listOf(routePatternBraintree),
                         listOf(upcomingTripBraintree),

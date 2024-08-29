@@ -23,6 +23,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         data class ByHeadsign(
             val route: Route,
             val headsign: String,
+            val routePatternId: String?,
             val line: Line?,
             override val patterns: List<RoutePattern>
         ) : StaticPatterns()
@@ -231,20 +232,23 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             allStopIds: Set<String>,
             global: GlobalResponse
         ): StopPatterns.ForRoute {
-            val patternsByHeadsign =
-                patterns.groupBy {
-                    val representativeTrip = global.trips.getValue(it.representativeTripId)
-                    representativeTrip.headsign
-                }
+            val patternsByRepresentativeTrip =
+                patterns.groupBy { global.trips.getValue(it.representativeTripId) }
 
             return StopPatterns.ForRoute(
                 route = route,
                 stop = stop,
                 allStopIds = allStopIds,
                 patterns =
-                    patternsByHeadsign
-                        .map { (headsign, routePatterns) ->
-                            StaticPatterns.ByHeadsign(route, headsign, null, routePatterns.sorted())
+                    patternsByRepresentativeTrip
+                        .map { (representativeTrip, routePatterns) ->
+                            StaticPatterns.ByHeadsign(
+                                route,
+                                representativeTrip.headsign,
+                                representativeTrip.routePatternId,
+                                null,
+                                routePatterns.sorted()
+                            )
                         }
                         .sorted(),
                 directions = Direction.getDirections(global, stop, route, patterns)
@@ -278,14 +282,19 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         directionPatterns.mapNotNull { global.routes[it.routeId] }.toSet().sorted()
                     if (directionRoutes.filter { !it.id.startsWith("Shuttle-") }.size == 1) {
                         val route = directionRoutes.first()
-                        val patternsByHeadsign =
+                        val patternsByRepresentativeTrip =
                             directionPatterns.groupBy {
-                                val representativeTrip =
-                                    global.trips.getValue(it.representativeTripId)
-                                representativeTrip.headsign
+                                global.trips.getValue(it.representativeTripId)
                             }
-                        return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
-                            StaticPatterns.ByHeadsign(route, headsign, line, patterns.sorted())
+                        return@flatMap patternsByRepresentativeTrip.map {
+                            (representativeTrip, patterns) ->
+                            StaticPatterns.ByHeadsign(
+                                route,
+                                representativeTrip.headsign,
+                                representativeTrip.routePatternId,
+                                line,
+                                patterns.sorted()
+                            )
                         }
                     }
                     listOf(
@@ -365,49 +374,49 @@ fun NearbyStaticData.withRealtimeInfo(
     // add predictions and apply filtering
     val upcomingTripsByHeadsignAndStop =
         UpcomingTrip.tripsMappedBy(
-            schedules,
-            predictions,
-            scheduleKey = { schedule, scheduleData ->
-                val trip = scheduleData.trips.getValue(schedule.tripId)
-                RealtimePatterns.UpcomingTripKey.ByHeadsign(
-                    schedule.routeId,
-                    trip.headsign,
-                    schedule.stopId
-                )
-            },
-            predictionKey = { prediction, streamData ->
-                val trip = streamData.trips.getValue(prediction.tripId)
-                RealtimePatterns.UpcomingTripKey.ByHeadsign(
-                    prediction.routeId,
-                    trip.headsign,
-                    prediction.stopId
-                )
-            }
-        )
-            ?: emptyMap()
+                schedules,
+                predictions,
+                scheduleKey = { schedule, scheduleData ->
+                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                        schedule.routeId,
+                        trip.routePatternId,
+                        schedule.stopId
+                    )
+                },
+                predictionKey = { prediction, streamData ->
+                    val trip = streamData.trips.getValue(prediction.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                        prediction.routeId,
+                        trip.routePatternId,
+                        prediction.stopId
+                    )
+                }
+            )
+            .orEmpty()
 
     val upcomingTripsByDirectionAndStop =
         UpcomingTrip.tripsMappedBy(
-            schedules,
-            predictions,
-            scheduleKey = { schedule, scheduleData ->
-                val trip = scheduleData.trips.getValue(schedule.tripId)
-                RealtimePatterns.UpcomingTripKey.ByDirection(
-                    schedule.routeId,
-                    trip.directionId,
-                    schedule.stopId
-                )
-            },
-            predictionKey = { prediction, streamData ->
-                val trip = streamData.trips.getValue(prediction.tripId)
-                RealtimePatterns.UpcomingTripKey.ByDirection(
-                    prediction.routeId,
-                    trip.directionId,
-                    prediction.stopId
-                )
-            }
-        )
-            ?: emptyMap()
+                schedules,
+                predictions,
+                scheduleKey = { schedule, scheduleData ->
+                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByDirection(
+                        schedule.routeId,
+                        trip.directionId,
+                        schedule.stopId
+                    )
+                },
+                predictionKey = { prediction, streamData ->
+                    val trip = streamData.trips.getValue(prediction.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByDirection(
+                        prediction.routeId,
+                        trip.directionId,
+                        prediction.stopId
+                    )
+                }
+            )
+            .orEmpty()
 
     val cutoffTime = filterAtTime.plus(90.minutes)
 
@@ -490,12 +499,29 @@ class NearbyStaticDataBuilder {
         val data = mutableListOf<NearbyStaticData.StaticPatterns>()
         val directions = mutableListOf<Direction>()
 
-        fun headsign(route: Route, headsign: String, patterns: List<RoutePattern>) {
-            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns))
+        fun headsign(
+            route: Route,
+            headsign: String,
+            patterns: List<RoutePattern>,
+            routePatternId: String? = null
+        ) {
+            data.add(
+                NearbyStaticData.StaticPatterns.ByHeadsign(
+                    route,
+                    headsign,
+                    routePatternId,
+                    line,
+                    patterns
+                )
+            )
         }
 
-        fun headsign(headsign: String, patterns: List<RoutePattern>) {
-            headsign(routes.min(), headsign, patterns)
+        fun headsign(
+            headsign: String,
+            patterns: List<RoutePattern>,
+            routePatternId: String? = null
+        ) {
+            headsign(routes.min(), headsign, patterns, routePatternId)
         }
 
         fun direction(direction: Direction, routes: List<Route>, patterns: List<RoutePattern>) {

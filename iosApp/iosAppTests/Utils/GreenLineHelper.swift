@@ -118,6 +118,7 @@ enum GreenLineHelper {
         pattern.representativeTrip { trip in
             trip.headsign = "Heath Street"
             trip.directionId = 0
+            trip.routePatternId = pattern.id
         }
     }
 
@@ -185,7 +186,12 @@ enum GreenLineHelper {
                     direction: Direction(name: "West", destination: "Kenmore & West", id: 0),
                     routes: [routeB, routeC], patterns: [rpB0, rpC0]
                 )
-                builder.headsign(route: routeE, headsign: "Heath Street", patterns: [rpE0])
+                builder.headsign(
+                    route: routeE,
+                    headsign: "Heath Street",
+                    patterns: [rpE0],
+                    routePatternId: "Green-E-886-0"
+                )
                 builder.direction(
                     direction: Direction(name: "East", destination: "Park St & North", id: 1),
                     routes: [routeB, routeC, routeE], patterns: [rpB1, rpC1, rpE1]

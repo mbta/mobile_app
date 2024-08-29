@@ -6,8 +6,11 @@ typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<Upcoming
 
 sealed class RealtimePatterns : Comparable<RealtimePatterns> {
     sealed class UpcomingTripKey {
-        data class ByHeadsign(val routeId: String, val headsign: String, val stopId: String) :
-            UpcomingTripKey()
+        data class ByHeadsign(
+            val routeId: String,
+            val routePatternId: String?,
+            val stopId: String
+        ) : UpcomingTripKey()
 
         data class ByDirection(val routeId: String, val direction: Int, val stopId: String) :
             UpcomingTripKey()
@@ -27,6 +30,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         val route: Route,
         val headsign: String,
         val line: Line?,
+        val routePatternId: String?,
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
@@ -42,6 +46,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.route,
             staticData.headsign,
             staticData.line,
+            staticData.routePatternId,
             staticData.patterns,
             if (upcomingTripsMap != null) {
                 stopIds
@@ -49,7 +54,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                         upcomingTripsMap[
                             UpcomingTripKey.ByHeadsign(
                                 staticData.route.id,
-                                staticData.headsign,
+                                staticData.routePatternId,
                                 stopId
                             )]
                     }

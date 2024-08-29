@@ -36,7 +36,8 @@ struct StopDetailsFilteredRouteView: View {
             self.route = route
             headsign = trip.headsign
             formatted = RealtimePatterns.ByHeadsign(
-                route: route, headsign: headsign, line: nil, patterns: [], upcomingTrips: [upcoming], alertsHere: nil
+                route: route, headsign: headsign, line: nil, routePatternId: trip.routePatternId, patterns: [],
+                upcomingTrips: [upcoming], alertsHere: nil
             ).format(now: now, routeType: route.type, context: .stopDetailsFiltered)
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
@@ -104,7 +105,7 @@ struct StopDetailsFilteredRouteView: View {
     var body: some View {
         if let patternsByStop {
             let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
-            let routeColor: Color? = routeHex != nil ? Color(hex: routeHex!) : nil
+            let routeColor: Color? = if let routeHex { Color(hex: routeHex) } else { nil }
             ZStack {
                 if let routeColor {
                     routeColor

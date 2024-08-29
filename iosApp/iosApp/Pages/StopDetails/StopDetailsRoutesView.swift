@@ -84,19 +84,31 @@ struct StopDetailsRoutesView: View {
     return StopDetailsRoutesView(departures: .init(routes: [
         .init(route: route1, stop: stop, patterns: [
             .ByHeadsign(
-                route: route1, headsign: "A", line: nil, patterns: [],
+                route: route1,
+                headsign: "A",
+                line: nil,
+                routePatternId: "test-A",
+                patterns: [],
                 upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
                 alertsHere: nil
             ),
         ]),
         .init(route: route2, stop: stop, patterns: [
             .ByHeadsign(
-                route: route2, headsign: "B", line: nil, patterns: [],
+                route: route2,
+                headsign: "B",
+                line: nil,
+                routePatternId: "test-B",
+                patterns: [],
                 upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
                 alertsHere: nil
             ),
             .ByHeadsign(
-                route: route2, headsign: "C", line: nil, patterns: [],
+                route: route2,
+                headsign: "C",
+                line: nil,
+                routePatternId: "test-C",
+                patterns: [],
                 upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                 alertsHere: nil
             ),

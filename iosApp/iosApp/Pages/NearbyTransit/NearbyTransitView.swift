@@ -396,8 +396,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
                             patterns: [
                                 RealtimePatterns.ByHeadsign(
                                     route: busRoute,
-                                    headsign: "Houghs Neck",
+                                    headsign: busTrip.headsign,
                                     line: nil,
+                                    routePatternId: busTrip.routePatternId,
                                     patterns: [busPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
@@ -424,8 +425,9 @@ struct NearbyTransitView_Previews: PreviewProvider {
                             patterns: [
                                 RealtimePatterns.ByHeadsign(
                                     route: crRoute,
-                                    headsign: "Houghs Neck",
+                                    headsign: crTrip.headsign,
                                     line: nil,
+                                    routePatternId: crTrip.routePatternId,
                                     patterns: [crPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),

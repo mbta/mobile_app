@@ -22,8 +22,20 @@ class NearbyResponseTest {
 
         val route1 = objects.route()
 
-        val route1rp1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
-        val route1rp2 = objects.routePattern(route1) { representativeTrip { headsign = "Nubian" } }
+        val route1rp1 =
+            objects.routePattern(route1) {
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
+            }
+        val route1rp2 =
+            objects.routePattern(route1) {
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
+            }
 
         val global =
             GlobalResponse(
@@ -39,8 +51,8 @@ class NearbyResponseTest {
         assertEquals(
             NearbyStaticData.build {
                 route(route1) {
-                    stop(stop1) { headsign("Harvard", listOf(route1rp1)) }
-                    stop(stop2) { headsign("Nubian", listOf(route1rp2)) }
+                    stop(stop1) { headsign("Harvard", listOf(route1rp1), "test-harvard") }
+                    stop(stop2) { headsign("Nubian", listOf(route1rp2), "test-nubian") }
                 }
             },
             NearbyStaticData(global, nearby)
@@ -58,12 +70,18 @@ class NearbyResponseTest {
         val route1rp1 =
             objects.routePattern(route1) {
                 sortOrder = 1
-                representativeTrip { headsign = "Harvard" }
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
         val route1rp2 =
             objects.routePattern(route1) {
                 sortOrder = 2
-                representativeTrip { headsign = "Nubian" }
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
 
         val global =
@@ -80,8 +98,8 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route1) {
                     stop(stop1) {
-                        headsign("Harvard", listOf(route1rp1))
-                        headsign("Nubian", listOf(route1rp2))
+                        headsign("Harvard", listOf(route1rp1), "test-harvard")
+                        headsign("Nubian", listOf(route1rp2), "test-nubian")
                     }
                 }
             },
@@ -102,12 +120,18 @@ class NearbyResponseTest {
         val subwayRp =
             objects.routePattern(subwayRoute) {
                 sortOrder = 2
-                representativeTrip { headsign = "Alewife" }
+                representativeTrip {
+                    headsign = "Alewife"
+                    routePatternId = "test-alewife"
+                }
             }
         val busRp =
             objects.routePattern(busRoute) {
                 sortOrder = 1
-                representativeTrip { headsign = "Nubian" }
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
 
         val global =
@@ -123,8 +147,12 @@ class NearbyResponseTest {
 
         assertEquals(
             NearbyStaticData.build {
-                route(subwayRoute) { stop(subwayStop) { headsign("Alewife", listOf(subwayRp)) } }
-                route(busRoute) { stop(busStop) { headsign("Nubian", listOf(busRp)) } }
+                route(subwayRoute) {
+                    stop(subwayStop) { headsign("Alewife", listOf(subwayRp), "test-alewife") }
+                }
+                route(busRoute) {
+                    stop(busStop) { headsign("Nubian", listOf(busRp), "test-nubian") }
+                }
             },
             NearbyStaticData(global, nearby)
         )
@@ -143,12 +171,18 @@ class NearbyResponseTest {
         val subway1Rp1 =
             objects.routePattern(subwayRoute1) {
                 sortOrder = 2
-                representativeTrip { headsign = "Alewife" }
+                representativeTrip {
+                    headsign = "Alewife"
+                    routePatternId = "test-alewife"
+                }
             }
         val subway2Rp1 =
             objects.routePattern(subwayRoute2) {
                 sortOrder = 1
-                representativeTrip { headsign = "Braintree" }
+                representativeTrip {
+                    headsign = "Braintree"
+                    routePatternId = "test-braintree"
+                }
             }
 
         val global =
@@ -165,10 +199,10 @@ class NearbyResponseTest {
         assertEquals(
             NearbyStaticData.build {
                 route(subwayRoute2) {
-                    stop(closerStop) { headsign("Braintree", listOf(subway2Rp1)) }
+                    stop(closerStop) { headsign("Braintree", listOf(subway2Rp1), "test-braintree") }
                 }
                 route(subwayRoute1) {
-                    stop(furtherStop) { headsign("Alewife", listOf(subway1Rp1)) }
+                    stop(furtherStop) { headsign("Alewife", listOf(subway1Rp1), "test-alewife") }
                 }
             },
             NearbyStaticData(global, nearby)
@@ -186,18 +220,32 @@ class NearbyResponseTest {
         val route1rp1 =
             objects.routePattern(route1) {
                 sortOrder = 1
-                representativeTrip { headsign = "Harvard" }
+                id = "test-harvard"
+                representativeTrip {
+                    id = "test"
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
         val route1rp2 =
             objects.routePattern(route1) {
                 sortOrder = 1
-                representativeTrip { headsign = "Harvard" }
+                id = "test-harvard"
+                representativeTrip {
+                    id = "test"
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
 
         val route1rp3 =
             objects.routePattern(route1) {
                 sortOrder = 2
-                representativeTrip { headsign = "Nubian" }
+                id = "test-nubian"
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
 
         val global =
@@ -214,8 +262,8 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route1) {
                     stop(stop1) {
-                        headsign("Harvard", listOf(route1rp1, route1rp2))
-                        headsign("Nubian", listOf(route1rp3))
+                        headsign("Harvard", listOf(route1rp1, route1rp2), "test-harvard")
+                        headsign("Nubian", listOf(route1rp3), "test-nubian")
                     }
                 }
             },
@@ -232,7 +280,13 @@ class NearbyResponseTest {
 
         val route1 = objects.route()
 
-        val route1rp1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
+        val route1rp1 =
+            objects.routePattern(route1) {
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
+            }
 
         val global =
             GlobalResponse(
@@ -247,7 +301,9 @@ class NearbyResponseTest {
 
         assertEquals(
             NearbyStaticData.build {
-                route(route1) { stop(stop1) { headsign("Harvard", listOf(route1rp1)) } }
+                route(route1) {
+                    stop(stop1) { headsign("Harvard", listOf(route1rp1), "test-harvard") }
+                }
             },
             NearbyStaticData(global, nearby)
         )
@@ -265,24 +321,40 @@ class NearbyResponseTest {
 
         val route1rp1 =
             objects.routePattern(route1) {
+                id = "test-harvard"
                 sortOrder = 10
-                representativeTrip { headsign = "Harvard" }
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
         val route1rp2 =
             objects.routePattern(route1) {
+                id = "test-nubian"
                 sortOrder = 11
-                representativeTrip { headsign = "Nubian" }
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
         val route1rp3 =
             objects.routePattern(route1) {
+                id = "test-nva"
                 sortOrder = 12
-                representativeTrip { headsign = "Nubian via Allston" }
+                representativeTrip {
+                    headsign = "Nubian via Allston"
+                    routePatternId = "test-nva"
+                }
             }
 
         val route2rp1 =
             objects.routePattern(route2) {
+                id = "test-porter"
                 sortOrder = 20
-                representativeTrip { headsign = "Porter Sq" }
+                representativeTrip {
+                    headsign = "Porter Sq"
+                    routePatternId = "test-porter"
+                }
             }
 
         val global =
@@ -300,12 +372,14 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route1) {
                     stop(stop1) {
-                        headsign("Harvard", listOf(route1rp1))
-                        headsign("Nubian", listOf(route1rp2))
+                        headsign("Harvard", listOf(route1rp1), "test-harvard")
+                        headsign("Nubian", listOf(route1rp2), "test-nubian")
                     }
-                    stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3)) }
+                    stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3), "test-nva") }
                 }
-                route(route2) { stop(stop2) { headsign("Porter Sq", listOf(route2rp1)) } }
+                route(route2) {
+                    stop(stop2) { headsign("Porter Sq", listOf(route2rp1), "test-porter") }
+                }
             },
             NearbyStaticData(global, nearby)
         )
@@ -327,17 +401,26 @@ class NearbyResponseTest {
         val route1rp1 =
             objects.routePattern(route1) {
                 sortOrder = 10
-                representativeTrip { headsign = "Harvard" }
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
         val route1rp2 =
             objects.routePattern(route1) {
                 sortOrder = 11
-                representativeTrip { headsign = "Nubian" }
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
         val route1rp3 =
             objects.routePattern(route1) {
                 sortOrder = 12
-                representativeTrip { headsign = "Nubian via Allston" }
+                representativeTrip {
+                    headsign = "Nubian via Allston"
+                    routePatternId = "test-nva"
+                }
             }
 
         val global =
@@ -345,18 +428,9 @@ class NearbyResponseTest {
                 objects,
                 patternIdsByStop =
                     mapOf(
-                        station1stop1.id to
-                            listOf(
-                                route1rp1.id,
-                            ),
-                        station1stop2.id to
-                            listOf(
-                                route1rp2.id,
-                            ),
-                        stop2.id to
-                            listOf(
-                                route1rp3.id,
-                            ),
+                        station1stop1.id to listOf(route1rp1.id),
+                        station1stop2.id to listOf(route1rp2.id),
+                        stop2.id to listOf(route1rp3.id),
                     ),
             )
         val nearby = NearbyResponse(objects)
@@ -365,10 +439,10 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route1) {
                     stop(station1, listOf(station1stop1.id, station1stop2.id)) {
-                        headsign("Harvard", listOf(route1rp1))
-                        headsign("Nubian", listOf(route1rp2))
+                        headsign("Harvard", listOf(route1rp1), "test-harvard")
+                        headsign("Nubian", listOf(route1rp2), "test-nubian")
                     }
-                    stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3)) }
+                    stop(stop2) { headsign("Nubian via Allston", listOf(route1rp3), "test-nva") }
                 }
             },
             NearbyStaticData(global, nearby)
@@ -395,7 +469,12 @@ class NearbyResponseTest {
         val route = objects.route { id = "Orange" }
 
         val routePattern =
-            objects.routePattern(route) { representativeTrip { headsign = "Oak Grove" } }
+            objects.routePattern(route) {
+                representativeTrip {
+                    headsign = "Oak Grove"
+                    routePatternId = "test-og"
+                }
+            }
 
         val global =
             GlobalResponse(
@@ -414,7 +493,7 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route) {
                     stop(parentStation, listOf(logicalPlatform.id, physicalPlatform.id)) {
-                        headsign("Oak Grove", listOf(routePattern))
+                        headsign("Oak Grove", listOf(routePattern), "test-og")
                     }
                 }
             },
@@ -447,7 +526,10 @@ class NearbyResponseTest {
 
         val route1rp1 =
             objects.routePattern(route1) {
-                representativeTrip { headsign = "Boston College" }
+                representativeTrip {
+                    headsign = "Boston College"
+                    routePatternId = "test-bc"
+                }
                 directionId = 0
                 sortOrder = 1
             }
@@ -459,7 +541,10 @@ class NearbyResponseTest {
             }
         val route2rp1 =
             objects.routePattern(route2) {
-                representativeTrip { headsign = "Cleveland Circle" }
+                representativeTrip {
+                    headsign = "Cleveland Circle"
+                    routePatternId = "test-cc"
+                }
                 directionId = 0
                 sortOrder = 3
             }
@@ -490,7 +575,7 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 line(line, listOf(route1, route2)) {
                     stop(stop1, routes = listOf(route1), directions = listOf(bDir, parkDir)) {
-                        headsign(route1, "Boston College", listOf(route1rp1))
+                        headsign(route1, "Boston College", listOf(route1rp1), "test-bc")
                     }
                     stop(
                         stop3,
@@ -500,7 +585,7 @@ class NearbyResponseTest {
                         direction(parkDir, listOf(route1, route2), listOf(route1rp2, route2rp2))
                     }
                     stop(stop2, listOf(route2), directions = listOf(cDir, parkDir)) {
-                        headsign(route2, "Cleveland Circle", listOf(route2rp1))
+                        headsign(route2, "Cleveland Circle", listOf(route2rp1), "test-cc")
                     }
                 }
             },
@@ -519,28 +604,40 @@ class NearbyResponseTest {
 
         val pattern1 =
             objects.routePattern(route1) {
+                id = "test-harvard"
                 sortOrder = 1
-                representativeTrip { headsign = "Harvard" }
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
         val trip1 = objects.trip(pattern1)
         val pattern2 =
             objects.routePattern(route1) {
+                id = "test-harvard"
                 sortOrder = 2
-                representativeTrip { headsign = "Harvard" }
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
             }
         val trip2 = objects.trip(pattern2)
         val pattern3 =
             objects.routePattern(route1) {
+                id = "test-nubian"
                 sortOrder = 3
-                representativeTrip { headsign = "Nubian" }
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
         val trip3 = objects.trip(pattern3)
 
         val staticData =
             NearbyStaticData.build {
                 route(route1) {
-                    stop(stop1) { headsign("Harvard", listOf(pattern1, pattern2)) }
-                    stop(stop2) { headsign("Nubian", listOf(pattern3)) }
+                    stop(stop1) { headsign("Harvard", listOf(pattern1, pattern2), "test-harvard") }
+                    stop(stop2) { headsign("Nubian", listOf(pattern3), "test-nubian") }
                 }
             }
 
@@ -595,6 +692,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Harvard",
                                     null,
+                                    "test-harvard",
                                     listOf(pattern1, pattern2),
                                     listOf(
                                         objects.upcomingTrip(stop1Pattern2Prediction),
@@ -611,6 +709,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Nubian",
                                     null,
+                                    "test-nubian",
                                     listOf(pattern3),
                                     listOf(objects.upcomingTrip(stop2Pattern3Prediction))
                                 )
@@ -644,7 +743,10 @@ class NearbyResponseTest {
                 directionId = 0
                 sortOrder = 1
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Typical Out" }
+                representativeTrip {
+                    headsign = "Typical Out"
+                    routePatternId = "test-to"
+                }
             }
         // should be included because typical
         val typicalInbound =
@@ -652,7 +754,10 @@ class NearbyResponseTest {
                 directionId = 1
                 sortOrder = 2
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Typical In" }
+                representativeTrip {
+                    headsign = "Typical In"
+                    routePatternId = "test-ti"
+                }
             }
         // should be included because prediction within 90 minutes
         val deviationOutbound =
@@ -660,7 +765,10 @@ class NearbyResponseTest {
                 directionId = 0
                 sortOrder = 3
                 typicality = RoutePattern.Typicality.Deviation
-                representativeTrip { headsign = "Deviation Out" }
+                representativeTrip {
+                    headsign = "Deviation Out"
+                    routePatternId = "test-do"
+                }
             }
         // should be included because prediction beyond 90 minutes
         val deviationInbound =
@@ -668,7 +776,10 @@ class NearbyResponseTest {
                 directionId = 1
                 sortOrder = 4
                 typicality = RoutePattern.Typicality.Deviation
-                representativeTrip { headsign = "Deviation In" }
+                representativeTrip {
+                    headsign = "Deviation In"
+                    routePatternId = "test-di"
+                }
             }
         // should be included because prediction
         val atypicalOutbound =
@@ -676,7 +787,10 @@ class NearbyResponseTest {
                 directionId = 0
                 sortOrder = 5
                 typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { headsign = "Atypical Out" }
+                representativeTrip {
+                    headsign = "Atypical Out"
+                    routePatternId = "test-ao"
+                }
             }
         // should be excluded because no prediction
         val atypicalInbound =
@@ -684,19 +798,22 @@ class NearbyResponseTest {
                 directionId = 1
                 sortOrder = 6
                 typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { headsign = "Atypical In" }
+                representativeTrip {
+                    headsign = "Atypical In"
+                    routePatternId = "test-ai"
+                }
             }
 
         val staticData =
             NearbyStaticData.build {
                 route(route1) {
                     stop(stop1) {
-                        headsign("Typical Out", listOf(typicalOutbound))
-                        headsign("Typical In", listOf(typicalInbound))
-                        headsign("Deviation Out", listOf(deviationOutbound))
-                        headsign("Deviation In", listOf(deviationInbound))
-                        headsign("Atypical Out", listOf(atypicalOutbound))
-                        headsign("Atypical In", listOf(atypicalInbound))
+                        headsign("Typical Out", listOf(typicalOutbound), "test-to")
+                        headsign("Typical In", listOf(typicalInbound), "test-ti")
+                        headsign("Deviation Out", listOf(deviationOutbound), "test-do")
+                        headsign("Deviation In", listOf(deviationInbound), "test-di")
+                        headsign("Atypical Out", listOf(atypicalOutbound), "test-ao")
+                        headsign("Atypical In", listOf(atypicalInbound), "test-ai")
                     }
                 }
             }
@@ -745,6 +862,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Typical Out",
                                     null,
+                                    "test-to",
                                     listOf(typicalOutbound),
                                     listOf(objects.upcomingTrip(typicalOutboundPrediction))
                                 ),
@@ -752,6 +870,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Deviation Out",
                                     null,
+                                    "test-do",
                                     listOf(deviationOutbound),
                                     listOf(objects.upcomingTrip(deviationOutboundPrediction))
                                 ),
@@ -759,6 +878,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Typical In",
                                     null,
+                                    "test-ti",
                                     listOf(typicalInbound),
                                     emptyList()
                                 ),
@@ -766,6 +886,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Atypical In",
                                     null,
+                                    "test-ai",
                                     listOf(atypicalInbound),
                                     listOf(objects.upcomingTrip(atypicalInboundPrediction))
                                 )
@@ -799,7 +920,10 @@ class NearbyResponseTest {
                 directionId = 0
                 sortOrder = 1
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Typical Out" }
+                representativeTrip {
+                    headsign = "Typical Out"
+                    routePatternId = "test-to"
+                }
             }
         // should be included because typical
         val typicalInbound =
@@ -807,7 +931,10 @@ class NearbyResponseTest {
                 directionId = 1
                 sortOrder = 2
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "Typical In" }
+                representativeTrip {
+                    headsign = "Typical In"
+                    routePatternId = "test-ti"
+                }
             }
         // should be included because prediction within 90 minutes
         val deviationOutbound =
@@ -815,7 +942,10 @@ class NearbyResponseTest {
                 directionId = 0
                 sortOrder = 3
                 typicality = RoutePattern.Typicality.Deviation
-                representativeTrip { headsign = "Deviation Out" }
+                representativeTrip {
+                    headsign = "Deviation Out"
+                    routePatternId = "test-do"
+                }
             }
         // should be included because prediction beyond 90 minutes
         val deviationInbound =
@@ -823,7 +953,10 @@ class NearbyResponseTest {
                 directionId = 1
                 sortOrder = 4
                 typicality = RoutePattern.Typicality.Deviation
-                representativeTrip { headsign = "Deviation In" }
+                representativeTrip {
+                    headsign = "Deviation In"
+                    routePatternId = "test-di"
+                }
             }
         // should be included because prediction
         val atypicalOutbound =
@@ -831,7 +964,10 @@ class NearbyResponseTest {
                 directionId = 0
                 sortOrder = 5
                 typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { headsign = "Atypical Out" }
+                representativeTrip {
+                    headsign = "Atypical Out"
+                    routePatternId = "test-ao"
+                }
             }
         // should be excluded because no prediction
         val atypicalInbound =
@@ -839,19 +975,22 @@ class NearbyResponseTest {
                 directionId = 1
                 sortOrder = 6
                 typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { headsign = "Atypical In" }
+                representativeTrip {
+                    headsign = "Atypical In"
+                    routePatternId = "test-ai"
+                }
             }
 
         val staticData =
             NearbyStaticData.build {
                 route(route1) {
                     stop(stop1) {
-                        headsign("Typical Out", listOf(typicalOutbound))
-                        headsign("Typical In", listOf(typicalInbound))
-                        headsign("Deviation Out", listOf(deviationOutbound))
-                        headsign("Deviation In", listOf(deviationInbound))
-                        headsign("Atypical Out", listOf(atypicalOutbound))
-                        headsign("Atypical In", listOf(atypicalInbound))
+                        headsign("Typical Out", listOf(typicalOutbound), "test-to")
+                        headsign("Typical In", listOf(typicalInbound), "test-ti")
+                        headsign("Deviation Out", listOf(deviationOutbound), "test-do")
+                        headsign("Deviation In", listOf(deviationInbound), "test-di")
+                        headsign("Atypical Out", listOf(atypicalOutbound), "test-ao")
+                        headsign("Atypical In", listOf(atypicalInbound), "test-ai")
                     }
                 }
             }
@@ -871,6 +1010,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Typical Out",
                                     null,
+                                    "test-to",
                                     listOf(typicalOutbound),
                                     emptyList()
                                 ),
@@ -878,6 +1018,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Typical In",
                                     null,
+                                    "test-ti",
                                     listOf(typicalInbound),
                                     emptyList()
                                 ),
@@ -940,27 +1081,53 @@ class NearbyResponseTest {
             }
 
         val closeSubwayPattern =
-            objects.routePattern(closeSubwayRoute) { representativeTrip { headsign = "Alewife" } }
+            objects.routePattern(closeSubwayRoute) {
+                representativeTrip {
+                    headsign = "Alewife"
+                    routePatternId = "test-alewife"
+                }
+            }
         val farSubwayPattern =
-            objects.routePattern(farSubwayRoute) { representativeTrip { headsign = "Oak Grove" } }
+            objects.routePattern(farSubwayRoute) {
+                representativeTrip {
+                    headsign = "Oak Grove"
+                    routePatternId = "test-og"
+                }
+            }
         val closeBusPattern =
-            objects.routePattern(closeBusRoute) { representativeTrip { headsign = "Nubian" } }
+            objects.routePattern(closeBusRoute) {
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
+            }
         val farBusPattern =
-            objects.routePattern(farBusRoute) { representativeTrip { headsign = "Malden Center" } }
+            objects.routePattern(farBusRoute) {
+                representativeTrip {
+                    headsign = "Malden Center"
+                    routePatternId = "test-mc"
+                }
+            }
 
         val staticData =
             NearbyStaticData.build {
                 route(farBusRoute) {
-                    stop(farBusStop) { headsign("Malden Center", listOf(farBusPattern)) }
+                    stop(farBusStop) { headsign("Malden Center", listOf(farBusPattern), "test-mc") }
                 }
                 route(closeBusRoute) {
-                    stop(closeBusStop) { headsign("Nubian", listOf(closeBusPattern)) }
+                    stop(closeBusStop) {
+                        headsign("Nubian", listOf(closeBusPattern), "test-nubian")
+                    }
                 }
                 route(farSubwayRoute) {
-                    stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
+                    stop(farSubwayStop) {
+                        headsign("Oak Grove", listOf(farSubwayPattern), "test-og")
+                    }
                 }
                 route(closeSubwayRoute) {
-                    stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
+                    stop(closeSubwayStop) {
+                        headsign("Alewife", listOf(closeSubwayPattern), "test-alewife")
+                    }
                 }
             }
 
@@ -1051,37 +1218,55 @@ class NearbyResponseTest {
         val closeSubwayPattern =
             objects.routePattern(closeSubwayRoute) {
                 sortOrder = 1
-                representativeTrip { headsign = "Alewife" }
+                representativeTrip {
+                    headsign = "Alewife"
+                    routePatternId = "test-alewife"
+                }
             }
         val farSubwayPattern =
             objects.routePattern(farSubwayRoute) {
                 sortOrder = 1
-                representativeTrip { headsign = "Oak Grove" }
+                representativeTrip {
+                    headsign = "Oak Grove"
+                    routePatternId = "test-og"
+                }
             }
         val closeBusPattern =
             objects.routePattern(closeBusRoute) {
                 sortOrder = 1
-                representativeTrip { headsign = "Nubian" }
+                representativeTrip {
+                    headsign = "Nubian"
+                    routePatternId = "test-nubian"
+                }
             }
         val farBusPattern =
             objects.routePattern(farBusRoute) {
                 sortOrder = 1
-                representativeTrip { headsign = "Malden Center" }
+                representativeTrip {
+                    headsign = "Malden Center"
+                    routePatternId = "test-mc"
+                }
             }
 
         val staticData =
             NearbyStaticData.build {
                 route(farBusRoute) {
-                    stop(farBusStop) { headsign("Malden Center", listOf(farBusPattern)) }
+                    stop(farBusStop) { headsign("Malden Center", listOf(farBusPattern), "test-mc") }
                 }
                 route(closeBusRoute) {
-                    stop(closeBusStop) { headsign("Nubian", listOf(closeBusPattern)) }
+                    stop(closeBusStop) {
+                        headsign("Nubian", listOf(closeBusPattern), "test-nubian")
+                    }
                 }
                 route(farSubwayRoute) {
-                    stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
+                    stop(farSubwayStop) {
+                        headsign("Oak Grove", listOf(farSubwayPattern), "test-og")
+                    }
                 }
                 route(closeSubwayRoute) {
-                    stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
+                    stop(closeSubwayStop) {
+                        headsign("Alewife", listOf(closeSubwayPattern), "test-alewife")
+                    }
                 }
             }
 
@@ -1149,12 +1334,20 @@ class NearbyResponseTest {
         val parentStop = objects.stop()
         val childStop = objects.stop { parentStationId = parentStop.id }
         val route1 = objects.route()
-        val pattern1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
+        val pattern1 =
+            objects.routePattern(route1) {
+                representativeTrip {
+                    headsign = "Harvard"
+                    routePatternId = "test-harvard"
+                }
+            }
 
         val staticData =
             NearbyStaticData.build {
                 route(route1) {
-                    stop(parentStop, listOf(childStop.id)) { headsign("Harvard", listOf(pattern1)) }
+                    stop(parentStop, listOf(childStop.id)) {
+                        headsign("Harvard", listOf(pattern1), "test-harvard")
+                    }
                 }
             }
 
@@ -1181,6 +1374,7 @@ class NearbyResponseTest {
                                     route1,
                                     "Harvard",
                                     null,
+                                    "test-harvard",
                                     listOf(pattern1),
                                     listOf(objects.upcomingTrip(prediction1))
                                 )
@@ -1205,7 +1399,14 @@ class NearbyResponseTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
-        val routePattern = objects.routePattern(route) { representativeTrip { headsign = "A" } }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "test-a"
+                representativeTrip {
+                    headsign = "A"
+                    routePatternId = "test-a"
+                }
+            }
         val trip1 = objects.trip(routePattern)
         val trip2 = objects.trip(routePattern)
 
@@ -1231,7 +1432,7 @@ class NearbyResponseTest {
 
         val staticData =
             NearbyStaticData.build {
-                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
+                route(route) { stop(stop) { headsign("A", listOf(routePattern), "test-a") } }
             }
 
         assertEquals(
@@ -1247,6 +1448,7 @@ class NearbyResponseTest {
                                     route,
                                     "A",
                                     null,
+                                    "test-a",
                                     listOf(routePattern),
                                     listOf(
                                         objects.upcomingTrip(sched1, pred1),
@@ -1270,15 +1472,29 @@ class NearbyResponseTest {
     }
 
     @Test
-    fun `withRealtimeInfo checks route along with headsign and stop`() {
+    fun `withRealtimeInfo checks route along with route pattern and stop`() {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route { sortOrder = 1 }
-        val routePattern1 = objects.routePattern(route1) { representativeTrip { headsign = "A" } }
+        val routePattern1 =
+            objects.routePattern(route1) {
+                id = "test-a"
+                representativeTrip {
+                    headsign = "A"
+                    routePatternId = "test-a"
+                }
+            }
         val trip1 = objects.trip(routePattern1)
 
         val route2 = objects.route { sortOrder = 2 }
-        val routePattern2 = objects.routePattern(route2) { representativeTrip { headsign = "A" } }
+        val routePattern2 =
+            objects.routePattern(route2) {
+                id = "test-a"
+                representativeTrip {
+                    headsign = "A"
+                    routePatternId = "test-a"
+                }
+            }
         val trip2 = objects.trip(routePattern2)
 
         val time = Instant.parse("2024-03-18T10:41:13-04:00")
@@ -1303,8 +1519,8 @@ class NearbyResponseTest {
 
         val staticData =
             NearbyStaticData.build {
-                route(route1) { stop(stop) { headsign("A", listOf(routePattern1)) } }
-                route(route2) { stop(stop) { headsign("A", listOf(routePattern2)) } }
+                route(route1) { stop(stop) { headsign("A", listOf(routePattern1), "test-a") } }
+                route(route2) { stop(stop) { headsign("A", listOf(routePattern2), "test-a") } }
             }
 
         assertEquals(
@@ -1320,6 +1536,7 @@ class NearbyResponseTest {
                                     route1,
                                     "A",
                                     null,
+                                    "test-a",
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1, pred1))
                                 )
@@ -1338,6 +1555,7 @@ class NearbyResponseTest {
                                     route2,
                                     "A",
                                     null,
+                                    "test-a",
                                     listOf(routePattern2),
                                     listOf(objects.upcomingTrip(sched2, pred2))
                                 )
@@ -1365,7 +1583,11 @@ class NearbyResponseTest {
         val routePattern =
             objects.routePattern(route) {
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "A" }
+                id = "test-a"
+                representativeTrip {
+                    headsign = "A"
+                    routePatternId = "test-a"
+                }
             }
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
@@ -1391,7 +1613,7 @@ class NearbyResponseTest {
 
         val staticData =
             NearbyStaticData.build {
-                route(route) { stop(stop) { headsign("A", listOf(routePattern)) } }
+                route(route) { stop(stop) { headsign("A", listOf(routePattern), "test-a") } }
             }
 
         assertEquals(
@@ -1407,6 +1629,7 @@ class NearbyResponseTest {
                                     route,
                                     "A",
                                     null,
+                                    "test-a",
                                     listOf(routePattern),
                                     emptyList(),
                                     alertsHere = listOf(alert)
@@ -1433,8 +1656,22 @@ class NearbyResponseTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
-        val routePattern1 = objects.routePattern(route) { representativeTrip { headsign = "A" } }
-        val routePattern2 = objects.routePattern(route) { representativeTrip { headsign = "B" } }
+        val routePattern1 =
+            objects.routePattern(route) {
+                id = "test-a"
+                representativeTrip {
+                    headsign = "A"
+                    routePatternId = "test-a"
+                }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                id = "test-b"
+                representativeTrip {
+                    headsign = "B"
+                    routePatternId = "test-b"
+                }
+            }
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
 
@@ -1461,8 +1698,8 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(route) {
                     stop(stop) {
-                        headsign("A", listOf(routePattern1))
-                        headsign("B", listOf(routePattern2))
+                        headsign("A", listOf(routePattern1), "test-a")
+                        headsign("B", listOf(routePattern2), "test-b")
                     }
                 }
             }
@@ -1480,6 +1717,7 @@ class NearbyResponseTest {
                                     route,
                                     "A",
                                     null,
+                                    "test-a",
                                     listOf(routePattern1),
                                     listOf(objects.upcomingTrip(sched1))
                                 )
@@ -1560,7 +1798,11 @@ class NearbyResponseTest {
             }
         val routePatternE1 =
             objects.routePattern(routeE) {
-                representativeTrip { headsign = "Heath Street" }
+                id = "test-hs"
+                representativeTrip {
+                    headsign = "Heath Street"
+                    routePatternId = "test-hs"
+                }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
             }
@@ -1637,7 +1879,7 @@ class NearbyResponseTest {
                             listOf(routeB, routeC),
                             listOf(routePatternB1, routePatternC1)
                         )
-                        headsign(routeE, "Heath Street", listOf(routePatternE1))
+                        headsign(routeE, "Heath Street", listOf(routePatternE1), "test-hs")
                         direction(
                             directionEast,
                             listOf(routeB, routeC, routeE),
@@ -1671,6 +1913,7 @@ class NearbyResponseTest {
                                 routeE,
                                 "Heath Street",
                                 line,
+                                "test-hs",
                                 listOf(routePatternE1),
                                 listOf(objects.upcomingTrip(schedE1, predE1))
                             ),

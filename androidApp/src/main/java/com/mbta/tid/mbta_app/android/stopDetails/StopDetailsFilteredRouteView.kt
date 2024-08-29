@@ -125,6 +125,7 @@ private data class RowData(
                         route,
                         headsign,
                         line = null,
+                        routePatternId = trip.routePatternId,
                         patterns = emptyList(),
                         upcomingTrips = listOf(upcoming),
                         alertsHere = null

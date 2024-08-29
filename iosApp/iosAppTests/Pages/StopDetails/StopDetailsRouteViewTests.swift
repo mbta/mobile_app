@@ -28,6 +28,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
             route: route,
             headsign: "North",
             line: nil,
+            routePatternId: "test-north",
             patterns: [northPattern],
             upcomingTrips: nil,
             alertsHere: nil
@@ -36,6 +37,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
             route: route,
             headsign: "South",
             line: nil,
+            routePatternId: "test-south",
             patterns: [southPattern],
             upcomingTrips: nil,
             alertsHere: nil
@@ -90,6 +92,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
             route: route,
             headsign: "North",
             line: nil,
+            routePatternId: "test-north",
             patterns: [northPattern],
             upcomingTrips: nil,
             alertsHere: nil
@@ -98,6 +101,7 @@ final class StopDetailsRouteViewTests: XCTestCase {
             route: route,
             headsign: "South",
             line: nil,
+            routePatternId: "test-south",
             patterns: [southPattern],
             upcomingTrips: nil,
             alertsHere: nil

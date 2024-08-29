@@ -358,6 +358,7 @@ final class HomeMapViewTests: XCTestCase {
                        route: MapTestDataHelper.shared.routeOrange,
                        headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                        line: nil,
+                       routePatternId: MapTestDataHelper.shared.tripOrangeC1.routePatternId,
                        patterns: [MapTestDataHelper.shared.patternOrange30],
                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                        alertsHere: nil
@@ -524,6 +525,7 @@ final class HomeMapViewTests: XCTestCase {
                    patterns: [.ByHeadsign(route: MapTestDataHelper.shared.routeOrange,
                                           headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                                           line: nil,
+                                          routePatternId: MapTestDataHelper.shared.tripOrangeC1.routePatternId,
                                           patterns: [MapTestDataHelper.shared.patternOrange30],
                                           upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                                           alertsHere: nil)])]))
@@ -625,6 +627,7 @@ final class HomeMapViewTests: XCTestCase {
                    patterns: [.ByHeadsign(route: MapTestDataHelper.shared.routeOrange,
                                           headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                                           line: nil,
+                                          routePatternId: MapTestDataHelper.shared.tripOrangeC1.routePatternId,
                                           patterns: [MapTestDataHelper.shared.patternOrange30],
                                           upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                                           alertsHere: nil)])]))

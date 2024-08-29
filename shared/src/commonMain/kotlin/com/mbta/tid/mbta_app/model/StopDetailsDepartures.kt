@@ -94,7 +94,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByHeadsign(
                         schedule.routeId,
-                        trip.headsign,
+                        trip.routePatternId,
                         schedule.stopId
                     )
                 },
@@ -102,7 +102,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     val trip = streamData.trips.getValue(prediction.tripId)
                     RealtimePatterns.UpcomingTripKey.ByHeadsign(
                         prediction.routeId,
-                        trip.headsign,
+                        trip.routePatternId,
                         prediction.stopId
                     )
                 }
@@ -155,25 +155,22 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             alerts: Collection<Alert>?
         ): PatternsByStop {
             global.run {
-                val patternsByHeadsign =
-                    routePatterns.groupBy {
-                        val representativeTrip = trips.getValue(it.representativeTripId)
-                        representativeTrip.headsign
-                    }
+                val patternsByRepresentativeTrip =
+                    routePatterns.groupBy { trips.getValue(it.representativeTripId) }
 
                 return PatternsByStop(
                     listOf(route),
                     null,
                     stop,
-                    patternsByHeadsign
-                        .map { (headsign, patterns) ->
+                    patternsByRepresentativeTrip
+                        .map { (representativeTrip, patterns) ->
                             val upcomingTrips =
                                 if (tripMap != null) {
                                     allStopIds
                                         .map {
                                             RealtimePatterns.UpcomingTripKey.ByHeadsign(
                                                 route.id,
-                                                headsign,
+                                                representativeTrip.routePatternId,
                                                 it
                                             )
                                         }
@@ -184,8 +181,9 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 }
                             RealtimePatterns.ByHeadsign(
                                 route,
-                                headsign,
+                                representativeTrip.headsign,
                                 null,
+                                representativeTrip.routePatternId,
                                 patterns,
                                 upcomingTrips,
                                 alerts?.let {

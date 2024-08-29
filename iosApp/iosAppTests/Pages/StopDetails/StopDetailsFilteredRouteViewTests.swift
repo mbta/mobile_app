@@ -35,11 +35,17 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
 
         let patternNorth = objects.routePattern(route: route) { pattern in
             pattern.directionId = 0
-            pattern.representativeTrip { $0.headsign = "North" }
+            pattern.representativeTrip {
+                $0.headsign = "North"
+                $0.routePatternId = "test-north"
+            }
         }
         let patternSouth = objects.routePattern(route: route) { pattern in
             pattern.directionId = 1
-            pattern.representativeTrip { $0.headsign = "South" }
+            pattern.representativeTrip {
+                $0.headsign = "South"
+                $0.routePatternId = "test-south"
+            }
         }
         let linePatternTrunk1 = objects.routePattern(route: lineRoute1) { pattern in
             pattern.directionId = 0
@@ -51,7 +57,10 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         }
         let linePatternBranch = objects.routePattern(route: lineRoute3) { pattern in
             pattern.directionId = 0
-            pattern.representativeTrip { $0.headsign = "Branch" }
+            pattern.representativeTrip {
+                $0.headsign = "Branch"
+                $0.routePatternId = "test-branch"
+            }
         }
 
         let now = Date.now
@@ -98,6 +107,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 route: route,
                 headsign: "North",
                 line: nil,
+                routePatternId: "test-north",
                 patterns: [patternNorth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
                 alertsHere: nil
@@ -106,6 +116,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 route: route,
                 headsign: "South",
                 line: nil,
+                routePatternId: "test-south",
                 patterns: [patternSouth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
                 alertsHere: nil
@@ -132,6 +143,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                     route: lineRoute3,
                     headsign: "Branch",
                     line: line,
+                    routePatternId: "test-branch",
                     patterns: [linePatternBranch],
                     upcomingTrips: [objects.upcomingTrip(prediction: linePredictionBranch)],
                     alertsHere: nil

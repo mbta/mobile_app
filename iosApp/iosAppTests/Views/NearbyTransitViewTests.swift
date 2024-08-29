@@ -88,6 +88,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.typicality = .typical
             pattern.representativeTrip { trip in
                 trip.headsign = "Charles River Loop"
+                trip.routePatternId = pattern.id
             }
         }
         let rp50 = objects.routePattern(route: route52) { pattern in
@@ -96,6 +97,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.typicality = .typical
             pattern.representativeTrip { trip in
                 trip.headsign = "Dedham Mall"
+                trip.routePatternId = pattern.id
             }
         }
         let rp41 = objects.routePattern(route: route52) { pattern in
@@ -104,6 +106,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.typicality = .typical
             pattern.representativeTrip { trip in
                 trip.headsign = "Watertown Yard"
+                trip.routePatternId = pattern.id
             }
         }
         let rp51 = objects.routePattern(route: route52) { pattern in
@@ -112,16 +115,17 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.typicality = .typical
             pattern.representativeTrip { trip in
                 trip.headsign = "Watertown Yard"
+                trip.routePatternId = pattern.id
             }
         }
         return NearbyStaticData.companion.build { builder in
             builder.route(route: route52) { builder in
                 builder.stop(stop: stop1) { builder in
-                    builder.headsign(headsign: "Charles River Loop", patterns: [rp40])
-                    builder.headsign(headsign: "Dedham Mall", patterns: [rp50])
+                    builder.headsign(headsign: "Charles River Loop", patterns: [rp40], routePatternId: "52-4-0")
+                    builder.headsign(headsign: "Dedham Mall", patterns: [rp50], routePatternId: "52-5-0")
                 }
                 builder.stop(stop: stop2) { builder in
-                    builder.headsign(headsign: "Watertown Yard", patterns: [rp41, rp51])
+                    builder.headsign(headsign: "Watertown Yard", patterns: [rp41, rp51], routePatternId: "52-4-1")
                 }
             }
         }
@@ -170,7 +174,10 @@ final class NearbyTransitViewTests: XCTestCase {
 
         // schedule, no prediction
         let time1 = Date.now.addingTimeInterval(45 * 60).toKotlinInstant()
-        let trip1 = objects.trip { $0.headsign = "Dedham Mall" }
+        let trip1 = objects.trip {
+            $0.headsign = "Dedham Mall"
+            $0.routePatternId = "52-5-0"
+        }
         objects.schedule { schedule in
             schedule.departureTime = time1
             schedule.routeId = "52"
@@ -181,7 +188,10 @@ final class NearbyTransitViewTests: XCTestCase {
         // schedule & prediction
         let notTime2 = Date.now.addingTimeInterval(9 * 60).toKotlinInstant()
         let time2 = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
-        let trip2 = objects.trip { $0.headsign = "Charles River Loop" }
+        let trip2 = objects.trip {
+            $0.headsign = "Charles River Loop"
+            $0.routePatternId = "52-4-0"
+        }
         let sched2 = objects.schedule { schedule in
             schedule.departureTime = notTime2
             schedule.routeId = "52"
@@ -195,7 +205,10 @@ final class NearbyTransitViewTests: XCTestCase {
 
         // schedule & cancellation
         let notTime3 = Date.now.addingTimeInterval(15 * 60).toKotlinInstant()
-        let trip3 = objects.trip { $0.headsign = "Watertown Yard" }
+        let trip3 = objects.trip {
+            $0.headsign = "Watertown Yard"
+            $0.routePatternId = "52-4-1"
+        }
         let sched3 = objects.schedule { schedule in
             schedule.departureTime = notTime3
             schedule.routeId = "52"
@@ -278,13 +291,17 @@ final class NearbyTransitViewTests: XCTestCase {
         let route = objects.route()
 
         let rp1 = objects.routePattern(route: route) { routePattern in
+            routePattern.id = "52-5-0"
             routePattern.representativeTrip { representativeTrip in
                 representativeTrip.headsign = "Dedham Mall"
+                representativeTrip.routePatternId = routePattern.id
             }
         }
         let rp2 = objects.routePattern(route: route) { routePattern in
+            routePattern.id = "52-4-1"
             routePattern.representativeTrip { representativeTrip in
                 representativeTrip.headsign = "Watertown Yard"
+                representativeTrip.routePatternId = routePattern.id
             }
         }
         objects.prediction { prediction in
@@ -548,6 +565,7 @@ final class NearbyTransitViewTests: XCTestCase {
             let objects = ObjectCollectionBuilder()
             let trip = objects.trip { trip in
                 trip.headsign = "Dedham Mall"
+                trip.routePatternId = "52-5-0"
             }
             objects.prediction { prediction in
                 prediction.departureTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()
@@ -864,6 +882,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     route: route,
                     headsign: "Place",
                     line: nil,
+                    routePatternId: "test-place",
                     patterns: [pattern],
                     upcomingTrips: nil,
                     alertsHere: nil
