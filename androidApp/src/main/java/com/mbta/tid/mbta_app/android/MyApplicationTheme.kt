@@ -8,7 +8,6 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -26,24 +25,25 @@ fun MyApplicationTheme(
     val colors =
         if (darkTheme) {
             darkColorScheme(
-                surface = colorResource(R.color.fill1), // Fill 1
-                surfaceVariant = Color(0xFF192026), // Fill 2
-                background = Color(0xFF000000), // Fill 3
-                primary = Color(0xFF66B2FF), // Key
-                primaryContainer = Color(0xFF3E454D), // Fill 1
-                secondary = Color(0xFF006CD9), // Key Inverse
-                tertiary = Color(0xFF8A9199), // De-emphasized
-                outline = Color(0x26FFFFFF) // Halo
+                surface = colorResource(R.color.fill1),
+                surfaceVariant = colorResource(R.color.fill2),
+                background = colorResource(R.color.fill3),
+                primary = colorResource(R.color.key),
+                primaryContainer = colorResource(R.color.fill1),
+                secondary = colorResource(R.color.key_inverse),
+                tertiary = colorResource(R.color.deemphasized),
+                outline = colorResource(R.color.halo)
             )
         } else {
             lightColorScheme(
-                surface = Color(0xFFE5E5E3), // Fill 1
-                surfaceVariant = Color(0xFFF5F4F2), // Fill 2
-                background = Color(0xFFFFFFFF), // Fill 3
-                primary = Color(0xFF006CD9), // Key
-                secondary = Color(0xFF66B2FF), // Key Inverse
-                tertiary = Color(0xFF8A9199), // De-emphasized
-                outline = Color(0x1A192026) // Halo
+                surface = colorResource(R.color.fill1),
+                surfaceVariant = colorResource(R.color.fill2),
+                background = colorResource(R.color.fill3),
+                primary = colorResource(R.color.key),
+                primaryContainer = colorResource(R.color.fill1),
+                secondary = colorResource(R.color.key_inverse),
+                tertiary = colorResource(R.color.deemphasized),
+                outline = colorResource(R.color.halo)
             )
         }
     val fontFamily =

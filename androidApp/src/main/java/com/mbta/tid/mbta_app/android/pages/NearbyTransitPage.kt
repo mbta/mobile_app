@@ -1,11 +1,8 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +23,7 @@ import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
@@ -44,12 +41,19 @@ constructor(
     val mapCenter: Position,
     var lastNearbyTransitLocation: Position?,
     val scaffoldState: BottomSheetScaffoldState,
-    val mapViewportState: MapViewportState
+    val mapViewportState: MapViewportState,
 )
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
-fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () -> Unit) {
+fun NearbyTransitPage(
+    modifier: Modifier = Modifier,
+    nearbyTransit: NearbyTransit,
+    navBarVisible: Boolean,
+    showNavBar: () -> Unit,
+    hideNavBar: () -> Unit,
+    bottomBar: @Composable () -> Unit
+) {
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -59,18 +63,9 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
             popUpTo(SheetRoutes.NearbyTransit)
         }
     }
-
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         BottomSheetScaffold(
-            sheetDragHandle = {
-                Column(
-                    modifier =
-                        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    BottomSheetDefaults.DragHandle()
-                }
-            },
+            sheetDragHandle = { DragHandle() },
             sheetContent = {
                 NavHost(
                     navController,
@@ -80,24 +75,11 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                             .padding(outerSheetPadding)
                             .background(MaterialTheme.colorScheme.surface)
                 ) {
-                    composable<SheetRoutes.NearbyTransit> {
-                        NearbyTransitView(
-                            alertData = nearbyTransit.alertData,
-                            globalResponse = nearbyTransit.globalResponse,
-                            targetLocation = nearbyTransit.mapCenter,
-                            setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
-                            onOpenStopDetails = { stopId, filter ->
-                                navController.navigate(
-                                    SheetRoutes.StopDetails(
-                                        stopId,
-                                        filter?.routeId,
-                                        filter?.directionId
-                                    )
-                                )
-                            }
-                        )
-                    }
                     composable<SheetRoutes.StopDetails> { backStackEntry ->
+                        if (navBarVisible) {
+                            hideNavBar()
+                        }
+
                         val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                         val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
                         val filterState = remember {
@@ -115,12 +97,34 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                         }
                         if (stop != null) {
                             StopDetailsPage(
+                                modifier = modifier,
                                 stop,
                                 filterState,
                                 nearbyTransit.alertData,
                                 onClose = { navController.popBackStack() }
                             )
                         }
+                    }
+                    composable<SheetRoutes.NearbyTransit> {
+                        if (!navBarVisible) {
+                            showNavBar()
+                        }
+
+                        NearbyTransitView(
+                            alertData = nearbyTransit.alertData,
+                            globalResponse = nearbyTransit.globalResponse,
+                            targetLocation = nearbyTransit.mapCenter,
+                            setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                            onOpenStopDetails = { stopId, filter ->
+                                navController.navigate(
+                                    SheetRoutes.StopDetails(
+                                        stopId,
+                                        filter?.routeId,
+                                        filter?.directionId
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             },
@@ -134,7 +138,7 @@ fun NearbyTransitPage(nearbyTransit: NearbyTransit, bottomBar: @Composable () ->
                 alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                 currentNavEntry = currentNavEntry,
-                handleStopNavigation = ::handleStopNavigation,
+                handleStopNavigation = ::handleStopNavigation
             )
         }
     }
