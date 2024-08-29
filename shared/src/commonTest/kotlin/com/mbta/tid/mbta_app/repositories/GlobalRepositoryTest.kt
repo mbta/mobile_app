@@ -152,6 +152,7 @@ class GlobalRepositoryTest : KoinTest {
                     name = "S Franklin St @ Emery St",
                     longitude = -71.011556,
                     latitude = 42.125615,
+                    vehicleType = RouteType.BUS,
                     childStopIds = emptyList(),
                     connectingStopIds = emptyList(),
                     locationType = LocationType.STOP
