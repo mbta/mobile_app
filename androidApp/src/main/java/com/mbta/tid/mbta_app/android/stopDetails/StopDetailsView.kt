@@ -93,6 +93,11 @@ fun StopDetailsView(
                     .padding(top = 8.dp)
                     .border(2.dp, colorResource(R.color.halo))
             )
+            HorizontalDivider(
+                Modifier.fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .border(2.dp, colorResource(R.color.halo))
+            )
         }
 
         if (departures != null) {
