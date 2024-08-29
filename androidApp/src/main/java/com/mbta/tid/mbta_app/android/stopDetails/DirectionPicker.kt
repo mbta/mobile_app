@@ -14,9 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,8 +33,11 @@ fun deselectedBackgroundColor(route: Route): Int =
     else R.color.deselected_toggle_1
 
 @Composable
-fun DirectionPicker(patternsByStop: PatternsByStop, filterState: MutableState<StopDetailsFilter?>) {
-    var filter by filterState
+fun DirectionPicker(
+    patternsByStop: PatternsByStop,
+    filter: StopDetailsFilter?,
+    updateStopFilter: (StopDetailsFilter?) -> Unit
+) {
     val availableDirections = patternsByStop.patterns.map { it.directionId() }.distinct().sorted()
     val directions = patternsByStop.directions
     val route = patternsByStop.representativeRoute
@@ -56,8 +56,9 @@ fun DirectionPicker(patternsByStop: PatternsByStop, filterState: MutableState<St
             for (direction in availableDirections) {
                 val isSelected = filter?.directionId == direction
                 val action = {
-                    filter =
+                    updateStopFilter(
                         StopDetailsFilter(routeId = line?.id ?: route.id, directionId = direction)
+                    )
                 }
 
                 Button(

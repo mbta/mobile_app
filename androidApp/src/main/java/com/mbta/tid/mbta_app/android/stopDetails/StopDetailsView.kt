@@ -8,7 +8,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,14 +31,14 @@ import org.koin.compose.koinInject
 fun StopDetailsView(
     modifier: Modifier = Modifier,
     stop: Stop,
-    filterState: MutableState<StopDetailsFilter?>,
+    filter: StopDetailsFilter?,
     departures: StopDetailsDepartures?,
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
+    updateStopFilter: (StopDetailsFilter?) -> Unit,
     globalRepository: IGlobalRepository = koinInject(),
 ) {
-    var filter by filterState
     var globalResponse: GlobalResponse? by remember { mutableStateOf(null) }
 
     LaunchedEffect(null) { globalResponse = globalRepository.getGlobalData() }
@@ -66,7 +65,7 @@ fun StopDetailsView(
     val onTapRoutePill = { pillFilter: PillFilter ->
         val filterId = pillFilter.id
         if (filter?.routeId == filterId) {
-            filter = null
+            updateStopFilter(null)
         } else {
             val patterns = departures?.routes?.find { it.routeIdentifier == filterId }
             if (patterns != null) {
@@ -75,7 +74,7 @@ fun StopDetailsView(
                         .flatMap { it.patterns.map(RoutePattern::directionId) }
                         .minOrNull()
                         ?: 0
-                filter = StopDetailsFilter(filterId, defaultDirectionId)
+                updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
             }
         }
     }
@@ -85,8 +84,14 @@ fun StopDetailsView(
             SheetHeader(onClose = onClose, title = stop.name)
             StopDetailsFilterPills(
                 servedRoutes = servedRoutes,
-                filterState = filterState,
-                onTapRoutePill = onTapRoutePill
+                filter = filter,
+                onTapRoutePill = onTapRoutePill,
+                onClearFilter = { updateStopFilter(null) }
+            )
+            HorizontalDivider(
+                Modifier.fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .border(2.dp, colorResource(R.color.halo))
             )
             HorizontalDivider(
                 Modifier.fillMaxWidth()
@@ -100,9 +105,10 @@ fun StopDetailsView(
                 departures,
                 globalResponse,
                 now,
-                filterState,
+                filter,
                 togglePinnedRoute,
-                pinnedRoutes
+                pinnedRoutes,
+                updateStopFilter
             )
         } else {
             CircularProgressIndicator()
