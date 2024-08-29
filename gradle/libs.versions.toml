@@ -7,7 +7,7 @@ kotlin = "2.0.10"
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
 compose-bom = "2024.08.00"
 androidx-activityCompose = "1.9.1"
-androidx-navigationCompose = "2.8.0-beta07"
+androidx-navigationCompose = "2.8.0-rc01"
 javaphoenixclient = "1.3.1"
 junit = "4.13.2"
 koin-bom = "3.5.6"
