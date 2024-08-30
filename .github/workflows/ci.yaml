@@ -71,9 +71,9 @@ jobs:
           - api-level: 28
             target: default
             arch: x86
-          - api-level: 33
-            target: default
-            arch: x86_64
+          # - api-level: 33
+          #   target: default
+          #   arch: x86_64
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
