@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
@@ -67,6 +68,8 @@ class StopDetailsFilterPillsTest {
         composeTestRule.onNodeWithText(route1.longName, ignoreCase = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).assertIsDisplayed()
         composeTestRule.onRoot().printToLog("ci-keep")
+        Log.i("ci-keep", "------------------------")
+        composeTestRule.onNodeWithText(route3.shortName).printToLog("ci-keep")
         composeTestRule.onNodeWithText(route3.shortName).assertIsDisplayed()
 
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).performClick()
