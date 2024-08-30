@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.component
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
@@ -8,10 +7,8 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.test.printToLog
 import com.mbta.tid.mbta_app.android.stopDetails.PillFilter
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilterPills
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
@@ -30,21 +27,21 @@ class StopDetailsFilterPillsTest {
         val route1 =
             objects.route {
                 color = "000000"
-                textColor = "FFFFFF"
+                textColor = "ffffff"
                 type = RouteType.HEAVY_RAIL
                 longName = "Red Line"
             }
         val route2 =
             objects.route {
                 color = "000000"
-                textColor = "FFFFFF"
+                textColor = "ffffff"
                 type = RouteType.LIGHT_RAIL
                 longName = "Mattapan Trolley"
             }
         val route3 =
             objects.route {
                 color = "000000"
-                textColor = "FFFFFF"
+                textColor = "ffffff"
                 type = RouteType.BUS
                 shortName = "55"
             }
@@ -70,9 +67,6 @@ class StopDetailsFilterPillsTest {
 
         composeTestRule.onNodeWithText(route1.longName, ignoreCase = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).assertIsDisplayed()
-        composeTestRule.onRoot().printToLog("ci-keep")
-        Log.i("ci-keep", "------------------------")
-        composeTestRule.onNodeWithText(route3.shortName).printToLog("ci-keep")
         composeTestRule
             .onNodeWithText(route3.shortName)
             .onParent()
