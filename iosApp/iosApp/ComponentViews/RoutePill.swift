@@ -43,7 +43,7 @@ struct RoutePill: View {
             switch spec.size {
             case .fixedPill: content.frame(width: 50, height: 24)
             case .circle: content.frame(width: 24, height: 24)
-            case .flexPill: content.frame(height: 24).padding(.horizontal, 12)
+            case .flexPill: content.frame(height: 24).padding(.horizontal, 12).frame(minWidth: 44)
             }
         }
     }
