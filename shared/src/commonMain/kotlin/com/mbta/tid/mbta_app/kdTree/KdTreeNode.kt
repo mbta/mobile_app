@@ -1,17 +1,9 @@
 package com.mbta.tid.mbta_app.kdTree
 
-import io.github.dellisd.spatialk.geojson.BoundingBox
-import io.github.dellisd.spatialk.geojson.Feature
 import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.geojson.dsl.feature
-import io.github.dellisd.spatialk.geojson.dsl.lineString
-import io.github.dellisd.spatialk.geojson.dsl.point
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.Units
 import io.github.dellisd.spatialk.turf.distance
-import io.github.dellisd.spatialk.turf.toPolygon
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonPrimitive
 
 internal data class KdTreeNode(
     val ids: List<String>,
@@ -45,47 +37,6 @@ internal data class KdTreeNode(
         if (considerFar) {
             farChild?.findNodesWithin(searchFrom, radiusMiles, selectPredicate, results)
         }
-    }
-
-    @OptIn(ExperimentalTurfApi::class)
-    fun asFeatures(boundingBox: BoundingBox): List<Feature> {
-        val id = ids.first()
-        val thisFeature =
-            listOf(
-                feature(point(latitude = position.latitude, longitude = position.longitude), id) {
-                    put("ids", JsonArray(ids.map(::JsonPrimitive)))
-                },
-                feature(
-                    lineString {
-                        +boundingBox.southwest.butWith(splitAxis, position[splitAxis])
-                        +boundingBox.northeast.butWith(splitAxis, position[splitAxis])
-                    },
-                    id = "$id-line"
-                ),
-                feature(boundingBox.toPolygon(), id = "$id-box") {
-                    put("fill-opacity", 0.1)
-                    put("stroke-opacity", 0)
-                }
-            )
-        var lowFeatures: List<Feature>? = null
-        if (lowChild != null) {
-            val lowBox =
-                BoundingBox(
-                    boundingBox.southwest,
-                    boundingBox.northeast.butWith(splitAxis, position[splitAxis])
-                )
-            lowFeatures = lowChild.asFeatures(lowBox)
-        }
-        var highFeatures: List<Feature>? = null
-        if (highChild != null) {
-            val highBox =
-                BoundingBox(
-                    boundingBox.southwest.butWith(splitAxis, position[splitAxis]),
-                    boundingBox.northeast
-                )
-            highFeatures = highChild.asFeatures(highBox)
-        }
-        return thisFeature + lowFeatures.orEmpty() + highFeatures.orEmpty()
     }
 
     companion object {

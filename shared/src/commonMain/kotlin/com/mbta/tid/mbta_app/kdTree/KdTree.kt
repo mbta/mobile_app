@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.kdTree
 
-import io.github.dellisd.spatialk.geojson.BoundingBox
-import io.github.dellisd.spatialk.geojson.FeatureCollection
 import io.github.dellisd.spatialk.geojson.Position
 
 /**
@@ -28,14 +26,4 @@ class KdTree(elements: List<Pair<String, Position>>) {
         results.sortBy { it.second }
         return results
     }
-
-    fun asGeoJSON(): String =
-        FeatureCollection(
-                root
-                    ?.asFeatures(
-                        BoundingBox(west = -71.858, south = 41.571, east = -70.266, north = 42.807)
-                    )
-                    .orEmpty()
-            )
-            .json()
 }
