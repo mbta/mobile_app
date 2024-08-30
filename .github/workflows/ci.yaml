@@ -66,7 +66,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        api-level: [ 28 ]
+        api-level: [ 28, 33 ]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
