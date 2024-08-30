@@ -108,6 +108,11 @@ jobs:
         env:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-connected-reports
+          path: androidApp/build/reports
   build-android:
     name: Build for Android
     if: github.actor != 'dependabot[bot]'
