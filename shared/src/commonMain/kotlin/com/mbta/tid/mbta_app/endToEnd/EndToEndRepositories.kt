@@ -181,7 +181,13 @@ fun endToEndModule(): Module {
             }
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
-        single<IRailRouteShapeRepository> { IdleRailRouteShapeRepository() }
+        single<IRailRouteShapeRepository> {
+            // If this returns a response (or maybe just an empty response, I didn't keep debugging
+            // once I found something that worked), the end-to-end test will fail in Xcode Cloud
+            // because the main thread stays busy for 30 seconds, and it will be a nightmare to
+            // debug.
+            IdleRailRouteShapeRepository()
+        }
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single { TogglePinnedRouteUsecase(get()) }
         single { GetSettingUsecase(get()) }
