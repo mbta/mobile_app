@@ -119,6 +119,10 @@ jobs:
         env:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
+      - name: logcat
+        if: failure()
+        run: |
+          /usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 logcat *:S ci-keep
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

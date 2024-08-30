@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.printToString
+import androidx.compose.ui.test.printToLog
 import com.mbta.tid.mbta_app.android.stopDetails.PillFilter
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilterPills
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
@@ -66,7 +66,7 @@ class StopDetailsFilterPillsTest {
 
         composeTestRule.onNodeWithText(route1.longName, ignoreCase = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).assertIsDisplayed()
-        println(composeTestRule.onRoot().printToString())
+        composeTestRule.onRoot().printToLog("ci-keep")
         composeTestRule.onNodeWithText(route3.shortName).assertIsDisplayed()
 
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).performClick()
