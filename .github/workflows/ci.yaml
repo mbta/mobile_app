@@ -122,7 +122,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: android-connected-reports
+          name: android-connected-reports-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
           path: androidApp/build/reports
   build-android:
     name: Build for Android
