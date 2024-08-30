@@ -11,6 +11,7 @@ import io.github.dellisd.spatialk.turf.toPolygon
 import kotlin.math.log2
 import kotlin.math.max
 import kotlin.math.round
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.json.JsonArray
@@ -374,6 +375,7 @@ class KdTreeTest {
             point("NEC-2287-13", 42.350742, -71.05493),
         )
 
+    @Ignore
     @Test
     fun `print tree info for debugging`() {
         val tree = KdTree(commuterRailPoints)
