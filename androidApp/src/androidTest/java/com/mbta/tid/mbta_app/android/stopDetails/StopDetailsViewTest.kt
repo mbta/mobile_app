@@ -1,27 +1,34 @@
-package com.mbta.tid.mbta_app.android.nearbyTransit
+package com.mbta.tid.mbta_app.android.stopDetails
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Outcome
+import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -29,9 +36,8 @@ import org.junit.Test
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
-import org.koin.test.KoinTest
 
-class NearbyTransitViewTest : KoinTest {
+class StopDetailsViewTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
@@ -97,69 +103,11 @@ class NearbyTransitViewTest : KoinTest {
             departureTime = now.plus(1.5.minutes)
         }
 
-    val greenLineRoute =
-        builder.route {
-            id = "route_2"
-            type = RouteType.LIGHT_RAIL
-            color = "008000"
-            directionNames = listOf("Inbound", "Outbound")
-            directionDestinations = listOf("Park Street", "Lechmere")
-            longName = "Green Line Long Name"
-            shortName = "Green Line"
-            textColor = "FFFFFF"
-            lineId = "line-Green"
-            routePatternIds = mutableListOf("pattern_3", "pattern_4")
-        }
-    val greenLineRoutePatternOne =
-        builder.routePattern(greenLineRoute) {
-            id = "pattern_3"
-            directionId = 0
-            name = "Green Line Pattern"
-            routeId = "route_2"
-            representativeTripId = "trip_2"
-        }
-    val greenLine =
-        builder.line {
-            id = "line-Green"
-            shortName = "Green Line"
-            longName = "Green Line Long Name"
-            color = "008000"
-            textColor = "FFFFFF"
-        }
-    val greenLineStop =
-        builder.stop {
-            id = "stop_2"
-            name = "Green Line Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val greenLineTrip =
-        builder.trip {
-            id = "trip_2"
-            routeId = "route_2"
-            directionId = 0
-            headsign = "Green Line Head Sign"
-        }
-    val greenLinePrediction =
-        builder.prediction {
-            id = "prediction_2"
-            revenue = true
-            stopId = "stop_2"
-            tripId = "trip_2"
-            routeId = "route_2"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(5.minutes)
-            departureTime = now.plus(5.5.minutes)
-        }
-
     val globalResponse =
         GlobalResponse(
             builder,
             mutableMapOf(
                 stop.id to listOf(routePatternOne.id, routePatternTwo.id),
-                greenLineStop.id to listOf(greenLineRoutePatternOne.id)
             )
         )
 
@@ -208,6 +156,7 @@ class NearbyTransitViewTest : KoinTest {
                 }
                 single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
                 single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                single<IGlobalRepository> { MockGlobalRepository(globalResponse) }
             }
         )
     }
@@ -215,27 +164,55 @@ class NearbyTransitViewTest : KoinTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testNearbyTransitViewDisplaysCorrectly() {
+    fun testStopDetailsViewDisplaysCorrectly() {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = null,
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    onOpenStopDetails = { _, _ -> }
+                val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+                StopDetailsView(
+                    stop = stop,
+                    filterState = filterState,
+                    departures =
+                        StopDetailsDepartures(
+                            listOf(
+                                PatternsByStop(
+                                    route = route,
+                                    stop = stop,
+                                    patterns =
+                                        listOf(
+                                            RealtimePatterns.ByHeadsign(
+                                                staticData =
+                                                    NearbyStaticData.StaticPatterns.ByHeadsign(
+                                                        route = route,
+                                                        headsign = trip.headsign,
+                                                        line = line,
+                                                        patterns =
+                                                            listOf(routePatternOne, routePatternTwo)
+                                                    ),
+                                                upcomingTripsMap =
+                                                    mapOf(
+                                                        RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                                                            trip.routeId,
+                                                            trip.headsign,
+                                                            stop.id
+                                                        ) to listOf(UpcomingTrip(trip, prediction))
+                                                    ),
+                                                stopIds = setOf(stop.id),
+                                                alerts = null
+                                            )
+                                        )
+                                )
+                            )
+                        ),
+                    pinnedRoutes = emptySet(),
+                    togglePinnedRoute = {},
+                    onClose = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
-
-        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Head Sign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sample Stop").assertExists()
+        composeTestRule.onNodeWithText("Sample Route").assertExists()
+        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
+        composeTestRule.onNodeWithText("1 min").assertExists()
     }
 }

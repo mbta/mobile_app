@@ -1,8 +1,17 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraState
+import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mbta.tid.mbta_app.android.pages.NearbyTransit
+import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -10,6 +19,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -31,7 +41,8 @@ import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
-class NearbyTransitViewTest : KoinTest {
+@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
+class NearbyTransitPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
     val route =
@@ -44,7 +55,6 @@ class NearbyTransitViewTest : KoinTest {
             longName = "Sample Route Long Name"
             shortName = "Sample Route"
             textColor = "000000"
-            lineId = "line_1"
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
     val routePatternOne =
@@ -71,12 +81,6 @@ class NearbyTransitViewTest : KoinTest {
             latitude = 0.0
             longitude = 0.0
         }
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
     val trip =
         builder.trip {
             id = "trip_1"
@@ -96,7 +100,6 @@ class NearbyTransitViewTest : KoinTest {
             arrivalTime = now.plus(1.minutes)
             departureTime = now.plus(1.5.minutes)
         }
-
     val greenLineRoute =
         builder.route {
             id = "route_2"
@@ -215,21 +218,36 @@ class NearbyTransitViewTest : KoinTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testNearbyTransitViewDisplaysCorrectly() {
+    fun testNearbyTransitPageDisplaysCorrectly() {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = null,
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    onOpenStopDetails = { _, _ -> }
+                NearbyTransitPage(
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        targetLocation = Position(0.0, 0.0),
+                        lastNearbyTransitLocation = Position(0.0, 0.0),
+                        mapCenter = Position(0.0, 0.0),
+                        mapViewportState =
+                            MapViewportState(
+                                CameraState(
+                                    Point.fromLngLat(0.0, 0.0),
+                                    EdgeInsets(0.0, 0.0, 0.0, 0.0),
+                                    1.0,
+                                    0.0,
+                                    0.0
+                                )
+                            ),
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                    ),
+                    {},
                 )
             }
         }
 
         composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sample Stop").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
 
