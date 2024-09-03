@@ -15,63 +15,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.model.RouteType
 
-enum class RoutePillType {
-    Fixed,
-    Flex
-}
-
-private sealed interface PillContent {
-    data class Text(val text: String) : PillContent
-
-    data class Image(val painter: Painter, val contentDescription: String) : PillContent
-}
-
-private fun linePillContent(line: Line, type: RoutePillType) =
-    if (line.longName == "Green Line" && type == RoutePillType.Fixed) PillContent.Text("GL")
-    else PillContent.Text(line.longName)
-
-private fun lightRailPillContent(route: Route, type: RoutePillType) =
-    if (route.longName.startsWith("Green Line ")) {
-        if (type == RoutePillType.Fixed)
-            PillContent.Text(route.longName.replace("Green Line ", "GL "))
-        else PillContent.Text(route.shortName)
-    } else if (route.longName == "Mattapan Trolley" && type == RoutePillType.Fixed)
-        PillContent.Text("M")
-    else PillContent.Text(route.longName)
-
-private fun heavyRailPillContent(route: Route, type: RoutePillType) =
-    if (type == RoutePillType.Fixed)
-        PillContent.Text(route.longName.split(" ").map { it.first() }.joinToString(separator = ""))
-    else PillContent.Text(route.longName)
-
-private fun commuterRailPillContent(route: Route, type: RoutePillType) =
-    if (type == RoutePillType.Fixed) PillContent.Text("CR")
-    else PillContent.Text(route.longName.replace(" Line", ""))
-
-@Composable
-private fun busPillContent(route: Route, type: RoutePillType) =
-    if (route.id.startsWith("Shuttle") && type == RoutePillType.Fixed)
-        PillContent.Image(painterResource(R.drawable.mode_bus), route.shortName)
-    else PillContent.Text(route.shortName)
-
-@Composable
-private fun ferryPillContent(route: Route, type: RoutePillType) =
-    if (type == RoutePillType.Fixed)
-        PillContent.Image(painterResource(R.drawable.mode_ferry), route.longName)
-    else PillContent.Text(route.longName)
+typealias RoutePillType = RoutePillSpec.Type
 
 @Composable
 fun RoutePill(
@@ -81,40 +36,23 @@ fun RoutePill(
     isActive: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val (textColor, routeColor) =
-        when {
-            route == null ->
-                when {
-                    line == null -> return
-                    else -> Pair(Color.fromHex(line.textColor), Color.fromHex(line.color))
-                }
-            route.id.startsWith("Shuttle") && line != null ->
-                Pair(Color.fromHex(line.textColor), Color.fromHex(line.color))
-            else -> Pair(Color.fromHex(route.textColor), Color.fromHex(route.color))
+    val spec = RoutePillSpec(route, line, type)
+    val textColor = Color.fromHex(spec.textColor)
+    val routeColor = Color.fromHex(spec.routeColor)
+
+    val pillContent = spec.content
+
+    val shape =
+        when (spec.shape) {
+            RoutePillSpec.Shape.Rectangle -> RoundedCornerShape(4.dp)
+            RoutePillSpec.Shape.Capsule -> RoundedCornerShape(percent = 100)
         }
 
-    val pillContent =
-        if (route == null) {
-            if (line == null) null else linePillContent(line, type)
-        } else
-            when (route.type) {
-                RouteType.LIGHT_RAIL -> lightRailPillContent(route, type)
-                RouteType.HEAVY_RAIL -> heavyRailPillContent(route, type)
-                RouteType.COMMUTER_RAIL -> commuterRailPillContent(route, type)
-                RouteType.BUS -> busPillContent(route, type)
-                RouteType.FERRY -> ferryPillContent(route, type)
-            }
-
-    val isRectangle = route?.type == RouteType.BUS && !route.id.startsWith("Shuttle")
-    val shape = if (isRectangle) RoundedCornerShape(4.dp) else RoundedCornerShape(percent = 100)
-
     fun Modifier.withSizePadding() =
-        if (type == RoutePillType.Fixed) {
-            size(width = 50.dp, height = 24.dp)
-        } else if (route?.longName?.startsWith("Green Line") == true) {
-            size(24.dp)
-        } else {
-            height(24.dp).padding(horizontal = 12.dp)
+        when (spec.size) {
+            RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
+            RoutePillSpec.Size.Circle -> size(24.dp)
+            RoutePillSpec.Size.FlexPill -> height(24.dp).padding(horizontal = 12.dp)
         }
 
     fun Modifier.withColor() =
@@ -127,8 +65,8 @@ fun RoutePill(
     val finalModifier = modifier.withColor().withSizePadding()
 
     when (pillContent) {
-        null -> {}
-        is PillContent.Text ->
+        RoutePillSpec.Content.Empty -> {}
+        is RoutePillSpec.Content.Text ->
             Text(
                 pillContent.text.uppercase(),
                 modifier = finalModifier,
@@ -140,13 +78,15 @@ fun RoutePill(
                 lineHeight = 24.sp,
                 maxLines = 1
             )
-        is PillContent.Image ->
+        is RoutePillSpec.Content.ModeImage -> {
+            val (painter, contentDescription) = routeIcon(routeType = pillContent.mode)
             Icon(
-                painter = pillContent.painter,
-                contentDescription = pillContent.contentDescription,
+                painter = painter,
+                contentDescription = contentDescription,
                 modifier = finalModifier,
                 tint = if (isActive) textColor else LocalContentColor.current
             )
+        }
     }
 }
 

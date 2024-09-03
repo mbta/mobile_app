@@ -11,7 +11,11 @@ import shared
 import SwiftUI
 
 func routeIcon(_ route: Route) -> Image {
-    switch route.type {
+    routeIcon(route.type)
+}
+
+func routeIcon(_ routeType: RouteType) -> Image {
+    switch routeType {
     case .bus:
         Image(.modeBus)
     case .commuterRail:
