@@ -68,6 +68,7 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.ref = "sentry" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
