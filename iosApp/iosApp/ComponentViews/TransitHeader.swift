@@ -29,6 +29,7 @@ struct TransitHeader<Content: View>: View {
                 .textCase(.none)
                 .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
             rightContent()
+                .foregroundStyle(textColor)
         } icon: {
             modeIcon
                 .resizable()
