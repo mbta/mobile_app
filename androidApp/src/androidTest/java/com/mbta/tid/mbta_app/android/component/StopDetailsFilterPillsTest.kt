@@ -3,9 +3,12 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import com.mbta.tid.mbta_app.android.stopDetails.PillFilter
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilterPills
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
@@ -64,6 +67,10 @@ class StopDetailsFilterPillsTest {
 
         composeTestRule.onNodeWithText(route1.longName, ignoreCase = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(route3.shortName)
+            .onParent()
+            .performScrollToNode(hasText(route3.shortName))
         composeTestRule.onNodeWithText(route3.shortName).assertIsDisplayed()
 
         composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).performClick()
