@@ -65,15 +65,15 @@ class StopDetailsFilterPillsTest {
             )
         }
 
-        composeTestRule.onNodeWithText(route1.longName, ignoreCase = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("RL", ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("M", ignoreCase = true).assertIsDisplayed()
         composeTestRule
             .onNodeWithText(route3.shortName)
             .onParent()
             .performScrollToNode(hasText(route3.shortName))
         composeTestRule.onNodeWithText(route3.shortName).assertIsDisplayed()
 
-        composeTestRule.onNodeWithText(route2.longName, ignoreCase = true).performClick()
+        composeTestRule.onNodeWithText("M", ignoreCase = true).performClick()
         assertTrue(filter.value?.routeId == route2.id)
 
         composeTestRule.onNodeWithText("All").performClick()
