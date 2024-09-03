@@ -12,9 +12,4 @@ if [ $GRADLE_EXIT_CODE -ne 0 ]; then
   /usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 logcat -d '*:S' ci-keep
 fi
 
-# https://github.com/ReactiveCircus/android-emulator-runner/issues/385#issuecomment-2234309549
-pkill -SIGTERM crashpad_handler || true
-sleep 5
-pkill -SIGKILL crashpad_handler || true
-
 exit $GRADLE_EXIT_CODE
