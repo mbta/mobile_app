@@ -47,7 +47,7 @@ struct HomeMapView: View {
 
     private var isNearbyNotFollowing: Bool {
         !viewportProvider.viewport.isFollowing && locationDataManager.currentLocation != nil
-            && nearbyVM.navigationStack.isEmpty
+            && nearbyVM.navigationStack.lastSafe() == .nearby
     }
 
     init(
@@ -109,7 +109,7 @@ struct HomeMapView: View {
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
-                guard isManuallyCentering else { return }
+                guard isManuallyCentering, nearbyVM.navigationStack.lastSafe() == .nearby else { return }
                 /*
                  This will be set to false after nearby is loaded to avoid the crosshair
                  dissapearing and re-appearing
