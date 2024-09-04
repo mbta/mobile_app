@@ -72,9 +72,9 @@ final class RoutePillTests: XCTestCase {
         let blueLineFlex = RoutePill(route: blueLine, type: .flex)
 
         XCTAssertEqual(try redLineFixed.inspect().view(RoutePill.self).text().string(), "RL")
-        XCTAssertEqual(try redLineFlex.inspect().view(RoutePill.self).text().string(), "Red Line")
+        XCTAssertEqual(try redLineFlex.inspect().view(RoutePill.self).text().string(), "RL")
         XCTAssertEqual(try blueLineFixed.inspect().view(RoutePill.self).text().string(), "BL")
-        XCTAssertEqual(try blueLineFlex.inspect().view(RoutePill.self).text().string(), "Blue Line")
+        XCTAssertEqual(try blueLineFlex.inspect().view(RoutePill.self).text().string(), "BL")
     }
 
     @MainActor func testLightRail() throws {
@@ -121,7 +121,7 @@ final class RoutePillTests: XCTestCase {
         XCTAssertEqual(try greenLineCFixed.inspect().view(RoutePill.self).text().string(), "GL C")
         XCTAssertEqual(try greenLineCFlex.inspect().view(RoutePill.self).text().string(), "C")
         XCTAssertEqual(try mattapanFixed.inspect().view(RoutePill.self).text().string(), "M")
-        XCTAssertEqual(try mattapanFlex.inspect().view(RoutePill.self).text().string(), "Mattapan Trolley")
+        XCTAssertEqual(try mattapanFlex.inspect().view(RoutePill.self).text().string(), "M")
     }
 
     @MainActor func testCommuterRail() throws {
@@ -272,7 +272,7 @@ final class RoutePillTests: XCTestCase {
         XCTAssertEqual(try rlFixed.inspect().view(RoutePill.self).text().string(), "Red Line")
         XCTAssertEqual(try rlFlex.inspect().view(RoutePill.self).text().string(), "Red Line")
         XCTAssertEqual(try glFixed.inspect().view(RoutePill.self).text().string(), "GL")
-        XCTAssertEqual(try glFlex.inspect().view(RoutePill.self).text().string(), "Green Line")
+        XCTAssertEqual(try glFlex.inspect().view(RoutePill.self).text().string(), "GL")
 
         XCTAssertEqual(rlFixed.routeColor, Color(hex: "DA291C"))
         XCTAssertEqual(rlFlex.routeColor, Color(hex: "DA291C"))

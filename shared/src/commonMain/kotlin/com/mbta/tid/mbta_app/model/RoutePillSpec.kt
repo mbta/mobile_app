@@ -39,9 +39,9 @@ data class RoutePillSpec(
         route?.takeUnless { it.id.startsWith("Shuttle") }?.textColor ?: line?.textColor ?: "",
         route?.takeUnless { it.id.startsWith("Shuttle") }?.color ?: line?.color ?: "",
         when (route?.type) {
-            null -> if (line == null) Content.Empty else linePillContent(line, type)
+            null -> if (line == null) Content.Empty else linePillContent(line)
             RouteType.LIGHT_RAIL -> lightRailPillContent(route, type)
-            RouteType.HEAVY_RAIL -> heavyRailPillContent(route, type)
+            RouteType.HEAVY_RAIL -> heavyRailPillContent(route)
             RouteType.COMMUTER_RAIL -> commuterRailPillContent(route, type)
             RouteType.BUS -> busPillContent(route, type)
             RouteType.FERRY -> ferryPillContent(route, type)
@@ -58,8 +58,8 @@ data class RoutePillSpec(
     )
 
     companion object {
-        private fun linePillContent(line: Line, type: Type): Content =
-            if (line.longName == "Green Line" && type == Type.Fixed) {
+        private fun linePillContent(line: Line): Content =
+            if (line.longName == "Green Line") {
                 Content.Text("GL")
             } else {
                 Content.Text(line.longName)
@@ -71,18 +71,14 @@ data class RoutePillSpec(
                     Type.Fixed -> Content.Text(route.longName.replace("Green Line ", "GL "))
                     Type.Flex -> Content.Text(route.shortName)
                 }
-            } else if (route.longName == "Mattapan Trolley" && type == Type.Fixed) {
+            } else if (route.longName == "Mattapan Trolley") {
                 Content.Text("M")
             } else {
                 Content.Text(route.longName)
             }
 
-        private fun heavyRailPillContent(route: Route, type: Type): Content =
-            when (type) {
-                Type.Fixed ->
-                    Content.Text(route.longName.split(" ").map { it.first() }.joinToString(""))
-                Type.Flex -> Content.Text(route.longName)
-            }
+        private fun heavyRailPillContent(route: Route): Content =
+            Content.Text(route.longName.split(" ").map { it.first() }.joinToString(""))
 
         private fun commuterRailPillContent(route: Route, type: Type): Content =
             when (type) {
