@@ -43,7 +43,7 @@ struct RoutePill: View {
             switch spec.size {
             case .fixedPill: content.frame(width: 50, height: 24)
             case .circle: content.frame(width: 24, height: 24)
-            case .flexPill: content.frame(height: 24).padding(.horizontal, 12)
+            case .flexPill: content.frame(height: 24).padding(.horizontal, 12).frame(minWidth: 44)
             }
         }
     }
@@ -58,7 +58,7 @@ struct RoutePill: View {
                     .background(pill.routeColor)
             } else if pill.spec.shape == .rectangle {
                 content.overlay(
-                    Rectangle().stroke(pill.routeColor, lineWidth: 1).padding(1)
+                    RoundedRectangle(cornerRadius: 4).stroke(pill.routeColor, lineWidth: 1).padding(1)
                 )
             } else {
                 content.overlay(
@@ -73,7 +73,7 @@ struct RoutePill: View {
 
         func body(content: Content) -> some View {
             switch spec.shape {
-            case .rectangle: content.clipShape(Rectangle())
+            case .rectangle: content.clipShape(RoundedRectangle(cornerRadius: 4))
             case .capsule: content.clipShape(Capsule())
             }
         }
