@@ -21,22 +21,18 @@ class NearbyStopViewTest {
         builder.route {
             id = "route_1"
             type = RouteType.BUS
-            color = "FF0000"
             directionNames = listOf("North", "South")
             directionDestinations = listOf("Downtown", "Uptown")
             longName = "Sample Route Long Name"
             shortName = "Sample Route"
-            textColor = "000000"
             lineId = "line_1"
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
     val line =
         builder.line {
             id = "line_1"
-            color = "FF0000"
             longName = "Sample Line Long Name"
             shortName = "Sample Line"
-            textColor = "000000"
         }
     val routePattern =
         builder.routePattern(route) {
