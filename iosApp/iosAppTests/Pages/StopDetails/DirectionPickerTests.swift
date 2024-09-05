@@ -22,14 +22,12 @@ final class DirectionPickerTests: XCTestCase {
             pattern.directionId = 0
             pattern.representativeTrip {
                 $0.headsign = "North"
-                $0.routePatternId = "test-north"
             }
         }
         let patternSouth = objects.routePattern(route: route) { pattern in
             pattern.directionId = 1
             pattern.representativeTrip {
                 $0.headsign = "South"
-                $0.routePatternId = "test-south"
             }
         }
 
@@ -39,11 +37,11 @@ final class DirectionPickerTests: XCTestCase {
             stop: stop,
             patterns: [
                 .ByHeadsign(
-                    route: route, headsign: "North", line: nil, routePatternId: "test-north",
+                    route: route, headsign: "North", line: nil,
                     patterns: [patternNorth], upcomingTrips: [], alertsHere: nil
                 ),
                 .ByHeadsign(
-                    route: route, headsign: "South", line: nil, routePatternId: "test-south",
+                    route: route, headsign: "South", line: nil,
                     patterns: [patternSouth], upcomingTrips: [], alertsHere: nil
                 ),
             ],

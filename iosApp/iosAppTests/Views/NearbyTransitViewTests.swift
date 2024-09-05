@@ -121,11 +121,11 @@ final class NearbyTransitViewTests: XCTestCase {
         return NearbyStaticData.companion.build { builder in
             builder.route(route: route52) { builder in
                 builder.stop(stop: stop1) { builder in
-                    builder.headsign(headsign: "Charles River Loop", patterns: [rp40], routePatternId: "52-4-0")
-                    builder.headsign(headsign: "Dedham Mall", patterns: [rp50], routePatternId: "52-5-0")
+                    builder.headsign(headsign: "Charles River Loop", patterns: [rp40])
+                    builder.headsign(headsign: "Dedham Mall", patterns: [rp50])
                 }
                 builder.stop(stop: stop2) { builder in
-                    builder.headsign(headsign: "Watertown Yard", patterns: [rp41, rp51], routePatternId: "52-4-1")
+                    builder.headsign(headsign: "Watertown Yard", patterns: [rp41, rp51])
                 }
             }
         }
@@ -882,7 +882,6 @@ final class NearbyTransitViewTests: XCTestCase {
                     route: route,
                     headsign: "Place",
                     line: nil,
-                    routePatternId: "test-place",
                     patterns: [pattern],
                     upcomingTrips: nil,
                     alertsHere: nil

@@ -94,7 +94,6 @@ final class StopDetailsPageTests: XCTestCase {
                 route: route1,
                 headsign: "",
                 line: nil,
-                routePatternId: "",
                 patterns: [routePattern1],
                 upcomingTrips: nil,
                 alertsHere: nil
@@ -107,7 +106,6 @@ final class StopDetailsPageTests: XCTestCase {
                 route: route2,
                 headsign: "",
                 line: nil,
-                routePatternId: "",
                 patterns: [routePattern2],
                 upcomingTrips: nil,
                 alertsHere: nil

@@ -189,8 +189,7 @@ enum GreenLineHelper {
                 builder.headsign(
                     route: routeE,
                     headsign: "Heath Street",
-                    patterns: [rpE0],
-                    routePatternId: "Green-E-886-0"
+                    patterns: [rpE0]
                 )
                 builder.direction(
                     direction: Direction(name: "East", destination: "Park St & North", id: 1),

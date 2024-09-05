@@ -107,7 +107,6 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 route: route,
                 headsign: "North",
                 line: nil,
-                routePatternId: "test-north",
                 patterns: [patternNorth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
                 alertsHere: nil
@@ -116,7 +115,6 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 route: route,
                 headsign: "South",
                 line: nil,
-                routePatternId: "test-south",
                 patterns: [patternSouth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
                 alertsHere: nil
@@ -143,7 +141,6 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                     route: lineRoute3,
                     headsign: "Branch",
                     line: line,
-                    routePatternId: "test-branch",
                     patterns: [linePatternBranch],
                     upcomingTrips: [objects.upcomingTrip(prediction: linePredictionBranch)],
                     alertsHere: nil
