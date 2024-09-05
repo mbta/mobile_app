@@ -85,7 +85,20 @@ fun NearbyTransitView(
             style = MaterialTheme.typography.titleLarge
         )
 
-        if (!nearbyWithRealtimeInfo.isNullOrEmpty()) {
+        if (nearbyWithRealtimeInfo == null) {
+            Text(text = "Loading...", modifier)
+        } else if (nearbyWithRealtimeInfo.isEmpty()) {
+            Column(Modifier.padding(8.dp).weight(1f), verticalArrangement = Arrangement.Center) {
+                Text(
+                    stringResource(R.string.no_stops_nearby_title),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    stringResource(R.string.no_stops_nearby),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        } else {
             LazyColumn(modifier) {
                 items(nearbyWithRealtimeInfo) {
                     when (it) {
@@ -108,19 +121,6 @@ fun NearbyTransitView(
                     }
                 }
             }
-        } else if (nearbyWithRealtimeInfo != null) {
-            Column(Modifier.padding(8.dp).weight(1f), verticalArrangement = Arrangement.Center) {
-                Text(
-                    stringResource(R.string.no_stops_nearby_title),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    stringResource(R.string.no_stops_nearby),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        } else {
-            Text(text = "Loading...", modifier)
         }
     }
 }
