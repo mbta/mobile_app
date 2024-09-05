@@ -2,7 +2,7 @@
 accompanist = "0.34.0"
 agp = "8.5.2"
 datastorePreferencesCore = "1.1.1"
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
 compose-bom = "2024.08.00"
