@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.dependencyInjection
 import IRepositories
 import RealRepositories
 import com.mbta.tid.mbta_app.AppVariant
-import com.mbta.tid.mbta_app.cache.GlobalCache
+import com.mbta.tid.mbta_app.cache.ResponseCache
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
@@ -36,7 +36,15 @@ fun appModule(appVariant: AppVariant) = module {
     )
 }
 
-fun cacheModule() = module { single { GlobalCache() } }
+fun cacheModule() = module {
+    factory { params ->
+        if (params.isNotEmpty()) {
+            ResponseCache(maxAge = params.get())
+        } else {
+            ResponseCache()
+        }
+    }
+}
 
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {

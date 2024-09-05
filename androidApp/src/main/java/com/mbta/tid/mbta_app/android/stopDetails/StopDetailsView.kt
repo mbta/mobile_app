@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -18,14 +16,12 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
+import com.mbta.tid.mbta_app.android.util.getGlobalData
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlin.time.Duration.Companion.seconds
-import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsView(
@@ -37,11 +33,8 @@ fun StopDetailsView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    globalRepository: IGlobalRepository = koinInject(),
 ) {
-    var globalResponse: GlobalResponse? by remember { mutableStateOf(null) }
-
-    LaunchedEffect(null) { globalResponse = globalRepository.getGlobalData() }
+    val globalResponse = getGlobalData()
 
     val now = timer(updateInterval = 5.seconds)
 
