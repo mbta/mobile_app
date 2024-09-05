@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.getSchedule
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
@@ -74,37 +78,49 @@ fun NearbyTransitView(
         }
     }
 
-    if (nearbyWithRealtimeInfo != null) {
-        LazyColumn(modifier) {
-            item {
-                Text(
-                    text = "Nearby transit",
-                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            items(nearbyWithRealtimeInfo) {
-                when (it) {
-                    is StopsAssociated.WithRoute ->
-                        NearbyRouteView(
-                            it,
-                            pinnedRoutes.orEmpty().contains(it.id),
-                            togglePinnedRoute,
-                            now,
-                            onOpenStopDetails
-                        )
-                    is StopsAssociated.WithLine ->
-                        NearbyLineView(
-                            it,
-                            pinnedRoutes.orEmpty().contains(it.id),
-                            togglePinnedRoute,
-                            now,
-                            onOpenStopDetails
-                        )
+    Column(modifier) {
+        Text(
+            text = "Nearby transit",
+            modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        if (!nearbyWithRealtimeInfo.isNullOrEmpty()) {
+            LazyColumn(modifier) {
+                items(nearbyWithRealtimeInfo) {
+                    when (it) {
+                        is StopsAssociated.WithRoute ->
+                            NearbyRouteView(
+                                it,
+                                pinnedRoutes.orEmpty().contains(it.id),
+                                togglePinnedRoute,
+                                now,
+                                onOpenStopDetails
+                            )
+                        is StopsAssociated.WithLine ->
+                            NearbyLineView(
+                                it,
+                                pinnedRoutes.orEmpty().contains(it.id),
+                                togglePinnedRoute,
+                                now,
+                                onOpenStopDetails
+                            )
+                    }
                 }
             }
+        } else if (nearbyWithRealtimeInfo != null) {
+            Column(Modifier.padding(8.dp).weight(1f), verticalArrangement = Arrangement.Center) {
+                Text(
+                    stringResource(R.string.no_stops_nearby_title),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    stringResource(R.string.no_stops_nearby),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        } else {
+            Text(text = "Loading...", modifier)
         }
-    } else {
-        Text(text = "Loading...", modifier)
     }
 }
