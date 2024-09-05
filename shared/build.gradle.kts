@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.sentry)
     alias(libs.plugins.serialization)
     alias(libs.plugins.skie)
     alias(libs.plugins.mokkery)
@@ -27,11 +28,6 @@ kotlin {
         version = "1.0"
         ios.deploymentTarget = "15.0"
         podfile = project.file("../iosApp/Podfile")
-        pod("Sentry") {
-            version = "~> 8.25.0"
-            // These extra options are required
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
 
         framework {
             baseName = "shared"
@@ -89,3 +85,5 @@ android {
 }
 
 skie { features { group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) } } }
+
+sentryKmp { autoInstall.commonMain.enabled = false }

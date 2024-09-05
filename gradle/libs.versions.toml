@@ -17,7 +17,7 @@ ktor = "2.3.12"
 mapbox = "11.3.0"
 mapboxTurf = "6.15.0"
 okhttp = "4.12.0"
-sentry = "0.7.1"
+sentry = "0.8.0"
 skie = "0.8.4"
 spatialk = "0.3.0"
 mokkery = "2.3.0"
@@ -68,6 +68,7 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.ref = "sentry" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
