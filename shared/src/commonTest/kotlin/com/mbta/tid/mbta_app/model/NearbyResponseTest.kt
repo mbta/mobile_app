@@ -1271,12 +1271,15 @@ class NearbyResponseTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route { sortOrder = 1 }
-        val routePattern1 = objects.routePattern(route1) { representativeTrip { headsign = "A" } }
+        val routePattern1 = objects.routePattern(route1)
         val trip1 = objects.trip(routePattern1)
 
         val route2 = objects.route { sortOrder = 2 }
-        val routePattern2 = objects.routePattern(route2) { representativeTrip { headsign = "A" } }
+        val routePattern2 = objects.routePattern(route2)
         val trip2 = objects.trip(routePattern2)
+
+        // Should not be included
+        val trip3 = objects.trip(routePattern2) { routePatternId = "not the right id" }
 
         val time = Instant.parse("2024-03-18T10:41:13-04:00")
 
@@ -1294,14 +1297,22 @@ class NearbyResponseTest {
                 stopSequence = 90
                 departureTime = time + 2.minutes
             }
+        val sched3 =
+            objects.schedule {
+                trip = trip3
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 3.minutes
+            }
 
         val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
         val pred2 = objects.prediction(sched2) { departureTime = time + 2.3.minutes }
+        val pred3 = objects.prediction(sched3) { departureTime = time + 3.4.minutes }
 
         val staticData =
             NearbyStaticData.build {
                 route(route1) { stop(stop) { headsign("A", listOf(routePattern1)) } }
-                route(route2) { stop(stop) { headsign("A", listOf(routePattern2)) } }
+                route(route2) { stop(stop) { headsign("B", listOf(routePattern2)) } }
             }
 
         assertEquals(
@@ -1333,7 +1344,7 @@ class NearbyResponseTest {
                             listOf(
                                 RealtimePatterns.ByHeadsign(
                                     route2,
-                                    "A",
+                                    "B",
                                     null,
                                     listOf(routePattern2),
                                     listOf(objects.upcomingTrip(sched2, pred2))
