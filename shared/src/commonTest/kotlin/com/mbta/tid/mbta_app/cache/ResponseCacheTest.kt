@@ -80,7 +80,7 @@ class ResponseCacheTest {
         val httpResponse = client.get { url { path("api/global") } }
 
         val cache = ResponseCache()
-        cache.data = ConditionalResponse.Response(null, httpResponse)
+        cache.data = httpResponse
         cache.dataTimestamp = TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
 
         assertEquals(httpResponse, cache.getOrFetch { fail() })
@@ -118,7 +118,7 @@ class ResponseCacheTest {
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
         val cache = ResponseCache()
-        cache.data = ConditionalResponse.Response(null, client.get { url { path("api/global") } })
+        cache.data = client.get { url { path("api/global") } }
         cache.dataTimestamp = TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
 
         var didFetch = false
