@@ -2,7 +2,9 @@ package com.mbta.tid.mbta_app.android.pages
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
@@ -18,6 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -105,82 +110,95 @@ fun NearbyTransitPage(
         BottomSheetScaffold(
             sheetDragHandle = { DragHandle() },
             sheetContent = {
-                NavHost(
-                    navController,
-                    startDestination = SheetRoutes.NearbyTransit,
+                var sheetHeight by remember { mutableStateOf(0.dp) }
+                val density = LocalDensity.current
+                Box(
                     modifier =
-                        Modifier.fillMaxSize()
-                            .padding(outerSheetPadding)
+                        Modifier.onGloballyPositioned {
+                                // https://issuetracker.google.com/issues/287390075#comment7
+                                sheetHeight = with(density) { it.boundsInWindow().height.toDp() }
+                            }
+                            .fillMaxSize()
                             .background(MaterialTheme.colorScheme.surface)
                 ) {
-                    composable<SheetRoutes.StopDetails> { backStackEntry ->
-                        if (navBarVisible) {
-                            hideNavBar()
-                        }
+                    NavHost(
+                        navController,
+                        startDestination = SheetRoutes.NearbyTransit,
+                        modifier =
+                            Modifier.height(sheetHeight)
+                                .padding(outerSheetPadding)
+                                .background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        composable<SheetRoutes.StopDetails> { backStackEntry ->
+                            if (navBarVisible) {
+                                hideNavBar()
+                            }
 
-                        val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-                        val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
+                            val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
+                            val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
-                        fun updateStopFilter(filter: StopDetailsFilter?) {
-                            stopDetailsFilter = filter
-                        }
+                            fun updateStopFilter(filter: StopDetailsFilter?) {
+                                stopDetailsFilter = filter
+                            }
 
-                        LaunchedEffect(navRoute) {
-                            updateStopFilter(
-                                if (
-                                    navRoute.filterRouteId != null &&
-                                        navRoute.filterDirectionId != null
-                                )
-                                    StopDetailsFilter(
-                                        navRoute.filterRouteId,
-                                        navRoute.filterDirectionId
+                            LaunchedEffect(navRoute) {
+                                updateStopFilter(
+                                    if (
+                                        navRoute.filterRouteId != null &&
+                                            navRoute.filterDirectionId != null
                                     )
-                                else null
-                            )
-                        }
-
-                        DisposableEffect(navRoute, stopDetailsFilter) {
-                            handleRouteChange(navRoute)
-
-                            onDispose { handleRouteChange(null) }
-                        }
-
-                        if (stop != null) {
-                            StopDetailsPage(
-                                modifier = modifier,
-                                stop,
-                                stopDetailsFilter,
-                                nearbyTransit.alertData,
-                                onClose = { navController.popBackStack() },
-                                updateStopFilter = ::updateStopFilter
-                            )
-                        }
-                    }
-                    composable<SheetRoutes.NearbyTransit> {
-                        if (!navBarVisible) {
-                            showNavBar()
-                        }
-
-                        LaunchedEffect(true) { stopDetailsFilter = null }
-
-                        NearbyTransitView(
-                            alertData = nearbyTransit.alertData,
-                            globalResponse = nearbyTransit.globalResponse,
-                            targetLocation = nearbyTransit.mapCenter,
-                            setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
-                            onOpenStopDetails = { stopId, filter ->
-                                navController.navigate(
-                                    SheetRoutes.StopDetails(
-                                        stopId,
-                                        filter?.routeId,
-                                        filter?.directionId
-                                    )
+                                        StopDetailsFilter(
+                                            navRoute.filterRouteId,
+                                            navRoute.filterDirectionId
+                                        )
+                                    else null
                                 )
                             }
-                        )
+
+                            DisposableEffect(navRoute, stopDetailsFilter) {
+                                handleRouteChange(navRoute)
+
+                                onDispose { handleRouteChange(null) }
+                            }
+
+                            if (stop != null) {
+                                StopDetailsPage(
+                                    modifier = modifier,
+                                    stop,
+                                    stopDetailsFilter,
+                                    nearbyTransit.alertData,
+                                    onClose = { navController.popBackStack() },
+                                    updateStopFilter = ::updateStopFilter
+                                )
+                            }
+                        }
+                        composable<SheetRoutes.NearbyTransit> {
+                            if (!navBarVisible) {
+                                showNavBar()
+                            }
+
+                            LaunchedEffect(true) { stopDetailsFilter = null }
+
+                            NearbyTransitView(
+                                alertData = nearbyTransit.alertData,
+                                globalResponse = nearbyTransit.globalResponse,
+                                targetLocation = nearbyTransit.mapCenter,
+                                setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                                onOpenStopDetails = { stopId, filter ->
+                                    navController.navigate(
+                                        SheetRoutes.StopDetails(
+                                            stopId,
+                                            filter?.routeId,
+                                            filter?.directionId
+                                        )
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             },
+            sheetContainerColor = MaterialTheme.colorScheme.surface,
             scaffoldState = nearbyTransit.scaffoldState,
             sheetPeekHeight = 422.dp,
         ) { sheetPadding ->
