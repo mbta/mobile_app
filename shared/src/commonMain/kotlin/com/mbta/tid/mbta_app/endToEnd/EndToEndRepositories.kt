@@ -84,14 +84,49 @@ fun endToEndModule(): Module {
             departureTime = now + 10.minutes
         }
     return module {
+        single<IAlertsRepository> { MockAlertsRepository() }
         single<IAppCheckRepository> { MockAppCheckRepository() }
         single<IConfigRepository> { MockConfigRepository() }
+        single<IGlobalRepository> {
+            object : IGlobalRepository {
+                override suspend fun getGlobalData() =
+                    GlobalResponse(
+                        objects,
+                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
+                    )
+            }
+        }
+        single<INearbyRepository> {
+            object : INearbyRepository {
+                override suspend fun getNearby(global: GlobalResponse, location: Coordinate) =
+                    NearbyStaticData(global, NearbyResponse(listOf(stopParkStreet.id)))
+            }
+        }
         single<IPinnedRoutesRepository> {
             object : IPinnedRoutesRepository {
                 override suspend fun getPinnedRoutes() = emptySet<String>()
 
                 override suspend fun setPinnedRoutes(routes: Set<String>) {}
             }
+        }
+        single<IPredictionsRepository> {
+            object : IPredictionsRepository {
+                override fun connect(
+                    stopIds: List<String>,
+                    onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+                ) {
+                    onReceive(Outcome(PredictionsStreamDataResponse(objects), null))
+                }
+
+                override fun disconnect() {}
+            }
+        }
+        single<IRailRouteShapeRepository> {
+            // If this returns a response (or maybe just an empty response, I didn't keep debugging
+            // once I found something that worked), the end-to-end test will fail in Xcode Cloud
+            // because the main thread stays busy for 30 seconds, and it will be a nightmare to
+            // debug.
+            IdleRailRouteShapeRepository()
         }
         single<ISchedulesRepository> {
             object : ISchedulesRepository {
@@ -102,6 +137,7 @@ fun endToEndModule(): Module {
                     getSchedule(stopIds, Clock.System.now())
             }
         }
+        single<ISearchResultRepository> { MockSearchResultRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
@@ -122,25 +158,6 @@ fun endToEndModule(): Module {
                 override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
                     TODO("Not yet implemented")
                 }
-            }
-        }
-        single<IPredictionsRepository> {
-            object : IPredictionsRepository {
-                override fun connect(
-                    stopIds: List<String>,
-                    onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
-                ) {
-                    onReceive(Outcome(PredictionsStreamDataResponse(objects), null))
-                }
-
-                override fun disconnect() {}
-            }
-        }
-        single<IAlertsRepository> { MockAlertsRepository() }
-        single<INearbyRepository> {
-            object : INearbyRepository {
-                override suspend fun getNearby(global: GlobalResponse, location: Coordinate) =
-                    NearbyStaticData(global, NearbyResponse(listOf(stopParkStreet.id)))
             }
         }
         single<ITripPredictionsRepository> {
@@ -171,26 +188,9 @@ fun endToEndModule(): Module {
                 }
             }
         }
-        single<IGlobalRepository> {
-            object : IGlobalRepository {
-                override suspend fun getGlobalData() =
-                    GlobalResponse(
-                        objects,
-                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
-                    )
-            }
-        }
-        single<ISearchResultRepository> { MockSearchResultRepository() }
-        single<IRailRouteShapeRepository> {
-            // If this returns a response (or maybe just an empty response, I didn't keep debugging
-            // once I found something that worked), the end-to-end test will fail in Xcode Cloud
-            // because the main thread stays busy for 30 seconds, and it will be a nightmare to
-            // debug.
-            IdleRailRouteShapeRepository()
-        }
         single<IVehiclesRepository> { MockVehiclesRepository() }
-        single { TogglePinnedRouteUsecase(get()) }
-        single { GetSettingUsecase(get()) }
         single { ConfigUseCase(get(), get()) }
+        single { GetSettingUsecase(get()) }
+        single { TogglePinnedRouteUsecase(get()) }
     }
 }
