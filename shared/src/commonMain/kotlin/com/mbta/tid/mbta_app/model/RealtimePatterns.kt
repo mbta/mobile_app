@@ -30,7 +30,6 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         val route: Route,
         val headsign: String,
         val line: Line?,
-        val routePatternId: String?,
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
@@ -46,17 +45,20 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.route,
             staticData.headsign,
             staticData.line,
-            staticData.routePatternId,
             staticData.patterns,
             if (upcomingTripsMap != null) {
                 stopIds
-                    .mapNotNull { stopId ->
-                        upcomingTripsMap[
-                            UpcomingTripKey.ByHeadsign(
-                                staticData.route.id,
-                                staticData.routePatternId,
-                                stopId
-                            )]
+                    .map { stopId ->
+                        staticData.patterns
+                            .mapNotNull { pattern ->
+                                upcomingTripsMap[
+                                    UpcomingTripKey.ByHeadsign(
+                                        staticData.route.id,
+                                        pattern.id,
+                                        stopId
+                                    )]
+                            }
+                            .flatten()
                     }
                     .flatten()
                     .sorted()

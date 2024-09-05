@@ -111,7 +111,6 @@ private fun StopDetailsRoutesViewPreview() {
                                     route1,
                                     "A",
                                     null,
-                                    trip1.routePatternId,
                                     emptyList(),
                                     listOf(UpcomingTrip(trip1, prediction1))
                                 )
@@ -125,7 +124,6 @@ private fun StopDetailsRoutesViewPreview() {
                                     route2,
                                     "B",
                                     null,
-                                    trip3.routePatternId,
                                     emptyList(),
                                     listOf(UpcomingTrip(trip3, prediction2))
                                 ),
@@ -133,7 +131,6 @@ private fun StopDetailsRoutesViewPreview() {
                                     route2,
                                     "C",
                                     null,
-                                    trip2.routePatternId,
                                     emptyList(),
                                     listOf(UpcomingTrip(trip2, schedule2))
                                 )

@@ -16,21 +16,10 @@ class StopDetailsDeparturesTest {
         val objects = ObjectCollectionBuilder()
 
         val route = objects.route()
-        val routePattern1 =
-            objects.routePattern(route) {
-                id = "test-a"
-                representativeTrip {
-                    headsign = "A"
-                    routePatternId = "test-a"
-                }
-            }
+        val routePattern1 = objects.routePattern(route) { representativeTrip { headsign = "A" } }
         val routePattern2 =
             objects.routePattern(route) {
-                id = "test-b"
-                representativeTrip {
-                    headsign = "B"
-                    routePatternId = "test-b"
-                }
+                representativeTrip { headsign = "B" }
                 typicality = RoutePattern.Typicality.Typical
             }
         val stop = objects.stop()
@@ -68,7 +57,6 @@ class StopDetailsDeparturesTest {
                                 route,
                                 "A",
                                 null,
-                                "test-a",
                                 listOf(routePattern1),
                                 listOf(
                                     objects.upcomingTrip(schedule1, prediction1),
@@ -79,7 +67,6 @@ class StopDetailsDeparturesTest {
                                 route,
                                 "B",
                                 null,
-                                "test-b",
                                 listOf(routePattern2),
                                 listOf()
                             )
@@ -164,10 +151,7 @@ class StopDetailsDeparturesTest {
             }
         val routePatternE1 =
             objects.routePattern(routeE) {
-                representativeTrip {
-                    headsign = "Heath Street"
-                    routePatternId = "test-hs"
-                }
+                representativeTrip { headsign = "Heath Street" }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
                 id = "test-hs"
@@ -258,7 +242,6 @@ class StopDetailsDeparturesTest {
                                 routeE,
                                 "Heath Street",
                                 line,
-                                "test-hs",
                                 listOf(routePatternE1),
                                 listOf(objects.upcomingTrip(schedE1, predE1))
                             ),
@@ -318,14 +301,7 @@ class StopDetailsDeparturesTest {
             val predictedTrip: UpcomingTrip?,
         ) {
             fun patternsByHeadsign(trips: List<UpcomingTrip>?) =
-                RealtimePatterns.ByHeadsign(
-                    route,
-                    headsign,
-                    null,
-                    routePattern.id,
-                    listOf(routePattern),
-                    trips
-                )
+                RealtimePatterns.ByHeadsign(route, headsign, null, listOf(routePattern), trips)
         }
 
         fun buildPattern(scheduled: Boolean, predicted: Boolean): PatternInfo {
@@ -453,20 +429,12 @@ class StopDetailsDeparturesTest {
         val earlyPattern =
             objects.routePattern(route) {
                 typicality = RoutePattern.Typicality.Atypical
-                id = "test-early"
-                representativeTrip {
-                    headsign = "Early"
-                    routePatternId = "test-early"
-                }
+                representativeTrip { headsign = "Early" }
             }
         val latePattern =
             objects.routePattern(route) {
                 typicality = RoutePattern.Typicality.Atypical
-                id = "test-late"
-                representativeTrip {
-                    headsign = "Late"
-                    routePatternId = "test-late"
-                }
+                representativeTrip { headsign = "Late" }
             }
 
         // since we only request schedules in the future and predictions get removed once they're
@@ -480,20 +448,12 @@ class StopDetailsDeparturesTest {
             }
 
         val expectedEarly =
-            RealtimePatterns.ByHeadsign(
-                route,
-                "Early",
-                null,
-                "test-early",
-                listOf(earlyPattern),
-                emptyList()
-            )
+            RealtimePatterns.ByHeadsign(route, "Early", null, listOf(earlyPattern), emptyList())
         val expectedLate =
             RealtimePatterns.ByHeadsign(
                 route,
                 "Late",
                 null,
-                "test-late",
                 listOf(latePattern),
                 listOf(UpcomingTrip(lateTrip, latePrediction))
             )
@@ -555,33 +515,21 @@ class StopDetailsDeparturesTest {
         val routePattern1 =
             objects.routePattern(routePinned) {
                 typicality = RoutePattern.Typicality.Typical
-                id = "test-a"
-                representativeTrip {
-                    headsign = "A"
-                    routePatternId = "test-a"
-                }
+                representativeTrip { headsign = "A" }
             }
 
         val routeNotPinned = objects.route { sortOrder = 1 }
         val routeNotPinnedPattern =
             objects.routePattern(routeNotPinned) {
                 typicality = RoutePattern.Typicality.Typical
-                id = "test-b"
-                representativeTrip {
-                    headsign = "B"
-                    routePatternId = "test-b"
-                }
+                representativeTrip { headsign = "B" }
             }
 
         val routeNotPinned2 = objects.route { sortOrder = 2 }
         val routeNotPinnedPattern2 =
             objects.routePattern(routeNotPinned2) {
                 typicality = RoutePattern.Typicality.Typical
-                id = "test-c"
-                representativeTrip {
-                    headsign = "C"
-                    routePatternId = "test-c"
-                }
+                representativeTrip { headsign = "C" }
             }
 
         val stop = objects.stop()
@@ -599,7 +547,6 @@ class StopDetailsDeparturesTest {
                                 routePinned,
                                 "A",
                                 null,
-                                "test-a",
                                 listOf(routePattern1),
                                 listOf()
                             ),
@@ -613,7 +560,6 @@ class StopDetailsDeparturesTest {
                                 routeNotPinned,
                                 "B",
                                 null,
-                                "test-b",
                                 listOf(routeNotPinnedPattern),
                                 listOf()
                             ),
@@ -627,7 +573,6 @@ class StopDetailsDeparturesTest {
                                 routeNotPinned2,
                                 "C",
                                 null,
-                                "test-c",
                                 listOf(routeNotPinnedPattern2),
                                 listOf()
                             ),
@@ -665,11 +610,7 @@ class StopDetailsDeparturesTest {
         val routePattern =
             objects.routePattern(route) {
                 typicality = RoutePattern.Typicality.Typical
-                id = "test-a"
-                representativeTrip {
-                    headsign = "A"
-                    routePatternId = "test-a"
-                }
+                representativeTrip { headsign = "A" }
             }
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
@@ -715,7 +656,6 @@ class StopDetailsDeparturesTest {
                                 route,
                                 "A",
                                 null,
-                                "test-a",
                                 listOf(routePattern),
                                 emptyList(),
                                 alertsHere = listOf(alert)

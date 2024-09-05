@@ -87,7 +87,6 @@ struct StopDetailsRoutesView: View {
                 route: route1,
                 headsign: "A",
                 line: nil,
-                routePatternId: "test-A",
                 patterns: [],
                 upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
                 alertsHere: nil
@@ -98,7 +97,6 @@ struct StopDetailsRoutesView: View {
                 route: route2,
                 headsign: "B",
                 line: nil,
-                routePatternId: "test-B",
                 patterns: [],
                 upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
                 alertsHere: nil
@@ -107,7 +105,6 @@ struct StopDetailsRoutesView: View {
                 route: route2,
                 headsign: "C",
                 line: nil,
-                routePatternId: "test-C",
                 patterns: [],
                 upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                 alertsHere: nil

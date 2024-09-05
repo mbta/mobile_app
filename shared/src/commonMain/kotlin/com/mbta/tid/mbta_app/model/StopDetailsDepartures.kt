@@ -183,7 +183,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 route,
                                 representativeTrip.headsign,
                                 null,
-                                representativeTrip.routePatternId,
                                 patterns,
                                 upcomingTrips,
                                 alerts?.let {

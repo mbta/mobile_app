@@ -25,7 +25,7 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.Loading,
-            RealtimePatterns.ByHeadsign(route, "", null, null, emptyList(), null, null)
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
     }
@@ -41,15 +41,7 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
-            RealtimePatterns.ByHeadsign(
-                    route,
-                    "",
-                    null,
-                    null,
-                    emptyList(),
-                    emptyList(),
-                    listOf(alert)
-                )
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
     }
@@ -77,7 +69,6 @@ class RealtimePatternsTest {
                     route,
                     "",
                     null,
-                    null,
                     emptyList(),
                     listOf(upcomingTrip),
                     listOf(alert)
@@ -95,15 +86,7 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.None,
-            RealtimePatterns.ByHeadsign(
-                    route,
-                    "",
-                    null,
-                    null,
-                    emptyList(),
-                    emptyList(),
-                    emptyList()
-                )
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
     }
@@ -145,7 +128,6 @@ class RealtimePatternsTest {
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
-                    null,
                     null,
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
@@ -193,7 +175,6 @@ class RealtimePatternsTest {
                     subwayRoute,
                     "",
                     null,
-                    null,
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
@@ -218,7 +199,6 @@ class RealtimePatternsTest {
                     busRoute,
                     "",
                     null,
-                    null,
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
@@ -240,7 +220,6 @@ class RealtimePatternsTest {
                     route,
                     "",
                     null,
-                    null,
                     emptyList(),
                     listOf(objects.upcomingTrip(prediction0))
                 )
@@ -251,7 +230,6 @@ class RealtimePatternsTest {
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
-                    null,
                     null,
                     emptyList(),
                     listOf(objects.upcomingTrip(prediction1))
@@ -268,11 +246,11 @@ class RealtimePatternsTest {
         val routePattern1 = objects.routePattern(route) { directionId = 1 }
         assertEquals(
             0,
-            RealtimePatterns.ByHeadsign(route, "", null, null, listOf(routePattern0)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0)).directionId()
         )
         assertEquals(
             1,
-            RealtimePatterns.ByHeadsign(route, "", null, null, listOf(routePattern1)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1)).directionId()
         )
     }
 
@@ -282,7 +260,6 @@ class RealtimePatternsTest {
             RealtimePatterns.ByHeadsign(
                     ObjectCollectionBuilder.Single.route(),
                     "",
-                    null,
                     null,
                     emptyList()
                 )

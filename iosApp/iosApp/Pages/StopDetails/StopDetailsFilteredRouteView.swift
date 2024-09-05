@@ -36,7 +36,7 @@ struct StopDetailsFilteredRouteView: View {
             self.route = route
             headsign = trip.headsign
             formatted = RealtimePatterns.ByHeadsign(
-                route: route, headsign: headsign, line: nil, routePatternId: trip.routePatternId, patterns: [],
+                route: route, headsign: headsign, line: nil, patterns: [],
                 upcomingTrips: [upcoming], alertsHere: nil
             ).format(now: now, routeType: route.type, context: .stopDetailsFiltered)
 

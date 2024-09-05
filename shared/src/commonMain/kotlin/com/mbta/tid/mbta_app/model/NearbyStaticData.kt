@@ -23,7 +23,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         data class ByHeadsign(
             val route: Route,
             val headsign: String,
-            val routePatternId: String?,
             val line: Line?,
             override val patterns: List<RoutePattern>
         ) : StaticPatterns()
@@ -232,23 +231,21 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             allStopIds: Set<String>,
             global: GlobalResponse
         ): StopPatterns.ForRoute {
-            val patternsByRepresentativeTrip =
-                patterns.groupBy { global.trips.getValue(it.representativeTripId) }
+            val patternsByHeadsign =
+                patterns.groupBy {
+                    patterns.groupBy { global.trips.getValue(it.representativeTripId) }
+                    val representativeTrip = global.trips.getValue(it.representativeTripId)
+                    representativeTrip.headsign
+                }
 
             return StopPatterns.ForRoute(
                 route = route,
                 stop = stop,
                 allStopIds = allStopIds,
                 patterns =
-                    patternsByRepresentativeTrip
-                        .map { (representativeTrip, routePatterns) ->
-                            StaticPatterns.ByHeadsign(
-                                route,
-                                representativeTrip.headsign,
-                                representativeTrip.routePatternId,
-                                null,
-                                routePatterns.sorted()
-                            )
+                    patternsByHeadsign
+                        .map { (headsign, routePatterns) ->
+                            StaticPatterns.ByHeadsign(route, headsign, null, routePatterns.sorted())
                         }
                         .sorted(),
                 directions = Direction.getDirections(global, stop, route, patterns)
@@ -291,7 +288,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                             StaticPatterns.ByHeadsign(
                                 route,
                                 representativeTrip.headsign,
-                                representativeTrip.routePatternId,
                                 line,
                                 patterns.sorted()
                             )
@@ -358,7 +354,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 }
 
 /**
- * Attaches [schedules] and [predictions] to the route, stop, and headsign to which they apply.
+ * Attaches [schedules] and [predictions] to the route, stop, and routePattern to which they apply.
  * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
  * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
  * sort order.
@@ -499,29 +495,12 @@ class NearbyStaticDataBuilder {
         val data = mutableListOf<NearbyStaticData.StaticPatterns>()
         val directions = mutableListOf<Direction>()
 
-        fun headsign(
-            route: Route,
-            headsign: String,
-            patterns: List<RoutePattern>,
-            routePatternId: String? = null
-        ) {
-            data.add(
-                NearbyStaticData.StaticPatterns.ByHeadsign(
-                    route,
-                    headsign,
-                    routePatternId,
-                    line,
-                    patterns
-                )
-            )
+        fun headsign(route: Route, headsign: String, patterns: List<RoutePattern>) {
+            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns))
         }
 
-        fun headsign(
-            headsign: String,
-            patterns: List<RoutePattern>,
-            routePatternId: String? = null
-        ) {
-            headsign(routes.min(), headsign, patterns, routePatternId)
+        fun headsign(headsign: String, patterns: List<RoutePattern>) {
+            headsign(routes.min(), headsign, patterns)
         }
 
         fun direction(direction: Direction, routes: List<Route>, patterns: List<RoutePattern>) {

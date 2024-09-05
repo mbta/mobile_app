@@ -398,7 +398,6 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     route: busRoute,
                                     headsign: busTrip.headsign,
                                     line: nil,
-                                    routePatternId: busTrip.routePatternId,
                                     patterns: [busPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
@@ -427,7 +426,6 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     route: crRoute,
                                     headsign: crTrip.headsign,
                                     line: nil,
-                                    routePatternId: crTrip.routePatternId,
                                     patterns: [crPattern],
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),
