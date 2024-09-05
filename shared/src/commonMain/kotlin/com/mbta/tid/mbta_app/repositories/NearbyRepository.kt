@@ -27,14 +27,26 @@ interface INearbyRepository {
 
 class NearbyRepository : KoinComponent, INearbyRepository {
     override suspend fun getNearby(global: GlobalResponse, location: Coordinate): NearbyStaticData {
-        val nearbyLeafStops =
-            global.leafStopsKdTree.findNodesWithin(
-                Position(latitude = location.latitude, longitude = location.longitude),
-                1.0
-            ) { stopId, distance ->
-                distance < 0.5 ||
-                    global.stops.getValue(stopId).vehicleType == RouteType.COMMUTER_RAIL
+        val searchPosition = Position(latitude = location.latitude, longitude = location.longitude)
+
+        var radiusMiles = 0.5
+        var crRadiusMiles = 1.0
+
+        fun findLeafStops(): List<Pair<String, Double>> =
+            global.leafStopsKdTree.findNodesWithin(searchPosition, crRadiusMiles) { stopId, distance
+                ->
+                distance < radiusMiles ||
+                    global.stops[stopId]?.vehicleType == RouteType.COMMUTER_RAIL
             }
+
+        var nearbyLeafStops = findLeafStops()
+
+        if (nearbyLeafStops.isEmpty()) {
+            radiusMiles = 2.0
+            crRadiusMiles = 10.0
+            nearbyLeafStops = findLeafStops()
+        }
+
         val nearbyStopsAndSiblings =
             nearbyLeafStops.flatMapTo(mutableSetOf()) { (stopId, distance) ->
                 val stop = global.stops.getValue(stopId)
@@ -46,7 +58,7 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                             .mapNotNull(global.stops::get)
                     else listOf(stop)
                 val selectedStops =
-                    if (distance <= 0.5) stopSiblings
+                    if (distance <= radiusMiles) stopSiblings
                     else stopSiblings.filter { it.vehicleType == RouteType.COMMUTER_RAIL }
                 selectedStops.map { it.id }
             }
