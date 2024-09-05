@@ -30,18 +30,15 @@ final class ContentViewTests: XCTestCase {
     }
 
     func testDisconnectsSocketAfterBackgrounding() throws {
-        let connectedExpectation = expectation(description: "Socket has connected")
         let disconnectedExpectation = expectation(description: "Socket has disconnected")
 
-        let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
-                                                    disconnectedExpectation: disconnectedExpectation)
+        let fakeSocketWithExpectations = FakeSocket(disconnectedExpectation: disconnectedExpectation)
 
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init()),
                                                 socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
 
-        wait(for: [connectedExpectation], timeout: 1)
         try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
@@ -49,7 +46,7 @@ final class ContentViewTests: XCTestCase {
     func testReconnectsSocketAfterBackgroundingAndReactivating() throws {
         let disconnectedExpectation = expectation(description: "Socket has disconnected")
         let connectedExpectation = expectation(description: "Socket has connected")
-        connectedExpectation.expectedFulfillmentCount = 2
+        connectedExpectation.expectedFulfillmentCount = 1
         connectedExpectation.assertForOverFulfill = true
 
         let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
@@ -69,7 +66,7 @@ final class ContentViewTests: XCTestCase {
     func testJoinsAlertsOnActive() throws {
         let joinAlertsExp = expectation(description: "Alerts channel joined")
         // joins in onAppear & on active
-        joinAlertsExp.expectedFulfillmentCount = 2
+        joinAlertsExp.expectedFulfillmentCount = 1
         joinAlertsExp.assertForOverFulfill = true
 
         let fakeNearbyVM: NearbyViewModel = .init(alertsRepository: CallbackAlertsRepository(connectExp: joinAlertsExp))
