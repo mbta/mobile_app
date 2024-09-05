@@ -5,10 +5,9 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.TimeSource
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 
 sealed class ConditionalResponse {
@@ -19,14 +18,13 @@ sealed class ConditionalResponse {
 
 class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
     internal var data: ConditionalResponse.Response? = null
-    internal var dataTimestamp: Instant? = null
+    internal var dataTimestamp: TimeSource.Monotonic.ValueTimeMark? = null
     private val lock = Mutex()
 
     private fun getData(): HttpResponse? {
         val data = this.data ?: return null
         val dataTimestamp = this.dataTimestamp ?: return null
-        val now = Clock.System.now()
-        return if (now - dataTimestamp < maxAge) {
+        return if (dataTimestamp.elapsedNow() < maxAge) {
             data.response
         } else {
             null
@@ -35,7 +33,7 @@ class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
 
     private fun putData(response: ConditionalResponse.Response) {
         this.data = response
-        this.dataTimestamp = Clock.System.now()
+        this.dataTimestamp = TimeSource.Monotonic.markNow()
     }
 
     suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): HttpResponse {
@@ -56,7 +54,7 @@ class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
             val finalResponse =
                 when (responseData) {
                     is ConditionalResponse.NotModified -> {
-                        this.dataTimestamp = Clock.System.now()
+                        this.dataTimestamp = TimeSource.Monotonic.markNow()
                         this.getData()!!
                     }
                     is ConditionalResponse.Response -> {

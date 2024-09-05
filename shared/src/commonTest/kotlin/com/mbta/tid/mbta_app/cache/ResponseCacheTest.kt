@@ -20,9 +20,9 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -81,7 +81,7 @@ class ResponseCacheTest {
 
         val cache = ResponseCache()
         cache.data = ConditionalResponse.Response(null, httpResponse)
-        cache.dataTimestamp = Clock.System.now() - (cache.maxAge - 1.minutes)
+        cache.dataTimestamp = TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
 
         assertEquals(httpResponse, cache.getOrFetch { fail() })
     }
@@ -119,7 +119,7 @@ class ResponseCacheTest {
 
         val cache = ResponseCache()
         cache.data = ConditionalResponse.Response(null, client.get { url { path("api/global") } })
-        cache.dataTimestamp = Clock.System.now() - (cache.maxAge + 1.minutes)
+        cache.dataTimestamp = TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
 
         var didFetch = false
 
