@@ -21,7 +21,6 @@ struct PinButton: View {
                 Image(pinned ? .pinnedRouteActive : .pinnedRouteInactive)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .shadow(color: Color.fill1, radius: pinned ? 1 : 0)
                     .accessibilityLabel("pin route")
             }
         )

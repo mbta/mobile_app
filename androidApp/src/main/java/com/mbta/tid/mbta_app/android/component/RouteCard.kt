@@ -11,7 +11,11 @@ fun RouteCard(
     content: @Composable () -> Unit
 ) {
     TransitCard(
-        header = { RouteHeader(route) { PinButton(pinned = pinned) { onPin(route.id) } } },
+        header = {
+            RouteHeader(route) { textColor ->
+                PinButton(pinned = pinned, color = textColor) { onPin(route.id) }
+            }
+        },
         content = content
     )
 }

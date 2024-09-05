@@ -13,7 +13,11 @@ fun LineCard(
     content: @Composable () -> Unit
 ) {
     TransitCard(
-        header = { LineHeader(line, routes) { PinButton(pinned = pinned) { onPin(line.id) } } },
+        header = {
+            LineHeader(line, routes) { textColor ->
+                PinButton(pinned = pinned, color = textColor) { onPin(line.id) }
+            }
+        },
         content
     )
 }

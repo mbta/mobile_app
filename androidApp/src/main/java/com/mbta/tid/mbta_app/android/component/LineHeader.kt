@@ -7,7 +7,11 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 
 @Composable
-fun LineHeader(line: Line, routes: List<Route>, rightContent: (@Composable () -> Unit)? = null) {
+fun LineHeader(
+    line: Line,
+    routes: List<Route>,
+    rightContent: (@Composable (textColor: Color) -> Unit)? = null
+) {
     val route = routes.first()
     val (modeIcon, modeDescription) = routeIcon(route = route)
     TransitHeader(

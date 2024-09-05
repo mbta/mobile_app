@@ -73,7 +73,7 @@ class RoutePillSpecTest {
             RoutePillSpec(
                 "FFFFFF",
                 "DA291C",
-                RoutePillSpec.Content.Text("Red Line"),
+                RoutePillSpec.Content.Text("RL"),
                 RoutePillSpec.Size.FlexPill,
                 RoutePillSpec.Shape.Capsule
             ),
@@ -93,7 +93,7 @@ class RoutePillSpecTest {
             RoutePillSpec(
                 "FFFFFF",
                 "003DA5",
-                RoutePillSpec.Content.Text("Blue Line"),
+                RoutePillSpec.Content.Text("BL"),
                 RoutePillSpec.Size.FlexPill,
                 RoutePillSpec.Shape.Capsule
             ),
@@ -156,7 +156,7 @@ class RoutePillSpecTest {
             RoutePillSpec(
                 "FFFFFF",
                 "DA291C",
-                RoutePillSpec.Content.Text("Mattapan Trolley"),
+                RoutePillSpec.Content.Text("M"),
                 RoutePillSpec.Size.FlexPill,
                 RoutePillSpec.Shape.Capsule
             ),
@@ -384,7 +384,7 @@ class RoutePillSpecTest {
             RoutePillSpec(
                 "FFFFFF",
                 "00843D",
-                RoutePillSpec.Content.Text("Green Line"),
+                RoutePillSpec.Content.Text("GL"),
                 RoutePillSpec.Size.FlexPill,
                 RoutePillSpec.Shape.Capsule
             ),

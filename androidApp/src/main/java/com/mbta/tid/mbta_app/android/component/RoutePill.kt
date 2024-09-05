@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -52,7 +53,8 @@ fun RoutePill(
         when (spec.size) {
             RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
             RoutePillSpec.Size.Circle -> size(24.dp)
-            RoutePillSpec.Size.FlexPill -> height(24.dp).padding(horizontal = 12.dp)
+            RoutePillSpec.Size.FlexPill ->
+                height(24.dp).padding(horizontal = 12.dp).widthIn(min = (48 - 12 * 2).dp)
         }
 
     fun Modifier.withColor() =
