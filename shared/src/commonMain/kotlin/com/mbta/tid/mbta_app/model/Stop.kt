@@ -13,6 +13,7 @@ data class Stop(
     @SerialName("location_type") val locationType: LocationType,
     val description: String? = null,
     @SerialName("platform_name") val platformName: String? = null,
+    @SerialName("vehicle_type") val vehicleType: RouteType? = null,
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList(),
     @SerialName("connecting_stop_ids") val connectingStopIds: List<String> = emptyList(),
     @SerialName("parent_station_id") val parentStationId: String? = null

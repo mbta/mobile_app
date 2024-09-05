@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
@@ -13,7 +14,9 @@ class PinButtonTest {
     @Test
     fun callsAction() {
         var wasTapped = false
-        composeTestRule.setContent { PinButton(pinned = false) { wasTapped = true } }
+        composeTestRule.setContent {
+            PinButton(pinned = false, color = Color.Unspecified) { wasTapped = true }
+        }
 
         composeTestRule.onNodeWithContentDescription("pin route").performClick()
         assertTrue(wasTapped)

@@ -2,15 +2,18 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +33,11 @@ fun deselectedBackgroundColor(route: Route): Int =
     else R.color.deselected_toggle_1
 
 @Composable
-fun DirectionPicker(patternsByStop: PatternsByStop, filterState: MutableState<StopDetailsFilter?>) {
-    var filter by filterState
+fun DirectionPicker(
+    patternsByStop: PatternsByStop,
+    filter: StopDetailsFilter?,
+    updateStopFilter: (StopDetailsFilter?) -> Unit
+) {
     val availableDirections = patternsByStop.patterns.map { it.directionId() }.distinct().sorted()
     val directions = patternsByStop.directions
     val route = patternsByStop.representativeRoute
@@ -40,17 +46,23 @@ fun DirectionPicker(patternsByStop: PatternsByStop, filterState: MutableState<St
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor = colorResource(deselectedBackgroundColor(route))
         Row(
-            Modifier.padding(2.dp).background(deselectedBackgroundColor, RoundedCornerShape(6.dp)),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.background(deselectedBackgroundColor, RoundedCornerShape(6.dp))
+                .border(2.dp, deselectedBackgroundColor, RoundedCornerShape(6.dp))
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             for (direction in availableDirections) {
                 val isSelected = filter?.directionId == direction
                 val action = {
-                    filter =
+                    updateStopFilter(
                         StopDetailsFilter(routeId = line?.id ?: route.id, directionId = direction)
+                    )
                 }
 
                 Button(
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                     onClick = action,
                     shape = RoundedCornerShape(6.dp),
                     colors =

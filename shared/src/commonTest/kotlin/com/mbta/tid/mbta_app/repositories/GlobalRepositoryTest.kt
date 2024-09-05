@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
-import com.mbta.tid.mbta_app.cache.GlobalCache
+import com.mbta.tid.mbta_app.cache.ResponseCache
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -117,7 +117,7 @@ class GlobalRepositoryTest : KoinTest {
             modules(
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
-                    single { GlobalCache() }
+                    single { ResponseCache() }
                 }
             )
         }
@@ -152,6 +152,7 @@ class GlobalRepositoryTest : KoinTest {
                     name = "S Franklin St @ Emery St",
                     longitude = -71.011556,
                     latitude = 42.125615,
+                    vehicleType = RouteType.BUS,
                     childStopIds = emptyList(),
                     connectingStopIds = emptyList(),
                     locationType = LocationType.STOP

@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 
 @Composable
-fun RouteHeader(route: Route, rightContent: (@Composable () -> Unit)? = null) {
+fun RouteHeader(route: Route, rightContent: (@Composable (textColor: Color) -> Unit)? = null) {
     val routeName =
         when (route.type) {
             RouteType.BUS -> route.shortName

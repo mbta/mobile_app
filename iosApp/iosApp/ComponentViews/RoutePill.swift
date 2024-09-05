@@ -10,140 +10,40 @@ import shared
 import SwiftUI
 
 struct RoutePill: View {
-    enum `Type` {
-        case fixed
-        case flex
-    }
-
     let route: Route?
     let line: Line?
-    let type: `Type`
+    let type: RoutePillSpec.Type_
     let isActive: Bool
-    let textColor: Color?
-    let routeColor: Color?
+    let textColor: Color
+    let routeColor: Color
+    let spec: RoutePillSpec
 
-    init(route: Route?, line: Line? = nil, type: Type, isActive: Bool = true) {
+    init(route: Route?, line: Line? = nil, type: RoutePillSpec.Type_, isActive: Bool = true) {
         self.route = route
         self.line = line
         self.type = type
         self.isActive = isActive
-        guard let route else {
-            guard let line else {
-                textColor = nil
-                routeColor = nil
-                return
-            }
-            textColor = Color(hex: line.textColor)
-            routeColor = Color(hex: line.color)
-            return
-        }
-        if route.id.starts(with: "Shuttle"), let line {
-            textColor = Color(hex: line.textColor)
-            routeColor = Color(hex: line.color)
-        } else {
-            textColor = Color(hex: route.textColor)
-            routeColor = Color(hex: route.color)
-        }
-    }
-
-    private enum PillContent {
-        case empty
-        case text(String)
-        case image(ImageResource)
-    }
-
-    private func getPillContent() -> PillContent {
-        guard let route else {
-            guard let line else {
-                return .empty
-            }
-            return Self.linePillContent(line: line, type: type)
-        }
-        return switch route.type {
-        case .lightRail: Self.lightRailPillContent(route: route, type: type)
-        case .heavyRail: Self.heavyRailPillContent(route: route, type: type)
-        case .commuterRail: Self.commuterRailPillContent(route: route, type: type)
-        case .bus: Self.busPillContent(route: route, type: type)
-        case .ferry: Self.ferryPillContent(route: route, type: type)
-        }
-    }
-
-    private static func linePillContent(line: Line, type: Type) -> PillContent {
-        if line.longName == "Green Line", type == .fixed {
-            .text("GL")
-        } else {
-            .text(line.longName)
-        }
-    }
-
-    private static func lightRailPillContent(route: Route, type: Type) -> PillContent {
-        if route.longName.starts(with: "Green Line ") {
-            if type == .fixed {
-                .text(route.longName.replacing("Green Line ", with: "GL "))
-            } else {
-                .text(route.shortName)
-            }
-        } else if route.longName == "Mattapan Trolley", type == .fixed {
-            .text("M")
-        } else {
-            .text(route.longName)
-        }
-    }
-
-    private static func heavyRailPillContent(route: Route, type: Type) -> PillContent {
-        if type == .fixed {
-            .text(String(route.longName.split(separator: " ").compactMap(\.first)))
-        } else {
-            .text(route.longName)
-        }
-    }
-
-    private static func commuterRailPillContent(route: Route, type: Type) -> PillContent {
-        if type == .fixed {
-            .text("CR")
-        } else {
-            .text(route.longName.replacing(" Line", with: ""))
-        }
-    }
-
-    private static func busPillContent(route: Route, type: Type) -> PillContent {
-        if route.id.starts(with: "Shuttle"), type == .fixed {
-            .image(.modeBus)
-        } else {
-            .text(route.shortName)
-        }
-    }
-
-    private static func ferryPillContent(route: Route, type: Type) -> PillContent {
-        if type == .fixed {
-            .image(.modeFerry)
-        } else {
-            .text(route.longName)
-        }
+        spec = .init(route: route, line: line, type: type)
+        textColor = .init(hex: spec.textColor)
+        routeColor = .init(hex: spec.routeColor)
     }
 
     @ViewBuilder func getPillBase() -> some View {
-        switch getPillContent() {
+        switch onEnum(of: spec.content) {
         case .empty: EmptyView()
-        case let .text(text): Text(text)
-        case let .image(image): Image(image)
+        case let .text(text): Text(text.text)
+        case let .modeImage(mode): routeIcon(mode.mode)
         }
     }
 
-    private static func isRectangle(route: Route) -> Bool {
-        route.type == .bus && !route.id.starts(with: "Shuttle")
-    }
-
     private struct FramePaddingModifier: ViewModifier {
-        let pill: RoutePill
+        let spec: RoutePillSpec
 
         func body(content: Content) -> some View {
-            if pill.type == .fixed {
-                content.frame(width: 50, height: 24)
-            } else if pill.route?.longName.starts(with: "Green Line ") ?? false {
-                content.frame(width: 24, height: 24)
-            } else {
-                content.frame(height: 24).padding(.horizontal, 12)
+            switch spec.size {
+            case .fixedPill: content.frame(width: 50, height: 24)
+            case .circle: content.frame(width: 24, height: 24)
+            case .flexPill: content.frame(height: 24).padding(.horizontal, 12).frame(minWidth: 44)
             }
         }
     }
@@ -156,26 +56,25 @@ struct RoutePill: View {
                 content
                     .foregroundColor(pill.textColor)
                     .background(pill.routeColor)
-            } else if let route = pill.route, RoutePill.isRectangle(route: route) {
+            } else if pill.spec.shape == .rectangle {
                 content.overlay(
-                    Rectangle().stroke(pill.routeColor ?? .deemphasized, lineWidth: 1).padding(1)
+                    RoundedRectangle(cornerRadius: 4).stroke(pill.routeColor, lineWidth: 1).padding(1)
                 )
             } else {
                 content.overlay(
-                    Capsule().stroke(pill.routeColor ?? .deemphasized, lineWidth: 1).padding(1)
+                    Capsule().stroke(pill.routeColor, lineWidth: 1).padding(1)
                 )
             }
         }
     }
 
     private struct ClipShapeModifier: ViewModifier {
-        let pill: RoutePill
+        let spec: RoutePillSpec
 
         func body(content: Content) -> some View {
-            if let route = pill.route, RoutePill.isRectangle(route: route) {
-                content.clipShape(Rectangle())
-            } else {
-                content.clipShape(Capsule())
+            switch spec.shape {
+            case .rectangle: content.clipShape(RoundedRectangle(cornerRadius: 4))
+            case .capsule: content.clipShape(Capsule())
             }
         }
     }
@@ -188,10 +87,10 @@ struct RoutePill: View {
                 .textCase(.uppercase)
                 .font(.custom("Helvetica Neue", size: 16).bold())
                 .tracking(0.5)
-                .modifier(FramePaddingModifier(pill: self))
+                .modifier(FramePaddingModifier(spec: spec))
                 .lineLimit(1)
                 .modifier(ColorModifier(pill: self))
-                .modifier(ClipShapeModifier(pill: self))
+                .modifier(ClipShapeModifier(spec: spec))
         }
     }
 }

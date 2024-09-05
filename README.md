@@ -55,6 +55,7 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 #### Gotchas
 
 - Be sure to install the Android SDK Command-line Tools via Android Studio > Settings Android SDK > SDK Tool Tabs > Android SDK Command Line Tools.
+- If you're seeing the error "undefined method 'map' for nil:NilClass" when running pod installs locally, you likely need to run `bundle exec gem uninstall ffi` then `bundle install` to get a cocoapods requirement to be installed properly on M1 Macs.
 
 ## Running Locally
 

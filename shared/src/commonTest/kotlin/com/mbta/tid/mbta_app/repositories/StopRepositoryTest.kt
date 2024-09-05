@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.RouteSegment
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.Stop
@@ -131,6 +132,7 @@ class StopRepositoryTest : KoinTest {
                                     latitude = 42.413361,
                                     longitude = -70.991685,
                                     platformName = "Exit Only",
+                                    vehicleType = RouteType.HEAVY_RAIL,
                                     parentStationId = "place-wondl"
                                 )
                             )

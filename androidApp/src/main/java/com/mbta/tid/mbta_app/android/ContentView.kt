@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -71,19 +73,21 @@ fun ContentView(
         mapCenterFlow.collectAsState(
             initial = Position(longitude = -71.062424, latitude = 42.356395)
         )
-    var lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
+    val lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
+    var navBarVisible by remember { mutableStateOf(true) }
 
     DisposableEffect(null) {
         socket.attach()
         (socket as? PhoenixSocketWrapper)?.attachLogging()
         onDispose { socket.detach() }
     }
-
+    val sheetModifier = Modifier.fillMaxSize().background(colorResource(id = R.color.fill1))
     NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
         composable<Routes.NearbyTransit> {
             NearbyTransitPage(
+                modifier = sheetModifier,
                 NearbyTransit(
                     alertData = alertData,
                     globalResponse = globalResponse,
@@ -91,29 +95,34 @@ fun ContentView(
                     mapCenter = mapCenter,
                     lastNearbyTransitLocation = lastNearbyTransitLocation,
                     scaffoldState = scaffoldState,
-                    mapViewportState = mapViewportState
+                    mapViewportState = mapViewportState,
                 ),
+                navBarVisible = navBarVisible,
+                showNavBar = { navBarVisible = true },
+                hideNavBar = { navBarVisible = false },
                 bottomBar = {
-                    BottomAppBar(
-                        modifier = Modifier.height(83.dp),
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        actions = {
-                            BottomNavIconButton(
-                                modifier = Modifier.fillMaxSize().weight(1f),
-                                onClick = { navController.navigate(Routes.NearbyTransit) },
-                                icon = R.drawable.map_pin,
-                                label = stringResource(R.string.nearby_transit_link),
-                                active = true,
-                            )
+                    if (navBarVisible) {
+                        BottomAppBar(
+                            modifier = Modifier.height(83.dp),
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            actions = {
+                                BottomNavIconButton(
+                                    modifier = Modifier.fillMaxSize().weight(1f),
+                                    onClick = { navController.navigate(Routes.NearbyTransit) },
+                                    icon = R.drawable.map_pin,
+                                    label = stringResource(R.string.nearby_transit_link),
+                                    active = true,
+                                )
 
-                            BottomNavIconButton(
-                                modifier = Modifier.fillMaxSize().weight(1f),
-                                onClick = {},
-                                icon = R.drawable.gear,
-                                label = stringResource(R.string.settings_link),
-                            )
-                        }
-                    )
+                                BottomNavIconButton(
+                                    modifier = Modifier.fillMaxSize().weight(1f),
+                                    onClick = {},
+                                    icon = R.drawable.gear,
+                                    label = stringResource(R.string.settings_link),
+                                )
+                            }
+                        )
+                    }
                 }
             )
         }

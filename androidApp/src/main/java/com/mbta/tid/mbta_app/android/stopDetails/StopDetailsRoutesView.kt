@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,18 +29,18 @@ fun StopDetailsRoutesView(
     departures: StopDetailsDepartures,
     global: GlobalResponse?,
     now: Instant,
-    filterState: MutableState<StopDetailsFilter?>,
+    filter: StopDetailsFilter?,
     pinRoute: (String) -> Unit,
-    pinnedRoutes: Set<String>
+    pinnedRoutes: Set<String>,
+    updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
-    val filter by filterState
-
     if (filter != null) {
         StopDetailsFilteredRouteView(
             departures = departures,
             global = global,
             now = now,
-            filterState = filterState
+            filter = filter,
+            updateStopFilter
         )
     } else {
         LazyColumn(Modifier.padding(top = 16.dp).background(colorResource(R.color.fill1))) {
@@ -140,9 +137,10 @@ private fun StopDetailsRoutesViewPreview() {
                 ),
             global = null,
             now = Clock.System.now(),
-            filterState = remember { mutableStateOf(null) },
+            filter = null,
             pinRoute = {},
-            pinnedRoutes = emptySet()
+            pinnedRoutes = emptySet(),
+            updateStopFilter = {}
         )
     }
 }

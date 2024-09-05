@@ -1,14 +1,16 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,9 +38,9 @@ fun StopDetailsFilteredRouteView(
     departures: StopDetailsDepartures,
     global: GlobalResponse?,
     now: Instant,
-    filterState: MutableState<StopDetailsFilter?>
+    filter: StopDetailsFilter?,
+    updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
-    val filter by filterState
     val patternsByStop = departures.routes.find { it.routeIdentifier == filter?.routeId }
     val expectedDirection = filter?.directionId
     if (patternsByStop == null) {
@@ -61,8 +63,9 @@ fun StopDetailsFilteredRouteView(
     val routeHex: String = patternsByStop.line?.color ?: patternsByStop.representativeRoute.color
     val routeColor: Color = Color.fromHex(routeHex)
     Column(
-        Modifier.padding(start = 8.dp, top = 8.dp, bottom = 32.dp, end = 8.dp)
+        Modifier.fillMaxSize()
             .background(routeColor)
+            .padding(start = 16.dp, end = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         if (patternsByStop.line != null) {
@@ -70,9 +73,11 @@ fun StopDetailsFilteredRouteView(
         } else {
             RouteHeader(patternsByStop.representativeRoute)
         }
-        DirectionPicker(patternsByStop, filterState)
+        DirectionPicker(patternsByStop, filter, updateStopFilter)
 
-        Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(4.dp))) {
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
             for ((index, alert) in alerts.withIndex()) {
                 Column {
                     StopDetailsAlertHeader(alert, routeColor)
@@ -82,7 +87,11 @@ fun StopDetailsFilteredRouteView(
                 }
             }
             for ((index, row) in rows.withIndex()) {
-                Column {
+                val modifier =
+                    if (index == 0 || index == rows.size - 1)
+                        Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                    else Modifier.background(colorResource(R.color.fill3))
+                Column(modifier.border(1.dp, colorResource(R.color.halo))) {
                     HeadsignRowView(
                         row.headsign,
                         row.formatted,
@@ -91,10 +100,6 @@ fun StopDetailsFilteredRouteView(
                             if (patternsByStop.line != null) PillDecoration.OnRow(route = row.route)
                             else null
                     )
-
-                    if (index < rows.size - 1) {
-                        HorizontalDivider(Modifier.background(colorResource(R.color.halo)))
-                    }
                 }
             }
         }

@@ -123,6 +123,7 @@ class ObjectCollectionBuilder {
             set(trip) {
                 routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
                 tripId = trip.id
+                directionId = trip.directionId
             }
 
         override fun built() =
@@ -306,6 +307,7 @@ class ObjectCollectionBuilder {
         var locationType = LocationType.STOP
         var description: String? = null
         var platformName: String? = null
+        var vehicleType: RouteType? = null
         var childStopIds: List<String> = emptyList()
         var connectingStopIds: List<String> = emptyList()
         var parentStationId: String? = null
@@ -326,6 +328,7 @@ class ObjectCollectionBuilder {
                 locationType,
                 description,
                 platformName,
+                vehicleType,
                 childStopIds,
                 connectingStopIds,
                 parentStationId

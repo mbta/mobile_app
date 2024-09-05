@@ -535,6 +535,7 @@ final class NearbyTransitViewTests: XCTestCase {
                     locationType: .station,
                     description: nil,
                     platformName: nil,
+                    vehicleType: nil,
                     childStopIds: [],
                     connectingStopIds: [],
                     parentStationId: nil

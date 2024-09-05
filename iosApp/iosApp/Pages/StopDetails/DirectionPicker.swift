@@ -48,7 +48,7 @@ struct DirectionPicker: View {
             }
             .padding(2)
             .background(deselectedBackroundColor)
-            .clipShape(.rect(cornerRadius: 6))
+            .clipShape(.rect(cornerRadius: 8))
         }
     }
 
@@ -59,4 +59,51 @@ struct DirectionPicker: View {
         }
         return Color.deselectedToggle1
     }
+}
+
+#Preview {
+    let objects = ObjectCollectionBuilder()
+    let stop = objects.stop { _ in }
+    let route = objects.route { route in
+        route.color = "FFC72C"
+        route.textColor = "000000"
+    }
+    let patternOutbound = objects.routePattern(route: route) { pattern in
+        pattern.directionId = 0
+    }
+    let patternInbound = objects.routePattern(route: route) { pattern in
+        pattern.directionId = 1
+    }
+    return DirectionPicker(
+        patternsByStop: .init(
+            routes: [route],
+            line: nil,
+            stop: stop,
+            patterns: [
+                .ByHeadsign(
+                    route: route,
+                    headsign: "Out",
+                    line: nil,
+                    patterns: [patternOutbound],
+                    upcomingTrips: nil,
+                    alertsHere: nil
+                ),
+                .ByHeadsign(
+                    route: route,
+                    headsign: "In",
+                    line: nil,
+                    patterns: [patternInbound],
+                    upcomingTrips: nil,
+                    alertsHere: nil
+                ),
+            ],
+            directions: [
+                .init(name: "Outbound", destination: "Out", id: 0),
+                .init(name: "Inbound", destination: "In", id: 1),
+            ]
+        ),
+        filter: .constant(.init(routeId: route.id, directionId: 0))
+    )
+    .fixedSize(horizontal: false, vertical: true)
+    .padding(16)
 }
