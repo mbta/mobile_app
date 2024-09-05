@@ -6,6 +6,7 @@ import io.ktor.http.HttpStatusCode
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -38,33 +39,32 @@ class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
     }
 
     suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): HttpResponse {
-        lock.lock()
-        val cachedData = this.getData()
-        if (cachedData != null) {
-            lock.unlock()
-            return cachedData
-        }
+        lock.withLock {
+            val cachedData = this.getData()
+            if (cachedData != null) {
+                return cachedData
+            }
 
-        val response = fetch(this.data?.etag)
-        val responseData =
-            when (response.status) {
-                HttpStatusCode.NotModified -> ConditionalResponse.NotModified
-                HttpStatusCode.OK ->
-                    ConditionalResponse.Response(response.headers["etag"], response)
-                else -> throw ResponseException(response, "Failed to load global data")
-            }
-        val finalResponse =
-            when (responseData) {
-                is ConditionalResponse.NotModified -> {
-                    this.dataTimestamp = Clock.System.now()
-                    this.getData()!!
+            val response = fetch(this.data?.etag)
+            val responseData =
+                when (response.status) {
+                    HttpStatusCode.NotModified -> ConditionalResponse.NotModified
+                    HttpStatusCode.OK ->
+                        ConditionalResponse.Response(response.headers["etag"], response)
+                    else -> throw ResponseException(response, "Failed to load global data")
                 }
-                is ConditionalResponse.Response -> {
-                    this.putData(responseData)
-                    responseData.response
+            val finalResponse =
+                when (responseData) {
+                    is ConditionalResponse.NotModified -> {
+                        this.dataTimestamp = Clock.System.now()
+                        this.getData()!!
+                    }
+                    is ConditionalResponse.Response -> {
+                        this.putData(responseData)
+                        responseData.response
+                    }
                 }
-            }
-        lock.unlock()
-        return finalResponse
+            return finalResponse
+        }
     }
 }
