@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
 @Composable
-fun PinButton(pinned: Boolean, action: () -> Unit) {
+fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
     IconToggleButton(
         checked = pinned,
         onCheckedChange = { action() },
@@ -26,7 +26,7 @@ fun PinButton(pinned: Boolean, action: () -> Unit) {
                 ),
             contentDescription = "pin route",
             modifier = Modifier.size(20.dp),
-            tint = Color.Unspecified
+            tint = color
         )
     }
 }

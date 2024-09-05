@@ -28,7 +28,7 @@ fun TransitHeader(
     textColor: Color,
     modeIcon: Painter,
     modeDescription: String,
-    rightContent: (@Composable () -> Unit)? = null
+    rightContent: (@Composable (textColor: Color) -> Unit)? = null
 ) {
     Column(
         modifier =
@@ -53,7 +53,7 @@ fun TransitHeader(
             )
             if (rightContent != null) {
                 Spacer(modifier = Modifier.weight(1.0F))
-                rightContent()
+                rightContent(textColor)
             }
         }
     }
