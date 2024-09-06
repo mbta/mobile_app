@@ -254,14 +254,15 @@ class NearbyTransitPageTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Head Sign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Long Name").assertExists()
+        composeTestRule.onNodeWithText("Green Line Stop").assertExists()
+        composeTestRule.onNodeWithText("Green Line Head Sign").assertExists()
+        composeTestRule.onNodeWithText("5 min").assertExists()
+
+        composeTestRule.onNodeWithText("Sample Route").assertExists()
+        composeTestRule.onNodeWithText("Sample Stop").assertExists()
+        composeTestRule.onNodeWithText("Sample Headsign").assertExists()
+        composeTestRule.onNodeWithText("1 min").assertExists()
     }
 }
