@@ -51,7 +51,6 @@ class StopDeparturesSummaryListTest {
         }
 
         composeTestRule.onNodeWithText("Alewife").assertExists()
-        composeTestRule.onNodeWithText("5").assertExists()
-        composeTestRule.onNodeWithText("min").assertExists()
+        composeTestRule.onNodeWithText("5 min").assertExists()
     }
 }

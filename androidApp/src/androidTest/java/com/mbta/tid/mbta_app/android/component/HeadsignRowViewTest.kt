@@ -1,11 +1,9 @@
 package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
@@ -44,9 +42,8 @@ class HeadsignRowViewTest {
         )
 
         composeTestRule.onNodeWithText("Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("2").assertIsDisplayed()
-        composeTestRule.onNodeWithText("10").assertIsDisplayed()
-        composeTestRule.onAllNodesWithText("min").assertCountEquals(2)
+        composeTestRule.onNodeWithText("2 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("10 min").assertIsDisplayed()
     }
 
     @Test

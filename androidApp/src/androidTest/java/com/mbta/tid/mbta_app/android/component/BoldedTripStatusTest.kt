@@ -15,7 +15,6 @@ class BoldedTripStatusTest {
 
         composeTestRule.setContent { BoldedTripStatus(text = text) }
 
-        composeTestRule.onNodeWithText("Hello").assertIsDisplayed()
-        composeTestRule.onNodeWithText("World").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Hello World").assertIsDisplayed()
     }
 }
