@@ -211,15 +211,16 @@ final class HomeMapViewTests: XCTestCase {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
 
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
-        HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(global: MockGlobalRepository(
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
+            global: MockGlobalRepository(
                 response: mockedGlobalResponse,
                 onGet: { globalLoadSubject.send() }
-            ), stop:
-            FilteredStopRepository(
+            ),
+            stop: FilteredStopRepository(
                 filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
                 onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
-            )))
+            )
+        ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
