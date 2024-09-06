@@ -21,11 +21,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
-import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
 @ColorRes
 fun deselectedBackgroundColor(route: Route): Int =

@@ -5,12 +5,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
-import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test

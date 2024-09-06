@@ -9,11 +9,6 @@
 import Foundation
 import shared
 
-struct StopDetailsFilter: Hashable {
-    let routeId: String
-    let directionId: Int32
-}
-
 struct TripDetailsTarget: Hashable {
     let stopId: String
     let stopSequence: Int?
