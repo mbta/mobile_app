@@ -51,7 +51,7 @@ dependencies {
     debugImplementation(libs.compose.ui.test.manifest)
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.koin.test)
+    testImplementation(libs.koin.test)
     androidTestImplementation(libs.koin.junit4)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
