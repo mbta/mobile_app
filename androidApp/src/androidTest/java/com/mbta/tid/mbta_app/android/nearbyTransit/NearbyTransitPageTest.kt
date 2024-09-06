@@ -29,8 +29,10 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
@@ -212,6 +214,7 @@ class NearbyTransitPageTest : KoinTest {
                 }
                 single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
                 single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                single<IVehiclesRepository> { MockVehiclesRepository() }
             }
         )
     }
