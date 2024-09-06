@@ -2045,8 +2045,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/davidstump/SwiftPhoenixClient";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.3.3;
+				kind = revision;
+				revision = 4e548e4ce4d46574a20b8a539d52d367fb0eae24;
 			};
 		};
 		6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {

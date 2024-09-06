@@ -107,8 +107,6 @@ struct ContentView: View {
             mapWithSheets
         }
         .onAppear {
-            socketProvider.socket.attach()
-            nearbyVM.joinAlertsChannel()
             Task {
                 await contentVM.loadSettings()
             }
