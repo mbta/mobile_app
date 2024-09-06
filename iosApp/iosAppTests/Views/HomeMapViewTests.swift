@@ -214,16 +214,11 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(global: MockGlobalRepository(
                 response: mockedGlobalResponse,
-                onGet: { globalLoadSubject.send(
-                ) }
+                onGet: { globalLoadSubject.send() }
             ), stop:
             FilteredStopRepository(
-                filteredRouteIds: [MapTestDataHelper
-                    .shared.routeOrange.id],
-                onGetStopMapData: {
-                    stopMapDetailsLoadedPublisher
-                        .send()
-                }
+                filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
+                onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
             )))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
