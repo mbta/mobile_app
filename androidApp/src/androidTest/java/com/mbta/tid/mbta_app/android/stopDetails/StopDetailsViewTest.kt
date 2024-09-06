@@ -170,7 +170,6 @@ class StopDetailsViewTest {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
                 StopDetailsView(
                     stop = stop,
-                    filterState = filterState,
                     departures =
                         StopDetailsDepartures(
                             listOf(
@@ -205,7 +204,9 @@ class StopDetailsViewTest {
                         ),
                     pinnedRoutes = emptySet(),
                     togglePinnedRoute = {},
-                    onClose = {}
+                    onClose = {},
+                    filter = filterState.value,
+                    updateStopFilter = filterState::value::set
                 )
             }
         }

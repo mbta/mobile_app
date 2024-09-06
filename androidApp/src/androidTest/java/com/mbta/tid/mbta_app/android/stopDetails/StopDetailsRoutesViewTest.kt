@@ -110,9 +110,10 @@ class StopDetailsRoutesViewTest {
                     ),
                 global = globalResponse,
                 now = now,
-                filterState = filterState,
                 pinRoute = {},
-                pinnedRoutes = emptySet()
+                pinnedRoutes = emptySet(),
+                filter = filterState.value,
+                updateStopFilter = filterState::value::set
             )
         }
 
