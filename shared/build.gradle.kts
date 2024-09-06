@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry)
     alias(libs.plugins.serialization)
     alias(libs.plugins.skie)
-    alias(libs.plugins.mokkery)
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -45,26 +45,26 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project.dependencies.platform(libs.koin.bom))
-                implementation(libs.koin.core)
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.encoding)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.client.websockets)
-                implementation(libs.ktor.serialization.kotlinx.json)
-                implementation(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
                 api(libs.sentry)
-                implementation(libs.skie.configuration.annotations)
                 api(libs.spatialk.geojson)
-                implementation(libs.spatialk.turf)
+                implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.androidx.datastore.preferences.core)
+                implementation(libs.koin.core)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.encoding)
+                implementation(libs.ktor.client.websockets)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.skie.configuration.annotations)
+                implementation(libs.spatialk.turf)
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(libs.kotlin.test)
                 implementation(libs.koin.test)
+                implementation(libs.kotlin.test)
                 implementation(libs.ktor.client.mock)
             }
         }
