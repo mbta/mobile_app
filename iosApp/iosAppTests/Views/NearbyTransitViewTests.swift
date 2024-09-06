@@ -880,4 +880,25 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [stopEntryPushedExp], timeout: 2)
     }
+
+    func testEmptyFallback() throws {
+        var sut = NearbyTransitView(
+            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
+            pinnedRouteRepository: pinnedRoutesRepository,
+            predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: MockScheduleRepository(),
+            getNearby: { _, _ in },
+            state: .constant(.init(loadedLocation: .init(), nearbyByRouteAndStop: .init(data: []))),
+            location: .constant(ViewportProvider.Defaults.center),
+            nearbyVM: .init()
+        )
+
+        let hasAppeared = sut.on(\.didAppear) { view in
+            XCTAssertNil(try? view.find(LoadingCard<Text>.self))
+            XCTAssertNotNil(try view.find(text: "No nearby MBTA stops"))
+            XCTAssertNotNil(try view.find(text: "Your current location is outside of our search area."))
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [hasAppeared], timeout: 5)
+    }
 }

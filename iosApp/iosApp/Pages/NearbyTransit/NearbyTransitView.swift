@@ -93,39 +93,49 @@ struct NearbyTransitView: View {
         }
     }
 
-    private func nearbyList(_ transit: [StopsAssociated]) -> some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack {
-                    ForEach(transit, id: \.id) { nearbyTransit in
-                        switch onEnum(of: nearbyTransit) {
-                        case let .withRoute(nearbyRoute):
-                            NearbyRouteView(
-                                nearbyRoute: nearbyRoute,
-                                pinned: pinnedRoutes.contains(nearbyRoute.route.id),
-                                onPin: { id in toggledPinnedRoute(id) },
-                                pushNavEntry: nearbyVM.pushNavEntry,
-                                now: now.toKotlinInstant()
-                            )
-                        case let .withLine(nearbyLine):
-                            NearbyLineView(
-                                nearbyLine: nearbyLine,
-                                pinned: pinnedRoutes.contains(nearbyLine.line.id),
-                                onPin: { id in toggledPinnedRoute(id) },
-                                pushNavEntry: nearbyVM.pushNavEntry,
-                                now: now.toKotlinInstant()
-                            )
+    @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
+        if transit.isEmpty {
+            VStack(spacing: 8) {
+                Spacer()
+                Text("No nearby MBTA stops")
+                    .font(Typography.headlineBold)
+                Text("Your current location is outside of our search area.")
+                Spacer()
+            }
+        } else {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack {
+                        ForEach(transit, id: \.id) { nearbyTransit in
+                            switch onEnum(of: nearbyTransit) {
+                            case let .withRoute(nearbyRoute):
+                                NearbyRouteView(
+                                    nearbyRoute: nearbyRoute,
+                                    pinned: pinnedRoutes.contains(nearbyRoute.route.id),
+                                    onPin: { id in toggledPinnedRoute(id) },
+                                    pushNavEntry: nearbyVM.pushNavEntry,
+                                    now: now.toKotlinInstant()
+                                )
+                            case let .withLine(nearbyLine):
+                                NearbyLineView(
+                                    nearbyLine: nearbyLine,
+                                    pinned: pinnedRoutes.contains(nearbyLine.line.id),
+                                    onPin: { id in toggledPinnedRoute(id) },
+                                    pushNavEntry: nearbyVM.pushNavEntry,
+                                    now: now.toKotlinInstant()
+                                )
+                            }
                         }
                     }
                 }
-            }
-            .onReceive(scrollSubject) { id in
-                withAnimation {
-                    proxy.scrollTo(id, anchor: .top)
+                .onReceive(scrollSubject) { id in
+                    withAnimation {
+                        proxy.scrollTo(id, anchor: .top)
+                    }
                 }
-            }
-            .putAboveWhen(predictionsError) { error in
-                IconCard(iconName: "network.slash", details: Text(error.predictionsErrorText))
+                .putAboveWhen(predictionsError) { error in
+                    IconCard(iconName: "network.slash", details: Text(error.predictionsErrorText))
+                }
             }
         }
     }

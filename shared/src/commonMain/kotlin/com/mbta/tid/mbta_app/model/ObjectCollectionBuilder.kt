@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.uuid
+import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -311,6 +312,13 @@ class ObjectCollectionBuilder {
         var childStopIds: List<String> = emptyList()
         var connectingStopIds: List<String> = emptyList()
         var parentStationId: String? = null
+
+        var position: Position
+            get() = Position(latitude = latitude, longitude = longitude)
+            set(value) {
+                latitude = value.latitude
+                longitude = value.longitude
+            }
 
         fun childStop(block: StopBuilder.() -> Unit = {}) =
             this@ObjectCollectionBuilder.stop {
