@@ -35,10 +35,17 @@ struct StopDetailsFilteredRouteView: View {
             tripId = trip.id
             self.route = route
             headsign = trip.headsign
-            formatted = RealtimePatterns.ByHeadsign(
-                route: route, headsign: headsign, line: nil, patterns: [],
-                upcomingTrips: [upcoming], alertsHere: nil
-            ).format(now: now, routeType: route.type, context: .stopDetailsFiltered)
+            formatted = if let formattedUpcomingTrip = RealtimePatterns.companion.formatUpcomingTrip(
+                now: now,
+                upcomingTrip: upcoming,
+                routeType: route.type,
+                context: .stopDetailsFiltered,
+                isSubway: route.type.isSubway()
+            ) {
+                RealtimePatterns.FormatSome(trips: [formattedUpcomingTrip])
+            } else {
+                RealtimePatterns.FormatNone()
+            }
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
