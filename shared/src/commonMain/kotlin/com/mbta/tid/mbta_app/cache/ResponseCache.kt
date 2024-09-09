@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.cache
 
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.etag
 import kotlin.time.Duration
@@ -11,44 +12,48 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.core.component.KoinComponent
 
+data class Response(
+    val etag: String?,
+    var fetchTime: TimeSource.Monotonic.ValueTimeMark,
+    val data: String
+)
+
 class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
-    internal var data: HttpResponse? = null
-    internal var dataTimestamp: TimeSource.Monotonic.ValueTimeMark? = null
+    internal var data: Response? = null
     private val lock = Mutex()
 
-    private fun getData(): HttpResponse? {
+    private fun getData(): Response? {
         val data = this.data ?: return null
-        val dataTimestamp = this.dataTimestamp ?: return null
-        return if (dataTimestamp.elapsedNow() < maxAge) {
+        return if (data.fetchTime.elapsedNow() < maxAge) {
             data
         } else {
             null
         }
     }
 
-    private fun putData(response: HttpResponse) {
-        this.data = response
-        this.dataTimestamp = TimeSource.Monotonic.markNow()
+    private suspend fun putData(response: HttpResponse) {
+        this.data = Response(response.etag(), TimeSource.Monotonic.markNow(), response.bodyAsText())
     }
 
-    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): HttpResponse {
+    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): String {
         lock.withLock {
             val cachedData = this.getData()
             if (cachedData != null) {
-                return cachedData
+                return cachedData.data
             }
 
-            val response = fetch(this.data?.etag())
-            return when (response.status) {
+            val httpResponse = fetch(this.data?.etag)
+            return when (httpResponse.status) {
                 HttpStatusCode.NotModified -> {
-                    this.dataTimestamp = TimeSource.Monotonic.markNow()
-                    this.getData()!!
+                    val data = this.data ?: throw RuntimeException("Failed to updated cached data")
+                    data.fetchTime = TimeSource.Monotonic.markNow()
+                    data.data
                 }
                 HttpStatusCode.OK -> {
-                    this.putData(response)
-                    response
+                    this.putData(httpResponse)
+                    this.getData()?.data ?: throw RuntimeException("Failed to set cached data")
                 }
-                else -> throw ResponseException(response, "Failed to load global data")
+                else -> throw ResponseException(httpResponse, "Failed to load global data")
             }
         }
     }

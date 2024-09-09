@@ -2,9 +2,9 @@ package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.cache.ResponseCache
+import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
-import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.timeout
@@ -34,15 +34,15 @@ class GlobalRepository() : IGlobalRepository, KoinComponent {
     private val cache: ResponseCache by inject()
 
     override suspend fun getGlobalData(): GlobalResponse =
-        cache
-            .getOrFetch { etag: String? ->
+        json.decodeFromString(
+            cache.getOrFetch { etag: String? ->
                 mobileBackendClient.get {
                     timeout { requestTimeoutMillis = 10000 }
                     url { path("api/global") }
                     header(HttpHeaders.IfNoneMatch, etag)
                 }
             }
-            .body()
+        )
 }
 
 class MockGlobalRepository

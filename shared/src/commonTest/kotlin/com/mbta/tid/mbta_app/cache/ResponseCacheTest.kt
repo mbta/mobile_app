@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.cache
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.header
@@ -24,7 +24,6 @@ import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 class ResponseCacheTest {
     @Test
@@ -37,7 +36,7 @@ class ResponseCacheTest {
 
         val mockEngine = MockEngine { _ ->
             respond(
-                content = ByteReadChannel(Json.encodeToString(globalData)),
+                content = ByteReadChannel(json.encodeToString(globalData)),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
@@ -51,12 +50,12 @@ class ResponseCacheTest {
 
         assertEquals(
             globalData,
-            cache
-                .getOrFetch {
+            json.decodeFromString(
+                cache.getOrFetch {
                     didFetch = true
                     client.get { url { path("api/global") } }
                 }
-                .body()
+            )
         )
         assertTrue(didFetch)
     }
@@ -71,7 +70,7 @@ class ResponseCacheTest {
 
         val mockEngine = MockEngine { _ ->
             respond(
-                content = ByteReadChannel(Json.encodeToString(globalData)),
+                content = ByteReadChannel(json.encodeToString(globalData)),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
@@ -80,10 +79,14 @@ class ResponseCacheTest {
         val httpResponse = client.get { url { path("api/global") } }
 
         val cache = ResponseCache()
-        cache.data = httpResponse
-        cache.dataTimestamp = TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
+        cache.data =
+            Response(
+                null,
+                TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
+                json.encodeToString(globalData)
+            )
 
-        assertEquals(httpResponse, cache.getOrFetch { fail() })
+        assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() }))
     }
 
     @Test
@@ -97,40 +100,33 @@ class ResponseCacheTest {
         newObjects.route()
         val newData = GlobalResponse(newObjects, emptyMap())
 
-        var callIndex = 0
         val mockEngine = MockEngine { request ->
-            callIndex += 1
-            when (callIndex) {
-                1 ->
-                    respond(
-                        content = ByteReadChannel(Json.encodeToString(oldData)),
-                        status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, "application/json")
-                    )
-                else ->
-                    respond(
-                        content = ByteReadChannel(Json.encodeToString(newData)),
-                        status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, "application/json")
-                    )
-            }
+            respond(
+                content = ByteReadChannel(json.encodeToString(newData)),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
         val cache = ResponseCache()
-        cache.data = client.get { url { path("api/global") } }
-        cache.dataTimestamp = TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+        cache.data =
+            Response(
+                null,
+                TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
+                json.encodeToString(oldData)
+            )
 
         var didFetch = false
 
-        val newResponse = client.get { url { path("api/global") } }
-
         assertEquals(
-            newResponse,
-            cache.getOrFetch {
-                didFetch = true
-                newResponse
-            }
+            newData,
+            json.decodeFromString(
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
+            )
         )
         assertTrue(didFetch)
     }
@@ -161,7 +157,7 @@ class ResponseCacheTest {
                         )
                     else ->
                         respond(
-                            content = ByteReadChannel(Json.encodeToString(newData)),
+                            content = ByteReadChannel(json.encodeToString(newData)),
                             status = HttpStatusCode.OK,
                             headers =
                                 headersOf(
@@ -172,7 +168,7 @@ class ResponseCacheTest {
                 }
             } else {
                 respond(
-                    content = ByteReadChannel(Json.encodeToString(oldData)),
+                    content = ByteReadChannel(json.encodeToString(oldData)),
                     status = HttpStatusCode.OK,
                     headers =
                         headersOf(
@@ -195,30 +191,30 @@ class ResponseCacheTest {
             }
         }
 
-        assertEquals(oldData, cache.getOrFetch(::fetch).body())
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(1, fetchCount)
 
         // Assert cached
-        assertEquals(oldData, cache.getOrFetch(::fetch).body())
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(1, fetchCount)
         delay(1.seconds)
 
         // Assert that the cache retains the data when it receives a NotModified response
-        assertEquals(oldData, cache.getOrFetch(::fetch).body())
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(2, fetchCount)
 
         // And that receiving NotModified resets the cache timer
-        assertEquals(oldData, cache.getOrFetch(::fetch).body())
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(2, fetchCount)
         delay(1.seconds)
 
         // Get new data on next request
-        assertEquals(newData, cache.getOrFetch(::fetch).body())
+        assertEquals(newData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(3, fetchCount)
         delay(1.seconds)
 
         // Ensure we go back to the old data when sent etag doesn't match
-        assertEquals(oldData, cache.getOrFetch(::fetch).body())
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(4, fetchCount)
     }
 }
