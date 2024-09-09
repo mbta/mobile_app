@@ -48,6 +48,7 @@ import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
 import com.mbta.tid.mbta_app.android.util.followPuck
 import com.mbta.tid.mbta_app.android.util.getRailRouteShapes
+import com.mbta.tid.mbta_app.android.util.getStopMapData
 import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
@@ -61,9 +62,12 @@ import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.map.StopSourceData
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
@@ -78,6 +82,8 @@ fun HomeMapView(
     currentNavEntry: NavBackStackEntry?,
     handleStopNavigation: (String) -> Unit,
     vehiclesData: List<Vehicle>,
+    stopDetailsDepartures: StopDetailsDepartures?,
+    stopDetailsFilter: StopDetailsFilter?
 ) {
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
@@ -105,31 +111,7 @@ fun HomeMapView(
         }
 
     val isDarkMode = isSystemInDarkTheme()
-
-    fun handleNearbyNavRestoration() {
-        if (
-            previousNavEntry?.destination?.route.equals("nearby") &&
-                currentNavEntry?.destination?.route?.startsWith("stop_details") == true
-        ) {
-            savedNearbyViewport = ViewportSnapshot(mapViewportState)
-        } else if (
-            previousNavEntry?.destination?.route?.startsWith("stop_details") == true &&
-                currentNavEntry?.destination?.route.equals("nearby")
-        ) {
-            savedNearbyViewport?.restoreOn(mapViewportState)
-            savedNearbyViewport = null
-        }
-    }
-
-    fun handleNavChange() {
-        handleNearbyNavRestoration()
-        val stopId = currentNavEntry?.arguments?.getString("stopId")
-        if (stopId == null) {
-            selectedStop = null
-            return
-        }
-        selectedStop = globalResponse?.stops?.get(stopId)
-    }
+    val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -167,6 +149,35 @@ fun HomeMapView(
         )
     }
 
+    fun updateDisplayedRoutesBasedOnStop() {
+        if (railRouteShapes == null || globalResponse == null || stopMapData == null) return
+
+        val filteredRoutes =
+            if (stopDetailsFilter != null) {
+                RouteFeaturesBuilder.filteredRouteShapesForStop(
+                    stopMapData,
+                    stopDetailsFilter,
+                    stopDetailsDepartures
+                )
+            } else {
+                RouteFeaturesBuilder.forRailAtStop(
+                    stopMapData.routeShapes,
+                    railRouteShapes.routesWithSegmentedShapes,
+                    globalResponse.routes
+                )
+            }
+        val newRailData =
+            RouteFeaturesBuilder.generateRouteLines(
+                filteredRoutes,
+                globalResponse.routes,
+                globalResponse.stops,
+                globalMapData?.alertsByStop
+            )
+        layerManager.run {
+            updateRouteSourceData(RouteFeaturesBuilder.buildCollection(newRailData).toMapbox())
+        }
+    }
+
     fun refreshRouteLineData() {
         if (railRouteShapes == null || globalResponse == null) return
         railRouteLineData =
@@ -199,6 +210,32 @@ fun HomeMapView(
     fun refreshStopSource() {
         val sourceData = stopSourceData ?: return
         layerManager.run { updateStopSourceData(sourceData) }
+    }
+
+    fun handleNearbyNavRestoration() {
+        if (
+            previousNavEntry?.destination?.route?.contains("NearbyTransit") == true &&
+                currentNavEntry?.destination?.route?.contains("StopDetails") == true
+        ) {
+            savedNearbyViewport = ViewportSnapshot(mapViewportState)
+        } else if (
+            previousNavEntry?.destination?.route?.contains("StopDetails") == true &&
+                currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+        ) {
+            refreshRouteLineSource()
+            savedNearbyViewport?.restoreOn(mapViewportState)
+            savedNearbyViewport = null
+        }
+    }
+
+    fun handleNavChange() {
+        handleNearbyNavRestoration()
+        val stopId = currentNavEntry?.arguments?.getString("stopId")
+        if (stopId == null) {
+            selectedStop = null
+            return
+        }
+        selectedStop = globalResponse?.stops?.get(stopId)
     }
 
     Box(modifier) {
@@ -241,6 +278,9 @@ fun HomeMapView(
                 refreshStopFeatures()
             }
             LaunchedEffect(stopSourceData) { refreshStopSource() }
+
+            LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
+            LaunchedEffect(stopDetailsFilter) { updateDisplayedRoutesBasedOnStop() }
 
             val context = LocalContext.current
 

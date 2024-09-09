@@ -11,9 +11,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.mbta.tid.mbta_app.android.stopDetails.PillFilter
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilterPills
-import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test

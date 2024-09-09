@@ -9,8 +9,11 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
+import com.mbta.tid.mbta_app.model.response.StopMapResponse
+import com.mbta.tid.mbta_app.utils.GreenLineTestHelper
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
@@ -312,5 +315,33 @@ class RouteFeaturesBuilderTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun testShapeFiltering() {
+        val basicMapResponse =
+            StopMapResponse(
+                routeShapes = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+                childStops = emptyMap()
+            )
+        val filteredShapes =
+            RouteFeaturesBuilder.filteredRouteShapesForStop(
+                basicMapResponse,
+                StopDetailsFilter(
+                    MapTestDataHelper.routeRed.id,
+                    MapTestDataHelper.patternRed10.directionId
+                ),
+                null
+            )
+        assertEquals(filteredShapes.count(), 1)
+
+        val glFilteredShapes =
+            RouteFeaturesBuilder.filteredRouteShapesForStop(
+                GreenLineTestHelper.stopMapResponse,
+                StopDetailsFilter("line-Green", 0),
+                null
+            )
+        assertEquals(glFilteredShapes.count(), 3)
+        assertEquals(glFilteredShapes.get(0).segmentedShapes.count(), 1)
     }
 }
