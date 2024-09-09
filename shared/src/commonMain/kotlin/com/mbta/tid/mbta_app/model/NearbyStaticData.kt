@@ -275,11 +275,11 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         directionPatterns.mapNotNull { global.routes[it.routeId] }.toSet().sorted()
                     if (directionRoutes.filter { !it.id.startsWith("Shuttle-") }.size == 1) {
                         val route = directionRoutes.first()
-                        val patternsByRepresentativeTrip =
+                        val patternsByHeadsign =
                             directionPatterns.groupBy {
                                 global.trips.getValue(it.representativeTripId).headsign
                             }
-                        return@flatMap patternsByRepresentativeTrip.map { (headsign, patterns) ->
+                        return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
                             StaticPatterns.ByHeadsign(route, headsign, line, patterns.sorted())
                         }
                     }
