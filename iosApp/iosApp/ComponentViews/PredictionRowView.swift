@@ -32,6 +32,11 @@ struct PredictionRowView: View {
 
     var body: some View {
         HStack(spacing: 0) {
+            if let secondaryAlert = predictions.secondaryAlert {
+                Image(secondaryAlert.iconName)
+                    .frame(width: 18, height: 18)
+                    .padding(.trailing, 8)
+            }
             if case let .onRow(route) = pillDecoration {
                 RoutePill(route: route, type: .flex).padding(.trailing, 8)
             }

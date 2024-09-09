@@ -180,8 +180,22 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         count: Int,
         context: TripInstantDisplay.Context
     ): Format {
-        val alert = alertsHere?.firstOrNull()
-        if (alert != null) return Format.NoService(alert)
+        val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
+        if (majorAlert != null) return Format.NoService(majorAlert)
+        val secondaryAlert =
+            alertsHere
+                ?.firstOrNull { it.significance >= AlertSignificance.Secondary }
+                ?.let {
+                    Format.SecondaryAlert(
+                        it,
+                        MapStopRoute.matching(
+                            when (this) {
+                                is ByHeadsign -> route
+                                is ByDirection -> representativeRoute
+                            }
+                        )
+                    )
+                }
         if (this.upcomingTrips == null) return Format.Loading
         val allTrips = upcomingTrips ?: emptyList()
         val tripsToShow =
@@ -199,8 +213,8 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                             .isSubway() && it.format is TripInstantDisplay.Schedule)
                 }
                 .take(count)
-        if (tripsToShow.isEmpty()) return Format.None
-        return Format.Some(tripsToShow)
+        if (tripsToShow.isEmpty()) return Format.None(secondaryAlert)
+        return Format.Some(tripsToShow, secondaryAlert)
     }
 
     /**
@@ -272,11 +286,28 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
     }
 
     sealed class Format {
-        data object Loading : Format()
+        abstract val secondaryAlert: SecondaryAlert?
 
-        data object None : Format()
+        data class SecondaryAlert(val iconName: String, val alertEffect: Alert.Effect) {
+            constructor(
+                alert: Alert,
+                mapStopRoute: MapStopRoute?
+            ) : this(
+                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}"} ?: "borderless"}-${alert.alertState.name.lowercase()}",
+                alert.effect
+            )
+        }
 
-        data class Some(val trips: List<FormatWithId>) : Format() {
+        data object Loading : Format() {
+            override val secondaryAlert = null
+        }
+
+        data class None(override val secondaryAlert: SecondaryAlert?) : Format()
+
+        data class Some(
+            val trips: List<FormatWithId>,
+            override val secondaryAlert: SecondaryAlert?
+        ) : Format() {
             data class FormatWithId(
                 val id: String,
                 val routeType: RouteType,
@@ -291,7 +322,9 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             }
         }
 
-        data class NoService(val alert: Alert) : Format()
+        data class NoService(val alert: Alert) : Format() {
+            override val secondaryAlert = null
+        }
     }
 
     companion object {

@@ -37,7 +37,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
 
             val activeRelevantAlerts =
                 alerts?.alerts?.values?.filter {
-                    it.isActive(filterAtTime) && Alert.serviceDisruptionEffects.contains(it.effect)
+                    it.isActive(filterAtTime) && it.significance >= AlertSignificance.Minor
                 }
 
             patternsByRoute

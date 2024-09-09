@@ -31,13 +31,13 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `formats as alert with no trips and alert`() = parametricTest {
+    fun `formats as alert with no trips and major alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
 
-        val alert = objects.alert {}
+        val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
@@ -47,7 +47,49 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `formats as alert with trip and alert`() = parametricTest {
+    fun `formats as none with no trips and secondary alert`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+
+        val context = anyContext()
+
+        val cases =
+            mapOf(
+                objects.route { id = "Red" } to "alert-large-red-issue",
+                objects.route { id = "Mattapan" } to "alert-large-mattapan-issue",
+                objects.route { id = "Orange" } to "alert-large-orange-issue",
+                objects.route { id = "Green-B" } to "alert-large-green-issue",
+                objects.route { id = "Blue" } to "alert-large-blue-issue",
+                objects.route { id = "741" } to "alert-large-silver-issue",
+                objects.route { type = RouteType.COMMUTER_RAIL } to "alert-large-commuter-issue",
+                objects.route { type = RouteType.FERRY } to "alert-large-ferry-issue",
+                objects.route { type = RouteType.BUS } to "alert-large-bus-issue",
+                objects.route { type = RouteType.HEAVY_RAIL } to "alert-borderless-issue"
+            )
+
+        val alert = objects.alert { effect = Alert.Effect.ServiceChange }
+
+        for ((route, icon) in cases) {
+            assertEquals(
+                RealtimePatterns.Format.None(
+                    RealtimePatterns.Format.SecondaryAlert(icon, Alert.Effect.ServiceChange)
+                ),
+                RealtimePatterns.ByHeadsign(
+                        route,
+                        "",
+                        null,
+                        emptyList(),
+                        emptyList(),
+                        listOf(alert)
+                    )
+                    .format(now, route.type, context)
+            )
+        }
+    }
+
+    @Test
+    fun `formats as alert with trip and major alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -61,7 +103,7 @@ class RealtimePatternsTest {
             }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
-        val alert = objects.alert {}
+        val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
@@ -78,6 +120,49 @@ class RealtimePatternsTest {
     }
 
     @Test
+    fun `preserves trip alongside secondary alert`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.BUS }
+
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 1.minutes
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        val alert = objects.alert { effect = Alert.Effect.ServiceChange }
+
+        assertEquals(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip.id,
+                        route.type,
+                        TripInstantDisplay.Approaching
+                    )
+                ),
+                RealtimePatterns.Format.SecondaryAlert(
+                    "alert-large-bus-issue",
+                    Alert.Effect.ServiceChange
+                )
+            ),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip),
+                    listOf(alert)
+                )
+                .format(now, route.type, anyContext())
+        )
+    }
+
+    @Test
     fun `formats as none with no trips and no alert`() = parametricTest {
         val now = Clock.System.now()
 
@@ -85,7 +170,7 @@ class RealtimePatternsTest {
         val route = objects.route()
 
         assertEquals(
-            RealtimePatterns.Format.None,
+            RealtimePatterns.Format.None(null),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
@@ -123,7 +208,8 @@ class RealtimePatternsTest {
                         routeType,
                         TripInstantDisplay.Minutes(5)
                     )
-                )
+                ),
+                null
             ),
             RealtimePatterns.ByHeadsign(
                     route,
@@ -169,7 +255,8 @@ class RealtimePatternsTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(5)
                     )
-                )
+                ),
+                null
             ),
             RealtimePatterns.ByHeadsign(
                     subwayRoute,
@@ -193,7 +280,8 @@ class RealtimePatternsTest {
                         RouteType.BUS,
                         TripInstantDisplay.Minutes(5)
                     )
-                )
+                ),
+                null
             ),
             RealtimePatterns.ByHeadsign(
                     busRoute,
@@ -336,7 +424,8 @@ class RealtimePatternsTest {
                         routeType,
                         TripInstantDisplay.Minutes(7)
                     )
-                )
+                ),
+                null
             ),
             directionPatterns.format(now, routeType, anyContext())
         )
