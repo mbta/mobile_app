@@ -90,6 +90,9 @@ struct StopDetailsView: View {
                 }
             }
         }
+        .onReceive(timer) { input in
+            now = input
+        }
         .task {
             do {
                 globalResponse = try await globalRepository.getGlobalData()
