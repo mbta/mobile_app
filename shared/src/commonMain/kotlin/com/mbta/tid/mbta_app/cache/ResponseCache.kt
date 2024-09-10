@@ -75,6 +75,7 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
                 HttpStatusCode.NotModified -> {
                     val data = this.data ?: throw RuntimeException("Failed to update cached data")
                     data.fetchTime = TimeSource.Monotonic.markNow()
+                    writeData(data)
                     data.data
                 }
                 HttpStatusCode.OK -> {
