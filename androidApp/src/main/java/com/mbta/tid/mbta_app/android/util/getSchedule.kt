@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
@@ -21,7 +23,9 @@ fun getSchedule(
 
     LaunchedEffect(stopIds, now) {
         if (stopIds != null) {
-            schedules = schedulesRepository.getSchedule(stopIds, now)
+            withContext(Dispatchers.IO) {
+                schedules = schedulesRepository.getSchedule(stopIds, now)
+            }
         }
     }
 

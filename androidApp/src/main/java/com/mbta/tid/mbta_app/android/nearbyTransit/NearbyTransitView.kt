@@ -31,6 +31,8 @@ import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -63,18 +65,20 @@ fun NearbyTransitView(
             )
         }
 
-    LaunchedEffect(targetLocation) {
+    LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null) {
-            nearby =
-                nearbyRepository.getNearby(
-                    global = globalResponse,
-                    location =
-                        Coordinate(
-                            latitude = targetLocation.latitude,
-                            longitude = targetLocation.longitude
-                        )
-                )
-            setLastLocation(targetLocation)
+            withContext(Dispatchers.IO) {
+                nearby =
+                    nearbyRepository.getNearby(
+                        global = globalResponse,
+                        location =
+                            Coordinate(
+                                latitude = targetLocation.latitude,
+                                longitude = targetLocation.longitude
+                            )
+                    )
+                setLastLocation(targetLocation)
+            }
         }
     }
 
