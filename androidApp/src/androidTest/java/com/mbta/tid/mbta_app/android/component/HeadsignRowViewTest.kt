@@ -37,7 +37,8 @@ class HeadsignRowViewTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(10)
                     ),
-                )
+                ),
+                secondaryAlert = null
             )
         )
 
@@ -57,7 +58,8 @@ class HeadsignRowViewTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding
                     )
-                )
+                ),
+                secondaryAlert = null
             )
         )
 
@@ -67,7 +69,7 @@ class HeadsignRowViewTest {
 
     @Test
     fun showsNoPredictions() {
-        init("Somewhere", RealtimePatterns.Format.None)
+        init("Somewhere", RealtimePatterns.Format.None(secondaryAlert = null))
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
         composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
