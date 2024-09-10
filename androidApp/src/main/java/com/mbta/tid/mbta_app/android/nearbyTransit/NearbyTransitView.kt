@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.android.util.getSchedule
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -31,6 +31,8 @@ import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -63,18 +65,20 @@ fun NearbyTransitView(
             )
         }
 
-    LaunchedEffect(targetLocation) {
+    LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null) {
-            nearby =
-                nearbyRepository.getNearby(
-                    global = globalResponse,
-                    location =
-                        Coordinate(
-                            latitude = targetLocation.latitude,
-                            longitude = targetLocation.longitude
-                        )
-                )
-            setLastLocation(targetLocation)
+            withContext(Dispatchers.IO) {
+                nearby =
+                    nearbyRepository.getNearby(
+                        global = globalResponse,
+                        location =
+                            Coordinate(
+                                latitude = targetLocation.latitude,
+                                longitude = targetLocation.longitude
+                            )
+                    )
+                setLastLocation(targetLocation)
+            }
         }
     }
 

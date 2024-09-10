@@ -37,9 +37,12 @@ import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class, FlowPreview::class)
@@ -51,8 +54,12 @@ fun ContentView(
     val navController = rememberNavController()
     var alertData: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
     DisposableEffect(null) {
-        alertsRepository.connect { alertData = it.data }
-        onDispose { alertsRepository.disconnect() }
+        val scope = CoroutineScope(Dispatchers.IO)
+        val job = scope.launch { alertsRepository.connect { alertData = it.data } }
+        onDispose {
+            alertsRepository.disconnect()
+            job.cancel()
+        }
     }
     val globalResponse = getGlobalData()
     val mapViewportState = rememberMapViewportState {

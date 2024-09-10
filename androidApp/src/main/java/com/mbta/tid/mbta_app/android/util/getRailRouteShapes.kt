@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -16,7 +18,11 @@ fun getRailRouteShapes(
 ): MapFriendlyRouteResponse? {
     var railRouteShapes: MapFriendlyRouteResponse? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(null) { railRouteShapes = railRouteShapeRepository.getRailRouteShapes() }
+    LaunchedEffect(null) {
+        withContext(Dispatchers.IO) {
+            railRouteShapes = railRouteShapeRepository.getRailRouteShapes()
+        }
+    }
 
     return railRouteShapes
 }

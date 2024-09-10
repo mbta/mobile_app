@@ -36,9 +36,10 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
-import com.mbta.tid.mbta_app.android.util.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -75,6 +76,7 @@ fun NearbyTransitPage(
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
     var stopDetailsFilter by rememberSaveable { mutableStateOf<StopDetailsFilter?>(null) }
+    var stopDetailsDepartures by rememberSaveable { mutableStateOf<StopDetailsDepartures?>(null) }
     var vehiclesData: List<Vehicle> by remember { mutableStateOf(emptyList()) }
 
     fun handleStopNavigation(stopId: String) {
@@ -141,6 +143,10 @@ fun NearbyTransitPage(
                                 stopDetailsFilter = filter
                             }
 
+                            fun updateStopDepartures(departures: StopDetailsDepartures?) {
+                                stopDetailsDepartures = departures
+                            }
+
                             LaunchedEffect(navRoute) {
                                 updateStopFilter(
                                     if (
@@ -168,7 +174,8 @@ fun NearbyTransitPage(
                                     stopDetailsFilter,
                                     nearbyTransit.alertData,
                                     onClose = { navController.popBackStack() },
-                                    updateStopFilter = ::updateStopFilter
+                                    updateStopFilter = ::updateStopFilter,
+                                    updateDepartures = ::updateStopDepartures
                                 )
                             }
                         }
@@ -210,7 +217,9 @@ fun NearbyTransitPage(
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                 currentNavEntry = currentNavEntry,
                 handleStopNavigation = ::handleStopNavigation,
-                vehiclesData = vehiclesData
+                vehiclesData = vehiclesData,
+                stopDetailsDepartures = stopDetailsDepartures,
+                stopDetailsFilter = stopDetailsFilter
             )
         }
     }

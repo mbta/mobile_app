@@ -8,13 +8,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
 fun getGlobalData(globalRepository: IGlobalRepository = koinInject()): GlobalResponse? {
     var globalResponse: GlobalResponse? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(null) { globalResponse = globalRepository.getGlobalData() }
+    LaunchedEffect(null) {
+        withContext(Dispatchers.IO) { globalResponse = globalRepository.getGlobalData() }
+    }
 
     return globalResponse
 }
