@@ -189,11 +189,13 @@ class StopDetailsViewTest {
                                                     ),
                                                 upcomingTripsMap =
                                                     mapOf(
-                                                        RealtimePatterns.UpcomingTripKey.ByHeadsign(
-                                                            trip.routeId,
-                                                            trip.headsign,
-                                                            stop.id
-                                                        ) to listOf(UpcomingTrip(trip, prediction))
+                                                        RealtimePatterns.UpcomingTripKey
+                                                            .ByRoutePattern(
+                                                                trip.routeId,
+                                                                routePatternOne.id,
+                                                                stop.id
+                                                            ) to
+                                                            listOf(UpcomingTrip(trip, prediction))
                                                     ),
                                                 stopIds = setOf(stop.id),
                                                 alerts = null

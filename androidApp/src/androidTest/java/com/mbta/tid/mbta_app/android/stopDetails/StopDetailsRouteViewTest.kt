@@ -66,6 +66,7 @@ class StopDetailsRouteViewTest {
             routeId = "route_1"
             directionId = 0
             headsign = "Sample Headsign"
+            routePatternId = "pattern_1"
         }
     val prediction =
         builder.prediction {
@@ -101,9 +102,9 @@ class StopDetailsRouteViewTest {
                                     ),
                                 upcomingTripsMap =
                                     mapOf(
-                                        RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                                        RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                                             route.id,
-                                            trip.headsign,
+                                            trip.routePatternId,
                                             stop.id,
                                         ) to listOf(UpcomingTrip(trip, prediction))
                                     ),
