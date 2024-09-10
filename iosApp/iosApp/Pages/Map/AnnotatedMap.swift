@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct AnnotatedMap: View {
     static let annotationTextZoomThreshold = 19.0

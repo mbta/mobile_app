@@ -86,4 +86,7 @@ android {
 
 skie { features { group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) } } }
 
-sentryKmp { autoInstall.commonMain.enabled = false }
+sentryKmp {
+    autoInstall.commonMain.enabled = false
+    autoInstall.cocoapods.sentryCocoaVersion = "~> 8.36.0"
+}

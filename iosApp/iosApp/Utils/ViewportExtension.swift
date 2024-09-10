@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-@_spi(Experimental) import MapboxMaps
+import MapboxMaps
 
 extension Viewport {
     var isFollowing: Bool {

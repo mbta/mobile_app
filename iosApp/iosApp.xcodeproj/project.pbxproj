@@ -2026,7 +2026,7 @@
 			repositoryURL = "https://github.com/mapbox/mapbox-maps-ios.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.3.0;
+				minimumVersion = 11.6.1;
 			};
 		};
 		6E55C1802C2489030086A424 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
@@ -2058,7 +2058,7 @@
 			repositoryURL = "https://github.com/appcues/appcues-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.2.0;
+				minimumVersion = 3.3.1;
 			};
 		};
 		9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
