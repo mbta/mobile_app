@@ -1,5 +1,11 @@
 package com.mbta.tid.mbta_app
 
+import com.mbta.tid.mbta_app.cache.createCacheFile
 import org.koin.dsl.module
 
-fun platformModule() = module { single { createDataStore(get()) } }
+fun platformModule() = module {
+    includes(
+        module { single { createDataStore(get()) } },
+        module { factory { params -> createCacheFile(params.get(), get()) } }
+    )
+}

@@ -44,7 +44,7 @@ class ResponseCacheTest {
 
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
-        val cache = ResponseCache()
+        val cache = ResponseCache(cacheKey = "test")
 
         var didFetch = false
 
@@ -78,7 +78,7 @@ class ResponseCacheTest {
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
         val httpResponse = client.get { url { path("api/global") } }
 
-        val cache = ResponseCache()
+        val cache = ResponseCache(cacheKey = "test")
         cache.data =
             Response(
                 null,
@@ -109,7 +109,7 @@ class ResponseCacheTest {
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
-        val cache = ResponseCache()
+        val cache = ResponseCache(cacheKey = "test")
         cache.data =
             Response(
                 null,
@@ -180,7 +180,7 @@ class ResponseCacheTest {
         }
 
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
-        val cache = ResponseCache(maxAge = 1.seconds)
+        val cache = ResponseCache(cacheKey = "test", maxAge = 1.seconds)
 
         var fetchCount = 0
         suspend fun fetch(etag: String?): HttpResponse {

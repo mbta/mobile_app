@@ -24,6 +24,7 @@ import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import org.koin.core.error.InstanceCreationException
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -38,10 +39,15 @@ fun appModule(appVariant: AppVariant) = module {
 
 fun cacheModule() = module {
     factory { params ->
-        if (params.isNotEmpty()) {
-            ResponseCache(maxAge = params.get())
+        if (params.size() == 2) {
+            ResponseCache(cacheKey = params.get(), maxAge = params.get())
+        } else if (params.size() == 1) {
+            ResponseCache(cacheKey = params.get())
         } else {
-            ResponseCache()
+            throw InstanceCreationException(
+                "Wrong number of arguments provided to cacheModule",
+                parent = Exception()
+            )
         }
     }
 }

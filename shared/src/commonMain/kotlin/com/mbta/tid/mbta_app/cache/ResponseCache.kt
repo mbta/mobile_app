@@ -10,20 +10,28 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.TimeSource
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 
+@Serializable
 data class Response(
     val etag: String?,
+    @Serializable(with = TimeMarkSerializer::class)
     var fetchTime: TimeSource.Monotonic.ValueTimeMark,
     val data: String
 )
 
-class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
+class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours) : KoinComponent {
     internal var data: Response? = null
     private val lock = Mutex()
+    private val cacheFile: CacheFile by inject { parametersOf(cacheKey) }
 
     private fun getData(): Response? {
-        val data = this.data ?: return null
+        val data = this.data ?: readData() ?: return null
         return if (data.fetchTime.elapsedNow() < maxAge) {
             data
         } else {
@@ -32,7 +40,27 @@ class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
     }
 
     private suspend fun putData(response: HttpResponse) {
-        this.data = Response(response.etag(), TimeSource.Monotonic.markNow(), response.bodyAsText())
+        val nextResponse =
+            Response(response.etag(), TimeSource.Monotonic.markNow(), response.bodyAsText())
+        this.data = nextResponse
+        this.writeData(nextResponse)
+    }
+
+    private fun readData(): Response? {
+        try {
+            val cachedOnDish = cacheFile.read() ?: return null
+            return Json.decodeFromString(cachedOnDish)
+        } catch (error: Exception) {
+            return null
+        }
+    }
+
+    private fun writeData(response: Response) {
+        try {
+            cacheFile.write(Json.encodeToString(response))
+        } catch (error: Exception) {
+            println("Writing to '$cacheKey' cache file failed. $error")
+        }
     }
 
     suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): String {
@@ -45,7 +73,7 @@ class ResponseCache(val maxAge: Duration = 1.hours) : KoinComponent {
             val httpResponse = fetch(this.data?.etag)
             return when (httpResponse.status) {
                 HttpStatusCode.NotModified -> {
-                    val data = this.data ?: throw RuntimeException("Failed to updated cached data")
+                    val data = this.data ?: throw RuntimeException("Failed to update cached data")
                     data.fetchTime = TimeSource.Monotonic.markNow()
                     data.data
                 }

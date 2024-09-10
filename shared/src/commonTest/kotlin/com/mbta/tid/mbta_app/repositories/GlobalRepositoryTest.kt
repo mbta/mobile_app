@@ -117,7 +117,7 @@ class GlobalRepositoryTest : KoinTest {
             modules(
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
-                    single { ResponseCache() }
+                    factory { params -> ResponseCache(cacheKey = params.get()) }
                 }
             )
         }

@@ -17,6 +17,7 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.parameter.parametersOf
 
 interface IGlobalRepository {
     @Throws(
@@ -31,7 +32,7 @@ interface IGlobalRepository {
 
 class GlobalRepository() : IGlobalRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
-    private val cache: ResponseCache by inject()
+    private val cache: ResponseCache by inject { parametersOf("global") }
 
     override suspend fun getGlobalData(): GlobalResponse =
         json.decodeFromString(
