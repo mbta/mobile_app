@@ -85,7 +85,7 @@ extension HomeMapView {
     ) {
         mapVM.childStops = stopMapData.childStops
         if let filter {
-            mapVM.routeSourceData = MapViewModel.filteredRouteShapesForStop(
+            mapVM.routeSourceData = RouteFeaturesBuilder.shared.filteredRouteShapesForStop(
                 stopMapData: stopMapData,
                 filter: filter,
                 departures: departures

@@ -13,8 +13,12 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsDepartures
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
+import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
@@ -216,5 +220,56 @@ object RouteFeaturesBuilder {
                 .map { it.routeId }
                 .toSet()
         return railShapes.filter { stopRailRouteIds.contains(it.routeId) }
+    }
+
+    fun filteredRouteShapesForStop(
+        stopMapData: StopMapResponse,
+        filter: StopDetailsFilter,
+        departures: StopDetailsDepartures?
+    ): List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> {
+        /**
+         * TODO: When we switch to a more involved filter and pinning ID type system, this should be
+         *   changed to be less hard coded and do this for any line (we'll then need to figure out
+         *   how to get corresponding route ids for each)
+         */
+        val filterRoutes =
+            if (filter.routeId == "line-Green") {
+                greenRoutes
+            } else {
+                setOf(filter.routeId)
+            }
+        val targetRouteData = stopMapData.routeShapes.filter { filterRoutes.contains(it.routeId) }
+
+        if (targetRouteData.isNotEmpty()) {
+            return departures?.let {
+                val upcomingRoutePatternIds =
+                    departures.routes
+                        .flatMap { it.allUpcomingTrips() }
+                        .mapNotNull { it.trip.routePatternId }
+                val targetRoutePatternIds = upcomingRoutePatternIds.toSet()
+                targetRouteData.map { routeData ->
+                    val filteredShapes =
+                        routeData.segmentedShapes.filter {
+                            it.directionId == filter.directionId &&
+                                targetRoutePatternIds.contains(it.sourceRoutePatternId)
+                        }
+                    MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                        routeData.routeId,
+                        filteredShapes
+                    )
+                }
+            }
+                ?: targetRouteData.map { routeData ->
+                    val filteredShapes =
+                        routeData.segmentedShapes.filter { it.directionId == filter.directionId }
+                    MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                        routeData.routeId,
+                        filteredShapes
+                    )
+                }
+        }
+        return listOf(
+            MapFriendlyRouteResponse.RouteWithSegmentedShapes(filter.routeId, emptyList())
+        )
     }
 }

@@ -278,6 +278,9 @@
     "Next stop" : {
 
     },
+    "No nearby MBTA stops" : {
+
+    },
     "No real-time data" : {
 
     },
@@ -409,6 +412,9 @@
     },
     "Weather" : {
       "comment" : "Possible alert cause"
+    },
+    "Your current location is outside of our search area." : {
+
     }
   },
   "version" : "1.0"

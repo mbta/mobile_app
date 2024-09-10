@@ -211,15 +211,16 @@ final class HomeMapViewTests: XCTestCase {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
 
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
-        HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
-                FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
-                                       onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
-                global: MockGlobalRepository(
-                    response: mockedGlobalResponse,
-                    onGet: { globalLoadSubject.send(
-                    ) }
-                )))
+        HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
+            global: MockGlobalRepository(
+                response: mockedGlobalResponse,
+                onGet: { globalLoadSubject.send() }
+            ),
+            stop: FilteredStopRepository(
+                filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
+                onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
+            )
+        ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
@@ -265,16 +266,16 @@ final class HomeMapViewTests: XCTestCase {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
-                FilteredStopRepository(
-                    filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
-                    onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
-                ),
+            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
                 global: MockGlobalRepository(
                     response: mockedGlobalResponse,
-                    onGet: { globalLoadSubject.send(
-                    ) }
-                )))
+                    onGet: { globalLoadSubject.send() }
+                ),
+                stop: FilteredStopRepository(
+                    filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
+                    onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
+                )
+            ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
@@ -323,14 +324,13 @@ final class HomeMapViewTests: XCTestCase {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
-            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop:
-                FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }),
+            .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
                 global: MockGlobalRepository(
                     response: mockedGlobalResponse,
-                    onGet: { globalLoadSubject.send(
-                    ) }
-
-                )))
+                    onGet: { globalLoadSubject.send() }
+                ),
+                stop: FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() })
+            ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
@@ -427,8 +427,8 @@ final class HomeMapViewTests: XCTestCase {
 
         HelpersKt
             .loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(
-                trip: FakeTripRepository(onGetTripShape: { tripShapeLoadSubject.send() }),
-                global: MockGlobalRepository(response: mockedGlobalResponse, onGet: { globalLoadSubject.send() })
+                global: MockGlobalRepository(response: mockedGlobalResponse, onGet: { globalLoadSubject.send() }),
+                trip: FakeTripRepository(onGetTripShape: { tripShapeLoadSubject.send() })
             ))
 
         let mapVM: MapViewModel = .init(layerManager: MockLayerManager())

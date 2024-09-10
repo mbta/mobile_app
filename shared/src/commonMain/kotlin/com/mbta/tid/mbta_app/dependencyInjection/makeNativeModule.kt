@@ -19,8 +19,8 @@ fun makeNativeModule(appCheck: IAppCheckRepository, socket: PhoenixSocket): Modu
     return module {
         single<IAppCheckRepository> { appCheck }
         single<PhoenixSocket> { socket }
-        factory<IPredictionsRepository> { PredictionsRepository(get()) }
         factory<IAlertsRepository> { AlertsRepository(get()) }
+        factory<IPredictionsRepository> { PredictionsRepository(get()) }
         factory<ITripPredictionsRepository> { TripPredictionsRepository(get()) }
         factory<IVehicleRepository> { VehicleRepository(get()) }
         factory<IVehiclesRepository> { VehiclesRepository(get()) }

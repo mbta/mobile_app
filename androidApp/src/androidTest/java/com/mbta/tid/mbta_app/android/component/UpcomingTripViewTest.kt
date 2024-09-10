@@ -51,7 +51,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Approaching))
         }
-        composeTestRule.onNodeWithText("1").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
     }
 
     @Test
@@ -85,7 +85,6 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
         }
-        composeTestRule.onNodeWithText("5").assertIsDisplayed()
-        composeTestRule.onNodeWithText("min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
     }
 }

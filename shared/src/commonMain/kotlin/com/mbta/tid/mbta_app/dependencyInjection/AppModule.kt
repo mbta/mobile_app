@@ -48,28 +48,28 @@ fun cacheModule() = module {
 
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {
-        repositories.appCheck?.let { appCheckRepo -> factory<IAppCheckRepository> { appCheckRepo } }
         single<IConfigRepository> { repositories.config }
+        single<IGlobalRepository> { repositories.global }
+        single<INearbyRepository> { repositories.nearby }
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }
+        single<IRailRouteShapeRepository> { repositories.railRouteShapes }
         single<ISchedulesRepository> { repositories.schedules }
+        single<ISearchResultRepository> { repositories.searchResults }
         single<ISettingsRepository> { repositories.settings }
         single<IStopRepository> { repositories.stop }
         single<ITripRepository> { repositories.trip }
+        repositories.alerts?.let { alertsRepo -> factory<IAlertsRepository> { alertsRepo } }
+        repositories.appCheck?.let { appCheckRepo -> factory<IAppCheckRepository> { appCheckRepo } }
         repositories.predictions?.let { predictionsRepo ->
             factory<IPredictionsRepository> { predictionsRepo }
         }
-        repositories.alerts?.let { alertsRepo -> factory<IAlertsRepository> { alertsRepo } }
-        single<INearbyRepository> { repositories.nearby }
         repositories.tripPredictions?.let { tripPredictionsRepo ->
             factory<ITripPredictionsRepository> { tripPredictionsRepo }
         }
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
-        single<IGlobalRepository> { repositories.global }
-        single<ISearchResultRepository> { repositories.searchResults }
-        single<IRailRouteShapeRepository> { repositories.railRouteShapes }
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
-        single { TogglePinnedRouteUsecase(get()) }
-        single { GetSettingUsecase(get()) }
         single { ConfigUseCase(get(), get()) }
+        single { GetSettingUsecase(get()) }
+        single { TogglePinnedRouteUsecase(get()) }
     }
 }
