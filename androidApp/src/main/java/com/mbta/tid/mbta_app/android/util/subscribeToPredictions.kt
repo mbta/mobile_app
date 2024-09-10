@@ -8,6 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
@@ -16,12 +20,19 @@ fun subscribeToPredictions(
     predictionsRepository: IPredictionsRepository = koinInject()
 ): PredictionsStreamDataResponse? {
     var predictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
-
     DisposableEffect(stopIds) {
-        if (stopIds != null) {
-            predictionsRepository.connect(stopIds) { predictions = it.data }
+        val scope = CoroutineScope(Dispatchers.IO)
+        val job =
+            scope.launch {
+                if (stopIds != null) {
+                    predictionsRepository.connect(stopIds) { predictions = it.data }
+                }
+            }
+
+        onDispose {
+            predictionsRepository.disconnect()
+            job.cancel()
         }
-        onDispose { predictionsRepository.disconnect() }
     }
 
     return predictions
