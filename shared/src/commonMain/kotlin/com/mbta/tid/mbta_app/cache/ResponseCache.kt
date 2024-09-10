@@ -27,8 +27,8 @@ data class Response(
 
 class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours) : KoinComponent {
     internal var data: Response? = null
+    internal val cacheFile: CacheFile by inject { parametersOf(cacheKey) }
     private val lock = Mutex()
-    private val cacheFile: CacheFile by inject { parametersOf(cacheKey) }
 
     private fun getData(): Response? {
         val data = this.data ?: readData() ?: return null

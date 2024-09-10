@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.cache
 
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.mocks.MockCacheFile
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -24,6 +25,9 @@ import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 
 class ResponseCacheTest {
     @Test
@@ -67,16 +71,6 @@ class ResponseCacheTest {
         objects.stop()
         objects.route()
         val globalData = GlobalResponse(objects, emptyMap())
-
-        val mockEngine = MockEngine { _ ->
-            respond(
-                content = ByteReadChannel(json.encodeToString(globalData)),
-                status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
-        val client = MobileBackendClient(mockEngine, AppVariant.Staging)
-        val httpResponse = client.get { url { path("api/global") } }
 
         val cache = ResponseCache(cacheKey = "test")
         cache.data =
@@ -216,5 +210,130 @@ class ResponseCacheTest {
         // Ensure we go back to the old data when sent etag doesn't match
         assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
         assertEquals(4, fetchCount)
+    }
+
+    @Test
+    fun `returns data from disk`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        objects.stop()
+        objects.stop()
+        objects.route()
+        val globalData = GlobalResponse(objects, emptyMap())
+
+        val cache = ResponseCache(cacheKey = "test")
+
+        val encodedResponse =
+            json.encodeToString(
+                Response(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
+                    json.encodeToString(globalData)
+                )
+            )
+
+        startKoin {
+            modules(module { factory<CacheFile> { MockCacheFile(data = encodedResponse) } })
+        }
+
+        runBlocking { assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() })) }
+
+        stopKoin()
+    }
+
+    @Test
+    fun `fetches data when disk cache is stale`() = runBlocking {
+        val oldObjects = ObjectCollectionBuilder()
+        val oldData = GlobalResponse(oldObjects, emptyMap())
+
+        val newObjects = ObjectCollectionBuilder()
+        newObjects.stop()
+        newObjects.stop()
+        newObjects.route()
+        val newData = GlobalResponse(newObjects, emptyMap())
+
+        val mockEngine = MockEngine { _ ->
+            respond(
+                content = ByteReadChannel(json.encodeToString(newData)),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+        val client = MobileBackendClient(mockEngine, AppVariant.Staging)
+
+        val cache = ResponseCache(cacheKey = "test")
+
+        val encodedResponse =
+            json.encodeToString(
+                Response(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
+                    json.encodeToString(oldData)
+                )
+            )
+
+        startKoin {
+            modules(module { factory<CacheFile> { MockCacheFile(data = encodedResponse) } })
+        }
+
+        runBlocking {
+            var didFetch = false
+
+            assertEquals(
+                newData,
+                json.decodeFromString(
+                    cache.getOrFetch {
+                        didFetch = true
+                        client.get { url { path("api/global") } }
+                    }
+                )
+            )
+            assertTrue(didFetch)
+        }
+
+        stopKoin()
+    }
+
+    @Test
+    fun `writes to disk cache on load`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        objects.stop()
+        objects.stop()
+        objects.route()
+        val globalData = GlobalResponse(objects, emptyMap())
+
+        val mockEngine = MockEngine { _ ->
+            respond(
+                content = ByteReadChannel(json.encodeToString(globalData)),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        val client = MobileBackendClient(mockEngine, AppVariant.Staging)
+
+        val cache = ResponseCache(cacheKey = "test")
+
+        startKoin { modules(module { factory<CacheFile> { MockCacheFile() } }) }
+
+        runBlocking {
+            var didFetch = false
+
+            assertEquals(
+                globalData,
+                json.decodeFromString(
+                    cache.getOrFetch {
+                        didFetch = true
+                        client.get { url { path("api/global") } }
+                    }
+                )
+            )
+            assertTrue(didFetch)
+            assertEquals(
+                cache.data!!.data,
+                json.decodeFromString<Response>(cache.cacheFile.read()!!).data
+            )
+        }
+
+        stopKoin()
     }
 }
