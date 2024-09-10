@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -16,6 +18,8 @@ fun getStopMapData(
     stopId: String
 ): StopMapResponse? {
     var stopMapResponse: StopMapResponse? by remember { mutableStateOf(null) }
-    LaunchedEffect(stopId) { stopMapResponse = stopRepository.getStopMapData(stopId) }
+    LaunchedEffect(stopId) {
+        withContext(Dispatchers.IO) { stopMapResponse = stopRepository.getStopMapData(stopId) }
+    }
     return stopMapResponse
 }
