@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 
@@ -42,6 +44,12 @@ fun PredictionRowView(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        predictions.secondaryAlert?.let { secondaryAlert ->
+            Image(
+                painterResource(drawableByName(secondaryAlert.iconName)),
+                secondaryAlert.alertEffect.name
+            )
+        }
         if (pillDecoration is PillDecoration.OnRow) {
             RoutePill(pillDecoration.route, line = null, RoutePillType.Flex)
         }

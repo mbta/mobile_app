@@ -17,7 +17,7 @@ import kotlinx.datetime.Instant
  */
 data class NearbyStaticData(val data: List<TransitWithStops>) {
 
-    sealed class StaticPatterns() : Comparable<StaticPatterns> {
+    sealed class StaticPatterns : Comparable<StaticPatterns> {
         abstract val patterns: List<RoutePattern>
 
         data class ByHeadsign(
@@ -49,7 +49,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             )
     }
 
-    sealed class StopPatterns() {
+    sealed class StopPatterns {
         abstract val stop: Stop
         abstract val allStopIds: Set<String>
         abstract val patterns: List<StaticPatterns>
@@ -103,7 +103,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         }
     }
 
-    sealed class TransitWithStops() {
+    sealed class TransitWithStops {
         fun sortRoute(): Route =
             when (this) {
                 is ByRoute -> this.route
@@ -408,7 +408,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val activeRelevantAlerts =
         alerts?.alerts?.values?.filter {
-            it.isActive(filterAtTime) && Alert.serviceDisruptionEffects.contains(it.effect)
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
         }
 
     return data

@@ -18,27 +18,34 @@ data class Alert(
     @SerialName("updated_at") val updatedAt: Instant
 ) : BackendObject {
     val alertState: StopAlertState =
-        if (this.effect == Alert.Effect.Shuttle) {
-            StopAlertState.Shuttle
-        } else if (
-            this.effect != Alert.Effect.Detour && serviceDisruptionEffects.contains(this.effect)
-        ) {
-            StopAlertState.Suspension
-        } else {
-            StopAlertState.Issue
+        when (this.effect) {
+            Effect.Shuttle -> StopAlertState.Shuttle
+            in setOf(
+                Effect.Suspension,
+                Effect.StationClosure,
+                Effect.StopClosure,
+                Effect.DockClosure
+            ) -> StopAlertState.Suspension
+            else -> StopAlertState.Issue
         }
 
-    companion object {
-        val serviceDisruptionEffects =
-            setOf(
-                Alert.Effect.StationClosure,
-                Alert.Effect.Shuttle,
-                Alert.Effect.Suspension,
-                Alert.Effect.Detour,
-                Alert.Effect.StopClosure,
-                Alert.Effect.DockClosure
-            )
-    }
+    val significance =
+        when (effect) {
+            // suspensions or shuttles can reasonably apply to an entire route
+            in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
+            // detours and closures are only major if they specify stops
+            in setOf(
+                Effect.StationClosure,
+                Effect.StopClosure,
+                Effect.DockClosure,
+                Effect.Detour
+            ) ->
+                if (informedEntity.all { it.stop != null }) AlertSignificance.Major
+                else AlertSignificance.Secondary
+            // service changes are always secondary
+            Effect.ServiceChange -> AlertSignificance.Secondary
+            else -> AlertSignificance.None
+        }
 
     @Serializable
     data class ActivePeriod(val start: Instant, val end: Instant?) {

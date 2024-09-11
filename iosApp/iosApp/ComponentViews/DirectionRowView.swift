@@ -61,9 +61,9 @@ struct DirectionRowView_Previews: PreviewProvider {
                                          routeType: RouteType.heavyRail,
                                          now: now.toKotlinInstant(), context: .nearbyTransit
                                      ),
-                                 ]))
+                                 ], secondaryAlert: nil))
                 DirectionRowView(direction: Direction(name: "North", destination: "None", id: 0),
-                                 predictions: RealtimePatterns.FormatNone.shared)
+                                 predictions: RealtimePatterns.FormatNone(secondaryAlert: nil))
                 DirectionRowView(direction: Direction(name: "South", destination: "Loading", id: 1),
                                  predictions: RealtimePatterns.FormatLoading.shared)
                 DirectionRowView(direction: Direction(name: "East", destination: "No Service", id: 1),

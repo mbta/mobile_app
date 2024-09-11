@@ -377,7 +377,8 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                             tripId = trip.id
                         )
                     } &&
-                    Alert.serviceDisruptionEffects.contains(alert.effect)
+                    // there's no UI yet for secondary alerts in trip details
+                    alert.significance >= AlertSignificance.Major
             }
         }
     }

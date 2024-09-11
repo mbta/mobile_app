@@ -4,6 +4,7 @@ import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
@@ -37,7 +38,8 @@ class HeadsignRowViewTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Minutes(10)
                     ),
-                )
+                ),
+                secondaryAlert = null
             )
         )
 
@@ -57,7 +59,8 @@ class HeadsignRowViewTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding
                     )
-                )
+                ),
+                secondaryAlert = null
             )
         )
 
@@ -66,11 +69,54 @@ class HeadsignRowViewTest {
     }
 
     @Test
+    fun showsOnePredictionWithSecondaryAlert() {
+        init(
+            "A Place",
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        "a",
+                        RouteType.LIGHT_RAIL,
+                        TripInstantDisplay.Boarding
+                    )
+                ),
+                secondaryAlert =
+                    RealtimePatterns.Format.SecondaryAlert(
+                        "alert-large-green-issue",
+                        Alert.Effect.ServiceChange
+                    )
+            )
+        )
+
+        composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
+        composeTestRule.onNodeWithText("BRD").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("ServiceChange").assertIsDisplayed()
+    }
+
+    @Test
     fun showsNoPredictions() {
-        init("Somewhere", RealtimePatterns.Format.None)
+        init("Somewhere", RealtimePatterns.Format.None(secondaryAlert = null))
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
         composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
+    }
+
+    @Test
+    fun showsNoPredictionsWithSecondaryAlert() {
+        init(
+            "Somewhere",
+            RealtimePatterns.Format.None(
+                secondaryAlert =
+                    RealtimePatterns.Format.SecondaryAlert(
+                        "alert-large-bus-issue",
+                        Alert.Effect.Detour
+                    )
+            )
+        )
+
+        composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Detour").assertIsDisplayed()
     }
 
     @Test
