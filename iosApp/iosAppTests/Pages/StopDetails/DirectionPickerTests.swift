@@ -20,11 +20,15 @@ final class DirectionPickerTests: XCTestCase {
 
         let patternNorth = objects.routePattern(route: route) { pattern in
             pattern.directionId = 0
-            pattern.representativeTrip { $0.headsign = "North" }
+            pattern.representativeTrip {
+                $0.headsign = "North"
+            }
         }
         let patternSouth = objects.routePattern(route: route) { pattern in
             pattern.directionId = 1
-            pattern.representativeTrip { $0.headsign = "South" }
+            pattern.representativeTrip {
+                $0.headsign = "South"
+            }
         }
 
         let patternsByStop = PatternsByStop(
