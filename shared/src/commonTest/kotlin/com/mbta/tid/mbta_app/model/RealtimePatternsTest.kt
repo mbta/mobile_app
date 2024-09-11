@@ -142,7 +142,7 @@ class RealtimePatternsTest {
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip.id,
                         route.type,
-                        TripInstantDisplay.Approaching
+                        TripInstantDisplay.Minutes(1)
                     )
                 ),
                 RealtimePatterns.Format.SecondaryAlert(

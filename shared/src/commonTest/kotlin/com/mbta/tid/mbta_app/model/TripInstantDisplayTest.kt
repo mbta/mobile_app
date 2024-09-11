@@ -587,6 +587,34 @@ class TripInstantDisplayTest {
     fun `minutes less than 20 in trip details`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(
+            TripInstantDisplay.Now,
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(15.seconds)
+                    },
+                schedule = null,
+                vehicle = null,
+                routeType = RouteType.BUS,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
+        )
+        assertEquals(
+            TripInstantDisplay.Minutes(1),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = now.plus(31.seconds)
+                    },
+                schedule = null,
+                vehicle = null,
+                routeType = RouteType.BUS,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails
+            )
+        )
+        assertEquals(
             TripInstantDisplay.AsTime(now + 90.seconds),
             TripInstantDisplay.from(
                 prediction =
@@ -595,7 +623,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL),
+                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.BUS),
                 now = now,
                 context = TripInstantDisplay.Context.TripDetails
             )
@@ -610,7 +638,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 now = now,
-                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL),
+                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.BUS),
                 context = TripInstantDisplay.Context.TripDetails
             )
         )
@@ -623,7 +651,7 @@ class TripInstantDisplayTest {
                     },
                 schedule = null,
                 vehicle = null,
-                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL),
+                routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.BUS),
                 now = now,
                 context = TripInstantDisplay.Context.TripDetails
             )

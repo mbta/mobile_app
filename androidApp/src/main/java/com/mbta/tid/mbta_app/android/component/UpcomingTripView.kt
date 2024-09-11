@@ -74,6 +74,14 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
+                is TripInstantDisplay.Now ->
+                    Text(
+                        stringResource(R.string.now),
+                        modifier,
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                 is TripInstantDisplay.Approaching ->
                     BoldedTripStatus(
                         text = stringResource(R.string.approaching_abbr),
