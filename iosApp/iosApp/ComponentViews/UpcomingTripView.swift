@@ -70,6 +70,9 @@ struct UpcomingTripView: View {
                 Text(verbatim: "")
             case .now:
                 Text("Now").font(Typography.headlineBold)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
+                        : accessibilityFormatters.arrivingOther())
             case .boarding:
                 Text("BRD").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
