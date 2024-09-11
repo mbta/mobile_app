@@ -42,9 +42,9 @@ struct StopDetailsFilteredRouteView: View {
                 context: .stopDetailsFiltered,
                 isSubway: route.type.isSubway()
             ) {
-                RealtimePatterns.FormatSome(trips: [formattedUpcomingTrip])
+                RealtimePatterns.FormatSome(trips: [formattedUpcomingTrip], secondaryAlert: nil)
             } else {
-                RealtimePatterns.FormatNone()
+                RealtimePatterns.FormatNone(secondaryAlert: nil)
             }
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
