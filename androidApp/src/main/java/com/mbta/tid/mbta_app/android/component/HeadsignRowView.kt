@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.route
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
@@ -53,10 +54,64 @@ fun HeadsignRowViewPreview() {
                             RouteType.LIGHT_RAIL,
                             TripInstantDisplay.Minutes(15)
                         )
-                    )
+                    ),
+                    secondaryAlert = null
                 )
             )
-            HeadsignRowView("None", RealtimePatterns.Format.None)
+            HeadsignRowView(
+                "Some with Alert",
+                RealtimePatterns.Format.Some(
+                    listOf(
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            "1",
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Minutes(5)
+                        ),
+                        RealtimePatterns.Format.Some.FormatWithId(
+                            "2",
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Minutes(15)
+                        )
+                    ),
+                    secondaryAlert =
+                        RealtimePatterns.Format.SecondaryAlert(
+                            "alert-large-bus-issue",
+                            Alert.Effect.Detour
+                        )
+                )
+            )
+            HeadsignRowView("None", RealtimePatterns.Format.None(secondaryAlert = null))
+            HeadsignRowView(
+                "None with Alert",
+                RealtimePatterns.Format.None(
+                    secondaryAlert =
+                        RealtimePatterns.Format.SecondaryAlert(
+                            "alert-large-bus-issue",
+                            Alert.Effect.Detour
+                        )
+                )
+            )
+            HeadsignRowView(
+                "Decorated None with Alert",
+                RealtimePatterns.Format.None(
+                    secondaryAlert =
+                        RealtimePatterns.Format.SecondaryAlert(
+                            "alert-large-green-issue",
+                            Alert.Effect.ServiceChange
+                        )
+                ),
+                pillDecoration =
+                    PillDecoration.OnRow(
+                        route {
+                            id = "Green-E"
+                            shortName = "E"
+                            color = "00843D"
+                            type = RouteType.LIGHT_RAIL
+                            textColor = "FFFFFF"
+                            longName = "Green Line E"
+                        }
+                    )
+            )
             HeadsignRowView("Loading", RealtimePatterns.Format.Loading)
             HeadsignRowView(
                 "No Service",

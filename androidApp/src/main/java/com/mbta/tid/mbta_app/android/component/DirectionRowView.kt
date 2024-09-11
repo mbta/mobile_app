@@ -68,12 +68,13 @@ private fun DirectionRowViewPreview() {
                                     now = now,
                                     context = TripInstantDisplay.Context.NearbyTransit
                                 ),
-                            )
+                            ),
+                        secondaryAlert = null
                     )
             )
             DirectionRowView(
                 direction = Direction(name = "North", destination = "None", id = 0),
-                predictions = RealtimePatterns.Format.None
+                predictions = RealtimePatterns.Format.None(secondaryAlert = null)
             )
             DirectionRowView(
                 direction = Direction(name = "South", destination = "Loading", id = 1),

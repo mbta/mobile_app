@@ -92,7 +92,8 @@ private fun entityMatcher(
 }
 
 private fun getServiceAlerts(alerts: List<Alert>): List<Alert> {
-    return alerts.filter { Alert.serviceDisruptionEffects.contains(it.effect) }
+    // In practice, AlertAssociatedStop is only used for the map, where only Major alerts are shown.
+    return alerts.filter { it.significance >= AlertSignificance.Major }
 }
 
 private fun getAlertStateByRoute(
