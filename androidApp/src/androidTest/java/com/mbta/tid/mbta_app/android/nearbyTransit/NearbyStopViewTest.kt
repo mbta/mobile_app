@@ -101,6 +101,6 @@ class NearbyStopViewTest {
 
         composeTestRule.onNodeWithText("Sample Stop").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("ARR").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Now").assertIsDisplayed()
     }
 }

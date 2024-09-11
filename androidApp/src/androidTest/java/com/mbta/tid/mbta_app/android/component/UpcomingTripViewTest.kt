@@ -39,6 +39,14 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeNow() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
+        }
+        composeTestRule.onNodeWithText("Now").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeBoarding() {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Boarding))

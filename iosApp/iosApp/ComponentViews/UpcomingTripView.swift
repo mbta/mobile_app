@@ -68,6 +68,8 @@ struct UpcomingTripView: View {
             case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")
+            case .now:
+                Text("Now").font(Typography.headlineBold)
             case .boarding:
                 Text("BRD").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
