@@ -68,6 +68,7 @@ class StopDetailsFilteredRouteViewTest {
             routeId = "route_1"
             directionId = 0
             headsign = "Sample Headsign"
+            routePatternId = "pattern_1"
         }
     val prediction =
         builder.prediction {

@@ -154,6 +154,7 @@ class StopDetailsDeparturesTest {
                 representativeTrip { headsign = "Heath Street" }
                 directionId = 0
                 typicality = RoutePattern.Typicality.Typical
+                id = "test-hs"
             }
         val routePatternE2 =
             objects.routePattern(routeE) {
@@ -320,7 +321,11 @@ class StopDetailsDeparturesTest {
             val routePattern =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Atypical
-                    representativeTrip { this.headsign = headsign }
+                    id = "test-$headsign"
+                    representativeTrip {
+                        this.headsign = headsign
+                        this.routePatternId = "test-$headsign"
+                    }
                 }
             val scheduledTrip =
                 if (scheduled) {

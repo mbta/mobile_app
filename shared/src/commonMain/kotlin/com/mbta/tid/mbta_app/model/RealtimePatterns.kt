@@ -6,8 +6,11 @@ typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<Upcoming
 
 sealed class RealtimePatterns : Comparable<RealtimePatterns> {
     sealed class UpcomingTripKey {
-        data class ByHeadsign(val routeId: String, val headsign: String, val stopId: String) :
-            UpcomingTripKey()
+        data class ByRoutePattern(
+            val routeId: String,
+            val routePatternId: String?,
+            val stopId: String
+        ) : UpcomingTripKey()
 
         data class ByDirection(val routeId: String, val direction: Int, val stopId: String) :
             UpcomingTripKey()
@@ -45,13 +48,17 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.patterns,
             if (upcomingTripsMap != null) {
                 stopIds
-                    .mapNotNull { stopId ->
-                        upcomingTripsMap[
-                            UpcomingTripKey.ByHeadsign(
-                                staticData.route.id,
-                                staticData.headsign,
-                                stopId
-                            )]
+                    .map { stopId ->
+                        staticData.patterns
+                            .mapNotNull { pattern ->
+                                upcomingTripsMap[
+                                    UpcomingTripKey.ByRoutePattern(
+                                        staticData.route.id,
+                                        pattern.id,
+                                        stopId
+                                    )]
+                            }
+                            .flatten()
                     }
                     .flatten()
                     .sorted()
@@ -186,17 +193,15 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         val allTrips = upcomingTrips ?: emptyList()
         val tripsToShow =
             allTrips
-                .map { Format.Some.FormatWithId(it, routeType, now, context) }
-                .filterNot {
-                    it.format is TripInstantDisplay.Hidden ||
-                        it.format is TripInstantDisplay.Skipped ||
-                        // API best practices call for hiding scheduled times on subway
-                        (when (this) {
+                .mapNotNull {
+                    val isSubway =
+                        when (this) {
                                 is ByHeadsign -> this.route
                                 is ByDirection -> this.routes.min()
                             }
                             .type
-                            .isSubway() && it.format is TripInstantDisplay.Schedule)
+                            .isSubway()
+                    formatUpcomingTrip(now, it, routeType, context, isSubway)
                 }
                 .take(count)
         if (tripsToShow.isEmpty()) return Format.None
@@ -323,5 +328,20 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                     }
                 }
             }
+
+        fun formatUpcomingTrip(
+            now: Instant,
+            upcomingTrip: UpcomingTrip,
+            routeType: RouteType,
+            context: TripInstantDisplay.Context,
+            isSubway: Boolean
+        ): Format.Some.FormatWithId? {
+            return Format.Some.FormatWithId(upcomingTrip, routeType, now, context).takeUnless {
+                it.format is TripInstantDisplay.Hidden ||
+                    it.format is TripInstantDisplay.Skipped ||
+                    // API best practices call for hiding scheduled times on subway
+                    (isSubway && it.format is TripInstantDisplay.Schedule)
+            }
+        }
     }
 }

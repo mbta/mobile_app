@@ -90,6 +90,7 @@ class NearbyTransitPageTest : KoinTest {
             routeId = "route_1"
             directionId = 0
             headsign = "Sample Headsign"
+            routePatternId = "pattern_1"
         }
     val prediction =
         builder.prediction {
@@ -146,6 +147,7 @@ class NearbyTransitPageTest : KoinTest {
             routeId = "route_2"
             directionId = 0
             headsign = "Green Line Head Sign"
+            routePatternId = "pattern_3"
         }
     val greenLinePrediction =
         builder.prediction {

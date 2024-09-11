@@ -103,18 +103,18 @@ data class UpcomingTrip(
                     }
                 }
             return if (schedulesMap != null || predictionsMap != null) {
-                val trips = (schedules?.trips ?: emptyMap()) + (predictions?.trips ?: emptyMap())
-                ((schedulesMap?.keys ?: emptySet()) + (predictionsMap?.keys ?: emptySet()))
-                    .associateWith { upcomingTripKey ->
-                        val schedulesHere = schedulesMap?.get(upcomingTripKey)
-                        val predictionsHere = predictionsMap?.get(upcomingTripKey)
-                        tripsFromData(
-                            schedulesHere ?: emptyList(),
-                            predictionsHere ?: emptyList(),
-                            trips,
-                            predictions?.vehicles ?: emptyMap()
-                        )
-                    }
+                val trips = schedules?.trips.orEmpty() + predictions?.trips.orEmpty()
+                val upcomingTripKeys = schedulesMap?.keys.orEmpty() + predictionsMap?.keys.orEmpty()
+                upcomingTripKeys.associateWith { upcomingTripKey ->
+                    val schedulesHere = schedulesMap?.get(upcomingTripKey)
+                    val predictionsHere = predictionsMap?.get(upcomingTripKey)
+                    tripsFromData(
+                        schedulesHere.orEmpty(),
+                        predictionsHere.orEmpty(),
+                        trips,
+                        predictions?.vehicles.orEmpty()
+                    )
+                }
             } else {
                 null
             }

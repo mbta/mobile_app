@@ -86,23 +86,23 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         private fun tripMapByHeadsign(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
-        ): Map<RealtimePatterns.UpcomingTripKey.ByHeadsign, List<UpcomingTrip>>? {
+        ): Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>? {
             return UpcomingTrip.tripsMappedBy(
                 schedules,
                 predictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
-                    RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         schedule.routeId,
-                        trip.headsign,
+                        trip.routePatternId,
                         schedule.stopId
                     )
                 },
                 predictionKey = { prediction, streamData ->
                     val trip = streamData.trips.getValue(prediction.tripId)
-                    RealtimePatterns.UpcomingTripKey.ByHeadsign(
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         prediction.routeId,
-                        trip.headsign,
+                        trip.routePatternId,
                         prediction.stopId
                     )
                 }
@@ -110,8 +110,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         }
 
         private fun tripMapByHeadsignOrDirection(
-            tripMapByHeadsign:
-                Map<RealtimePatterns.UpcomingTripKey.ByHeadsign, List<UpcomingTrip>>?,
+            tripMapByRoutePattern:
+                Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>?,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
         ): Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>? {
@@ -137,8 +137,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     }
                 )
 
-            return if (tripMapByHeadsign != null || tripMapByDirection != null) {
-                (tripMapByHeadsign ?: emptyMap()) + (tripMapByDirection ?: emptyMap())
+            return if (tripMapByRoutePattern != null || tripMapByDirection != null) {
+                (tripMapByRoutePattern ?: emptyMap()) + (tripMapByDirection ?: emptyMap())
             } else {
                 null
             }
@@ -148,7 +148,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             stop: Stop,
             route: Route,
             routePatterns: List<RoutePattern>,
-            tripMap: Map<RealtimePatterns.UpcomingTripKey.ByHeadsign, List<UpcomingTrip>>?,
+            tripMap: Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>?,
             allStopIds: Set<String>,
             loading: Boolean,
             global: GlobalResponse,
@@ -157,10 +157,10 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             global.run {
                 val patternsByHeadsign =
                     routePatterns.groupBy {
+                        routePatterns.groupBy { trips.getValue(it.representativeTripId) }
                         val representativeTrip = trips.getValue(it.representativeTripId)
                         representativeTrip.headsign
                     }
-
                 return PatternsByStop(
                     listOf(route),
                     null,
@@ -170,14 +170,20 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             val upcomingTrips =
                                 if (tripMap != null) {
                                     allStopIds
-                                        .map {
-                                            RealtimePatterns.UpcomingTripKey.ByHeadsign(
-                                                route.id,
-                                                headsign,
-                                                it
-                                            )
+                                        .map { stopId ->
+                                            patterns
+                                                .mapNotNull { pattern ->
+                                                    tripMap[
+                                                        RealtimePatterns.UpcomingTripKey
+                                                            .ByRoutePattern(
+                                                                route.id,
+                                                                pattern.id,
+                                                                stopId
+                                                            )]
+                                                }
+                                                .flatten()
                                         }
-                                        .flatMap { tripMap[it] ?: emptyList() }
+                                        .flatten()
                                         .sorted()
                                 } else {
                                     null

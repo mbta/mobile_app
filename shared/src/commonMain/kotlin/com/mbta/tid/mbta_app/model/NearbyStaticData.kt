@@ -232,10 +232,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             global: GlobalResponse
         ): StopPatterns.ForRoute {
             val patternsByHeadsign =
-                patterns.groupBy {
-                    val representativeTrip = global.trips.getValue(it.representativeTripId)
-                    representativeTrip.headsign
-                }
+                patterns.groupBy { global.trips.getValue(it.representativeTripId).headsign }
 
             return StopPatterns.ForRoute(
                 route = route,
@@ -280,9 +277,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         val route = directionRoutes.first()
                         val patternsByHeadsign =
                             directionPatterns.groupBy {
-                                val representativeTrip =
-                                    global.trips.getValue(it.representativeTripId)
-                                representativeTrip.headsign
+                                global.trips.getValue(it.representativeTripId).headsign
                             }
                         return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
                             StaticPatterns.ByHeadsign(route, headsign, line, patterns.sorted())
@@ -349,7 +344,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 }
 
 /**
- * Attaches [schedules] and [predictions] to the route, stop, and headsign to which they apply.
+ * Attaches [schedules] and [predictions] to the route, stop, and routePattern to which they apply.
  * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
  * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
  * sort order.
@@ -363,51 +358,51 @@ fun NearbyStaticData.withRealtimeInfo(
     pinnedRoutes: Set<String>
 ): List<StopsAssociated> {
     // add predictions and apply filtering
-    val upcomingTripsByHeadsignAndStop =
+    val upcomingTripsByRoutePatternAndStop =
         UpcomingTrip.tripsMappedBy(
-            schedules,
-            predictions,
-            scheduleKey = { schedule, scheduleData ->
-                val trip = scheduleData.trips.getValue(schedule.tripId)
-                RealtimePatterns.UpcomingTripKey.ByHeadsign(
-                    schedule.routeId,
-                    trip.headsign,
-                    schedule.stopId
-                )
-            },
-            predictionKey = { prediction, streamData ->
-                val trip = streamData.trips.getValue(prediction.tripId)
-                RealtimePatterns.UpcomingTripKey.ByHeadsign(
-                    prediction.routeId,
-                    trip.headsign,
-                    prediction.stopId
-                )
-            }
-        )
-            ?: emptyMap()
+                schedules,
+                predictions,
+                scheduleKey = { schedule, scheduleData ->
+                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                        schedule.routeId,
+                        trip.routePatternId,
+                        schedule.stopId
+                    )
+                },
+                predictionKey = { prediction, streamData ->
+                    val trip = streamData.trips.getValue(prediction.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                        prediction.routeId,
+                        trip.routePatternId,
+                        prediction.stopId
+                    )
+                }
+            )
+            .orEmpty()
 
     val upcomingTripsByDirectionAndStop =
         UpcomingTrip.tripsMappedBy(
-            schedules,
-            predictions,
-            scheduleKey = { schedule, scheduleData ->
-                val trip = scheduleData.trips.getValue(schedule.tripId)
-                RealtimePatterns.UpcomingTripKey.ByDirection(
-                    schedule.routeId,
-                    trip.directionId,
-                    schedule.stopId
-                )
-            },
-            predictionKey = { prediction, streamData ->
-                val trip = streamData.trips.getValue(prediction.tripId)
-                RealtimePatterns.UpcomingTripKey.ByDirection(
-                    prediction.routeId,
-                    trip.directionId,
-                    prediction.stopId
-                )
-            }
-        )
-            ?: emptyMap()
+                schedules,
+                predictions,
+                scheduleKey = { schedule, scheduleData ->
+                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByDirection(
+                        schedule.routeId,
+                        trip.directionId,
+                        schedule.stopId
+                    )
+                },
+                predictionKey = { prediction, streamData ->
+                    val trip = streamData.trips.getValue(prediction.tripId)
+                    RealtimePatterns.UpcomingTripKey.ByDirection(
+                        prediction.routeId,
+                        trip.directionId,
+                        prediction.stopId
+                    )
+                }
+            )
+            .orEmpty()
 
     val cutoffTime = filterAtTime.plus(90.minutes)
 
@@ -427,7 +422,7 @@ fun NearbyStaticData.withRealtimeInfo(
                             .map {
                                 PatternsByStop(
                                     it,
-                                    upcomingTripsByHeadsignAndStop +
+                                    upcomingTripsByRoutePatternAndStop +
                                         upcomingTripsByDirectionAndStop,
                                     cutoffTime,
                                     activeRelevantAlerts
@@ -449,7 +444,7 @@ fun NearbyStaticData.withRealtimeInfo(
                             .map {
                                 PatternsByStop(
                                     it,
-                                    upcomingTripsByHeadsignAndStop +
+                                    upcomingTripsByRoutePatternAndStop +
                                         upcomingTripsByDirectionAndStop,
                                     cutoffTime,
                                     activeRelevantAlerts
