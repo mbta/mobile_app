@@ -10,6 +10,8 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.utils.MockSystemPaths
+import com.mbta.tid.mbta_app.utils.SystemPaths
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -20,6 +22,8 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
+import okio.FileSystem
+import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -118,6 +122,8 @@ class GlobalRepositoryTest : KoinTest {
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
                     factory { params -> ResponseCache(cacheKey = params.get()) }
+                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
+                    single<FileSystem> { FakeFileSystem() }
                 }
             )
         }

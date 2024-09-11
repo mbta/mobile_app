@@ -2,10 +2,11 @@ package com.mbta.tid.mbta_app.cache
 
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.json
-import com.mbta.tid.mbta_app.mocks.MockCacheFile
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.utils.MockSystemPaths
+import com.mbta.tid.mbta_app.utils.SystemPaths
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.header
@@ -25,11 +26,14 @@ import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
+import okio.FileSystem
+import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
 class ResponseCacheTest {
+
     @Test
     fun `fetches data if empty`() = runBlocking {
         val objects = ObjectCollectionBuilder()
@@ -52,16 +56,28 @@ class ResponseCacheTest {
 
         var didFetch = false
 
-        assertEquals(
-            globalData,
-            json.decodeFromString(
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
+        startKoin {
+            modules(
+                module {
+                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
+                    single<FileSystem> { FakeFileSystem() }
                 }
             )
-        )
-        assertTrue(didFetch)
+        }
+        runBlocking {
+            assertEquals(
+                globalData,
+                json.decodeFromString(
+                    cache.getOrFetch {
+                        didFetch = true
+                        client.get { url { path("api/global") } }
+                    }
+                )
+            )
+            assertTrue(didFetch)
+        }
+
+        stopKoin()
     }
 
     @Test
@@ -80,7 +96,17 @@ class ResponseCacheTest {
                 json.encodeToString(globalData)
             )
 
-        assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() }))
+        startKoin {
+            modules(
+                module {
+                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
+                    single<FileSystem> { FakeFileSystem() }
+                }
+            )
+        }
+        runBlocking { assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() })) }
+
+        stopKoin()
     }
 
     @Test
@@ -113,16 +139,28 @@ class ResponseCacheTest {
 
         var didFetch = false
 
-        assertEquals(
-            newData,
-            json.decodeFromString(
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
+        startKoin {
+            modules(
+                module {
+                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
+                    single<FileSystem> { FakeFileSystem() }
                 }
             )
-        )
-        assertTrue(didFetch)
+        }
+        runBlocking {
+            assertEquals(
+                newData,
+                json.decodeFromString(
+                    cache.getOrFetch {
+                        didFetch = true
+                        client.get { url { path("api/global") } }
+                    }
+                )
+            )
+            assertTrue(didFetch)
+        }
+
+        stopKoin()
     }
 
     @Test
@@ -185,31 +223,43 @@ class ResponseCacheTest {
             }
         }
 
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-        assertEquals(1, fetchCount)
+        startKoin {
+            modules(
+                module {
+                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
+                    single<FileSystem> { FakeFileSystem() }
+                }
+            )
+        }
+        runBlocking {
+            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+            assertEquals(1, fetchCount)
 
-        // Assert cached
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-        assertEquals(1, fetchCount)
-        delay(1.seconds)
+            // Assert cached
+            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+            assertEquals(1, fetchCount)
+            delay(1.seconds)
 
-        // Assert that the cache retains the data when it receives a NotModified response
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-        assertEquals(2, fetchCount)
+            // Assert that the cache retains the data when it receives a NotModified response
+            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+            assertEquals(2, fetchCount)
 
-        // And that receiving NotModified resets the cache timer
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-        assertEquals(2, fetchCount)
-        delay(1.seconds)
+            // And that receiving NotModified resets the cache timer
+            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+            assertEquals(2, fetchCount)
+            delay(1.seconds)
 
-        // Get new data on next request
-        assertEquals(newData, json.decodeFromString(cache.getOrFetch(::fetch)))
-        assertEquals(3, fetchCount)
-        delay(1.seconds)
+            // Get new data on next request
+            assertEquals(newData, json.decodeFromString(cache.getOrFetch(::fetch)))
+            assertEquals(3, fetchCount)
+            delay(1.seconds)
 
-        // Ensure we go back to the old data when sent etag doesn't match
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-        assertEquals(4, fetchCount)
+            // Ensure we go back to the old data when sent etag doesn't match
+            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+            assertEquals(4, fetchCount)
+        }
+
+        stopKoin()
     }
 
     @Test
@@ -231,8 +281,20 @@ class ResponseCacheTest {
                 )
             )
 
+        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val fileSystem = FakeFileSystem()
+        fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
+        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
+            writeUtf8(encodedResponse)
+        }
+
         startKoin {
-            modules(module { factory<CacheFile> { MockCacheFile(data = encodedResponse) } })
+            modules(
+                module {
+                    single<SystemPaths> { mockPaths }
+                    single<FileSystem> { fileSystem }
+                }
+            )
         }
 
         runBlocking { assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() })) }
@@ -271,8 +333,20 @@ class ResponseCacheTest {
                 )
             )
 
+        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val fileSystem = FakeFileSystem()
+        fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
+        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
+            writeUtf8(encodedResponse)
+        }
+
         startKoin {
-            modules(module { factory<CacheFile> { MockCacheFile(data = encodedResponse) } })
+            modules(
+                module {
+                    single<SystemPaths> { mockPaths }
+                    single<FileSystem> { fileSystem }
+                }
+            )
         }
 
         runBlocking {
@@ -313,7 +387,17 @@ class ResponseCacheTest {
 
         val cache = ResponseCache(cacheKey = "test")
 
-        startKoin { modules(module { factory<CacheFile> { MockCacheFile() } }) }
+        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val fileSystem = FakeFileSystem()
+
+        startKoin {
+            modules(
+                module {
+                    single<SystemPaths> { mockPaths }
+                    single<FileSystem> { fileSystem }
+                }
+            )
+        }
 
         runBlocking {
             var didFetch = false
@@ -330,7 +414,15 @@ class ResponseCacheTest {
             assertTrue(didFetch)
             assertEquals(
                 cache.data!!.data,
-                json.decodeFromString<Response>(cache.cacheFile.read()!!).data
+                json
+                    .decodeFromString<Response>(
+                        fileSystem.read(
+                            mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json"
+                        ) {
+                            readUtf8()
+                        }
+                    )
+                    .data
             )
         }
 

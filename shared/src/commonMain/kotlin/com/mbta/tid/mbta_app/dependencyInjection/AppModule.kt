@@ -24,6 +24,8 @@ import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import okio.FileSystem
+import okio.SYSTEM
 import org.koin.core.error.InstanceCreationException
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -32,6 +34,7 @@ import org.koin.dsl.module
 fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
+        module { single { FileSystem.SYSTEM } },
         cacheModule(),
         repositoriesModule(RealRepositories())
     )
