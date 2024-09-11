@@ -62,8 +62,8 @@ final class StopDetailsAlertHeaderTests: XCTestCase {
         XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "alert-borderless-issue"
         }))
-        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in try
-                image.actualImage().name() == "fa-circle-info"
+        XCTAssertNotNil(try sut.find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
         }))
     }
 }
