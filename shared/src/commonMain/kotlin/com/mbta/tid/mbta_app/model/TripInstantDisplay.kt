@@ -20,6 +20,8 @@ sealed class TripInstantDisplay {
 
     data object Approaching : TripInstantDisplay()
 
+    data object Now : TripInstantDisplay()
+
     data class AsTime(val predictionTime: Instant) : TripInstantDisplay()
 
     data class Schedule(val scheduleTime: Instant) : TripInstantDisplay()
@@ -88,6 +90,16 @@ sealed class TripInstantDisplay {
             // since we checked departureTime or arrivalTime as non-null, we don't have to also
             // check  predictionTime
             val timeRemaining = prediction.predictionTime!!.minus(now)
+            val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
+            /**
+             * Because the gap between boarding and arriving is much smaller for bus, having
+             * different states doesn’t provide much rider value so we return Now instead
+             */
+            if (routeType == RouteType.BUS && timeRemaining <= ARRIVAL_CUTOFF) {
+                return Now
+            } else if (routeType == RouteType.BUS) {
+                return Minutes(minutes)
+            }
             if (
                 vehicle?.currentStatus == Vehicle.CurrentStatus.StoppedAt &&
                     vehicle.stopId == prediction.stopId &&
@@ -105,7 +117,6 @@ sealed class TripInstantDisplay {
             if (routeType == RouteType.COMMUTER_RAIL || forceAsTime) {
                 return AsTime(prediction.predictionTime)
             }
-            val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
             return Minutes(minutes)
         }
     }
