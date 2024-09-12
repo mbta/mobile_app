@@ -18,6 +18,8 @@ extension Setting: Identifiable {
         switch key {
         case .search:
             "Search"
+        case .searchRouteResults:
+            "Search - Route Results"
         case .map:
             "Map Debug"
         }
@@ -27,6 +29,8 @@ extension Setting: Identifiable {
         switch key {
         case .search:
             "magnifyingglass"
+        case .searchRouteResults:
+            "point.topleft.down.to.point.bottomright.curvepath.fill"
         case .map:
             "location.magnifyingglass"
         }
@@ -35,6 +39,8 @@ extension Setting: Identifiable {
     var category: SettingsSection.Category {
         switch key {
         case .search:
+            .featureFlags
+        case .searchRouteResults:
             .featureFlags
         case .map:
             .debug

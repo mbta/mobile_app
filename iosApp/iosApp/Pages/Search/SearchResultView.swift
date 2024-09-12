@@ -32,16 +32,20 @@ struct SearchView: View {
     let searchResultsRepository: ISearchResultRepository
     @State var searchResults: SearchResults?
 
+    @ObservedObject var searchVM: SearchViewModel
+
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
 
     init(
         query: String,
+        searchVM: SearchViewModel,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
         self.query = query
+        self.searchVM = searchVM
         self.searchResultsRepository = searchResultsRepository
         self.didAppear = didAppear
         self.didChange = didChange
@@ -60,11 +64,17 @@ struct SearchView: View {
     var body: some View {
         VStack {
             if !query.isEmpty {
-                SearchResultView(results: searchResults)
+                SearchResultView(
+                    results: searchResults,
+                    showRoutes: searchVM.routeResultsEnabled
+                )
             }
         }
         .onAppear {
             loadResults(query: query)
+            Task {
+                await searchVM.loadSettings()
+            }
             didAppear?(self)
         }
         .onChange(of: query) { query in
@@ -76,8 +86,10 @@ struct SearchView: View {
 
 struct SearchResultView: View {
     private var results: SearchResults?
-    init(results: SearchResults? = nil) {
+    private var showRoutes: Bool
+    init(results: SearchResults? = nil, showRoutes: Bool = false) {
         self.results = results
+        self.showRoutes = showRoutes
     }
 
     var body: some View {
@@ -95,7 +107,7 @@ struct SearchResultView: View {
                             }
                         }
                     }
-                    if !results!.routes.isEmpty {
+                    if showRoutes, !results!.routes.isEmpty {
                         Section(header: Text("Routes")) {
                             ForEach(results!.routes, id: \.id) {
                                 RouteResultView(route: $0)
