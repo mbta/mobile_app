@@ -20,12 +20,13 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 @Serializable
-data class Response(
+data class ResponseMetadata(
     val etag: String?,
     @Serializable(with = TimeMarkSerializer::class)
-    var fetchTime: TimeSource.Monotonic.ValueTimeMark,
-    val data: String
+    var fetchTime: TimeSource.Monotonic.ValueTimeMark
 )
+
+@Serializable data class Response(val metadata: ResponseMetadata, val body: String)
 
 class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours) : KoinComponent {
     companion object {
@@ -34,18 +35,28 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
 
     internal var data: Response? = null
 
-    private val systemPaths: SystemPaths by inject()
     private val fileSystem: FileSystem by inject()
+    private val systemPaths: SystemPaths by inject()
+    private val cacheDirectory: Path
+        get() {
+            return systemPaths.cache / CACHE_SUBDIRECTORY
+        }
+
     private val cacheFilePath: Path
         get() {
-            return systemPaths.cache / CACHE_SUBDIRECTORY / "$cacheKey.json"
+            return cacheDirectory / "$cacheKey.json"
+        }
+
+    private val cacheMetadataFilePath: Path
+        get() {
+            return cacheDirectory / "$cacheKey-meta.json"
         }
 
     private val lock = Mutex()
 
     private fun getData(): Response? {
         val data = this.data ?: readData() ?: return null
-        return if (data.fetchTime.elapsedNow() < maxAge) {
+        return if (data.metadata.fetchTime.elapsedNow() < maxAge) {
             data
         } else {
             null
@@ -53,16 +64,22 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
     }
 
     private suspend fun putData(response: HttpResponse) {
-        val nextResponse =
-            Response(response.etag(), TimeSource.Monotonic.markNow(), response.bodyAsText())
-        this.data = nextResponse
-        this.writeData(nextResponse)
+        val nextData =
+            Response(
+                ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()),
+                response.bodyAsText()
+            )
+        this.data = nextData
+        this.writeData(nextData)
     }
 
     private fun readData(): Response? {
         try {
+            val diskMetadata: ResponseMetadata =
+                Json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
             val diskData = fileSystem.read(cacheFilePath) { readUtf8() }
-            return Json.decodeFromString(diskData)
+            this.data = Response(diskMetadata, diskData)
+            return this.data
         } catch (error: Exception) {
             return null
         }
@@ -71,9 +88,18 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
     private fun writeData(response: Response) {
         try {
             fileSystem.createDirectories(cacheFilePath.parent!!)
-            fileSystem.write(cacheFilePath) { writeUtf8(Json.encodeToString(response)) }
+            fileSystem.write(cacheFilePath) { writeUtf8(response.body) }
+            writeMetadata(response.metadata)
         } catch (error: Exception) {
             println("Writing to '$cacheFilePath' failed. $error")
+        }
+    }
+
+    private fun writeMetadata(metadata: ResponseMetadata) {
+        try {
+            fileSystem.write(cacheMetadataFilePath) { writeUtf8(Json.encodeToString(metadata)) }
+        } catch (error: Exception) {
+            println("Writing to '${cacheMetadataFilePath}' failed. $error")
         }
     }
 
@@ -81,20 +107,20 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
         lock.withLock {
             val cachedData = this.getData()
             if (cachedData != null) {
-                return cachedData.data
+                return cachedData.body
             }
 
-            val httpResponse = fetch(this.data?.etag)
+            val httpResponse = fetch(this.data?.metadata?.etag)
             return when (httpResponse.status) {
                 HttpStatusCode.NotModified -> {
                     val data = this.data ?: throw RuntimeException("Failed to update cached data")
-                    data.fetchTime = TimeSource.Monotonic.markNow()
-                    writeData(data)
-                    data.data
+                    data.metadata.fetchTime = TimeSource.Monotonic.markNow()
+                    writeMetadata(data.metadata)
+                    data.body
                 }
                 HttpStatusCode.OK -> {
                     this.putData(httpResponse)
-                    this.getData()?.data ?: throw RuntimeException("Failed to set cached data")
+                    this.getData()?.body ?: throw RuntimeException("Failed to set cached data")
                 }
                 else -> throw ResponseException(httpResponse, "Failed to load global data")
             }

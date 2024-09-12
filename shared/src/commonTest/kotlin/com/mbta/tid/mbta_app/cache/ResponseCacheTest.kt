@@ -16,6 +16,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.http.path
 import io.ktor.utils.io.ByteReadChannel
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -33,6 +34,8 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
 class ResponseCacheTest {
+
+    @AfterTest fun `stop koin`() = run { stopKoin() }
 
     @Test
     fun `fetches data if empty`() = runBlocking {
@@ -64,20 +67,17 @@ class ResponseCacheTest {
                 }
             )
         }
-        runBlocking {
-            assertEquals(
-                globalData,
-                json.decodeFromString(
-                    cache.getOrFetch {
-                        didFetch = true
-                        client.get { url { path("api/global") } }
-                    }
-                )
-            )
-            assertTrue(didFetch)
-        }
 
-        stopKoin()
+        assertEquals(
+            globalData,
+            json.decodeFromString(
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
+            )
+        )
+        assertTrue(didFetch)
     }
 
     @Test
@@ -91,8 +91,10 @@ class ResponseCacheTest {
         val cache = ResponseCache(cacheKey = "test")
         cache.data =
             Response(
-                null,
-                TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
+                ResponseMetadata(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
+                ),
                 json.encodeToString(globalData)
             )
 
@@ -104,9 +106,7 @@ class ResponseCacheTest {
                 }
             )
         }
-        runBlocking { assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() })) }
-
-        stopKoin()
+        assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() }))
     }
 
     @Test
@@ -132,8 +132,10 @@ class ResponseCacheTest {
         val cache = ResponseCache(cacheKey = "test")
         cache.data =
             Response(
-                null,
-                TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
+                ResponseMetadata(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+                ),
                 json.encodeToString(oldData)
             )
 
@@ -147,20 +149,17 @@ class ResponseCacheTest {
                 }
             )
         }
-        runBlocking {
-            assertEquals(
-                newData,
-                json.decodeFromString(
-                    cache.getOrFetch {
-                        didFetch = true
-                        client.get { url { path("api/global") } }
-                    }
-                )
-            )
-            assertTrue(didFetch)
-        }
 
-        stopKoin()
+        assertEquals(
+            newData,
+            json.decodeFromString(
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
+            )
+        )
+        assertTrue(didFetch)
     }
 
     @Test
@@ -231,35 +230,32 @@ class ResponseCacheTest {
                 }
             )
         }
-        runBlocking {
-            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-            assertEquals(1, fetchCount)
 
-            // Assert cached
-            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-            assertEquals(1, fetchCount)
-            delay(1.seconds)
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(1, fetchCount)
 
-            // Assert that the cache retains the data when it receives a NotModified response
-            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-            assertEquals(2, fetchCount)
+        // Assert cached
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(1, fetchCount)
+        delay(1.seconds)
 
-            // And that receiving NotModified resets the cache timer
-            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-            assertEquals(2, fetchCount)
-            delay(1.seconds)
+        // Assert that the cache retains the data when it receives a NotModified response
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(2, fetchCount)
 
-            // Get new data on next request
-            assertEquals(newData, json.decodeFromString(cache.getOrFetch(::fetch)))
-            assertEquals(3, fetchCount)
-            delay(1.seconds)
+        // And that receiving NotModified resets the cache timer
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(2, fetchCount)
+        delay(1.seconds)
 
-            // Ensure we go back to the old data when sent etag doesn't match
-            assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
-            assertEquals(4, fetchCount)
-        }
+        // Get new data on next request
+        assertEquals(newData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(3, fetchCount)
+        delay(1.seconds)
 
-        stopKoin()
+        // Ensure we go back to the old data when sent etag doesn't match
+        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(4, fetchCount)
     }
 
     @Test
@@ -272,21 +268,21 @@ class ResponseCacheTest {
 
         val cache = ResponseCache(cacheKey = "test")
 
-        val encodedResponse =
-            json.encodeToString(
-                Response(
-                    null,
-                    TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
-                    json.encodeToString(globalData)
-                )
-            )
-
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
-        fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
-        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-            writeUtf8(encodedResponse)
+        val directory = mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY
+        fileSystem.createDirectories(directory)
+        fileSystem.write(directory / "test-meta.json") {
+            writeUtf8(
+                json.encodeToString(
+                    ResponseMetadata(
+                        null,
+                        TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
+                    )
+                )
+            )
         }
+        fileSystem.write(directory / "test.json") { writeUtf8(json.encodeToString(globalData)) }
 
         startKoin {
             modules(
@@ -297,9 +293,13 @@ class ResponseCacheTest {
             )
         }
 
-        runBlocking { assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() })) }
-
-        stopKoin()
+        assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() }))
+        fileSystem.delete(directory / "test.json")
+        assertEquals(
+            globalData,
+            json.decodeFromString(cache.getOrFetch { fail() }),
+            "Only the initial get is from disk, after that it's stored in memory"
+        )
     }
 
     @Test
@@ -324,20 +324,21 @@ class ResponseCacheTest {
 
         val cache = ResponseCache(cacheKey = "test")
 
-        val encodedResponse =
-            json.encodeToString(
-                Response(
-                    null,
-                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
-                    json.encodeToString(oldData)
-                )
-            )
-
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
         fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
+        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json") {
+            writeUtf8(
+                json.encodeToString(
+                    ResponseMetadata(
+                        null,
+                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+                    )
+                )
+            )
+        }
         fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-            writeUtf8(encodedResponse)
+            writeUtf8(json.encodeToString(oldData))
         }
 
         startKoin {
@@ -349,22 +350,18 @@ class ResponseCacheTest {
             )
         }
 
-        runBlocking {
-            var didFetch = false
+        var didFetch = false
 
-            assertEquals(
-                newData,
-                json.decodeFromString(
-                    cache.getOrFetch {
-                        didFetch = true
-                        client.get { url { path("api/global") } }
-                    }
-                )
+        assertEquals(
+            newData,
+            json.decodeFromString(
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
             )
-            assertTrue(didFetch)
-        }
-
-        stopKoin()
+        )
+        assertTrue(didFetch)
     }
 
     @Test
@@ -375,11 +372,16 @@ class ResponseCacheTest {
         objects.route()
         val globalData = GlobalResponse(objects, emptyMap())
 
+        val responseEtag = "etag"
         val mockEngine = MockEngine { _ ->
             respond(
                 content = ByteReadChannel(json.encodeToString(globalData)),
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                headers =
+                    headersOf(
+                        Pair(HttpHeaders.ContentType, listOf("application/json")),
+                        Pair(HttpHeaders.ETag, listOf(responseEtag))
+                    )
             )
         }
 
@@ -399,33 +401,35 @@ class ResponseCacheTest {
             )
         }
 
-        runBlocking {
-            var didFetch = false
+        var didFetch = false
 
-            assertEquals(
-                globalData,
-                json.decodeFromString(
-                    cache.getOrFetch {
-                        didFetch = true
-                        client.get { url { path("api/global") } }
+        assertEquals(
+            globalData,
+            json.decodeFromString(
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
+            )
+        )
+        assertTrue(didFetch)
+        assertEquals(
+            cache.data!!.metadata.etag,
+            json
+                .decodeFromString<ResponseMetadata>(
+                    fileSystem.read(
+                        mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json"
+                    ) {
+                        readUtf8()
                     }
                 )
-            )
-            assertTrue(didFetch)
-            assertEquals(
-                cache.data!!.data,
-                json
-                    .decodeFromString<Response>(
-                        fileSystem.read(
-                            mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json"
-                        ) {
-                            readUtf8()
-                        }
-                    )
-                    .data
-            )
-        }
-
-        stopKoin()
+                .etag
+        )
+        assertEquals(
+            cache.data!!.body,
+            fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
+                readUtf8()
+            }
+        )
     }
 }
