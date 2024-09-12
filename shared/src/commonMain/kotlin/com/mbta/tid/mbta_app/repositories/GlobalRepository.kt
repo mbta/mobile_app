@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.cache.ResponseCache
-import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -17,7 +16,6 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
 
 interface IGlobalRepository {
     @Throws(
@@ -30,20 +28,19 @@ interface IGlobalRepository {
     suspend fun getGlobalData(): GlobalResponse
 }
 
-class GlobalRepository() : IGlobalRepository, KoinComponent {
+class GlobalRepository(
+    val cache: ResponseCache<GlobalResponse> = ResponseCache.create(cacheKey = "global")
+) : IGlobalRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
-    private val cache: ResponseCache by inject { parametersOf("global") }
 
     override suspend fun getGlobalData(): GlobalResponse =
-        json.decodeFromString(
-            cache.getOrFetch { etag: String? ->
-                mobileBackendClient.get {
-                    timeout { requestTimeoutMillis = 10000 }
-                    url { path("api/global") }
-                    header(HttpHeaders.IfNoneMatch, etag)
-                }
+        cache.getOrFetch { etag: String? ->
+            mobileBackendClient.get {
+                timeout { requestTimeoutMillis = 10000 }
+                url { path("api/global") }
+                header(HttpHeaders.IfNoneMatch, etag)
             }
-        )
+        }
 }
 
 class MockGlobalRepository

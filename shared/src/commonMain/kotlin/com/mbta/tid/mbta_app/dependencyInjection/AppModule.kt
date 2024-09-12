@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.dependencyInjection
 import IRepositories
 import RealRepositories
 import com.mbta.tid.mbta_app.AppVariant
-import com.mbta.tid.mbta_app.cache.ResponseCache
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
@@ -26,7 +25,6 @@ import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import okio.FileSystem
 import okio.SYSTEM
-import org.koin.core.error.InstanceCreationException
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -35,24 +33,8 @@ fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
-        cacheModule(),
         repositoriesModule(RealRepositories())
     )
-}
-
-fun cacheModule() = module {
-    factory { params ->
-        if (params.size() == 2) {
-            ResponseCache(cacheKey = params.get(), maxAge = params.get())
-        } else if (params.size() == 1) {
-            ResponseCache(cacheKey = params.get())
-        } else {
-            throw InstanceCreationException(
-                "Wrong number of arguments provided to cacheModule",
-                parent = Exception()
-            )
-        }
-    }
 }
 
 fun repositoriesModule(repositories: IRepositories): Module {

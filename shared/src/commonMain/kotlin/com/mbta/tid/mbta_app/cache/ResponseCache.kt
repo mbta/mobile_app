@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.cache
 
+import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.utils.SystemPaths
+import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
@@ -11,9 +13,10 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.TimeSource
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import okio.FileSystem
 import okio.Path
 import org.koin.core.component.KoinComponent
@@ -26,14 +29,21 @@ data class ResponseMetadata(
     var fetchTime: TimeSource.Monotonic.ValueTimeMark
 )
 
-@Serializable data class Response(val metadata: ResponseMetadata, val body: String)
+@Serializable data class Response<T>(val metadata: ResponseMetadata, val body: T)
 
-class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours) : KoinComponent {
+class ResponseCache<T>(
+    private val cacheKey: String,
+    val maxAge: Duration,
+    private val serializer: KSerializer<T>
+) : KoinComponent {
     companion object {
         const val CACHE_SUBDIRECTORY = "responseCache"
+
+        inline fun <reified T> create(cacheKey: String, maxAge: Duration = 1.hours) =
+            ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer())
     }
 
-    internal var data: Response? = null
+    internal var data: Response<T>? = null
 
     private val fileSystem: FileSystem by inject()
     private val systemPaths: SystemPaths by inject()
@@ -54,7 +64,11 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
 
     private val lock = Mutex()
 
-    private fun getData(): Response? {
+    private fun decodeData(body: String): T {
+        return json.decodeFromString(serializer, body)
+    }
+
+    private fun getData(): Response<T>? {
         val data = this.data ?: readData() ?: return null
         return if (data.metadata.fetchTime.elapsedNow() < maxAge) {
             data
@@ -67,17 +81,17 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
         val nextData =
             Response(
                 ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()),
-                response.bodyAsText()
+                decodeData(response.bodyAsText())
             )
         this.data = nextData
         this.writeData(nextData)
     }
 
-    private fun readData(): Response? {
+    private fun readData(): Response<T>? {
         try {
             val diskMetadata: ResponseMetadata =
-                Json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
-            val diskData = fileSystem.read(cacheFilePath) { readUtf8() }
+                json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
+            val diskData = decodeData(fileSystem.read(cacheFilePath) { readUtf8() })
             this.data = Response(diskMetadata, diskData)
             return this.data
         } catch (error: Exception) {
@@ -85,10 +99,12 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
         }
     }
 
-    private fun writeData(response: Response) {
+    private fun writeData(response: Response<T>) {
         try {
             fileSystem.createDirectories(cacheFilePath.parent!!)
-            fileSystem.write(cacheFilePath) { writeUtf8(response.body) }
+            fileSystem.write(cacheFilePath) {
+                writeUtf8(json.encodeToString(serializer, response.body))
+            }
             writeMetadata(response.metadata)
         } catch (error: Exception) {
             println("Writing to '$cacheFilePath' failed. $error")
@@ -97,13 +113,13 @@ class ResponseCache(private val cacheKey: String, val maxAge: Duration = 1.hours
 
     private fun writeMetadata(metadata: ResponseMetadata) {
         try {
-            fileSystem.write(cacheMetadataFilePath) { writeUtf8(Json.encodeToString(metadata)) }
+            fileSystem.write(cacheMetadataFilePath) { writeUtf8(json.encodeToString(metadata)) }
         } catch (error: Exception) {
             println("Writing to '${cacheMetadataFilePath}' failed. $error")
         }
     }
 
-    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): String {
+    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): T {
         lock.withLock {
             val cachedData = this.getData()
             if (cachedData != null) {

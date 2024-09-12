@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
-import com.mbta.tid.mbta_app.cache.ResponseCache
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -121,7 +120,6 @@ class GlobalRepositoryTest : KoinTest {
             modules(
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
-                    factory { params -> ResponseCache(cacheKey = params.get()) }
                     single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
                     single<FileSystem> { FakeFileSystem() }
                 }

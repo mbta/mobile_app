@@ -55,7 +55,7 @@ class ResponseCacheTest {
 
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
-        val cache = ResponseCache(cacheKey = "test")
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
         var didFetch = false
 
@@ -70,12 +70,10 @@ class ResponseCacheTest {
 
         assertEquals(
             globalData,
-            json.decodeFromString(
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
-                }
-            )
+            cache.getOrFetch {
+                didFetch = true
+                client.get { url { path("api/global") } }
+            }
         )
         assertTrue(didFetch)
     }
@@ -88,14 +86,14 @@ class ResponseCacheTest {
         objects.route()
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val cache = ResponseCache(cacheKey = "test")
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
         cache.data =
             Response(
                 ResponseMetadata(
                     null,
                     TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes)
                 ),
-                json.encodeToString(globalData)
+                globalData
             )
 
         startKoin {
@@ -106,7 +104,7 @@ class ResponseCacheTest {
                 }
             )
         }
-        assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() }))
+        assertEquals(globalData, cache.getOrFetch { fail() })
     }
 
     @Test
@@ -129,14 +127,14 @@ class ResponseCacheTest {
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
-        val cache = ResponseCache(cacheKey = "test")
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
         cache.data =
             Response(
                 ResponseMetadata(
                     null,
                     TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
                 ),
-                json.encodeToString(oldData)
+                oldData
             )
 
         var didFetch = false
@@ -152,12 +150,10 @@ class ResponseCacheTest {
 
         assertEquals(
             newData,
-            json.decodeFromString(
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
-                }
-            )
+            cache.getOrFetch {
+                didFetch = true
+                client.get { url { path("api/global") } }
+            }
         )
         assertTrue(didFetch)
     }
@@ -211,7 +207,7 @@ class ResponseCacheTest {
         }
 
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
-        val cache = ResponseCache(cacheKey = "test", maxAge = 1.seconds)
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test", maxAge = 1.seconds)
 
         var fetchCount = 0
         suspend fun fetch(etag: String?): HttpResponse {
@@ -231,30 +227,30 @@ class ResponseCacheTest {
             )
         }
 
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(oldData, cache.getOrFetch(::fetch))
         assertEquals(1, fetchCount)
 
         // Assert cached
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(oldData, cache.getOrFetch(::fetch))
         assertEquals(1, fetchCount)
         delay(1.seconds)
 
         // Assert that the cache retains the data when it receives a NotModified response
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(oldData, cache.getOrFetch(::fetch))
         assertEquals(2, fetchCount)
 
         // And that receiving NotModified resets the cache timer
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(oldData, cache.getOrFetch(::fetch))
         assertEquals(2, fetchCount)
         delay(1.seconds)
 
         // Get new data on next request
-        assertEquals(newData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(newData, cache.getOrFetch(::fetch))
         assertEquals(3, fetchCount)
         delay(1.seconds)
 
         // Ensure we go back to the old data when sent etag doesn't match
-        assertEquals(oldData, json.decodeFromString(cache.getOrFetch(::fetch)))
+        assertEquals(oldData, cache.getOrFetch(::fetch))
         assertEquals(4, fetchCount)
     }
 
@@ -266,7 +262,7 @@ class ResponseCacheTest {
         objects.route()
         val globalData = GlobalResponse(objects, emptyMap())
 
-        val cache = ResponseCache(cacheKey = "test")
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
@@ -293,11 +289,11 @@ class ResponseCacheTest {
             )
         }
 
-        assertEquals(globalData, json.decodeFromString(cache.getOrFetch { fail() }))
+        assertEquals(globalData, cache.getOrFetch { fail() })
         fileSystem.delete(directory / "test.json")
         assertEquals(
             globalData,
-            json.decodeFromString(cache.getOrFetch { fail() }),
+            cache.getOrFetch { fail() },
             "Only the initial get is from disk, after that it's stored in memory"
         )
     }
@@ -322,7 +318,7 @@ class ResponseCacheTest {
         }
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
-        val cache = ResponseCache(cacheKey = "test")
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
@@ -354,12 +350,10 @@ class ResponseCacheTest {
 
         assertEquals(
             newData,
-            json.decodeFromString(
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
-                }
-            )
+            cache.getOrFetch {
+                didFetch = true
+                client.get { url { path("api/global") } }
+            }
         )
         assertTrue(didFetch)
     }
@@ -387,7 +381,7 @@ class ResponseCacheTest {
 
         val client = MobileBackendClient(mockEngine, AppVariant.Staging)
 
-        val cache = ResponseCache(cacheKey = "test")
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
@@ -405,12 +399,10 @@ class ResponseCacheTest {
 
         assertEquals(
             globalData,
-            json.decodeFromString(
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
-                }
-            )
+            cache.getOrFetch {
+                didFetch = true
+                client.get { url { path("api/global") } }
+            }
         )
         assertTrue(didFetch)
         assertEquals(
@@ -427,9 +419,11 @@ class ResponseCacheTest {
         )
         assertEquals(
             cache.data!!.body,
-            fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-                readUtf8()
-            }
+            json.decodeFromString(
+                fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
+                    readUtf8()
+                }
+            )
         )
     }
 }
