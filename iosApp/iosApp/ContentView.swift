@@ -102,6 +102,7 @@ struct ContentView: View {
                 TextField("Find nearby transit", text: $searchObserver.searchText)
                 SearchView(
                     query: searchObserver.debouncedText,
+                    nearbyVM: nearbyVM,
                     searchVM: searchVM
                 )
             }

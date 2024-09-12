@@ -29,9 +29,13 @@ class TextFieldObserver: ObservableObject {
 
 struct SearchView: View {
     let query: String
+    let globalRepository: IGlobalRepository
     let searchResultsRepository: ISearchResultRepository
+
+    @State var globalResponse: GlobalResponse?
     @State var searchResults: SearchResults?
 
+    @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var searchVM: SearchViewModel
 
     var didAppear: ((Self) -> Void)?
@@ -39,13 +43,17 @@ struct SearchView: View {
 
     init(
         query: String,
+        nearbyVM: NearbyViewModel,
         searchVM: SearchViewModel,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
         self.query = query
+        self.nearbyVM = nearbyVM
         self.searchVM = searchVM
+        self.globalRepository = globalRepository
         self.searchResultsRepository = searchResultsRepository
         self.didAppear = didAppear
         self.didChange = didChange
@@ -61,11 +69,18 @@ struct SearchView: View {
         }
     }
 
+    func handleStopTap(stopId: String) {
+        guard let stop = globalResponse?.stops[stopId] else { return }
+        nearbyVM.navigationStack.removeAll()
+        nearbyVM.navigationStack.append(.stopDetails(stop, nil))
+    }
+
     var body: some View {
         VStack {
             if !query.isEmpty {
                 SearchResultView(
                     results: searchResults,
+                    handleStopTap: handleStopTap,
                     showRoutes: searchVM.routeResultsEnabled
                 )
             }
@@ -74,6 +89,13 @@ struct SearchView: View {
             loadResults(query: query)
             Task {
                 await searchVM.loadSettings()
+            }
+            Task {
+                do {
+                    globalResponse = try await globalRepository.getGlobalData()
+                } catch {
+                    debugPrint(error)
+                }
             }
             didAppear?(self)
         }
@@ -86,9 +108,15 @@ struct SearchView: View {
 
 struct SearchResultView: View {
     private var results: SearchResults?
+    private var handleStopTap: (String) -> Void
     private var showRoutes: Bool
-    init(results: SearchResults? = nil, showRoutes: Bool = false) {
+    init(
+        results: SearchResults? = nil,
+        handleStopTap: @escaping (String) -> Void,
+        showRoutes: Bool = false
+    ) {
         self.results = results
+        self.handleStopTap = handleStopTap
         self.showRoutes = showRoutes
     }
 
@@ -103,7 +131,7 @@ struct SearchResultView: View {
                     if !results!.stops.isEmpty {
                         Section(header: Text("Stops")) {
                             ForEach(results!.stops, id: \.id) {
-                                StopResultView(stop: $0)
+                                StopResultView(stop: $0, handleStopTap: handleStopTap)
                             }
                         }
                     }
@@ -122,11 +150,12 @@ struct SearchResultView: View {
 
 struct StopResultView: View {
     let stop: StopResult
+    let handleStopTap: (String) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
             Text(stop.name)
-        }
+        }.onTapGesture { handleStopTap(stop.id) }
     }
 }
 
@@ -172,7 +201,8 @@ struct SearchResultView_Previews: PreviewProvider {
                         ]
                     ),
                 ]
-            )
+            ),
+            handleStopTap: { _ in }
         ).font(Typography.body).previewDisplayName("SearchResultView")
     }
 }
