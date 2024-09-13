@@ -595,6 +595,19 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
         return isSubway && routeHasAlert && schedulesNeverTypical && predictionsAlwaysTypical
     }
 
+    fun RoutePattern.isTruncationOf(
+        fullPattern: RoutePattern,
+        fullPatternStopIds: List<String>,
+        stopId: String
+    ): Boolean {
+        if (typicality == RoutePattern.Typicality.Typical) return false
+        if (directionId != fullPattern.directionId) return false
+        val truncatedPatternTrip = globalData.trips[representativeTripId] ?: return false
+        checkNotNull(truncatedPatternTrip.stopIds) { fetchedWithoutStopIds(this) }
+        return truncatedPatternTrip.stopIds.contains(stopId) &&
+            fullPatternStopIds.containsSubsequence(truncatedPatternTrip.stopIds)
+    }
+
     for (routeId in relevantRouteIds) {
         val route = globalData.routes[routeId] ?: continue
 
@@ -621,18 +634,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                         // consider all the patterns that could be in the schedule
                         val plausibleTruncatedPatterns =
                             routePatternsByRoute[routeId].orEmpty().filter {
-                                if (it.typicality == RoutePattern.Typicality.Typical)
-                                    return@filter false
-                                if (it.directionId != fullPattern.directionId) return@filter false
-                                val truncatedPatternTrip =
-                                    globalData.trips[it.representativeTripId] ?: return@filter false
-                                checkNotNull(truncatedPatternTrip.stopIds) {
-                                    fetchedWithoutStopIds(it)
-                                }
-                                truncatedPatternTrip.stopIds.contains(stopId) &&
-                                    fullPatternTrip.stopIds.containsSubsequence(
-                                        truncatedPatternTrip.stopIds
-                                    )
+                                it.isTruncationOf(fullPattern, fullPatternTrip.stopIds, stopId)
                             }
 
                         val truncatedPatternId =
