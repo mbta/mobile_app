@@ -608,6 +608,29 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             fullPatternStopIds.containsSubsequence(truncatedPatternTrip.stopIds)
     }
 
+    fun rewritePredictions(routePredictions: List<Prediction>) {
+        for (prediction in routePredictions) {
+            val fullPattern = prediction.routePattern() ?: continue
+            // subway doesn't have loops! we don't have to think about loops! yay!
+            val stopId = prediction.stopId
+
+            val truncatedPatternId =
+                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
+            val truncatedPattern = globalData.routePatterns[truncatedPatternId]
+
+            if (truncatedPattern != null) {
+                val originalTrip = predictions.trips[prediction.tripId] ?: continue
+                val truncatedRepresentativeTrip =
+                    globalData.trips[truncatedPattern.representativeTripId] ?: continue
+                rewrittenTrips[originalTrip.id] =
+                    originalTrip.copy(
+                        headsign = truncatedRepresentativeTrip.headsign,
+                        routePatternId = truncatedPattern.id
+                    )
+            }
+        }
+    }
+
     for (routeId in relevantRouteIds) {
         val route = globalData.routes[routeId] ?: continue
 
@@ -657,26 +680,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                     }
                 }
             }
-            for (prediction in predictionsByRoute[routeId].orEmpty()) {
-                val fullPattern = prediction.routePattern() ?: continue
-                // subway doesn't have loops! we don't have to think about loops! yay!
-                val stopId = prediction.stopId
-
-                val truncatedPatternId =
-                    truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
-                val truncatedPattern = globalData.routePatterns[truncatedPatternId]
-
-                if (truncatedPattern != null) {
-                    val originalTrip = predictions.trips[prediction.tripId] ?: continue
-                    val truncatedRepresentativeTrip =
-                        globalData.trips[truncatedPattern.representativeTripId] ?: continue
-                    rewrittenTrips[originalTrip.id] =
-                        originalTrip.copy(
-                            headsign = truncatedRepresentativeTrip.headsign,
-                            routePatternId = truncatedPattern.id
-                        )
-                }
-            }
+            rewritePredictions(predictionsByRoute[routeId].orEmpty())
         }
     }
 
