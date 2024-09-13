@@ -572,8 +572,8 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
     // from Pair(fullPattern.id, stopId) to truncatedPattern.id
     val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
 
-    for (routeId in relevantRouteIds) {
-        val route = globalData.routes[routeId] ?: continue
+    fun appliesToRoute(route: Route): Boolean {
+        val routeId = route.id
         val isSubway = route.type.isSubway()
 
         val routeHasAlert =
@@ -582,17 +582,23 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                     alert.anyInformedEntity { it.appliesTo(routeId = routeId) }
             }
 
-        val routeSchedules = schedulesByRoute[routeId].orEmpty()
         val schedulesNeverTypical =
-            routeSchedules.all { it.routePattern()?.typicality != RoutePattern.Typicality.Typical }
+            schedulesByRoute[routeId].orEmpty().all {
+                it.routePattern()?.typicality != RoutePattern.Typicality.Typical
+            }
 
-        val routePredictions = predictionsByRoute[routeId].orEmpty()
         val predictionsAlwaysTypical =
-            routePredictions.all {
+            predictionsByRoute[routeId].orEmpty().all {
                 it.routePattern()?.typicality == RoutePattern.Typicality.Typical
             }
 
-        if (isSubway && routeHasAlert && schedulesNeverTypical && predictionsAlwaysTypical) {
+        return isSubway && routeHasAlert && schedulesNeverTypical && predictionsAlwaysTypical
+    }
+
+    for (routeId in relevantRouteIds) {
+        val route = globalData.routes[routeId] ?: continue
+
+        if (appliesToRoute(route)) {
             val stopPatterns =
                 this.data.flatMap { transitWithStops ->
                     val routeMatches = transitWithStops.allRoutes().any { it.id == routeId }
@@ -638,7 +644,9 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                                 // schedule
                                 plausibleTruncatedPatterns
                                     .singleOrNull { truncatedPattern ->
-                                        routeSchedules.any { it.routePattern() == truncatedPattern }
+                                        schedulesByRoute[routeId].orEmpty().any {
+                                            it.routePattern() == truncatedPattern
+                                        }
                                     }
                                     ?.id
                             }
@@ -647,7 +655,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                     }
                 }
             }
-            for (prediction in routePredictions) {
+            for (prediction in predictionsByRoute[routeId].orEmpty()) {
                 val fullPattern = prediction.routePattern() ?: continue
                 // subway doesn't have loops! we don't have to think about loops! yay!
                 val stopId = prediction.stopId
