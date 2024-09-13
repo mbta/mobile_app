@@ -124,14 +124,15 @@ struct SearchResultView: View {
         if results == nil {
             Text("Loading...")
         } else {
-            if results!.stops.isEmpty, results!.routes.isEmpty {
+            if results!.stops.isEmpty, !showRoutes || results!.routes.isEmpty {
                 Text("No results found")
             } else {
                 List {
                     if !results!.stops.isEmpty {
                         Section(header: Text("Stops")) {
-                            ForEach(results!.stops, id: \.id) {
-                                StopResultView(stop: $0, handleStopTap: handleStopTap)
+                            ForEach(results!.stops, id: \.id) { stop in
+                                StopResultView(stop: stop)
+                                    .onTapGesture { handleStopTap(stop.id) }
                             }
                         }
                     }
@@ -150,12 +151,11 @@ struct SearchResultView: View {
 
 struct StopResultView: View {
     let stop: StopResult
-    let handleStopTap: (String) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
             Text(stop.name)
-        }.onTapGesture { handleStopTap(stop.id) }
+        }
     }
 }
 
