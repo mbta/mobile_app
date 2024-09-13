@@ -609,6 +609,49 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             fullPatternStopIds.containsSubsequence(truncatedPatternTrip.stopIds)
     }
 
+    fun truncatePattern(
+        fullPattern: RoutePattern,
+        fullPatternStopIds: List<String>,
+        stopId: String
+    ) {
+        // we may be only fetching a subset of the schedule, so we want to consider all the patterns
+        // that could be in the schedule
+        val plausibleTruncatedPatterns =
+            routePatternsByRoute[fullPattern.routeId].orEmpty().filter {
+                it.isTruncationOf(fullPattern, fullPatternStopIds, stopId)
+            }
+
+        val truncatedPatternId =
+            if (plausibleTruncatedPatterns.size < 2) {
+                plausibleTruncatedPatterns.singleOrNull()?.id
+            } else {
+                // if there are multiple truncated patterns with the right direction and stops,
+                // hopefully there's only one that's actually on the schedule
+                plausibleTruncatedPatterns
+                    .singleOrNull { truncatedPattern ->
+                        schedulesByRoute[fullPattern.routeId].orEmpty().any {
+                            it.routePattern() == truncatedPattern
+                        }
+                    }
+                    ?.id
+            }
+
+        truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] = truncatedPatternId
+    }
+
+    fun truncatePatternsAtStop(stopPattern: NearbyStaticData.StopPatterns) {
+        for (fullPattern in stopPattern.patterns.flatMap { it.patterns }) {
+            val fullPatternTrip = globalData.trips[fullPattern.representativeTripId] ?: continue
+            checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
+
+            for (stopId in stopPattern.allStopIds) {
+                if (!fullPatternTrip.stopIds.contains(stopId)) continue
+
+                truncatePattern(fullPattern, fullPatternTrip.stopIds, stopId)
+            }
+        }
+    }
+
     fun rewritePredictions(routePredictions: List<Prediction>) {
         for (prediction in routePredictions) {
             val fullPattern = prediction.routePattern() ?: continue
@@ -636,41 +679,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
         for (route in transitWithStops.allRoutes()) {
             if (appliesToRoute(route)) {
                 for (stopPattern in transitWithStops.patternsByStop) {
-                    for (fullPattern in stopPattern.patterns.flatMap { it.patterns }) {
-                        val fullPatternTrip =
-                            globalData.trips[fullPattern.representativeTripId] ?: continue
-                        checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
-
-                        for (stopId in stopPattern.allStopIds) {
-                            if (!fullPatternTrip.stopIds.contains(stopId)) continue
-
-                            // we may be only fetching a subset of the schedule, so we want to
-                            // consider all the patterns that could be in the schedule
-                            val plausibleTruncatedPatterns =
-                                routePatternsByRoute[route.id].orEmpty().filter {
-                                    it.isTruncationOf(fullPattern, fullPatternTrip.stopIds, stopId)
-                                }
-
-                            val truncatedPatternId =
-                                if (plausibleTruncatedPatterns.size < 2) {
-                                    plausibleTruncatedPatterns.singleOrNull()?.id
-                                } else {
-                                    // if there are multiple truncated patterns with the right
-                                    // direction and stops, hopefully there's only one that's
-                                    // actually on the schedule
-                                    plausibleTruncatedPatterns
-                                        .singleOrNull { truncatedPattern ->
-                                            schedulesByRoute[route.id].orEmpty().any {
-                                                it.routePattern() == truncatedPattern
-                                            }
-                                        }
-                                        ?.id
-                                }
-
-                            truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
-                                truncatedPatternId
-                        }
-                    }
+                    truncatePatternsAtStop(stopPattern)
                 }
                 rewritePredictions(predictionsByRoute[route.id].orEmpty())
             }
