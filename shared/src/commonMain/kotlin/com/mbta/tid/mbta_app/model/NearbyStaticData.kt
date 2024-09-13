@@ -565,9 +565,6 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
     val predictionsByRoute = predictions.predictions.values.groupBy { it.routeId }
     val routePatternsByRoute = globalData.routePatterns.values.groupBy { it.routeId }
 
-    val relevantRouteIds =
-        predictions.predictions.values.mapTo(mutableSetOf()) { it.routeId }.toSet()
-
     val rewrittenTrips = predictions.trips.toMutableMap()
     // from Pair(fullPattern.id, stopId) to truncatedPattern.id
     val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
@@ -582,15 +579,19 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                     alert.anyInformedEntity { it.appliesTo(routeId = routeId) }
             }
 
+        val routeSchedules = schedulesByRoute[routeId].orEmpty()
         val schedulesNeverTypical =
-            schedulesByRoute[routeId].orEmpty().all {
-                it.routePattern()?.typicality != RoutePattern.Typicality.Typical
-            }
+            routeSchedules.isNotEmpty() &&
+                routeSchedules.all {
+                    it.routePattern()?.typicality != RoutePattern.Typicality.Typical
+                }
 
+        val routePredictions = predictionsByRoute[routeId].orEmpty()
         val predictionsAlwaysTypical =
-            predictionsByRoute[routeId].orEmpty().all {
-                it.routePattern()?.typicality == RoutePattern.Typicality.Typical
-            }
+            routePredictions.isNotEmpty() &&
+                routePredictions.all {
+                    it.routePattern()?.typicality == RoutePattern.Typicality.Typical
+                }
 
         return isSubway && routeHasAlert && schedulesNeverTypical && predictionsAlwaysTypical
     }
@@ -631,56 +632,48 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
         }
     }
 
-    for (routeId in relevantRouteIds) {
-        val route = globalData.routes[routeId] ?: continue
+    for (transitWithStops in this.data) {
+        for (route in transitWithStops.allRoutes()) {
+            if (appliesToRoute(route)) {
+                for (stopPattern in transitWithStops.patternsByStop) {
+                    for (fullPattern in stopPattern.patterns.flatMap { it.patterns }) {
+                        val fullPatternTrip =
+                            globalData.trips[fullPattern.representativeTripId] ?: continue
+                        checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
 
-        if (appliesToRoute(route)) {
-            val stopPatterns =
-                this.data.flatMap { transitWithStops ->
-                    val routeMatches = transitWithStops.allRoutes().any { it.id == routeId }
-                    if (routeMatches) transitWithStops.patternsByStop else emptyList()
-                }
-            for (stopPattern in stopPatterns) {
-                for (fullPattern in stopPattern.patterns.flatMap { it.patterns }) {
-                    val fullPatternTrip =
-                        globalData.trips[fullPattern.representativeTripId] ?: continue
-                    checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
+                        for (stopId in stopPattern.allStopIds) {
+                            if (!fullPatternTrip.stopIds.contains(stopId)) continue
 
-                    for (stopId in stopPattern.allStopIds) {
-                        if (!fullPatternTrip.stopIds.contains(stopId)) continue
+                            // we may be only fetching a subset of the schedule, so we want to
+                            // consider all the patterns that could be in the schedule
+                            val plausibleTruncatedPatterns =
+                                routePatternsByRoute[route.id].orEmpty().filter {
+                                    it.isTruncationOf(fullPattern, fullPatternTrip.stopIds, stopId)
+                                }
 
-                        val truncatedPatternKey = Pair(fullPattern.id, stopId)
-                        if (truncatedPatternByFullPatternAndStop.containsKey(truncatedPatternKey))
-                            continue
-
-                        // we may be only fetching a subset of the schedule, so we want to
-                        // consider all the patterns that could be in the schedule
-                        val plausibleTruncatedPatterns =
-                            routePatternsByRoute[routeId].orEmpty().filter {
-                                it.isTruncationOf(fullPattern, fullPatternTrip.stopIds, stopId)
-                            }
-
-                        val truncatedPatternId =
-                            if (plausibleTruncatedPatterns.size < 2) {
-                                plausibleTruncatedPatterns.singleOrNull()?.id
-                            } else {
-                                // if there are multiple truncated patterns with the right direction
-                                // and stops, hopefully there's only one that's actually on the
-                                // schedule
-                                plausibleTruncatedPatterns
-                                    .singleOrNull { truncatedPattern ->
-                                        schedulesByRoute[routeId].orEmpty().any {
-                                            it.routePattern() == truncatedPattern
+                            val truncatedPatternId =
+                                if (plausibleTruncatedPatterns.size < 2) {
+                                    plausibleTruncatedPatterns.singleOrNull()?.id
+                                } else {
+                                    // if there are multiple truncated patterns with the right
+                                    // direction and stops, hopefully there's only one that's
+                                    // actually on the schedule
+                                    plausibleTruncatedPatterns
+                                        .singleOrNull { truncatedPattern ->
+                                            schedulesByRoute[route.id].orEmpty().any {
+                                                it.routePattern() == truncatedPattern
+                                            }
                                         }
-                                    }
-                                    ?.id
-                            }
-                        truncatedPatternByFullPatternAndStop[truncatedPatternKey] =
-                            truncatedPatternId
+                                        ?.id
+                                }
+
+                            truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
+                                truncatedPatternId
+                        }
                     }
                 }
+                rewritePredictions(predictionsByRoute[route.id].orEmpty())
             }
-            rewritePredictions(predictionsByRoute[routeId].orEmpty())
         }
     }
 
