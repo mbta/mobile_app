@@ -98,7 +98,7 @@ struct ContentView: View {
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            if contentVM.searchEnabled {
+            if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
                 TextField("Find nearby transit", text: $searchObserver.searchText)
                 SearchView(
                     query: searchObserver.debouncedText,
