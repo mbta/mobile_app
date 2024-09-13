@@ -54,8 +54,18 @@ fun NearbyTransitView(
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
     val nearbyWithRealtimeInfo =
-        remember(nearby, targetLocation, schedules, predictions, alertData, now, pinnedRoutes) {
+        remember(
+            nearby,
+            globalResponse,
+            targetLocation,
+            schedules,
+            predictions,
+            alertData,
+            now,
+            pinnedRoutes
+        ) {
             nearby?.withRealtimeInfo(
+                globalData = globalResponse,
                 sortByDistanceFrom = targetLocation,
                 schedules,
                 predictions,

@@ -348,19 +348,21 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             directionId: Int? = null,
             alerts: Collection<Alert>
         ): List<Alert> =
-            stopIds.flatMap { stopId ->
-                alerts.filter { alert ->
-                    alert.anyInformedEntity {
-                        routes.any { route ->
-                            it.appliesTo(
-                                directionId = directionId,
-                                routeId = route.id,
-                                stopId = stopId
-                            )
-                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+            stopIds
+                .flatMap { stopId ->
+                    alerts.filter { alert ->
+                        alert.anyInformedEntity {
+                            routes.any { route ->
+                                it.appliesTo(
+                                    directionId = directionId,
+                                    routeId = route.id,
+                                    stopId = stopId
+                                )
+                            } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+                        }
                     }
                 }
-            }
+                .distinct()
 
         fun formatUpcomingTrip(
             now: Instant,

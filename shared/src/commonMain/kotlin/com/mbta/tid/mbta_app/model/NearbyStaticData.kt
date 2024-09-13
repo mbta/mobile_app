@@ -348,8 +348,11 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
  * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
  * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
  * sort order.
+ *
+ * Calls [NearbyStaticData.rewrittenForTemporaryTerminals].
  */
 fun NearbyStaticData.withRealtimeInfo(
+    globalData: GlobalResponse?,
     sortByDistanceFrom: Position,
     schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
@@ -357,11 +360,20 @@ fun NearbyStaticData.withRealtimeInfo(
     filterAtTime: Instant,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated> {
+    val activeRelevantAlerts =
+        alerts?.alerts?.values?.filter {
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
+        }
+
+    // this needs to change how the trip keys are constructed
+    val (rewrittenThis, rewrittenPredictions) =
+        rewrittenForTemporaryTerminals(predictions, globalData, activeRelevantAlerts, schedules)
+
     // add predictions and apply filtering
     val upcomingTripsByRoutePatternAndStop =
         UpcomingTrip.tripsMappedBy(
                 schedules,
-                predictions,
+                rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
@@ -384,7 +396,7 @@ fun NearbyStaticData.withRealtimeInfo(
     val upcomingTripsByDirectionAndStop =
         UpcomingTrip.tripsMappedBy(
                 schedules,
-                predictions,
+                rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByDirection(
@@ -406,12 +418,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val cutoffTime = filterAtTime.plus(90.minutes)
 
-    val activeRelevantAlerts =
-        alerts?.alerts?.values?.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
-        }
-
-    return data
+    return rewrittenThis.data
         .asSequence()
         .map { transit ->
             when (transit) {
@@ -465,6 +472,240 @@ fun NearbyStaticData.withRealtimeInfo(
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
         .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
 }
+
+/**
+ * For reasons, for mid-line subway shuttles/suspensions, schedules will correctly reflect the
+ * closure and use route patterns that stop at temporary terminals, but predictions will use the
+ * canonical route patterns. The way we work around this is that for
+ * 1. subway routes
+ * 2. with alerts somewhere on the line
+ * 3. where the schedule has non-typical patterns instead of typical patterns
+ * 4. but the predictions all have typical patterns instead of non-typical patterns
+ *
+ * we check the stops of the scheduled patterns against both the predicted pattern and the
+ * prediction's current stop to override the prediction's route pattern with a correct scheduled
+ * pattern, and then we load the headsign from the new route pattern's representative trip. This
+ * should be narrowly scoped enough to apply to temporary terminals but no other trips. Hopefully.
+ */
+private fun NearbyStaticData.rewrittenForTemporaryTerminals(
+    predictions: PredictionsStreamDataResponse?,
+    globalData: GlobalResponse?,
+    alerts: List<Alert>?,
+    schedules: ScheduleResponse?,
+): Pair<NearbyStaticData, PredictionsStreamDataResponse?> {
+    if (predictions == null || globalData == null || alerts == null || schedules == null)
+        return Pair(this, predictions)
+
+    fun Schedule.routePattern(): RoutePattern? =
+        schedules.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
+    fun Prediction.routePattern(): RoutePattern? =
+        predictions.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
+
+    val schedulesByRoute = schedules.schedules.groupBy { it.routeId }
+    val predictionsByRoute = predictions.predictions.values.groupBy { it.routeId }
+    val routePatternsByRoute = globalData.routePatterns.values.groupBy { it.routeId }
+
+    val relevantRouteIds =
+        predictions.predictions.values.mapTo(mutableSetOf()) { it.routeId }.toSet()
+
+    val rewrittenTrips = predictions.trips.toMutableMap()
+    // from Pair(fullPattern.id, stopId) to truncatedPattern.id
+    val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
+
+    fun NearbyStaticData.TransitWithStops.patternsByStop() =
+        when (this) {
+            is NearbyStaticData.TransitWithStops.ByLine -> this.patternsByStop
+            is NearbyStaticData.TransitWithStops.ByRoute -> this.patternsByStop
+        }
+
+    for (routeId in relevantRouteIds) {
+        val route = globalData.routes[routeId] ?: continue
+        val isSubway = route.type.isSubway()
+
+        val routeHasAlert =
+            alerts.any { alert ->
+                alert.effect in setOf(Alert.Effect.Suspension, Alert.Effect.Shuttle) &&
+                    alert.anyInformedEntity { it.appliesTo(routeId = routeId) }
+            }
+
+        val routeSchedules = schedulesByRoute[routeId].orEmpty()
+        val schedulesNeverTypical =
+            routeSchedules.all { it.routePattern()?.typicality != RoutePattern.Typicality.Typical }
+
+        val routePredictions = predictionsByRoute[routeId].orEmpty()
+        val predictionsAlwaysTypical =
+            routePredictions.all {
+                it.routePattern()?.typicality == RoutePattern.Typicality.Typical
+            }
+
+        if (isSubway && routeHasAlert && schedulesNeverTypical && predictionsAlwaysTypical) {
+            val stopPatterns =
+                this.data.flatMap { transitWithStops ->
+                    val routeMatches =
+                        when (transitWithStops) {
+                            is NearbyStaticData.TransitWithStops.ByLine ->
+                                transitWithStops.routes.any { it.id == routeId }
+                            is NearbyStaticData.TransitWithStops.ByRoute ->
+                                transitWithStops.route.id == routeId
+                        }
+                    if (routeMatches) transitWithStops.patternsByStop() else emptyList()
+                }
+            for (stopPattern in stopPatterns) {
+                for (fullPattern in stopPattern.patterns.flatMap { it.patterns }) {
+                    val fullPatternTrip =
+                        globalData.trips[fullPattern.representativeTripId] ?: continue
+                    checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
+
+                    for (stopId in stopPattern.allStopIds) {
+                        if (!fullPatternTrip.stopIds.contains(stopId)) continue
+
+                        val truncatedPatternKey = Pair(fullPattern.id, stopId)
+                        if (truncatedPatternByFullPatternAndStop.containsKey(truncatedPatternKey))
+                            continue
+
+                        // we may be only fetching a subset of the schedule, so we want to
+                        // consider all the patterns that could be in the schedule
+                        val plausibleTruncatedPatterns =
+                            routePatternsByRoute[routeId].orEmpty().filter {
+                                if (it.typicality == RoutePattern.Typicality.Typical)
+                                    return@filter false
+                                if (it.directionId != fullPattern.directionId) return@filter false
+                                val truncatedPatternTrip =
+                                    globalData.trips[it.representativeTripId] ?: return@filter false
+                                checkNotNull(truncatedPatternTrip.stopIds) {
+                                    fetchedWithoutStopIds(it)
+                                }
+                                truncatedPatternTrip.stopIds.contains(stopId) &&
+                                    fullPatternTrip.stopIds.containsSubsequence(
+                                        truncatedPatternTrip.stopIds
+                                    )
+                            }
+
+                        val truncatedPatternId =
+                            if (plausibleTruncatedPatterns.size < 2) {
+                                plausibleTruncatedPatterns.singleOrNull()?.id
+                            } else {
+                                // if there are multiple truncated patterns with the right direction
+                                // and stops, hopefully there's only one that's actually on the
+                                // schedule
+                                plausibleTruncatedPatterns
+                                    .singleOrNull { truncatedPattern ->
+                                        routeSchedules.any { it.routePattern() == truncatedPattern }
+                                    }
+                                    ?.id
+                            }
+                        truncatedPatternByFullPatternAndStop[truncatedPatternKey] =
+                            truncatedPatternId
+                    }
+                }
+            }
+            for (prediction in routePredictions) {
+                val fullPattern = prediction.routePattern() ?: continue
+                // subway doesn't have loops! we don't have to think about loops! yay!
+                val stopId = prediction.stopId
+
+                val truncatedPatternId =
+                    truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
+                val truncatedPattern = globalData.routePatterns[truncatedPatternId]
+
+                if (truncatedPattern != null) {
+                    val originalTrip = predictions.trips[prediction.tripId] ?: continue
+                    val truncatedRepresentativeTrip =
+                        globalData.trips[truncatedPattern.representativeTripId] ?: continue
+                    rewrittenTrips[originalTrip.id] =
+                        originalTrip.copy(
+                            headsign = truncatedRepresentativeTrip.headsign,
+                            routePatternId = truncatedPattern.id
+                        )
+                }
+            }
+        }
+    }
+
+    fun NearbyStaticData.StaticPatterns.copy(patterns: List<RoutePattern>) =
+        when (this) {
+            is NearbyStaticData.StaticPatterns.ByDirection -> this.copy(patterns = patterns)
+            is NearbyStaticData.StaticPatterns.ByHeadsign -> this.copy(patterns = patterns)
+        }
+
+    fun NearbyStaticData.StopPatterns.copy(patterns: List<NearbyStaticData.StaticPatterns>) =
+        when (this) {
+            is NearbyStaticData.StopPatterns.ForLine -> this.copy(patterns = patterns)
+            is NearbyStaticData.StopPatterns.ForRoute -> this.copy(patterns = patterns)
+        }
+
+    // for every case where we collapsed a prediction into a schedule, move the patterns in the data
+    fun NearbyStaticData.StopPatterns.collapseForRewrites(): NearbyStaticData.StopPatterns {
+        val collapsedPatterns =
+            patterns
+                .groupBy { staticPatterns ->
+                    staticPatterns.patterns.map { pattern ->
+                        val truncatedPatternId =
+                            allStopIds
+                                .mapNotNull { stopId ->
+                                    truncatedPatternByFullPatternAndStop[Pair(pattern.id, stopId)]
+                                }
+                                .singleOrNull()
+                        truncatedPatternId ?: pattern.id
+                    }
+                }
+                .values
+                .map { patternsList ->
+                    if (patternsList.size == 1) return@map patternsList.single()
+                    val patternsCorrectFirst =
+                        patternsList.sortedBy {
+                            val isTruncated =
+                                it.patterns.any { pattern ->
+                                    truncatedPatternByFullPatternAndStop.containsValue(pattern.id)
+                                }
+                            if (isTruncated) 0 else 1
+                        }
+                    patternsCorrectFirst
+                        .reduce { acc, nextPatterns ->
+                            acc.copy(patterns = acc.patterns + nextPatterns.patterns)
+                        }
+                        .let { it.copy(patterns = it.patterns.sorted()) }
+                }
+        return copy(patterns = collapsedPatterns)
+    }
+
+    fun NearbyStaticData.TransitWithStops.copy(
+        patternsByStop: List<NearbyStaticData.StopPatterns>
+    ) =
+        when (this) {
+            is NearbyStaticData.TransitWithStops.ByLine ->
+                this.copy(patternsByStop = patternsByStop)
+            is NearbyStaticData.TransitWithStops.ByRoute ->
+                this.copy(patternsByStop = patternsByStop)
+        }
+
+    val rewrittenData =
+        this.data.map { transitWithStops ->
+            transitWithStops.copy(
+                patternsByStop =
+                    transitWithStops.patternsByStop().map { stopPatterns ->
+                        stopPatterns.collapseForRewrites()
+                    }
+            )
+        }
+
+    return Pair(this.copy(data = rewrittenData), predictions.copy(trips = rewrittenTrips))
+}
+
+/**
+ * Tests whether this list contains the other list in order as a subsequence. Assumes this list does
+ * not contain duplicates, because in the specific context where it's used it won't.
+ */
+private fun <T> List<T>.containsSubsequence(subsequence: List<T>): Boolean {
+    if (subsequence.isEmpty()) return true
+    val startIndex = this.indexOf(subsequence.first())
+    if (startIndex == -1) return false
+    if (this.size < startIndex + subsequence.size) return false
+    return this.subList(startIndex, startIndex + subsequence.size) == subsequence
+}
+
+private fun fetchedWithoutStopIds(routePattern: RoutePattern) =
+    "route pattern ${routePattern.id} representative trip ${routePattern.representativeTripId} fetched without stop IDs"
 
 class NearbyStaticDataBuilder {
     val data = mutableListOf<NearbyStaticData.TransitWithStops>()
