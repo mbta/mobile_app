@@ -667,4 +667,68 @@ class StopDetailsDeparturesTest {
             departures
         )
     }
+
+    @Test
+    fun `StopDetailsDepartues provides a default StopDetailsFilter given a single route and direction`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route = objects.route()
+        val routePattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        val departures =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                emptySet(),
+                time
+            )
+
+        assertEquals(
+            StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId),
+            departures.autoFilter()
+        )
+    }
+
+    @Test
+    fun `StopDetailsDepartures provides a null filter value given multiple routes and directions`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route1 = objects.route()
+        val routePattern1 =
+            objects.routePattern(route1) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val route2 = objects.route()
+        val routePattern2 =
+            objects.routePattern(route2) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        val departures =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(
+                    objects,
+                    mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                ),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                emptySet(),
+                time
+            )
+
+        assertEquals(null, departures.autoFilter())
+    }
 }

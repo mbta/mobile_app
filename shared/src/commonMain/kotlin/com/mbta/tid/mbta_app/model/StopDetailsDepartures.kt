@@ -81,6 +81,19 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         }
     )
 
+    fun autoFilter(): StopDetailsFilter? {
+        if (routes.size != 1) {
+            return null
+        }
+        val route = routes.first()
+        val directions = route.patterns.map { it.directionId() }.toSet()
+        if (directions.size != 1) {
+            return null
+        }
+        val direction = directions.first()
+        return StopDetailsFilter(route.routeIdentifier, direction)
+    }
+
     companion object {
 
         private fun tripMapByHeadsign(

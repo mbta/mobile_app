@@ -73,12 +73,14 @@ fun StopDetailsView(
     Column(modifier) {
         Column {
             SheetHeader(onClose = onClose, title = stop.name)
-            StopDetailsFilterPills(
-                servedRoutes = servedRoutes,
-                filter = filter,
-                onTapRoutePill = onTapRoutePill,
-                onClearFilter = { updateStopFilter(null) }
-            )
+            if (servedRoutes.size > 1) {
+                StopDetailsFilterPills(
+                    servedRoutes = servedRoutes,
+                    filter = filter,
+                    onTapRoutePill = onTapRoutePill,
+                    onClearFilter = { updateStopFilter(null) }
+                )
+            }
             HorizontalDivider(
                 Modifier.fillMaxWidth()
                     .padding(top = 8.dp)
@@ -91,7 +93,7 @@ fun StopDetailsView(
                 departures,
                 globalResponse,
                 now,
-                filter,
+                filter ?: departures.autoFilter(),
                 togglePinnedRoute,
                 pinnedRoutes,
                 updateStopFilter
