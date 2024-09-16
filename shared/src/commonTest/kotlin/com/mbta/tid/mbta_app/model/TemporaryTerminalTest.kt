@@ -12,6 +12,10 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+/**
+ * An integration test for all of the logic in [NearbyStaticData.rewrittenForTemporaryTerminals] and
+ * [TemporaryTerminalRewriter].
+ */
 class TemporaryTerminalTest {
     val now = Instant.parse("2024-08-19T16:44:08-04:00")
 
