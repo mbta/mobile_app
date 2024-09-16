@@ -35,7 +35,8 @@ final class TripDetailsStopViewTests: XCTestCase {
             stop: .init(stop: stop, stopSequence: 1, alert: alert, schedule: nil, prediction: prediction, vehicle: nil,
                         routes: []),
             now: Date.now.toKotlinInstant(),
-            onTapLink: { _, _, _ in }
+            onTapLink: { _, _, _ in },
+            routeType: nil
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Stop Closed"))
@@ -69,7 +70,8 @@ final class TripDetailsStopViewTests: XCTestCase {
                 XCTAssertEqual(stopListEntry, actualStopListEntry)
                 XCTAssertNil(connectingRoute)
                 exp.fulfill()
-            }
+            },
+            routeType: nil
         )
 
         try sut.inspect().find(button: "Boylston").tap()
@@ -107,10 +109,36 @@ final class TripDetailsStopViewTests: XCTestCase {
                 XCTAssertEqual(stopListEntry, actualStopListEntry)
                 XCTAssertEqual(connectingRouteId, connectingRoute.id)
                 exp.fulfill()
-            }
+            },
+            routeType: nil
         )
 
         try sut.inspect().find(text: "28").find(RoutePill.self, relation: .parent).callOnTapGesture()
         wait(for: [exp], timeout: 5)
+    }
+
+    func testShowsNowForBus() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let prediction = objects.prediction { prediction in
+            prediction.arrivalTime = now.addingTimeInterval(15).toKotlinInstant()
+        }
+        let sut = TripDetailsStopView(
+            stop: .init(
+                stop: stop,
+                stopSequence: 1,
+                alert: nil,
+                schedule: nil,
+                prediction: prediction,
+                vehicle: nil,
+                routes: []
+            ),
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeType: .bus
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Now"))
     }
 }
