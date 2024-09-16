@@ -9,29 +9,49 @@ import kotlin.test.assertTrue
 
 /** Unit tests for the individual helper functions defined in [TemporaryTerminalRewriter]. */
 class TemporaryTerminalRewriterTest {
-    private val boardExitRide =
-        listOf(
-            Alert.InformedEntity.Activity.Board,
-            Alert.InformedEntity.Activity.Exit,
-            Alert.InformedEntity.Activity.Ride
-        )
+    private class AppliesToRouteTestHelper {
+        val boardExitRide =
+            listOf(
+                Alert.InformedEntity.Activity.Board,
+                Alert.InformedEntity.Activity.Exit,
+                Alert.InformedEntity.Activity.Ride
+            )
 
-    @Test
-    fun `appliesToRoute accepts non-branching suspension`() {
         val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
-        objects.prediction { trip = objects.trip(typical) }
+        lateinit var route: Route
 
-        val rewriter =
+        fun createRoute() {
+            route = objects.route { type = RouteType.HEAVY_RAIL }
+        }
+
+        lateinit var alert: Alert
+
+        fun createAlert() {
+            alert =
+                objects.alert {
+                    effect = Alert.Effect.Suspension
+                    informedEntity(activities = boardExitRide, route = route.id)
+                }
+        }
+
+        lateinit var typical: RoutePattern
+        lateinit var diversion: RoutePattern
+
+        fun createPatterns() {
+            typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
+            diversion =
+                objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
+        }
+
+        fun createSchedule() {
+            objects.schedule { trip = objects.trip(diversion) }
+        }
+
+        fun createPrediction() {
+            objects.prediction { trip = objects.trip(typical) }
+        }
+
+        fun rewriter() =
             TemporaryTerminalRewriter(
                 NearbyStaticData(emptyList()),
                 PredictionsStreamDataResponse(objects),
@@ -39,154 +59,102 @@ class TemporaryTerminalRewriterTest {
                 listOf(alert),
                 ScheduleResponse(objects)
             )
+    }
+
+    private fun appliesToRouteTest(block: AppliesToRouteTestHelper.() -> Unit) =
+        AppliesToRouteTestHelper().block()
+
+    @Test
+    fun `appliesToRoute accepts non-branching suspension`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
+        createPatterns()
+        createSchedule()
+        createPrediction()
+
+        val rewriter = rewriter()
 
         assertTrue(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects bus`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.BUS }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
-        objects.prediction { trip = objects.trip(typical) }
+    fun `appliesToRoute rejects bus`() = appliesToRouteTest {
+        route = objects.route { type = RouteType.BUS }
+        createAlert()
+        createPatterns()
+        createSchedule()
+        createPrediction()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects insufficient alert effect`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
+    fun `appliesToRoute rejects insufficient alert effect`() = appliesToRouteTest {
+        createRoute()
+        alert =
             objects.alert {
                 effect = Alert.Effect.StationClosure
                 informedEntity(activities = boardExitRide, route = route.id)
             }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
-        objects.prediction { trip = objects.trip(typical) }
+        createPatterns()
+        createSchedule()
+        createPrediction()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects wrong route`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
+    fun `appliesToRoute rejects wrong route`() = appliesToRouteTest {
+        createRoute()
+        alert =
             objects.alert {
                 effect = Alert.Effect.Suspension
                 informedEntity(activities = boardExitRide, route = "not-${route.id}")
             }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
-        objects.prediction { trip = objects.trip(typical) }
+        createPatterns()
+        createSchedule()
+        createPrediction()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects without non-typical schedule`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
+    fun `appliesToRoute rejects without non-typical schedule`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
+        createPatterns()
         objects.schedule { trip = objects.trip(typical) }
-        objects.prediction { trip = objects.trip(typical) }
+        createPrediction()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects without missing typical schedule`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
+    fun `appliesToRoute rejects without missing typical schedule`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
+        createPatterns()
+        createSchedule()
         objects.schedule { trip = objects.trip(typical) }
-        objects.prediction { trip = objects.trip(typical) }
+        createPrediction()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute accepts branching suspension`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
+    fun `appliesToRoute accepts branching suspension`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
         val typicalA = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
         val typicalB = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
         val diversionA =
@@ -195,93 +163,45 @@ class TemporaryTerminalRewriterTest {
         objects.schedule { trip = objects.trip(typicalB) }
         objects.prediction { trip = objects.trip(typicalA) }
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertTrue(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects no schedules`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.prediction { trip = objects.trip(typical) }
+    fun `appliesToRoute rejects no schedules`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
+        createPatterns()
+        createPrediction()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects no predictions`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
+    fun `appliesToRoute rejects no predictions`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
+        createPatterns()
+        createSchedule()
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
 
     @Test
-    fun `appliesToRoute rejects with diversion prediction`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(activities = boardExitRide, route = route.id)
-            }
-        val typical = objects.routePattern(route) { typicality = RoutePattern.Typicality.Typical }
-        val diversion =
-            objects.routePattern(route) { typicality = RoutePattern.Typicality.Diversion }
-        objects.schedule { trip = objects.trip(diversion) }
-        objects.prediction { trip = objects.trip(typical) }
+    fun `appliesToRoute rejects with diversion prediction`() = appliesToRouteTest {
+        createRoute()
+        createAlert()
+        createPatterns()
+        createSchedule()
+        createPrediction()
         objects.prediction { trip = objects.trip(diversion) }
 
-        val rewriter =
-            TemporaryTerminalRewriter(
-                NearbyStaticData(emptyList()),
-                PredictionsStreamDataResponse(objects),
-                GlobalResponse(objects, emptyMap()),
-                listOf(alert),
-                ScheduleResponse(objects)
-            )
+        val rewriter = rewriter()
 
         assertFalse(rewriter.appliesToRoute(route))
     }
