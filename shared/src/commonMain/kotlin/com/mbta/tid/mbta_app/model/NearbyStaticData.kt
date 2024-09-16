@@ -639,55 +639,18 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
         truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] = truncatedPatternId
     }
 
-    fun truncatePatternsAtStop(stopPattern: NearbyStaticData.StopPatterns) {
-        for (fullPattern in stopPattern.patterns.flatMap { it.patterns }) {
+    fun NearbyStaticData.StopPatterns.withTruncatedPatterns(): NearbyStaticData.StopPatterns {
+        for (fullPattern in this.patterns.flatMap { it.patterns }) {
             val fullPatternTrip = globalData.trips[fullPattern.representativeTripId] ?: continue
             checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
 
-            for (stopId in stopPattern.allStopIds) {
+            for (stopId in this.allStopIds) {
                 if (!fullPatternTrip.stopIds.contains(stopId)) continue
 
                 truncatePattern(fullPattern, fullPatternTrip.stopIds, stopId)
             }
         }
-    }
 
-    fun rewritePredictions(routePredictions: List<Prediction>) {
-        for (prediction in routePredictions) {
-            val fullPattern = prediction.routePattern() ?: continue
-            // subway doesn't have loops! we don't have to think about loops! yay!
-            val stopId = prediction.stopId
-
-            val truncatedPatternId =
-                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
-            val truncatedPattern = globalData.routePatterns[truncatedPatternId]
-
-            if (truncatedPattern != null) {
-                val originalTrip = predictions.trips[prediction.tripId] ?: continue
-                val truncatedRepresentativeTrip =
-                    globalData.trips[truncatedPattern.representativeTripId] ?: continue
-                rewrittenTrips[originalTrip.id] =
-                    originalTrip.copy(
-                        headsign = truncatedRepresentativeTrip.headsign,
-                        routePatternId = truncatedPattern.id
-                    )
-            }
-        }
-    }
-
-    for (transitWithStops in this.data) {
-        for (route in transitWithStops.allRoutes()) {
-            if (appliesToRoute(route)) {
-                for (stopPattern in transitWithStops.patternsByStop) {
-                    truncatePatternsAtStop(stopPattern)
-                }
-                rewritePredictions(predictionsByRoute[route.id].orEmpty())
-            }
-        }
-    }
-
-    // for every case where we collapsed a prediction into a schedule, move the patterns in the data
-    fun NearbyStaticData.StopPatterns.collapseForRewrites(): NearbyStaticData.StopPatterns {
         val collapsedPatterns =
             patterns
                 .groupBy { staticPatterns ->
@@ -721,14 +684,41 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
         return copy(patterns = collapsedPatterns)
     }
 
+    fun rewritePredictions(routePredictions: List<Prediction>) {
+        for (prediction in routePredictions) {
+            val fullPattern = prediction.routePattern() ?: continue
+            // subway doesn't have loops! we don't have to think about loops! yay!
+            val stopId = prediction.stopId
+
+            val truncatedPatternId =
+                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
+            val truncatedPattern = globalData.routePatterns[truncatedPatternId]
+
+            if (truncatedPattern != null) {
+                val originalTrip = predictions.trips[prediction.tripId] ?: continue
+                val truncatedRepresentativeTrip =
+                    globalData.trips[truncatedPattern.representativeTripId] ?: continue
+                rewrittenTrips[originalTrip.id] =
+                    originalTrip.copy(
+                        headsign = truncatedRepresentativeTrip.headsign,
+                        routePatternId = truncatedPattern.id
+                    )
+            }
+        }
+    }
+
     val rewrittenData =
         this.data.map { transitWithStops ->
-            transitWithStops.copy(
-                patternsByStop =
-                    transitWithStops.patternsByStop.map { stopPatterns ->
-                        stopPatterns.collapseForRewrites()
-                    }
-            )
+            transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
+                if (appliesToRoute(route)) {
+                    val patternsTruncated =
+                        transit.patternsByStop.map { it.withTruncatedPatterns() }
+                    rewritePredictions(predictionsByRoute[route.id].orEmpty())
+                    transit.copy(patternsByStop = patternsTruncated)
+                } else {
+                    transit
+                }
+            }
         }
 
     return Pair(this.copy(data = rewrittenData), predictions.copy(trips = rewrittenTrips))
