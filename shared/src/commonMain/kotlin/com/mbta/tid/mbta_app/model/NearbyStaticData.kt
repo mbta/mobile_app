@@ -539,7 +539,7 @@ fun NearbyStaticData.withRealtimeInfo(
  * canonical route patterns. The way we work around this is that for
  * 1. subway routes
  * 2. with alerts somewhere on the line
- * 3. where the schedule has non-typical patterns instead of typical patterns
+ * 3. where the schedule has non-typical patterns and is missing a typical pattern
  * 4. but the predictions all have typical patterns instead of non-typical patterns
  *
  * we check the stops of the scheduled patterns against both the predicted pattern and the
@@ -580,11 +580,15 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             }
 
         val routeSchedules = schedulesByRoute[routeId].orEmpty()
-        val schedulesNeverTypical =
-            routeSchedules.isNotEmpty() &&
-                routeSchedules.all {
-                    it.routePattern()?.typicality != RoutePattern.Typicality.Typical
-                }
+        val scheduledPatterns = routeSchedules.mapNotNullTo(mutableSetOf()) { it.routePattern() }
+        val routePatterns = routePatternsByRoute[routeId].orEmpty()
+        val scheduleMissingTypical =
+            routePatterns
+                .filter { it.typicality == RoutePattern.Typicality.Typical }
+                .any { it !in scheduledPatterns }
+        val scheduleHasNontypical =
+            scheduledPatterns.any { it.typicality != RoutePattern.Typicality.Typical }
+        val scheduleReplacedTypical = scheduleMissingTypical && scheduleHasNontypical
 
         val routePredictions = predictionsByRoute[routeId].orEmpty()
         val predictionsAlwaysTypical =
@@ -593,7 +597,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
                     it.routePattern()?.typicality == RoutePattern.Typicality.Typical
                 }
 
-        return isSubway && routeHasAlert && schedulesNeverTypical && predictionsAlwaysTypical
+        return isSubway && routeHasAlert && scheduleReplacedTypical && predictionsAlwaysTypical
     }
 
     fun RoutePattern.isTruncationOf(
