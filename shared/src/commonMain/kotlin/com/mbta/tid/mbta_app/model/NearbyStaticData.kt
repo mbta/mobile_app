@@ -558,61 +558,14 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
 
     val rewriter = TemporaryTerminalRewriter(this, predictions, globalData, alerts, schedules)
 
-    fun Schedule.routePattern(): RoutePattern? =
-        schedules.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
     fun Prediction.routePattern(): RoutePattern? =
         predictions.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
 
-    val schedulesByRoute = rewriter.schedulesByRoute
     val predictionsByRoute = rewriter.predictionsByRoute
-    val routePatternsByRoute = rewriter.routePatternsByRoute
 
     val rewrittenTrips = predictions.trips.toMutableMap()
     // from Pair(fullPattern.id, stopId) to truncatedPattern.id
     val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
-
-    fun RoutePattern.isTruncationOf(
-        fullPattern: RoutePattern,
-        fullPatternStopIds: List<String>,
-        stopId: String
-    ): Boolean {
-        if (typicality == RoutePattern.Typicality.Typical) return false
-        if (directionId != fullPattern.directionId) return false
-        val truncatedPatternTrip = globalData.trips[representativeTripId] ?: return false
-        checkNotNull(truncatedPatternTrip.stopIds) { fetchedWithoutStopIds(this) }
-        return truncatedPatternTrip.stopIds.contains(stopId) &&
-            fullPatternStopIds.containsSubsequence(truncatedPatternTrip.stopIds)
-    }
-
-    fun truncatePattern(
-        fullPattern: RoutePattern,
-        fullPatternStopIds: List<String>,
-        stopId: String
-    ) {
-        // we may be only fetching a subset of the schedule, so we want to consider all the patterns
-        // that could be in the schedule
-        val plausibleTruncatedPatterns =
-            routePatternsByRoute[fullPattern.routeId].orEmpty().filter {
-                it.isTruncationOf(fullPattern, fullPatternStopIds, stopId)
-            }
-
-        val truncatedPatternId =
-            if (plausibleTruncatedPatterns.size < 2) {
-                plausibleTruncatedPatterns.singleOrNull()?.id
-            } else {
-                // if there are multiple truncated patterns with the right direction and stops,
-                // hopefully there's only one that's actually on the schedule
-                plausibleTruncatedPatterns
-                    .singleOrNull { truncatedPattern ->
-                        schedulesByRoute[fullPattern.routeId].orEmpty().any {
-                            it.routePattern() == truncatedPattern
-                        }
-                    }
-                    ?.id
-            }
-
-        truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] = truncatedPatternId
-    }
 
     fun NearbyStaticData.StopPatterns.withTruncatedPatterns(): NearbyStaticData.StopPatterns {
         for (fullPattern in this.patterns.flatMap { it.patterns }) {
@@ -622,7 +575,8 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             for (stopId in this.allStopIds) {
                 if (!fullPatternTrip.stopIds.contains(stopId)) continue
 
-                truncatePattern(fullPattern, fullPatternTrip.stopIds, stopId)
+                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
+                    rewriter.truncatedPattern(fullPattern, fullPatternTrip.stopIds, stopId)?.id
             }
         }
 
@@ -698,21 +652,6 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
 
     return Pair(this.copy(data = rewrittenData), predictions.copy(trips = rewrittenTrips))
 }
-
-/**
- * Tests whether this list contains the other list in order as a subsequence. Assumes this list does
- * not contain duplicates, because in the specific context where it's used it won't.
- */
-private fun <T> List<T>.containsSubsequence(subsequence: List<T>): Boolean {
-    if (subsequence.isEmpty()) return true
-    val startIndex = this.indexOf(subsequence.first())
-    if (startIndex == -1) return false
-    if (this.size < startIndex + subsequence.size) return false
-    return this.subList(startIndex, startIndex + subsequence.size) == subsequence
-}
-
-private fun fetchedWithoutStopIds(routePattern: RoutePattern) =
-    "route pattern ${routePattern.id} representative trip ${routePattern.representativeTripId} fetched without stop IDs"
 
 class NearbyStaticDataBuilder {
     val data = mutableListOf<NearbyStaticData.TransitWithStops>()

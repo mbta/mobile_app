@@ -11,14 +11,14 @@ class TemporaryTerminalRewriter(
     val alerts: List<Alert>,
     val schedules: ScheduleResponse
 ) {
-    val schedulesByRoute = schedules.schedules.groupBy { it.routeId }
+    private val schedulesByRoute = schedules.schedules.groupBy { it.routeId }
     // predictions that reflect auto-cancelled schedules will throw everything off, so filter out
     // cancellations
     val predictionsByRoute =
         predictions.predictions.values
             .filterNot { it.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled }
             .groupBy { it.routeId }
-    val routePatternsByRoute = globalData.routePatterns.values.groupBy { it.routeId }
+    private val routePatternsByRoute = globalData.routePatterns.values.groupBy { it.routeId }
 
     fun Schedule.routePattern(): RoutePattern? =
         schedules.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
@@ -68,4 +68,69 @@ class TemporaryTerminalRewriter(
 
         return isSubway && routeHasAlert && scheduleReplacedTypical && predictionsAlwaysTypical
     }
+
+    /**
+     * Checks if this route pattern is not typical, points in the same direction as [fullPattern],
+     * contains [stopId], and contains a subsequence of [fullPatternStopIds].
+     */
+    fun RoutePattern.isTruncationOf(
+        fullPattern: RoutePattern,
+        fullPatternStopIds: List<String>,
+        stopId: String
+    ): Boolean {
+        if (typicality == RoutePattern.Typicality.Typical) return false
+        if (directionId != fullPattern.directionId) return false
+        val truncatedPatternTrip = globalData.trips[representativeTripId] ?: return false
+        checkNotNull(truncatedPatternTrip.stopIds) { fetchedWithoutStopIds(this) }
+        return truncatedPatternTrip.stopIds.contains(stopId) &&
+            fullPatternStopIds.containsSubsequence(truncatedPatternTrip.stopIds)
+    }
+
+    /**
+     * Finds a truncated pattern for [fullPattern] that includes [stopId]. Since at time of writing
+     * we only fetch scheduled trips for the remainder of the day, does not require that the
+     * truncated pattern actually appear in the schedule unless there are multiple plausible
+     * patterns (which could happen if the rating includes both a current disruption and a future
+     * disruption on the same line). If there is no plausible truncated pattern, or if there are
+     * several, does not truncate [fullPattern].
+     */
+    fun truncatedPattern(
+        fullPattern: RoutePattern,
+        fullPatternStopIds: List<String>,
+        stopId: String
+    ): RoutePattern? {
+        // we may be only fetching a subset of the schedule, so we want to consider all the patterns
+        // that could be in the schedule
+        val plausibleTruncatedPatterns =
+            routePatternsByRoute[fullPattern.routeId].orEmpty().filter {
+                it.isTruncationOf(fullPattern, fullPatternStopIds, stopId)
+            }
+
+        return if (plausibleTruncatedPatterns.size < 2) {
+            plausibleTruncatedPatterns.singleOrNull()
+        } else {
+            // if there are multiple truncated patterns with the right direction and stops,
+            // hopefully there's only one that's actually on the schedule
+            plausibleTruncatedPatterns.singleOrNull { truncatedPattern ->
+                schedulesByRoute[fullPattern.routeId].orEmpty().any {
+                    it.routePattern() == truncatedPattern
+                }
+            }
+        }
+    }
 }
+
+/**
+ * Tests whether this list contains the other list in order as a subsequence. Assumes this list does
+ * not contain duplicates, because in the specific context where it's used it won't.
+ */
+private fun <T> List<T>.containsSubsequence(subsequence: List<T>): Boolean {
+    if (subsequence.isEmpty()) return true
+    val startIndex = this.indexOf(subsequence.first())
+    if (startIndex == -1) return false
+    if (this.size < startIndex + subsequence.size) return false
+    return this.subList(startIndex, startIndex + subsequence.size) == subsequence
+}
+
+fun fetchedWithoutStopIds(routePattern: RoutePattern) =
+    "route pattern ${routePattern.id} representative trip ${routePattern.representativeTripId} fetched without stop IDs"
