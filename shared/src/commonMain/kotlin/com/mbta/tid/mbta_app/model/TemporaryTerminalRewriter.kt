@@ -26,6 +26,8 @@ class TemporaryTerminalRewriter(
     fun Prediction.routePattern(): RoutePattern? =
         predictions.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
 
+    val rewrittenTrips = predictions.trips.toMutableMap()
+
     // from Pair(fullPattern.id, stopId) to truncatedPattern.id
     val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
 
@@ -173,6 +175,34 @@ class TemporaryTerminalRewriter(
                         .let { it.copy(patterns = it.patterns.sorted()) }
                 }
         return stopPatterns.copy(patterns = collapsedPatterns)
+    }
+
+    /**
+     * Uses [truncatedPatternByFullPatternAndStop] as written by [truncatePatternsAtStop] to replace
+     * trip headsigns and route pattern IDs in [rewrittenTrips].
+     */
+    fun rewritePredictions(routeId: String) {
+        val routePredictions = predictionsByRoute[routeId].orEmpty()
+        for (prediction in routePredictions) {
+            val fullPattern = prediction.routePattern() ?: continue
+            // subway doesn't have loops! we don't have to think about loops! yay!
+            val stopId = prediction.stopId
+
+            val truncatedPatternId =
+                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
+            val truncatedPattern = globalData.routePatterns[truncatedPatternId]
+
+            if (truncatedPattern != null) {
+                val originalTrip = predictions.trips[prediction.tripId] ?: continue
+                val truncatedRepresentativeTrip =
+                    globalData.trips[truncatedPattern.representativeTripId] ?: continue
+                rewrittenTrips[originalTrip.id] =
+                    originalTrip.copy(
+                        headsign = truncatedRepresentativeTrip.headsign,
+                        routePatternId = truncatedPattern.id
+                    )
+            }
+        }
     }
 }
 

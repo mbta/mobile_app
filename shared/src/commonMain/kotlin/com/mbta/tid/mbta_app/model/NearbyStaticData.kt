@@ -558,44 +558,13 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
 
     val rewriter = TemporaryTerminalRewriter(this, predictions, globalData, alerts, schedules)
 
-    fun Prediction.routePattern(): RoutePattern? =
-        predictions.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
-
-    val predictionsByRoute = rewriter.predictionsByRoute
-
-    val rewrittenTrips = predictions.trips.toMutableMap()
-
-    fun rewritePredictions(routePredictions: List<Prediction>) {
-        for (prediction in routePredictions) {
-            val fullPattern = prediction.routePattern() ?: continue
-            // subway doesn't have loops! we don't have to think about loops! yay!
-            val stopId = prediction.stopId
-
-            val truncatedPatternId =
-                rewriter.truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)]
-                    ?: continue
-            val truncatedPattern = globalData.routePatterns[truncatedPatternId]
-
-            if (truncatedPattern != null) {
-                val originalTrip = predictions.trips[prediction.tripId] ?: continue
-                val truncatedRepresentativeTrip =
-                    globalData.trips[truncatedPattern.representativeTripId] ?: continue
-                rewrittenTrips[originalTrip.id] =
-                    originalTrip.copy(
-                        headsign = truncatedRepresentativeTrip.headsign,
-                        routePatternId = truncatedPattern.id
-                    )
-            }
-        }
-    }
-
     val rewrittenData =
         this.data.map { transitWithStops ->
             transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
                 if (rewriter.appliesToRoute(route)) {
                     val patternsTruncated =
                         transit.patternsByStop.map { rewriter.truncatePatternsAtStop(it) }
-                    rewritePredictions(predictionsByRoute[route.id].orEmpty())
+                    rewriter.rewritePredictions(route.id)
                     transit.copy(patternsByStop = patternsTruncated)
                 } else {
                     transit
@@ -603,7 +572,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             }
         }
 
-    return Pair(this.copy(data = rewrittenData), predictions.copy(trips = rewrittenTrips))
+    return Pair(this.copy(data = rewrittenData), predictions.copy(trips = rewriter.rewrittenTrips))
 }
 
 class NearbyStaticDataBuilder {

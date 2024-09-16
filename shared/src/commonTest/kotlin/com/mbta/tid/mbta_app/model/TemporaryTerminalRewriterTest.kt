@@ -549,4 +549,51 @@ class TemporaryTerminalRewriterTest {
             rewriter.truncatedPatternByFullPatternAndStop.toMap()
         )
     }
+
+    @Test
+    fun `rewritePredictions replaces headsign and route pattern id`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val stop = objects.stop()
+        val shortPattern =
+            objects.routePattern(route) { representativeTrip { headsign = "Short Headsign" } }
+        val longPattern =
+            objects.routePattern(route) { representativeTrip { headsign = "Long Headsign" } }
+
+        val trip = objects.trip(longPattern)
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                stopId = stop.id
+            }
+
+        val rewriter =
+            TemporaryTerminalRewriter(
+                NearbyStaticData(emptyList()),
+                // ensure representative trips aren't included in predictions
+                PredictionsStreamDataResponse(
+                    mapOf(prediction.id to prediction),
+                    mapOf(trip.id to trip),
+                    emptyMap()
+                ),
+                GlobalResponse(objects, emptyMap()),
+                emptyList(),
+                ScheduleResponse(objects)
+            )
+
+        rewriter.truncatedPatternByFullPatternAndStop[Pair(longPattern.id, stop.id)] =
+            shortPattern.id
+
+        assertEquals(mapOf(trip.id to trip), rewriter.rewrittenTrips)
+
+        rewriter.rewritePredictions(route.id)
+
+        assertEquals(
+            mapOf(
+                trip.id to trip.copy(routePatternId = shortPattern.id, headsign = "Short Headsign")
+            ),
+            rewriter.rewrittenTrips.toMap()
+        )
+    }
 }
