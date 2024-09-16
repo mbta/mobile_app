@@ -24,7 +24,7 @@ class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) 
             install(ContentNegotiation) { json(json) }
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
-            install(HttpTimeout) { requestTimeoutMillis = 5000 }
+            install(HttpTimeout) { requestTimeoutMillis = 8000 }
             defaultRequest { url(appVariant.backendRoot) }
         }
 
