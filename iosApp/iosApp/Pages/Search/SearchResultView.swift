@@ -71,7 +71,6 @@ struct SearchView: View {
 
     func handleStopTap(stopId: String) {
         guard let stop = globalResponse?.stops[stopId] else { return }
-        nearbyVM.navigationStack.removeAll()
         nearbyVM.navigationStack.append(.stopDetails(stop, nil))
     }
 
