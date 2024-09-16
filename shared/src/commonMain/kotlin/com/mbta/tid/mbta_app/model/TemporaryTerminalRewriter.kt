@@ -26,6 +26,9 @@ class TemporaryTerminalRewriter(
     fun Prediction.routePattern(): RoutePattern? =
         predictions.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
 
+    // from Pair(fullPattern.id, stopId) to truncatedPattern.id
+    val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
+
     /**
      * Rewriting realtime data for temporary terminals causes what the app displays to diverge from
      * what the API says is real, and so must be done with caution. Specifically, we only want to
@@ -117,6 +120,59 @@ class TemporaryTerminalRewriter(
                 }
             }
         }
+    }
+
+    /**
+     * Checks each typical pattern and child stop at [stopPatterns] for truncation, and merges full
+     * patterns into their truncated [NearbyStaticData.StaticPatterns].
+     */
+    fun truncatePatternsAtStop(
+        stopPatterns: NearbyStaticData.StopPatterns
+    ): NearbyStaticData.StopPatterns {
+        for (fullPattern in stopPatterns.patterns.flatMap { it.patterns }) {
+            if (fullPattern.typicality != RoutePattern.Typicality.Typical) continue
+            val fullPatternStopIds =
+                globalData.trips[fullPattern.representativeTripId]?.stopIds ?: continue
+
+            for (stopId in stopPatterns.allStopIds) {
+                if (!fullPatternStopIds.contains(stopId)) continue
+
+                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
+                    truncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
+            }
+        }
+
+        val collapsedPatterns =
+            stopPatterns.patterns
+                .groupBy { staticPatterns ->
+                    staticPatterns.patterns.map { pattern ->
+                        val truncatedPatternId =
+                            stopPatterns.allStopIds
+                                .mapNotNull { stopId ->
+                                    truncatedPatternByFullPatternAndStop[Pair(pattern.id, stopId)]
+                                }
+                                .singleOrNull()
+                        truncatedPatternId ?: pattern.id
+                    }
+                }
+                .values
+                .map { patternsList ->
+                    if (patternsList.size == 1) return@map patternsList.single()
+                    val patternsCorrectFirst =
+                        patternsList.sortedBy {
+                            val isTruncated =
+                                it.patterns.any { pattern ->
+                                    truncatedPatternByFullPatternAndStop.containsValue(pattern.id)
+                                }
+                            if (isTruncated) 0 else 1
+                        }
+                    patternsCorrectFirst
+                        .reduce { acc, nextPatterns ->
+                            acc.copy(patterns = acc.patterns + nextPatterns.patterns)
+                        }
+                        .let { it.copy(patterns = it.patterns.sorted()) }
+                }
+        return stopPatterns.copy(patterns = collapsedPatterns)
     }
 }
 

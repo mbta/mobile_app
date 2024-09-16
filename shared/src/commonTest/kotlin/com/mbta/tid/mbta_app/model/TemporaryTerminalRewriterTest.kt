@@ -376,4 +376,177 @@ class TemporaryTerminalRewriterTest {
 
         assertNull(truncatedPattern(fullPattern, "a"))
     }
+
+    private class TruncatePatternsAtStopTestHelper {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        var nextPatternSortOrder = 0
+
+        // this should probably be somewhere more useful than both here and TripDetailsStopListTest
+        private val childStopId = Regex("""(?<parentStop>[A-Za-z]+)\d+""")
+
+        // Generate stops dynamically based on ID, using a numeric suffix to indicate children.
+        fun stop(
+            stopId: String,
+            childStopIds: List<String> = listOf(),
+            connectingStopIds: List<String> = listOf()
+        ): Stop {
+            objects.stops[stopId]?.let {
+                return it
+            }
+
+            val parentStationId =
+                when (val match = childStopId.matchEntire(stopId)) {
+                    null -> null
+                    else -> stop(match.groups["parentStop"]!!.value).id
+                }
+            return objects.stop {
+                id = stopId
+                this.parentStationId = parentStationId
+                this.childStopIds = childStopIds
+                this.connectingStopIds = connectingStopIds
+            }
+        }
+
+        fun typical(route: Route, directionId: Int, vararg stopIds: String) =
+            objects.routePattern(route) {
+                this.directionId = directionId
+                typicality = RoutePattern.Typicality.Typical
+                sortOrder = nextPatternSortOrder
+                nextPatternSortOrder += 1
+                representativeTrip { this.stopIds = stopIds.asList() }
+            }
+
+        fun diversion(route: Route, directionId: Int, vararg stopIds: String) =
+            objects.routePattern(route) {
+                this.directionId = directionId
+                typicality = RoutePattern.Typicality.Diversion
+                sortOrder = nextPatternSortOrder
+                nextPatternSortOrder += 1
+                representativeTrip { this.stopIds = stopIds.asList() }
+            }
+
+        fun stopPatterns(block: NearbyStaticDataBuilder.() -> Unit): NearbyStaticData.StopPatterns {
+            val staticData = NearbyStaticData.build(block)
+            return staticData.data.single().patternsByStop.single()
+        }
+
+        val rewriter by lazy {
+            TemporaryTerminalRewriter(
+                NearbyStaticData(emptyList()),
+                PredictionsStreamDataResponse(objects),
+                GlobalResponse(objects, emptyMap()),
+                emptyList(),
+                ScheduleResponse(objects)
+            )
+        }
+    }
+
+    private fun truncatePatternsAtStopTest(block: TruncatePatternsAtStopTestHelper.() -> Unit) =
+        TruncatePatternsAtStopTestHelper().block()
+
+    @Test
+    fun `truncatePatternsAtStop handles easy case`() = truncatePatternsAtStopTest {
+        val typical = typical(route, 0, "a", "b", "c", "d", "e")
+        val early = diversion(route, 0, "a", "b")
+
+        val original = stopPatterns {
+            route(route) {
+                stop(stop("a")) {
+                    headsign("e", listOf(typical))
+                    headsign("b", listOf(early))
+                }
+            }
+        }
+
+        val expected = stopPatterns {
+            route(route) { stop(stop("a")) { headsign("b", listOf(typical, early)) } }
+        }
+
+        assertEquals(expected, rewriter.truncatePatternsAtStop(original))
+        assertEquals(
+            mapOf(Pair(typical.id, "a") to early.id),
+            rewriter.truncatedPatternByFullPatternAndStop.toMap()
+        )
+    }
+
+    @Test
+    fun `truncatePatternsAtStop handles Red Line`() = truncatePatternsAtStopTest {
+        stop("Al", listOf("Al0", "Al1"))
+        val harvard = stop("Ha", listOf("Ha0", "Ha1"))
+        stop("Ke", listOf("Ke0", "Ke1"))
+        // 0_ southbound 1_ northbound _0 Ashmont _1 Braintree
+        val jfkUmass = stop("Jf", listOf("Jf00", "Jf01", "Jf10", "Jf11"))
+        stop("As", listOf("As0", "As1"))
+        stop("Br", listOf("Br0", "Br1"))
+        val typicalBSouth = typical(route, 0, "Al0", "Ha0", "Ke0", "Jf01", "Br0")
+        val typicalASouth = typical(route, 0, "Al0", "Ha0", "Ke0", "Jf00", "As0")
+        val divASouth = diversion(route, 0, "Jf00", "As0")
+        val divBSouth = diversion(route, 0, "Jf01", "Br0")
+        val divSSouth = diversion(route, 0, "Al0", "Ha0", "Ke0")
+        val typicalBNorth = typical(route, 1, "Br1", "Jf11", "Ke1", "Ha1", "Al1")
+        val typicalANorth = typical(route, 1, "As1", "Jf10", "Ke1", "Ha1", "Al1")
+        val divANorth = diversion(route, 1, "As1", "Jf10")
+        val divBNorth = diversion(route, 1, "Br1", "Jf11")
+        val divSNorth = diversion(route, 1, "Ke1", "Ha1", "Al1")
+
+        val originalHarvard = stopPatterns {
+            route(route) {
+                stop(harvard) {
+                    headsign("Braintree", listOf(typicalBSouth))
+                    headsign("Ashmont", listOf(typicalASouth))
+                    headsign("Kendall/MIT", listOf(divSSouth))
+                    headsign("Alewife", listOf(typicalBNorth, typicalANorth, divSNorth))
+                }
+            }
+        }
+
+        val expectedHarvard = stopPatterns {
+            route(route) {
+                stop(harvard) {
+                    headsign("Kendall/MIT", listOf(typicalBSouth, typicalASouth, divSSouth))
+                    headsign("Alewife", listOf(typicalBNorth, typicalANorth, divSNorth))
+                }
+            }
+        }
+
+        val originalJFK = stopPatterns {
+            route(route) {
+                stop(jfkUmass) {
+                    headsign("Braintree", listOf(typicalBSouth, divBSouth))
+                    headsign("Ashmont", listOf(typicalASouth, divASouth))
+                    headsign("Alewife", listOf(typicalBNorth, typicalANorth))
+                    headsign("JFK/UMass", listOf(divANorth, divBNorth))
+                }
+            }
+        }
+
+        val expectedJFK = stopPatterns {
+            route(route) {
+                stop(jfkUmass) {
+                    headsign("Braintree", listOf(typicalBSouth, divBSouth))
+                    headsign("Ashmont", listOf(typicalASouth, divASouth))
+                    headsign("Alewife", listOf(typicalBNorth, typicalANorth))
+                    headsign("JFK/UMass", listOf(divANorth, divBNorth))
+                }
+            }
+        }
+
+        assertEquals(expectedHarvard, rewriter.truncatePatternsAtStop(originalHarvard))
+        assertEquals(expectedJFK, rewriter.truncatePatternsAtStop(originalJFK))
+        assertEquals(
+            mapOf(
+                Pair(typicalBSouth.id, "Ha0") to divSSouth.id,
+                Pair(typicalASouth.id, "Ha0") to divSSouth.id,
+                Pair(typicalBNorth.id, "Ha1") to divSNorth.id,
+                Pair(typicalANorth.id, "Ha1") to divSNorth.id,
+                Pair(typicalBSouth.id, "Jf01") to divBSouth.id,
+                Pair(typicalASouth.id, "Jf00") to divASouth.id,
+                Pair(typicalBNorth.id, "Jf11") to divBNorth.id,
+                Pair(typicalANorth.id, "Jf10") to divANorth.id
+            ),
+            rewriter.truncatedPatternByFullPatternAndStop.toMap()
+        )
+    }
 }

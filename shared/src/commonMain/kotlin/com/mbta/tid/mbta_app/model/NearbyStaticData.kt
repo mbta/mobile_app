@@ -564,54 +564,6 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
     val predictionsByRoute = rewriter.predictionsByRoute
 
     val rewrittenTrips = predictions.trips.toMutableMap()
-    // from Pair(fullPattern.id, stopId) to truncatedPattern.id
-    val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
-
-    fun NearbyStaticData.StopPatterns.withTruncatedPatterns(): NearbyStaticData.StopPatterns {
-        for (fullPattern in this.patterns.flatMap { it.patterns }) {
-            val fullPatternStopIds =
-                globalData.trips[fullPattern.representativeTripId]?.stopIds ?: continue
-
-            for (stopId in this.allStopIds) {
-                if (!fullPatternStopIds.contains(stopId)) continue
-
-                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
-                    rewriter.truncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
-            }
-        }
-
-        val collapsedPatterns =
-            patterns
-                .groupBy { staticPatterns ->
-                    staticPatterns.patterns.map { pattern ->
-                        val truncatedPatternId =
-                            allStopIds
-                                .mapNotNull { stopId ->
-                                    truncatedPatternByFullPatternAndStop[Pair(pattern.id, stopId)]
-                                }
-                                .singleOrNull()
-                        truncatedPatternId ?: pattern.id
-                    }
-                }
-                .values
-                .map { patternsList ->
-                    if (patternsList.size == 1) return@map patternsList.single()
-                    val patternsCorrectFirst =
-                        patternsList.sortedBy {
-                            val isTruncated =
-                                it.patterns.any { pattern ->
-                                    truncatedPatternByFullPatternAndStop.containsValue(pattern.id)
-                                }
-                            if (isTruncated) 0 else 1
-                        }
-                    patternsCorrectFirst
-                        .reduce { acc, nextPatterns ->
-                            acc.copy(patterns = acc.patterns + nextPatterns.patterns)
-                        }
-                        .let { it.copy(patterns = it.patterns.sorted()) }
-                }
-        return copy(patterns = collapsedPatterns)
-    }
 
     fun rewritePredictions(routePredictions: List<Prediction>) {
         for (prediction in routePredictions) {
@@ -620,7 +572,8 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             val stopId = prediction.stopId
 
             val truncatedPatternId =
-                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] ?: continue
+                rewriter.truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)]
+                    ?: continue
             val truncatedPattern = globalData.routePatterns[truncatedPatternId]
 
             if (truncatedPattern != null) {
@@ -641,7 +594,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
             transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
                 if (rewriter.appliesToRoute(route)) {
                     val patternsTruncated =
-                        transit.patternsByStop.map { it.withTruncatedPatterns() }
+                        transit.patternsByStop.map { rewriter.truncatePatternsAtStop(it) }
                     rewritePredictions(predictionsByRoute[route.id].orEmpty())
                     transit.copy(patternsByStop = patternsTruncated)
                 } else {
@@ -695,7 +648,7 @@ class NearbyStaticDataBuilder {
         @DefaultArgumentInterop.Enabled
         fun stop(
             stop: Stop,
-            childStopIds: List<String> = emptyList(),
+            childStopIds: List<String> = stop.childStopIds,
             directions: List<Direction>? = null,
             block: PatternsBuilder.() -> Unit
         ) {
