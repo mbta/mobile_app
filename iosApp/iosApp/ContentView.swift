@@ -229,12 +229,13 @@ struct ContentView: View {
                 tripId: tripId,
                 vehicleId: vehicleId,
                 target: target,
-                routeId: _,
+                routeId: routeId,
                 directionId: _
             ):
                 TripDetailsPage(
                     tripId: tripId,
                     vehicleId: vehicleId,
+                    routeId: routeId,
                     target: target,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM

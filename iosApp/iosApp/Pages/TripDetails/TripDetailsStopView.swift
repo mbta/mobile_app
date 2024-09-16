@@ -13,6 +13,7 @@ struct TripDetailsStopView: View {
     let stop: TripDetailsStopList.Entry
     let now: Instant
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
+    let routeType: RouteType?
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -23,7 +24,7 @@ struct TripDetailsStopView: View {
                     HStack {
                         Text(stop.stop.name).foregroundStyle(Color.text)
                         Spacer()
-                        UpcomingTripView(prediction: upcomingTripViewState, routeType: nil)
+                        UpcomingTripView(prediction: upcomingTripViewState, routeType: routeType)
                     }
                 }
             )
@@ -35,7 +36,7 @@ struct TripDetailsStopView: View {
         if let alert = stop.alert {
             .noService(alert.effect)
         } else {
-            .some(stop.format(now: now, routeType: nil))
+            .some(stop.format(now: now, routeType: routeType))
         }
     }
 
@@ -83,6 +84,7 @@ struct TripDetailsStopView: View {
             ]
         ),
         now: Date.now.toKotlinInstant(),
-        onTapLink: { _, _, _ in }
+        onTapLink: { _, _, _ in },
+        routeType: .lightRail
     ).font(Typography.body)
 }

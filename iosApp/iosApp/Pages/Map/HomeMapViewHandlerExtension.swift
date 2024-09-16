@@ -205,7 +205,7 @@ extension HomeMapView {
         })
         let stopSequence = trip?.stopSequence?.intValue
 
-        guard let routeId = vehicle.routeId ?? trip?.trip.id else {
+        guard let routeId = trip?.trip.routeId ?? vehicle.routeId else {
             // TODO: figure out something to do if this is nil
             return
         }

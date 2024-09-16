@@ -14,6 +14,7 @@ import SwiftUI
 struct TripDetailsPage: View {
     let tripId: String
     let vehicleId: String
+    let routeId: String
     let target: TripDetailsTarget?
 
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -34,9 +35,14 @@ struct TripDetailsPage: View {
 
     let inspection = Inspection<Self>()
 
+    private var routeType: RouteType? {
+        globalResponse?.routes[routeId]?.type
+    }
+
     init(
         tripId: String,
         vehicleId: String,
+        routeId: String,
         target: TripDetailsTarget?,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
@@ -48,6 +54,7 @@ struct TripDetailsPage: View {
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
+        self.routeId = routeId
         self.target = target
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
@@ -75,9 +82,14 @@ struct TripDetailsPage: View {
                         targetStopSequence: Int32(stopSequence),
                         globalData: globalResponse
                     ) {
-                        TripDetailsStopListSplitView(splitStops: splitStops, now: now, onTapLink: onTapStop)
+                        TripDetailsStopListSplitView(
+                            splitStops: splitStops,
+                            now: now,
+                            onTapLink: onTapStop,
+                            routeType: routeType
+                        )
                     } else {
-                        TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop)
+                        TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop, routeType: routeType)
                     }
                 } else {
                     Text("Couldn't load stop list")

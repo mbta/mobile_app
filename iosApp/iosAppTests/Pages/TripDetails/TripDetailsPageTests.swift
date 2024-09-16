@@ -46,6 +46,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
+            routeId: trip.routeId,
             target: nil,
             nearbyVM: .init(),
             mapVM: .init(),
@@ -109,6 +110,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
+            routeId: route.id,
             target: nil,
             nearbyVM: .init(),
             mapVM: .init(),
@@ -152,6 +154,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
+            routeId: trip.routeId,
             target: .init(stopId: stop1.id, stopSequence: 998),
             nearbyVM: .init(),
             mapVM: .init(),
@@ -261,6 +264,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
+            routeId: trip.routeId,
             target: nil,
             nearbyVM: .init(),
             mapVM: .init(),
@@ -320,6 +324,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
+            routeId: trip.routeId,
             target: nil,
             nearbyVM: .init(),
             mapVM: .init(),
@@ -361,6 +366,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: "tripId",
             vehicleId: "veicleId",
+            routeId: "routeId",
             target: nil,
             nearbyVM: FakeNearbyVM(backExp),
             mapVM: .init(),
@@ -396,6 +402,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
+            routeId: trip.routeId,
             target: nil,
             nearbyVM: .init(),
             mapVM: mapVM,
@@ -442,6 +449,7 @@ final class TripDetailsPageTests: XCTestCase {
         let sut = TripDetailsPage(
             tripId: trip.id,
             vehicleId: vehicle.id,
+            routeId: route.id,
             target: nil,
             nearbyVM: nearbyVM,
             mapVM: .init(),

@@ -13,10 +13,11 @@ struct TripDetailsStopListView: View {
     let stops: TripDetailsStopList
     let now: Instant
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
+    let routeType: RouteType?
 
     var body: some View {
         List(stops.stops, id: \.stopSequence) { stop in
-            TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink)
+            TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
         }
     }
 }
@@ -53,6 +54,7 @@ struct TripDetailsStopListView: View {
             ),
         ]),
         now: Date.now.toKotlinInstant(),
-        onTapLink: { _, _, _ in }
+        onTapLink: { _, _, _ in },
+        routeType: nil
     ).font(Typography.body)
 }
