@@ -57,6 +57,7 @@ kotlin {
                 implementation(libs.ktor.client.encoding)
                 implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.okio)
                 implementation(libs.skie.configuration.annotations)
                 implementation(libs.spatialk.turf)
             }
@@ -66,6 +67,7 @@ kotlin {
                 implementation(libs.koin.test)
                 implementation(libs.kotlin.test)
                 implementation(libs.ktor.client.mock)
+                implementation(libs.okio.fakefilesystem)
             }
         }
         val androidMain by getting {
@@ -85,5 +87,10 @@ android {
 }
 
 skie { features { group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) } } }
+
+mokkery {
+    ignoreInlineMembers.set(true)
+    ignoreFinalMembers.set(true)
+}
 
 sentryKmp { autoInstall.commonMain.enabled = false }
