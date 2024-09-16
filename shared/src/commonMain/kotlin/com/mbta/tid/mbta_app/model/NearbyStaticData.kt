@@ -556,49 +556,20 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
     if (predictions == null || globalData == null || alerts == null || schedules == null)
         return Pair(this, predictions)
 
+    val rewriter = TemporaryTerminalRewriter(this, predictions, globalData, alerts, schedules)
+
     fun Schedule.routePattern(): RoutePattern? =
         schedules.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
     fun Prediction.routePattern(): RoutePattern? =
         predictions.trips[tripId]?.let { globalData.routePatterns[it.routePatternId] }
 
-    val schedulesByRoute = schedules.schedules.groupBy { it.routeId }
-    val predictionsByRoute = predictions.predictions.values.groupBy { it.routeId }
-    val routePatternsByRoute = globalData.routePatterns.values.groupBy { it.routeId }
+    val schedulesByRoute = rewriter.schedulesByRoute
+    val predictionsByRoute = rewriter.predictionsByRoute
+    val routePatternsByRoute = rewriter.routePatternsByRoute
 
     val rewrittenTrips = predictions.trips.toMutableMap()
     // from Pair(fullPattern.id, stopId) to truncatedPattern.id
     val truncatedPatternByFullPatternAndStop = mutableMapOf<Pair<String, String>, String?>()
-
-    fun appliesToRoute(route: Route): Boolean {
-        val routeId = route.id
-        val isSubway = route.type.isSubway()
-
-        val routeHasAlert =
-            alerts.any { alert ->
-                alert.effect in setOf(Alert.Effect.Suspension, Alert.Effect.Shuttle) &&
-                    alert.anyInformedEntity { it.appliesTo(routeId = routeId) }
-            }
-
-        val routeSchedules = schedulesByRoute[routeId].orEmpty()
-        val scheduledPatterns = routeSchedules.mapNotNullTo(mutableSetOf()) { it.routePattern() }
-        val routePatterns = routePatternsByRoute[routeId].orEmpty()
-        val scheduleMissingTypical =
-            routePatterns
-                .filter { it.typicality == RoutePattern.Typicality.Typical }
-                .any { it !in scheduledPatterns }
-        val scheduleHasNontypical =
-            scheduledPatterns.any { it.typicality != RoutePattern.Typicality.Typical }
-        val scheduleReplacedTypical = scheduleMissingTypical && scheduleHasNontypical
-
-        val routePredictions = predictionsByRoute[routeId].orEmpty()
-        val predictionsAlwaysTypical =
-            routePredictions.isNotEmpty() &&
-                routePredictions.all {
-                    it.routePattern()?.typicality == RoutePattern.Typicality.Typical
-                }
-
-        return isSubway && routeHasAlert && scheduleReplacedTypical && predictionsAlwaysTypical
-    }
 
     fun RoutePattern.isTruncationOf(
         fullPattern: RoutePattern,
@@ -714,7 +685,7 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
     val rewrittenData =
         this.data.map { transitWithStops ->
             transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
-                if (appliesToRoute(route)) {
+                if (rewriter.appliesToRoute(route)) {
                     val patternsTruncated =
                         transit.patternsByStop.map { it.withTruncatedPatterns() }
                     rewritePredictions(predictionsByRoute[route.id].orEmpty())
