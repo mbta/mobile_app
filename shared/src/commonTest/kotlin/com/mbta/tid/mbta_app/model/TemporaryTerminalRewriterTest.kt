@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -300,7 +299,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf crashes on missing stop IDs`() = truncatedPatternTest {
+    fun `isTruncationOf does not crash on missing stop IDs`() = truncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val notEarly =
             objects.routePattern(route) {
@@ -309,7 +308,7 @@ class TemporaryTerminalRewriterTest {
                 representativeTrip()
             }
 
-        assertFails { notEarly.isTruncationOf(fullPattern, "a") }
+        assertFalse(notEarly.isTruncationOf(fullPattern, "a"))
     }
 
     @Test

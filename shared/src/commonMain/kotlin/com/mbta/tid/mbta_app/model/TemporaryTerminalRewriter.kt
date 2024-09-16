@@ -80,10 +80,10 @@ class TemporaryTerminalRewriter(
     ): Boolean {
         if (typicality == RoutePattern.Typicality.Typical) return false
         if (directionId != fullPattern.directionId) return false
-        val truncatedPatternTrip = globalData.trips[representativeTripId] ?: return false
-        checkNotNull(truncatedPatternTrip.stopIds) { fetchedWithoutStopIds(this) }
-        return truncatedPatternTrip.stopIds.contains(stopId) &&
-            fullPatternStopIds.containsSubsequence(truncatedPatternTrip.stopIds)
+        val truncatedPatternStopIds =
+            globalData.trips[representativeTripId]?.stopIds ?: return false
+        return truncatedPatternStopIds.contains(stopId) &&
+            fullPatternStopIds.containsSubsequence(truncatedPatternStopIds)
     }
 
     /**
@@ -131,6 +131,3 @@ private fun <T> List<T>.containsSubsequence(subsequence: List<T>): Boolean {
     if (this.size < startIndex + subsequence.size) return false
     return this.subList(startIndex, startIndex + subsequence.size) == subsequence
 }
-
-fun fetchedWithoutStopIds(routePattern: RoutePattern) =
-    "route pattern ${routePattern.id} representative trip ${routePattern.representativeTripId} fetched without stop IDs"

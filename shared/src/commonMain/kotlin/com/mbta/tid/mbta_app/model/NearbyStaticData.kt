@@ -569,14 +569,14 @@ private fun NearbyStaticData.rewrittenForTemporaryTerminals(
 
     fun NearbyStaticData.StopPatterns.withTruncatedPatterns(): NearbyStaticData.StopPatterns {
         for (fullPattern in this.patterns.flatMap { it.patterns }) {
-            val fullPatternTrip = globalData.trips[fullPattern.representativeTripId] ?: continue
-            checkNotNull(fullPatternTrip.stopIds) { fetchedWithoutStopIds(fullPattern) }
+            val fullPatternStopIds =
+                globalData.trips[fullPattern.representativeTripId]?.stopIds ?: continue
 
             for (stopId in this.allStopIds) {
-                if (!fullPatternTrip.stopIds.contains(stopId)) continue
+                if (!fullPatternStopIds.contains(stopId)) continue
 
                 truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
-                    rewriter.truncatedPattern(fullPattern, fullPatternTrip.stopIds, stopId)?.id
+                    rewriter.truncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
             }
         }
 
