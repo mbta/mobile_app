@@ -29,19 +29,31 @@ class TextFieldObserver: ObservableObject {
 
 struct SearchView: View {
     let query: String
+    let globalRepository: IGlobalRepository
     let searchResultsRepository: ISearchResultRepository
+
+    @State var globalResponse: GlobalResponse?
     @State var searchResults: SearchResults?
+
+    @ObservedObject var nearbyVM: NearbyViewModel
+    @ObservedObject var searchVM: SearchViewModel
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
 
     init(
         query: String,
+        nearbyVM: NearbyViewModel,
+        searchVM: SearchViewModel,
+        globalRepository: IGlobalRepository = RepositoryDI().global,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
         self.query = query
+        self.nearbyVM = nearbyVM
+        self.searchVM = searchVM
+        self.globalRepository = globalRepository
         self.searchResultsRepository = searchResultsRepository
         self.didAppear = didAppear
         self.didChange = didChange
@@ -57,14 +69,33 @@ struct SearchView: View {
         }
     }
 
+    func handleStopTap(stopId: String) {
+        guard let stop = globalResponse?.stops[stopId] else { return }
+        nearbyVM.navigationStack.append(.stopDetails(stop, nil))
+    }
+
     var body: some View {
         VStack {
             if !query.isEmpty {
-                SearchResultView(results: searchResults)
+                SearchResultView(
+                    results: searchResults,
+                    handleStopTap: handleStopTap,
+                    showRoutes: searchVM.routeResultsEnabled
+                )
             }
         }
         .onAppear {
             loadResults(query: query)
+            Task {
+                await searchVM.loadSettings()
+            }
+            Task {
+                do {
+                    globalResponse = try await globalRepository.getGlobalData()
+                } catch {
+                    debugPrint(error)
+                }
+            }
             didAppear?(self)
         }
         .onChange(of: query) { query in
@@ -76,26 +107,35 @@ struct SearchView: View {
 
 struct SearchResultView: View {
     private var results: SearchResults?
-    init(results: SearchResults? = nil) {
+    private var handleStopTap: (String) -> Void
+    private var showRoutes: Bool
+    init(
+        results: SearchResults? = nil,
+        handleStopTap: @escaping (String) -> Void,
+        showRoutes: Bool = false
+    ) {
         self.results = results
+        self.handleStopTap = handleStopTap
+        self.showRoutes = showRoutes
     }
 
     var body: some View {
         if results == nil {
             Text("Loading...")
         } else {
-            if results!.stops.isEmpty, results!.routes.isEmpty {
+            if results!.stops.isEmpty, !showRoutes || results!.routes.isEmpty {
                 Text("No results found")
             } else {
                 List {
                     if !results!.stops.isEmpty {
                         Section(header: Text("Stops")) {
-                            ForEach(results!.stops, id: \.id) {
-                                StopResultView(stop: $0)
+                            ForEach(results!.stops, id: \.id) { stop in
+                                StopResultView(stop: stop)
+                                    .onTapGesture { handleStopTap(stop.id) }
                             }
                         }
                     }
-                    if !results!.routes.isEmpty {
+                    if showRoutes, !results!.routes.isEmpty {
                         Section(header: Text("Routes")) {
                             ForEach(results!.routes, id: \.id) {
                                 RouteResultView(route: $0)
@@ -160,7 +200,8 @@ struct SearchResultView_Previews: PreviewProvider {
                         ]
                     ),
                 ]
-            )
+            ),
+            handleStopTap: { _ in }
         ).font(Typography.body).previewDisplayName("SearchResultView")
     }
 }
