@@ -4,6 +4,16 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 
+/**
+ * For reasons, for mid-line subway shuttles/suspensions, schedules will correctly reflect the
+ * closure and use route patterns that stop at temporary terminals, but predictions will use the
+ * canonical route patterns. The way we work around this is that under the conditions specified in
+ * [appliesToRoute], we check the stops of the scheduled patterns against both the predicted pattern
+ * and the prediction's current stop to override the prediction's route pattern with a correct
+ * scheduled pattern, and then we load the headsign from the new route pattern's representative
+ * trip. This should be narrowly scoped enough to apply to temporary terminals but no other trips.
+ * Hopefully.
+ */
 class TemporaryTerminalRewriter(
     val nearbyStaticData: NearbyStaticData,
     val predictions: PredictionsStreamDataResponse,
@@ -203,6 +213,31 @@ class TemporaryTerminalRewriter(
                     )
             }
         }
+    }
+
+    /**
+     * For each route which passes [appliesToRoute], rewrites the static data with
+     * [truncatePatternsAtStop] and the predictions stream trips with [rewritePredictions].
+     */
+    fun rewritten(): Pair<NearbyStaticData, PredictionsStreamDataResponse?> {
+        val rewrittenData =
+            nearbyStaticData.data.map { transitWithStops ->
+                transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
+                    if (appliesToRoute(route)) {
+                        val patternsTruncated =
+                            transit.patternsByStop.map { truncatePatternsAtStop(it) }
+                        rewritePredictions(route.id)
+                        transit.copy(patternsByStop = patternsTruncated)
+                    } else {
+                        transit
+                    }
+                }
+            }
+
+        return Pair(
+            nearbyStaticData.copy(data = rewrittenData),
+            predictions.copy(trips = rewrittenTrips)
+        )
     }
 }
 

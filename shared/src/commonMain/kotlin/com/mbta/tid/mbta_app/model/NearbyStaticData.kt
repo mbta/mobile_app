@@ -409,7 +409,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
  * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
  * sort order.
  *
- * Calls [NearbyStaticData.rewrittenForTemporaryTerminals].
+ * Runs static data and predictions through [TemporaryTerminalRewriter].
  */
 fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
@@ -427,7 +427,22 @@ fun NearbyStaticData.withRealtimeInfo(
 
     // this needs to change how the trip keys are constructed
     val (rewrittenThis, rewrittenPredictions) =
-        rewrittenForTemporaryTerminals(predictions, globalData, activeRelevantAlerts, schedules)
+        if (
+            predictions == null ||
+                globalData == null ||
+                activeRelevantAlerts == null ||
+                schedules == null
+        )
+            Pair(this, predictions)
+        else
+            TemporaryTerminalRewriter(
+                    this,
+                    predictions,
+                    globalData,
+                    activeRelevantAlerts,
+                    schedules
+                )
+                .rewritten()
 
     // add predictions and apply filtering
     val upcomingTripsByRoutePatternAndStop =
@@ -531,48 +546,6 @@ fun NearbyStaticData.withRealtimeInfo(
         .toList()
         .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
         .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
-}
-
-/**
- * For reasons, for mid-line subway shuttles/suspensions, schedules will correctly reflect the
- * closure and use route patterns that stop at temporary terminals, but predictions will use the
- * canonical route patterns. The way we work around this is that for
- * 1. subway routes
- * 2. with alerts somewhere on the line
- * 3. where the schedule has non-typical patterns and is missing a typical pattern
- * 4. but the predictions all have typical patterns instead of non-typical patterns
- *
- * we check the stops of the scheduled patterns against both the predicted pattern and the
- * prediction's current stop to override the prediction's route pattern with a correct scheduled
- * pattern, and then we load the headsign from the new route pattern's representative trip. This
- * should be narrowly scoped enough to apply to temporary terminals but no other trips. Hopefully.
- */
-private fun NearbyStaticData.rewrittenForTemporaryTerminals(
-    predictions: PredictionsStreamDataResponse?,
-    globalData: GlobalResponse?,
-    alerts: List<Alert>?,
-    schedules: ScheduleResponse?,
-): Pair<NearbyStaticData, PredictionsStreamDataResponse?> {
-    if (predictions == null || globalData == null || alerts == null || schedules == null)
-        return Pair(this, predictions)
-
-    val rewriter = TemporaryTerminalRewriter(this, predictions, globalData, alerts, schedules)
-
-    val rewrittenData =
-        this.data.map { transitWithStops ->
-            transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
-                if (rewriter.appliesToRoute(route)) {
-                    val patternsTruncated =
-                        transit.patternsByStop.map { rewriter.truncatePatternsAtStop(it) }
-                    rewriter.rewritePredictions(route.id)
-                    transit.copy(patternsByStop = patternsTruncated)
-                } else {
-                    transit
-                }
-            }
-        }
-
-    return Pair(this.copy(data = rewrittenData), predictions.copy(trips = rewriter.rewrittenTrips))
 }
 
 class NearbyStaticDataBuilder {
