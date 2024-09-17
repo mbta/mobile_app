@@ -12,7 +12,6 @@ import shared
 @_spi(Experimental) import MapboxMaps
 
 class MapViewModel: ObservableObject {
-    @Published var childStops: [String: Stop]?
     @Published var selectedVehicle: Vehicle?
     @Published var routeSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
     @Published var stopSourceData: StopSourceData = .init()
@@ -53,9 +52,5 @@ class MapViewModel: ObservableObject {
 
     func updateStopSource(_ stopData: MapboxMaps.FeatureCollection) {
         layerManager?.updateSourceData(stopData: stopData)
-    }
-
-    func updateChildStopSource(_ childStopData: MapboxMaps.FeatureCollection) {
-        layerManager?.updateSourceData(childStopData: childStopData)
     }
 }

@@ -51,8 +51,6 @@ extension HomeMapView {
 
         mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stop()?.id)
 
-        mapVM.childStops = nil
-
         addLayers(layerManager)
     }
 
@@ -75,7 +73,6 @@ extension HomeMapView {
     func resetDefaultSources() {
         mapVM.stopSourceData = .init(selectedStopId: nil)
         mapVM.routeSourceData = mapVM.allRailSourceData
-        mapVM.childStops = nil
     }
 
     func updateStopDetailsLayers(
@@ -83,7 +80,6 @@ extension HomeMapView {
         _ filter: StopDetailsFilter?,
         _ departures: StopDetailsDepartures?
     ) {
-        mapVM.childStops = stopMapData.childStops
         if let filter {
             mapVM.routeSourceData = RouteFeaturesBuilder.shared.filteredRouteShapesForStop(
                 stopMapData: stopMapData,
@@ -120,11 +116,5 @@ extension HomeMapView {
             linesToSnap: mapVM.snappedStopRouteLines
         )
         .toMapbox())
-    }
-
-    func updateChildStopSource(childStops: [String: Stop]?) {
-        mapVM
-            .updateChildStopSource(ChildStopFeaturesBuilder.shared.generateChildStopFeatures(childStops: childStops)
-                .toMapbox())
     }
 }

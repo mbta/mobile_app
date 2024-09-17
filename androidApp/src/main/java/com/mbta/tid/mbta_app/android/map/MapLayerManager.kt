@@ -12,9 +12,6 @@ import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.map.AlertIcons
-import com.mbta.tid.mbta_app.map.ChildStopFeaturesBuilder
-import com.mbta.tid.mbta_app.map.ChildStopIcons
-import com.mbta.tid.mbta_app.map.ChildStopLayerGenerator
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLayerGenerator
@@ -24,7 +21,7 @@ import com.mbta.tid.mbta_app.map.StopLayerGenerator
 
 class MapLayerManager(val map: MapboxMap, context: Context) {
     init {
-        for (icon in StopIcons.all + AlertIcons.all + ChildStopIcons.all) {
+        for (icon in StopIcons.all + AlertIcons.all) {
             val drawable = context.resources.getDrawable(drawableByName(icon), null)
 
             map.addImage(icon, (drawable as BitmapDrawable).bitmap)
@@ -38,8 +35,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
     fun addLayers(colorPalette: ColorPalette) {
         val layers: List<MapboxLayer> =
             RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
-                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() } +
-                listOf(ChildStopLayerGenerator.createChildStopLayer(colorPalette).toMapbox())
+                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
         for (layer in layers) {
             if (map.styleLayerExists(checkNotNull(layer.layerId))) {
                 // Skip attempting to add layer if it already exists
@@ -72,9 +68,5 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
 
     fun updateStopSourceData(stopData: FeatureCollection) {
         updateSourceData(StopFeaturesBuilder.stopSourceId, stopData)
-    }
-
-    fun updateChildStopSourceData(childStopData: FeatureCollection) {
-        updateSourceData(ChildStopFeaturesBuilder.childStopSourceId, childStopData)
     }
 }
