@@ -154,36 +154,36 @@ class TemporaryTerminalRewriter(
             }
         }
 
-        val collapsedPatterns =
-            stopPatterns.patterns
-                .groupBy { staticPatterns ->
-                    staticPatterns.patterns.map { pattern ->
-                        val truncatedPatternId =
-                            stopPatterns.allStopIds
-                                .mapNotNull { stopId ->
-                                    truncatedPatternByFullPatternAndStop[Pair(pattern.id, stopId)]
-                                }
-                                .singleOrNull()
-                        truncatedPatternId ?: pattern.id
+        fun truncatedPatternIds(staticPatterns: NearbyStaticData.StaticPatterns) =
+            staticPatterns.patterns.map { pattern ->
+                val truncatedPatternId =
+                    stopPatterns.allStopIds
+                        .mapNotNull { stopId ->
+                            truncatedPatternByFullPatternAndStop[Pair(pattern.id, stopId)]
+                        }
+                        .singleOrNull()
+                truncatedPatternId ?: pattern.id
+            }
+
+        fun truncatedPatternFirst(patternsList: List<NearbyStaticData.StaticPatterns>) =
+            patternsList.sortedBy {
+                val isTruncationResult =
+                    it.patterns.any { pattern ->
+                        truncatedPatternByFullPatternAndStop.containsValue(pattern.id)
                     }
-                }
-                .values
-                .map { patternsList ->
-                    if (patternsList.size == 1) return@map patternsList.single()
-                    val patternsCorrectFirst =
-                        patternsList.sortedBy {
-                            val isTruncated =
-                                it.patterns.any { pattern ->
-                                    truncatedPatternByFullPatternAndStop.containsValue(pattern.id)
-                                }
-                            if (isTruncated) 0 else 1
-                        }
-                    patternsCorrectFirst
-                        .reduce { acc, nextPatterns ->
-                            acc.copy(patterns = acc.patterns + nextPatterns.patterns)
-                        }
-                        .let { it.copy(patterns = it.patterns.sorted()) }
-                }
+                if (isTruncationResult) 0 else 1
+            }
+
+        val collapsedPatterns =
+            stopPatterns.patterns.groupBy(::truncatedPatternIds).values.map { patternsList ->
+                if (patternsList.size == 1) return@map patternsList.single()
+                // reduce runs left to right, so start with the data from the truncated pattern
+                truncatedPatternFirst(patternsList)
+                    .reduce { acc, nextPatterns ->
+                        acc.copy(patterns = acc.patterns + nextPatterns.patterns)
+                    }
+                    .let { it.copy(patterns = it.patterns.sorted()) }
+            }
         return stopPatterns.copy(patterns = collapsedPatterns)
     }
 
