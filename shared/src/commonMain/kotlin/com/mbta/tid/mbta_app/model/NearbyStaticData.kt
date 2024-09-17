@@ -224,6 +224,19 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     companion object {
         val groupedLines = listOf("line-Green")
 
+        fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
+            schedules?.let { scheduleResponse ->
+                val scheduledTrips = scheduleResponse.trips
+                return@let scheduleResponse.schedules.fold(mutableMapOf<String, Boolean>()) {
+                    hasSchedules,
+                    schedule ->
+                    val trip = scheduledTrips[schedule.tripId]
+                    val patternId = trip?.routePatternId ?: return@fold hasSchedules
+                    hasSchedules[patternId] = true
+                    return@fold hasSchedules
+                }
+            }
+
         fun buildStopPatternsForRoute(
             stop: Stop,
             patterns: List<RoutePattern>,
@@ -410,6 +423,7 @@ fun NearbyStaticData.withRealtimeInfo(
         alerts?.alerts?.values?.filter {
             it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
         }
+    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
     return data
         .asSequence()
@@ -425,7 +439,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                     upcomingTripsByRoutePatternAndStop +
                                         upcomingTripsByDirectionAndStop,
                                     cutoffTime,
-                                    activeRelevantAlerts
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern
                                 )
                             }
                             .filterNot { it.patterns.isEmpty() }
@@ -447,7 +462,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                     upcomingTripsByRoutePatternAndStop +
                                         upcomingTripsByDirectionAndStop,
                                     cutoffTime,
-                                    activeRelevantAlerts
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern
                                 )
                             }
                             .filterNot { it.patterns.isEmpty() }

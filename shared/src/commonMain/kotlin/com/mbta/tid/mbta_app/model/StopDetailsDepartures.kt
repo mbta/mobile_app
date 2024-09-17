@@ -39,6 +39,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 alerts?.alerts?.values?.filter {
                     it.isActive(filterAtTime) && it.significance >= AlertSignificance.Minor
                 }
+            val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
             patternsByRoute
                 .mapNotNull { (route, routePatterns) ->
@@ -56,7 +57,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             allStopIds,
                             loading,
                             global,
-                            activeRelevantAlerts
+                            activeRelevantAlerts,
+                            hasSchedulesTodayByPattern
                         )
                     }
 
@@ -68,7 +70,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         allStopIds,
                         loading,
                         global,
-                        activeRelevantAlerts
+                        activeRelevantAlerts,
+                        hasSchedulesTodayByPattern
                     )
                 }
                 .filterNot { it.patterns.isEmpty() }
@@ -165,7 +168,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             allStopIds: Set<String>,
             loading: Boolean,
             global: GlobalResponse,
-            alerts: Collection<Alert>?
+            alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ): PatternsByStop {
             global.run {
                 val patternsByHeadsign =
@@ -213,7 +217,11 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                         stopIds = allStopIds,
                                         alerts = alerts
                                     )
-                                }
+                                },
+                                RealtimePatterns.hasSchedulesToday(
+                                    hasSchedulesTodayByPattern,
+                                    patterns
+                                )
                             )
                         }
                         .filter {
@@ -233,7 +241,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             allStopIds: Set<String>,
             loading: Boolean,
             global: GlobalResponse,
-            alerts: Collection<Alert>?
+            alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ): PatternsByStop {
             global.run {
                 val groupedPatternsByRoute = patternsByRoute.filter { it.key.lineId == line.id }
@@ -252,9 +261,21 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         .map {
                             when (it) {
                                 is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                                    RealtimePatterns.ByHeadsign(it, tripMap, allStopIds, alerts)
+                                    RealtimePatterns.ByHeadsign(
+                                        it,
+                                        tripMap,
+                                        allStopIds,
+                                        alerts,
+                                        hasSchedulesTodayByPattern
+                                    )
                                 is NearbyStaticData.StaticPatterns.ByDirection ->
-                                    RealtimePatterns.ByDirection(it, tripMap, allStopIds, alerts)
+                                    RealtimePatterns.ByDirection(
+                                        it,
+                                        tripMap,
+                                        allStopIds,
+                                        alerts,
+                                        hasSchedulesTodayByPattern
+                                    )
                             }
                         }
                         .filter {

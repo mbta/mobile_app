@@ -31,6 +31,7 @@ struct UpcomingTripView: View {
     enum State: Equatable {
         case loading
         case none
+        case noSchedulesToday
         case noService(shared.Alert.Effect)
         case some(TripInstantDisplay)
     }
@@ -113,7 +114,6 @@ struct UpcomingTripView: View {
                         .padding(4)
                         .foregroundStyle(Color.deemphasized)
                 }
-
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
                     .accessibilityLabel(isFirst
@@ -125,6 +125,8 @@ struct UpcomingTripView: View {
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
             Text("No real-time data").font(Typography.footnote)
+        case .noSchedulesToday:
+            Text("No service today").font(Typography.footnote)
         case .loading:
             ProgressView()
         }
