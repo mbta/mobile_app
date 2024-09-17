@@ -109,7 +109,7 @@ class TemporaryTerminalRewriter(
      * disruption on the same line). If there is no plausible truncated pattern, or if there are
      * several, does not truncate [fullPattern].
      */
-    fun truncatedPattern(
+    fun findTruncatedPattern(
         fullPattern: RoutePattern,
         fullPatternStopIds: List<String>,
         stopId: String
@@ -150,7 +150,7 @@ class TemporaryTerminalRewriter(
                 if (!fullPatternStopIds.contains(stopId)) continue
 
                 truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
-                    truncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
+                    findTruncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
             }
         }
 

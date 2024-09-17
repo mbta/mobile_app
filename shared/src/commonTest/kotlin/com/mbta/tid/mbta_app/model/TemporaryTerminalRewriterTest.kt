@@ -208,7 +208,7 @@ class TemporaryTerminalRewriterTest {
         assertFalse(rewriter.appliesToRoute(route))
     }
 
-    private class TruncatedPatternTestHelper {
+    private class FindTruncatedPatternTestHelper {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
 
@@ -246,19 +246,19 @@ class TemporaryTerminalRewriterTest {
                 isTruncationOf(fullPattern, fullPatternStopIds, stopId)
             }
 
-        fun truncatedPattern(fullPattern: RoutePattern, stopId: String) =
+        fun findTruncatedPattern(fullPattern: RoutePattern, stopId: String) =
             rewriter.run {
                 val fullPatternStopIds = objects.trips[fullPattern.representativeTripId]?.stopIds
                 checkNotNull(fullPatternStopIds)
-                truncatedPattern(fullPattern, fullPatternStopIds, stopId)
+                findTruncatedPattern(fullPattern, fullPatternStopIds, stopId)
             }
     }
 
-    private fun truncatedPatternTest(block: TruncatedPatternTestHelper.() -> Unit) =
-        TruncatedPatternTestHelper().block()
+    private fun findTruncatedPatternTest(block: FindTruncatedPatternTestHelper.() -> Unit) =
+        FindTruncatedPatternTestHelper().block()
 
     @Test
-    fun `isTruncationOf accepts truncations`() = truncatedPatternTest {
+    fun `isTruncationOf accepts truncations`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val early = diversion(0, "a", "b")
         val late = diversion(0, "d", "e")
@@ -270,7 +270,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf rejects typical`() = truncatedPatternTest {
+    fun `isTruncationOf rejects typical`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val almostEarly = typical(0, "a", "b")
 
@@ -278,7 +278,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf rejects wrong direction`() = truncatedPatternTest {
+    fun `isTruncationOf rejects wrong direction`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         // on subway it shouldn't be possible to not also have "b", "a" here anyway
         val notEarly = diversion(1, "a", "b")
@@ -287,7 +287,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf does not crash on missing trip`() = truncatedPatternTest {
+    fun `isTruncationOf does not crash on missing trip`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val notEarly =
             objects.routePattern(route) {
@@ -299,7 +299,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf does not crash on missing stop IDs`() = truncatedPatternTest {
+    fun `isTruncationOf does not crash on missing stop IDs`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val notEarly =
             objects.routePattern(route) {
@@ -312,7 +312,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf rejects missing current stop`() = truncatedPatternTest {
+    fun `isTruncationOf rejects missing current stop`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val early = diversion(0, "a", "b")
         val late = diversion(0, "d", "e")
@@ -322,7 +322,7 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `isTruncationOf rejects not subsequence`() = truncatedPatternTest {
+    fun `isTruncationOf rejects not subsequence`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val tooEarly = diversion(0, "z", "a", "b")
         val tooLate = diversion(0, "d", "e", "f")
@@ -340,41 +340,41 @@ class TemporaryTerminalRewriterTest {
     }
 
     @Test
-    fun `truncatedPattern uses single if available`() = truncatedPatternTest {
+    fun `findTruncatedPattern uses single if available`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val early = diversion(0, "a", "b")
         val late = diversion(0, "d", "e")
 
-        assertEquals(early, truncatedPattern(fullPattern, "a"))
-        assertEquals(late, truncatedPattern(fullPattern, "e"))
+        assertEquals(early, findTruncatedPattern(fullPattern, "a"))
+        assertEquals(late, findTruncatedPattern(fullPattern, "e"))
     }
 
     @Test
-    fun `truncatedPattern checks schedule if multiple available`() = truncatedPatternTest {
+    fun `findTruncatedPattern checks schedule if multiple available`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val earlyShort = diversion(0, "a", "b")
         diversion(0, "a", "b", "c")
         schedule(earlyShort)
 
-        assertEquals(earlyShort, truncatedPattern(fullPattern, "a"))
+        assertEquals(earlyShort, findTruncatedPattern(fullPattern, "a"))
     }
 
     @Test
-    fun `truncatedPattern gives up if multiple scheduled`() = truncatedPatternTest {
+    fun `findTruncatedPattern gives up if multiple scheduled`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
         val earlyShort = diversion(0, "a", "b")
         val earlyLong = diversion(0, "a", "b", "c")
         schedule(earlyShort)
         schedule(earlyLong)
 
-        assertNull(truncatedPattern(fullPattern, "a"))
+        assertNull(findTruncatedPattern(fullPattern, "a"))
     }
 
     @Test
-    fun `truncatedPattern gives up if none available`() = truncatedPatternTest {
+    fun `findTruncatedPattern gives up if none available`() = findTruncatedPatternTest {
         val fullPattern = typical(0, "a", "b", "c", "d", "e")
 
-        assertNull(truncatedPattern(fullPattern, "a"))
+        assertNull(findTruncatedPattern(fullPattern, "a"))
     }
 
     private class TruncatePatternsAtStopTestHelper {
