@@ -165,20 +165,16 @@ class TemporaryTerminalRewriter(
                 truncatedPatternId ?: pattern.id
             }
 
-        fun truncatedPatternFirst(patternsList: List<NearbyStaticData.StaticPatterns>) =
-            patternsList.sortedBy {
-                val isTruncationResult =
-                    it.patterns.any { pattern ->
-                        truncatedPatternByFullPatternAndStop.containsValue(pattern.id)
-                    }
-                if (isTruncationResult) 0 else 1
-            }
-
         val collapsedPatterns =
-            stopPatterns.patterns.groupBy(::truncatedPatternIds).values.map { patternsList ->
+            stopPatterns.patterns.groupBy(::truncatedPatternIds).map {
+                (truncatedPatternIds, patternsList) ->
                 if (patternsList.size == 1) return@map patternsList.single()
-                // reduce runs left to right, so start with the data from the truncated pattern
-                truncatedPatternFirst(patternsList)
+                // reduce runs left to right, so start with the data from the truncated patterns
+                val (truncatedPatterns, fullPatterns) =
+                    patternsList.partition { patterns ->
+                        patterns.patterns.any { it.id in truncatedPatternIds }
+                    }
+                (truncatedPatterns + fullPatterns)
                     .reduce { acc, nextPatterns ->
                         acc.copy(patterns = acc.patterns + nextPatterns.patterns)
                     }
