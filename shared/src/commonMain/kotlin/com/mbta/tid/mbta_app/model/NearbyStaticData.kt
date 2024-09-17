@@ -19,19 +19,22 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
     sealed class StaticPatterns : Comparable<StaticPatterns> {
         abstract val patterns: List<RoutePattern>
+        abstract val stopIds: Set<String>
 
         data class ByHeadsign(
             val route: Route,
             val headsign: String,
             val line: Line?,
-            override val patterns: List<RoutePattern>
+            override val patterns: List<RoutePattern>,
+            override val stopIds: Set<String>
         ) : StaticPatterns()
 
         data class ByDirection(
             val line: Line,
             val routes: List<Route>,
             val direction: Direction,
-            override val patterns: List<RoutePattern>
+            override val patterns: List<RoutePattern>,
+            override val stopIds: Set<String>
         ) : StaticPatterns()
 
         override fun compareTo(other: StaticPatterns): Int =
@@ -51,38 +54,26 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
     sealed class StopPatterns {
         abstract val stop: Stop
-        abstract val allStopIds: Set<String>
         abstract val patterns: List<StaticPatterns>
         abstract val directions: List<Direction>
 
         data class ForRoute(
             val route: Route,
             override val stop: Stop,
-            /** Includes both parent and child stop IDs if present */
-            override val allStopIds: Set<String>,
             override val patterns: List<StaticPatterns>,
             override val directions: List<Direction>
         ) : StopPatterns() {
             constructor(
                 route: Route,
                 stop: Stop,
-                allStopIds: Set<String>,
                 patterns: List<StaticPatterns>,
-            ) : this(
-                route,
-                stop,
-                allStopIds,
-                patterns,
-                listOf(Direction(0, route), Direction(1, route))
-            )
+            ) : this(route, stop, patterns, listOf(Direction(0, route), Direction(1, route)))
         }
 
         data class ForLine(
             val line: Line,
             val routes: List<Route>,
             override val stop: Stop,
-            /** Includes both parent and child stop IDs if present */
-            override val allStopIds: Set<String>,
             override val patterns: List<StaticPatterns>,
             override val directions: List<Direction>
         ) : StopPatterns() {
@@ -91,12 +82,10 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 routes: List<Route>,
                 stop: Stop,
                 patterns: List<StaticPatterns>,
-                allStopIds: Set<String>,
             ) : this(
                 line,
                 routes,
                 stop,
-                allStopIds,
                 patterns,
                 listOf(Direction(0, routes.first()), Direction(1, routes.first()))
             )
@@ -237,11 +226,16 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             return StopPatterns.ForRoute(
                 route = route,
                 stop = stop,
-                allStopIds = allStopIds,
                 patterns =
                     patternsByHeadsign
                         .map { (headsign, routePatterns) ->
-                            StaticPatterns.ByHeadsign(route, headsign, null, routePatterns.sorted())
+                            StaticPatterns.ByHeadsign(
+                                route,
+                                headsign,
+                                null,
+                                routePatterns.sorted(),
+                                filterStopsByPatterns(routePatterns, global, allStopIds)
+                            )
                         }
                         .sorted(),
                 directions = Direction.getDirections(global, stop, route, patterns)
@@ -280,7 +274,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                                 global.trips.getValue(it.representativeTripId).headsign
                             }
                         return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
-                            StaticPatterns.ByHeadsign(route, headsign, line, patterns.sorted())
+                            StaticPatterns.ByHeadsign(
+                                route,
+                                headsign,
+                                line,
+                                patterns.sorted(),
+                                filterStopsByPatterns(patterns, global, allStopIds)
+                            )
                         }
                     }
                     listOf(
@@ -289,6 +289,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                             routes = directionRoutes,
                             direction = direction,
                             patterns = directionPatterns.sorted(),
+                            filterStopsByPatterns(directionPatterns, global, allStopIds)
                         )
                     )
                 }
@@ -297,7 +298,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 line = line,
                 routes = routes,
                 stop = stop,
-                allStopIds = allStopIds,
                 patterns = linePatterns,
             )
         }
@@ -333,6 +333,19 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         )
                     },
             )
+        }
+
+        private fun filterStopsByPatterns(
+            routePatterns: List<RoutePattern>,
+            global: GlobalResponse,
+            localStops: Set<String>
+        ): Set<String> {
+            val patternsStops =
+                routePatterns.flatMapTo(mutableSetOf()) {
+                    global.trips[it.representativeTripId]?.stopIds.orEmpty()
+                }
+            val relevantStops = patternsStops.intersect(localStops)
+            return relevantStops.ifEmpty { localStops }
         }
 
         fun build(block: NearbyStaticDataBuilder.() -> Unit): NearbyStaticData {
@@ -481,23 +494,47 @@ class NearbyStaticDataBuilder {
         data.add(NearbyStaticData.TransitWithStops.ByLine(line, routes, builder.data))
     }
 
-    class PatternsBuilder(val line: Line?, val routes: List<Route>) {
+    class PatternsBuilder(val line: Line?, val routes: List<Route>, val allStopIds: Set<String>) {
         val data = mutableListOf<NearbyStaticData.StaticPatterns>()
         val directions = mutableListOf<Direction>()
 
-        fun headsign(route: Route, headsign: String, patterns: List<RoutePattern>) {
-            data.add(NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns))
+        fun headsign(
+            route: Route,
+            headsign: String,
+            patterns: List<RoutePattern>,
+            stopIds: Set<String> = allStopIds
+        ) {
+            data.add(
+                NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns, stopIds)
+            )
         }
 
-        fun headsign(headsign: String, patterns: List<RoutePattern>) {
-            headsign(routes.min(), headsign, patterns)
+        fun headsign(
+            headsign: String,
+            patterns: List<RoutePattern>,
+            stopIds: Set<String> = allStopIds
+        ) {
+            headsign(routes.min(), headsign, patterns, stopIds)
         }
 
-        fun direction(direction: Direction, routes: List<Route>, patterns: List<RoutePattern>) {
+        fun direction(
+            direction: Direction,
+            routes: List<Route>,
+            patterns: List<RoutePattern>,
+            stopIds: Set<String> = allStopIds
+        ) {
             if (line == null) {
                 throw RuntimeException("Can't build direction patterns without a line")
             }
-            data.add(NearbyStaticData.StaticPatterns.ByDirection(line, routes, direction, patterns))
+            data.add(
+                NearbyStaticData.StaticPatterns.ByDirection(
+                    line,
+                    routes,
+                    direction,
+                    patterns,
+                    stopIds
+                )
+            )
             directions.add(direction)
         }
     }
@@ -508,28 +545,18 @@ class NearbyStaticDataBuilder {
         @DefaultArgumentInterop.Enabled
         fun stop(
             stop: Stop,
-            childStopIds: List<String> = emptyList(),
+            childStopIds: List<String> = stop.childStopIds,
             directions: List<Direction>? = null,
             block: PatternsBuilder.() -> Unit
         ) {
-            val builder = PatternsBuilder(null, listOf(route))
+            val allStopIds = setOf(stop.id).plus(childStopIds)
+            val builder = PatternsBuilder(null, listOf(route), allStopIds)
             builder.block()
             data.add(
                 if (directions != null) {
-                    NearbyStaticData.StopPatterns.ForRoute(
-                        route,
-                        stop,
-                        setOf(stop.id).plus(childStopIds),
-                        builder.data,
-                        directions
-                    )
+                    NearbyStaticData.StopPatterns.ForRoute(route, stop, builder.data, directions)
                 } else {
-                    NearbyStaticData.StopPatterns.ForRoute(
-                        route,
-                        stop,
-                        setOf(stop.id).plus(childStopIds),
-                        builder.data
-                    )
+                    NearbyStaticData.StopPatterns.ForRoute(route, stop, builder.data)
                 }
             )
         }
@@ -546,14 +573,14 @@ class NearbyStaticDataBuilder {
             directions: List<Direction>? = null,
             block: PatternsBuilder.() -> Unit
         ) {
-            val builder = PatternsBuilder(line, routes)
+            val allStopIds = setOf(stop.id).plus(childStopIds)
+            val builder = PatternsBuilder(line, routes, allStopIds)
             builder.block()
             data.add(
                 NearbyStaticData.StopPatterns.ForLine(
                     line,
                     routes,
                     stop,
-                    setOf(stop.id).plus(childStopIds),
                     builder.data,
                     directions ?: builder.directions
                 )

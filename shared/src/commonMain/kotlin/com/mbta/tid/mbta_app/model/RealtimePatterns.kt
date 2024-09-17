@@ -39,7 +39,6 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
             upcomingTripsMap: UpcomingTripsMap?,
-            stopIds: Set<String>,
             alerts: Collection<Alert>?,
         ) : this(
             staticData.route,
@@ -47,7 +46,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.line,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                stopIds
+                staticData.stopIds
                     .map { stopId ->
                         staticData.patterns
                             .mapNotNull { pattern ->
@@ -68,7 +67,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             alerts?.let {
                 applicableAlerts(
                     routes = listOf(staticData.route),
-                    stopIds = stopIds,
+                    stopIds = staticData.stopIds,
                     alerts = alerts
                 )
             }
@@ -104,7 +103,6 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap?,
-            stopIds: Set<String>,
             alerts: Collection<Alert>?,
         ) : this(
             staticData.line,
@@ -112,7 +110,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.direction,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                stopIds
+                staticData.stopIds
                     .flatMap { stopId ->
                         staticData.routes.mapNotNull { route ->
                             upcomingTripsMap[
@@ -129,7 +127,11 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                 null
             },
             alerts?.let {
-                applicableAlerts(routes = staticData.routes, stopIds = stopIds, alerts = alerts)
+                applicableAlerts(
+                    routes = staticData.routes,
+                    stopIds = staticData.stopIds,
+                    alerts = alerts
+                )
             }
         )
     }
