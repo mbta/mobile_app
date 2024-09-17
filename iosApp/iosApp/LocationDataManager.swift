@@ -33,8 +33,9 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
         }
     }
 
-    public func locationFetcher(_: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
-        currentLocation = locations.last
+    public func locationFetcher(_: LocationFetcher, didUpdateLocations _: [CLLocation]) {
+        let defaultLocation = ViewportProvider.Defaults.center
+        currentLocation = CLLocation(latitude: defaultLocation.latitude, longitude: defaultLocation.longitude)
     }
 }
 
