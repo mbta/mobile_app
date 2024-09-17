@@ -498,6 +498,7 @@ class NearbyStaticDataBuilder {
         val data = mutableListOf<NearbyStaticData.StaticPatterns>()
         val directions = mutableListOf<Direction>()
 
+        @DefaultArgumentInterop.Enabled
         fun headsign(
             route: Route,
             headsign: String,
@@ -509,6 +510,7 @@ class NearbyStaticDataBuilder {
             )
         }
 
+        @DefaultArgumentInterop.Enabled
         fun headsign(
             headsign: String,
             patterns: List<RoutePattern>,
@@ -517,6 +519,7 @@ class NearbyStaticDataBuilder {
             headsign(routes.min(), headsign, patterns, stopIds)
         }
 
+        @DefaultArgumentInterop.Enabled
         fun direction(
             direction: Direction,
             routes: List<Route>,
