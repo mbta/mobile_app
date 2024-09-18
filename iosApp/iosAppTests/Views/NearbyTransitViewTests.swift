@@ -350,7 +350,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictions)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "No real-time data"))
+                .parent().parent().find(text: "Predictions unavailable"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().parent().find(text: "10 min"))
@@ -439,7 +439,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictionsByStop)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "No real-time data"))
+                .parent().parent().find(text: "Predictions unavailable"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().parent().find(text: "10 min"))
