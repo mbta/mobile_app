@@ -3,6 +3,7 @@
     <string name="hello_platform">Hello, %1$s!</string>
     <string name="boarding_abbr">BRD</string>
     <string name="arriving_abbr">ARR</string>
+    <string name="now">Now</string>
     <string name="minutes_abbr">%1$s min</string>
     <string name="approaching_abbr">1 min</string>
     <string name="detour">Detour</string>

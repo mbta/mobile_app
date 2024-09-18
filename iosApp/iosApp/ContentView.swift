@@ -17,8 +17,9 @@ struct ContentView: View {
     @ObservedObject var contentVM: ContentViewModel
 
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
-    @StateObject var nearbyVM: NearbyViewModel = .init()
+    @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
+    @StateObject var searchVM = SearchViewModel()
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
@@ -97,10 +98,12 @@ struct ContentView: View {
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            if contentVM.searchEnabled {
+            if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
                 TextField("Find nearby transit", text: $searchObserver.searchText)
                 SearchView(
-                    query: searchObserver.debouncedText
+                    query: searchObserver.debouncedText,
+                    nearbyVM: nearbyVM,
+                    searchVM: searchVM
                 )
             }
             locationAuthHeader
@@ -229,12 +232,13 @@ struct ContentView: View {
                 tripId: tripId,
                 vehicleId: vehicleId,
                 target: target,
-                routeId: _,
+                routeId: routeId,
                 directionId: _
             ):
                 TripDetailsPage(
                     tripId: tripId,
                     vehicleId: vehicleId,
+                    routeId: routeId,
                     target: target,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM

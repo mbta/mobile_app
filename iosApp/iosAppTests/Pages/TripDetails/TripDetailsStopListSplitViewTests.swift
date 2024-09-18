@@ -41,7 +41,8 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
                 followingStops: [entry(stop2, 20, pred2), entry(stop3, 30, pred3)]
             ),
             now: Date.now.toKotlinInstant(),
-            onTapLink: { _, _, _ in }
+            onTapLink: { _, _, _ in },
+            routeType: nil
         )
 
         XCTAssertNil(try? sut.inspect().find(ViewType.DisclosureGroup.self))
@@ -55,7 +56,8 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
                 followingStops: []
             ),
             now: Date.now.toKotlinInstant(),
-            onTapLink: { _, _, _ in }
+            onTapLink: { _, _, _ in },
+            routeType: nil
         )
 
         XCTAssertNotNil(try sut.inspect().find(ViewType.DisclosureGroup.self))

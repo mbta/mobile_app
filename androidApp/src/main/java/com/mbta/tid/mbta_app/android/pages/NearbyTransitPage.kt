@@ -145,6 +145,9 @@ fun NearbyTransitPage(
 
                             fun updateStopDepartures(departures: StopDetailsDepartures?) {
                                 stopDetailsDepartures = departures
+                                if (departures != null && stopDetailsFilter == null) {
+                                    stopDetailsFilter = departures.autoFilter()
+                                }
                             }
 
                             LaunchedEffect(navRoute) {

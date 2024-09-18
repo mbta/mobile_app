@@ -13,20 +13,21 @@ struct TripDetailsStopListSplitView: View {
     let splitStops: TripDetailsStopList.TargetSplit
     let now: Instant
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
+    let routeType: RouteType?
 
     var body: some View {
         List {
             if !splitStops.collapsedStops.isEmpty {
                 DisclosureGroup(LocalizedStringKey("\(splitStops.collapsedStops.count, specifier: "%ld") stops")) {
                     ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
-                        TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink)
+                        TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
                     }
                 }
             }
-            TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink)
+            TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink, routeType: routeType)
                 .listRowBackground(Color.keyInverse.opacity(0.15))
             ForEach(splitStops.followingStops, id: \.stopSequence) { stop in
-                TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink)
+                TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
             }
         }
     }
@@ -61,6 +62,7 @@ struct TripDetailsStopListSplitView: View {
             followingStops: [entry(stop3, 30, pred3)]
         ),
         now: Date.now.toKotlinInstant(),
-        onTapLink: { _, _, _ in }
+        onTapLink: { _, _, _ in },
+        routeType: nil
     ).font(Typography.body)
 }
