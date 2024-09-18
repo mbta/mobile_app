@@ -228,8 +228,6 @@ class ObjectCollectionBuilder {
         var id = uuid()
         var arrivalTime: Instant? = null
         var departureTime: Instant? = null
-        var dropOffType = Schedule.StopEdgeType.Regular
-        var pickUpType = Schedule.StopEdgeType.Regular
         var stopSequence = 0
         var routeId = ""
         var stopId = ""
@@ -247,8 +245,14 @@ class ObjectCollectionBuilder {
                 id,
                 arrivalTime,
                 departureTime,
-                dropOffType,
-                pickUpType,
+                when (arrivalTime) {
+                    null -> Schedule.StopEdgeType.Unavailable
+                    else -> Schedule.StopEdgeType.Regular
+                },
+                when (departureTime) {
+                    null -> Schedule.StopEdgeType.Unavailable
+                    else -> Schedule.StopEdgeType.Regular
+                },
                 stopSequence,
                 routeId,
                 stopId,
