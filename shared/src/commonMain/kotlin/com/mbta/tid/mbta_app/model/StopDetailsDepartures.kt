@@ -18,7 +18,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     ) : this(
         global.run {
             val loading = schedules == null || predictions == null
-            val tripMapByHeadsign = tripMapByHeadsign(schedules, predictions)
+            val tripMapByHeadsign = tripMapByHeadsign(schedules, predictions, filterAtTime)
 
             val allStopIds =
                 if (patternIdsByStop.containsKey(stop.id)) {
@@ -53,7 +53,12 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             stop,
                             line,
                             patternsByRoute,
-                            tripMapByHeadsignOrDirection(tripMapByHeadsign, schedules, predictions),
+                            tripMapByHeadsignOrDirection(
+                                tripMapByHeadsign,
+                                schedules,
+                                predictions,
+                                filterAtTime
+                            ),
                             allStopIds,
                             loading,
                             global,
@@ -102,6 +107,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         private fun tripMapByHeadsign(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
+            filterAtTime: Instant
         ): Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>? {
             return UpcomingTrip.tripsMappedBy(
                 schedules,
@@ -121,7 +127,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         trip.routePatternId,
                         prediction.stopId
                     )
-                }
+                },
+                filterAtTime
             )
         }
 
@@ -130,6 +137,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>?,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
+            filterAtTime: Instant
         ): Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>? {
             val tripMapByDirection =
                 UpcomingTrip.tripsMappedBy(
@@ -150,7 +158,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             trip.directionId,
                             prediction.stopId
                         )
-                    }
+                    },
+                    filterAtTime
                 )
 
             return if (tripMapByRoutePattern != null || tripMapByDirection != null) {

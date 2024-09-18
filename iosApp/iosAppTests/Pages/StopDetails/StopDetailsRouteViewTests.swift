@@ -30,7 +30,8 @@ final class StopDetailsRouteViewTests: XCTestCase {
             line: nil,
             patterns: [northPattern],
             upcomingTrips: nil,
-            alertsHere: nil
+            alertsHere: nil,
+            hasSchedulesToday: true
         )
         let patternsByHeadsignSouth = RealtimePatterns.ByHeadsign(
             route: route,
@@ -38,7 +39,8 @@ final class StopDetailsRouteViewTests: XCTestCase {
             line: nil,
             patterns: [southPattern],
             upcomingTrips: nil,
-            alertsHere: nil
+            alertsHere: nil,
+            hasSchedulesToday: true
         )
         let patternsByStop = PatternsByStop(
             route: route,
@@ -92,7 +94,8 @@ final class StopDetailsRouteViewTests: XCTestCase {
             line: nil,
             patterns: [northPattern],
             upcomingTrips: nil,
-            alertsHere: nil
+            alertsHere: nil,
+            hasSchedulesToday: true
         )
         let patternsByHeadsignSouth = RealtimePatterns.ByHeadsign(
             route: route,
@@ -100,7 +103,8 @@ final class StopDetailsRouteViewTests: XCTestCase {
             line: nil,
             patterns: [southPattern],
             upcomingTrips: nil,
-            alertsHere: nil
+            alertsHere: nil,
+            hasSchedulesToday: true
         )
         let patternsByStop = PatternsByStop(
             route: route,

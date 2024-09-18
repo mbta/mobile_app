@@ -235,7 +235,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didAppear) { view in
             try view.vStack().callOnChange(newValue: PredictionsStreamDataResponse(objects: objects))
-            let patterns = try view.findAll(HeadsignRowView.self)
+            let patterns = view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
@@ -885,7 +885,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     line: nil,
                     patterns: [pattern],
                     upcomingTrips: nil,
-                    alertsHere: nil
+                    alertsHere: nil,
+                    hasSchedulesToday: true
                 )]
 
             ),

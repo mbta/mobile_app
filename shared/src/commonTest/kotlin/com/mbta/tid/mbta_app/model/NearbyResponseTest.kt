@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Instant
@@ -596,7 +597,9 @@ class NearbyResponseTest {
                                     listOf(
                                         objects.upcomingTrip(stop1Pattern2Prediction),
                                         objects.upcomingTrip(stop1Pattern1Prediction)
-                                    )
+                                    ),
+                                    null,
+                                    true
                                 )
                             )
                         ),
@@ -609,7 +612,9 @@ class NearbyResponseTest {
                                     "Nubian",
                                     null,
                                     listOf(pattern3),
-                                    listOf(objects.upcomingTrip(stop2Pattern3Prediction))
+                                    listOf(objects.upcomingTrip(stop2Pattern3Prediction)),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -743,28 +748,36 @@ class NearbyResponseTest {
                                     "Typical Out",
                                     null,
                                     listOf(typicalOutbound),
-                                    listOf(objects.upcomingTrip(typicalOutboundPrediction))
+                                    listOf(objects.upcomingTrip(typicalOutboundPrediction)),
+                                    null,
+                                    true
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Deviation Out",
                                     null,
                                     listOf(deviationOutbound),
-                                    listOf(objects.upcomingTrip(deviationOutboundPrediction))
+                                    listOf(objects.upcomingTrip(deviationOutboundPrediction)),
+                                    null,
+                                    true
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical In",
                                     null,
                                     listOf(typicalInbound),
-                                    emptyList()
+                                    emptyList(),
+                                    null,
+                                    true
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Atypical In",
                                     null,
                                     listOf(atypicalInbound),
-                                    listOf(objects.upcomingTrip(atypicalInboundPrediction))
+                                    listOf(objects.upcomingTrip(atypicalInboundPrediction)),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -869,14 +882,18 @@ class NearbyResponseTest {
                                     "Typical Out",
                                     null,
                                     listOf(typicalOutbound),
-                                    emptyList()
+                                    emptyList(),
+                                    null,
+                                    true
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical In",
                                     null,
                                     listOf(typicalInbound),
-                                    emptyList()
+                                    emptyList(),
+                                    null,
+                                    true
                                 ),
                             )
                         )
@@ -1179,7 +1196,9 @@ class NearbyResponseTest {
                                     "Harvard",
                                     null,
                                     listOf(pattern1),
-                                    listOf(objects.upcomingTrip(prediction1))
+                                    listOf(objects.upcomingTrip(prediction1)),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -1248,7 +1267,9 @@ class NearbyResponseTest {
                                     listOf(
                                         objects.upcomingTrip(sched1, pred1),
                                         objects.upcomingTrip(sched2, pred2)
-                                    )
+                                    ),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -1329,7 +1350,9 @@ class NearbyResponseTest {
                                     "A",
                                     null,
                                     listOf(routePattern1),
-                                    listOf(objects.upcomingTrip(sched1, pred1))
+                                    listOf(objects.upcomingTrip(sched1, pred1)),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -1347,7 +1370,9 @@ class NearbyResponseTest {
                                     "B",
                                     null,
                                     listOf(routePattern2),
-                                    listOf(objects.upcomingTrip(sched2, pred2))
+                                    listOf(objects.upcomingTrip(sched2, pred2)),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -1377,6 +1402,11 @@ class NearbyResponseTest {
             }
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        objects.schedule {
+            this.trip = objects.trip(routePattern)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+        }
 
         val alert =
             objects.alert {
@@ -1417,7 +1447,8 @@ class NearbyResponseTest {
                                     null,
                                     listOf(routePattern),
                                     emptyList(),
-                                    alertsHere = listOf(alert)
+                                    alertsHere = listOf(alert),
+                                    true
                                 )
                             )
                         )
@@ -1489,7 +1520,9 @@ class NearbyResponseTest {
                                     "A",
                                     null,
                                     listOf(routePattern1),
-                                    listOf(objects.upcomingTrip(sched1))
+                                    listOf(objects.upcomingTrip(sched1)),
+                                    null,
+                                    true
                                 )
                             )
                         )
@@ -1674,14 +1707,18 @@ class NearbyResponseTest {
                                 listOf(
                                     objects.upcomingTrip(schedB1, predB1),
                                     objects.upcomingTrip(schedC1, predC1),
-                                )
+                                ),
+                                null,
+                                true
                             ),
                             RealtimePatterns.ByHeadsign(
                                 routeE,
                                 "Heath Street",
                                 line,
                                 listOf(routePatternE1),
-                                listOf(objects.upcomingTrip(schedE1, predE1))
+                                listOf(objects.upcomingTrip(schedE1, predE1)),
+                                null,
+                                true
                             ),
                             RealtimePatterns.ByDirection(
                                 line,
@@ -1692,7 +1729,9 @@ class NearbyResponseTest {
                                     objects.upcomingTrip(schedB2, predB2),
                                     objects.upcomingTrip(schedC2, predC2),
                                     objects.upcomingTrip(schedE2, predE2),
-                                )
+                                ),
+                                null,
+                                true
                             ),
                         ),
                         listOf(directionWest, directionEast)

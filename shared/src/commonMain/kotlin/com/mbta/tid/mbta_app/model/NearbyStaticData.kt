@@ -390,7 +390,8 @@ fun NearbyStaticData.withRealtimeInfo(
                         trip.routePatternId,
                         prediction.stopId
                     )
-                }
+                },
+                filterAtTime
             )
             .orEmpty()
 
@@ -413,7 +414,8 @@ fun NearbyStaticData.withRealtimeInfo(
                         trip.directionId,
                         prediction.stopId
                     )
-                }
+                },
+                filterAtTime
             )
             .orEmpty()
 

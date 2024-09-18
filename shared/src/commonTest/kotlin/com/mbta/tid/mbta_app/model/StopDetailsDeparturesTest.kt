@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -46,6 +47,13 @@ class StopDetailsDeparturesTest {
                 stopSequence = 4
             }
 
+        objects.schedule {
+            this.trip = objects.trip(routePattern2)
+            stopId = stop.id
+            departureTime = time1.minus(1.hours)
+            stopSequence = 4
+        }
+
         assertEquals(
             StopDetailsDepartures(
                 listOf(
@@ -61,14 +69,18 @@ class StopDetailsDeparturesTest {
                                 listOf(
                                     objects.upcomingTrip(schedule1, prediction1),
                                     objects.upcomingTrip(schedule2)
-                                )
+                                ),
+                                null,
+                                true
                             ),
                             RealtimePatterns.ByHeadsign(
                                 route,
                                 "B",
                                 null,
                                 listOf(routePattern2),
-                                listOf()
+                                listOf(),
+                                null,
+                                true
                             )
                         )
                     )
@@ -236,14 +248,18 @@ class StopDetailsDeparturesTest {
                                 listOf(
                                     objects.upcomingTrip(schedB1, predB1),
                                     objects.upcomingTrip(schedC1, predC1),
-                                )
+                                ),
+                                null,
+                                true
                             ),
                             RealtimePatterns.ByHeadsign(
                                 routeE,
                                 "Heath Street",
                                 line,
                                 listOf(routePatternE1),
-                                listOf(objects.upcomingTrip(schedE1, predE1))
+                                listOf(objects.upcomingTrip(schedE1, predE1)),
+                                null,
+                                true
                             ),
                             RealtimePatterns.ByDirection(
                                 line,
@@ -254,7 +270,9 @@ class StopDetailsDeparturesTest {
                                     objects.upcomingTrip(schedB2, predB2),
                                     objects.upcomingTrip(schedC2, predC2),
                                     objects.upcomingTrip(schedE2, predE2),
-                                )
+                                ),
+                                null,
+                                true
                             ),
                         ),
                         listOf(Direction("West", null, 0), directionEast)
@@ -301,7 +319,15 @@ class StopDetailsDeparturesTest {
             val predictedTrip: UpcomingTrip?,
         ) {
             fun patternsByHeadsign(trips: List<UpcomingTrip>?) =
-                RealtimePatterns.ByHeadsign(route, headsign, null, listOf(routePattern), trips)
+                RealtimePatterns.ByHeadsign(
+                    route,
+                    headsign,
+                    null,
+                    listOf(routePattern),
+                    trips,
+                    null,
+                    true
+                )
         }
 
         fun buildPattern(scheduled: Boolean, predicted: Boolean): PatternInfo {
@@ -337,7 +363,16 @@ class StopDetailsDeparturesTest {
                             departureTime = time
                         }
                     objects.upcomingTrip(schedule)
-                } else null
+                } else {
+                    val scheduledTrip = objects.trip(routePattern)
+                    val schedule =
+                        objects.schedule {
+                            trip = scheduledTrip
+                            stopId = stop.id
+                            departureTime = time.minus(1.hours)
+                        }
+                    objects.upcomingTrip(schedule)
+                }
             val predictedTrip =
                 if (predicted) {
                     val predictedTrip = objects.trip(routePattern)
@@ -437,8 +472,14 @@ class StopDetailsDeparturesTest {
                 representativeTrip { headsign = "Late" }
             }
 
-        // since we only request schedules in the future and predictions get removed once they're
-        // far enough in the past, there will be no schedule or prediction for the early pattern
+        // since predictions get removed once they're far enough in the past, there will be no
+        // prediction for the early pattern, and the past schedule will be filtered out
+        objects.schedule {
+            this.trip = objects.trip(earlyPattern)
+            stopId = stop.id
+            departureTime = now.minus(10.minutes)
+        }
+
         val lateTrip = objects.trip(latePattern)
         val latePrediction =
             objects.prediction {
@@ -446,16 +487,42 @@ class StopDetailsDeparturesTest {
                 stopId = stop.id
                 departureTime = late
             }
+        val lateSchedule =
+            objects.schedule {
+                this.trip = lateTrip
+                stopId = stop.id
+                departureTime = now.minus(10.minutes)
+            }
 
         val expectedEarly =
-            RealtimePatterns.ByHeadsign(route, "Early", null, listOf(earlyPattern), emptyList())
-        val expectedLate =
+            RealtimePatterns.ByHeadsign(
+                route,
+                "Early",
+                null,
+                listOf(earlyPattern),
+                emptyList(),
+                null,
+                true
+            )
+        val expectedLateBeforeLoad =
             RealtimePatterns.ByHeadsign(
                 route,
                 "Late",
                 null,
                 listOf(latePattern),
-                listOf(UpcomingTrip(lateTrip, latePrediction))
+                listOf(UpcomingTrip(lateTrip, latePrediction)),
+                null,
+                true
+            )
+        val expectedLateAfterLoad =
+            RealtimePatterns.ByHeadsign(
+                route,
+                "Late",
+                null,
+                listOf(latePattern),
+                listOf(UpcomingTrip(lateTrip, lateSchedule, latePrediction)),
+                null,
+                true
             )
 
         val expectedBeforeLoaded =
@@ -465,7 +532,7 @@ class StopDetailsDeparturesTest {
                         listOf(route),
                         null,
                         stop,
-                        listOf(expectedEarly, expectedLate),
+                        listOf(expectedEarly, expectedLateBeforeLoad),
                         listOf(Direction("", "", 0), Direction("", "", 1))
                     )
                 )
@@ -489,7 +556,7 @@ class StopDetailsDeparturesTest {
                         listOf(route),
                         null,
                         stop,
-                        listOf(expectedLate),
+                        listOf(expectedLateAfterLoad),
                         listOf(Direction("", "", 0), Direction("", "", 1))
                     )
                 )
@@ -511,12 +578,20 @@ class StopDetailsDeparturesTest {
     fun `StopDetailsDepartures sorts by route preference order`() {
         val objects = ObjectCollectionBuilder()
 
+        val time = Instant.parse("2024-04-02T16:29:22Z")
+
+        val stop = objects.stop()
         val routePinned = objects.route { sortOrder = 100 }
         val routePattern1 =
             objects.routePattern(routePinned) {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "A" }
             }
+        objects.schedule {
+            this.trip = objects.trip(routePattern1)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+        }
 
         val routeNotPinned = objects.route { sortOrder = 1 }
         val routeNotPinnedPattern =
@@ -524,6 +599,11 @@ class StopDetailsDeparturesTest {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "B" }
             }
+        objects.schedule {
+            this.trip = objects.trip(routeNotPinnedPattern)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+        }
 
         val routeNotPinned2 = objects.route { sortOrder = 2 }
         val routeNotPinnedPattern2 =
@@ -531,10 +611,11 @@ class StopDetailsDeparturesTest {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "C" }
             }
-
-        val stop = objects.stop()
-
-        val time1 = Instant.parse("2024-04-02T16:29:22Z")
+        objects.schedule {
+            this.trip = objects.trip(routeNotPinnedPattern2)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+        }
 
         assertEquals(
             StopDetailsDepartures(
@@ -548,7 +629,9 @@ class StopDetailsDeparturesTest {
                                 "A",
                                 null,
                                 listOf(routePattern1),
-                                listOf()
+                                listOf(),
+                                null,
+                                true
                             ),
                         )
                     ),
@@ -561,7 +644,9 @@ class StopDetailsDeparturesTest {
                                 "B",
                                 null,
                                 listOf(routeNotPinnedPattern),
-                                listOf()
+                                listOf(),
+                                null,
+                                true
                             ),
                         )
                     ),
@@ -574,7 +659,9 @@ class StopDetailsDeparturesTest {
                                 "C",
                                 null,
                                 listOf(routeNotPinnedPattern2),
-                                listOf()
+                                listOf(),
+                                null,
+                                true
                             ),
                         )
                     )
@@ -597,7 +684,7 @@ class StopDetailsDeparturesTest {
                 PredictionsStreamDataResponse(objects),
                 null,
                 setOf(routePinned.id),
-                filterAtTime = time1,
+                filterAtTime = time,
             )
         )
     }
@@ -614,6 +701,13 @@ class StopDetailsDeparturesTest {
             }
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
+
+        objects.schedule {
+            this.trip = objects.trip(routePattern)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+            stopSequence = 4
+        }
 
         val alert =
             objects.alert {
@@ -658,7 +752,8 @@ class StopDetailsDeparturesTest {
                                 null,
                                 listOf(routePattern),
                                 emptyList(),
-                                alertsHere = listOf(alert)
+                                listOf(alert),
+                                true
                             )
                         )
                     )

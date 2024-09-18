@@ -395,7 +395,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             patterns: List<RoutePattern>
         ): Boolean {
             val hasSchedulesTodayByPattern = optionalHasSchedulesTodayByPattern ?: return true
-            return patterns.all { pattern -> hasSchedulesTodayByPattern[pattern.id] == true }
+            return patterns.any { pattern -> hasSchedulesTodayByPattern[pattern.id] == true }
         }
     }
 }

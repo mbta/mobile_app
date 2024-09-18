@@ -130,7 +130,8 @@ private data class RowData(
                         line = null,
                         patterns = emptyList(),
                         upcomingTrips = listOf(upcoming),
-                        alertsHere = null
+                        alertsHere = null,
+                        hasSchedulesToday = true
                     )
                     .format(now, route.type, TripInstantDisplay.Context.StopDetailsFiltered)
 

@@ -25,7 +25,7 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.Loading,
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null, true)
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
     }
@@ -41,7 +41,15 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    listOf(alert),
+                    true
+                )
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
     }
@@ -81,7 +89,8 @@ class RealtimePatternsTest {
                         null,
                         emptyList(),
                         emptyList(),
-                        listOf(alert)
+                        listOf(alert),
+                        true
                     )
                     .format(now, route.type, context)
             )
@@ -113,7 +122,8 @@ class RealtimePatternsTest {
                     null,
                     emptyList(),
                     listOf(upcomingTrip),
-                    listOf(alert)
+                    listOf(alert),
+                    true
                 )
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
@@ -156,7 +166,8 @@ class RealtimePatternsTest {
                     null,
                     emptyList(),
                     listOf(upcomingTrip),
-                    listOf(alert)
+                    listOf(alert),
+                    true
                 )
                 .format(now, route.type, anyContext())
         )
@@ -171,7 +182,15 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.None(null),
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    true
+                )
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
         )
     }
@@ -216,7 +235,9 @@ class RealtimePatternsTest {
                     "",
                     null,
                     emptyList(),
-                    listOf(upcomingTrip1, upcomingTrip2)
+                    listOf(upcomingTrip1, upcomingTrip2),
+                    null,
+                    true
                 )
                 .format(now, routeType, anyContext())
         )
@@ -263,7 +284,9 @@ class RealtimePatternsTest {
                     "",
                     null,
                     emptyList(),
-                    listOf(upcomingTrip1, upcomingTrip2)
+                    listOf(upcomingTrip1, upcomingTrip2),
+                    null,
+                    true
                 )
                 .format(now, RouteType.LIGHT_RAIL, anyContext())
         )
@@ -288,7 +311,9 @@ class RealtimePatternsTest {
                     "",
                     null,
                     emptyList(),
-                    listOf(upcomingTrip1, upcomingTrip2)
+                    listOf(upcomingTrip1, upcomingTrip2),
+                    null,
+                    true
                 )
                 .format(now, RouteType.BUS, anyContext())
         )
@@ -309,7 +334,9 @@ class RealtimePatternsTest {
                     "",
                     null,
                     emptyList(),
-                    listOf(objects.upcomingTrip(prediction0))
+                    listOf(objects.upcomingTrip(prediction0)),
+                    null,
+                    true
                 )
                 .directionId()
         )
@@ -320,7 +347,9 @@ class RealtimePatternsTest {
                     "",
                     null,
                     emptyList(),
-                    listOf(objects.upcomingTrip(prediction1))
+                    listOf(objects.upcomingTrip(prediction1)),
+                    null,
+                    true
                 )
                 .directionId()
         )
@@ -334,11 +363,13 @@ class RealtimePatternsTest {
         val routePattern1 = objects.routePattern(route) { directionId = 1 }
         assertEquals(
             0,
-            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0), null, null, true)
+                .directionId()
         )
         assertEquals(
             1,
-            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1), null, null, true)
+                .directionId()
         )
     }
 
@@ -349,7 +380,10 @@ class RealtimePatternsTest {
                     ObjectCollectionBuilder.Single.route(),
                     "",
                     null,
-                    emptyList()
+                    emptyList(),
+                    null,
+                    null,
+                    true
                 )
                 .directionId()
         }
@@ -402,7 +436,9 @@ class RealtimePatternsTest {
                 routes = listOf(route1, route2, route3),
                 direction = Direction("", "", 0),
                 emptyList(),
-                listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3, upcomingTrip4)
+                listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3, upcomingTrip4),
+                null,
+                true
             )
 
         val routeType = anyNonCommuterRailRouteType()
