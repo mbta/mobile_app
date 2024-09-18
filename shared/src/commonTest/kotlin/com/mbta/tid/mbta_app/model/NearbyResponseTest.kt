@@ -1471,7 +1471,6 @@ class NearbyResponseTest {
                 stopSequence = 90
                 arrivalTime = time + 2.minutes
                 departureTime = null
-                pickUpType = Schedule.StopEdgeType.Unavailable
             }
 
         val staticData =

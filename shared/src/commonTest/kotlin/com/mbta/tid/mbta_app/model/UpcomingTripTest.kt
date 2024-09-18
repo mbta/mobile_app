@@ -490,20 +490,20 @@ class UpcomingTripTest {
         val trip = trip()
 
         val schedule1 = schedule {
+            arrivalTime = Clock.System.now()
             departureTime = null
-            pickUpType = Schedule.StopEdgeType.Unavailable
         }
         assertEquals(true, UpcomingTrip(trip, schedule1).isArrivalOnly())
 
         val schedule2 = schedule {
+            arrivalTime = Clock.System.now()
             departureTime = Clock.System.now()
-            pickUpType = Schedule.StopEdgeType.Regular
         }
         assertEquals(false, UpcomingTrip(trip, schedule2).isArrivalOnly())
 
         val schedule3 = schedule {
-            pickUpType = Schedule.StopEdgeType.Unavailable
-            dropOffType = Schedule.StopEdgeType.Unavailable
+            arrivalTime = null
+            departureTime = null
         }
         assertEquals(null, UpcomingTrip(trip, schedule3).isArrivalOnly())
     }
@@ -533,17 +533,12 @@ class UpcomingTripTest {
         val trip = trip()
         val scheduleArrivalOnly = schedule {
             arrivalTime = Clock.System.now()
-            dropOffType = Schedule.StopEdgeType.Regular
             departureTime = null
-            pickUpType = Schedule.StopEdgeType.Unavailable
         }
-        val scheduleNormal = schedule {
-            departureTime = Clock.System.now()
-            pickUpType = Schedule.StopEdgeType.Regular
-        }
+        val scheduleNormal = schedule { departureTime = Clock.System.now() }
         val scheduleNeither = schedule {
-            dropOffType = Schedule.StopEdgeType.Unavailable
-            pickUpType = Schedule.StopEdgeType.Unavailable
+            arrivalTime = null
+            departureTime = null
         }
         val predictionArrivalOnly = prediction {
             arrivalTime = Clock.System.now()

@@ -431,21 +431,7 @@ class TemporaryTerminalTest {
                         emptyList(),
                         listOf(alert)
                     ),
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "JFK/UMass",
-                        null,
-                        listOf(redAshmontJfk, redBraintreeJfk),
-                        listOf(
-                            UpcomingTrip(tripAshmontAlewife1, predictionAshmontAlewife1),
-                            UpcomingTrip(tripBraintreeJfk, scheduleBraintreeJfk),
-                            UpcomingTrip(tripAshmontJfk, scheduleAshmontJfk),
-                            UpcomingTrip(tripAshmontAlewife2, predictionAshmontAlewife2),
-                            UpcomingTrip(tripAshmontAlewife3, predictionAshmontAlewife3),
-                        ),
-                        // TODO remove alert once we fix alert boundaries
-                        listOf(alert)
-                    )
+                    // JFK/UMass filtered out because arrival only
                 )
                 .condensed(),
             NearbyStaticData(globalData, nearbyAtShuttleEdge)
