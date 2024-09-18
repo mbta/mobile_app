@@ -241,6 +241,7 @@ struct NearbyTransitView: View {
     ) -> [StopsAssociated]? {
         guard let loadedLocation = state.loadedLocation else { return nil }
         return state.nearbyByRouteAndStop?.withRealtimeInfo(
+            globalData: globalData,
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
             schedules: schedules,
             predictions: predictions,

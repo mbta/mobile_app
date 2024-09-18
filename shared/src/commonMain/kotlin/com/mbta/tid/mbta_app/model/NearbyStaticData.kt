@@ -20,19 +20,26 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     sealed class StaticPatterns : Comparable<StaticPatterns> {
         abstract val patterns: List<RoutePattern>
 
+        abstract fun copy(patterns: List<RoutePattern> = this.patterns): StaticPatterns
+
         data class ByHeadsign(
             val route: Route,
             val headsign: String,
             val line: Line?,
             override val patterns: List<RoutePattern>
-        ) : StaticPatterns()
+        ) : StaticPatterns() {
+            override fun copy(patterns: List<RoutePattern>) =
+                copy(route = route, patterns = patterns)
+        }
 
         data class ByDirection(
             val line: Line,
             val routes: List<Route>,
             val direction: Direction,
             override val patterns: List<RoutePattern>
-        ) : StaticPatterns()
+        ) : StaticPatterns() {
+            override fun copy(patterns: List<RoutePattern>) = copy(line = line, patterns = patterns)
+        }
 
         override fun compareTo(other: StaticPatterns): Int =
             compareValuesBy(
@@ -55,6 +62,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         abstract val patterns: List<StaticPatterns>
         abstract val directions: List<Direction>
 
+        abstract fun copy(
+            stop: Stop = this.stop,
+            allStopIds: Set<String> = this.allStopIds,
+            patterns: List<StaticPatterns> = this.patterns,
+            directions: List<Direction> = this.directions
+        ): StopPatterns
+
         data class ForRoute(
             val route: Route,
             override val stop: Stop,
@@ -75,6 +89,20 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 patterns,
                 listOf(Direction(0, route), Direction(1, route))
             )
+
+            override fun copy(
+                stop: Stop,
+                allStopIds: Set<String>,
+                patterns: List<StaticPatterns>,
+                directions: List<Direction>
+            ) =
+                copy(
+                    route = route,
+                    stop = stop,
+                    allStopIds = allStopIds,
+                    patterns = patterns,
+                    directions = directions
+                )
         }
 
         data class ForLine(
@@ -100,10 +128,32 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 patterns,
                 listOf(Direction(0, routes.first()), Direction(1, routes.first()))
             )
+
+            override fun copy(
+                stop: Stop,
+                allStopIds: Set<String>,
+                patterns: List<StaticPatterns>,
+                directions: List<Direction>
+            ) =
+                this.copy(
+                    line = line,
+                    stop = stop,
+                    allStopIds = allStopIds,
+                    patterns = patterns,
+                    directions = directions
+                )
         }
     }
 
     sealed class TransitWithStops {
+        abstract val patternsByStop: List<StopPatterns>
+
+        abstract fun allRoutes(): List<Route>
+
+        abstract fun copy(
+            patternsByStop: List<StopPatterns> = this.patternsByStop
+        ): TransitWithStops
+
         fun sortRoute(): Route =
             when (this) {
                 is ByRoute -> this.route
@@ -113,11 +163,21 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         data class ByLine(
             val line: Line,
             val routes: List<Route>,
-            val patternsByStop: List<StopPatterns>
-        ) : TransitWithStops()
+            override val patternsByStop: List<StopPatterns>
+        ) : TransitWithStops() {
+            override fun allRoutes() = routes
 
-        data class ByRoute(val route: Route, val patternsByStop: List<StopPatterns>) :
-            TransitWithStops()
+            override fun copy(patternsByStop: List<StopPatterns>) =
+                this.copy(line = line, routes = routes, patternsByStop = patternsByStop)
+        }
+
+        data class ByRoute(val route: Route, override val patternsByStop: List<StopPatterns>) :
+            TransitWithStops() {
+            override fun allRoutes() = listOf(route)
+
+            override fun copy(patternsByStop: List<StopPatterns>) =
+                this.copy(route = route, patternsByStop = patternsByStop)
+        }
     }
 
     fun stopIds(): Set<String> =
@@ -348,8 +408,11 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
  * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
  * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
  * sort order.
+ *
+ * Runs static data and predictions through [TemporaryTerminalRewriter].
  */
 fun NearbyStaticData.withRealtimeInfo(
+    globalData: GlobalResponse?,
     sortByDistanceFrom: Position,
     schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
@@ -357,11 +420,35 @@ fun NearbyStaticData.withRealtimeInfo(
     filterAtTime: Instant,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated> {
+    val activeRelevantAlerts =
+        alerts?.alerts?.values?.filter {
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
+        }
+
+    // this needs to change how the trip keys are constructed
+    val (rewrittenThis, rewrittenPredictions) =
+        if (
+            predictions == null ||
+                globalData == null ||
+                activeRelevantAlerts == null ||
+                schedules == null
+        )
+            Pair(this, predictions)
+        else
+            TemporaryTerminalRewriter(
+                    this,
+                    predictions,
+                    globalData,
+                    activeRelevantAlerts,
+                    schedules
+                )
+                .rewritten()
+
     // add predictions and apply filtering
     val upcomingTripsByRoutePatternAndStop =
         UpcomingTrip.tripsMappedBy(
                 schedules,
-                predictions,
+                rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
@@ -384,7 +471,7 @@ fun NearbyStaticData.withRealtimeInfo(
     val upcomingTripsByDirectionAndStop =
         UpcomingTrip.tripsMappedBy(
                 schedules,
-                predictions,
+                rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByDirection(
@@ -406,12 +493,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val cutoffTime = filterAtTime.plus(90.minutes)
 
-    val activeRelevantAlerts =
-        alerts?.alerts?.values?.filter {
-            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
-        }
-
-    return data
+    return rewrittenThis.data
         .asSequence()
         .map { transit ->
             when (transit) {
@@ -508,7 +590,7 @@ class NearbyStaticDataBuilder {
         @DefaultArgumentInterop.Enabled
         fun stop(
             stop: Stop,
-            childStopIds: List<String> = emptyList(),
+            childStopIds: List<String> = stop.childStopIds,
             directions: List<Direction>? = null,
             block: PatternsBuilder.() -> Unit
         ) {
