@@ -785,6 +785,177 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `withRealtimeInfo handles schedule and predictions edge cases`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+
+        val route1 = objects.route()
+
+        // exclude, schedule in past
+        val schedulePast =
+            objects.routePattern(route1) {
+                sortOrder = 1
+                representativeTrip { headsign = "Schedule Past" }
+            }
+        // include, schedule upcoming
+        val scheduleSoon =
+            objects.routePattern(route1) {
+                sortOrder = 2
+                representativeTrip { headsign = "Schedule Soon" }
+            }
+        // exclude, schedule too late
+        val scheduleLater =
+            objects.routePattern(route1) {
+                sortOrder = 3
+                representativeTrip { headsign = "Schedule Later" }
+            }
+        // exclude, prediction in past
+        val predictionPast =
+            objects.routePattern(route1) {
+                sortOrder = 4
+                representativeTrip { headsign = "Prediction Past" }
+            }
+        // include, prediction in past but BRD
+        val predictionBrd =
+            objects.routePattern(route1) {
+                sortOrder = 5
+                representativeTrip { headsign = "Prediction BRD" }
+            }
+        // include, prediction upcoming
+        val predictionSoon =
+            objects.routePattern(route1) {
+                sortOrder = 6
+                representativeTrip { headsign = "Prediction Soon" }
+            }
+        // exclude, prediction later
+        val predictionLater =
+            objects.routePattern(route1) {
+                sortOrder = 7
+                representativeTrip { headsign = "Prediction Later" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Schedule Past", listOf(schedulePast))
+                        headsign("Schedule Soon", listOf(scheduleSoon))
+                        headsign("Schedule Later", listOf(scheduleLater))
+                        headsign("Prediction Past", listOf(predictionPast))
+                        headsign("Prediction BRD", listOf(predictionBrd))
+                        headsign("Prediction Soon", listOf(predictionSoon))
+                        headsign("Prediction Later", listOf(predictionLater))
+                    }
+                }
+            }
+
+        val time = Instant.parse("2024-09-19T13:43:19-04:00")
+
+        val schedulePastSchedule =
+            objects.schedule {
+                stopId = stop1.id
+                trip = objects.trip(schedulePast)
+                departureTime = time - 1.minutes
+            }
+        val scheduleSoonSchedule =
+            objects.schedule {
+                stopId = stop1.id
+                trip = objects.trip(scheduleSoon)
+                departureTime = time + 5.minutes
+            }
+        val scheduleLaterSchedule =
+            objects.schedule {
+                stopId = stop1.id
+                trip = objects.trip(scheduleLater)
+                departureTime = time + 91.minutes
+            }
+        val predictionPastPrediction =
+            objects.prediction {
+                stopId = stop1.id
+                trip = objects.trip(predictionPast)
+                departureTime = time - 1.minutes
+            }
+        val predictionBrdTrip = objects.trip(predictionBrd)
+        val predictionBrdVehicle =
+            objects.vehicle {
+                stopId = stop1.id
+                tripId = predictionBrdTrip.id
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+            }
+        val predictionBrdPrediction =
+            objects.prediction {
+                stopId = stop1.id
+                trip = predictionBrdTrip
+                departureTime = time - 1.minutes
+                vehicleId = predictionBrdVehicle.id
+            }
+        val predictionSoonPrediction =
+            objects.prediction {
+                stopId = stop1.id
+                trip = objects.trip(predictionSoon)
+                departureTime = time + 5.minutes
+            }
+        val predictionLaterPrediction =
+            objects.prediction {
+                stopId = stop1.id
+                trip = objects.trip(predictionLater)
+                departureTime = time + 91.minutes
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            route1,
+                            stop1,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Schedule Soon",
+                                    null,
+                                    listOf(scheduleSoon),
+                                    listOf(objects.upcomingTrip(scheduleSoonSchedule))
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Prediction BRD",
+                                    null,
+                                    listOf(predictionBrd),
+                                    listOf(
+                                        objects.upcomingTrip(
+                                            predictionBrdPrediction,
+                                            predictionBrdVehicle
+                                        )
+                                    )
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Prediction Soon",
+                                    null,
+                                    listOf(predictionSoon),
+                                    listOf(objects.upcomingTrip(predictionSoonPrediction))
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects, emptyMap()),
+                sortByDistanceFrom = stop1.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = null,
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+            )
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo hides rare patterns while loading`() {
         val objects = ObjectCollectionBuilder()
 

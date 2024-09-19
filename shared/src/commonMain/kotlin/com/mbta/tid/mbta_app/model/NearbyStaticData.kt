@@ -506,6 +506,7 @@ fun NearbyStaticData.withRealtimeInfo(
                                     it,
                                     upcomingTripsByRoutePatternAndStop +
                                         upcomingTripsByDirectionAndStop,
+                                    filterAtTime,
                                     cutoffTime,
                                     activeRelevantAlerts
                                 )
@@ -528,6 +529,7 @@ fun NearbyStaticData.withRealtimeInfo(
                                     it,
                                     upcomingTripsByRoutePatternAndStop +
                                         upcomingTripsByDirectionAndStop,
+                                    filterAtTime,
                                     cutoffTime,
                                     activeRelevantAlerts
                                 )

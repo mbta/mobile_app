@@ -233,15 +233,19 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         patterns.any { it.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
 
     /**
-     * Checks if a trip exists before the given cutoff time.
+     * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
+     * left this stop.
      *
      * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
      * should be hidden until data is available.
      */
-    fun isUpcomingBefore(cutoffTime: Instant) =
+    fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
         upcomingTrips?.any {
             val tripTime = it.time
-            tripTime != null && tripTime < cutoffTime
+            tripTime != null &&
+                tripTime < cutoffTime &&
+                (tripTime >= currentTime ||
+                    (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
         }
             ?: false
 

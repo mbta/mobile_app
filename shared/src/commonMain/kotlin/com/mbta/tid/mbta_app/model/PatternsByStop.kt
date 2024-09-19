@@ -24,6 +24,7 @@ data class PatternsByStop(
     constructor(
         staticData: NearbyStaticData.StopPatterns,
         upcomingTripsMap: UpcomingTripsMap?,
+        filterTime: Instant,
         cutoffTime: Instant,
         alerts: Collection<Alert>?,
     ) : this(
@@ -45,7 +46,10 @@ data class PatternsByStop(
                         RealtimePatterns.ByDirection(it, upcomingTripsMap, alerts)
                 }
             }
-            .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
+            .filter {
+                (it.isTypical() || it.isUpcomingWithin(filterTime, cutoffTime)) &&
+                    !it.isArrivalOnly()
+            }
             .sorted(),
         staticData.directions
     )
