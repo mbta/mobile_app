@@ -147,6 +147,8 @@ class TemporaryTerminalRewriter(
                 val fullPatternStopIds =
                     globalData.trips[fullPattern.representativeTripId]?.stopIds ?: continue
 
+                // JFK/UMass has different platforms for different branches, so to match correctly
+                // we need to check each platform ID separately
                 for (stopId in fullStaticPatterns.stopIds) {
                     if (!fullPatternStopIds.contains(stopId)) continue
 
