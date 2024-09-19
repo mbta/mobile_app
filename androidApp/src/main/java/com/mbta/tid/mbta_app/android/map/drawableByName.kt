@@ -73,8 +73,6 @@ fun drawableByName(name: String): Int =
         "live-data" -> R.drawable.live_data
         "location-dot" -> R.drawable.location_dot
         "location-halo" -> R.drawable.location_halo
-        "map-child-stop-entrance" -> R.drawable.map_child_stop_entrance
-        "map-child-stop-platform" -> R.drawable.map_child_stop_platform
         "map-nearby-location-cursor" -> R.drawable.map_nearby_location_cursor
         "map-stop-close-BLUE" -> R.drawable.map_stop_close_blue
         "map-stop-close-BUS" -> R.drawable.map_stop_close_bus
