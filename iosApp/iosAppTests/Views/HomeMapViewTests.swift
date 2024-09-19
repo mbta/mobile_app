@@ -253,7 +253,6 @@ final class HomeMapViewTests: XCTestCase {
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
-            XCTAssertNotNil(mapVM.childStops)
         }
         wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
 
@@ -309,7 +308,6 @@ final class HomeMapViewTests: XCTestCase {
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
             XCTAssertFalse(mapVM.routeSourceData.isEmpty)
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
-            XCTAssertNotNil(mapVM.childStops)
         }
 
         ViewHosting.host(view: sut)
@@ -389,7 +387,6 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
                 segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
             } })
-            XCTAssertNotNil(mapVM.childStops)
         }
 
         ViewHosting.host(view: sut)
@@ -467,7 +464,6 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
                 segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
             }})
-            XCTAssertNil(mapVM.childStops)
         }
 
         let stopDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 1) { _ in
@@ -881,30 +877,6 @@ final class HomeMapViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared, updateStopSourcesCalledExpectation], timeout: 5)
-    }
-
-    func testUpdatesChildStopSourcesWhenDataChanges() {
-        let updateChildStopSourcesCalledExpectation = XCTestExpectation(description: "Update child stop source called")
-
-        let layerManager = MockLayerManager(updateChildStopDataCallback: { _ in
-            updateChildStopSourcesCalledExpectation.fulfill()
-        })
-
-        let childStopData: [String: Stop]? = ["stop1": ObjectCollectionBuilder().stop { _ in }]
-        var sut = HomeMapView(
-            mapVM: .init(layerManager: layerManager),
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: .init(),
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: childStopData)
-        }
-
-        ViewHosting.host(view: sut)
-        wait(for: [hasAppeared, updateChildStopSourcesCalledExpectation], timeout: 5)
     }
 
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {

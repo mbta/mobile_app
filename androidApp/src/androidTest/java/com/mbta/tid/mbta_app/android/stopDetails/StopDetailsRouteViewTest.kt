@@ -99,6 +99,7 @@ class StopDetailsRouteViewTest {
                                         trip.headsign,
                                         line,
                                         listOf(routePatternOne, routePatternTwo),
+                                        stopIds = setOf(stop.id),
                                     ),
                                 upcomingTripsMap =
                                     mapOf(
@@ -108,7 +109,6 @@ class StopDetailsRouteViewTest {
                                             stop.id,
                                         ) to listOf(UpcomingTrip(trip, prediction))
                                     ),
-                                stopIds = setOf(stop.id),
                                 alerts = null
                             )
                         )

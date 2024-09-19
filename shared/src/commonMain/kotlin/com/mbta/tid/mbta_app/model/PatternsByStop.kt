@@ -24,6 +24,7 @@ data class PatternsByStop(
     constructor(
         staticData: NearbyStaticData.StopPatterns,
         upcomingTripsMap: UpcomingTripsMap?,
+        filterTime: Instant,
         cutoffTime: Instant,
         alerts: Collection<Alert>?,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
@@ -44,7 +45,6 @@ data class PatternsByStop(
                         RealtimePatterns.ByHeadsign(
                             it,
                             upcomingTripsMap,
-                            staticData.allStopIds,
                             alerts,
                             hasSchedulesTodayByPattern
                         )
@@ -52,13 +52,15 @@ data class PatternsByStop(
                         RealtimePatterns.ByDirection(
                             it,
                             upcomingTripsMap,
-                            staticData.allStopIds,
                             alerts,
                             hasSchedulesTodayByPattern
                         )
                 }
             }
-            .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }
+            .filter {
+                (it.isTypical() || it.isUpcomingWithin(filterTime, cutoffTime)) &&
+                    !it.isArrivalOnly()
+            }
             .sorted(),
         staticData.directions
     )

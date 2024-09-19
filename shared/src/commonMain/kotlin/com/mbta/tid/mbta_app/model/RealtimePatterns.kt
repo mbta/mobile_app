@@ -42,7 +42,6 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
             upcomingTripsMap: UpcomingTripsMap?,
-            stopIds: Set<String>,
             alerts: Collection<Alert>?,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ) : this(
@@ -51,7 +50,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.line,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                stopIds
+                staticData.stopIds
                     .map { stopId ->
                         staticData.patterns
                             .mapNotNull { pattern ->
@@ -72,7 +71,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             alerts?.let {
                 applicableAlerts(
                     routes = listOf(staticData.route),
-                    stopIds = stopIds,
+                    stopIds = staticData.stopIds,
                     alerts = alerts
                 )
             },
@@ -110,7 +109,6 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap?,
-            stopIds: Set<String>,
             alerts: Collection<Alert>?,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ) : this(
@@ -119,7 +117,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.direction,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                stopIds
+                staticData.stopIds
                     .flatMap { stopId ->
                         staticData.routes.mapNotNull { route ->
                             upcomingTripsMap[
@@ -136,7 +134,11 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                 null
             },
             alerts?.let {
-                applicableAlerts(routes = staticData.routes, stopIds = stopIds, alerts = alerts)
+                applicableAlerts(
+                    routes = staticData.routes,
+                    stopIds = staticData.stopIds,
+                    alerts = alerts
+                )
             },
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
         )
@@ -242,15 +244,19 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         patterns.any { it.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
 
     /**
-     * Checks if a trip exists before the given cutoff time.
+     * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
+     * left this stop.
      *
      * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
      * should be hidden until data is available.
      */
-    fun isUpcomingBefore(cutoffTime: Instant) =
+    fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
         upcomingTrips?.any {
             val tripTime = it.time
-            tripTime != null && tripTime < cutoffTime
+            tripTime != null &&
+                tripTime < cutoffTime &&
+                (tripTime >= currentTime ||
+                    (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
         }
             ?: false
 
@@ -361,19 +367,21 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             directionId: Int? = null,
             alerts: Collection<Alert>
         ): List<Alert> =
-            stopIds.flatMap { stopId ->
-                alerts.filter { alert ->
-                    alert.anyInformedEntity {
-                        routes.any { route ->
-                            it.appliesTo(
-                                directionId = directionId,
-                                routeId = route.id,
-                                stopId = stopId
-                            )
-                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+            stopIds
+                .flatMap { stopId ->
+                    alerts.filter { alert ->
+                        alert.anyInformedEntity {
+                            routes.any { route ->
+                                it.appliesTo(
+                                    directionId = directionId,
+                                    routeId = route.id,
+                                    stopId = stopId
+                                )
+                            } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+                        }
                     }
                 }
-            }
+                .distinct()
 
         fun formatUpcomingTrip(
             now: Instant,

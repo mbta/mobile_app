@@ -18,7 +18,6 @@ protocol IMapLayerManager {
 
     func updateSourceData(routeData: MapboxMaps.FeatureCollection)
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
-    func updateSourceData(childStopData: MapboxMaps.FeatureCollection)
 }
 
 struct MapImageError: Error {}
@@ -33,7 +32,7 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addIcons(recreate: Bool = false) {
-        for iconId in StopIcons.shared.all + AlertIcons.shared.all + ChildStopIcons.shared.all {
+        for iconId in StopIcons.shared.all + AlertIcons.shared.all {
             do {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
                 if map.imageExists(withId: iconId) {
@@ -68,7 +67,6 @@ class MapLayerManager: IMapLayerManager {
         let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
             .map { $0.toMapbox() }
             + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette).map { $0.toMapbox() }
-            + [ChildStopLayerGenerator.shared.createChildStopLayer(colorPalette: colorPalette).toMapbox()]
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
@@ -106,9 +104,5 @@ class MapLayerManager: IMapLayerManager {
 
     func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
-    }
-
-    func updateSourceData(childStopData: MapboxMaps.FeatureCollection) {
-        updateSourceData(sourceId: ChildStopFeaturesBuilder.shared.childStopSourceId, data: childStopData)
     }
 }

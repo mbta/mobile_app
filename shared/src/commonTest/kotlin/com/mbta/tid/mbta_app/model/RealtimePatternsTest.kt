@@ -1,12 +1,18 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
+import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 class RealtimePatternsTest {
     // trip details doesn't use RealtimePatterns
@@ -573,6 +579,101 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
             emptyList()
+        )
+    }
+
+    @Test
+    fun `properly applies platform alerts by pattern`() {
+        val objects = ObjectCollectionBuilder()
+        lateinit var platform1: Stop
+        lateinit var platform2: Stop
+        val station =
+            objects.stop {
+                platform1 = childStop()
+                platform2 = childStop()
+            }
+
+        val route = objects.route()
+        val pattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                sortOrder = 1
+                representativeTrip { headsign = "A" }
+            }
+        val pattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                sortOrder = 2
+                representativeTrip { headsign = "B" }
+            }
+
+        val alert =
+            objects.alert {
+                activePeriod(Instant.DISTANT_PAST, null)
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    stop = platform2.id
+                )
+            }
+
+        val static =
+            NearbyStaticData.build {
+                route(route) {
+                    stop(station) {
+                        headsign("A", listOf(pattern1), setOf(platform1.id))
+                        headsign("B", listOf(pattern2), setOf(platform2.id))
+                    }
+                }
+            }
+
+        val actual =
+            static.withRealtimeInfo(
+                GlobalResponse(objects, emptyMap()),
+                Position(0.0, 0.0),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                Clock.System.now(),
+                emptySet()
+            )
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            route,
+                            station,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    "A",
+                                    null,
+                                    listOf(pattern1),
+                                    emptyList(),
+                                    emptyList()
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    "B",
+                                    null,
+                                    listOf(pattern2),
+                                    emptyList(),
+                                    listOf(alert)
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            actual
         )
     }
 }

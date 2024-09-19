@@ -273,7 +273,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                     RealtimePatterns.ByHeadsign(
                                         it,
                                         tripMap,
-                                        allStopIds,
                                         alerts,
                                         hasSchedulesTodayByPattern
                                     )
@@ -281,7 +280,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                     RealtimePatterns.ByDirection(
                                         it,
                                         tripMap,
-                                        allStopIds,
                                         alerts,
                                         hasSchedulesTodayByPattern
                                     )
