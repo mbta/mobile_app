@@ -18,7 +18,8 @@ if [ -d $JDK_PATH ]; then
 fi
 
 brew install openjdk@17
-DEFAULT_JAVA_PATH="$HOMEBREW_PREFIX/opt/openjdk@17/libexec/openjdk.jdk"
+
+DEFAULT_JAVA_PATH="/usr/local/opt/openjdk@17/libexec/openjdk.jdk"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
 rm -rf $JDK_PATH
 mkdir -p $JDK_PATH
