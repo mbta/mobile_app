@@ -391,6 +391,9 @@ class ObjectCollectionBuilder {
     fun upcomingTrip(prediction: Prediction) =
         UpcomingTrip(trips.getValue(prediction.tripId), null, prediction, null)
 
+    fun upcomingTrip(prediction: Prediction, vehicle: Vehicle) =
+        UpcomingTrip(trips.getValue(prediction.tripId), null, prediction, vehicle)
+
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
         source: MutableMap<String, Built>,
         builder: Builder,
