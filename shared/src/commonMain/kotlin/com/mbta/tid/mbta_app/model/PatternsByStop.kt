@@ -40,19 +40,9 @@ data class PatternsByStop(
             .map {
                 when (it) {
                     is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                        RealtimePatterns.ByHeadsign(
-                            it,
-                            upcomingTripsMap,
-                            staticData.allStopIds,
-                            alerts
-                        )
+                        RealtimePatterns.ByHeadsign(it, upcomingTripsMap, alerts)
                     is NearbyStaticData.StaticPatterns.ByDirection ->
-                        RealtimePatterns.ByDirection(
-                            it,
-                            upcomingTripsMap,
-                            staticData.allStopIds,
-                            alerts
-                        )
+                        RealtimePatterns.ByDirection(it, upcomingTripsMap, alerts)
                 }
             }
             .filter { (it.isTypical() || it.isUpcomingBefore(cutoffTime)) && !it.isArrivalOnly() }

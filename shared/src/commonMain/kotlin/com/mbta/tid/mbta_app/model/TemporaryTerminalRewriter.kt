@@ -141,23 +141,27 @@ class TemporaryTerminalRewriter(
     fun truncatePatternsAtStop(
         stopPatterns: NearbyStaticData.StopPatterns
     ): NearbyStaticData.StopPatterns {
-        for (fullPattern in stopPatterns.patterns.flatMap { it.patterns }) {
-            if (fullPattern.typicality != RoutePattern.Typicality.Typical) continue
-            val fullPatternStopIds =
-                globalData.trips[fullPattern.representativeTripId]?.stopIds ?: continue
+        for (fullStaticPatterns in stopPatterns.patterns) {
+            for (fullPattern in fullStaticPatterns.patterns) {
+                if (fullPattern.typicality != RoutePattern.Typicality.Typical) continue
+                val fullPatternStopIds =
+                    globalData.trips[fullPattern.representativeTripId]?.stopIds ?: continue
 
-            for (stopId in stopPatterns.allStopIds) {
-                if (!fullPatternStopIds.contains(stopId)) continue
+                // JFK/UMass has different platforms for different branches, so to match correctly
+                // we need to check each platform ID separately
+                for (stopId in fullStaticPatterns.stopIds) {
+                    if (!fullPatternStopIds.contains(stopId)) continue
 
-                truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
-                    findTruncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
+                    truncatedPatternByFullPatternAndStop[Pair(fullPattern.id, stopId)] =
+                        findTruncatedPattern(fullPattern, fullPatternStopIds, stopId)?.id
+                }
             }
         }
 
         fun truncatedPatternIds(staticPatterns: NearbyStaticData.StaticPatterns) =
             staticPatterns.patterns.map { pattern ->
                 val truncatedPatternId =
-                    stopPatterns.allStopIds
+                    staticPatterns.stopIds
                         .mapNotNull { stopId ->
                             truncatedPatternByFullPatternAndStop[Pair(pattern.id, stopId)]
                         }

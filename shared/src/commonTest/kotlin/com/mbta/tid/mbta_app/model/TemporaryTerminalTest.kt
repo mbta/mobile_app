@@ -408,8 +408,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redAlewifeBraintree, redJfkBraintree),
                         listOf(UpcomingTrip(tripJfkBraintree, scheduleJfkBraintree)),
-                        // TODO remove alert once we fix alert boundaries
-                        listOf(alert)
+                        emptyList()
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,
@@ -417,8 +416,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redAlewifeAshmont, redJfkAshmont),
                         listOf(UpcomingTrip(tripJfkAshmont, scheduleJfkAshmont)),
-                        // TODO remove alert once we fix alert boundaries
-                        listOf(alert)
+                        emptyList()
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,

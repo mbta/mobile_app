@@ -252,9 +252,9 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         .map {
                             when (it) {
                                 is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                                    RealtimePatterns.ByHeadsign(it, tripMap, allStopIds, alerts)
+                                    RealtimePatterns.ByHeadsign(it, tripMap, alerts)
                                 is NearbyStaticData.StaticPatterns.ByDirection ->
-                                    RealtimePatterns.ByDirection(it, tripMap, allStopIds, alerts)
+                                    RealtimePatterns.ByDirection(it, tripMap, alerts)
                             }
                         }
                         .filter {

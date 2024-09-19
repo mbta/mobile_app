@@ -185,7 +185,11 @@ class StopDetailsViewTest {
                                                         headsign = trip.headsign,
                                                         line = line,
                                                         patterns =
-                                                            listOf(routePatternOne, routePatternTwo)
+                                                            listOf(
+                                                                routePatternOne,
+                                                                routePatternTwo
+                                                            ),
+                                                        stopIds = setOf(stop.id),
                                                     ),
                                                 upcomingTripsMap =
                                                     mapOf(
@@ -197,7 +201,6 @@ class StopDetailsViewTest {
                                                             ) to
                                                             listOf(UpcomingTrip(trip, prediction))
                                                     ),
-                                                stopIds = setOf(stop.id),
                                                 alerts = null
                                             )
                                         )
