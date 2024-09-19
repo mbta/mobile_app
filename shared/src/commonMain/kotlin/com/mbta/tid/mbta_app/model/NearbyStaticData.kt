@@ -480,7 +480,17 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.isEmpty() }
         .toList()
-        .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
+        .sortedWith(
+            compareBy(
+                {
+                    it.patternsByStop.all { byStop ->
+                        byStop.patterns.all { patterns -> !patterns.hasSchedulesToday }
+                    }
+                },
+                { it.distanceFrom(sortByDistanceFrom) },
+                { it.sortRoute() },
+            )
+        )
         .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
 }
 
