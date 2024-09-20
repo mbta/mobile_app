@@ -81,7 +81,9 @@ class NearbyStopViewTest {
                                 null
                             )
                         )
-                    )
+                    ),
+                    emptyList(),
+                    true
                 )
             )
         )

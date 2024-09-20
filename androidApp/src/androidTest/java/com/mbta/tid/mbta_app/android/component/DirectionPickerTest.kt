@@ -39,8 +39,24 @@ class DirectionPickerTest {
             }
         val patterns =
             listOf(
-                RealtimePatterns.ByHeadsign(route, "A", null, listOf(aPattern)),
-                RealtimePatterns.ByHeadsign(route, "B", null, listOf(bPattern)),
+                RealtimePatterns.ByHeadsign(
+                    route,
+                    "A",
+                    null,
+                    listOf(aPattern),
+                    emptyList(),
+                    emptyList(),
+                    true
+                ),
+                RealtimePatterns.ByHeadsign(
+                    route,
+                    "B",
+                    null,
+                    listOf(bPattern),
+                    emptyList(),
+                    emptyList(),
+                    true
+                ),
             )
         val patternsByStop =
             PatternsByStop(

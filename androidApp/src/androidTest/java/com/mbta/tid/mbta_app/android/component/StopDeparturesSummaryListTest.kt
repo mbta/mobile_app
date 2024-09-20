@@ -36,7 +36,9 @@ class StopDeparturesSummaryListTest {
                     "Alewife",
                     null,
                     listOf(routePattern),
-                    listOf(UpcomingTrip(trip, prediction))
+                    listOf(UpcomingTrip(trip, prediction)),
+                    emptyList(),
+                    true
                 )
             )
 
