@@ -679,20 +679,45 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures picks out alerts`() {
+    fun `StopDetailsDepartures picks out alerts by platform`() {
         val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
+        lateinit var platform1: Stop
+        lateinit var platform2: Stop
+        val stop =
+            objects.stop {
+                platform1 = childStop()
+                platform2 = childStop()
+            }
         val route = objects.route { sortOrder = 1 }
-        val routePattern =
+        val routePattern1 =
             objects.routePattern(route) {
+                directionId = 0
                 typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "A" }
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(platform1.id)
+                }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip {
+                    headsign = "B"
+                    stopIds = listOf(platform2.id)
+                }
             }
 
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
         objects.schedule {
-            this.trip = objects.trip(routePattern)
+            this.trip = objects.trip(routePattern1)
+            stopId = stop.id
+            departureTime = time.minus(1.hours)
+            stopSequence = 4
+        }
+        objects.schedule {
+            this.trip = objects.trip(routePattern2)
             stopId = stop.id
             departureTime = time.minus(1.hours)
             stopSequence = 4
@@ -713,14 +738,20 @@ class StopDetailsDeparturesTest {
                     ),
                     route = route.id,
                     routeType = route.type,
-                    stop = stop.id
+                    stop = platform1.id
                 )
             }
 
         val departures =
             StopDetailsDepartures(
                 stop,
-                GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
+                GlobalResponse(
+                    objects,
+                    mapOf(
+                        platform1.id to listOf(routePattern1.id),
+                        platform2.id to listOf(routePattern2.id)
+                    )
+                ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
@@ -739,9 +770,18 @@ class StopDetailsDeparturesTest {
                                 route,
                                 "A",
                                 null,
-                                listOf(routePattern),
+                                listOf(routePattern1),
                                 emptyList(),
                                 listOf(alert),
+                                true
+                            ),
+                            RealtimePatterns.ByHeadsign(
+                                route,
+                                "B",
+                                null,
+                                listOf(routePattern2),
+                                emptyList(),
+                                emptyList(),
                                 true
                             )
                         )
