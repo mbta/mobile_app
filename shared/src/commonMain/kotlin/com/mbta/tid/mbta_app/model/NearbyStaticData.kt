@@ -565,17 +565,20 @@ fun NearbyStaticData.withRealtimeInfo(
         .filterNot { it.isEmpty() }
         .toList()
         .sortedWith(
-            compareBy(
-                {
+            compareBy<StopsAssociated, Route>(Route.pinnedRoutesComparator(pinnedRoutes)) {
+                    it.sortRoute()
+                }
+                .thenBy {
                     it.patternsByStop.all { byStop ->
-                        byStop.patterns.all { patterns -> !patterns.hasSchedulesToday }
+                        byStop.patterns.all { patterns ->
+                            patterns.upcomingTrips.isNullOrEmpty() && !patterns.hasSchedulesToday
+                        }
                     }
-                },
-                { it.distanceFrom(sortByDistanceFrom) },
-                { it.sortRoute() },
-            )
+                }
+                .thenBy(Route.subwayFirstComparator) { it.sortRoute() }
+                .thenBy { it.distanceFrom(sortByDistanceFrom) }
+                .thenBy { it.sortRoute() }
         )
-        .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
 }
 
 class NearbyStaticDataBuilder {
