@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
@@ -14,6 +16,12 @@ interface IPredictionsRepository {
     fun connect(
         stopIds: List<String>,
         onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+    )
+
+    fun connectV2(
+        stopIds: List<String>,
+        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
     )
 
     fun disconnect()
@@ -46,6 +54,28 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
             ?.receive(PhoenixPushStatus.Error) { onReceive(Outcome(null, SocketError.Connection)) }
     }
 
+    override fun connectV2(
+        stopIds: List<String>,
+        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit,
+    ) {
+        channel = socket.getChannel(PredictionsForStopsChannel.topicV2(stopIds), mapOf())
+
+        channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
+            handleV2Message(message, onMessage)
+        }
+        channel?.onFailure { onMessage(Outcome(null, SocketError.Unknown)) }
+
+        channel?.onDetach { message -> println("leaving channel ${message.subject}") }
+        channel
+            ?.attach()
+            ?.receive(PhoenixPushStatus.Ok) { message ->
+                println("joined channel ${message.subject}")
+                handleV2JoinMessage(message, onJoin)
+            }
+            ?.receive(PhoenixPushStatus.Error) { onJoin(Outcome(null, SocketError.Connection)) }
+    }
+
     override fun disconnect() {
         channel?.detach()
         channel = null
@@ -71,6 +101,52 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
             println("No jsonPayload found for message ${message.body}")
         }
     }
+
+    private fun handleV2JoinMessage(
+        message: PhoenixMessage,
+        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit
+    ) {
+        val rawPayload: String? = message.jsonBody
+
+        if (rawPayload != null) {
+            val newPredictionsByStop =
+                try {
+                    PredictionsForStopsChannel.parseV2JoinMessage(rawPayload)
+                } catch (e: IllegalArgumentException) {
+                    onJoin(Outcome(null, SocketError.Unknown))
+                    return
+                }
+            println(
+                "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions"
+            )
+            onJoin(Outcome(newPredictionsByStop, null))
+        } else {
+            println("No jsonPayload found for message ${message.body}")
+        }
+    }
+
+    private fun handleV2Message(
+        message: PhoenixMessage,
+        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+    ) {
+        val rawPayload: String? = message.jsonBody
+
+        if (rawPayload != null) {
+            val newPredictionsForStop =
+                try {
+                    PredictionsForStopsChannel.parseV2Message(rawPayload)
+                } catch (e: IllegalArgumentException) {
+                    onMessage(Outcome(null, SocketError.Unknown))
+                    return
+                }
+            println(
+                "Received ${newPredictionsForStop.predictions.size} predictions for stop ${newPredictionsForStop.stopId}"
+            )
+            onMessage(Outcome(newPredictionsForStop, null))
+        } else {
+            println("No jsonPayload found for message ${message.body}")
+        }
+    }
 }
 
 class MockPredictionsRepository : IPredictionsRepository {
@@ -78,6 +154,14 @@ class MockPredictionsRepository : IPredictionsRepository {
     override fun connect(
         stopIds: List<String>,
         onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+    ) {
+        /* no-op */
+    }
+
+    override fun connectV2(
+        stopIds: List<String>,
+        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
     ) {
         /* no-op */
     }

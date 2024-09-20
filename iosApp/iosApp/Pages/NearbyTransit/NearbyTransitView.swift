@@ -30,6 +30,7 @@ struct NearbyTransitView: View {
     @State var nearbyWithRealtimeInfo: [StopsAssociated]?
     @State var now = Date.now
     @State var pinnedRoutes: Set<String> = []
+    @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsError: SocketError?
 
@@ -68,6 +69,14 @@ struct NearbyTransitView: View {
         }
         .onChange(of: scheduleResponse) { response in
             updateNearbyRoutes(scheduleResponse: response)
+        }
+        .onChange(of: predictionsByStop) { predictionsByStop in
+            if let predictionsByStop {
+                predictions = PredictionsByStopJoinResponse.companion
+                    .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
+            } else {
+                predictions = nil
+            }
         }
         .onChange(of: predictions) { predictions in
             updateNearbyRoutes(predictions: predictions)
@@ -173,13 +182,49 @@ struct NearbyTransitView: View {
 
     func joinPredictions(_ stopIds: Set<String>?) {
         guard let stopIds else { return }
-        predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
-            DispatchQueue.main.async {
-                if let data = outcome.data {
-                    predictions = data
-                    predictionsError = nil
-                } else if let error = outcome.error {
-                    predictionsError = error.toSwiftEnum()
+
+        // TODO: cutover
+        if true {
+            predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
+                DispatchQueue.main.async {
+                    if let data = outcome.data {
+                        predictionsByStop = data
+                        predictionsError = nil
+                    } else if let error = outcome.error {
+                        predictionsError = error.toSwiftEnum()
+                    }
+                }
+            }, onMessage: { outcome in
+                DispatchQueue.main.async {
+                    if let data = outcome.data {
+                        if let existingPredictionsByStop = predictionsByStop {
+                            predictionsByStop = PredictionsByStopJoinResponse.companion
+                                .mergePredictions(allByStop: existingPredictionsByStop, updatedPredictions: data)
+                            predictionsError = nil
+                        } else {
+                            predictionsByStop = PredictionsByStopJoinResponse(
+                                predictionsByStop: [data.stopId: data.predictions],
+                                trips: data.trips,
+                                vehicles: data.vehicles
+                            )
+                            predictionsError = nil
+                        }
+
+                    } else if let error = outcome.error {
+                        predictionsError = error.toSwiftEnum()
+                    }
+                }
+
+            })
+        } else {
+            predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
+                DispatchQueue.main.async {
+                    if let data = outcome.data {
+                        predictions = data
+                        predictionsError = nil
+                    } else if let error = outcome.error {
+                        predictionsError = error.toSwiftEnum()
+                    }
                 }
             }
         }
