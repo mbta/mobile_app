@@ -19,10 +19,7 @@ fi
 
 brew install openjdk@17
 
-echo "Logging /usr/local/Cellar/openjdk@17/17.0.12"
-ls -al /usr/local/Cellar/openjdk@17/17.0.12
-
-DEFAULT_JAVA_PATH="/usr/local/Cellar/openjdk@17/libexec/openjdk.jdk"
+DEFAULT_JAVA_PATH="/usr/local/Cellar/openjdk@17//17.0.12/libexec/openjdk.jdk"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
 rm -rf $JDK_PATH
 mkdir -p $JDK_PATH
