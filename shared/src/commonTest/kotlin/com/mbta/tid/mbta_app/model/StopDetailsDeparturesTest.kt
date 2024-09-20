@@ -318,7 +318,7 @@ class StopDetailsDeparturesTest {
             val scheduledTrip: UpcomingTrip?,
             val predictedTrip: UpcomingTrip?,
         ) {
-            fun patternsByHeadsign(trips: List<UpcomingTrip>?) =
+            fun patternsByHeadsign(trips: List<UpcomingTrip>?, hasSchedulesToday: Boolean = true) =
                 RealtimePatterns.ByHeadsign(
                     route,
                     headsign,
@@ -326,7 +326,7 @@ class StopDetailsDeparturesTest {
                     listOf(routePattern),
                     trips,
                     null,
-                    true
+                    hasSchedulesToday
                 )
         }
 
@@ -363,16 +363,7 @@ class StopDetailsDeparturesTest {
                             departureTime = time
                         }
                     objects.upcomingTrip(schedule)
-                } else {
-                    val scheduledTrip = objects.trip(routePattern)
-                    val schedule =
-                        objects.schedule {
-                            trip = scheduledTrip
-                            stopId = stop.id
-                            departureTime = time.minus(1.hours)
-                        }
-                    objects.upcomingTrip(schedule)
-                }
+                } else null
             val predictedTrip =
                 if (predicted) {
                     val predictedTrip = objects.trip(routePattern)
@@ -435,8 +426,8 @@ class StopDetailsDeparturesTest {
                 scheduledUnpredicted.patternsByHeadsign(
                     listOf(scheduledUnpredicted.scheduledTrip!!)
                 ),
-                unscheduledPredicted.patternsByHeadsign(emptyList()),
-                unscheduledUnpredicted.patternsByHeadsign(emptyList())
+                unscheduledPredicted.patternsByHeadsign(emptyList(), hasSchedulesToday = false),
+                unscheduledUnpredicted.patternsByHeadsign(emptyList(), hasSchedulesToday = false)
             ),
             actual(includeSchedules = true, includePredictions = false)
         )
@@ -447,7 +438,10 @@ class StopDetailsDeparturesTest {
                     listOf(scheduledPredicted.scheduledTrip, scheduledPredicted.predictedTrip)
                 ),
                 scheduledUnpredicted.patternsByHeadsign(listOf(scheduledUnpredicted.scheduledTrip)),
-                unscheduledPredicted.patternsByHeadsign(listOf(unscheduledPredicted.predictedTrip)),
+                unscheduledPredicted.patternsByHeadsign(
+                    listOf(unscheduledPredicted.predictedTrip),
+                    hasSchedulesToday = false
+                )
             ),
             actual(includeSchedules = true, includePredictions = true)
         )

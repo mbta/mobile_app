@@ -658,7 +658,8 @@ class RealtimePatternsTest {
                                     null,
                                     listOf(pattern1),
                                     emptyList(),
-                                    emptyList()
+                                    emptyList(),
+                                    false
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route,
@@ -666,7 +667,8 @@ class RealtimePatternsTest {
                                     null,
                                     listOf(pattern2),
                                     emptyList(),
-                                    listOf(alert)
+                                    listOf(alert),
+                                    false
                                 )
                             )
                         )

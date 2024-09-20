@@ -930,7 +930,9 @@ class NearbyResponseTest {
                                     "Schedule Soon",
                                     null,
                                     listOf(scheduleSoon),
-                                    listOf(objects.upcomingTrip(scheduleSoonSchedule))
+                                    listOf(objects.upcomingTrip(scheduleSoonSchedule)),
+                                    null,
+                                    true
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
@@ -942,14 +944,18 @@ class NearbyResponseTest {
                                             predictionBrdPrediction,
                                             predictionBrdVehicle
                                         )
-                                    )
+                                    ),
+                                    null,
+                                    false
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Prediction Soon",
                                     null,
                                     listOf(predictionSoon),
-                                    listOf(objects.upcomingTrip(predictionSoonPrediction))
+                                    listOf(objects.upcomingTrip(predictionSoonPrediction)),
+                                    null,
+                                    false
                                 )
                             )
                         )
