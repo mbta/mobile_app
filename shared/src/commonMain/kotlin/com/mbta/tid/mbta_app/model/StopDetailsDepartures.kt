@@ -180,9 +180,11 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     stop,
                     patternsByHeadsign
                         .map { (headsign, patterns) ->
+                            val stopIdsOnPatterns =
+                                NearbyStaticData.filterStopsByPatterns(patterns, global, allStopIds)
                             val upcomingTrips =
                                 if (tripMap != null) {
-                                    allStopIds
+                                    stopIdsOnPatterns
                                         .map { stopId ->
                                             patterns
                                                 .mapNotNull { pattern ->
@@ -210,7 +212,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 alerts?.let {
                                     RealtimePatterns.applicableAlerts(
                                         routes = listOf(route),
-                                        stopIds = allStopIds,
+                                        stopIds = stopIdsOnPatterns,
                                         alerts = alerts
                                     )
                                 }

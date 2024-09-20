@@ -382,7 +382,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             )
         }
 
-        private fun filterStopsByPatterns(
+        fun filterStopsByPatterns(
             routePatterns: List<RoutePattern>,
             global: GlobalResponse,
             localStops: Set<String>
