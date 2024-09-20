@@ -19,8 +19,8 @@ fi
 
 brew install openjdk@17
 
-echo "Logging /usr/local/opt/openjdk@17"
-ls -al /usr/local/opt/openjdk@17
+echo "Logging /usr/local/opt/openjdk@17/17.0.12"
+ls -al /usr/local/opt/openjdk@17/17.0.12
 
 DEFAULT_JAVA_PATH="/usr/local/opt/openjdk@17/libexec/openjdk.jdk"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
