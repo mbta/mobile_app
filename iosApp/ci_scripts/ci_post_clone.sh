@@ -19,6 +19,8 @@ fi
 
 brew install openjdk@17
 
+ls -al /usr/local/opt/openjdk@17/libexec
+
 DEFAULT_JAVA_PATH="/usr/local/opt/openjdk@17/libexec/openjdk.jdk"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
 rm -rf $JDK_PATH
@@ -27,6 +29,8 @@ mkdir -p $JDK_PATH
 mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
+
+ls -al "$CI_DERIVED_DATA_PATH/JDK"
 
 # Install cocoapods
 brew install cocoapods
