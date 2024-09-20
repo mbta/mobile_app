@@ -10,6 +10,8 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -323,6 +325,34 @@ class RealtimePatternsTest {
                 )
                 .format(now, RouteType.BUS, anyContext())
         )
+    }
+
+    @Test
+    fun `format handles no schedules all day`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.BUS }
+
+        assertEquals(
+            RealtimePatterns.Format.NoSchedulesToday(null),
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), listOf(), null, false)
+                .format(now, RouteType.BUS, anyContext())
+        )
+    }
+
+    @Test
+    fun `hasSchedulesToday returns true when schedules exist or have not loaded`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val patternA = objects.routePattern(route)
+        val patternB = objects.routePattern(route)
+        assertTrue(RealtimePatterns.hasSchedulesToday(null, listOf(patternA, patternB)))
+        val hasSchedulesByPattern = mapOf(Pair(patternA.id, true))
+        assertTrue(
+            RealtimePatterns.hasSchedulesToday(hasSchedulesByPattern, listOf(patternA, patternB))
+        )
+        assertFalse(RealtimePatterns.hasSchedulesToday(hasSchedulesByPattern, listOf(patternB)))
     }
 
     @Test

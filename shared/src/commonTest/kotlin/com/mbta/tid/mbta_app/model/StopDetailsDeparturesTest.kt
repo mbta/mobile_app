@@ -593,11 +593,6 @@ class StopDetailsDeparturesTest {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "B" }
             }
-        objects.schedule {
-            this.trip = objects.trip(routeNotPinnedPattern)
-            stopId = stop.id
-            departureTime = time.minus(1.hours)
-        }
 
         val routeNotPinned2 = objects.route { sortOrder = 2 }
         val routeNotPinnedPattern2 =
@@ -640,7 +635,7 @@ class StopDetailsDeparturesTest {
                                 listOf(routeNotPinnedPattern),
                                 listOf(),
                                 null,
-                                true
+                                false
                             ),
                         )
                     ),
