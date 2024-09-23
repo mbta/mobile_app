@@ -350,16 +350,20 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.setDepartures(StopDetailsDepartures(routes:
-            [.init(route: MapTestDataHelper.shared.routeOrange, stop: stop,
-                   patterns: [.ByHeadsign(
-                       route: MapTestDataHelper.shared.routeOrange,
-                       headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
-                       line: nil,
-                       patterns: [MapTestDataHelper.shared.patternOrange30],
-                       upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                       alertsHere: nil
-                   )])]))
+        nearbyVM.setDepartures(StopDetailsDepartures(
+            routes: [.init(
+                route: MapTestDataHelper.shared.routeOrange, stop: stop,
+                patterns: [.ByHeadsign(
+                    route: MapTestDataHelper.shared.routeOrange,
+                    headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
+                    line: nil,
+                    patterns: [MapTestDataHelper.shared.patternOrange30],
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                    alertsHere: nil,
+                    hasSchedulesToday: true
+                )]
+            )]
+        ))
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
@@ -445,14 +449,13 @@ final class HomeMapViewTests: XCTestCase {
 
         let globalDataLoaded = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
             let newNavStackEntry: SheetNavigationStackEntry =
-                .tripDetails(tripId: "ol_trip_id",
-                             vehicleId: "vehicle",
-                             target: .init(stopId: MapTestDataHelper.shared.stopSullivan.id,
-                                           stopSequence: 0),
-                             routeId: MapTestDataHelper.shared.routeOrange.id,
-                             directionId: MapTestDataHelper.shared
-                                 .patternOrange30
-                                 .directionId)
+                .tripDetails(
+                    tripId: "ol_trip_id",
+                    vehicleId: "vehicle",
+                    target: .init(stopId: MapTestDataHelper.shared.stopSullivan.id, stopSequence: 0),
+                    routeId: MapTestDataHelper.shared.routeOrange.id,
+                    directionId: MapTestDataHelper.shared.patternOrange30.directionId
+                )
             try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
         }
 
@@ -515,14 +518,20 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.setDepartures(StopDetailsDepartures(routes:
-            [.init(route: MapTestDataHelper.shared.routeOrange, stop: stop,
-                   patterns: [.ByHeadsign(route: MapTestDataHelper.shared.routeOrange,
-                                          headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
-                                          line: nil,
-                                          patterns: [MapTestDataHelper.shared.patternOrange30],
-                                          upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                                          alertsHere: nil)])]))
+        nearbyVM.setDepartures(StopDetailsDepartures(
+            routes: [.init(
+                route: MapTestDataHelper.shared.routeOrange, stop: stop,
+                patterns: [.ByHeadsign(
+                    route: MapTestDataHelper.shared.routeOrange,
+                    headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
+                    line: nil,
+                    patterns: [MapTestDataHelper.shared.patternOrange30],
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                    alertsHere: nil,
+                    hasSchedulesToday: true
+                )]
+            )]
+        ))
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(
             stop,
@@ -616,14 +625,20 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.setDepartures(StopDetailsDepartures(routes:
-            [.init(route: MapTestDataHelper.shared.routeOrange, stop: stop,
-                   patterns: [.ByHeadsign(route: MapTestDataHelper.shared.routeOrange,
-                                          headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
-                                          line: nil,
-                                          patterns: [MapTestDataHelper.shared.patternOrange30],
-                                          upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                                          alertsHere: nil)])]))
+        nearbyVM.setDepartures(StopDetailsDepartures(
+            routes: [.init(
+                route: MapTestDataHelper.shared.routeOrange, stop: stop,
+                patterns: [.ByHeadsign(
+                    route: MapTestDataHelper.shared.routeOrange,
+                    headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
+                    line: nil,
+                    patterns: [MapTestDataHelper.shared.patternOrange30],
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                    alertsHere: nil,
+                    hasSchedulesToday: true
+                )]
+            )]
+        ))
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(
             stop,
@@ -770,11 +785,16 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        sut.handleCameraChange(.init(cameraState: CameraState(center: .init(latitude: 2, longitude: 2),
-                                                              padding: .zero,
-                                                              zoom: 12,
-                                                              bearing: .leastNormalMagnitude,
-                                                              pitch: 0.0), timestamp: Date.now))
+        sut.handleCameraChange(.init(
+            cameraState: CameraState(
+                center: .init(latitude: 2, longitude: 2),
+                padding: .zero,
+                zoom: 12,
+                bearing: .leastNormalMagnitude,
+                pitch: 0.0
+            ),
+            timestamp: Date.now
+        ))
 
         wait(for: [updateCameraExpectation], timeout: 5)
     }

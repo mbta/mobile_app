@@ -89,7 +89,8 @@ data class UpcomingTrip(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
             scheduleKey: (Schedule, ScheduleResponse) -> Key,
-            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key
+            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key,
+            filterAtTime: Instant
         ): Map<Key, List<UpcomingTrip>>? {
 
             val schedulesMap =
@@ -111,12 +112,18 @@ data class UpcomingTrip(
                     val schedulesHere = schedulesMap?.get(upcomingTripKey)
                     val predictionsHere = predictionsMap?.get(upcomingTripKey)
                     tripsFromData(
-                        stops,
-                        schedulesHere.orEmpty(),
-                        predictionsHere.orEmpty(),
-                        trips,
-                        predictions?.vehicles.orEmpty()
-                    )
+                            stops,
+                            schedulesHere.orEmpty(),
+                            predictionsHere.orEmpty(),
+                            trips,
+                            predictions?.vehicles.orEmpty()
+                        )
+                        .filter { upcomingTrip ->
+                            if (upcomingTrip.prediction != null) return@filter true
+                            val scheduleTime =
+                                upcomingTrip.schedule?.scheduleTime ?: return@filter true
+                            scheduleTime >= filterAtTime
+                        }
                 }
             } else {
                 null

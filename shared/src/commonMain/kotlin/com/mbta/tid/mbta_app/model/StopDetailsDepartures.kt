@@ -19,7 +19,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     ) : this(
         global.run {
             val loading = schedules == null || predictions == null
-            val tripMapByHeadsign = tripMapByHeadsign(stops, schedules, predictions)
+            val tripMapByHeadsign = tripMapByHeadsign(stops, schedules, predictions, filterAtTime)
 
             val allStopIds =
                 if (patternIdsByStop.containsKey(stop.id)) {
@@ -40,6 +40,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 alerts?.alerts?.values?.filter {
                     it.isActive(filterAtTime) && it.significance >= AlertSignificance.Minor
                 }
+            val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
             patternsByRoute
                 .mapNotNull { (route, routePatterns) ->
@@ -57,12 +58,14 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 stops,
                                 tripMapByHeadsign,
                                 schedules,
-                                predictions
+                                predictions,
+                                filterAtTime
                             ),
                             allStopIds,
                             loading,
                             global,
-                            activeRelevantAlerts
+                            activeRelevantAlerts,
+                            hasSchedulesTodayByPattern
                         )
                     }
 
@@ -74,7 +77,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         allStopIds,
                         loading,
                         global,
-                        activeRelevantAlerts
+                        activeRelevantAlerts,
+                        hasSchedulesTodayByPattern
                     )
                 }
                 .filterNot { it.patterns.isEmpty() }
@@ -106,6 +110,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             stops: Map<String, Stop>,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
+            filterAtTime: Instant
         ): Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>? {
             return UpcomingTrip.tripsMappedBy(
                 stops,
@@ -126,7 +131,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         trip.routePatternId,
                         stops.resolveParentId(prediction.stopId)
                     )
-                }
+                },
+                filterAtTime
             )
         }
 
@@ -136,6 +142,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 Map<RealtimePatterns.UpcomingTripKey.ByRoutePattern, List<UpcomingTrip>>?,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
+            filterAtTime: Instant
         ): Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>? {
             val tripMapByDirection =
                 UpcomingTrip.tripsMappedBy(
@@ -157,7 +164,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             trip.directionId,
                             stops.resolveParentId(prediction.stopId)
                         )
-                    }
+                    },
+                    filterAtTime
                 )
 
             return if (tripMapByRoutePattern != null || tripMapByDirection != null) {
@@ -175,7 +183,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             allStopIds: Set<String>,
             loading: Boolean,
             global: GlobalResponse,
-            alerts: Collection<Alert>?
+            alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ): PatternsByStop {
             global.run {
                 val patternsByHeadsign =
@@ -220,7 +229,11 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                         stopIds = stopIdsOnPatterns,
                                         alerts = alerts
                                     )
-                                }
+                                },
+                                RealtimePatterns.hasSchedulesToday(
+                                    hasSchedulesTodayByPattern,
+                                    patterns
+                                )
                             )
                         }
                         .filter {
@@ -240,7 +253,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             allStopIds: Set<String>,
             loading: Boolean,
             global: GlobalResponse,
-            alerts: Collection<Alert>?
+            alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ): PatternsByStop {
             global.run {
                 val groupedPatternsByRoute = patternsByRoute.filter { it.key.lineId == line.id }
@@ -259,9 +273,21 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         .map {
                             when (it) {
                                 is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                                    RealtimePatterns.ByHeadsign(it, tripMap, stop.id, alerts)
+                                    RealtimePatterns.ByHeadsign(
+                                        it,
+                                        tripMap,
+                                        stop.id,
+                                        alerts,
+                                        hasSchedulesTodayByPattern
+                                    )
                                 is NearbyStaticData.StaticPatterns.ByDirection ->
-                                    RealtimePatterns.ByDirection(it, tripMap, stop.id, alerts)
+                                    RealtimePatterns.ByDirection(
+                                        it,
+                                        tripMap,
+                                        stop.id,
+                                        alerts,
+                                        hasSchedulesTodayByPattern
+                                    )
                             }
                         }
                         .filter {

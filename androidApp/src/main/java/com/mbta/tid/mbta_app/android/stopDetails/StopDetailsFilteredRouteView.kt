@@ -129,8 +129,7 @@ private data class RowData(
                         headsign,
                         line = null,
                         patterns = emptyList(),
-                        upcomingTrips = listOf(upcoming),
-                        alertsHere = null
+                        upcomingTrips = listOf(upcoming)
                     )
                     .format(now, route.type, TripInstantDisplay.Context.StopDetailsFiltered)
 

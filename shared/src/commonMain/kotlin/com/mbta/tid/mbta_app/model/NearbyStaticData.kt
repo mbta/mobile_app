@@ -261,6 +261,18 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     companion object {
         val groupedLines = listOf("line-Green")
 
+        fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
+            schedules?.let { scheduleResponse ->
+                val scheduledTrips = scheduleResponse.trips
+                val hasSchedules: MutableMap<String, Boolean> = mutableMapOf()
+                for (schedule in scheduleResponse.schedules) {
+                    val trip = scheduledTrips[schedule.tripId]
+                    val patternId = trip?.routePatternId ?: continue
+                    hasSchedules[patternId] = true
+                }
+                hasSchedules
+            }
+
         fun buildStopPatternsForRoute(
             stop: Stop,
             patterns: List<RoutePattern>,
@@ -468,7 +480,8 @@ fun NearbyStaticData.withRealtimeInfo(
                         trip.routePatternId,
                         globalStops.resolveParentId(prediction.stopId)
                     )
-                }
+                },
+                filterAtTime
             )
             .orEmpty()
 
@@ -492,11 +505,13 @@ fun NearbyStaticData.withRealtimeInfo(
                         trip.directionId,
                         globalStops.resolveParentId(prediction.stopId)
                     )
-                }
+                },
+                filterAtTime
             )
             .orEmpty()
 
     val cutoffTime = filterAtTime.plus(90.minutes)
+    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
     return rewrittenThis.data
         .asSequence()
@@ -513,7 +528,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                         upcomingTripsByDirectionAndStop,
                                     filterAtTime,
                                     cutoffTime,
-                                    activeRelevantAlerts
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern
                                 )
                             }
                             .filterNot { it.patterns.isEmpty() }
@@ -536,7 +552,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                         upcomingTripsByDirectionAndStop,
                                     filterAtTime,
                                     cutoffTime,
-                                    activeRelevantAlerts
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern
                                 )
                             }
                             .filterNot { it.patterns.isEmpty() }
@@ -551,8 +568,21 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.isEmpty() }
         .toList()
-        .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
-        .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
+        .sortedWith(
+            compareBy<StopsAssociated, Route>(Route.pinnedRoutesComparator(pinnedRoutes)) {
+                    it.sortRoute()
+                }
+                .thenBy {
+                    it.patternsByStop.all { byStop ->
+                        byStop.patterns.all { patterns ->
+                            patterns.upcomingTrips.isNullOrEmpty() && !patterns.hasSchedulesToday
+                        }
+                    }
+                }
+                .thenBy(Route.subwayFirstComparator) { it.sortRoute() }
+                .thenBy { it.distanceFrom(sortByDistanceFrom) }
+                .thenBy { it.sortRoute() }
+        )
 }
 
 class NearbyStaticDataBuilder {
