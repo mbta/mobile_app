@@ -25,9 +25,9 @@ data class PredictionsByStopJoinResponse(
     )
 
     companion object {
-        /*
-        Merge the latest predictions for a single stop into the predictions for all stops.
-        Removes vehicles & trips that are no longer referenced in any predictions
+        /**
+         * Merge the latest predictions for a single stop into the predictions for all stops.
+         * Removes vehicles & trips that are no longer referenced in any predictions
          */
         fun mergePredictions(
             allByStop: PredictionsByStopJoinResponse,
@@ -63,6 +63,7 @@ data class PredictionsByStopJoinResponse(
             )
         }
 
+        /** Flattens the `predictionsByStop` field into a single map of predictions by id */
         fun toPredictionsStreamDataResponse(
             predictionsByStop: PredictionsByStopJoinResponse
         ): PredictionsStreamDataResponse {
