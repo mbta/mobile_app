@@ -35,7 +35,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
-        override val hasSchedulesToday: Boolean,
+        override val hasSchedulesToday: Boolean = true,
     ) : RealtimePatterns() {
         override val id = headsign
 
@@ -91,7 +91,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
-        override val hasSchedulesToday: Boolean,
+        override val hasSchedulesToday: Boolean = true,
     ) : RealtimePatterns() {
         override val id = "${line.id}:${direction.id}"
         val representativeRoute = routes.min()

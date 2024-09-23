@@ -263,14 +263,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
             schedules?.let { scheduleResponse ->
                 val scheduledTrips = scheduleResponse.trips
-                return@let scheduleResponse.schedules.fold(mutableMapOf<String, Boolean>()) {
-                    hasSchedules,
-                    schedule ->
+                val hasSchedules: MutableMap<String, Boolean> = mutableMapOf()
+                for (schedule in scheduleResponse.schedules) {
                     val trip = scheduledTrips[schedule.tripId]
-                    val patternId = trip?.routePatternId ?: return@fold hasSchedules
+                    val patternId = trip?.routePatternId ?: continue
                     hasSchedules[patternId] = true
-                    return@fold hasSchedules
                 }
+                hasSchedules
             }
 
         fun buildStopPatternsForRoute(

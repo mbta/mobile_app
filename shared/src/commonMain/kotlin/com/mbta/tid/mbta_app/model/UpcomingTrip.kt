@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import kotlin.time.Duration.Companion.ZERO
 import kotlinx.datetime.Instant
 
 /**
@@ -120,7 +119,7 @@ data class UpcomingTrip(
                             if (upcomingTrip.prediction != null) return@filter true
                             val scheduleTime =
                                 upcomingTrip.schedule?.scheduleTime ?: return@filter true
-                            scheduleTime.minus(filterAtTime) >= ZERO
+                            scheduleTime >= filterAtTime
                         }
                 }
             } else {

@@ -1372,31 +1372,37 @@ class NearbyResponseTest {
                 longitude = closeBusStop.longitude + 0.5
             }
 
+        // Unpinned, no schedules
         val closeBusRoute =
             objects.route {
                 id = "close-bus"
                 type = RouteType.BUS
             }
+        // Unpinned, with schedules
         val midBusRoute =
             objects.route {
                 id = "mid-bus"
                 type = RouteType.BUS
             }
+        // Unpinned, no schedules
         val farBusRoute =
             objects.route {
                 id = "far-bus"
                 type = RouteType.BUS
             }
+        // Unpinned, no schedules
         val closeSubwayRoute =
             objects.route {
                 id = "close-subway"
                 type = RouteType.HEAVY_RAIL
             }
+        // Pinned, no schedules
         val midSubwayRoute =
             objects.route {
                 id = "mid-subway"
                 type = RouteType.LIGHT_RAIL
             }
+        // Pinned, with schedules
         val farSubwayRoute =
             objects.route {
                 id = "far-subway"
@@ -1507,6 +1513,13 @@ class NearbyResponseTest {
                 pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
             )
 
+        // Routes with no service today should sort below all routes with any service today,
+        // unless they are a pinned route, in which case we want them to sort beneath all other
+        // pinned routes, but above any unpinned ones. Here, the far and mid subway routes are both
+        // pinned, but mid has no scheduled service, so it's sorted below the farther pinned route.
+        // For unpinned routes, mid bus is the only one with any schedules, so it's sorted above all
+        // the other unpinned routes, then the remaining  are ordered with the usual nearby transit
+        // sort order, subway first, then by distance.
         assertEquals(
             listOf(
                 farSubwayRoute,
