@@ -6,7 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import AppcuesKit
 import FirebaseAnalytics
 import Foundation
 
@@ -30,10 +29,5 @@ extension AnalyticsProvider: ScreenTracker {
                 AnalyticsParameterScreenName: screen.rawValue,
             ]
         )
-        if let appcues {
-            appcues.screen(title: screen.rawValue)
-        } else {
-            debugPrint("Appcues not initialized")
-        }
     }
 }

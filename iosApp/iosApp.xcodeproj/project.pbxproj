@@ -81,7 +81,6 @@
 		8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA1FB742BF7EB3500384658 /* TripDetailsStopListSplitView.swift */; };
 		8CA1FB772BF813F500384658 /* TripDetailsStopListSplitViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA1FB762BF813F500384658 /* TripDetailsStopListSplitViewTests.swift */; };
 		8CA485B82BDC679A00E84E1F /* VehicleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */; };
-		8CB28DB52C2B2DEC0036258E /* AppcuesKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CB28DB42C2B2DEC0036258E /* AppcuesKit */; };
 		8CB28DB92C2CC5AD0036258E /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB28DB82C2CC5AD0036258E /* MapViewModel.swift */; };
 		8CB823D62BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823D52BC5E85C002C87E0 /* SheetNavigationStackEntryTests.swift */; };
 		8CB823D92BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823D82BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift */; };
@@ -440,7 +439,6 @@
 			files = (
 				6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */,
 				6E55C1822C2489030086A424 /* Collections in Frameworks */,
-				8CB28DB52C2B2DEC0036258E /* AppcuesKit in Frameworks */,
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
 				6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */,
@@ -987,7 +985,6 @@
 				6EE745802B965AEA0052227E /* SwiftPhoenixClient */,
 				9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				6E55C1812C2489030086A424 /* Collections */,
-				8CB28DB42C2B2DEC0036258E /* AppcuesKit */,
 				6E45D8A82C4170890006934E /* FirebaseAppCheck */,
 			);
 			productName = iosApp;
@@ -1033,7 +1030,6 @@
 				6EE7457F2B965AEA0052227E /* XCRemoteSwiftPackageReference "SwiftPhoenixClient" */,
 				9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				6E55C1802C2489030086A424 /* XCRemoteSwiftPackageReference "swift-collections" */,
-				8CB28DB32C2B2DEC0036258E /* XCRemoteSwiftPackageReference "appcues-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -2061,14 +2057,6 @@
 				minimumVersion = 0.9.11;
 			};
 		};
-		8CB28DB32C2B2DEC0036258E /* XCRemoteSwiftPackageReference "appcues-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/appcues/appcues-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.2.0;
-			};
-		};
 		9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -2103,11 +2091,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
-		};
-		8CB28DB42C2B2DEC0036258E /* AppcuesKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8CB28DB32C2B2DEC0036258E /* XCRemoteSwiftPackageReference "appcues-ios-sdk" */;
-			productName = AppcuesKit;
 		};
 		9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
 			isa = XCSwiftPackageProductDependency;

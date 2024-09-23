@@ -1,5 +1,5 @@
 {
-  "originHash" : "a3020db9dca7e3d8c232ab638d2abfde463e0cd40e7692c77c9f65d84976c597",
+  "originHash" : "f82dbcd39f57dbdb743ad87fd7fa70201cc43a1313d5b5f7881b38a99ae48303",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "7d2688de038d5484866d835acb47b379722d610e",
         "version" : "10.19.0"
-      }
-    },
-    {
-      "identity" : "appcues-ios-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/appcues/appcues-ios-sdk",
-      "state" : {
-        "revision" : "5b3668a18154dcfc37a5b551658c29985a5f80e1",
-        "version" : "3.2.0"
       }
     },
     {
