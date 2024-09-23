@@ -9,10 +9,10 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         data class ByRoutePattern(
             val routeId: String,
             val routePatternId: String?,
-            val stopId: String
+            val parentStopId: String
         ) : UpcomingTripKey()
 
-        data class ByDirection(val routeId: String, val direction: Int, val stopId: String) :
+        data class ByDirection(val routeId: String, val direction: Int, val parentStopId: String) :
             UpcomingTripKey()
     }
 
@@ -39,6 +39,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
             upcomingTripsMap: UpcomingTripsMap?,
+            parentStopId: String,
             alerts: Collection<Alert>?,
         ) : this(
             staticData.route,
@@ -46,18 +47,14 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.line,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                staticData.stopIds
-                    .map { stopId ->
-                        staticData.patterns
-                            .mapNotNull { pattern ->
-                                upcomingTripsMap[
-                                    UpcomingTripKey.ByRoutePattern(
-                                        staticData.route.id,
-                                        pattern.id,
-                                        stopId
-                                    )]
-                            }
-                            .flatten()
+                staticData.patterns
+                    .mapNotNull { pattern ->
+                        upcomingTripsMap[
+                            UpcomingTripKey.ByRoutePattern(
+                                staticData.route.id,
+                                pattern.id,
+                                parentStopId
+                            )]
                     }
                     .flatten()
                     .sorted()
@@ -103,6 +100,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap?,
+            parentStopId: String,
             alerts: Collection<Alert>?,
         ) : this(
             staticData.line,
@@ -110,16 +108,14 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             staticData.direction,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                staticData.stopIds
-                    .flatMap { stopId ->
-                        staticData.routes.mapNotNull { route ->
-                            upcomingTripsMap[
-                                UpcomingTripKey.ByDirection(
-                                    route.id,
-                                    staticData.direction.id,
-                                    stopId
-                                )]
-                        }
+                staticData.routes
+                    .mapNotNull { route ->
+                        upcomingTripsMap[
+                            UpcomingTripKey.ByDirection(
+                                route.id,
+                                staticData.direction.id,
+                                parentStopId
+                            )]
                     }
                     .flatten()
                     .sorted()

@@ -41,9 +41,19 @@ data class PatternsByStop(
             .map {
                 when (it) {
                     is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                        RealtimePatterns.ByHeadsign(it, upcomingTripsMap, alerts)
+                        RealtimePatterns.ByHeadsign(
+                            it,
+                            upcomingTripsMap,
+                            staticData.stop.id,
+                            alerts
+                        )
                     is NearbyStaticData.StaticPatterns.ByDirection ->
-                        RealtimePatterns.ByDirection(it, upcomingTripsMap, alerts)
+                        RealtimePatterns.ByDirection(
+                            it,
+                            upcomingTripsMap,
+                            staticData.stop.id,
+                            alerts
+                        )
                 }
             }
             .filter {

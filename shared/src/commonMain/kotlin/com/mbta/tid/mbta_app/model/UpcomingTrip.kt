@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.resolveParentId
 import kotlinx.datetime.Instant
 
 /**
@@ -84,6 +85,7 @@ data class UpcomingTrip(
 
     companion object {
         fun <Key> tripsMappedBy(
+            stops: Map<String, Stop>,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
             scheduleKey: (Schedule, ScheduleResponse) -> Key,
@@ -109,6 +111,7 @@ data class UpcomingTrip(
                     val schedulesHere = schedulesMap?.get(upcomingTripKey)
                     val predictionsHere = predictionsMap?.get(upcomingTripKey)
                     tripsFromData(
+                        stops,
                         schedulesHere.orEmpty(),
                         predictionsHere.orEmpty(),
                         trips,
@@ -122,9 +125,10 @@ data class UpcomingTrip(
 
         /**
          * Gets the list of [UpcomingTrip]s from the given [schedules], [predictions] and
-         * [vehicles]. Matches by trip ID, stop ID, and stop sequence.
+         * [vehicles]. Matches by trip ID, parent stop ID, and stop sequence.
          */
         fun tripsFromData(
+            stops: Map<String, Stop>,
             schedules: List<Schedule>,
             predictions: List<Prediction>,
             trips: Map<String, Trip>,
@@ -132,16 +136,24 @@ data class UpcomingTrip(
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
                 val tripId: String,
-                val stopId: String?,
+                val rootStopId: String?,
                 val stopSequence: Int?
             ) {
                 constructor(
                     schedule: Schedule
-                ) : this(schedule.tripId, schedule.stopId, schedule.stopSequence)
+                ) : this(
+                    schedule.tripId,
+                    stops.resolveParentId(schedule.stopId),
+                    schedule.stopSequence
+                )
 
                 constructor(
                     prediction: Prediction
-                ) : this(prediction.tripId, prediction.stopId, prediction.stopSequence)
+                ) : this(
+                    prediction.tripId,
+                    stops.resolveParentId(prediction.stopId),
+                    prediction.stopSequence
+                )
             }
 
             val schedulesMap = schedules.associateBy { UpcomingTripKey(it) }
