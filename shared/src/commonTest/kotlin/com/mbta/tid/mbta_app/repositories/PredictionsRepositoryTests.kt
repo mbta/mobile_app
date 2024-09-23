@@ -14,6 +14,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -132,6 +133,7 @@ class PredictionsRepositoryTests : KoinTest {
         val push = mock<PhoenixPush>(MockMode.autofill)
         val predictionsRepo = PredictionsRepository(socket)
         every { channel.attach() } returns push
+
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel("predictions:stops:v2:1,2", any()) } returns channel
         assertNull(predictionsRepo.channel)
@@ -142,6 +144,34 @@ class PredictionsRepositoryTests : KoinTest {
         )
 
         assertNotNull(predictionsRepo.channel)
+    }
+
+    @Test
+    fun testV2ChannelJoinTwiceLeavesOldChannel() {
+        val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        val push = mock<PhoenixPush>(MockMode.autofill)
+        val predictionsRepo = PredictionsRepository(socket)
+        every { channel.attach() } returns push
+
+        every { push.receive(any(), any()) } returns push
+        every { socket.getChannel("predictions:stops:v2:1,2", any()) } returns channel
+        assertNull(predictionsRepo.channel)
+        predictionsRepo.connectV2(
+            stopIds = listOf("1", "2"),
+            onJoin = { /* no-op */},
+            onMessage = { /* no-op */}
+        )
+
+        assertNotNull(predictionsRepo.channel)
+
+        predictionsRepo.connectV2(
+            stopIds = listOf("3", "4"),
+            onJoin = { /* no-op */},
+            onMessage = { /* no-op */}
+        )
+
+        verify { channel.detach() }
     }
 
     @Test

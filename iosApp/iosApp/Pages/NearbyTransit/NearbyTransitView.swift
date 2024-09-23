@@ -20,6 +20,7 @@ struct NearbyTransitView: View {
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
+    var settingsRepository = RepositoryDI().settings
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
@@ -33,6 +34,7 @@ struct NearbyTransitView: View {
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsError: SocketError?
+    @State var predictionsV2Enabled = false
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
@@ -49,7 +51,10 @@ struct NearbyTransitView: View {
         .onAppear {
             getGlobal()
             getNearby(location: location, globalData: globalData)
-            joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+            Task {
+                await getPredictionsFeatureFlag()
+                joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+            }
             updateNearbyRoutes()
             updatePinnedRoutes()
             getSchedule()
@@ -70,12 +75,13 @@ struct NearbyTransitView: View {
         .onChange(of: scheduleResponse) { response in
             updateNearbyRoutes(scheduleResponse: response)
         }
-        .onChange(of: predictionsByStop) { predictionsByStop in
-            if let predictionsByStop {
-                predictions = PredictionsByStopJoinResponse.companion
-                    .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
+        .onChange(of: predictionsByStop) { newPredictionsByStop in
+            if let newPredictionsByStop {
+                let condensedPredictions = PredictionsByStopJoinResponse.companion
+                    .toPredictionsStreamDataResponse(predictionsByStop: newPredictionsByStop)
+                updateNearbyRoutes(predictions: condensedPredictions)
             } else {
-                predictions = nil
+                updateNearbyRoutes(predictions: nil)
             }
         }
         .onChange(of: predictions) { predictions in
@@ -114,6 +120,9 @@ struct NearbyTransitView: View {
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
+                    if predictionsV2Enabled {
+                        Text("Using Predictions Channel V2")
+                    }
                     LazyVStack {
                         ForEach(transit, id: \.id) { nearbyTransit in
                             switch onEnum(of: nearbyTransit) {
@@ -151,7 +160,9 @@ struct NearbyTransitView: View {
 
     private func errorCard(_ errorText: String) -> some View {
         IconCard(iconName: "network.slash", details: Text(errorText))
-            .refreshable(state.loading) { getNearby(location: location, globalData: globalData) }
+            .refreshable(state.loading) {
+                getNearby(location: location, globalData: globalData)
+            }
     }
 
     var didAppear: ((Self) -> Void)?
@@ -180,42 +191,17 @@ struct NearbyTransitView: View {
         }
     }
 
+    func getPredictionsFeatureFlag() async {
+        do {
+            let settings = try await settingsRepository.getSettings()
+            predictionsV2Enabled = settings.first(where: { $0.key == .predictionsV2Channel })?.isOn ?? false
+        } catch {}
+    }
+
     func joinPredictions(_ stopIds: Set<String>?) {
         guard let stopIds else { return }
-
-        // TODO: cutover
-        if true {
-            predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
-                DispatchQueue.main.async {
-                    if let data = outcome.data {
-                        predictionsByStop = data
-                        predictionsError = nil
-                    } else if let error = outcome.error {
-                        predictionsError = error.toSwiftEnum()
-                    }
-                }
-            }, onMessage: { outcome in
-                DispatchQueue.main.async {
-                    if let data = outcome.data {
-                        if let existingPredictionsByStop = predictionsByStop {
-                            predictionsByStop = PredictionsByStopJoinResponse.companion
-                                .mergePredictions(allByStop: existingPredictionsByStop, updatedPredictions: data)
-                            predictionsError = nil
-                        } else {
-                            predictionsByStop = PredictionsByStopJoinResponse(
-                                predictionsByStop: [data.stopId: data.predictions],
-                                trips: data.trips,
-                                vehicles: data.vehicles
-                            )
-                            predictionsError = nil
-                        }
-
-                    } else if let error = outcome.error {
-                        predictionsError = error.toSwiftEnum()
-                    }
-                }
-
-            })
+        if predictionsV2Enabled {
+            joinPredictionsV2(stopIds: stopIds)
         } else {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
@@ -228,6 +214,40 @@ struct NearbyTransitView: View {
                 }
             }
         }
+    }
+
+    func joinPredictionsV2(stopIds: Set<String>) {
+        predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    predictionsByStop = data
+                    predictionsError = nil
+                } else if let error = outcome.error {
+                    predictionsError = error.toSwiftEnum()
+                }
+            }
+        }, onMessage: { outcome in
+            DispatchQueue.main.async {
+                if let data = outcome.data {
+                    if let existingPredictionsByStop = predictionsByStop {
+                        predictionsByStop = PredictionsByStopJoinResponse.companion
+                            .mergePredictions(allByStop: existingPredictionsByStop, updatedPredictions: data)
+                        predictionsError = nil
+                    } else {
+                        predictionsByStop = PredictionsByStopJoinResponse(
+                            predictionsByStop: [data.stopId: data.predictions],
+                            trips: data.trips,
+                            vehicles: data.vehicles
+                        )
+                        predictionsError = nil
+                    }
+
+                } else if let error = outcome.error {
+                    predictionsError = error.toSwiftEnum()
+                }
+            }
+
+        })
     }
 
     func leavePredictions() {
@@ -268,9 +288,15 @@ struct NearbyTransitView: View {
         alerts: AlertsStreamDataResponse? = nil,
         pinnedRoutes: Set<String>? = nil
     ) {
+        let fallbackPredictions = if let predictionsByStop {
+            PredictionsByStopJoinResponse.companion
+                .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
+        } else { self.predictions
+        }
+
         nearbyWithRealtimeInfo = withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
-            predictions: predictions ?? self.predictions,
+            predictions: predictions ?? fallbackPredictions,
             alerts: alerts ?? nearbyVM.alerts,
             filterAtTime: now.toKotlinInstant(),
             pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes

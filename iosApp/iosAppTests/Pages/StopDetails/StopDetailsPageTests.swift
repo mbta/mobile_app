@@ -230,29 +230,11 @@ final class StopDetailsPageTests: XCTestCase {
 
         let leaveExpectation = expectation(description: "leaves predictions")
 
-        class FakePredictionsRepo: IPredictionsRepository {
-            let joinExpectation: XCTestExpectation
-            let leaveExpectation: XCTestExpectation
-
-            init(joinExpectation: XCTestExpectation, leaveExpectation: XCTestExpectation) {
-                self.joinExpectation = joinExpectation
-                self.leaveExpectation = leaveExpectation
-            }
-
-            func connect(
-                stopIds _: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
-                    -> Void
-            ) {
-                joinExpectation.fulfill()
-            }
-
-            func disconnect() {
-                leaveExpectation.fulfill()
-            }
-        }
-
-        let predictionsRepo = FakePredictionsRepo(joinExpectation: joinExpectation, leaveExpectation: leaveExpectation)
+        let predictionsRepo = MockPredictionsRepository(onConnect: { joinExpectation.fulfill() },
+                                                        onConnectV2: {},
+                                                        onDisconnect: { leaveExpectation.fulfill() },
+                                                        connectOutcome: nil,
+                                                        connectV2Outcome: nil)
         let sut = StopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
@@ -271,6 +253,78 @@ final class StopDetailsPageTests: XCTestCase {
         try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
+    }
+
+    func testJoinsPredictionsV2WhenEnabled() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: 0))
+        let joinExpectation = expectation(description: "joins predictions")
+        joinExpectation.expectedFulfillmentCount = 2
+        joinExpectation.assertForOverFulfill = true
+
+        let leaveExpectation = expectation(description: "leaves predictions")
+
+        let predictionsRepo = MockPredictionsRepository(onConnect: {},
+                                                        onConnectV2: { joinExpectation.fulfill() },
+                                                        onDisconnect: { leaveExpectation.fulfill() },
+                                                        connectOutcome: nil,
+                                                        connectV2Outcome: nil)
+        let sut = StopDetailsPage(
+            schedulesRepository: MockScheduleRepository(),
+            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
+            predictionsRepository: predictionsRepo,
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter,
+            nearbyVM: .init()
+        )
+
+        ViewHosting.host(view: sut)
+
+        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.background)
+
+        wait(for: [leaveExpectation], timeout: 1)
+
+        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
+
+        wait(for: [joinExpectation], timeout: 1)
+    }
+
+    func testUpdatesDeparturesOnV2PredictionsChange() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+        let prediction = objects.prediction { _ in }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: 0))
+
+        let nearbyVM: NearbyViewModel = .init()
+
+        let predictionsRepo = MockPredictionsRepository()
+        let sut = StopDetailsPage(
+            globalRepository: MockGlobalRepository(response: .init(
+                objects: objects,
+                patternIdsByStop: [stop.id: []]
+            )),
+            schedulesRepository: MockScheduleRepository(),
+            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
+            predictionsRepository: predictionsRepo,
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter,
+            nearbyVM: nearbyVM
+        )
+
+        ViewHosting.host(view: sut)
+        XCTAssertNil(nearbyVM.departures)
+
+        try sut.inspect().find(StopDetailsView.self)
+            .callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
     }
 
     func testAppliesFilterAutomatically() throws {

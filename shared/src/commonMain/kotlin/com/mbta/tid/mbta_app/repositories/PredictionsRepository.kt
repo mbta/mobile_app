@@ -59,6 +59,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
         onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit,
     ) {
+        disconnect()
         channel = socket.getChannel(PredictionsForStopsChannel.topicV2(stopIds), mapOf())
 
         channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
@@ -156,13 +157,37 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockPredictionsRepository : IPredictionsRepository {
+class MockPredictionsRepository(
+    val onConnect: () -> Unit = {},
+    val onConnectV2: () -> Unit = {},
+    val onDisconnect: () -> Unit = {},
+    private val connectOutcome: Outcome<PredictionsStreamDataResponse?, SocketError>? = null,
+    private val connectV2Outcome: Outcome<PredictionsByStopJoinResponse?, SocketError>? = null
+) : IPredictionsRepository {
+
+    constructor() :
+        this(onConnect = {}, onConnectV2 = {}, connectOutcome = null, connectV2Outcome = null)
+
+    constructor(
+        onConnect: () -> Unit = {},
+        onConnectV2: () -> Unit = {},
+        onDisconnect: () -> Unit = {},
+    ) : this(
+        onConnect = onConnect,
+        onConnectV2 = onConnectV2,
+        onDisconnect = onDisconnect,
+        connectOutcome = null,
+        connectV2Outcome = null
+    )
 
     override fun connect(
         stopIds: List<String>,
         onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
     ) {
-        /* no-op */
+        onConnect()
+        if (connectOutcome != null) {
+            onReceive(connectOutcome)
+        }
     }
 
     override fun connectV2(
@@ -170,10 +195,13 @@ class MockPredictionsRepository : IPredictionsRepository {
         onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
         onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
     ) {
-        /* no-op */
+        onConnectV2()
+        if (connectV2Outcome != null) {
+            onJoin(connectV2Outcome)
+        }
     }
 
     override fun disconnect() {
-        /* no-op */
+        onDisconnect()
     }
 }
