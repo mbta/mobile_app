@@ -28,9 +28,6 @@ mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
-echo "Logging $CI_DERIVED_DATA_PATH/JDK"
-ls -al "$CI_DERIVED_DATA_PATH/JDK"
-
 # Install cocoapods
 brew install cocoapods
 cd "${CI_PRIMARY_REPOSITORY_PATH}"
