@@ -323,8 +323,7 @@ class TemporaryTerminalTest {
                             UpcomingTrip(tripAlewifeBraintree2, predictionAlewifeBraintree2),
                             UpcomingTrip(tripAlewifeBraintree3, predictionAlewifeBraintree3)
                         ),
-                        emptyList(),
-                        true
+                        emptyList()
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,
@@ -335,8 +334,7 @@ class TemporaryTerminalTest {
                             UpcomingTrip(tripBraintreeAlewife1, predictionBraintreeAlewife1),
                             UpcomingTrip(tripKendallAlewife, scheduleKendallAlewife)
                         ),
-                        emptyList(),
-                        true
+                        emptyList()
                     )
                 )
                 .condensed(),
@@ -365,8 +363,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redAlewifeBraintree),
                         emptyList(),
-                        listOf(alert),
-                        true
+                        listOf(alert)
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,
@@ -374,8 +371,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redAlewifeAshmont),
                         emptyList(),
-                        listOf(alert),
-                        true
+                        listOf(alert)
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,
@@ -383,8 +379,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redBraintreeAlewife, redAshmontAlewife),
                         emptyList(),
-                        listOf(alert),
-                        true
+                        listOf(alert)
                     )
                 )
                 .condensed(),
@@ -413,8 +408,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redAlewifeBraintree, redJfkBraintree),
                         listOf(UpcomingTrip(tripJfkBraintree, scheduleJfkBraintree)),
-                        emptyList(),
-                        true
+                        emptyList()
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,
@@ -422,8 +416,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redAlewifeAshmont, redJfkAshmont),
                         listOf(UpcomingTrip(tripJfkAshmont, scheduleJfkAshmont)),
-                        emptyList(),
-                        true
+                        emptyList()
                     ),
                     RealtimePatterns.ByHeadsign(
                         red,
@@ -431,8 +424,7 @@ class TemporaryTerminalTest {
                         null,
                         listOf(redBraintreeAlewife, redAshmontAlewife),
                         emptyList(),
-                        listOf(alert),
-                        true
+                        listOf(alert)
                     ),
                     // JFK/UMass filtered out because arrival only
                 )

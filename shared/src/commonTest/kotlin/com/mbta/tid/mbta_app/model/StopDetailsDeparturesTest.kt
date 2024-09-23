@@ -69,18 +69,14 @@ class StopDetailsDeparturesTest {
                                 listOf(
                                     objects.upcomingTrip(schedule1, prediction1),
                                     objects.upcomingTrip(schedule2)
-                                ),
-                                null,
-                                true
+                                )
                             ),
                             RealtimePatterns.ByHeadsign(
                                 route,
                                 "B",
                                 null,
                                 listOf(routePattern2),
-                                listOf(),
-                                null,
-                                true
+                                listOf()
                             )
                         )
                     )
@@ -248,18 +244,14 @@ class StopDetailsDeparturesTest {
                                 listOf(
                                     objects.upcomingTrip(schedB1, predB1),
                                     objects.upcomingTrip(schedC1, predC1),
-                                ),
-                                null,
-                                true
+                                )
                             ),
                             RealtimePatterns.ByHeadsign(
                                 routeE,
                                 "Heath Street",
                                 line,
                                 listOf(routePatternE1),
-                                listOf(objects.upcomingTrip(schedE1, predE1)),
-                                null,
-                                true
+                                listOf(objects.upcomingTrip(schedE1, predE1))
                             ),
                             RealtimePatterns.ByDirection(
                                 line,
@@ -270,9 +262,7 @@ class StopDetailsDeparturesTest {
                                     objects.upcomingTrip(schedB2, predB2),
                                     objects.upcomingTrip(schedC2, predC2),
                                     objects.upcomingTrip(schedE2, predE2),
-                                ),
-                                null,
-                                true
+                                )
                             ),
                         ),
                         listOf(Direction("West", null, 0), directionEast)
@@ -495,8 +485,6 @@ class StopDetailsDeparturesTest {
                 null,
                 listOf(earlyPattern),
                 emptyList(),
-                null,
-                true
             )
         val expectedLateBeforeLoad =
             RealtimePatterns.ByHeadsign(
@@ -505,8 +493,6 @@ class StopDetailsDeparturesTest {
                 null,
                 listOf(latePattern),
                 listOf(UpcomingTrip(lateTrip, latePrediction)),
-                null,
-                true
             )
         val expectedLateAfterLoad =
             RealtimePatterns.ByHeadsign(
@@ -515,8 +501,6 @@ class StopDetailsDeparturesTest {
                 null,
                 listOf(latePattern),
                 listOf(UpcomingTrip(lateTrip, lateSchedule, latePrediction)),
-                null,
-                true
             )
 
         val expectedBeforeLoaded =
@@ -527,7 +511,7 @@ class StopDetailsDeparturesTest {
                         null,
                         stop,
                         listOf(expectedEarly, expectedLateBeforeLoad),
-                        listOf(Direction("", "", 0), Direction("", "", 1))
+                        listOf(Direction("", "", 0), Direction("", "", 1)),
                     )
                 )
             )
@@ -618,9 +602,7 @@ class StopDetailsDeparturesTest {
                                 "A",
                                 null,
                                 listOf(routePattern1),
-                                listOf(),
-                                null,
-                                true
+                                listOf()
                             ),
                         )
                     ),
@@ -648,9 +630,7 @@ class StopDetailsDeparturesTest {
                                 "C",
                                 null,
                                 listOf(routeNotPinnedPattern2),
-                                listOf(),
-                                null,
-                                true
+                                listOf()
                             ),
                         )
                     )
@@ -772,8 +752,7 @@ class StopDetailsDeparturesTest {
                                 null,
                                 listOf(routePattern1),
                                 emptyList(),
-                                listOf(alert),
-                                true
+                                listOf(alert)
                             ),
                             RealtimePatterns.ByHeadsign(
                                 route,
@@ -781,8 +760,7 @@ class StopDetailsDeparturesTest {
                                 null,
                                 listOf(routePattern2),
                                 emptyList(),
-                                emptyList(),
-                                true
+                                emptyList()
                             )
                         )
                     )

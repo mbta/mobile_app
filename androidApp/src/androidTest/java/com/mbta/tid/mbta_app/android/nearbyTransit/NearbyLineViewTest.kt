@@ -85,9 +85,7 @@ class NearbyLineViewTest {
                                     null
                                 )
                             )
-                        ),
-                        emptyList(),
-                        true
+                        )
                     )
                 )
             )

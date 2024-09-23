@@ -108,9 +108,7 @@ private fun StopDetailsRoutesViewPreview() {
                                     "A",
                                     null,
                                     emptyList(),
-                                    listOf(UpcomingTrip(trip1, prediction1)),
-                                    null,
-                                    true
+                                    listOf(UpcomingTrip(trip1, prediction1))
                                 )
                             )
                         ),
@@ -123,18 +121,14 @@ private fun StopDetailsRoutesViewPreview() {
                                     "B",
                                     null,
                                     emptyList(),
-                                    listOf(UpcomingTrip(trip3, prediction2)),
-                                    null,
-                                    true
+                                    listOf(UpcomingTrip(trip3, prediction2))
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route2,
                                     "C",
                                     null,
                                     emptyList(),
-                                    listOf(UpcomingTrip(trip2, schedule2)),
-                                    null,
-                                    true
+                                    listOf(UpcomingTrip(trip2, schedule2))
                                 )
                             )
                         )
