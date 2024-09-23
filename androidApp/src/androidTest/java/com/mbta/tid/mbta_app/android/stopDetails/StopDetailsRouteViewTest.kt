@@ -109,7 +109,8 @@ class StopDetailsRouteViewTest {
                                             stop.id,
                                         ) to listOf(UpcomingTrip(trip, prediction))
                                     ),
-                                alerts = null
+                                alerts = null,
+                                hasSchedulesTodayByPattern = null
                             )
                         )
                     ),
