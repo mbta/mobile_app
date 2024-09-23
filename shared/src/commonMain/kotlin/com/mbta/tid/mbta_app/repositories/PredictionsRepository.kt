@@ -113,6 +113,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                 try {
                     PredictionsForStopsChannel.parseV2JoinMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
+                    print("ERROR $e")
                     onJoin(Outcome(null, SocketError.Unknown))
                     return
                 }
@@ -125,7 +126,13 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         }
     }
 
-    private fun handleV2Message(
+    /**
+     * Parse the phoenix message & pass to the onMessage callback
+     *
+     * @param message: the message to parse, expected as a PredictionsByStopMessageResponse
+     * @param onMessage: the callback ot invoke on the parsed message
+     */
+    internal fun handleV2Message(
         message: PhoenixMessage,
         onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
     ) {
