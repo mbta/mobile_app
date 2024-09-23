@@ -1,4 +1,3 @@
-import AppcuesKit
 import FirebaseAnalytics
 import FirebaseAppCheck
 import FirebaseCore
@@ -22,23 +21,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             AppCheck.setAppCheckProviderFactory(providerFactory)
         #endif
         FirebaseApp.configure()
-
-        // Don't configure Appcues for debug builds to not waste active user slots
-        #if !DEBUG
-            let bundle = Bundle.main
-            let info = bundle.infoDictionary
-            if let info, let appcuesAccountID = info["APPCUES_ACCOUNT_ID"] as? String,
-               let appcuesAppID = info["APPCUES_APP_ID"] as? String, !appcuesAccountID.isEmpty, !appcuesAppID.isEmpty {
-                let appcuesConfig = Appcues.Config(
-                    accountID: appcuesAccountID,
-                    applicationID: appcuesAppID
-                )
-
-                AnalyticsProvider.shared.appcues = Appcues(config: appcuesConfig)
-            } else {
-                Logger().info("Appcues config not set, skipping initialization")
-            }
-        #endif
         return true
     }
 }
@@ -58,9 +40,6 @@ struct IOSApp: App {
                 DummyTestAppView()
             } else {
                 ProductionAppView()
-                    .onAppear {
-                        AnalyticsProvider.shared.appcues?.anonymous()
-                    }
             }
         }
     }

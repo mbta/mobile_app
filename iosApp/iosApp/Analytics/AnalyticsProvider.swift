@@ -6,14 +6,11 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import AppcuesKit
 import FirebaseAnalytics
 import Foundation
 
 class AnalyticsProvider {
     static let shared = AnalyticsProvider()
-
-    var appcues: Appcues?
 
     /**
      * The `file` param is automatically populated with the call sites file path which we parse the class name from.
