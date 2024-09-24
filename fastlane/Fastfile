@@ -51,9 +51,6 @@ platform :android do
   desc "Deploy a new version to Google Play for internal testing"
   lane :internal do |options|
     upload_to_play_store(
-      # in either a fastlane bug or an Android Publisher API bug, until the app is reviewed and in alpha,
-      # only draft releases can be created - https://github.com/fastlane/fastlane/discussions/18293
-      release_status: "draft",
       track: "internal",
       aab: "androidApp/build/outputs/bundle/release/androidApp-release.aab",
       validate_only: options[:validate_only],
