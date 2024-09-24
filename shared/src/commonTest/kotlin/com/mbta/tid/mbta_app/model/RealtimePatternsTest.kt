@@ -317,6 +317,38 @@ class RealtimePatternsTest {
     }
 
     @Test
+    fun `hasMajorAlerts is true when a major alert is active`() = parametricTest {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val majorAlert = objects.alert { effect = Alert.Effect.Suspension }
+        val minorAlert = objects.alert { effect = Alert.Effect.FacilityIssue }
+
+        assertTrue(
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    listOf(majorAlert)
+                )
+                .hasMajorAlerts
+        )
+        assertFalse(
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    listOf(minorAlert)
+                )
+                .hasMajorAlerts
+        )
+    }
+
+    @Test
     fun `hasSchedulesToday returns true when schedules exist or have not loaded`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
