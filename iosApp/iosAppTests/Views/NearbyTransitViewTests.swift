@@ -235,7 +235,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let exp = sut.on(\.didAppear) { view in
             try view.vStack().callOnChange(newValue: PredictionsStreamDataResponse(objects: objects))
-            let patterns = try view.findAll(HeadsignRowView.self)
+            let patterns = view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
@@ -530,19 +530,23 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         let predictions: PredictionsStreamDataResponse = .init(objects: Green.shared.objects)
 
-        var sut = NearbyTransitView(
+        let globalLoadedPublisher = PassthroughSubject<Void, Never>()
+
+        let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(response: predictions),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(greenLineState),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])) {
+                globalLoadedPublisher.send()
+            },
             nearbyVM: .init()
         )
 
-        let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: predictions)
+        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.2) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 
@@ -941,7 +945,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     line: nil,
                     patterns: [pattern],
                     upcomingTrips: nil,
-                    alertsHere: nil
+                    alertsHere: nil,
+                    hasSchedulesToday: true
                 )]
 
             ),

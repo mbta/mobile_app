@@ -84,6 +84,8 @@ fun PredictionRowView(
                     is RealtimePatterns.Format.NoService ->
                         UpcomingTripView(UpcomingTripViewState.NoService(predictions.alert.effect))
                     is RealtimePatterns.Format.None -> UpcomingTripView(UpcomingTripViewState.None)
+                    is RealtimePatterns.Format.NoSchedulesToday ->
+                        UpcomingTripView(UpcomingTripViewState.NoSchedulesToday)
                     is RealtimePatterns.Format.Loading ->
                         UpcomingTripView(UpcomingTripViewState.Loading)
                 }

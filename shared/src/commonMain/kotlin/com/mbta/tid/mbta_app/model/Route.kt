@@ -38,14 +38,14 @@ data class Route(
                 }
             }
 
+        fun pinnedRoutesComparator(pinnedRoutes: Set<String>): Comparator<Route> = compareBy {
+            !pinnedRoutes.contains(it.id) && !pinnedRoutes.contains(it.lineId)
+        }
+
         /*
         Sort by pinned status first, then subway first, then given sort order.
          */
-        fun relevanceComparator(pinnedRoutes: Set<String>): Comparator<Route> {
-            return compareBy<Route> {
-                    !pinnedRoutes.contains(it.id) && !pinnedRoutes.contains(it.lineId)
-                }
-                .then(subwayFirstComparator)
-        }
+        fun relevanceComparator(pinnedRoutes: Set<String>): Comparator<Route> =
+            pinnedRoutesComparator(pinnedRoutes).then(subwayFirstComparator)
     }
 }

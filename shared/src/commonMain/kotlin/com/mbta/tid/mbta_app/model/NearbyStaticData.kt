@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -260,6 +261,18 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
     companion object {
         val groupedLines = listOf("line-Green")
 
+        fun getSchedulesTodayByPattern(schedules: ScheduleResponse?): Map<String, Boolean>? =
+            schedules?.let { scheduleResponse ->
+                val scheduledTrips = scheduleResponse.trips
+                val hasSchedules: MutableMap<String, Boolean> = mutableMapOf()
+                for (schedule in scheduleResponse.schedules) {
+                    val trip = scheduledTrips[schedule.tripId]
+                    val patternId = trip?.routePatternId ?: continue
+                    hasSchedules[patternId] = true
+                }
+                hasSchedules
+            }
+
         fun buildStopPatternsForRoute(
             stop: Stop,
             patterns: List<RoutePattern>,
@@ -444,9 +457,12 @@ fun NearbyStaticData.withRealtimeInfo(
                 )
                 .rewritten()
 
+    val globalStops = globalData?.stops.orEmpty()
+
     // add predictions and apply filtering
     val upcomingTripsByRoutePatternAndStop =
         UpcomingTrip.tripsMappedBy(
+                globalData?.stops.orEmpty(),
                 schedules,
                 rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
@@ -454,7 +470,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         schedule.routeId,
                         trip.routePatternId,
-                        schedule.stopId
+                        globalStops.resolveParentId(schedule.stopId)
                     )
                 },
                 predictionKey = { prediction, streamData ->
@@ -462,14 +478,16 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         prediction.routeId,
                         trip.routePatternId,
-                        prediction.stopId
+                        globalStops.resolveParentId(prediction.stopId)
                     )
-                }
+                },
+                filterAtTime
             )
             .orEmpty()
 
     val upcomingTripsByDirectionAndStop =
         UpcomingTrip.tripsMappedBy(
+                globalData?.stops.orEmpty(),
                 schedules,
                 rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
@@ -477,7 +495,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         schedule.routeId,
                         trip.directionId,
-                        schedule.stopId
+                        globalStops.resolveParentId(schedule.stopId)
                     )
                 },
                 predictionKey = { prediction, streamData ->
@@ -485,13 +503,15 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         prediction.routeId,
                         trip.directionId,
-                        prediction.stopId
+                        globalStops.resolveParentId(prediction.stopId)
                     )
-                }
+                },
+                filterAtTime
             )
             .orEmpty()
 
     val cutoffTime = filterAtTime.plus(90.minutes)
+    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
     return rewrittenThis.data
         .asSequence()
@@ -508,7 +528,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                         upcomingTripsByDirectionAndStop,
                                     filterAtTime,
                                     cutoffTime,
-                                    activeRelevantAlerts
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern
                                 )
                             }
                             .filterNot { it.patterns.isEmpty() }
@@ -531,7 +552,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                         upcomingTripsByDirectionAndStop,
                                     filterAtTime,
                                     cutoffTime,
-                                    activeRelevantAlerts
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern
                                 )
                             }
                             .filterNot { it.patterns.isEmpty() }
@@ -546,8 +568,21 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.isEmpty() }
         .toList()
-        .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.sortRoute() }))
-        .sortedWith(compareBy(Route.relevanceComparator(pinnedRoutes)) { it.sortRoute() })
+        .sortedWith(
+            compareBy<StopsAssociated, Route>(Route.pinnedRoutesComparator(pinnedRoutes)) {
+                    it.sortRoute()
+                }
+                .thenBy {
+                    it.patternsByStop.all { byStop ->
+                        byStop.patterns.all { patterns ->
+                            patterns.upcomingTrips.isNullOrEmpty() && !patterns.hasSchedulesToday
+                        }
+                    }
+                }
+                .thenBy(Route.subwayFirstComparator) { it.sortRoute() }
+                .thenBy { it.distanceFrom(sortByDistanceFrom) }
+                .thenBy { it.sortRoute() }
+        )
 }
 
 class NearbyStaticDataBuilder {

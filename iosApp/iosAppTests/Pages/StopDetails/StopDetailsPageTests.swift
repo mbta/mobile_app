@@ -96,7 +96,8 @@ final class StopDetailsPageTests: XCTestCase {
                 line: nil,
                 patterns: [routePattern1],
                 upcomingTrips: nil,
-                alertsHere: nil
+                alertsHere: nil,
+                hasSchedulesToday: true
             )]
         )
         let route2Departures = PatternsByStop(
@@ -108,7 +109,8 @@ final class StopDetailsPageTests: XCTestCase {
                 line: nil,
                 patterns: [routePattern2],
                 upcomingTrips: nil,
-                alertsHere: nil
+                alertsHere: nil,
+                hasSchedulesToday: true
             )]
         )
 

@@ -27,6 +27,7 @@ data class PatternsByStop(
         filterTime: Instant,
         cutoffTime: Instant,
         alerts: Collection<Alert>?,
+        hasSchedulesTodayByPattern: Map<String, Boolean>?,
     ) : this(
         when (staticData) {
             is NearbyStaticData.StopPatterns.ForRoute -> listOf(staticData.route)
@@ -41,9 +42,21 @@ data class PatternsByStop(
             .map {
                 when (it) {
                     is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                        RealtimePatterns.ByHeadsign(it, upcomingTripsMap, alerts)
+                        RealtimePatterns.ByHeadsign(
+                            it,
+                            upcomingTripsMap,
+                            staticData.stop.id,
+                            alerts,
+                            hasSchedulesTodayByPattern
+                        )
                     is NearbyStaticData.StaticPatterns.ByDirection ->
-                        RealtimePatterns.ByDirection(it, upcomingTripsMap, alerts)
+                        RealtimePatterns.ByDirection(
+                            it,
+                            upcomingTripsMap,
+                            staticData.stop.id,
+                            alerts,
+                            hasSchedulesTodayByPattern
+                        )
                 }
             }
             .filter {
