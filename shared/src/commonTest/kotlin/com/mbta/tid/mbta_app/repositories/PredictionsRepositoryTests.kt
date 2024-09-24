@@ -155,7 +155,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
-        every { socket.getChannel("predictions:stops:v2:1,2", any()) } returns channel
+        every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
         predictionsRepo.connectV2(
             stopIds = listOf("1", "2"),
