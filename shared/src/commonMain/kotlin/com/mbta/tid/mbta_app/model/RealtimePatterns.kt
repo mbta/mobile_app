@@ -23,6 +23,11 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
     abstract val alertsHere: List<Alert>?
     abstract val hasSchedulesToday: Boolean
 
+    val hasMajorAlerts
+        get() = run {
+            this.alertsHere?.any { alert -> alert.significance == AlertSignificance.Major } == true
+        }
+
     /**
      * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
      * @property upcomingTrips Every [UpcomingTrip] for the [Stop] in the containing

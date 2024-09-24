@@ -7,6 +7,17 @@ sealed class StopsAssociated() {
     abstract val id: String
     abstract val patternsByStop: List<PatternsByStop>
 
+    val hasSchedulesToday
+        get() = run {
+            this.patternsByStop.any { byStop ->
+                byStop.patterns.any { patterns ->
+                    patterns.hasSchedulesToday ||
+                        patterns.hasMajorAlerts ||
+                        patterns.upcomingTrips?.isNotEmpty() == true
+                }
+            }
+        }
+
     fun distanceFrom(position: Position): Double = this.distance(position)
 
     fun isEmpty(): Boolean = this.patternsByStop.isEmpty()

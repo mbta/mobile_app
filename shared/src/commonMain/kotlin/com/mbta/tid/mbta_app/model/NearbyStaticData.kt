@@ -572,13 +572,7 @@ fun NearbyStaticData.withRealtimeInfo(
             compareBy<StopsAssociated, Route>(Route.pinnedRoutesComparator(pinnedRoutes)) {
                     it.sortRoute()
                 }
-                .thenBy {
-                    it.patternsByStop.all { byStop ->
-                        byStop.patterns.all { patterns ->
-                            patterns.upcomingTrips.isNullOrEmpty() && !patterns.hasSchedulesToday
-                        }
-                    }
-                }
+                .thenBy { !it.hasSchedulesToday }
                 .thenBy(Route.subwayFirstComparator) { it.sortRoute() }
                 .thenBy { it.distanceFrom(sortByDistanceFrom) }
                 .thenBy { it.sortRoute() }

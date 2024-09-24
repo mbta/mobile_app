@@ -9,6 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -1428,7 +1429,7 @@ class NearbyResponseTest {
                 typicality = RoutePattern.Typicality.Typical
             }
         val midSubwayPattern =
-            objects.routePattern(farSubwayRoute) {
+            objects.routePattern(midSubwayRoute) {
                 sortOrder = 1
                 representativeTrip { headsign = "Medford/Tufts" }
                 typicality = RoutePattern.Typicality.Typical
@@ -1510,6 +1511,123 @@ class NearbyResponseTest {
                 closeSubwayRoute,
                 closeBusRoute,
                 farBusRoute
+            ),
+            realtimeRoutesSorted.flatMap {
+                when (it) {
+                    is StopsAssociated.WithRoute -> listOf(it.route)
+                    is StopsAssociated.WithLine -> it.routes
+                }
+            }
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo doesn't sort unscheduled routes to the bottom if they are disrupted`() {
+        val objects = ObjectCollectionBuilder()
+
+        val closeSubwayStop = objects.stop()
+        val midSubwayStop =
+            objects.stop {
+                latitude = closeSubwayStop.latitude + 0.3
+                longitude = closeSubwayStop.longitude + 0.3
+            }
+        val farSubwayStop =
+            objects.stop {
+                latitude = closeSubwayStop.latitude + 0.5
+                longitude = closeSubwayStop.longitude + 0.5
+            }
+
+        // No alerts, no schedules
+        val closeSubwayRoute =
+            objects.route {
+                id = "close-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+        // Some alerts, no schedules
+        val midSubwayRoute =
+            objects.route {
+                id = "mid-subway"
+                type = RouteType.LIGHT_RAIL
+            }
+        // No alerts, some schedules
+        val farSubwayRoute =
+            objects.route {
+                id = "far-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midSubwayPattern =
+            objects.routePattern(midSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Medford/Tufts" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Oak Grove" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(farSubwayRoute) {
+                    stop(farSubwayStop) { headsign("Oak Grove", listOf(farSubwayPattern)) }
+                }
+                route(midSubwayRoute) {
+                    stop(midSubwayStop) { headsign("Medford/Tufts", listOf(midSubwayPattern)) }
+                }
+                route(closeSubwayRoute) {
+                    stop(closeSubwayStop) { headsign("Alewife", listOf(closeSubwayPattern)) }
+                }
+            }
+
+        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+
+        objects.schedule {
+            routeId = farSubwayRoute.id
+            tripId = farSubwayPattern.representativeTripId
+        }
+
+        objects.alert {
+            activePeriod(time.minus(2.days), time.plus(2.days))
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride
+                ),
+                route = midSubwayRoute.id,
+                routeType = midSubwayRoute.type,
+                stop = midSubwayStop.id
+            )
+        }
+
+        val realtimeRoutesSorted =
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects, emptyMap()),
+                sortByDistanceFrom = closeSubwayStop.position,
+                predictions = PredictionsStreamDataResponse(objects),
+                schedules = ScheduleResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+            )
+
+        // If a route has major disruptions and doesn't have any scheduled trips, it should still
+        // be sorted as it normally would be.
+        assertEquals(
+            listOf(
+                midSubwayRoute,
+                farSubwayRoute,
+                closeSubwayRoute,
             ),
             realtimeRoutesSorted.flatMap {
                 when (it) {
