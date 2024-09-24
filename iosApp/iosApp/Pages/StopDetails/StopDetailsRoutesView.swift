@@ -80,6 +80,17 @@ struct StopDetailsRoutesView: View {
         prediction.trip = trip3
         prediction.departureTime = (Date.now + 8 * 60).toKotlinInstant()
     }
+    let trip4 = objects.trip { _ in }
+    let schedule3 = objects.schedule { schedule in
+        schedule.trip = trip4
+        schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+    }
+    let prediction3 = objects.prediction { prediction in
+        prediction.trip = trip4
+        prediction.departureTime = nil
+        prediction.arrivalTime = nil
+        prediction.scheduleRelationship = .cancelled
+    }
 
     return StopDetailsRoutesView(departures: .init(routes: [
         .init(route: route1, stop: stop, patterns: [
@@ -111,6 +122,16 @@ struct StopDetailsRoutesView: View {
                 upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                 alertsHere: nil,
                 hasSchedulesToday: true
+            ),
+            .ByHeadsign(
+                route: route2,
+                headsign: "D",
+                line: nil,
+                patterns: [],
+                upcomingTrips: [
+                    .init(trip: trip4, schedule: schedule3, prediction: prediction3),
+                ],
+                alertsHere: nil
             ),
         ]),
     ]), global: nil, now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },

@@ -120,6 +120,25 @@ struct UpcomingTripView: View {
                         ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
                                                                          vehicleText: vehicleTypeText)
                         : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
+            case let .cancelled(schedule):
+                HStack(spacing: Self.subjectSpacing) {
+                    Text("Cancelled")
+                        .font(Typography.footnote)
+                        .foregroundStyle(Color.deemphasized)
+                    Text(schedule.scheduledTime.toNSDate(), style: .time)
+                        .font(Typography.footnoteSemibold)
+                        .strikethrough()
+                        .foregroundStyle(Color.deemphasized)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    isFirst
+                        ? accessibilityFormatters.scheduledFirst(
+                            date: schedule.scheduledTime.toNSDate(),
+                            vehicleText: vehicleTypeText
+                        )
+                        : accessibilityFormatters.scheduledOther(date: schedule.scheduledTime.toNSDate())
+                )
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
@@ -182,6 +201,14 @@ class UpcomingTripAccessibilityFormatters {
 
     public func predictionTimeOther(date: Date) -> Text {
         Text("and at \(timeFormatter.string(from: date))")
+    }
+
+    public func cancelledFirst(date: Date, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) cancelled")
+    }
+
+    public func cancelledOther(date: Date) -> Text {
+        Text("and at \(timeFormatter.string(from: date)) cancelled")
     }
 }
 
@@ -278,6 +305,7 @@ struct UpcomingTripView_Previews: PreviewProvider {
             UpcomingTripView(prediction: .noService(.suspension), routeType: .heavyRail)
             UpcomingTripView(prediction: .noService(.shuttle), routeType: .heavyRail)
             UpcomingTripView(prediction: .noService(.stopClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
             UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
         }
         .padding(8)

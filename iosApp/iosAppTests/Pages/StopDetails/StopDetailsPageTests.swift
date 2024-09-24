@@ -127,7 +127,7 @@ final class StopDetailsPageTests: XCTestCase {
         XCTAssertNil(filter.wrappedValue)
     }
 
-    func testDisplaysSchedules() {
+    @MainActor func testDisplaysSchedules() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -275,7 +275,7 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
-    func testAppliesFilterAutomatically() throws {
+    @MainActor func testAppliesFilterAutomatically() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
