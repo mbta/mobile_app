@@ -169,6 +169,10 @@ class MockPredictionsRepository(
         this(onConnect = {}, onConnectV2 = {}, connectOutcome = null, connectV2Outcome = null)
 
     constructor(
+        response: PredictionsStreamDataResponse?
+    ) : this(connectOutcome = Outcome(response, null))
+
+    constructor(
         onConnect: () -> Unit = {},
         onConnectV2: () -> Unit = {},
         onDisconnect: () -> Unit = {},
