@@ -177,17 +177,25 @@ class PredictionsRepositoryTests : KoinTest {
     @Test
     fun testV2ChannelClearedOnLeave() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        val push = mock<PhoenixPush>(MockMode.autofill)
         val predictionsRepo = PredictionsRepository(socket)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
+        every { channel.attach() } returns push
+
+        every { push.receive(any(), any()) } returns push
+        every { socket.getChannel(any(), any()) } returns channel
+        assertNull(predictionsRepo.channel)
         predictionsRepo.connectV2(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */},
             onMessage = { /* no-op */}
         )
+
         assertNotNull(predictionsRepo.channel)
 
         predictionsRepo.disconnect()
-        assertNull(predictionsRepo.channel)
+
+        verify { channel.detach() }
     }
 
     @Test
