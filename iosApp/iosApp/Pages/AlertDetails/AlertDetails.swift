@@ -61,6 +61,8 @@ struct AlertDetails: View {
         case .drawbridgeBeingRaised: NSLocalizedString("Drawbridge Being Raised", comment: "Possible alert cause")
         case .electricalWork: NSLocalizedString("Electrical Work", comment: "Possible alert cause")
         case .fire: NSLocalizedString("Fire", comment: "Possible alert cause")
+        case .fireDepartmentActivity: NSLocalizedString("Fire Department Activity", comment: "Possible alert cause")
+        case .flooding: NSLocalizedString("Flooding", comment: "Possible alert cause")
         case .fog: NSLocalizedString("Fog", comment: "Possible alert cause")
         case .freightTrainInterference: NSLocalizedString("Freight Train Interference", comment: "Possible alert cause")
         case .hazmatCondition: NSLocalizedString("Hazmat Condition", comment: "Possible alert cause")

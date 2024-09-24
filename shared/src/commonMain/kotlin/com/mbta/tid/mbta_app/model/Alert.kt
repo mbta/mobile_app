@@ -74,6 +74,8 @@ data class Alert(
         @SerialName("drawbridge_being_raised") DrawbridgeBeingRaised,
         @SerialName("electrical_work") ElectricalWork,
         @SerialName("fire") Fire,
+        @SerialName("fire_department_activity") FireDepartmentActivity,
+        @SerialName("flooding") Flooding,
         @SerialName("fog") Fog,
         @SerialName("freight_train_interference") FreightTrainInterference,
         @SerialName("hazmat_condition") HazmatCondition,
