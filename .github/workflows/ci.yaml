@@ -146,7 +146,7 @@ jobs:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
         run: |
-          bundle exec fastlane android build validate_only:${{ github.event_name == 'pull_request' }}
+          bundle exec fastlane android build
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
@@ -156,8 +156,8 @@ jobs:
           name: android-aab
           path: androidApp/build/outputs/bundle/release/androidApp-release.aab
   deploy-android:
-    name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
-    if: github.actor != 'dependabot[bot]'
+    name: Upload to Google Play
+    if: github.event_name != 'pull_request'
     concurrency:
       group: deploy-android
       cancel-in-progress: false
@@ -180,6 +180,6 @@ jobs:
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           ruby: true
-      - name: ${{ github.event_name == 'pull_request' && 'Validate on' || 'Upload to' }} Google Play
+      - name: Upload to Google Play
         run: |
-          bundle exec fastlane android internal validate_only:${{ github.event_name == 'pull_request' }}
+          bundle exec fastlane android internal
