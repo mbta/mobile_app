@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
@@ -456,9 +457,12 @@ fun NearbyStaticData.withRealtimeInfo(
                 )
                 .rewritten()
 
+    val globalStops = globalData?.stops.orEmpty()
+
     // add predictions and apply filtering
     val upcomingTripsByRoutePatternAndStop =
         UpcomingTrip.tripsMappedBy(
+                globalData?.stops.orEmpty(),
                 schedules,
                 rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
@@ -466,7 +470,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         schedule.routeId,
                         trip.routePatternId,
-                        schedule.stopId
+                        globalStops.resolveParentId(schedule.stopId)
                     )
                 },
                 predictionKey = { prediction, streamData ->
@@ -474,7 +478,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         prediction.routeId,
                         trip.routePatternId,
-                        prediction.stopId
+                        globalStops.resolveParentId(prediction.stopId)
                     )
                 },
                 filterAtTime
@@ -483,6 +487,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val upcomingTripsByDirectionAndStop =
         UpcomingTrip.tripsMappedBy(
+                globalData?.stops.orEmpty(),
                 schedules,
                 rewrittenPredictions,
                 scheduleKey = { schedule, scheduleData ->
@@ -490,7 +495,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         schedule.routeId,
                         trip.directionId,
-                        schedule.stopId
+                        globalStops.resolveParentId(schedule.stopId)
                     )
                 },
                 predictionKey = { prediction, streamData ->
@@ -498,7 +503,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         prediction.routeId,
                         trip.directionId,
-                        prediction.stopId
+                        globalStops.resolveParentId(prediction.stopId)
                     )
                 },
                 filterAtTime

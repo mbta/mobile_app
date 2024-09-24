@@ -441,19 +441,23 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         let predictions: PredictionsStreamDataResponse = .init(objects: Green.shared.objects)
 
-        var sut = NearbyTransitView(
+        let globalLoadedPublisher = PassthroughSubject<Void, Never>()
+
+        let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(response: predictions),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(greenLineState),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])) {
+                globalLoadedPublisher.send()
+            },
             nearbyVM: .init()
         )
 
-        let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: predictions)
+        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.2) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 

@@ -672,4 +672,88 @@ class RealtimePatternsTest {
             actual
         )
     }
+
+    @Test
+    fun `handles logical vs physical platforms`() {
+        // at Union Sq, North/South Station, and some others, the platforms don't map one-to-one to
+        // the directions, and the schedules are by direction but the predictions are by physical
+        // platform
+        val objects = ObjectCollectionBuilder()
+        lateinit var logicalPlatform: Stop
+        lateinit var physicalPlatform: Stop
+        val station =
+            objects.stop {
+                logicalPlatform = childStop()
+                physicalPlatform = childStop()
+            }
+
+        val route = objects.route()
+        val pattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                sortOrder = 1
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(logicalPlatform.id)
+                }
+            }
+
+        val static =
+            NearbyStaticData.build {
+                route(route) {
+                    stop(station) { headsign("A", listOf(pattern), setOf(logicalPlatform.id)) }
+                }
+            }
+
+        val now = Clock.System.now()
+
+        val schedule =
+            objects.schedule {
+                trip = objects.trip(pattern)
+                stopId = logicalPlatform.id
+                departureTime = now + 5.minutes
+            }
+
+        val prediction =
+            objects.prediction(schedule) {
+                stopId = physicalPlatform.id
+                departureTime = now + 5.minutes
+            }
+
+        val actual =
+            static.withRealtimeInfo(
+                GlobalResponse(objects, emptyMap()),
+                Position(0.0, 0.0),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                now,
+                emptySet()
+            )
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            route,
+                            station,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    "A",
+                                    null,
+                                    listOf(pattern),
+                                    listOf(objects.upcomingTrip(schedule, prediction)),
+                                    emptyList()
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            actual
+        )
+    }
 }

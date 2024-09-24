@@ -73,13 +73,22 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockPredictionsRepository : IPredictionsRepository {
+class MockPredictionsRepository(
+    private val instantReceive: Outcome<PredictionsStreamDataResponse?, SocketError>?
+) : IPredictionsRepository {
+    constructor() : this(instantReceive = null)
+
+    constructor(
+        response: PredictionsStreamDataResponse?
+    ) : this(instantReceive = Outcome(response, null))
 
     override fun connect(
         stopIds: List<String>,
         onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
     ) {
-        /* no-op */
+        if (instantReceive != null) {
+            onReceive(instantReceive)
+        }
     }
 
     override fun disconnect() {

@@ -201,6 +201,7 @@ class StopDetailsViewTest {
                                                             ) to
                                                             listOf(UpcomingTrip(trip, prediction))
                                                     ),
+                                                parentStopId = stop.id,
                                                 alerts = null,
                                                 hasSchedulesTodayByPattern = null
                                             )

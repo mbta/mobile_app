@@ -45,6 +45,7 @@ data class PatternsByStop(
                         RealtimePatterns.ByHeadsign(
                             it,
                             upcomingTripsMap,
+                            staticData.stop.id,
                             alerts,
                             hasSchedulesTodayByPattern
                         )
@@ -52,6 +53,7 @@ data class PatternsByStop(
                         RealtimePatterns.ByDirection(
                             it,
                             upcomingTripsMap,
+                            staticData.stop.id,
                             alerts,
                             hasSchedulesTodayByPattern
                         )
