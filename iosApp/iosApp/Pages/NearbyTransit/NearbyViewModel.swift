@@ -76,22 +76,22 @@ class NearbyViewModel: ObservableObject {
         fetchNearbyTask = Task { @MainActor [weak self] in
             guard let self else { return }
             if nearbyState.loadedLocation != nil {
-                self.analytics.refetchedNearbyTransit()
+                analytics.refetchedNearbyTransit()
             }
-            self.nearbyState.loading = true
+            nearbyState.loading = true
             defer {
                 self.nearbyState.loading = false
                 self.selectingLocation = false
             }
             do {
-                let response = try await self.nearbyRepository.getNearby(
+                let response = try await nearbyRepository.getNearby(
                     global: global,
                     location: location.coordinateKt
                 )
                 try Task.checkCancellation()
-                self.nearbyState.nearbyByRouteAndStop = response
-                self.nearbyState.loadedLocation = location
-                self.nearbyState.error = nil
+                nearbyState.nearbyByRouteAndStop = response
+                nearbyState.loadedLocation = location
+                nearbyState.error = nil
             } catch is CancellationError {
                 // Do nothing when cancelled
                 return
