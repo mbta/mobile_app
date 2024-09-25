@@ -10,6 +10,8 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -298,6 +300,66 @@ class RealtimePatternsTest {
                 )
                 .format(now, RouteType.BUS, anyContext())
         )
+    }
+
+    @Test
+    fun `format handles no schedules all day`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.BUS }
+
+        assertEquals(
+            RealtimePatterns.Format.NoSchedulesToday(null),
+            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), listOf(), null, false)
+                .format(now, RouteType.BUS, anyContext())
+        )
+    }
+
+    @Test
+    fun `hasMajorAlerts is true when a major alert is active`() = parametricTest {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val majorAlert = objects.alert { effect = Alert.Effect.Suspension }
+        val minorAlert = objects.alert { effect = Alert.Effect.FacilityIssue }
+
+        assertTrue(
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    listOf(majorAlert)
+                )
+                .hasMajorAlerts
+        )
+        assertFalse(
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    listOf(minorAlert)
+                )
+                .hasMajorAlerts
+        )
+    }
+
+    @Test
+    fun `hasSchedulesToday returns true when schedules exist or have not loaded`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val patternA = objects.routePattern(route)
+        val patternB = objects.routePattern(route)
+        assertTrue(RealtimePatterns.hasSchedulesToday(null, listOf(patternA, patternB)))
+        val hasSchedulesByPattern = mapOf(Pair(patternA.id, true))
+        assertTrue(
+            RealtimePatterns.hasSchedulesToday(hasSchedulesByPattern, listOf(patternA, patternB))
+        )
+        assertFalse(RealtimePatterns.hasSchedulesToday(hasSchedulesByPattern, listOf(patternB)))
     }
 
     @Test
@@ -622,7 +684,8 @@ class RealtimePatternsTest {
                                     null,
                                     listOf(pattern1),
                                     emptyList(),
-                                    emptyList()
+                                    emptyList(),
+                                    false
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route,
@@ -630,7 +693,92 @@ class RealtimePatternsTest {
                                     null,
                                     listOf(pattern2),
                                     emptyList(),
-                                    listOf(alert)
+                                    listOf(alert),
+                                    false
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            actual
+        )
+    }
+
+    @Test
+    fun `handles logical vs physical platforms`() {
+        // at Union Sq, North/South Station, and some others, the platforms don't map one-to-one to
+        // the directions, and the schedules are by direction but the predictions are by physical
+        // platform
+        val objects = ObjectCollectionBuilder()
+        lateinit var logicalPlatform: Stop
+        lateinit var physicalPlatform: Stop
+        val station =
+            objects.stop {
+                logicalPlatform = childStop()
+                physicalPlatform = childStop()
+            }
+
+        val route = objects.route()
+        val pattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                sortOrder = 1
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(logicalPlatform.id)
+                }
+            }
+
+        val static =
+            NearbyStaticData.build {
+                route(route) {
+                    stop(station) { headsign("A", listOf(pattern), setOf(logicalPlatform.id)) }
+                }
+            }
+
+        val now = Clock.System.now()
+
+        val schedule =
+            objects.schedule {
+                trip = objects.trip(pattern)
+                stopId = logicalPlatform.id
+                departureTime = now + 5.minutes
+            }
+
+        val prediction =
+            objects.prediction(schedule) {
+                stopId = physicalPlatform.id
+                departureTime = now + 5.minutes
+            }
+
+        val actual =
+            static.withRealtimeInfo(
+                GlobalResponse(objects, emptyMap()),
+                Position(0.0, 0.0),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                AlertsStreamDataResponse(objects),
+                now,
+                emptySet()
+            )
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route,
+                    listOf(
+                        PatternsByStop(
+                            route,
+                            station,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    "A",
+                                    null,
+                                    listOf(pattern),
+                                    listOf(objects.upcomingTrip(schedule, prediction)),
+                                    emptyList()
                                 )
                             )
                         )

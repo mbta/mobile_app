@@ -410,6 +410,7 @@ class UpcomingTripTest {
 
         val result =
             UpcomingTrip.tripsFromData(
+                objects.stops,
                 objects.schedules.values.toList(),
                 objects.predictions.values.toList(),
                 objects.trips,

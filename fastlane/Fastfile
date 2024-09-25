@@ -19,14 +19,7 @@ platform :android do
       track: "internal",
     )
     last_version_code = version_codes.max
-    next_version_code =
-      if options[:validate_only]
-        # Add at least 10 to skip over any concurrent full deployments,
-        # add up to 100 to not collide with any concurrent validations
-        last_version_code + Random.rand(10..100)
-      else
-        last_version_code + 1
-      end
+    next_version_code = last_version_code + 1
     properties = {
       "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
       "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
@@ -51,12 +44,8 @@ platform :android do
   desc "Deploy a new version to Google Play for internal testing"
   lane :internal do |options|
     upload_to_play_store(
-      # in either a fastlane bug or an Android Publisher API bug, until the app is reviewed and in alpha,
-      # only draft releases can be created - https://github.com/fastlane/fastlane/discussions/18293
-      release_status: "draft",
       track: "internal",
       aab: "androidApp/build/outputs/bundle/release/androidApp-release.aab",
-      validate_only: options[:validate_only],
     )
   end
 end

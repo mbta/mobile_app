@@ -9,17 +9,24 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         data class ByRoutePattern(
             val routeId: String,
             val routePatternId: String?,
-            val stopId: String
+            val parentStopId: String
         ) : UpcomingTripKey()
 
-        data class ByDirection(val routeId: String, val direction: Int, val stopId: String) :
+        data class ByDirection(val routeId: String, val direction: Int, val parentStopId: String) :
             UpcomingTripKey()
     }
+
+    abstract val id: String
 
     abstract val patterns: List<RoutePattern>
     abstract val upcomingTrips: List<UpcomingTrip>?
     abstract val alertsHere: List<Alert>?
-    abstract val id: String
+    abstract val hasSchedulesToday: Boolean
+
+    val hasMajorAlerts
+        get() = run {
+            this.alertsHere?.any { alert -> alert.significance == AlertSignificance.Major } == true
+        }
 
     /**
      * @property patterns [RoutePattern] listed in ascending order based on [RoutePattern.sortOrder]
@@ -33,31 +40,30 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
+        override val hasSchedulesToday: Boolean = true,
     ) : RealtimePatterns() {
         override val id = headsign
 
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
             upcomingTripsMap: UpcomingTripsMap?,
+            parentStopId: String,
             alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ) : this(
             staticData.route,
             staticData.headsign,
             staticData.line,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                staticData.stopIds
-                    .map { stopId ->
-                        staticData.patterns
-                            .mapNotNull { pattern ->
-                                upcomingTripsMap[
-                                    UpcomingTripKey.ByRoutePattern(
-                                        staticData.route.id,
-                                        pattern.id,
-                                        stopId
-                                    )]
-                            }
-                            .flatten()
+                staticData.patterns
+                    .mapNotNull { pattern ->
+                        upcomingTripsMap[
+                            UpcomingTripKey.ByRoutePattern(
+                                staticData.route.id,
+                                pattern.id,
+                                parentStopId
+                            )]
                     }
                     .flatten()
                     .sorted()
@@ -70,7 +76,8 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                     stopIds = staticData.stopIds,
                     alerts = alerts
                 )
-            }
+            },
+            hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
         )
     }
 
@@ -86,6 +93,7 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
+        override val hasSchedulesToday: Boolean = true,
     ) : RealtimePatterns() {
         override val id = "${line.id}:${direction.id}"
         val representativeRoute = routes.min()
@@ -103,23 +111,23 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap?,
+            parentStopId: String,
             alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ) : this(
             staticData.line,
             staticData.routes,
             staticData.direction,
             staticData.patterns,
             if (upcomingTripsMap != null) {
-                staticData.stopIds
-                    .flatMap { stopId ->
-                        staticData.routes.mapNotNull { route ->
-                            upcomingTripsMap[
-                                UpcomingTripKey.ByDirection(
-                                    route.id,
-                                    staticData.direction.id,
-                                    stopId
-                                )]
-                        }
+                staticData.routes
+                    .mapNotNull { route ->
+                        upcomingTripsMap[
+                            UpcomingTripKey.ByDirection(
+                                route.id,
+                                staticData.direction.id,
+                                parentStopId
+                            )]
                     }
                     .flatten()
                     .sorted()
@@ -132,7 +140,8 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                     stopIds = staticData.stopIds,
                     alerts = alerts
                 )
-            }
+            },
+            hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
         )
     }
 
@@ -220,7 +229,10 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                     formatUpcomingTrip(now, it, routeType, context, isSubway)
                 }
                 .take(count)
-        if (tripsToShow.isEmpty()) return Format.None(secondaryAlert)
+        if (tripsToShow.isEmpty()) {
+            return if (hasSchedulesToday) Format.None(secondaryAlert)
+            else Format.NoSchedulesToday(secondaryAlert)
+        }
         return Format.Some(tripsToShow, secondaryAlert)
     }
 
@@ -315,6 +327,8 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
 
         data class None(override val secondaryAlert: SecondaryAlert?) : Format()
 
+        data class NoSchedulesToday(override val secondaryAlert: SecondaryAlert?) : Format()
+
         data class Some(
             val trips: List<FormatWithId>,
             override val secondaryAlert: SecondaryAlert?
@@ -383,6 +397,14 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
                     // API best practices call for hiding scheduled times on subway
                     (isSubway && it.format is TripInstantDisplay.Schedule)
             }
+        }
+
+        fun hasSchedulesToday(
+            optionalHasSchedulesTodayByPattern: Map<String, Boolean>?,
+            patterns: List<RoutePattern>
+        ): Boolean {
+            val hasSchedulesTodayByPattern = optionalHasSchedulesTodayByPattern ?: return true
+            return patterns.any { pattern -> hasSchedulesTodayByPattern[pattern.id] == true }
         }
     }
 }

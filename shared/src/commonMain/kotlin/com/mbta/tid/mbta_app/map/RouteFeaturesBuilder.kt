@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
+import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
@@ -98,9 +99,7 @@ object RouteFeaturesBuilder {
     ): MapFriendlyRouteResponse.RouteWithSegmentedShapes? {
         val shape = shapeWithStops.shape ?: return null
         val parentResolvedStops =
-            shapeWithStops.stopIds.map {
-                stopsById?.get(it)?.resolveParent(stops = stopsById)?.id ?: it
-            }
+            shapeWithStops.stopIds.map { stopsById?.resolveParentId(it) ?: it }
         return MapFriendlyRouteResponse.RouteWithSegmentedShapes(
             routeId = shapeWithStops.routeId,
             segmentedShapes =

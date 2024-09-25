@@ -202,6 +202,12 @@
     "Fire" : {
       "comment" : "Possible alert cause"
     },
+    "Fire Department Activity" : {
+      "comment" : "Possible alert cause"
+    },
+    "Flooding" : {
+      "comment" : "Possible alert cause"
+    },
     "Fog" : {
       "comment" : "Possible alert cause"
     },
@@ -288,6 +294,9 @@
 
     },
     "No Service" : {
+
+    },
+    "No service today" : {
 
     },
     "Now" : {

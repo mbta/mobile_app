@@ -86,7 +86,8 @@ struct DirectionPicker: View {
                     line: nil,
                     patterns: [patternOutbound],
                     upcomingTrips: nil,
-                    alertsHere: nil
+                    alertsHere: nil,
+                    hasSchedulesToday: true
                 ),
                 .ByHeadsign(
                     route: route,
@@ -94,7 +95,8 @@ struct DirectionPicker: View {
                     line: nil,
                     patterns: [patternInbound],
                     upcomingTrips: nil,
-                    alertsHere: nil
+                    alertsHere: nil,
+                    hasSchedulesToday: true
                 ),
             ],
             directions: [
