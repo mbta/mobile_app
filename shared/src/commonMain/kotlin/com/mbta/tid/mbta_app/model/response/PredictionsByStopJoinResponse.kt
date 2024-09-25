@@ -24,58 +24,45 @@ data class PredictionsByStopJoinResponse(
         objects.vehicles
     )
 
-    companion object {
-        /**
-         * Merge the latest predictions for a single stop into the predictions for all stops.
-         * Removes vehicles & trips that are no longer referenced in any predictions
-         */
-        fun mergePredictions(
-            allByStop: PredictionsByStopJoinResponse,
-            updatedPredictions: PredictionsByStopMessageResponse
-        ): PredictionsByStopJoinResponse {
+    /**
+     * Merge the latest predictions for a single stop into the predictions for all stops. Removes
+     * vehicles & trips that are no longer referenced in any predictions
+     */
+    fun mergePredictions(
+        updatedPredictions: PredictionsByStopMessageResponse
+    ): PredictionsByStopJoinResponse {
 
-            val updatedPredictionsByStop: Map<String, Map<String, Prediction>> =
-                allByStop.predictionsByStop.plus(
-                    Pair(updatedPredictions.stopId, updatedPredictions.predictions)
-                )
+        val updatedPredictionsByStop: Map<String, Map<String, Prediction>> =
+            predictionsByStop.plus(Pair(updatedPredictions.stopId, updatedPredictions.predictions))
 
-            val usedTrips = mutableSetOf<String>()
-            val usedVehicles = mutableSetOf<String>()
-            val predictions = updatedPredictionsByStop.flatMap { it.value.values }
-            predictions.forEach {
-                usedTrips.add(it.tripId)
-                if (it.vehicleId != null) {
-                    usedVehicles.add(it.vehicleId)
-                }
+        val usedTrips = mutableSetOf<String>()
+        val usedVehicles = mutableSetOf<String>()
+        val predictions = updatedPredictionsByStop.flatMap { it.value.values }
+        predictions.forEach {
+            usedTrips.add(it.tripId)
+            if (it.vehicleId != null) {
+                usedVehicles.add(it.vehicleId)
             }
-
-            val updatedTrips =
-                allByStop.trips.plus(updatedPredictions.trips).filterKeys { it in usedTrips }
-            val updatedVehicles =
-                allByStop.vehicles.plus(updatedPredictions.vehicles).filterKeys {
-                    it in usedVehicles
-                }
-
-            return PredictionsByStopJoinResponse(
-                predictionsByStop = updatedPredictionsByStop,
-                trips = updatedTrips,
-                vehicles = updatedVehicles
-            )
         }
 
-        /** Flattens the `predictionsByStop` field into a single map of predictions by id */
-        fun toPredictionsStreamDataResponse(
-            predictionsByStop: PredictionsByStopJoinResponse
-        ): PredictionsStreamDataResponse {
-            val predictionsById =
-                predictionsByStop.predictionsByStop
-                    .flatMap { it.value.values }
-                    .associateBy { it.id }
-            return PredictionsStreamDataResponse(
-                predictions = predictionsById,
-                trips = predictionsByStop.trips,
-                vehicles = predictionsByStop.vehicles
-            )
-        }
+        val updatedTrips = trips.plus(updatedPredictions.trips).filterKeys { it in usedTrips }
+        val updatedVehicles =
+            vehicles.plus(updatedPredictions.vehicles).filterKeys { it in usedVehicles }
+
+        return PredictionsByStopJoinResponse(
+            predictionsByStop = updatedPredictionsByStop,
+            trips = updatedTrips,
+            vehicles = updatedVehicles
+        )
+    }
+
+    /** Flattens the `predictionsByStop` field into a single map of predictions by id */
+    fun toPredictionsStreamDataResponse(): PredictionsStreamDataResponse {
+        val predictionsById = predictionsByStop.flatMap { it.value.values }.associateBy { it.id }
+        return PredictionsStreamDataResponse(
+            predictions = predictionsById,
+            trips = trips,
+            vehicles = vehicles
+        )
     }
 }

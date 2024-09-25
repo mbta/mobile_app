@@ -175,8 +175,7 @@ struct StopDetailsPage: View {
             DispatchQueue.main.async {
                 if let data = outcome.data {
                     if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = PredictionsByStopJoinResponse.companion
-                            .mergePredictions(allByStop: existingPredictionsByStop, updatedPredictions: data)
+                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
                             predictionsByStop: [data.stopId: data.predictions],
@@ -203,15 +202,10 @@ struct StopDetailsPage: View {
         let predictionsByStop = predictionsByStop ?? self.predictionsByStop
 
         let targetPredictions = if let predictionsByStop {
-            PredictionsByStopJoinResponse.companion
-                .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
+            predictionsByStop.toPredictionsStreamDataResponse()
         } else {
             predictions ?? self.predictions
         }
-
-        print("TARGET \(targetPredictions)")
-
-        print("GLOBAL \(globalResponse)")
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures(

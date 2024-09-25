@@ -77,8 +77,7 @@ struct NearbyTransitView: View {
         }
         .onChange(of: predictionsByStop) { newPredictionsByStop in
             if let newPredictionsByStop {
-                let condensedPredictions = PredictionsByStopJoinResponse.companion
-                    .toPredictionsStreamDataResponse(predictionsByStop: newPredictionsByStop)
+                let condensedPredictions = newPredictionsByStop.toPredictionsStreamDataResponse()
                 updateNearbyRoutes(predictions: condensedPredictions)
             } else {
                 updateNearbyRoutes(predictions: nil)
@@ -230,8 +229,7 @@ struct NearbyTransitView: View {
             DispatchQueue.main.async {
                 if let data = outcome.data {
                     if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = PredictionsByStopJoinResponse.companion
-                            .mergePredictions(allByStop: existingPredictionsByStop, updatedPredictions: data)
+                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
                         predictionsError = nil
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
@@ -289,8 +287,7 @@ struct NearbyTransitView: View {
         pinnedRoutes: Set<String>? = nil
     ) {
         let fallbackPredictions = if let predictionsByStop {
-            PredictionsByStopJoinResponse.companion
-                .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
+            predictionsByStop.toPredictionsStreamDataResponse()
         } else { self.predictions }
 
         nearbyWithRealtimeInfo = withRealtimeInfo(
