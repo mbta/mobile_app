@@ -63,7 +63,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     func goBack() {
-        navigationStack.removeLast()
+        _ = navigationStack.popLast()
     }
 
     func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
