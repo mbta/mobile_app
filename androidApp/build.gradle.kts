@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 35
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
