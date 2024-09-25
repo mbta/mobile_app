@@ -55,6 +55,7 @@ struct UpcomingTripView: View {
 
         case .ferry: isOnly ? NSLocalizedString("ferry", comment: "ferry")
             : NSLocalizedString("ferries", comment: "ferries")
+
         case nil: ""
         }
     }
