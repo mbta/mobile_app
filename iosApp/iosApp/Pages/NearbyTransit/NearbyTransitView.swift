@@ -291,8 +291,7 @@ struct NearbyTransitView: View {
         let fallbackPredictions = if let predictionsByStop {
             PredictionsByStopJoinResponse.companion
                 .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
-        } else { self.predictions
-        }
+        } else { self.predictions }
 
         nearbyWithRealtimeInfo = withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
