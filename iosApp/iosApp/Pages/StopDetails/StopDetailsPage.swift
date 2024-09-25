@@ -34,6 +34,8 @@ struct StopDetailsPage: View {
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
+    var didAppear: ((Self) -> Void)?
+
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
@@ -72,12 +74,13 @@ struct StopDetailsPage: View {
                 loadGlobalData()
                 changeStop(stop)
                 loadPinnedRoutes()
+                didAppear?(self)
             }
             .onChange(of: stop) { nextStop in changeStop(nextStop) }
             .onChange(of: globalResponse) { _ in updateDepartures() }
             .onChange(of: pinnedRoutes) { _ in updateDepartures() }
-            .onChange(of: predictionsByStop) { _ in
-                updateDepartures()
+            .onChange(of: predictionsByStop) { newPredictionsByStop in
+                updateDepartures(stop, newPredictionsByStop, predictions)
             }
             .onChange(of: predictions) { _ in updateDepartures() }
             .onChange(of: schedulesResponse) { _ in updateDepartures() }
@@ -191,15 +194,24 @@ struct StopDetailsPage: View {
         predictionsRepository.disconnect()
     }
 
-    func updateDepartures(_ stop: Stop? = nil) {
+    func updateDepartures(
+        _ stop: Stop? = nil,
+        _ predictionsByStop: PredictionsByStopJoinResponse? = nil,
+        _ predictions: PredictionsStreamDataResponse? = nil
+    ) {
         let stop = stop ?? self.stop
+        let predictionsByStop = predictionsByStop ?? self.predictionsByStop
 
         let targetPredictions = if let predictionsByStop {
             PredictionsByStopJoinResponse.companion
                 .toPredictionsStreamDataResponse(predictionsByStop: predictionsByStop)
         } else {
-            predictions
+            predictions ?? self.predictions
         }
+
+        print("TARGET \(targetPredictions)")
+
+        print("GLOBAL \(globalResponse)")
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures(

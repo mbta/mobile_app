@@ -301,18 +301,24 @@ final class StopDetailsPageTests: XCTestCase {
         let route = objects.route()
         let stop = objects.stop { _ in }
         let prediction = objects.prediction { _ in }
+        let pattern = objects.routePattern(route: route) { _ in }
+        let trip = objects.trip { trip in
+            trip.id = prediction.tripId
+            trip.stopIds = [stop.id]
+        }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: 0))
 
         let nearbyVM: NearbyViewModel = .init()
 
+        let globalDataLoaded = PassthroughSubject<Void, Never>()
+
         let predictionsRepo = MockPredictionsRepository()
-        let sut = StopDetailsPage(
-            globalRepository: MockGlobalRepository(response: .init(
-                objects: objects,
-                patternIdsByStop: [stop.id: []]
-            )),
+        var sut = StopDetailsPage(
+            globalRepository: MockGlobalRepository(response: .init(objects: objects,
+                                                                   patternIdsByStop: [stop.id: [pattern.id]]),
+                                                   onGet: { globalDataLoaded.send() }),
             schedulesRepository: MockScheduleRepository(),
             settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
             predictionsRepository: predictionsRepo,
@@ -322,11 +328,15 @@ final class StopDetailsPageTests: XCTestCase {
             nearbyVM: nearbyVM
         )
 
-        ViewHosting.host(view: sut)
         XCTAssertNil(nearbyVM.departures)
+        let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded, after: 1) { view in
+            try view.find(StopDetailsView.self)
+                .callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
+            XCTAssertNotNil(nearbyVM.departures)
+        }
+        ViewHosting.host(view: sut)
 
-        try sut.inspect().find(StopDetailsView.self)
-            .callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
+        wait(for: [hasAppeared], timeout: 5)
     }
 
     func testAppliesFilterAutomatically() throws {
