@@ -131,7 +131,8 @@ struct StopDetailsRoutesView: View {
                 upcomingTrips: [
                     .init(trip: trip4, schedule: schedule3, prediction: prediction3),
                 ],
-                alertsHere: nil
+                alertsHere: nil,
+                hasSchedulesToday: true
             ),
         ]),
     ]), global: nil, now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
