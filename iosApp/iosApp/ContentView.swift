@@ -1,4 +1,6 @@
+import BottomSheet
 import CoreLocation
+import NavigationTransitions
 import shared
 import SwiftPhoenixClient
 import SwiftUI
@@ -19,6 +21,8 @@ struct ContentView: View {
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
+
+    @State var animatedLastEntry: SheetNavigationStackEntry = .nearby
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
@@ -159,22 +163,143 @@ struct ContentView: View {
                 },
                 content: coverContents
             )
-            .sheet(
-                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
-                onDismiss: {
+            /*  .sheet(
+                 item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
+                 onDismiss: {
+                     selectedDetent = .halfScreen
+
+                     if visibleNearbySheet == nearbyVM.navigationStack.last {
+                         // When the visible sheet matches the last nav entry, then a dismissal indicates
+                         // an intentional action remove the sheet and replace it with the previous one.
+
+                         // When the visible sheet *doesn't* match the latest item in the nav stack, it is
+                         // being dismissed so that it can be automatically replaced with the new one.
+                         nearbyVM.goBack()
+                     }
+                 },
+                 content: sheetContents
+             )*/
+            .sheet(isPresented: .constant(true),
+                   /* onDismiss: {
+                           selectedDetent = .halfScreen
+
+                           if visibleNearbySheet == nearbyVM.navigationStack.last {
+                               // When the visible sheet matches the last nav entry, then a dismissal indicates
+                               // an intentional action remove the sheet and replace it with the previous one.
+
+                               // When the visible sheet *doesn't* match the latest item in the nav stack, it is
+                               // being dismissed so that it can be automatically replaced with the new one.
+                               nearbyVM.goBack()
+                           }
+                       },
+                        */ content: {
+                       GeometryReader { proxy in
+
+                           VStack {
+                               navSheetContents
+                                   // Adding id here prevents the next sheet from opening at the large detent.
+                                   // https://stackoverflow.com/a/77429540
+
+                                   .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                                   .interactiveDismissDisabled()
+                                   .modifier(AllowsBackgroundInteraction())
+                           }
+
+                           .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe()) { newEntry in
+
+                               withAnimation {
+                                   print("ANIMATED LAST ENTRY CHANGING")
+                                   animatedLastEntry = newEntry
+                               }
+                           }
+
+                           .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
+                               .id) { _ in
+                                   print("CHANGED")
+                                   selectedDetent = .halfScreen
+                           }
+                           .onChange(of: $selectedDetent.wrappedValue) { newDetent in
+                               print("DETENT NOW \(newDetent)")
+                           }
+                           .onAppear {
+                               recordSheetHeight(proxy.size.height)
+                           }
+                           .onChange(of: proxy.size.height) { newValue in
+                               recordSheetHeight(newValue)
+                           }
+                       }
+                   })
+    }
+
+    @ViewBuilder
+    var navSheetContents: some View {
+        NavigationStack(path: $nearbyVM.navigationStack) {
+            VStack {
+                nearbySheetContents.onAppear {
+                    visibleNearbySheet = .nearby
+                    screenTracker.track(screen: .nearbyTransit)
                     selectedDetent = .halfScreen
+                }
+            } // Adding id here prevents the next sheet from opening at the large detent.
+            // https://stackoverflow.com/a/77429540
+            // THIS ONE MATTERS
+            .id($nearbyVM.navigationStack.wrappedValue.lastSafe().id)
+            .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
+                switch entry {
+                case .alertDetails:
+                    EmptyView()
 
-                    if visibleNearbySheet == nearbyVM.navigationStack.last {
-                        // When the visible sheet matches the last nav entry, then a dismissal indicates
-                        // an intentional action remove the sheet and replace it with the previous one.
+                case let .stopDetails(stop, _):
+                    StopDetailsPage(
+                        viewportProvider: viewportProvider,
+                        stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                        nearbyVM: nearbyVM
+                    )
+                    .onAppear {
+                        visibleNearbySheet = entry
 
-                        // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                        // being dismissed so that it can be automatically replaced with the new one.
-                        nearbyVM.goBack()
+                        print("STOP DETAILS APPEAR")
+                        let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
+                        screenTracker.track(
+                            screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                        )
                     }
-                },
-                content: sheetContents
-            )
+                    .navigationBarBackButtonHidden()
+                    .transition(.scale)
+
+                case let .tripDetails(
+                    tripId: tripId,
+                    vehicleId: vehicleId,
+                    target: target,
+                    routeId: routeId,
+                    directionId: _
+                ):
+                    TripDetailsPage(
+                        tripId: tripId,
+                        vehicleId: vehicleId,
+                        routeId: routeId,
+                        target: target,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM
+                    )
+                    .onAppear {
+                        visibleNearbySheet = entry
+
+                        screenTracker.track(screen: .tripDetails)
+
+                    }.navigationBarBackButtonHidden()
+
+                case .nearby:
+                    nearbySheetContents
+                        .onAppear {
+                            visibleNearbySheet = entry
+
+                            screenTracker.track(screen: .nearbyTransit)
+                        }.navigationBarBackButtonHidden()
+                }
+            }
+            // .navigationTransition(.slide(axis: .vertical))
+        }
     }
 
     private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {

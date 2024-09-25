@@ -86,7 +86,7 @@ struct StopDetailsView: View {
                         pinnedRoutes: pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
-                    ProgressView()
+                    LoadingCard()
                 }
             }
         }

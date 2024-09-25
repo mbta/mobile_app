@@ -52,13 +52,15 @@ class NearbyViewModel: ObservableObject {
     }
 
     func pushNavEntry(_ entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(targetStop, _) = entry,
-           case let .stopDetails(currentStop, _) = navigationStack.last,
-           targetStop == currentStop {
-            _ = navigationStack.popLast()
-            navigationStack.append(entry)
-        } else {
-            navigationStack.append(entry)
+        withAnimation {
+            if case let .stopDetails(targetStop, _) = entry,
+               case let .stopDetails(currentStop, _) = navigationStack.last,
+               targetStop == currentStop {
+                _ = navigationStack.popLast()
+                navigationStack.append(entry)
+            } else {
+                navigationStack.append(entry)
+            }
         }
     }
 
