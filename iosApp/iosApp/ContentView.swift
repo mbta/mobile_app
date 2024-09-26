@@ -104,7 +104,8 @@ struct ContentView: View {
                     if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
                         SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                     }
-                    if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
+                    if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
+                       locationDataManager.currentLocation != nil {
                         RecenterButton { Task { viewportProvider.follow() } }
                     }
                 }.frame(maxWidth: .infinity, alignment: .trailing)
