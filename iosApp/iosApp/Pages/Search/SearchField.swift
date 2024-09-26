@@ -10,6 +10,10 @@ import SwiftUI
 
 struct SearchField: View {
     @ObservedObject var searchObserver: TextFieldObserver
+
+    // Don't update this FocusState isFocused directly, only toggle through searchObserver.isFocused,
+    // otherwise it's possible for the update in searchObserver to get skipped. It's also not
+    // possible to test state variable changes, while testing this will stay set to false.
     @FocusState var isFocused: Bool
 
     @ScaledMetric var searchIconSize: CGFloat = 16
@@ -32,15 +36,12 @@ struct SearchField: View {
                     .animation(.smooth, value: searchObserver.isSearching)
                 if !searchObserver.searchText.isEmpty {
                     ActionButton(kind: .clear) {
-                        isFocused = true
+                        searchObserver.isFocused = true
                         searchObserver.clear()
                     }.accessibilityLabel("Clear search text")
                         .padding(.all, 4)
                 }
             }
-            .onAppear { isFocused = searchObserver.isFocused }
-            .onChange(of: isFocused) { searchObserver.isFocused = $0 }
-            .onChange(of: searchObserver.isFocused) { isFocused = $0 }
             .padding(.leading, 8)
             .padding(.trailing, 6)
             .frame(maxWidth: .infinity, minHeight: 44)
@@ -64,5 +65,8 @@ struct SearchField: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
+        .onAppear { isFocused = searchObserver.isFocused }
+        .onChange(of: isFocused) { searchObserver.isFocused = $0 }
+        .onChange(of: searchObserver.isFocused) { isFocused = $0 }
     }
 }

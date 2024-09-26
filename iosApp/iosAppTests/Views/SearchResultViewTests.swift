@@ -55,6 +55,61 @@ final class SearchResultViewTests: XCTestCase {
         wait(for: [getSearchResultsExpectation], timeout: 1)
     }
 
+    @MainActor func testOverlayDisplayedOnFocus() throws {
+        class FakeRepo: ISearchResultRepository {
+            let getSearchResultsExpectation: XCTestExpectation
+
+            init(getSearchResultsExpectation: XCTestExpectation) {
+                self.getSearchResultsExpectation = getSearchResultsExpectation
+            }
+
+            func __getSearchResults(query _: String) async throws -> SearchResults? {
+                getSearchResultsExpectation.fulfill()
+                return SearchResults(routes: [], stops: [])
+            }
+        }
+
+        let getSearchResultsExpectation = expectation(description: "getSearchResults")
+        let searchObserver = TextFieldObserver()
+
+        var sut = SearchOverlay(
+            searchObserver: searchObserver,
+            nearbyVM: NearbyViewModel(),
+            searchVM: SearchViewModel(),
+            searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+        )
+
+        ViewHosting.host(view: sut)
+
+        // On init, only the search field should be displayed
+        XCTAssertNotNil(try sut.inspect().find(SearchField.self))
+        XCTAssertThrowsError(try sut.inspect().find(SearchResultView.self))
+        XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(button: "Cancel"))
+        // On focus, the result view and cancel button should appear,
+        // but the clear button should be hidden
+        searchObserver.isFocused = true
+        XCTAssertNotNil(try sut.inspect().find(SearchResultView.self))
+        XCTAssertNotNil(try sut.inspect().find(SearchField.self).find(button: "Cancel"))
+        XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(ActionButton.self))
+        XCTAssert(searchObserver.isSearching)
+        // Once text is entered, the search repo should be called
+        searchObserver.searchText = "test"
+        wait(for: [getSearchResultsExpectation], timeout: 1)
+        XCTAssertEqual("test", searchObserver.searchText)
+        // Even if the focus is then lost, the result view should still be displayed
+        searchObserver.isFocused = false
+        XCTAssertNotNil(try sut.inspect().find(SearchResultView.self))
+        // When the search field is cleared, the field should be refocused
+        try sut.inspect().find(SearchField.self).find(ActionButton.self).button().tap()
+        XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(ActionButton.self))
+        XCTAssert(searchObserver.isSearching)
+        XCTAssertNotNil(try sut.inspect().find(SearchResultView.self))
+        // When cancel is tapped, the results should disappear and the search field be unfocused
+        try sut.inspect().find(SearchField.self).find(button: "Cancel").tap()
+        XCTAssertThrowsError(try sut.inspect().find(SearchResultView.self))
+        XCTAssertFalse(searchObserver.isSearching)
+    }
+
     @MainActor func testNoResults() throws {
         let sut = SearchResultView(
             results: SearchResults(routes: [], stops: []),
