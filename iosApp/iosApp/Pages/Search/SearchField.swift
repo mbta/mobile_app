@@ -28,7 +28,7 @@ struct SearchField: View {
                     .foregroundStyle(Color.deemphasized)
                     .accessibilityHidden(true)
                 TextField("Stops", text: $searchObserver.searchText)
-                    .accessibilityLabel("Search text field")
+                    .accessibilityLabel("search")
                     .focused($isFocused)
                     .submitLabel(.done)
                     .padding(.horizontal, 2)
@@ -38,8 +38,9 @@ struct SearchField: View {
                     ActionButton(kind: .clear) {
                         searchObserver.isFocused = true
                         searchObserver.clear()
-                    }.accessibilityLabel("Clear search text")
-                        .padding(.all, 4)
+                    }
+                    .accessibilityLabel("clear search text")
+                    .padding(.all, 4)
                 }
             }
             .padding(.leading, 8)
@@ -47,19 +48,17 @@ struct SearchField: View {
             .frame(maxWidth: .infinity, minHeight: 44)
             .background(Color.fill3)
             .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(
-                        searchObserver.isSearching ? Color.keyInverse.opacity(0.40) : Color.halo,
-                        lineWidth: searchObserver.isSearching ? 3 : 2
-                    )
-            )
+            .overlay(RoundedRectangle(cornerRadius: 8)
+                .stroke(
+                    searchObserver.isSearching ? Color.keyInverse.opacity(0.40) : Color.halo,
+                    lineWidth: searchObserver.isSearching ? 3 : 2
+                ))
 
             if searchObserver.isSearching {
                 Button(action: {
                     searchObserver.isFocused = false
                     searchObserver.clear()
-                }, label: { Text("Cancel") }).accessibilityLabel("Close search page")
+                }, label: { Text("Cancel") }).accessibilityLabel("close search page")
                     .dynamicTypeSize(...DynamicTypeSize.large)
             }
         }
