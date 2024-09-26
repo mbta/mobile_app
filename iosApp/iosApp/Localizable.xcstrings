@@ -148,6 +148,9 @@
     "buses" : {
       "comment" : "buses"
     },
+    "Cancel" : {
+
+    },
     "Coast Guard Restriction" : {
       "comment" : "Possible alert cause"
     },

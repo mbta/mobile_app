@@ -11,22 +11,6 @@ import CoreLocation
 import shared
 import SwiftUI
 
-class TextFieldObserver: ObservableObject {
-    @Published var debouncedText = ""
-    @Published var searchText = ""
-
-    private var subscriptions = Set<AnyCancellable>()
-
-    init() {
-        $searchText
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] nextText in
-                self?.debouncedText = nextText
-            })
-            .store(in: &subscriptions)
-    }
-}
-
 struct SearchView: View {
     let query: String
     let globalRepository: IGlobalRepository
@@ -75,15 +59,11 @@ struct SearchView: View {
     }
 
     var body: some View {
-        VStack {
-            if !query.isEmpty {
-                SearchResultView(
-                    results: searchResults,
-                    handleStopTap: handleStopTap,
-                    showRoutes: searchVM.routeResultsEnabled
-                )
-            }
-        }
+        SearchResultView(
+            results: searchResults,
+            handleStopTap: handleStopTap,
+            showRoutes: searchVM.routeResultsEnabled
+        )
         .onAppear {
             loadResults(query: query)
             Task {
