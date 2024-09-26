@@ -15,7 +15,7 @@ protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
     func addIcons(recreate: Bool)
     func addLayers(colorScheme: ColorScheme, recreate: Bool)
-
+    func updateVisibleLayers(colorScheme: ColorScheme)
     func updateSourceData(routeData: MapboxMaps.FeatureCollection)
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
 }
@@ -58,15 +58,10 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
-        let colorPalette = switch colorScheme {
-        case .light: ColorPalette.companion.light
-        case .dark: ColorPalette.companion.dark
-        @unknown default: ColorPalette.companion.light
-        }
+        let colorPalette = getColorPalette(colorScheme: colorScheme)
         currentScheme = colorScheme
-        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
-            .map { $0.toMapbox() }
-            + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette).map { $0.toMapbox() }
+        let layers = generateLayers(colorScheme: colorScheme)
+
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
@@ -77,6 +72,7 @@ class MapLayerManager: IMapLayerManager {
                         continue
                     }
                 }
+
                 if map.layerExists(withId: "puck") {
                     try map.addLayer(layer, layerPosition: .below("puck"))
                 } else {
@@ -86,6 +82,49 @@ class MapLayerManager: IMapLayerManager {
                 Logger().error("Failed to add layer \(layer.id)\n\(error)")
             }
         }
+    }
+
+    func updateVisibleLayers(colorScheme: ColorScheme) {
+        let newLayers = generateLayers(colorScheme: colorScheme)
+        let newLayerIds = newLayers.map(\.id)
+        for layerIdentifier in map.allLayerIdentifiers {
+            do {
+                if layerIdentifier.id.contains(StopLayerGenerator.shared.stopLayerId),
+                   !newLayerIds.contains(layerIdentifier.id) {
+                    try map.removeLayer(withId: layerIdentifier.id)
+                }
+            } catch {
+                Logger().error("Failed to remove layer \(layerIdentifier.id)\n\(error)")
+            }
+        }
+
+        for layer in newLayers {
+            do {
+                if !map.allLayerIdentifiers.contains(where: { layerInfo in layerInfo.id == layer.id }) {
+                    try map.addLayer(layer)
+                }
+            } catch {
+                Logger().error("Failed to add layer \(layer.id)\n\(error)")
+            }
+        }
+    }
+
+    func getColorPalette(colorScheme: ColorScheme) -> ColorPalette {
+        switch colorScheme {
+        case .light: ColorPalette.companion.light
+        case .dark: ColorPalette.companion.dark
+        @unknown default: ColorPalette.companion.light
+        }
+    }
+
+    func generateLayers(colorScheme: ColorScheme) -> [MapboxMaps.Layer] {
+        let colorPalette = getColorPalette(colorScheme: colorScheme)
+        return RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
+            .map { $0.toMapbox() } + StopLayerGenerator.shared.createStopLayers(
+                colorPalette: colorPalette,
+                zoom: Float(map.cameraState.zoom)
+            ).map { $0.toMapbox()
+            }
     }
 
     func updateSourceData(sourceId: String, data: MapboxMaps.FeatureCollection) {

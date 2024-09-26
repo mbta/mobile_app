@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 class StopLayerGeneratorTest {
     @Test
     fun `stop layers are created`() {
-        val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light)
+        val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light, 14.0.toFloat())
 
         assertEquals(11, stopLayers.size)
         assertEquals(StopLayerGenerator.stopTouchTargetLayerId, stopLayers[0].id)
@@ -28,6 +28,29 @@ class StopLayerGeneratorTest {
         assertEquals(StopLayerGenerator.getAlertLayerId(1), stopLayers[8].id)
         assertEquals(StopLayerGenerator.getAlertLayerId(2), stopLayers[9].id)
         assertEquals(StopLayerGenerator.stopLayerSelectedPinId, stopLayers[10].id)
+    }
+
+    @Test
+    fun `bus stop layers are not created when zoom is less than 12`() {
+        val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light, 11.0.toFloat())
+
+        assertEquals(9, stopLayers.size)
+        assertEquals(StopLayerGenerator.stopTouchTargetLayerId, stopLayers[0].id)
+        assertEquals(StopLayerGenerator.stopLayerId, stopLayers[1].id)
+        assertEquals(StopLayerGenerator.getTransferLayerId(0), stopLayers[2].id)
+        assertEquals(StopLayerGenerator.getTransferLayerId(1), stopLayers[3].id)
+        assertEquals(StopLayerGenerator.getTransferLayerId(2), stopLayers[4].id)
+        assertEquals(StopLayerGenerator.getAlertLayerId(0), stopLayers[5].id)
+        assertEquals(StopLayerGenerator.getAlertLayerId(1), stopLayers[6].id)
+        assertEquals(StopLayerGenerator.getAlertLayerId(2), stopLayers[7].id)
+        assertEquals(StopLayerGenerator.stopLayerSelectedPinId, stopLayers[8].id)
+    }
+
+    @Test
+    fun `no stop layers are not created when zoom is less than 11`() {
+        val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light, 10.0.toFloat())
+
+        assertEquals(0, stopLayers.size)
     }
 
     @Test
@@ -200,7 +223,7 @@ class StopLayerGeneratorTest {
                 .features
                 .single()
 
-        val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light)
+        val stopLayers = StopLayerGenerator.createStopLayers(ColorPalette.light, 14.0.toFloat())
 
         val busLayer = stopLayers[1]
         val busAlertLayer = stopLayers[2]

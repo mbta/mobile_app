@@ -9,6 +9,8 @@ import com.mbta.tid.mbta_app.map.style.downcastToColor
 object StopLayerGenerator {
     val maxTransferLayers = 3
     val stopZoomThreshold = 8.0
+    val showBusStopZoomThreshold = 12.0
+    val showAnyStopZoomThreshold = 11.0
 
     val stopLayerId = "stop-layer"
     val stopTouchTargetLayerId = "${stopLayerId}-touch-target"
@@ -21,10 +23,14 @@ object StopLayerGenerator {
 
     fun getTransferLayerId(index: Int) = "${stopLayerId}-transfer-${index}"
 
-    fun createStopLayers(colorPalette: ColorPalette): List<SymbolLayer> {
+    fun createStopLayers(colorPalette: ColorPalette, zoom: Float): List<SymbolLayer> {
+        if (zoom < showAnyStopZoomThreshold) {
+            return emptyList()
+        }
+
         val sourceId = StopFeaturesBuilder.stopSourceId
+
         val stopLayer = createStopLayer(id = stopLayerId, colorPalette = colorPalette)
-        val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
 
         val stopTouchTargetLayer = SymbolLayer(id = stopTouchTargetLayerId, source = sourceId)
         stopTouchTargetLayer.iconImage = Exp.image(Exp(StopIcons.stopDummyIcon))
@@ -55,6 +61,14 @@ object StopLayerGenerator {
                 createAlertLayer(id = getAlertLayerId(index), index)
             }
 
+        if (zoom < showBusStopZoomThreshold) {
+            return listOf(stopTouchTargetLayer, stopLayer) +
+                transferLayers +
+                alertLayers +
+                listOf(stopSelectedPinLayer)
+        }
+
+        val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
         val busAlertLayer = createAlertLayer(id = busAlertLayerId, forBus = true)
 
         return listOf(stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer) +

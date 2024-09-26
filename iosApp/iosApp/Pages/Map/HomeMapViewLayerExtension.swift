@@ -58,6 +58,12 @@ extension HomeMapView {
         layerManager.addLayers(colorScheme: colorScheme, recreate: recreate)
     }
 
+    func updateVisibleLayers() {
+        if let layerManager = mapVM.layerManager {
+            layerManager.updateVisibleLayers(colorScheme: colorScheme)
+        }
+    }
+
     func refreshMap() {
         if let layerManager = mapVM.layerManager {
             if layerManager.currentScheme != colorScheme {
