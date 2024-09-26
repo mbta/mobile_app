@@ -30,7 +30,7 @@ struct SearchField: View {
                 TextField("Stops", text: $searchObserver.searchText)
                     .accessibilityLabel("Search text field")
                     .focused($isFocused)
-                    .submitLabel(searchObserver.searchText.isEmpty ? .done : .search)
+                    .submitLabel(.done)
                     .padding(.horizontal, 2)
                     .padding(.vertical, 8)
                     .animation(.smooth, value: searchObserver.isSearching)
