@@ -38,6 +38,7 @@ enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     Map(booleanPreferencesKey("map_debug")),
     Search(booleanPreferencesKey("search_featureFlag")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
+    PredictionsV2Channel(booleanPreferencesKey("predictions_v2Channel"))
 }
 
 data class Setting(val key: Settings, var isOn: Boolean)

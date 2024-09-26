@@ -11,6 +11,8 @@ import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -116,6 +118,14 @@ fun endToEndModule(): Module {
                     onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
                 ) {
                     onReceive(Outcome(PredictionsStreamDataResponse(objects), null))
+                }
+
+                override fun connectV2(
+                    stopIds: List<String>,
+                    onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+                    onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                ) {
+                    onJoin(Outcome(PredictionsByStopJoinResponse(objects), null))
                 }
 
                 override fun disconnect() {}

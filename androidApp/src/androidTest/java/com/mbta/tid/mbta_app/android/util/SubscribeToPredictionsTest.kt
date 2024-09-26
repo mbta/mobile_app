@@ -7,6 +7,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlinx.coroutines.channels.Channel
@@ -46,6 +48,14 @@ class SubscribeToPredictionsTest {
                     isConnected = true
                     launch { stopIdsChannel.send(stopIds) }
                     this.onReceive = onReceive
+                }
+
+                override fun connectV2(
+                    stopIds: List<String>,
+                    onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+                    onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                ) {
+                    /* no-op */
                 }
 
                 override fun disconnect() {

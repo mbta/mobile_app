@@ -22,6 +22,8 @@ extension Setting: Identifiable {
             "Search - Route Results"
         case .map:
             "Map Debug"
+        case .predictionsV2Channel:
+            "Predictions V2 Channel"
         }
     }
 
@@ -33,6 +35,8 @@ extension Setting: Identifiable {
             "point.topleft.down.to.point.bottomright.curvepath.fill"
         case .map:
             "location.magnifyingglass"
+        case .predictionsV2Channel:
+            "magnifyingglass"
         }
     }
 
@@ -41,6 +45,8 @@ extension Setting: Identifiable {
         case .search:
             .featureFlags
         case .searchRouteResults:
+            .featureFlags
+        case .predictionsV2Channel:
             .featureFlags
         case .map:
             .debug
