@@ -25,4 +25,9 @@ class TextFieldObserver: ObservableObject {
             })
             .store(in: &subscriptions)
     }
+
+    func clear() {
+        searchText = ""
+        debouncedText = ""
+    }
 }

@@ -32,7 +32,8 @@ struct SearchField: View {
                     .animation(.smooth, value: searchObserver.isSearching)
                 if !searchObserver.searchText.isEmpty {
                     ActionButton(kind: .clear) {
-                        searchObserver.searchText = ""
+                        isFocused = true
+                        searchObserver.clear()
                     }.accessibilityLabel("Clear search text")
                         .padding(.all, 4)
                 }
@@ -55,8 +56,8 @@ struct SearchField: View {
 
             if searchObserver.isSearching {
                 Button(action: {
-                    searchObserver.searchText = ""
                     searchObserver.isFocused = false
+                    searchObserver.clear()
                 }, label: { Text("Cancel") }).accessibilityLabel("Close search page")
                     .dynamicTypeSize(...DynamicTypeSize.large)
             }
