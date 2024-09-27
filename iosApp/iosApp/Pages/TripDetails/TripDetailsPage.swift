@@ -29,6 +29,8 @@ struct TripDetailsPage: View {
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
+    @State var lastPredictions: Instant?
+    var errorBannerRepository: IErrorBannerStateRepository
     let analytics: TripDetailsAnalytics
 
     @State var now = Date.now.toKotlinInstant()
@@ -50,6 +52,7 @@ struct TripDetailsPage: View {
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle,
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         analytics: TripDetailsAnalytics = AnalyticsProvider.shared
     ) {
         self.tripId = tripId
@@ -62,6 +65,7 @@ struct TripDetailsPage: View {
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
+        self.errorBannerRepository = errorBannerRepository
         self.analytics = analytics
     }
 
@@ -77,6 +81,7 @@ struct TripDetailsPage: View {
                     vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
                 ) {
                     vehicleCardView
+                    ErrorBanner()
                     if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
                         targetStopSequence: Int32(stopSequence),
@@ -126,6 +131,7 @@ struct TripDetailsPage: View {
         .task {
             now = Date.now.toKotlinInstant()
             while !Task.isCancelled {
+                await checkPredictionsStale()
                 do {
                     try await Task.sleep(for: .seconds(1))
                 } catch {
@@ -160,6 +166,7 @@ struct TripDetailsPage: View {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
+                    lastPredictions = Date.now.toKotlinInstant()
                     tripPredictions = data
                 } else {
                     tripPredictions = nil
@@ -189,6 +196,19 @@ struct TripDetailsPage: View {
         vehicleRepository.disconnect()
         if mapVM.selectedVehicle?.id == vehicleId {
             mapVM.selectedVehicle = nil
+        }
+    }
+
+    private func checkPredictionsStale() async {
+        if let lastPredictions {
+            errorBannerRepository.checkPredictionsStale(
+                predictionsLastUpdated: lastPredictions,
+                predictionQuantity: Int32(tripPredictions?.predictionQuantity() ?? 0),
+                action: {
+                    leavePredictions()
+                    joinPredictions(tripId: tripId)
+                }
+            )
         }
     }
 

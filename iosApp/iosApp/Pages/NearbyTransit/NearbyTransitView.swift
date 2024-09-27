@@ -33,10 +33,11 @@ struct NearbyTransitView: View {
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictions: PredictionsStreamDataResponse?
+    @State var lastPredictions: Instant?
     @State var predictionsError: SocketError?
     @State var predictionsV2Enabled = false
+    var errorBannerRepository = RepositoryDI().errorBanner
 
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
@@ -89,13 +90,17 @@ struct NearbyTransitView: View {
         .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
-        .onReceive(timer) { input in
-            now = input
-            updateNearbyRoutes()
-        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onDisappear {
             leavePredictions()
+        }
+        .task {
+            while !Task.isCancelled {
+                now = Date.now
+                updateNearbyRoutes()
+                await checkPredictionsStale()
+                try? await Task.sleep(for: .seconds(5))
+            }
         }
         .withScenePhaseHandlers(
             onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
@@ -205,6 +210,7 @@ struct NearbyTransitView: View {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
                     if let data = outcome.data {
+                        lastPredictions = Date.now.toKotlinInstant()
                         predictions = data
                         predictionsError = nil
                     } else if let error = outcome.error {
@@ -219,6 +225,7 @@ struct NearbyTransitView: View {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
+                    lastPredictions = Date.now.toKotlinInstant()
                     predictionsByStop = data
                     predictionsError = nil
                 } else if let error = outcome.error {
@@ -228,6 +235,7 @@ struct NearbyTransitView: View {
         }, onMessage: { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
+                    lastPredictions = Date.now.toKotlinInstant()
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
                         predictionsError = nil
@@ -272,6 +280,23 @@ struct NearbyTransitView: View {
             } catch {
                 debugPrint(error)
             }
+        }
+    }
+
+    private func checkPredictionsStale() async {
+        if let lastPredictions {
+            errorBannerRepository.checkPredictionsStale(
+                predictionsLastUpdated: lastPredictions,
+                predictionQuantity: Int32(
+                    predictionsByStop?.predictionQuantity() ??
+                        predictions?.predictionQuantity() ??
+                        0
+                ),
+                action: {
+                    leavePredictions()
+                    joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+                }
+            )
         }
     }
 

@@ -30,9 +30,10 @@ struct StopDetailsPage: View {
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictionsV2Enabled = false
+    @State var lastPredictions: Instant?
+    var errorBannerRepository: IErrorBannerStateRepository
 
     let inspection = Inspection<Self>()
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     var didAppear: ((Self) -> Void)?
 
@@ -41,6 +42,7 @@ struct StopDetailsPage: View {
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         settingsRepository: ISettingsRepository = RepositoryDI().settings,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
@@ -51,6 +53,7 @@ struct StopDetailsPage: View {
         self.schedulesRepository = schedulesRepository
         self.settingsRepository = settingsRepository
         self.predictionsRepository = predictionsRepository
+        self.errorBannerRepository = errorBannerRepository
         self.viewportProvider = viewportProvider
         self.stop = stop
         _filter = filter
@@ -85,9 +88,13 @@ struct StopDetailsPage: View {
             .onChange(of: predictions) { _ in updateDepartures() }
             .onChange(of: schedulesResponse) { _ in updateDepartures() }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .onReceive(timer) { input in
-                now = input
-                updateDepartures()
+            .task {
+                while !Task.isCancelled {
+                    now = Date.now
+                    updateDepartures()
+                    await checkPredictionsStale()
+                    try? await Task.sleep(for: .seconds(5))
+                }
             }
             .onDisappear { leavePredictions() }
             .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
@@ -153,10 +160,11 @@ struct StopDetailsPage: View {
             } else {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
                     DispatchQueue.main.async {
-                        predictions = if let data = outcome.data {
-                            data
+                        if let data = outcome.data {
+                            lastPredictions = Date.now.toKotlinInstant()
+                            predictions = data
                         } else {
-                            nil
+                            predictions = nil
                         }
                     }
                 }
@@ -174,6 +182,7 @@ struct StopDetailsPage: View {
         }, onMessage: { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
+                    lastPredictions = Date.now.toKotlinInstant()
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
                     } else {
@@ -191,6 +200,23 @@ struct StopDetailsPage: View {
 
     func leavePredictions() {
         predictionsRepository.disconnect()
+    }
+
+    private func checkPredictionsStale() async {
+        if let lastPredictions {
+            errorBannerRepository.checkPredictionsStale(
+                predictionsLastUpdated: lastPredictions,
+                predictionQuantity: Int32(
+                    predictionsByStop?.predictionQuantity() ??
+                        predictions?.predictionQuantity() ??
+                        0
+                ),
+                action: {
+                    leavePredictions()
+                    joinPredictions(stop)
+                }
+            )
+        }
     }
 
     func updateDepartures(

@@ -34,6 +34,7 @@ struct NearbyTransitPageView: View {
             Color.fill1.ignoresSafeArea(.all)
             VStack {
                 SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
+                ErrorBanner()
                 if viewportProvider.isManuallyCentering {
                     LoadingCard { Text("select location") }
                 } else {
