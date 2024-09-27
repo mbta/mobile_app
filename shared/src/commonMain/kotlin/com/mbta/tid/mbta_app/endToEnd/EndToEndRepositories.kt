@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -39,6 +40,7 @@ import com.mbta.tid.mbta_app.repositories.IdleRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
@@ -89,6 +91,7 @@ fun endToEndModule(): Module {
         single<IAlertsRepository> { MockAlertsRepository() }
         single<IAppCheckRepository> { MockAppCheckRepository() }
         single<IConfigRepository> { MockConfigRepository() }
+        single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
         single<IGlobalRepository> {
             object : IGlobalRepository {
                 override suspend fun getGlobalData() =
@@ -119,6 +122,8 @@ fun endToEndModule(): Module {
                 ) {
                     onReceive(Outcome(PredictionsStreamDataResponse(objects), null))
                 }
+
+                override var lastUpdated: Instant? = null
 
                 override fun connectV2(
                     stopIds: List<String>,
@@ -178,6 +183,8 @@ fun endToEndModule(): Module {
                 ) {
                     TODO("Not yet implemented")
                 }
+
+                override var lastUpdated: Instant? = null
 
                 override fun disconnect() {
                     TODO("Not yet implemented")

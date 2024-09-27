@@ -65,4 +65,6 @@ data class PredictionsByStopJoinResponse(
             vehicles = vehicles
         )
     }
+
+    fun predictionQuantity() = predictionsByStop.map { it.value.size }.sum()
 }

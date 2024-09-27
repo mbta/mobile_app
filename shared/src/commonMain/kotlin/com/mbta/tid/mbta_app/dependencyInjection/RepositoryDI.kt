@@ -1,9 +1,11 @@
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
+import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -27,7 +29,9 @@ import com.mbta.tid.mbta_app.repositories.IdleTripRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
@@ -46,6 +50,7 @@ interface IRepositories {
     val alerts: IAlertsRepository?
     val appCheck: IAppCheckRepository?
     val config: IConfigRepository
+    val errorBanner: IErrorBannerStateRepository
     val global: IGlobalRepository
     val nearby: INearbyRepository
     val pinnedRoutes: IPinnedRoutesRepository
@@ -65,6 +70,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val alerts: IAlertsRepository by inject()
     override val appCheck: IAppCheckRepository by inject()
     override val config: IConfigRepository by inject()
+    override val errorBanner: IErrorBannerStateRepository by inject()
     override val global: IGlobalRepository by inject()
     override val nearby: INearbyRepository by inject()
     override val pinnedRoutes: IPinnedRoutesRepository by inject()
@@ -86,6 +92,7 @@ class RealRepositories : IRepositories {
     override val alerts = null
     override val appCheck = null
     override val config = ConfigRepository()
+    override val errorBanner = ErrorBannerStateRepository()
     override val global = GlobalRepository()
     override val nearby = NearbyRepository()
     override val pinnedRoutes = PinnedRoutesRepository()
@@ -105,6 +112,7 @@ class MockRepositories(
     override val alerts: IAlertsRepository,
     override val appCheck: IAppCheckRepository,
     override val config: IConfigRepository,
+    override val errorBanner: IErrorBannerStateRepository,
     override val global: IGlobalRepository,
     override val nearby: INearbyRepository,
     override val pinnedRoutes: IPinnedRoutesRepository,
@@ -131,6 +139,7 @@ class MockRepositories(
                 alerts = MockAlertsRepository(),
                 appCheck = MockAppCheckRepository(),
                 config = MockConfigRepository(),
+                errorBanner = MockErrorBannerStateRepository(),
                 global = global,
                 nearby = IdleNearbyRepository(),
                 pinnedRoutes = PinnedRoutesRepository(),
@@ -138,7 +147,7 @@ class MockRepositories(
                 railRouteShapes = IdleRailRouteShapeRepository(),
                 schedules = schedules,
                 searchResults = IdleSearchResultRepository(),
-                settings = SettingsRepository(),
+                settings = MockSettingsRepository(),
                 stop = stop,
                 trip = trip,
                 tripPredictions = MockTripPredictionsRepository(),

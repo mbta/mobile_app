@@ -15,4 +15,6 @@ data class PredictionsStreamDataResponse(
     constructor(
         objects: ObjectCollectionBuilder
     ) : this(objects.predictions, objects.trips, objects.vehicles)
+
+    fun predictionQuantity() = predictions.size
 }

@@ -155,4 +155,20 @@ class PredictionsByStopJoinResponseTest {
         assertEquals(mapOf(trip1.id to trip1, trip2.id to trip2), response.trips)
         assertEquals(mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2), response.vehicles)
     }
+
+    @Test
+    fun `predictionQuantity counts predictions`() {
+        val data =
+            PredictionsByStopJoinResponse(
+                predictionsByStop =
+                    mapOf(
+                        "1" to mapOf("a" to prediction(), "b" to prediction()),
+                        "2" to mapOf("c" to prediction())
+                    ),
+                trips = emptyMap(),
+                vehicles = emptyMap()
+            )
+
+        assertEquals(3, data.predictionQuantity())
+    }
 }

@@ -68,6 +68,7 @@ fun drawableByName(name: String): Int =
         "fa-circle-info" -> R.drawable.fa_circle_info
         "fa-clock" -> R.drawable.fa_clock
         "fa-location-arrow-solid" -> R.drawable.fa_location_arrow_solid
+        "fa-magnifying-glass-solid" -> R.drawable.fa_magnifying_glass_solid
         "fa-route" -> R.drawable.fa_route
         "fa-xmark" -> R.drawable.fa_xmark
         "live-data" -> R.drawable.live_data

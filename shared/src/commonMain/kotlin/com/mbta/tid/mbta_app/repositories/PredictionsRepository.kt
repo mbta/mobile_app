@@ -10,6 +10,8 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 
 interface IPredictionsRepository {
@@ -24,6 +26,8 @@ interface IPredictionsRepository {
         onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
     )
 
+    var lastUpdated: Instant?
+
     fun disconnect()
 }
 
@@ -31,6 +35,8 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
     IPredictionsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
+
+    override var lastUpdated: Instant? = null
 
     override fun connect(
         stopIds: List<String>,
@@ -97,6 +103,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                     return
                 }
             println("Received ${newPredictions.predictions.size} predictions")
+            lastUpdated = Clock.System.now()
             onReceive(Outcome(newPredictions, null))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -121,6 +128,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
             println(
                 "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions"
             )
+            lastUpdated = Clock.System.now()
             onJoin(Outcome(newPredictionsByStop, null))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -150,6 +158,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
             println(
                 "Received ${newPredictionsForStop.predictions.size} predictions for stop ${newPredictionsForStop.stopId}"
             )
+            lastUpdated = Clock.System.now()
             onMessage(Outcome(newPredictionsForStop, null))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -204,6 +213,8 @@ class MockPredictionsRepository(
             onJoin(connectV2Outcome)
         }
     }
+
+    override var lastUpdated: Instant? = null
 
     override fun disconnect() {
         onDisconnect()
