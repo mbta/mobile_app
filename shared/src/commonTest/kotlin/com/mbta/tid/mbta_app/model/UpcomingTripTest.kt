@@ -512,7 +512,7 @@ class UpcomingTripTest {
         val predictionDropped = prediction {
             arrivalTime = null
             departureTime = null
-            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            scheduleRelationship = Prediction.ScheduleRelationship.Skipped
         }
 
         assertEquals(null, UpcomingTrip(trip, schedule, predictionDropped).time)

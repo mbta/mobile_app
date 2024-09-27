@@ -25,6 +25,16 @@
         }
       }
     },
+    "%@ arriving at %@ cancelled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arriving at %2$@ cancelled"
+          }
+        }
+      }
+    },
     "%@ arriving at %@ scheduled" : {
       "localizations" : {
         "en" : {
@@ -121,6 +131,9 @@
     "and at %@" : {
 
     },
+    "and at %@ cancelled" : {
+
+    },
     "and at %@ scheduled" : {
 
     },
@@ -147,6 +160,9 @@
     },
     "buses" : {
       "comment" : "buses"
+    },
+    "Cancelled" : {
+
     },
     "Coast Guard Restriction" : {
       "comment" : "Possible alert cause"

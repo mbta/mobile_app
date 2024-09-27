@@ -203,20 +203,21 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 NearbyStaticData.filterStopsByPatterns(patterns, global, allStopIds)
                             val upcomingTrips =
                                 if (tripMap != null) {
-                                    patterns
-                                        .mapNotNull { pattern ->
-                                            tripMap[
-                                                RealtimePatterns.UpcomingTripKey.ByRoutePattern(
-                                                    route.id,
-                                                    pattern.id,
-                                                    stop.id
-                                                )]
-                                        }
-                                        .flatten()
-                                        .sorted()
-                                } else {
-                                    null
-                                }
+                                        patterns
+                                            .mapNotNull { pattern ->
+                                                tripMap[
+                                                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                                                        route.id,
+                                                        pattern.id,
+                                                        stop.id
+                                                    )]
+                                            }
+                                            .flatten()
+                                            .sorted()
+                                    } else {
+                                        null
+                                    }
+                                    ?.filterCancellations(route.type.isSubway())
                             RealtimePatterns.ByHeadsign(
                                 route,
                                 headsign,

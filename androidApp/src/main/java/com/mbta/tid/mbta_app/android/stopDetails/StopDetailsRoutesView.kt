@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
+import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -93,6 +94,19 @@ private fun StopDetailsRoutesViewPreview() {
             trip = trip3
             departureTime = Clock.System.now() + 8.minutes
         }
+    val trip4 = objects.trip()
+    val schedule3 =
+        objects.schedule {
+            trip = trip4
+            departureTime = Clock.System.now() + 10.minutes
+        }
+    val prediction3 =
+        objects.prediction {
+            trip = trip4
+            departureTime = null
+            arrivalTime = null
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
 
     MyApplicationTheme {
         StopDetailsRoutesView(
@@ -129,6 +143,13 @@ private fun StopDetailsRoutesViewPreview() {
                                     null,
                                     emptyList(),
                                     listOf(UpcomingTrip(trip2, schedule2))
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route2,
+                                    "D",
+                                    null,
+                                    emptyList(),
+                                    listOf(UpcomingTrip(trip4, schedule3, prediction3))
                                 )
                             )
                         )
