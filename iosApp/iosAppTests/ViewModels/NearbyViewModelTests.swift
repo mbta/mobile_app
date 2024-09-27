@@ -74,4 +74,10 @@ final class NearbyViewModelTests: XCTestCase {
 
         XCTAssertEqual(nearbyVM.getTargetStop(global: mockGlobal), stop)
     }
+
+    func testGoBackOnEmptyStack() {
+        // This should succeed unless there's a fatal error thrown
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [])
+        nearbyVM.goBack()
+    }
 }
