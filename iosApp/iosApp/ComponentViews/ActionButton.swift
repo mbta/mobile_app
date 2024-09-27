@@ -13,6 +13,7 @@ struct ActionButton: View {
     enum Kind {
         case back
         case close
+        case clear
 
         var accessibilityLabel: String {
             switch self {
@@ -20,6 +21,8 @@ struct ActionButton: View {
                 "Back"
             case .close:
                 "Close"
+            case .clear:
+                "Clear"
             }
         }
 
@@ -27,7 +30,7 @@ struct ActionButton: View {
             switch self {
             case .back:
                 .faChevronLeft
-            case .close:
+            case .close, .clear:
                 .faXmark
             }
         }
@@ -39,7 +42,7 @@ struct ActionButton: View {
     @ScaledMetric private var circleSize: CGFloat = 32
 
     @ScaledMetric private var backIconSize: CGFloat = 14
-    @ScaledMetric private var closeIconSize: CGFloat = 10
+    @ScaledMetric private var closeIconSize: CGFloat = 12
 
     var iconSize: CGFloat {
         switch kind {
@@ -47,25 +50,45 @@ struct ActionButton: View {
             backIconSize
         case .close:
             closeIconSize
+        case .clear:
+            closeIconSize / 2
+        }
+    }
+
+    var circleColor: Color {
+        switch kind {
+        case .back, .close:
+            Color.contrast
+        case .clear:
+            Color.deemphasized
+        }
+    }
+
+    var iconColor: Color {
+        switch kind {
+        case .back, .close:
+            Color.fill2
+        case .clear:
+            Color.fill3
         }
     }
 
     var body: some View {
+        let buttonSize = kind == .clear ? circleSize / 2 : circleSize
         Button(action: { action() }) {
             ZStack {
                 Circle()
-                    .fill(Color.contrast)
-                    .frame(width: circleSize, height: circleSize)
+                    .fill(circleColor)
+                    .frame(width: buttonSize, height: buttonSize)
 
                 Image(kind.image)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
-                    .padding(5)
-                    .foregroundStyle(Color.fill2)
+                    .foregroundStyle(iconColor)
             }
         }
-        .frame(width: circleSize, height: circleSize)
+        .frame(width: buttonSize, height: buttonSize)
         .accessibilityLabel(kind.accessibilityLabel)
     }
 }
@@ -74,5 +97,6 @@ struct ActionButton_Previews: PreviewProvider {
     static var previews: some View {
         ActionButton(kind: .back, action: { print("Pressed") }).previewDisplayName("Back Button")
         ActionButton(kind: .close, action: { print("Pressed") }).previewDisplayName("Close Button")
+        ActionButton(kind: .clear, action: { print("Pressed") }).previewDisplayName("Clear Button")
     }
 }
