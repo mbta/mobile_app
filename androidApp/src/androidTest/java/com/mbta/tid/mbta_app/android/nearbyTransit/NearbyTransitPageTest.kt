@@ -196,6 +196,8 @@ class NearbyTransitPageTest : KoinTest {
                             /* no-op */
                         }
 
+                        override var lastUpdated: Instant? = null
+
                         override fun disconnect() {
                             /* no-op */
                         }

@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
@@ -57,6 +58,8 @@ class SubscribeToPredictionsTest {
                 ) {
                     /* no-op */
                 }
+
+                override var lastUpdated: Instant? = null
 
                 override fun disconnect() {
                     check(isConnected) { "called disconnect when not connected" }
