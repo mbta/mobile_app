@@ -842,7 +842,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip1, upcomingTrip2)
                 )
-                .format(now, routeType, anyContext())
+                .format(now, routeType, TripInstantDisplay.Context.StopDetailsFiltered)
         )
     }
 
