@@ -30,7 +30,6 @@ struct StopDetailsPage: View {
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictionsV2Enabled = false
-    @State var lastPredictions: Instant?
     var errorBannerRepository: IErrorBannerStateRepository
 
     let inspection = Inspection<Self>()
@@ -161,7 +160,6 @@ struct StopDetailsPage: View {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
                     DispatchQueue.main.async {
                         if let data = outcome.data {
-                            lastPredictions = Date.now.toKotlinInstant()
                             predictions = data
                         } else {
                             predictions = nil
@@ -182,7 +180,6 @@ struct StopDetailsPage: View {
         }, onMessage: { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
-                    lastPredictions = Date.now.toKotlinInstant()
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
                     } else {
@@ -203,7 +200,7 @@ struct StopDetailsPage: View {
     }
 
     private func checkPredictionsStale() async {
-        if let lastPredictions {
+        if let lastPredictions = predictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(

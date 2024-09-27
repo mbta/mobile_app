@@ -123,6 +123,8 @@ fun endToEndModule(): Module {
                     onReceive(Outcome(PredictionsStreamDataResponse(objects), null))
                 }
 
+                override var lastUpdated: Instant? = null
+
                 override fun connectV2(
                     stopIds: List<String>,
                     onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
@@ -181,6 +183,8 @@ fun endToEndModule(): Module {
                 ) {
                     TODO("Not yet implemented")
                 }
+
+                override var lastUpdated: Instant? = null
 
                 override fun disconnect() {
                     TODO("Not yet implemented")

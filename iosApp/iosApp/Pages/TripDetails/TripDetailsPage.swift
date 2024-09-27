@@ -29,7 +29,6 @@ struct TripDetailsPage: View {
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
-    @State var lastPredictions: Instant?
     var errorBannerRepository: IErrorBannerStateRepository
     let analytics: TripDetailsAnalytics
 
@@ -166,7 +165,6 @@ struct TripDetailsPage: View {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
-                    lastPredictions = Date.now.toKotlinInstant()
                     tripPredictions = data
                 } else {
                     tripPredictions = nil
@@ -200,7 +198,7 @@ struct TripDetailsPage: View {
     }
 
     private func checkPredictionsStale() async {
-        if let lastPredictions {
+        if let lastPredictions = tripPredictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(tripPredictions?.predictionQuantity() ?? 0),

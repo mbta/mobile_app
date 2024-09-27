@@ -33,7 +33,6 @@ struct NearbyTransitView: View {
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictions: PredictionsStreamDataResponse?
-    @State var lastPredictions: Instant?
     @State var predictionsError: SocketError?
     @State var predictionsV2Enabled = false
     var errorBannerRepository = RepositoryDI().errorBanner
@@ -210,7 +209,6 @@ struct NearbyTransitView: View {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
                     if let data = outcome.data {
-                        lastPredictions = Date.now.toKotlinInstant()
                         predictions = data
                         predictionsError = nil
                     } else if let error = outcome.error {
@@ -225,7 +223,6 @@ struct NearbyTransitView: View {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
-                    lastPredictions = Date.now.toKotlinInstant()
                     predictionsByStop = data
                     predictionsError = nil
                 } else if let error = outcome.error {
@@ -235,7 +232,6 @@ struct NearbyTransitView: View {
         }, onMessage: { outcome in
             DispatchQueue.main.async {
                 if let data = outcome.data {
-                    lastPredictions = Date.now.toKotlinInstant()
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
                         predictionsError = nil
@@ -284,7 +280,7 @@ struct NearbyTransitView: View {
     }
 
     private func checkPredictionsStale() async {
-        if let lastPredictions {
+        if let lastPredictions = predictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(

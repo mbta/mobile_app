@@ -602,6 +602,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 /* no-op */
             }
 
+            var lastUpdated: Instant?
+
             func disconnect() { /* no-op */ }
         }
 
