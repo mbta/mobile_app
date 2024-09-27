@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
@@ -146,7 +147,7 @@ class MockRepositories(
                 railRouteShapes = IdleRailRouteShapeRepository(),
                 schedules = schedules,
                 searchResults = IdleSearchResultRepository(),
-                settings = SettingsRepository(),
+                settings = MockSettingsRepository(),
                 stop = stop,
                 trip = trip,
                 tripPredictions = MockTripPredictionsRepository(),
