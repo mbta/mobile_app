@@ -438,6 +438,9 @@
     "Updated: %@" : {
       "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"
     },
+    "Using Predictions Channel V2" : {
+
+    },
     "Weather" : {
       "comment" : "Possible alert cause"
     },
