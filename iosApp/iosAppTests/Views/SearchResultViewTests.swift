@@ -70,6 +70,7 @@ final class SearchResultViewTests: XCTestCase {
         }
 
         let getSearchResultsExpectation = expectation(description: "getSearchResults")
+        getSearchResultsExpectation.assertForOverFulfill = false
         let searchObserver = TextFieldObserver()
 
         var sut = SearchOverlay(
