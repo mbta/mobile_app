@@ -64,6 +64,7 @@ struct StopDetailsView: View {
             VStack(spacing: 0) {
                 VStack {
                     SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
+                    ErrorBanner()
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,

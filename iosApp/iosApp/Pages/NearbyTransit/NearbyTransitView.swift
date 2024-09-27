@@ -35,8 +35,8 @@ struct NearbyTransitView: View {
     @State var predictions: PredictionsStreamDataResponse?
     @State var predictionsError: SocketError?
     @State var predictionsV2Enabled = false
+    var errorBannerRepository = RepositoryDI().errorBanner
 
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
@@ -89,13 +89,17 @@ struct NearbyTransitView: View {
         .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
-        .onReceive(timer) { input in
-            now = input
-            updateNearbyRoutes()
-        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onDisappear {
             leavePredictions()
+        }
+        .task {
+            while !Task.isCancelled {
+                now = Date.now
+                updateNearbyRoutes()
+                await checkPredictionsStale()
+                try? await Task.sleep(for: .seconds(5))
+            }
         }
         .withScenePhaseHandlers(
             onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
@@ -272,6 +276,23 @@ struct NearbyTransitView: View {
             } catch {
                 debugPrint(error)
             }
+        }
+    }
+
+    private func checkPredictionsStale() async {
+        if let lastPredictions = predictionsRepository.lastUpdated {
+            errorBannerRepository.checkPredictionsStale(
+                predictionsLastUpdated: lastPredictions,
+                predictionQuantity: Int32(
+                    predictionsByStop?.predictionQuantity() ??
+                        predictions?.predictionQuantity() ??
+                        0
+                ),
+                action: {
+                    leavePredictions()
+                    joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+                }
+            )
         }
     }
 

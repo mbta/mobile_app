@@ -8,6 +8,8 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 
 interface ITripPredictionsRepository {
@@ -16,6 +18,8 @@ interface ITripPredictionsRepository {
         onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
     )
 
+    var lastUpdated: Instant?
+
     fun disconnect()
 }
 
@@ -23,6 +27,8 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
     ITripPredictionsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
+
+    override var lastUpdated: Instant? = null
 
     override fun connect(
         tripId: String,
@@ -65,6 +71,7 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
                     return
                 }
             println("Received ${newPredictions.predictions.size} predictions")
+            lastUpdated = Clock.System.now()
             onReceive(Outcome(newPredictions, null))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -80,6 +87,8 @@ class MockTripPredictionsRepository : ITripPredictionsRepository {
     ) {
         /* no-op */
     }
+
+    override var lastUpdated: Instant? = null
 
     override fun disconnect() {
         /* no-op */

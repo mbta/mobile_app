@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -40,6 +41,7 @@ fun appModule(appVariant: AppVariant) = module {
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {
         single<IConfigRepository> { repositories.config }
+        single<IErrorBannerStateRepository> { repositories.errorBanner }
         single<IGlobalRepository> { repositories.global }
         single<INearbyRepository> { repositories.nearby }
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }

@@ -560,6 +560,8 @@ final class TripDetailsPageTests: XCTestCase {
             onReceive(.init(data: response, error: nil))
         }
 
+        var lastUpdated: Instant?
+
         func disconnect() {}
     }
 
