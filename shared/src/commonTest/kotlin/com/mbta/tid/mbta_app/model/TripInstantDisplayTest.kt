@@ -675,7 +675,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = anyEnumValue()
+                context = TripInstantDisplay.Context.StopDetailsFiltered
             )
         )
     }
@@ -697,7 +697,29 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.LIGHT_RAIL,
                 now = now,
-                context = anyEnumValue()
+                context = TripInstantDisplay.Context.StopDetailsFiltered
+            )
+        )
+    }
+
+    @Test
+    fun `cancelled trip is hidden in other contexts`() = parametricTest {
+        val now = Clock.System.now()
+        assertEquals(
+            TripInstantDisplay.Hidden,
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+                        arrivalTime = null
+                        departureTime = null
+                    },
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule { departureTime = now + 15.minutes },
+                vehicle = null,
+                routeType = RouteType.BUS,
+                now = now,
+                context = anyEnumValueExcept(TripInstantDisplay.Context.StopDetailsFiltered)
             )
         )
     }

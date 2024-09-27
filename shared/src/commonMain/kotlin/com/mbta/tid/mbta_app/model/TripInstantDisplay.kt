@@ -62,7 +62,8 @@ sealed class TripInstantDisplay {
             if (
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
                     schedule?.scheduleTime != null &&
-                    routeType?.isSubway() == false
+                    routeType?.isSubway() == false &&
+                    context == Context.StopDetailsFiltered
             ) {
                 return Cancelled(schedule.scheduleTime)
             }
