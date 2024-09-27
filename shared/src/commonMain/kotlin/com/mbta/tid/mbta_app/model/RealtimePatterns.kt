@@ -4,6 +4,28 @@ import kotlinx.datetime.Instant
 
 typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>
 
+internal fun List<UpcomingTrip>.filterCancellations(isSubway: Boolean): List<UpcomingTrip> {
+    /**
+     * Do not display cancelled/skipped trips in contexts where there are only two departures shown
+     * since it's more important that riders know about trips they can still take. Never show
+     * cancelled trips for subways.
+     */
+    return if (this.size <= 2) {
+        this.filter { trip -> !trip.isCancelled }
+    } else {
+        this.filter { trip ->
+            if (isSubway) {
+                !trip.isCancelled
+            } else {
+                true
+            }
+        }
+    }
+}
+
+internal fun UpcomingTripsMap.filterCancellations(isSubway: Boolean): UpcomingTripsMap =
+    this.entries.associate { it.key to it.value.filterCancellations(isSubway) }
+
 sealed class RealtimePatterns : Comparable<RealtimePatterns> {
     sealed class UpcomingTripKey {
         data class ByRoutePattern(

@@ -852,7 +852,7 @@ final class NearbyTransitViewTests: XCTestCase {
             .find(text: "Failed to load nearby transit, test error"))
     }
 
-    func testPredictionErrorMessage() throws {
+    @MainActor func testPredictionErrorMessage() throws {
         let predictionsErroredPublisher = PassthroughSubject<Bool, Never>()
         let state = NearbyViewModel.NearbyTransitState(
             loadedLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),

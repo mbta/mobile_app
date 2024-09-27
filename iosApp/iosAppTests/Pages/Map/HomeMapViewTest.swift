@@ -19,7 +19,7 @@ final class HomeMapViewTest: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testAppears() throws {
+    @MainActor func testAppears() throws {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
