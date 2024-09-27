@@ -120,7 +120,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                 is TripInstantDisplay.Cancelled ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            "Cancelled",
+                            stringResource(R.string.cancelled),
                             color = colorResource(R.color.deemphasized),
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.headlineMedium,
