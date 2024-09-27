@@ -125,7 +125,7 @@ final class ContentViewTests: XCTestCase {
         wait(for: [tokenConfigExpectation], timeout: 5)
     }
 
-    func testFetchesConfigOnMapboxError() throws {
+    @MainActor func testFetchesConfigOnMapboxError() throws {
         let loadConfigCallback = XCTestExpectation(description: "load config called")
         loadConfigCallback.expectedFulfillmentCount = 2
 

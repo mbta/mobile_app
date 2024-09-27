@@ -788,4 +788,171 @@ class RealtimePatternsTest {
             actual
         )
     }
+
+    @Test
+    fun `includes cancelled trips`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                departureTime = now + 2.minutes
+            }
+        val prediction1 =
+            objects.prediction {
+                trip = trip1
+                departureTime = null
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+        val prediction2 =
+            objects.prediction {
+                trip = trip2
+                departureTime = now + 5.minutes
+            }
+
+        val upcomingTrip1 = objects.upcomingTrip(schedule1, prediction1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
+        val routeType = RouteType.BUS
+        assertEquals(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip1.id,
+                        routeType,
+                        TripInstantDisplay.Cancelled(schedule1.departureTime!!)
+                    ),
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip2.id,
+                        routeType,
+                        TripInstantDisplay.Minutes(5)
+                    )
+                ),
+                null
+            ),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip1, upcomingTrip2)
+                )
+                .format(now, routeType, anyContext())
+        )
+    }
+
+    @Test
+    fun `filterCancellations filters if 2 or less`() {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                departureTime = now + 2.minutes
+            }
+        val prediction1 =
+            objects.prediction {
+                trip = trip1
+                departureTime = null
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+        val prediction2 =
+            objects.prediction {
+                trip = trip2
+                departureTime = now + 5.minutes
+            }
+
+        val upcomingTrip1 = objects.upcomingTrip(schedule1, prediction1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
+        val sut = listOf(upcomingTrip1, upcomingTrip2).filterCancellations(false)
+        assertEquals(sut, listOf(upcomingTrip2))
+    }
+
+    @Test
+    fun `filterCancellations filters subway cancellations`() {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+        val trip3 = objects.trip()
+
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                departureTime = now + 2.minutes
+            }
+        val prediction1 =
+            objects.prediction {
+                trip = trip1
+                departureTime = null
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+        val prediction2 =
+            objects.prediction {
+                trip = trip2
+                departureTime = now + 5.minutes
+            }
+        val prediction3 =
+            objects.prediction {
+                trip = trip3
+                departureTime = now + 7.minutes
+            }
+
+        val upcomingTrip1 = objects.upcomingTrip(schedule1, prediction1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
+        val upcomingTrip3 = objects.upcomingTrip(prediction3)
+        val sut = listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3).filterCancellations(true)
+        assertEquals(sut, listOf(upcomingTrip2, upcomingTrip3))
+    }
+
+    @Test
+    fun `include cancellations if not subway`() {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+
+        val trip1 = objects.trip()
+        val trip2 = objects.trip()
+        val trip3 = objects.trip()
+
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                departureTime = now + 2.minutes
+            }
+        val prediction1 =
+            objects.prediction {
+                trip = trip1
+                departureTime = null
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+        val prediction2 =
+            objects.prediction {
+                trip = trip2
+                departureTime = now + 5.minutes
+            }
+        val prediction3 =
+            objects.prediction {
+                trip = trip3
+                departureTime = now + 7.minutes
+            }
+
+        val upcomingTrip1 = objects.upcomingTrip(schedule1, prediction1)
+        val upcomingTrip2 = objects.upcomingTrip(prediction2)
+        val upcomingTrip3 = objects.upcomingTrip(prediction3)
+        val sut = listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3).filterCancellations(false)
+        assertEquals(sut, listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3))
+    }
 }

@@ -29,7 +29,7 @@ final class AlertDetailsPageTests: XCTestCase {
         }
     }
 
-    func testAlertDetailsPageParentStopResolution() throws {
+    @MainActor func testAlertDetailsPageParentStopResolution() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
