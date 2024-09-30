@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IdleNearbyRepository
 import com.mbta.tid.mbta_app.repositories.IdleRailRouteShapeRepository
@@ -43,6 +44,7 @@ import com.mbta.tid.mbta_app.repositories.SearchResultRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
 import com.mbta.tid.mbta_app.repositories.TripRepository
+import com.mbta.tid.mbta_app.repositories.VisitHistoryRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -64,6 +66,7 @@ interface IRepositories {
     val tripPredictions: ITripPredictionsRepository?
     val vehicle: IVehicleRepository?
     val vehicles: IVehiclesRepository?
+    val visitHistory: IVisitHistoryRepository
 }
 
 class RepositoryDI : IRepositories, KoinComponent {
@@ -84,6 +87,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val tripPredictions: ITripPredictionsRepository by inject()
     override val vehicle: IVehicleRepository by inject()
     override val vehicles: IVehiclesRepository by inject()
+    override val visitHistory: IVisitHistoryRepository by inject()
 }
 
 class RealRepositories : IRepositories {
@@ -106,6 +110,7 @@ class RealRepositories : IRepositories {
     override val tripPredictions = null
     override val vehicle = null
     override val vehicles = null
+    override val visitHistory = VisitHistoryRepository()
 }
 
 class MockRepositories(
@@ -125,7 +130,8 @@ class MockRepositories(
     override val trip: ITripRepository,
     override val tripPredictions: ITripPredictionsRepository,
     override val vehicle: IVehicleRepository,
-    override val vehicles: IVehiclesRepository
+    override val vehicles: IVehiclesRepository,
+    override val visitHistory: IVisitHistoryRepository
 ) : IRepositories {
     companion object {
         @DefaultArgumentInterop.Enabled
@@ -152,7 +158,8 @@ class MockRepositories(
                 trip = trip,
                 tripPredictions = MockTripPredictionsRepository(),
                 vehicle = MockVehicleRepository(),
-                vehicles = MockVehiclesRepository()
+                vehicles = MockVehiclesRepository(),
+                visitHistory = VisitHistoryRepository()
             )
         }
     }

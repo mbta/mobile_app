@@ -21,9 +21,11 @@ import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import okio.FileSystem
 import okio.SYSTEM
 import org.koin.core.module.Module
@@ -61,8 +63,10 @@ fun repositoriesModule(repositories: IRepositories): Module {
         }
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
+        single<IVisitHistoryRepository> { repositories.visitHistory }
         single { ConfigUseCase(get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
+        single { VisitHistoryUsecase(get()) }
     }
 }
