@@ -60,6 +60,8 @@ object MapExp {
             Exp(14) to withMultipliers(1)
         )
 
+    val isBusExp = Exp.all(singleRouteTypeExp, Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)))
+
     // Returns a different double value from a provided array depending on route type.
     // The resizeWith array is ordered by [bus, commuter rail, everything else].
     fun modeSizeMultiplierExp(resizeWith: List<Number>) =
@@ -240,8 +242,7 @@ object MapExp {
     // whether or not the stop is a bus stop and this is on the bus layer
     fun busSwitchExp(forBus: Boolean, resultExpression: Exp<String>): Exp<String> {
         return Exp.case(
-            Exp.all(singleRouteTypeExp, Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name))) to
-                if (forBus) resultExpression else Exp.string(Exp("")),
+            isBusExp to if (forBus) resultExpression else Exp.string(Exp("")),
             if (!forBus) resultExpression else Exp.string(Exp(""))
         )
     }
