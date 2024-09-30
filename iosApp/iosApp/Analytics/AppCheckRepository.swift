@@ -17,7 +17,7 @@ class AppCheckRepository: IAppCheckRepository {
             let token = try await AppCheck.appCheck().token(forcingRefresh: false)
             return ApiResultOk(data: Token(token: token.token))
         } catch {
-            return ApiResultError(error: ErrorDetails(code: nil, message: "\(error)"))
+            return ApiResultError(code: nil, message: "\(error)")
         }
     }
 }

@@ -307,7 +307,7 @@ final class TripDetailsPageTests: XCTestCase {
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            tripError: .init(code: 404, message: "Bad response"),
+            tripError: ApiResultError(code: 404, message: "Bad response"),
             scheduleResponse: TripSchedulesResponse.StopIds(stopIds: []),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -521,12 +521,12 @@ final class TripDetailsPageTests: XCTestCase {
         }
 
         init(
-            tripError: ErrorDetails,
+            tripError: ApiResultError<TripResponse>,
             scheduleResponse: TripSchedulesResponse,
             onGetTrip: (() -> Void)? = nil,
             onGetTripSchedules: (() -> Void)? = nil
         ) {
-            tripResponse = ApiResultError(error: tripError)
+            tripResponse = tripError
             self.scheduleResponse = scheduleResponse
             self.onGetTrip = onGetTrip
             self.onGetTripSchedules = onGetTripSchedules

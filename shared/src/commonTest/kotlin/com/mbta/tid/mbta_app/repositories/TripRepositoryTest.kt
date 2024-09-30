@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.ErrorDetails
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -16,6 +15,7 @@ import io.ktor.http.headersOf
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -113,12 +113,11 @@ class TripRepositoryTest : KoinTest {
         }
 
         runBlocking {
-            val apiResult: ApiResult<TripShape> = TripRepository().getTripShape(tripId = "12345")
+            val apiResult = TripRepository().getTripShape(tripId = "12345")
 
-            assertEquals(
-                ApiResult.Error(error = ErrorDetails(code = 404, message = "not_found")),
-                apiResult
-            )
+            assertIs<ApiResult.Error<*>>(apiResult)
+            assertEquals(404, apiResult.code)
+            assertContains(apiResult.message, "not_found")
         }
 
         stopKoin()
@@ -140,10 +139,10 @@ class TripRepositoryTest : KoinTest {
         }
 
         runBlocking {
-            val apiResult: ApiResult.Error<TripShape> =
-                TripRepository().getTripShape(tripId = "12345") as ApiResult.Error<TripShape>
+            val apiResult = TripRepository().getTripShape(tripId = "12345")
+            assertIs<ApiResult.Error<*>>(apiResult)
 
-            assertContains(apiResult.error.message, "Field 'shape_with_stops' is required for type")
+            assertContains(apiResult.message, "Field 'shape_with_stops' is required for type")
         }
 
         stopKoin()
