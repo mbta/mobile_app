@@ -216,17 +216,17 @@ struct ContentView: View {
                             viewportProvider: viewportProvider,
                             stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
                             nearbyVM: nearbyVM
-                        ).id(stop.id)
-                            .toolbar(.hidden, for: .tabBar)
-                            .onAppear {
-                                let filtered = filter != nil
-                                screenTracker.track(
-                                    screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                                )
-                            }
-                    }.id(stop.id)
-                        .transition(transition)
-                        .id(stop.id)
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                        .onAppear {
+                            let filtered = filter != nil
+                            screenTracker.track(
+                                screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                            )
+                        }
+                    }
+
+                    .transition(transition)
 
                 case let .tripDetails(
                     tripId: tripId,
