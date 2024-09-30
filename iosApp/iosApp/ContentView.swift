@@ -1,4 +1,3 @@
-import BottomSheet
 import CoreLocation
 import NavigationTransitions
 import shared
@@ -23,6 +22,7 @@ struct ContentView: View {
     @StateObject var searchVM = SearchViewModel()
 
     @State var animatedLastEntry: SheetNavigationStackEntry = .nearby
+    let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
@@ -154,118 +154,79 @@ struct ContentView: View {
 
     @ViewBuilder var mapWithSheets: some View {
         mapSection
-            .fullScreenCover(
-                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().coverItemIdentifiable()),
-                onDismiss: {
-                    if case .alertDetails = nearbyVM.navigationStack.last {
-                        nearbyVM.goBack()
+            .sheet(isPresented: .constant(true), content: {
+                GeometryReader { proxy in
+
+                    VStack {
+                        navSheetContents
+                            // Adding id here prevents the next sheet from opening at the large detent.
+                            // https://stackoverflow.com/a/77429540
+
+                            .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                            .interactiveDismissDisabled()
+                            .modifier(AllowsBackgroundInteraction())
                     }
-                },
-                content: coverContents
-            )
-            /*  .sheet(
-                 item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()),
-                 onDismiss: {
-                     selectedDetent = .halfScreen
+                    .fullScreenCover(
+                        item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
+                            .coverItemIdentifiable()),
+                        onDismiss: {
+                            if case .alertDetails = nearbyVM.navigationStack.last {
+                                nearbyVM.goBack()
+                            }
+                        },
+                        content: coverContents
+                    )
 
-                     if visibleNearbySheet == nearbyVM.navigationStack.last {
-                         // When the visible sheet matches the last nav entry, then a dismissal indicates
-                         // an intentional action remove the sheet and replace it with the previous one.
+                    .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe()) { newEntry in
 
-                         // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                         // being dismissed so that it can be automatically replaced with the new one.
-                         nearbyVM.goBack()
-                     }
-                 },
-                 content: sheetContents
-             )*/
-            .sheet(isPresented: .constant(true),
-                   /* onDismiss: {
-                           selectedDetent = .halfScreen
+                        DispatchQueue.main.async {
+                            withAnimation {
+                                animatedLastEntry = newEntry
+                            }
+                        }
+                    }
 
-                           if visibleNearbySheet == nearbyVM.navigationStack.last {
-                               // When the visible sheet matches the last nav entry, then a dismissal indicates
-                               // an intentional action remove the sheet and replace it with the previous one.
-
-                               // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                               // being dismissed so that it can be automatically replaced with the new one.
-                               nearbyVM.goBack()
-                           }
-                       },
-                        */ content: {
-                       GeometryReader { proxy in
-
-                           VStack {
-                               navSheetContents
-                                   // Adding id here prevents the next sheet from opening at the large detent.
-                                   // https://stackoverflow.com/a/77429540
-
-                                   .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                                   .interactiveDismissDisabled()
-                                   .modifier(AllowsBackgroundInteraction())
-                           }
-
-                           .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe()) { newEntry in
-
-                               withAnimation {
-                                   print("ANIMATED LAST ENTRY CHANGING")
-                                   animatedLastEntry = newEntry
-                               }
-                           }
-
-                           .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
-                               .id) { _ in
-                                   print("CHANGED")
-                                   selectedDetent = .halfScreen
-                           }
-                           .onChange(of: $selectedDetent.wrappedValue) { newDetent in
-                               print("DETENT NOW \(newDetent)")
-                           }
-                           .onAppear {
-                               recordSheetHeight(proxy.size.height)
-                           }
-                           .onChange(of: proxy.size.height) { newValue in
-                               recordSheetHeight(newValue)
-                           }
-                       }
-                   })
+                    .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
+                        .id) { _ in
+                            selectedDetent = .halfScreen
+                    }
+                    .onAppear {
+                        recordSheetHeight(proxy.size.height)
+                    }
+                    .onChange(of: proxy.size.height) { newValue in
+                        recordSheetHeight(newValue)
+                    }
+                }
+            })
     }
 
     @ViewBuilder
     var navSheetContents: some View {
-        NavigationStack(path: $nearbyVM.navigationStack) {
+        NavigationStack {
             VStack {
-                nearbySheetContents.onAppear {
-                    visibleNearbySheet = .nearby
-                    screenTracker.track(screen: .nearbyTransit)
-                    selectedDetent = .halfScreen
-                }
-            } // Adding id here prevents the next sheet from opening at the large detent.
-            // https://stackoverflow.com/a/77429540
-            // THIS ONE MATTERS
-            .id($nearbyVM.navigationStack.wrappedValue.lastSafe().id)
-            .navigationDestination(for: SheetNavigationStackEntry.self) { entry in
-                switch entry {
+                switch animatedLastEntry {
                 case .alertDetails:
                     EmptyView()
 
-                case let .stopDetails(stop, _):
-                    StopDetailsPage(
-                        viewportProvider: viewportProvider,
-                        stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                        nearbyVM: nearbyVM
-                    )
-                    .onAppear {
-                        visibleNearbySheet = entry
-
-                        print("STOP DETAILS APPEAR")
-                        let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
-                        screenTracker.track(
-                            screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                        )
-                    }
-                    .navigationBarBackButtonHidden()
-                    .transition(.scale)
+                case let .stopDetails(stop, filter):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        StopDetailsPage(
+                            viewportProvider: viewportProvider,
+                            stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                            nearbyVM: nearbyVM
+                        ).id(stop.id)
+                            .toolbar(.hidden, for: .tabBar)
+                            .onAppear {
+                                let filtered = filter != nil
+                                screenTracker.track(
+                                    screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                                )
+                            }
+                    }.id(stop.id)
+                        .transition(transition)
+                        .id(stop.id)
 
                 case let .tripDetails(
                     tripId: tripId,
@@ -274,31 +235,31 @@ struct ContentView: View {
                     routeId: routeId,
                     directionId: _
                 ):
-                    TripDetailsPage(
-                        tripId: tripId,
-                        vehicleId: vehicleId,
-                        routeId: routeId,
-                        target: target,
-                        nearbyVM: nearbyVM,
-                        mapVM: mapVM
-                    )
-                    .onAppear {
-                        visibleNearbySheet = entry
+                    TabView {
+                        TripDetailsPage(
+                            tripId: tripId,
+                            vehicleId: vehicleId,
+                            routeId: routeId,
+                            target: target,
+                            nearbyVM: nearbyVM,
+                            mapVM: mapVM
+                        ).toolbar(.hidden, for: .tabBar)
+                            .onAppear {
+                                screenTracker.track(screen: .tripDetails)
+                            }
+                    }
 
-                        screenTracker.track(screen: .tripDetails)
-
-                    }.navigationBarBackButtonHidden()
+                    .transition(transition)
 
                 case .nearby:
                     nearbySheetContents
+                        .transition(transition)
                         .onAppear {
-                            visibleNearbySheet = entry
-
                             screenTracker.track(screen: .nearbyTransit)
-                        }.navigationBarBackButtonHidden()
+                        }
                 }
             }
-            // .navigationTransition(.slide(axis: .vertical))
+            .animation(.easeInOut, value: animatedLastEntry)
         }
     }
 
@@ -310,73 +271,6 @@ struct ContentView: View {
                 AlertDetailsPage(alertId: alertId, line: line, routes: routes, nearbyVM: nearbyVM)
             default:
                 EmptyView()
-            }
-        }
-    }
-
-    private func sheetContents(sheetIdentityEntry: NearbySheetItem) -> some View {
-        let entry = sheetIdentityEntry.stackEntry
-        return GeometryReader { proxy in
-            sheetSwitch(entry: entry)
-                .onAppear {
-                    recordSheetHeight(proxy.size.height)
-                }
-                .onChange(of: proxy.size.height) { newValue in
-                    recordSheetHeight(newValue)
-                }
-                // Adding id here prevents the next sheet from opening at the large detent.
-                // https://stackoverflow.com/a/77429540
-                .id(sheetIdentityEntry.id)
-                .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                .interactiveDismissDisabled(visibleNearbySheet == .nearby)
-                .modifier(AllowsBackgroundInteraction())
-        }
-    }
-
-    private func sheetSwitch(entry: SheetNavigationStackEntry) -> some View {
-        NavigationStack {
-            switch entry {
-            case .alertDetails:
-                EmptyView()
-
-            case let .stopDetails(stop, _):
-                StopDetailsPage(
-                    viewportProvider: viewportProvider,
-                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                    nearbyVM: nearbyVM
-                ).onAppear {
-                    let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
-                    visibleNearbySheet = entry
-                    screenTracker.track(
-                        screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                    )
-                }
-
-            case let .tripDetails(
-                tripId: tripId,
-                vehicleId: vehicleId,
-                target: target,
-                routeId: routeId,
-                directionId: _
-            ):
-                TripDetailsPage(
-                    tripId: tripId,
-                    vehicleId: vehicleId,
-                    routeId: routeId,
-                    target: target,
-                    nearbyVM: nearbyVM,
-                    mapVM: mapVM
-                ).onAppear {
-                    screenTracker.track(screen: .tripDetails)
-                    visibleNearbySheet = entry
-                }
-
-            case .nearby:
-                nearbySheetContents
-                    .onAppear {
-                        visibleNearbySheet = entry
-                        screenTracker.track(screen: .nearbyTransit)
-                    }
             }
         }
     }

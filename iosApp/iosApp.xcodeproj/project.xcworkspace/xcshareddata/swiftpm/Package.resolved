@@ -1,5 +1,5 @@
 {
-  "originHash" : "a2b59b5f418a8d823aba805c1d48e270cea70150d3532564422dca3335b31290",
+  "originHash" : "f82dbcd39f57dbdb743ad87fd7fa70201cc43a1313d5b5f7881b38a99ae48303",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "7d2688de038d5484866d835acb47b379722d610e",
         "version" : "10.19.0"
-      }
-    },
-    {
-      "identity" : "appcues-ios-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/appcues/appcues-ios-sdk",
-      "state" : {
-        "revision" : "5b3668a18154dcfc37a5b551658c29985a5f80e1",
-        "version" : "3.2.0"
       }
     },
     {
@@ -137,15 +128,6 @@
       }
     },
     {
-      "identity" : "polyline",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raphaelmor/Polyline.git",
-      "state" : {
-        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23",
-        "version" : "5.1.0"
-      }
-    },
-    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
@@ -177,8 +159,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/davidstump/SwiftPhoenixClient",
       "state" : {
-        "revision" : "588bf6baab5d049752748e19a4bff32421ea40ec",
-        "version" : "5.3.2"
+        "revision" : "4e548e4ce4d46574a20b8a539d52d367fb0eae24"
       }
     },
     {
