@@ -42,10 +42,7 @@ object StopLayerGenerator {
         stopTouchTargetLayer.filter =
             Exp.ge(
                 Exp.zoom(),
-                Exp.case(
-                    MapExp.isBusExp to Exp(busStopZoomThreshold + 1),
-                    Exp(stopZoomThreshold + 1)
-                )
+                Exp.case(MapExp.isBusExp to Exp(busStopZoomThreshold), Exp(stopZoomThreshold))
             )
         includeSharedProps(stopSelectedPinLayer, forBus = false)
 
