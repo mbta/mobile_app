@@ -36,12 +36,11 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
-import com.mbta.tid.mbta_app.model.Outcome
-import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
@@ -85,14 +84,17 @@ fun NearbyTransitPage(
         }
     }
 
-    fun handleReceiveVehicles(response: Outcome<VehiclesStreamDataResponse?, SocketError>) {
-        if (response.error != null) {
-            Log.e("Map", "Vehicle stream failed: ${response.error}")
-            return
+    fun handleReceiveVehicles(response: ApiResult<VehiclesStreamDataResponse>) {
+        when (response) {
+            is ApiResult.Ok -> {
+                val vehicleResponse = response.data
+                vehiclesData = vehicleResponse.vehicles.values.toList()
+            }
+            is ApiResult.Error -> {
+                Log.e("Map", "Vehicle stream failed: ${response.message}")
+                return
+            }
         }
-
-        val vehicleResponse = response.data ?: return
-        vehiclesData = vehicleResponse.vehicles.values.toList()
     }
 
     fun handleRouteChange(route: SheetRoutes?) {

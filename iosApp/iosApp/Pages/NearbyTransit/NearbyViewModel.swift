@@ -136,8 +136,8 @@ class NearbyViewModel: ObservableObject {
     func joinAlertsChannel() {
         alertsRepository.connect { outcome in
             DispatchQueue.main.async { [weak self] in
-                if let data = outcome.data {
-                    self?.alerts = data
+                if case let .ok(data) = onEnum(of: outcome) {
+                    self?.alerts = data.data
                 }
             }
         }

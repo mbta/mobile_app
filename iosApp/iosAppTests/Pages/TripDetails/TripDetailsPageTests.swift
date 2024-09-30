@@ -554,10 +554,10 @@ final class TripDetailsPageTests: XCTestCase {
 
         func connect(
             tripId: String,
-            onReceive: @escaping (Outcome<PredictionsStreamDataResponse, __SocketError>) -> Void
+            onReceive: @escaping (ApiResult<PredictionsStreamDataResponse>) -> Void
         ) {
             onConnect?(tripId)
-            onReceive(.init(data: response, error: nil))
+            onReceive(ApiResultOk(data: response))
         }
 
         var lastUpdated: Instant?
@@ -573,9 +573,11 @@ final class TripDetailsPageTests: XCTestCase {
 
         func connect(
             vehicleId _: String,
-            onReceive: @escaping (Outcome<VehicleStreamDataResponse, __SocketError>) -> Void
+            onReceive: @escaping (ApiResult<VehicleStreamDataResponse>) -> Void
         ) {
-            onReceive(.init(data: response, error: nil))
+            if let response {
+                onReceive(ApiResultOk(data: response))
+            }
         }
 
         func disconnect() {}

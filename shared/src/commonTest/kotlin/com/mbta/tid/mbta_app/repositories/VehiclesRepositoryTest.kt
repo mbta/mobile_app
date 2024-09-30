@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.mocks.MockMessage
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
@@ -16,9 +17,9 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.fail
 import org.koin.test.KoinTest
 
 class VehiclesRepositoryTest : KoinTest {
@@ -74,8 +75,7 @@ class VehiclesRepositoryTest : KoinTest {
             routeId = "Red",
             directionId = 0,
             onReceive = { outcome ->
-                outcome.data?.let { assertEquals(it, VehiclesStreamDataResponse(emptyMap())) }
-                outcome.error?.let { fail() }
+                assertEquals(VehiclesStreamDataResponse(emptyMap()), outcome.dataOrThrow())
             }
         )
     }
@@ -112,8 +112,8 @@ class VehiclesRepositoryTest : KoinTest {
             routeId = "Red",
             directionId = 0,
             onReceive = { outcome ->
-                assertNotNull(outcome.error)
-                assertEquals(outcome.error, SocketError.Unknown)
+                assertIs<ApiResult.Error<*>>(outcome)
+                assertEquals(outcome.message, SocketError.FAILURE)
             }
         )
     }

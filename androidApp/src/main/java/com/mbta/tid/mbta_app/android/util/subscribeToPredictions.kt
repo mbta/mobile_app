@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +25,12 @@ fun subscribeToPredictions(
         val job =
             scope.launch {
                 if (stopIds != null) {
-                    predictionsRepository.connect(stopIds) { predictions = it.data }
+                    predictionsRepository.connect(stopIds) {
+                        when (it) {
+                            is ApiResult.Ok -> predictions = it.data
+                            is ApiResult.Error -> TODO("handle errors")
+                        }
+                    }
                 }
             }
 

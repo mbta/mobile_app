@@ -3,10 +3,8 @@ package com.mbta.tid.mbta_app.endToEnd
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -118,19 +116,19 @@ fun endToEndModule(): Module {
             object : IPredictionsRepository {
                 override fun connect(
                     stopIds: List<String>,
-                    onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+                    onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
                 ) {
-                    onReceive(Outcome(PredictionsStreamDataResponse(objects), null))
+                    onReceive(ApiResult.Ok(PredictionsStreamDataResponse(objects)))
                 }
 
                 override var lastUpdated: Instant? = null
 
                 override fun connectV2(
                     stopIds: List<String>,
-                    onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
-                    onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                    onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
+                    onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                 ) {
-                    onJoin(Outcome(PredictionsByStopJoinResponse(objects), null))
+                    onJoin(ApiResult.Ok(PredictionsByStopJoinResponse(objects)))
                 }
 
                 override fun disconnect() {}
@@ -179,7 +177,7 @@ fun endToEndModule(): Module {
             object : ITripPredictionsRepository {
                 override fun connect(
                     tripId: String,
-                    onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+                    onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
                 ) {
                     TODO("Not yet implemented")
                 }
@@ -195,7 +193,7 @@ fun endToEndModule(): Module {
             object : IVehicleRepository {
                 override fun connect(
                     vehicleId: String,
-                    onReceive: (Outcome<VehicleStreamDataResponse?, SocketError>) -> Unit
+                    onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
                 ) {
                     TODO("Not yet implemented")
                 }
