@@ -497,8 +497,8 @@ final class TripDetailsPageTests: XCTestCase {
             self.response = response
         }
 
-        func __getGlobalData() async throws -> GlobalResponse {
-            response
+        func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
+            ApiResultOk(data: response)
         }
     }
 
@@ -537,9 +537,9 @@ final class TripDetailsPageTests: XCTestCase {
             return tripResponse
         }
 
-        override func __getTripSchedules(tripId _: String) async throws -> TripSchedulesResponse {
+        override func __getTripSchedules(tripId _: String) async throws -> ApiResult<TripSchedulesResponse> {
             onGetTripSchedules?()
-            return scheduleResponse
+            return ApiResultOk(data: scheduleResponse)
         }
     }
 

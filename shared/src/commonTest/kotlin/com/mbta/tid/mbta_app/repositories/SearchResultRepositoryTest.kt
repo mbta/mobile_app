@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.StopResultRoute
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -122,7 +123,7 @@ class SearchResultRepositoryTest : KoinTest {
                         )
                     )
                 )
-            assertEquals(expectedResponse, response)
+            assertEquals(ApiResult.Ok(expectedResponse), response)
         }
     }
 }

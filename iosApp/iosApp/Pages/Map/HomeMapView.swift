@@ -84,10 +84,9 @@ struct HomeMapView: View {
                 }
             }
             .task {
-                do {
-                    globalData = try await globalRepository.getGlobalData()
-                } catch {
-                    debugPrint(error)
+                switch await callApi({ try await globalRepository.getGlobalData() }) {
+                case let .ok(data): globalData = data.data
+                case let .error(error): debugPrint(error)
                 }
             }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in

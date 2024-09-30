@@ -33,7 +33,7 @@ final class SearchResultViewTests: XCTestCase {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
             }
 
-            func __getSearchResults(query _: String) async throws -> SearchResults? {
+            func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults> {
                 getSearchResultsExpectation.fulfill()
                 throw NotUnderTestError()
             }
@@ -63,9 +63,9 @@ final class SearchResultViewTests: XCTestCase {
                 self.getSearchResultsExpectation = getSearchResultsExpectation
             }
 
-            func __getSearchResults(query _: String) async throws -> SearchResults? {
+            func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults> {
                 getSearchResultsExpectation.fulfill()
-                return SearchResults(routes: [], stops: [])
+                return ApiResultOk(data: SearchResults(routes: [], stops: []))
             }
         }
 

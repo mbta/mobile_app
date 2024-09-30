@@ -6,8 +6,6 @@ import com.mbta.tid.mbta_app.model.response.ConfigResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -20,8 +18,8 @@ interface IConfigRepository {
 class ConfigRepository : IConfigRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
-    override suspend fun getConfig(token: String): ApiResult<ConfigResponse> {
-        try {
+    override suspend fun getConfig(token: String): ApiResult<ConfigResponse> =
+        ApiResult.runCatching {
             val response =
                 mobileBackendClient.get {
                     url {
@@ -30,15 +28,8 @@ class ConfigRepository : IConfigRepository, KoinComponent {
                     }
                 }
 
-            if (response.status === HttpStatusCode.OK) {
-                return ApiResult.Ok(data = json.decodeFromString(response.body()))
-            } else {
-                return ApiResult.Error(response.status.value, response.bodyAsText())
-            }
-        } catch (e: Exception) {
-            return ApiResult.Error(message = e.message ?: e.toString())
+            return ApiResult.Ok(json.decodeFromString(response.body()))
         }
-    }
 }
 
 class MockConfigRepository(

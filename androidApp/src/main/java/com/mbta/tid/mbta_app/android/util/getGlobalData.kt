@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,12 @@ fun getGlobalData(globalRepository: IGlobalRepository = koinInject()): GlobalRes
     var globalResponse: GlobalResponse? by remember { mutableStateOf(null) }
 
     LaunchedEffect(null) {
-        withContext(Dispatchers.IO) { globalResponse = globalRepository.getGlobalData() }
+        withContext(Dispatchers.IO) {
+            when (val data = globalRepository.getGlobalData()) {
+                is ApiResult.Ok -> globalResponse = data.data
+                is ApiResult.Error -> TODO("handle errors")
+            }
+        }
     }
 
     return globalResponse

@@ -17,7 +17,10 @@ extension HomeMapView {
     func handleAppear(location: LocationManager?, map _: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
-            railRouteShapes = try await railRouteShapeRepository.getRailRouteShapes()
+            switch try await onEnum(of: railRouteShapeRepository.getRailRouteShapes()) {
+            case let .ok(data): railRouteShapes = data.data
+            case let .error(error): throw error
+            }
         }
 
         // Set MapBox to use the current location to display puck
@@ -149,9 +152,11 @@ extension HomeMapView {
         viewportProvider.animateTo(coordinates: stop.coordinate, zoom: MapDefaults.shared.stopPageZoom)
 
         Task {
-            stopMapData = try await stopRepository.getStopMapData(stopId: stop.id)
-            if let stopMapData {
-                updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+            if case let .ok(data) = try await onEnum(of: stopRepository.getStopMapData(stopId: stop.id)) {
+                stopMapData = data.data
+                if let stopMapData {
+                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
+                }
             }
         }
     }

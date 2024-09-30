@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.Schedule
 import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
@@ -68,34 +69,36 @@ class SchedulesRepositoryTest : KoinTest {
         runBlocking {
             val response = SchedulesRepository().getSchedule(stopIds = listOf("place-davis"))
             assertEquals(
-                ScheduleResponse(
-                    schedules =
-                        listOf(
-                            Schedule(
-                                id = "sched1",
-                                arrivalTime = Instant.parse("2024-01-02T03:04:05.00Z"),
-                                departureTime = Instant.parse("2024-01-02T03:04:06.00Z"),
-                                dropOffType = Schedule.StopEdgeType.Regular,
-                                pickUpType = Schedule.StopEdgeType.Regular,
-                                stopSequence = 0,
-                                routeId = "Red",
-                                stopId = "70064",
-                                tripId = "trip1"
-                            )
-                        ),
-                    trips =
-                        mapOf(
-                            "trip1" to
-                                Trip(
-                                    id = "trip1",
-                                    directionId = 0,
-                                    headsign = "Alewife",
+                ApiResult.Ok(
+                    ScheduleResponse(
+                        schedules =
+                            listOf(
+                                Schedule(
+                                    id = "sched1",
+                                    arrivalTime = Instant.parse("2024-01-02T03:04:05.00Z"),
+                                    departureTime = Instant.parse("2024-01-02T03:04:06.00Z"),
+                                    dropOffType = Schedule.StopEdgeType.Regular,
+                                    pickUpType = Schedule.StopEdgeType.Regular,
+                                    stopSequence = 0,
                                     routeId = "Red",
-                                    routePatternId = "rp1",
-                                    shapeId = "shape1",
-                                    stopIds = listOf("70064", "70065")
+                                    stopId = "70064",
+                                    tripId = "trip1"
                                 )
-                        )
+                            ),
+                        trips =
+                            mapOf(
+                                "trip1" to
+                                    Trip(
+                                        id = "trip1",
+                                        directionId = 0,
+                                        headsign = "Alewife",
+                                        routeId = "Red",
+                                        routePatternId = "rp1",
+                                        shapeId = "shape1",
+                                        stopIds = listOf("70064", "70065")
+                                    )
+                            )
+                    )
                 ),
                 response
             )

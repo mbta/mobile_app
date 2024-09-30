@@ -26,6 +26,7 @@ class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) 
             install(ContentEncoding) { gzip(0.9F) }
             install(HttpTimeout) { requestTimeoutMillis = 8000 }
             defaultRequest { url(appVariant.backendRoot) }
+            expectSuccess = true
         }
 
     suspend fun get(request: HttpRequestBuilder.() -> Unit): HttpResponse {

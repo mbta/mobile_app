@@ -97,6 +97,7 @@
 		8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */; };
 		8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */; };
 		8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */; };
+		8CE36C8F2CAB231500D77F22 /* ApiResultErrorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE36C8E2CAB231500D77F22 /* ApiResultErrorExtension.swift */; };
 		8CF5ABF72C70001200CF26B0 /* VehicleMarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */; };
 		9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A03F3652BA9E68500DA40DC /* Debouncer.swift */; };
 		9A15DA3D2BF51BA7003A861C /* HomeMapViewLayerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A15DA3C2BF51BA7003A861C /* HomeMapViewLayerExtension.swift */; };
@@ -327,6 +328,7 @@
 		8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesView.swift; sourceTree = "<group>"; };
 		8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteView.swift; sourceTree = "<group>"; };
 		8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntry.swift; sourceTree = "<group>"; };
+		8CE36C8E2CAB231500D77F22 /* ApiResultErrorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResultErrorExtension.swift; sourceTree = "<group>"; };
 		8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarkerView.swift; sourceTree = "<group>"; };
 		95F035057D97B7CC51A0583A /* Pods-iosAppTests.staging release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.staging release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.staging release.xcconfig"; sourceTree = "<group>"; };
 		9A03F3652BA9E68500DA40DC /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
@@ -879,6 +881,7 @@
 		9AC10BD82B80060E00EA4605 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8CE36C8E2CAB231500D77F22 /* ApiResultErrorExtension.swift */,
 				8C1587032C76524600AB5036 /* AppVariantExtension.swift */,
 				9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */,
 				9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */,
@@ -1266,6 +1269,7 @@
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
 				ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */,
 				8C1587042C76524600AB5036 /* AppVariantExtension.swift in Sources */,
+				8CE36C8F2CAB231500D77F22 /* ApiResultErrorExtension.swift in Sources */,
 				9A4DB77A2CA47E6D00E8755B /* SearchField.swift in Sources */,
 				9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */,
 				9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */,
