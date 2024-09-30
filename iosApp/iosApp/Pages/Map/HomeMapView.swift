@@ -108,9 +108,6 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
-            .onReceive(viewportProvider.cameraStatePublisher) { _ in
-                updateVisibleLayers()
-            }
             .onDisappear {
                 mapVM.layerManager = nil
             }
@@ -157,8 +154,7 @@ struct HomeMapView: View {
             handleAppear: handleAppear,
             handleTryLayerInit: handleTryLayerInit,
             handleAccessTokenLoaded: handleAccessTokenLoaded,
-            globalMapData: globalMapData,
-            viewportProvider: viewportProvider
+            globalMapData: globalMapData
         )
         .onChange(of: globalData) { _ in
             handleGlobalMapDataChange(now: now)
@@ -214,7 +210,6 @@ struct ProxyModifiedMap: View {
     var globalData: GlobalResponse?
     var railRouteShapes: MapFriendlyRouteResponse?
     var globalMapData: GlobalMapData?
-    var viewportProvider: ViewportProvider
 
     var body: some View {
         MapReader { proxy in

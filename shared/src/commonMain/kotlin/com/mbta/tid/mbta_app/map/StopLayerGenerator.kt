@@ -8,9 +8,8 @@ import com.mbta.tid.mbta_app.map.style.downcastToColor
 
 object StopLayerGenerator {
     val maxTransferLayers = 3
-    val stopZoomThreshold = 8.0
-    val showBusStopZoomThreshold = 12.0
-    val showAnyStopZoomThreshold = 11.0
+    val stopZoomThreshold = 11.0
+    val busStopZoomThreshold = 12.0
 
     val stopLayerId = "stop-layer"
     val stopTouchTargetLayerId = "${stopLayerId}-touch-target"
@@ -23,11 +22,7 @@ object StopLayerGenerator {
 
     fun getTransferLayerId(index: Int) = "${stopLayerId}-transfer-${index}"
 
-    fun createStopLayers(colorPalette: ColorPalette, zoom: Float): List<SymbolLayer> {
-        if (zoom < showAnyStopZoomThreshold) {
-            return emptyList()
-        }
-
+    fun createStopLayers(colorPalette: ColorPalette): List<SymbolLayer> {
         val sourceId = StopFeaturesBuilder.stopSourceId
 
         val stopLayer = createStopLayer(id = stopLayerId, colorPalette = colorPalette)
@@ -35,7 +30,7 @@ object StopLayerGenerator {
         val stopTouchTargetLayer = SymbolLayer(id = stopTouchTargetLayerId, source = sourceId)
         stopTouchTargetLayer.iconImage = Exp.image(Exp(StopIcons.stopDummyIcon))
         stopTouchTargetLayer.iconPadding = 22.0
-        includeSharedProps(stopTouchTargetLayer)
+        includeSharedProps(stopTouchTargetLayer, forBus = false)
 
         val stopSelectedPinLayer = SymbolLayer(id = stopLayerSelectedPinId, source = sourceId)
         stopSelectedPinLayer.iconImage =
@@ -44,14 +39,22 @@ object StopLayerGenerator {
                 Exp.image(Exp(""))
             )
         stopSelectedPinLayer.iconOffset = offsetPinValue()
-        includeSharedProps(stopSelectedPinLayer)
+        stopTouchTargetLayer.filter =
+            Exp.ge(
+                Exp.zoom(),
+                Exp.case(
+                    MapExp.isBusExp to Exp(busStopZoomThreshold + 1),
+                    Exp(stopZoomThreshold + 1)
+                )
+            )
+        includeSharedProps(stopSelectedPinLayer, forBus = false)
 
         val transferLayers =
             (0.rangeUntil(maxTransferLayers)).map { index ->
                 val transferLayer = SymbolLayer(id = getTransferLayerId(index), source = sourceId)
                 transferLayer.iconImage = (StopIcons.getTransferLayerIcon(index))
                 transferLayer.iconOffset = offsetTransferValue(index)
-                includeSharedProps(transferLayer)
+                includeSharedProps(transferLayer, forBus = false)
 
                 return@map transferLayer
             }
@@ -60,13 +63,6 @@ object StopLayerGenerator {
             (0.rangeUntil(maxTransferLayers)).map { index ->
                 createAlertLayer(id = getAlertLayerId(index), index)
             }
-
-        if (zoom < showBusStopZoomThreshold) {
-            return listOf(stopTouchTargetLayer, stopLayer) +
-                transferLayers +
-                alertLayers +
-                listOf(stopSelectedPinLayer)
-        }
 
         val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
         val busAlertLayer = createAlertLayer(id = busAlertLayerId, forBus = true)
@@ -82,7 +78,7 @@ object StopLayerGenerator {
         alertLayer.iconImage = AlertIcons.getAlertLayerIcon(index, forBus = forBus)
         alertLayer.iconOffset = offsetAlertValue(index)
         alertLayer.iconAllowOverlap = true
-        includeSharedProps(alertLayer)
+        includeSharedProps(alertLayer, forBus)
 
         return alertLayer
     }
@@ -108,15 +104,15 @@ object StopLayerGenerator {
         stopLayer.textOptional = true
         stopLayer.textOffset = MapExp.labelOffsetExp
 
-        includeSharedProps(stopLayer)
+        includeSharedProps(stopLayer, forBus)
         return stopLayer
     }
 
-    fun includeSharedProps(layer: SymbolLayer) {
+    fun includeSharedProps(layer: SymbolLayer, forBus: Boolean) {
         layer.iconSize = MapExp.selectedSizeExp
 
         layer.iconAllowOverlap = true
-        layer.minZoom = stopZoomThreshold
+        layer.minZoom = if (forBus) busStopZoomThreshold else stopZoomThreshold
         layer.symbolSortKey = Exp.get(StopFeaturesBuilder.propSortOrderKey)
     }
 

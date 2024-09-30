@@ -35,11 +35,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
     fun addLayers(colorPalette: ColorPalette) {
         val layers: List<MapboxLayer> =
             RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
-                StopLayerGenerator.createStopLayers(
-                        colorPalette,
-                        this.map.cameraState.zoom.toFloat()
-                    )
-                    .map { it.toMapbox() }
+                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
         for (layer in layers) {
             if (map.styleLayerExists(checkNotNull(layer.layerId))) {
                 // Skip attempting to add layer if it already exists
