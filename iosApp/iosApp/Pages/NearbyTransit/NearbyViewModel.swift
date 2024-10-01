@@ -44,8 +44,6 @@ class NearbyViewModel: ObservableObject {
     }
 
     func setDepartures(_ newDepartures: StopDetailsDepartures?) {
-        let routeServed: Set<String> = Set(newDepartures?.routes.map { it in it.routeIdentifier } ?? [])
-
         departures = newDepartures
     }
 
