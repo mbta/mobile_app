@@ -74,20 +74,33 @@ struct StopDetailsPage: View {
             )
             .onAppear {
                 loadGlobalData()
-                changeStop(stop)
+                fetchStopData(stop)
                 loadPinnedRoutes()
                 didAppear?(self)
             }
-            .onChange(of: stop) { nextStop in changeStop(nextStop) }
-            .onChange(of: globalResponse) { _ in updateDepartures() }
-            .onChange(of: pinnedRoutes) { _ in updateDepartures() }
+            .onChange(of: stop) { nextStop in
+                changeStop(nextStop)
+            }
+            .onChange(of: globalResponse) { _ in
+
+                updateDepartures(stop)
+            }
+            .onChange(of: pinnedRoutes) { _ in
+                updateDepartures(stop)
+            }
             .onChange(of: predictionsByStop) { newPredictionsByStop in
                 updateDepartures(stop, newPredictionsByStop, predictions)
             }
-            .onChange(of: predictions) { _ in updateDepartures() }
-            .onChange(of: schedulesResponse) { _ in updateDepartures() }
+            .onChange(of: predictions) { _ in
+
+                updateDepartures(stop)
+            }
+            .onChange(of: schedulesResponse) { _ in
+
+                updateDepartures(stop)
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .task {
+            .task(id: stop.id) {
                 while !Task.isCancelled {
                     now = Date.now
                     updateDepartures()
@@ -95,7 +108,10 @@ struct StopDetailsPage: View {
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
-            .onDisappear { leavePredictions() }
+            .onDisappear {
+                print("LEAVE FROM DISAPPEAR")
+                leavePredictions()
+            }
             .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
                                     onInactive: leavePredictions,
                                     onBackground: leavePredictions)
@@ -134,6 +150,11 @@ struct StopDetailsPage: View {
     }
 
     func changeStop(_ stop: Stop) {
+        leavePredictions()
+        fetchStopData(stop)
+    }
+
+    func fetchStopData(_ stop: Stop) {
         getSchedule(stop)
         joinPredictions(stop)
         updateDepartures(stop)
@@ -158,6 +179,7 @@ struct StopDetailsPage: View {
                 joinPredictionsV2(stopIds: [stop.id])
             } else {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
+
                     DispatchQueue.main.async {
                         if let data = outcome.data {
                             predictions = data
@@ -209,6 +231,7 @@ struct StopDetailsPage: View {
                         0
                 ),
                 action: {
+                    print("LEAVE PREDICTIONS FROM STALE")
                     leavePredictions()
                     joinPredictions(stop)
                 }
@@ -229,6 +252,10 @@ struct StopDetailsPage: View {
         } else {
             predictions ?? self.predictions
         }
+
+        let routeServed: Set<String> = Set(targetPredictions.map { it in it.predictions.values.map { it in
+            it.routeId
+        } } ?? [])
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures(

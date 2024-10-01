@@ -257,6 +257,43 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
+    func testLeavesAndJoinsPredictionsOnStopChange() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let filter: Binding<StopDetailsFilter?> = .constant(.init(routeId: route.id, directionId: 0))
+        let leaveExpectation = expectation(description: "leaves predictions")
+        leaveExpectation.expectedFulfillmentCount = 1
+
+        let joinExpectation = expectation(description: "joins predictions")
+        joinExpectation.expectedFulfillmentCount = 2
+        joinExpectation.assertForOverFulfill = true
+
+        let predictionsRepo = MockPredictionsRepository(onConnect: {},
+                                                        onConnectV2: { joinExpectation.fulfill() },
+                                                        onDisconnect: { leaveExpectation.fulfill() },
+                                                        connectOutcome: nil,
+                                                        connectV2Outcome: nil)
+        let sut = StopDetailsPage(
+            schedulesRepository: MockScheduleRepository(),
+            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
+            predictionsRepository: predictionsRepo,
+            viewportProvider: viewportProvider,
+            stop: stop,
+            filter: filter,
+            nearbyVM: .init()
+        )
+
+        ViewHosting.host(view: sut)
+
+        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: stop)
+
+        wait(for: [leaveExpectation], timeout: 1)
+        wait(for: [joinExpectation], timeout: 1)
+    }
+
     func testJoinsPredictionsV2WhenEnabled() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()

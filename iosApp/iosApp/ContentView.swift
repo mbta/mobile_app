@@ -184,14 +184,12 @@ struct ContentView: View {
                     )
 
                     .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe()) { newEntry in
-
                         DispatchQueue.main.async {
                             withAnimation {
                                 animatedLastEntry = newEntry
                             }
                         }
                     }
-
                     .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
                         .id) { _ in
                             selectedDetent = .halfScreen
@@ -230,8 +228,8 @@ struct ContentView: View {
                                 screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
                             )
                         }
-                    }.id(stop.id)
-                        .transition(transition)
+                    }
+                    .transition(transition)
 
                 case let .tripDetails(
                     tripId: tripId,
@@ -253,7 +251,6 @@ struct ContentView: View {
                                 screenTracker.track(screen: .tripDetails)
                             }
                     }
-                    .id(tripId)
                     .transition(transition)
 
                 case .nearby:
