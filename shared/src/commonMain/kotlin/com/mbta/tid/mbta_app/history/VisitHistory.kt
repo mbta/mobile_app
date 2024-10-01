@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.history
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,11 +22,4 @@ class VisitHistory {
     fun latest(n: Int = RETRIEVE_COUNT): List<Visit> {
         return visits.take(n)
     }
-}
-
-@Serializable
-sealed class Visit {
-    val timestamp: Instant = Clock.System.now()
-
-    @Serializable data class StopVisit(val stopId: String) : Visit()
 }

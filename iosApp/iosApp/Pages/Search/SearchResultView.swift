@@ -110,7 +110,7 @@ struct SearchResultView: View {
     init(
         results: SearchResults? = nil,
         handleStopTap: @escaping (String) -> Void,
-        latestVisits: [Stop]?,
+        latestVisits: [Stop]? = nil,
         showRoutes: Bool = false
     ) {
         self.results = results

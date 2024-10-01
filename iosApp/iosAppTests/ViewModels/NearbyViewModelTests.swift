@@ -80,4 +80,47 @@ final class NearbyViewModelTests: XCTestCase {
         let nearbyVM: NearbyViewModel = .init(navigationStack: [])
         nearbyVM.goBack()
     }
+
+    func testVisitHistoryChanges() async {
+        let objects = ObjectCollectionBuilder()
+        let stopA = objects.stop { _ in }
+        let stopB = objects.stop { _ in }
+        let stopC = objects.stop { _ in }
+
+        let visitHistoryRepo = MockVisitHistoryRepository()
+        let visitHistoryUsecase = VisitHistoryUsecase(repository: visitHistoryRepo)
+        let nearbyVM: NearbyViewModel = .init(visitHistoryUsecase: visitHistoryUsecase)
+
+        do {
+            func pause() async throws { try await Task.sleep(nanoseconds: 200_000_000) }
+
+            // Pause after every nav stack update to allow for the didSet to run
+            nearbyVM.pushNavEntry(.stopDetails(stopA, nil))
+            try await pause()
+            nearbyVM.navigationStack.removeAll()
+            try await pause()
+            nearbyVM.pushNavEntry(.stopDetails(stopB, nil))
+            try await pause()
+            nearbyVM.pushNavEntry(.tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0))
+            try await pause()
+            nearbyVM.pushNavEntry(.stopDetails(stopC, StopDetailsFilter(routeId: "route", directionId: 1)))
+            try await pause()
+            nearbyVM.navigationStack.removeAll()
+            try await pause()
+            nearbyVM.pushNavEntry(.stopDetails(stopB, nil))
+            try await pause()
+
+            let visits = try await visitHistoryUsecase.getLatestVisits()
+            XCTAssertEqual(
+                [
+                    Visit.StopVisit(stopId: stopB.id),
+                    Visit.StopVisit(stopId: stopC.id),
+                    Visit.StopVisit(stopId: stopA.id),
+                ],
+                visits
+            )
+        } catch {
+            XCTFail("Getting latest visits failed, \(error)")
+        }
+    }
 }

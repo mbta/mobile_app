@@ -32,10 +32,8 @@ class NearbyViewModel: ObservableObject {
                 default: break
                 }
             } catch {
-                Self.logger
-                    .warning(
-                        "Failed to add to visit history for nav \(navEntry.sheetItemIdentifiable().debugDescription), \(error)"
-                    )
+                let navLabel = navEntry.sheetItemIdentifiable().debugDescription
+                Self.logger.warning("Failed to add to visit history for nav \(navLabel), \(error)")
             }
         }}
     }
