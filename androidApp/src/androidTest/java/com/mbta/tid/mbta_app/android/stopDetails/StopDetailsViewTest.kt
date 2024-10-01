@@ -8,14 +8,13 @@ import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -121,20 +120,20 @@ class StopDetailsViewTest {
                     object : IPredictionsRepository {
                         override fun connect(
                             stopIds: List<String>,
-                            onReceive:
-                                (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+                            onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
                         ) {
-                            onReceive(Outcome(PredictionsStreamDataResponse(builder), null))
+                            onReceive(ApiResult.Ok(PredictionsStreamDataResponse(builder)))
                         }
 
                         override fun connectV2(
                             stopIds: List<String>,
-                            onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
-                            onMessage:
-                                (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                            onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
+                            onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                         ) {
                             /* no-op */
                         }
+
+                        override var lastUpdated: Instant? = null
 
                         override fun disconnect() {
                             /* no-op */

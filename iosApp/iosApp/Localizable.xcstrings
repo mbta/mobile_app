@@ -25,6 +25,16 @@
         }
       }
     },
+    "%@ arriving at %@ cancelled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arriving at %2$@ cancelled"
+          }
+        }
+      }
+    },
     "%@ arriving at %@ scheduled" : {
       "localizations" : {
         "en" : {
@@ -121,6 +131,9 @@
     "and at %@" : {
 
     },
+    "and at %@ cancelled" : {
+
+    },
     "and at %@ scheduled" : {
 
     },
@@ -147,6 +160,12 @@
     },
     "buses" : {
       "comment" : "buses"
+    },
+    "Cancel" : {
+
+    },
+    "Cancelled" : {
+
     },
     "Coast Guard Restriction" : {
       "comment" : "Possible alert cause"
@@ -418,6 +437,28 @@
     },
     "Until further notice" : {
       "comment" : "Used when the end of an alert is indefinite"
+    },
+    "Updated %ld minutes ago" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Updated %ld minute ago"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Updated %ld minutes ago"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "Updated: %@" : {
       "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"

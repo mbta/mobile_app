@@ -33,6 +33,7 @@ import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.util.getGlobalData
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import io.github.dellisd.spatialk.geojson.Position
@@ -55,7 +56,15 @@ fun ContentView(
     var alertData: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
     DisposableEffect(null) {
         val scope = CoroutineScope(Dispatchers.IO)
-        val job = scope.launch { alertsRepository.connect { alertData = it.data } }
+        val job =
+            scope.launch {
+                alertsRepository.connect {
+                    when (it) {
+                        is ApiResult.Ok -> alertData = it.data
+                        is ApiResult.Error -> TODO("handle errors")
+                    }
+                }
+            }
         onDispose {
             alertsRepository.disconnect()
             job.cancel()

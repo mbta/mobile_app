@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.repositories
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ConfigResponse
-import com.mbta.tid.mbta_app.model.response.ErrorDetails
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -18,7 +17,7 @@ interface IConfigRepository {
     suspend fun getConfig(token: String): ApiResult<ConfigResponse>
 }
 
-class ConfigRepository() : IConfigRepository, KoinComponent {
+class ConfigRepository : IConfigRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun getConfig(token: String): ApiResult<ConfigResponse> {
@@ -34,10 +33,10 @@ class ConfigRepository() : IConfigRepository, KoinComponent {
             if (response.status === HttpStatusCode.OK) {
                 return ApiResult.Ok(data = json.decodeFromString(response.body()))
             } else {
-                return ApiResult.Error(ErrorDetails(response.status.value, response.bodyAsText()))
+                return ApiResult.Error(response.status.value, response.bodyAsText())
             }
         } catch (e: Exception) {
-            return ApiResult.Error(ErrorDetails(message = e.message ?: e.toString()))
+            return ApiResult.Error(message = e.message ?: e.toString())
         }
     }
 }

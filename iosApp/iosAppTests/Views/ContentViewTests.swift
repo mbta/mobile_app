@@ -125,7 +125,7 @@ final class ContentViewTests: XCTestCase {
         wait(for: [tokenConfigExpectation], timeout: 5)
     }
 
-    func testFetchesConfigOnMapboxError() throws {
+    @MainActor func testFetchesConfigOnMapboxError() throws {
         let loadConfigCallback = XCTestExpectation(description: "load config called")
         loadConfigCallback.expectedFulfillmentCount = 2
 
@@ -200,10 +200,7 @@ final class ContentViewTests: XCTestCase {
             self.disconnectExp = disconnectExp
         }
 
-        func connect(
-            onReceive _: @escaping (Outcome<AlertsStreamDataResponse, shared.SocketError._ObjectiveCType>)
-                -> Void
-        ) {
+        func connect(onReceive _: @escaping (ApiResult<AlertsStreamDataResponse>) -> Void) {
             connectExp?.fulfill()
         }
 

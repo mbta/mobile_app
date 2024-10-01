@@ -63,7 +63,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     func goBack() {
-        navigationStack.removeLast()
+        _ = navigationStack.popLast()
     }
 
     func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
@@ -136,8 +136,8 @@ class NearbyViewModel: ObservableObject {
     func joinAlertsChannel() {
         alertsRepository.connect { outcome in
             DispatchQueue.main.async { [weak self] in
-                if let data = outcome.data {
-                    self?.alerts = data
+                if case let .ok(result) = onEnum(of: outcome) {
+                    self?.alerts = result.data
                 }
             }
         }

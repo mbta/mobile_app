@@ -82,8 +82,8 @@ extension HomeMapView {
     func joinVehiclesChannel(routeId: String, directionId: Int32) {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
-            if let data = outcome.data {
-                vehiclesData = Array(data.vehicles.values)
+            if case let .ok(result) = onEnum(of: outcome) {
+                vehiclesData = Array(result.data.vehicles.values)
             }
         }
     }

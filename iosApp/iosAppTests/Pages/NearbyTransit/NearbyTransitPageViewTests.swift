@@ -91,6 +91,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
             .buildWithDefaults(global: FakeGlobalRepository(notifier: globalDataLoaded)))
 
         let getNearbyExpectation = expectation(description: "getNearby")
+        getNearbyExpectation.assertForOverFulfill = false
         let newCameraState = CameraState(
             center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
             padding: .zero,

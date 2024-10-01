@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class TripDetailsPageTests: XCTestCase {
-    func testLoadsStopList() throws {
+    @MainActor func testLoadsStopList() throws {
         let objects = ObjectCollectionBuilder()
 
         let trip = objects.trip { _ in }
@@ -66,7 +66,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [showsStopsExp], timeout: 5)
     }
 
-    func testIncludesVehicleCard() throws {
+    @MainActor func testIncludesVehicleCard() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
@@ -129,7 +129,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [showVehicleCardExp], timeout: 5)
     }
 
-    func testSplitsWithTarget() throws {
+    @MainActor func testSplitsWithTarget() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
@@ -173,7 +173,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [splitViewExp], timeout: 5)
     }
 
-    func testDisplaysTransferRoutes() throws {
+    @MainActor func testDisplaysTransferRoutes() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
@@ -290,7 +290,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [routeExp], timeout: 5)
     }
 
-    func testTripRequestError() throws {
+    @MainActor func testTripRequestError() throws {
         let objects = ObjectCollectionBuilder()
 
         let trip = objects.trip { trip in
@@ -307,7 +307,7 @@ final class TripDetailsPageTests: XCTestCase {
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            tripError: .init(code: 404, message: "Bad response"),
+            tripError: ApiResultError(code: 404, message: "Bad response"),
             scheduleResponse: TripSchedulesResponse.StopIds(stopIds: []),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -422,7 +422,7 @@ final class TripDetailsPageTests: XCTestCase {
         subscription.cancel()
     }
 
-    func testResolvesParentStop() {
+    @MainActor func testResolvesParentStop() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let trip = objects.trip { $0.routeId = route.id }
@@ -521,12 +521,12 @@ final class TripDetailsPageTests: XCTestCase {
         }
 
         init(
-            tripError: ErrorDetails,
+            tripError: ApiResultError<TripResponse>,
             scheduleResponse: TripSchedulesResponse,
             onGetTrip: (() -> Void)? = nil,
             onGetTripSchedules: (() -> Void)? = nil
         ) {
-            tripResponse = ApiResultError(error: tripError)
+            tripResponse = tripError
             self.scheduleResponse = scheduleResponse
             self.onGetTrip = onGetTrip
             self.onGetTripSchedules = onGetTripSchedules
@@ -554,11 +554,13 @@ final class TripDetailsPageTests: XCTestCase {
 
         func connect(
             tripId: String,
-            onReceive: @escaping (Outcome<PredictionsStreamDataResponse, __SocketError>) -> Void
+            onReceive: @escaping (ApiResult<PredictionsStreamDataResponse>) -> Void
         ) {
             onConnect?(tripId)
-            onReceive(.init(data: response, error: nil))
+            onReceive(ApiResultOk(data: response))
         }
+
+        var lastUpdated: Instant?
 
         func disconnect() {}
     }
@@ -571,9 +573,11 @@ final class TripDetailsPageTests: XCTestCase {
 
         func connect(
             vehicleId _: String,
-            onReceive: @escaping (Outcome<VehicleStreamDataResponse, __SocketError>) -> Void
+            onReceive: @escaping (ApiResult<VehicleStreamDataResponse>) -> Void
         ) {
-            onReceive(.init(data: response, error: nil))
+            if let response {
+                onReceive(ApiResultOk(data: response))
+            }
         }
 
         func disconnect() {}
