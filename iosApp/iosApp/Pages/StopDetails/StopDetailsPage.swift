@@ -109,7 +109,6 @@ struct StopDetailsPage: View {
                 }
             }
             .onDisappear {
-                print("LEAVE FROM DISAPPEAR")
                 leavePredictions()
             }
             .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
@@ -230,7 +229,6 @@ struct StopDetailsPage: View {
                         0
                 ),
                 action: {
-                    print("LEAVE PREDICTIONS FROM STALE")
                     leavePredictions()
                     joinPredictions(stop)
                 }
