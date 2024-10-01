@@ -165,7 +165,7 @@ struct TripDetailsPage: View {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(data): tripPredictions = data.data
+                case let .ok(result): tripPredictions = result.data
                 case .error: tripPredictions = nil
                 }
             }
@@ -180,9 +180,9 @@ struct TripDetailsPage: View {
         vehicleRepository.connect(vehicleId: vehicleId) { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(data):
-                    vehicleResponse = data.data
-                    mapVM.selectedVehicle = data.data.vehicle
+                case let .ok(result):
+                    vehicleResponse = result.data
+                    mapVM.selectedVehicle = result.data.vehicle
                 case .error: vehicleResponse = nil
                 }
             }

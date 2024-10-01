@@ -160,7 +160,7 @@ struct StopDetailsPage: View {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
                     DispatchQueue.main.async {
                         switch onEnum(of: outcome) {
-                        case let .ok(data): predictions = data.data
+                        case let .ok(result): predictions = result.data
                         case .error: predictions = nil
                         }
                     }
@@ -172,20 +172,20 @@ struct StopDetailsPage: View {
     func joinPredictionsV2(stopIds: Set<String>) {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
-                if case let .ok(data) = onEnum(of: outcome) {
-                    predictionsByStop = data.data
+                if case let .ok(result) = onEnum(of: outcome) {
+                    predictionsByStop = result.data
                 }
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
-                if case let .ok(data) = onEnum(of: outcome) {
+                if case let .ok(result) = onEnum(of: outcome) {
                     if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data.data)
+                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
-                            predictionsByStop: [data.data.stopId: data.data.predictions],
-                            trips: data.data.trips,
-                            vehicles: data.data.vehicles
+                            predictionsByStop: [result.data.stopId: result.data.predictions],
+                            trips: result.data.trips,
+                            vehicles: result.data.vehicles
                         )
                     }
                 }

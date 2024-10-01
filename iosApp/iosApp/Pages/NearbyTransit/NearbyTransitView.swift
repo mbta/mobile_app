@@ -209,8 +209,8 @@ struct NearbyTransitView: View {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
                     switch onEnum(of: outcome) {
-                    case let .ok(data):
-                        predictions = data.data
+                    case let .ok(result):
+                        predictions = result.data
                         predictionsError = nil
                     case let .error(error):
                         predictionsError = error.message
@@ -224,8 +224,8 @@ struct NearbyTransitView: View {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(data):
-                    predictionsByStop = data.data
+                case let .ok(result):
+                    predictionsByStop = result.data
                     predictionsError = nil
                 case let .error(error):
                     predictionsError = error.message
@@ -234,15 +234,15 @@ struct NearbyTransitView: View {
         }, onMessage: { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(data):
+                case let .ok(result):
                     if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data.data)
+                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                         predictionsError = nil
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
-                            predictionsByStop: [data.data.stopId: data.data.predictions],
-                            trips: data.data.trips,
-                            vehicles: data.data.vehicles
+                            predictionsByStop: [result.data.stopId: result.data.predictions],
+                            trips: result.data.trips,
+                            vehicles: result.data.vehicles
                         )
                         predictionsError = nil
                     }
