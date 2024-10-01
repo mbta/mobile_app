@@ -15,9 +15,11 @@ struct SearchView: View {
     let query: String
     let globalRepository: IGlobalRepository
     let searchResultsRepository: ISearchResultRepository
+    let visitHistoryUsecase: VisitHistoryUsecase
 
     @State var globalResponse: GlobalResponse?
     @State var searchResults: SearchResults?
+    @State var latestVisits: [Stop]?
 
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var searchVM: SearchViewModel
@@ -31,6 +33,7 @@ struct SearchView: View {
         searchVM: SearchViewModel,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
+        visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
@@ -39,6 +42,7 @@ struct SearchView: View {
         self.searchVM = searchVM
         self.globalRepository = globalRepository
         self.searchResultsRepository = searchResultsRepository
+        self.visitHistoryUsecase = visitHistoryUsecase
         self.didAppear = didAppear
         self.didChange = didChange
     }
@@ -53,6 +57,17 @@ struct SearchView: View {
         }
     }
 
+    func loadVisitHistory() {
+        Task { do {
+            latestVisits = try await visitHistoryUsecase.getLatestVisits().compactMap { visit in
+                switch onEnum(of: visit) {
+                case let .stopVisit(stopVisit): globalResponse?.stops[stopVisit.stopId]
+                default: nil
+                }
+            }
+        } catch {} }
+    }
+
     func handleStopTap(stopId: String) {
         guard let stop = globalResponse?.stops[stopId] else { return }
         nearbyVM.navigationStack.append(.stopDetails(stop, nil))
@@ -62,10 +77,12 @@ struct SearchView: View {
         SearchResultView(
             results: searchResults,
             handleStopTap: handleStopTap,
+            latestVisits: latestVisits,
             showRoutes: searchVM.routeResultsEnabled
         )
         .onAppear {
             loadResults(query: query)
+            loadVisitHistory()
             Task {
                 await searchVM.loadSettings()
             }
@@ -88,20 +105,31 @@ struct SearchView: View {
 struct SearchResultView: View {
     private var results: SearchResults?
     private var handleStopTap: (String) -> Void
+    private var latestVisits: [Stop]?
     private var showRoutes: Bool
     init(
         results: SearchResults? = nil,
         handleStopTap: @escaping (String) -> Void,
+        latestVisits: [Stop]?,
         showRoutes: Bool = false
     ) {
         self.results = results
         self.handleStopTap = handleStopTap
+        self.latestVisits = latestVisits
         self.showRoutes = showRoutes
     }
 
     var body: some View {
         if results == nil {
-            Text("Loading...")
+            if let latestVisits, !latestVisits.isEmpty {
+                List {
+                    ForEach(latestVisits, id: \.id) { stop in
+                        Text(stop.name)
+                    }
+                }
+            } else {
+                Text("Loading...")
+            }
         } else {
             if results!.stops.isEmpty, !showRoutes || results!.routes.isEmpty {
                 Text("No results found")
@@ -181,7 +209,8 @@ struct SearchResultView_Previews: PreviewProvider {
                     ),
                 ]
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in },
+            latestVisits: nil
         ).font(Typography.body).previewDisplayName("SearchResultView")
     }
 }
