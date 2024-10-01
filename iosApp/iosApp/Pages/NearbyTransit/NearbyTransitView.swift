@@ -33,7 +33,7 @@ struct NearbyTransitView: View {
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictions: PredictionsStreamDataResponse?
-    @State var predictionsError: SocketError?
+    @State var predictionsError: String?
     @State var predictionsV2Enabled = false
     var errorBannerRepository = RepositoryDI().errorBanner
 
@@ -155,7 +155,7 @@ struct NearbyTransitView: View {
                     }
                 }
                 .putAboveWhen(predictionsError) { error in
-                    IconCard(iconName: "network.slash", details: Text(error.predictionsErrorText))
+                    IconCard(iconName: "network.slash", details: Text(error))
                 }
             }
         }
@@ -208,11 +208,12 @@ struct NearbyTransitView: View {
         } else {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
-                    if let data = outcome.data {
-                        predictions = data
+                    switch onEnum(of: outcome) {
+                    case let .ok(result):
+                        predictions = result.data
                         predictionsError = nil
-                    } else if let error = outcome.error {
-                        predictionsError = error.toSwiftEnum()
+                    case let .error(error):
+                        predictionsError = error.message
                     }
                 }
             }
@@ -222,30 +223,31 @@ struct NearbyTransitView: View {
     func joinPredictionsV2(stopIds: Set<String>) {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
-                if let data = outcome.data {
-                    predictionsByStop = data
+                switch onEnum(of: outcome) {
+                case let .ok(result):
+                    predictionsByStop = result.data
                     predictionsError = nil
-                } else if let error = outcome.error {
-                    predictionsError = error.toSwiftEnum()
+                case let .error(error):
+                    predictionsError = error.message
                 }
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
-                if let data = outcome.data {
+                switch onEnum(of: outcome) {
+                case let .ok(result):
                     if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
+                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                         predictionsError = nil
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
-                            predictionsByStop: [data.stopId: data.predictions],
-                            trips: data.trips,
-                            vehicles: data.vehicles
+                            predictionsByStop: [result.data.stopId: result.data.predictions],
+                            trips: result.data.trips,
+                            vehicles: result.data.vehicles
                         )
                         predictionsError = nil
                     }
-
-                } else if let error = outcome.error {
-                    predictionsError = error.toSwiftEnum()
+                case let .error(error):
+                    predictionsError = error.message
                 }
             }
 

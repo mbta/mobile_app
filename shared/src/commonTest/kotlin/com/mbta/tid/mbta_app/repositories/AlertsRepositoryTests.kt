@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.repositories
 import com.mbta.tid.mbta_app.mocks.MockMessage
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPush
@@ -15,6 +16,7 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
@@ -77,9 +79,10 @@ class AlertsRepositoryTests {
         every { socket.getChannel(any(), any()) } returns MockChannel()
         alertsRepo.connect(
             onReceive = { outcome ->
-                assertNotNull(outcome.data)
+                val data = outcome.dataOrThrow()
+                assertNotNull(data)
                 val expectedResponse = AlertsStreamDataResponse(alerts = emptyMap())
-                assertEquals(outcome.data, expectedResponse)
+                assertEquals(expectedResponse, data)
             }
         )
     }
@@ -114,8 +117,9 @@ class AlertsRepositoryTests {
         every { socket.getChannel(any(), any()) } returns MockChannel()
         alertsRepo.connect(
             onReceive = { outcome ->
-                assertNotNull(outcome.error)
-                assertEquals(outcome.error, SocketError.Unknown)
+                assertIs<ApiResult.Error<*>>(outcome)
+                assertNotNull(outcome.message)
+                assertEquals(outcome.message, SocketError.FAILURE)
             }
         )
     }

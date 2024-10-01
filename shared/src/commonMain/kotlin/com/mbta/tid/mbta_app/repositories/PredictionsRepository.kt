@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -17,13 +17,13 @@ import org.koin.core.component.KoinComponent
 interface IPredictionsRepository {
     fun connect(
         stopIds: List<String>,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     )
 
     fun connectV2(
         stopIds: List<String>,
-        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
-        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
     )
 
     var lastUpdated: Instant?
@@ -40,7 +40,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     override fun connect(
         stopIds: List<String>,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
         val joinPayload = PredictionsForStopsChannel.joinPayload(stopIds)
         channel = socket.getChannel(PredictionsForStopsChannel.topic, joinPayload)
@@ -48,7 +48,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
             handleNewDataMessage(message, onReceive)
         }
-        channel?.onFailure { onReceive(Outcome(null, SocketError.Unknown)) }
+        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
 
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
@@ -57,13 +57,15 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                 println("joined channel ${message.subject}")
                 handleNewDataMessage(message, onReceive)
             }
-            ?.receive(PhoenixPushStatus.Error) { onReceive(Outcome(null, SocketError.Connection)) }
+            ?.receive(PhoenixPushStatus.Error) {
+                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
+            }
     }
 
     override fun connectV2(
         stopIds: List<String>,
-        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
-        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit,
+        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
         disconnect()
         channel = socket.getChannel(PredictionsForStopsChannel.topicV2(stopIds), mapOf())
@@ -71,7 +73,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
             handleV2Message(message, onMessage)
         }
-        channel?.onFailure { onMessage(Outcome(null, SocketError.Unknown)) }
+        channel?.onFailure { onMessage(ApiResult.Error(message = SocketError.FAILURE)) }
 
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
@@ -80,7 +82,9 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                 println("joined channel ${message.subject}")
                 handleV2JoinMessage(message, onJoin)
             }
-            ?.receive(PhoenixPushStatus.Error) { onJoin(Outcome(null, SocketError.Connection)) }
+            ?.receive(PhoenixPushStatus.Error) {
+                onJoin(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
+            }
     }
 
     override fun disconnect() {
@@ -90,7 +94,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -99,12 +103,12 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                 try {
                     PredictionsForStopsChannel.parseMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
-                    onReceive(Outcome(null, SocketError.Unknown))
+                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
             println("Received ${newPredictions.predictions.size} predictions")
             lastUpdated = Clock.System.now()
-            onReceive(Outcome(newPredictions, null))
+            onReceive(ApiResult.Ok(newPredictions))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
@@ -112,7 +116,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     private fun handleV2JoinMessage(
         message: PhoenixMessage,
-        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit
+        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -122,14 +126,14 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                     PredictionsForStopsChannel.parseV2JoinMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
                     print("ERROR $e")
-                    onJoin(Outcome(null, SocketError.Unknown))
+                    onJoin(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
             println(
                 "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions"
             )
             lastUpdated = Clock.System.now()
-            onJoin(Outcome(newPredictionsByStop, null))
+            onJoin(ApiResult.Ok(newPredictionsByStop))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
@@ -143,7 +147,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
      */
     internal fun handleV2Message(
         message: PhoenixMessage,
-        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -152,14 +156,14 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                 try {
                     PredictionsForStopsChannel.parseV2Message(rawPayload)
                 } catch (e: IllegalArgumentException) {
-                    onMessage(Outcome(null, SocketError.Unknown))
+                    onMessage(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
             println(
                 "Received ${newPredictionsForStop.predictions.size} predictions for stop ${newPredictionsForStop.stopId}"
             )
             lastUpdated = Clock.System.now()
-            onMessage(Outcome(newPredictionsForStop, null))
+            onMessage(ApiResult.Ok(newPredictionsForStop))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
@@ -170,16 +174,16 @@ class MockPredictionsRepository(
     val onConnect: () -> Unit = {},
     val onConnectV2: () -> Unit = {},
     val onDisconnect: () -> Unit = {},
-    private val connectOutcome: Outcome<PredictionsStreamDataResponse?, SocketError>? = null,
-    private val connectV2Outcome: Outcome<PredictionsByStopJoinResponse?, SocketError>? = null
+    private val connectOutcome: ApiResult<PredictionsStreamDataResponse>? = null,
+    private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null
 ) : IPredictionsRepository {
 
     constructor() :
         this(onConnect = {}, onConnectV2 = {}, connectOutcome = null, connectV2Outcome = null)
 
     constructor(
-        response: PredictionsStreamDataResponse?
-    ) : this(connectOutcome = Outcome(response, null))
+        response: PredictionsStreamDataResponse
+    ) : this(connectOutcome = ApiResult.Ok(response))
 
     constructor(
         onConnect: () -> Unit = {},
@@ -195,7 +199,7 @@ class MockPredictionsRepository(
 
     override fun connect(
         stopIds: List<String>,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
         onConnect()
         if (connectOutcome != null) {
@@ -205,8 +209,8 @@ class MockPredictionsRepository(
 
     override fun connectV2(
         stopIds: List<String>,
-        onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
-        onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
+        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
     ) {
         onConnectV2()
         if (connectV2Outcome != null) {
