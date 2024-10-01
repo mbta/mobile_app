@@ -43,7 +43,7 @@ class ContentViewModel: ObservableObject {
         do {
             configResponse = try await configUseCase.getConfig()
         } catch {
-            configResponse = ApiResultError(error: .init(code: nil, message: "\(error.localizedDescription)"))
+            configResponse = ApiResultError(code: nil, message: "\(error.localizedDescription)")
         }
     }
 }
