@@ -224,9 +224,8 @@ struct ContentView: View {
                                 screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
                             )
                         }
-                    }
-
-                    .transition(transition)
+                    }.id(stop.id)
+                        .transition(transition)
 
                 case let .tripDetails(
                     tripId: tripId,
@@ -248,7 +247,7 @@ struct ContentView: View {
                                 screenTracker.track(screen: .tripDetails)
                             }
                     }
-
+                    .id(tripId)
                     .transition(transition)
 
                 case .nearby:
