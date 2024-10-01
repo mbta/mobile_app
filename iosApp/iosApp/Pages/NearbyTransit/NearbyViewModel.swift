@@ -52,20 +52,18 @@ class NearbyViewModel: ObservableObject {
     }
 
     func pushNavEntry(_ entry: SheetNavigationStackEntry) {
-        withAnimation {
-            if case let .stopDetails(targetStop, _) = entry,
-               case let .stopDetails(currentStop, _) = navigationStack.last,
-               targetStop == currentStop {
-                _ = navigationStack.popLast()
-                navigationStack.append(entry)
-            } else {
-                navigationStack.append(entry)
-            }
+        if case let .stopDetails(targetStop, _) = entry,
+           case let .stopDetails(currentStop, _) = navigationStack.last,
+           targetStop == currentStop {
+            _ = navigationStack.popLast()
+            navigationStack.append(entry)
+        } else {
+            navigationStack.append(entry)
         }
     }
 
     func goBack() {
-        navigationStack.removeLast()
+        _ = navigationStack.popLast()
     }
 
     func getNearby(global: GlobalResponse, location: CLLocationCoordinate2D) {
