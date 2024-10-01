@@ -350,7 +350,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictions)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "No real-time data"))
+                .parent().parent().find(text: "Predictions unavailable"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().parent().find(text: "10 min"))
@@ -439,7 +439,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictionsByStop)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "No real-time data"))
+                .parent().parent().find(text: "Predictions unavailable"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().parent().find(text: "10 min"))
@@ -584,7 +584,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
             func connect(
                 stopIds: [String],
-                onReceive _: @escaping (Outcome<PredictionsStreamDataResponse, shared.SocketError._ObjectiveCType>)
+                onReceive _: @escaping (ApiResult<PredictionsStreamDataResponse>)
                     -> Void
             ) {
                 if stopIds.sorted() == ["84791", "8552"] {
@@ -597,8 +597,8 @@ final class NearbyTransitViewTests: XCTestCase {
             }
 
             func connectV2(stopIds _: [String],
-                           onJoin _: @escaping (Outcome<PredictionsByStopJoinResponse, __SocketError>) -> Void,
-                           onMessage _: @escaping (Outcome<PredictionsByStopMessageResponse, __SocketError>) -> Void) {
+                           onJoin _: @escaping (ApiResult<PredictionsByStopJoinResponse>) -> Void,
+                           onMessage _: @escaping (ApiResult<PredictionsByStopMessageResponse>) -> Void) {
                 /* no-op */
             }
 
@@ -865,8 +865,10 @@ final class NearbyTransitViewTests: XCTestCase {
                                                         onConnectV2: {},
                                                         onDisconnect: {},
                                                         connectOutcome:
-                                                        Outcome(data: nil,
-                                                                error: SocketError.unknown.toKotlinEnum()),
+                                                        ApiResultError(
+                                                            code: nil,
+                                                            message: SocketError.shared.FAILURE
+                                                        ),
                                                         connectV2Outcome: nil)
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -879,7 +881,7 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init()
         )
         let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 1) { view in
-            XCTAssertEqual(try view.actualView().predictionsError, shared.SocketError.unknown)
+            XCTAssertEqual(try view.actualView().predictionsError, SocketError.shared.FAILURE)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)

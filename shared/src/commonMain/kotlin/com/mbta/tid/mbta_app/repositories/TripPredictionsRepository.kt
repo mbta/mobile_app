@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
@@ -13,10 +13,7 @@ import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
 
 interface ITripPredictionsRepository {
-    fun connect(
-        tripId: String,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
-    )
+    fun connect(tripId: String, onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit)
 
     var lastUpdated: Instant?
 
@@ -32,14 +29,14 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
 
     override fun connect(
         tripId: String,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
         channel = socket.getChannel("predictions:trip:$tripId", emptyMap())
 
         channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
             handleNewDataMessage(message, onReceive)
         }
-        channel?.onFailure { onReceive(Outcome(null, SocketError.Unknown)) }
+        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
 
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
@@ -48,7 +45,9 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
                 println("joined channel ${message.subject}")
                 handleNewDataMessage(message, onReceive)
             }
-            ?.receive(PhoenixPushStatus.Error) { onReceive(Outcome(null, SocketError.Connection)) }
+            ?.receive(PhoenixPushStatus.Error) {
+                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
+            }
     }
 
     override fun disconnect() {
@@ -58,7 +57,7 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -67,12 +66,12 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
                 try {
                     PredictionsForStopsChannel.parseMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
-                    onReceive(Outcome(null, SocketError.Unknown))
+                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
             println("Received ${newPredictions.predictions.size} predictions")
             lastUpdated = Clock.System.now()
-            onReceive(Outcome(newPredictions, null))
+            onReceive(ApiResult.Ok(newPredictions))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
@@ -83,7 +82,7 @@ class MockTripPredictionsRepository : ITripPredictionsRepository {
 
     override fun connect(
         tripId: String,
-        onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
         /* no-op */
     }

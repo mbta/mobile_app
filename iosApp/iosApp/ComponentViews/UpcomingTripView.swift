@@ -144,7 +144,7 @@ struct UpcomingTripView: View {
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
-            Text("No real-time data").font(Typography.footnote)
+            Text("Predictions unavailable").font(Typography.footnote)
         case .noSchedulesToday:
             Text("No service today").font(Typography.footnote)
         case .loading:

@@ -181,10 +181,9 @@ struct StopDetailsPage: View {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
 
                     DispatchQueue.main.async {
-                        if let data = outcome.data {
-                            predictions = data
-                        } else {
-                            predictions = nil
+                        switch onEnum(of: outcome) {
+                        case let .ok(result): predictions = result.data
+                        case .error: predictions = nil
                         }
                     }
                 }
@@ -195,20 +194,20 @@ struct StopDetailsPage: View {
     func joinPredictionsV2(stopIds: Set<String>) {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
-                if let data = outcome.data {
-                    predictionsByStop = data
+                if case let .ok(result) = onEnum(of: outcome) {
+                    predictionsByStop = result.data
                 }
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
-                if let data = outcome.data {
+                if case let .ok(result) = onEnum(of: outcome) {
                     if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: data)
+                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
-                            predictionsByStop: [data.stopId: data.predictions],
-                            trips: data.trips,
-                            vehicles: data.vehicles
+                            predictionsByStop: [result.data.stopId: result.data.predictions],
+                            trips: result.data.trips,
+                            vehicles: result.data.vehicles
                         )
                     }
                 }

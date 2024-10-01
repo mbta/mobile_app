@@ -200,10 +200,7 @@ final class ContentViewTests: XCTestCase {
             self.disconnectExp = disconnectExp
         }
 
-        func connect(
-            onReceive _: @escaping (Outcome<AlertsStreamDataResponse, shared.SocketError._ObjectiveCType>)
-                -> Void
-        ) {
+        func connect(onReceive _: @escaping (ApiResult<AlertsStreamDataResponse>) -> Void) {
             connectExp?.fulfill()
         }
 

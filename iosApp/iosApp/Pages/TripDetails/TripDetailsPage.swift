@@ -168,10 +168,9 @@ struct TripDetailsPage: View {
     private func joinPredictions(tripId: String) {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
-                if let data = outcome.data {
-                    tripPredictions = data
-                } else {
-                    tripPredictions = nil
+                switch onEnum(of: outcome) {
+                case let .ok(result): tripPredictions = result.data
+                case .error: tripPredictions = nil
                 }
             }
         }
@@ -184,11 +183,11 @@ struct TripDetailsPage: View {
     private func joinVehicle(vehicleId: String) {
         vehicleRepository.connect(vehicleId: vehicleId) { outcome in
             DispatchQueue.main.async {
-                if let data = outcome.data {
-                    vehicleResponse = data
-                    mapVM.selectedVehicle = data.vehicle
-                } else {
-                    vehicleResponse = nil
+                switch onEnum(of: outcome) {
+                case let .ok(result):
+                    vehicleResponse = result.data
+                    mapVM.selectedVehicle = result.data.vehicle
+                case .error: vehicleResponse = nil
                 }
             }
         }

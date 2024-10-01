@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.phoenix.AlertsChannel
 import org.koin.core.component.KoinComponent
 
 interface IAlertsRepository {
-    fun connect(onReceive: (Outcome<AlertsStreamDataResponse?, SocketError>) -> Unit)
+    fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit)
 
     fun disconnect()
 }
@@ -20,14 +20,14 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
 
     var channel: PhoenixChannel? = null
 
-    override fun connect(onReceive: (Outcome<AlertsStreamDataResponse?, SocketError>) -> Unit) {
+    override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
         channel?.detach()
         channel = socket.getChannel(AlertsChannel.topic, emptyMap())
 
         channel?.onEvent(AlertsChannel.newDataEvent) { message ->
             handleNewDataMessage(message, onReceive)
         }
-        channel?.onFailure { onReceive(Outcome(null, SocketError.Unknown)) }
+        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
 
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
@@ -36,7 +36,9 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
                 println("joined channel ${message.subject}")
                 handleNewDataMessage(message, onReceive)
             }
-            ?.receive(PhoenixPushStatus.Error) { onReceive(Outcome(null, SocketError.Connection)) }
+            ?.receive(PhoenixPushStatus.Error) {
+                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
+            }
     }
 
     override fun disconnect() {
@@ -46,7 +48,7 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (Outcome<AlertsStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit
     ) {
         val rawPayload = message.jsonBody
         if (rawPayload != null) {
@@ -54,7 +56,7 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
                 try {
                     AlertsChannel.parseMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
-                    onReceive(Outcome(null, SocketError.Unknown))
+                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     println("${e.message}")
                     return
                 }
@@ -65,7 +67,7 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
                     newAlerts
                 }
             println("Received ${newAlerts.alerts.size} alerts")
-            onReceive(Outcome(splitNewAlerts, null))
+            onReceive(ApiResult.Ok(splitNewAlerts))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
@@ -79,7 +81,7 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
 
 class MockAlertsRepository : IAlertsRepository {
 
-    override fun connect(onReceive: (Outcome<AlertsStreamDataResponse?, SocketError>) -> Unit) {
+    override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
         /* no-op */
     }
 

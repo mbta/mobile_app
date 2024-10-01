@@ -307,7 +307,7 @@ final class TripDetailsPageTests: XCTestCase {
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
 
         let tripRepository = FakeTripRepository(
-            tripError: .init(code: 404, message: "Bad response"),
+            tripError: ApiResultError(code: 404, message: "Bad response"),
             scheduleResponse: TripSchedulesResponse.StopIds(stopIds: []),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
@@ -582,12 +582,12 @@ final class TripDetailsPageTests: XCTestCase {
         }
 
         init(
-            tripError: ErrorDetails,
+            tripError: ApiResultError<TripResponse>,
             scheduleResponse: TripSchedulesResponse,
             onGetTrip: (() -> Void)? = nil,
             onGetTripSchedules: (() -> Void)? = nil
         ) {
-            tripResponse = ApiResultError(error: tripError)
+            tripResponse = tripError
             self.scheduleResponse = scheduleResponse
             self.onGetTrip = onGetTrip
             self.onGetTripSchedules = onGetTripSchedules
@@ -619,10 +619,10 @@ final class TripDetailsPageTests: XCTestCase {
 
         func connect(
             tripId: String,
-            onReceive: @escaping (Outcome<PredictionsStreamDataResponse, __SocketError>) -> Void
+            onReceive: @escaping (ApiResult<PredictionsStreamDataResponse>) -> Void
         ) {
             onConnect?(tripId)
-            onReceive(.init(data: response, error: nil))
+            onReceive(ApiResultOk(data: response))
         }
 
         var lastUpdated: Instant?
@@ -647,9 +647,11 @@ final class TripDetailsPageTests: XCTestCase {
 
         func connect(
             vehicleId _: String,
-            onReceive: @escaping (Outcome<VehicleStreamDataResponse, __SocketError>) -> Void
+            onReceive: @escaping (ApiResult<VehicleStreamDataResponse>) -> Void
         ) {
-            onReceive(.init(data: response, error: nil))
+            if let response {
+                onReceive(ApiResultOk(data: response))
+            }
             onConnect?()
         }
 

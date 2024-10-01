@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.mocks.MockMessage
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
@@ -17,9 +18,9 @@ import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.fail
 import org.koin.test.KoinTest
 
 class PredictionsRepositoryTests : KoinTest {
@@ -78,13 +79,10 @@ class PredictionsRepositoryTests : KoinTest {
         predictionsRepo.connect(
             stopIds = listOf("1"),
             onReceive = { outcome ->
-                outcome.data?.let {
-                    assertEquals(
-                        it,
-                        PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap())
-                    )
-                }
-                outcome.error?.let { fail() }
+                assertEquals(
+                    PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
+                    outcome.dataOrThrow()
+                )
             }
         )
     }
@@ -120,8 +118,8 @@ class PredictionsRepositoryTests : KoinTest {
         predictionsRepo.connect(
             stopIds = listOf("1"),
             onReceive = { outcome ->
-                assertNotNull(outcome.error)
-                assertEquals(outcome.error, SocketError.Unknown)
+                assertIs<ApiResult.Error<*>>(outcome)
+                assertEquals(outcome.message, SocketError.FAILURE)
             }
         )
     }
@@ -275,17 +273,16 @@ class PredictionsRepositoryTests : KoinTest {
         predictionsRepo.connectV2(
             stopIds = listOf("1"),
             onJoin = { outcome ->
-                outcome.data?.let {
-                    assertEquals(1, it.predictionsByStop.size)
-                    assertEquals("p_1", it.predictionsByStop["12345"]?.get("p_1")?.id)
+                val data = outcome.dataOrThrow()
+                assertNotNull(data)
+                assertEquals(1, data.predictionsByStop.size)
+                assertEquals("p_1", data.predictionsByStop["12345"]?.get("p_1")?.id)
 
-                    assertEquals(1, it.trips.size)
-                    assertEquals("t_1", it.trips["t_1"]?.id)
+                assertEquals(1, data.trips.size)
+                assertEquals("t_1", data.trips["t_1"]?.id)
 
-                    assertEquals(1, it.vehicles.size)
-                    assertEquals("v_1", it.vehicles["v_1"]?.id)
-                }
-                outcome.error?.let { fail() }
+                assertEquals(1, data.vehicles.size)
+                assertEquals("v_1", data.vehicles["v_1"]?.id)
             },
             onMessage = { /* no-op */}
         )
@@ -353,17 +350,16 @@ class PredictionsRepositoryTests : KoinTest {
         predictionsRepo.handleV2Message(
             message,
             onMessage = { outcome ->
-                outcome.data?.let {
-                    assertEquals("12345", it.stopId)
-                    assertEquals("p_1", it.predictions["p_1"]?.id)
+                val data = outcome.dataOrThrow()
+                assertNotNull(data)
+                assertEquals("12345", data.stopId)
+                assertEquals("p_1", data.predictions["p_1"]?.id)
 
-                    assertEquals(1, it.trips.size)
-                    assertEquals("t_1", it.trips["t_1"]?.id)
+                assertEquals(1, data.trips.size)
+                assertEquals("t_1", data.trips["t_1"]?.id)
 
-                    assertEquals(1, it.vehicles.size)
-                    assertEquals("v_1", it.vehicles["v_1"]?.id)
-                }
-                outcome.error?.let { fail() }
+                assertEquals(1, data.vehicles.size)
+                assertEquals("v_1", data.vehicles["v_1"]?.id)
             }
         )
     }
@@ -399,8 +395,8 @@ class PredictionsRepositoryTests : KoinTest {
         predictionsRepo.connectV2(
             stopIds = listOf("1"),
             onJoin = { outcome ->
-                assertNotNull(outcome.error)
-                assertEquals(outcome.error, SocketError.Unknown)
+                assertIs<ApiResult.Error<*>>(outcome)
+                assertEquals(SocketError.RECEIVED_ERROR, outcome.message)
             },
             onMessage = { /* no-op */}
         )
@@ -415,9 +411,8 @@ class PredictionsRepositoryTests : KoinTest {
         predictionsRepo.handleV2Message(
             message,
             onMessage = { outcome ->
-                outcome.data?.let { fail() }
-
-                outcome.error?.let { error -> assertEquals(SocketError.Unknown, error) }
+                assertIs<ApiResult.Error<*>>(outcome)
+                assertEquals(SocketError.FAILED_TO_PARSE, outcome.message)
             }
         )
     }

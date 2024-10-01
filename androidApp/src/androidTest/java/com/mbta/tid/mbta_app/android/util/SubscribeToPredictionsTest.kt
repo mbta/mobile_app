@@ -5,8 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.Outcome
-import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -35,15 +34,14 @@ class SubscribeToPredictionsTest {
         val predictionsRepo =
             object : IPredictionsRepository {
                 val stopIdsChannel = Channel<List<String>>()
-                lateinit var onReceive:
-                    (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+                lateinit var onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
                 val disconnectChannel = Channel<Unit>()
 
                 var isConnected = false
 
                 override fun connect(
                     stopIds: List<String>,
-                    onReceive: (Outcome<PredictionsStreamDataResponse?, SocketError>) -> Unit
+                    onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
                 ) {
                     check(!isConnected) { "called connect when already connected" }
                     isConnected = true
@@ -53,8 +51,8 @@ class SubscribeToPredictionsTest {
 
                 override fun connectV2(
                     stopIds: List<String>,
-                    onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
-                    onMessage: (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                    onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
+                    onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                 ) {
                     /* no-op */
                 }
@@ -81,7 +79,7 @@ class SubscribeToPredictionsTest {
         assertNull(predictions)
 
         val expectedPredictions1 = buildSomePredictions()
-        predictionsRepo.onReceive(Outcome(expectedPredictions1, null))
+        predictionsRepo.onReceive(ApiResult.Ok(expectedPredictions1))
         composeTestRule.awaitIdle()
         assertEquals(expectedPredictions1, predictions)
 
@@ -92,7 +90,7 @@ class SubscribeToPredictionsTest {
         assertEquals(expectedPredictions1, predictions)
 
         val expectedPredictions2 = buildSomePredictions()
-        predictionsRepo.onReceive(Outcome(expectedPredictions2, null))
+        predictionsRepo.onReceive(ApiResult.Ok(expectedPredictions2))
         composeTestRule.awaitIdle()
         assertEquals(expectedPredictions2, predictions)
 

@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.repositories
 
 import VehicleChannel
-import com.mbta.tid.mbta_app.model.Outcome
 import com.mbta.tid.mbta_app.model.SocketError
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
@@ -11,10 +11,7 @@ import com.mbta.tid.mbta_app.network.PhoenixSocket
 import org.koin.core.component.KoinComponent
 
 interface IVehicleRepository {
-    fun connect(
-        vehicleId: String,
-        onReceive: (Outcome<VehicleStreamDataResponse?, SocketError>) -> Unit
-    )
+    fun connect(vehicleId: String, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit)
 
     fun disconnect()
 }
@@ -24,14 +21,14 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
 
     override fun connect(
         vehicleId: String,
-        onReceive: (Outcome<VehicleStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
     ) {
         channel = socket.getChannel(VehicleChannel.topic(vehicleId), emptyMap())
 
         channel?.onEvent(VehicleChannel.newDataEvent) { message ->
             handleNewDataMessage(message, onReceive)
         }
-        channel?.onFailure { onReceive(Outcome(null, SocketError.Unknown)) }
+        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
 
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
@@ -40,7 +37,9 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
                 println("joined channel ${message.subject}")
                 handleNewDataMessage(message, onReceive)
             }
-            ?.receive(PhoenixPushStatus.Error) { onReceive(Outcome(null, SocketError.Connection)) }
+            ?.receive(PhoenixPushStatus.Error) {
+                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
+            }
     }
 
     override fun disconnect() {
@@ -50,7 +49,7 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
 
     private fun handleNewDataMessage(
         message: PhoenixMessage,
-        onReceive: (Outcome<VehicleStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
     ) {
         val rawPayload: String? = message.jsonBody
 
@@ -59,11 +58,11 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
                 try {
                     VehicleChannel.parseMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
-                    onReceive(Outcome(null, SocketError.Unknown))
+                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
             println("Received vehicle update")
-            onReceive(Outcome(newVehicleData, null))
+            onReceive(ApiResult.Ok(newVehicleData))
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
@@ -73,7 +72,7 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
 class MockVehicleRepository : IVehicleRepository {
     override fun connect(
         vehicleId: String,
-        onReceive: (Outcome<VehicleStreamDataResponse?, SocketError>) -> Unit
+        onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
     ) {
         /* no-op */
     }
