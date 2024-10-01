@@ -28,6 +28,8 @@ sealed class TripInstantDisplay {
 
     data class Skipped(val scheduledTime: Instant?) : TripInstantDisplay()
 
+    data class Cancelled(val scheduledTime: Instant) : TripInstantDisplay()
+
     data class Minutes(val minutes: Int) : TripInstantDisplay()
 
     enum class Context {
@@ -56,6 +58,14 @@ sealed class TripInstantDisplay {
                     return Skipped(it)
                 }
                 return Hidden
+            }
+            if (
+                prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
+                    schedule?.scheduleTime != null &&
+                    routeType?.isSubway() == false &&
+                    context == Context.StopDetailsFiltered
+            ) {
+                return Cancelled(schedule.scheduleTime)
             }
             val departureTime =
                 if (prediction != null) {

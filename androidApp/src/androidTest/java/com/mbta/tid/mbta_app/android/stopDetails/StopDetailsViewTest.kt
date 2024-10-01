@@ -18,6 +18,8 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -124,6 +126,17 @@ class StopDetailsViewTest {
                         ) {
                             onReceive(Outcome(PredictionsStreamDataResponse(builder), null))
                         }
+
+                        override fun connectV2(
+                            stopIds: List<String>,
+                            onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+                            onMessage:
+                                (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                        ) {
+                            /* no-op */
+                        }
+
+                        override var lastUpdated: Instant? = null
 
                         override fun disconnect() {
                             /* no-op */

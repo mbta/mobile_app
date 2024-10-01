@@ -101,16 +101,19 @@ struct ContentView: View {
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
-                TextField("Find nearby transit", text: $searchObserver.searchText)
-                SearchView(
-                    query: searchObserver.debouncedText,
-                    nearbyVM: nearbyVM,
-                    searchVM: searchVM
-                )
-            }
             locationAuthHeader
-            mapWithSheets
+            ZStack(alignment: .top) {
+                mapWithSheets
+                VStack(alignment: .trailing, spacing: 0) {
+                    if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
+                        SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                    }
+                    if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
+                       locationDataManager.currentLocation != nil {
+                        RecenterButton { Task { viewportProvider.follow() } }
+                    }
+                }.frame(maxWidth: .infinity, alignment: .trailing)
+            }
         }
         .onAppear {
             Task {
@@ -153,10 +156,13 @@ struct ContentView: View {
     }
 
     @ViewBuilder var mapWithSheets: some View {
+        let nav = $nearbyVM.navigationStack.wrappedValue.lastSafe()
+        let sheetItem: Binding<NearbySheetItem?> = .constant(
+            searchObserver.isSearching && nav == .nearby ? .none : nav.sheetItemIdentifiable()
+        )
         mapSection
             .sheet(isPresented: .constant(true), content: {
                 GeometryReader { proxy in
-
                     VStack {
                         navSheetContents
                             // Adding id here prevents the next sheet from opening at the large detent.

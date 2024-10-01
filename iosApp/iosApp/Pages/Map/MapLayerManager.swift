@@ -15,7 +15,6 @@ protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
     func addIcons(recreate: Bool)
     func addLayers(colorScheme: ColorScheme, recreate: Bool)
-
     func updateSourceData(routeData: MapboxMaps.FeatureCollection)
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
 }
@@ -58,15 +57,13 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
-        let colorPalette = switch colorScheme {
-        case .light: ColorPalette.companion.light
-        case .dark: ColorPalette.companion.dark
-        @unknown default: ColorPalette.companion.light
-        }
+        let colorPalette = getColorPalette(colorScheme: colorScheme)
         currentScheme = colorScheme
         let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
-            .map { $0.toMapbox() }
-            + StopLayerGenerator.shared.createStopLayers(colorPalette: colorPalette).map { $0.toMapbox() }
+            .map { $0.toMapbox() } + StopLayerGenerator.shared.createStopLayers(
+                colorPalette: colorPalette
+            ).map { $0.toMapbox() }
+
         for layer in layers {
             do {
                 if map.layerExists(withId: layer.id) {
@@ -77,6 +74,7 @@ class MapLayerManager: IMapLayerManager {
                         continue
                     }
                 }
+
                 if map.layerExists(withId: "puck") {
                     try map.addLayer(layer, layerPosition: .below("puck"))
                 } else {
@@ -85,6 +83,14 @@ class MapLayerManager: IMapLayerManager {
             } catch {
                 Logger().error("Failed to add layer \(layer.id)\n\(error)")
             }
+        }
+    }
+
+    func getColorPalette(colorScheme: ColorScheme) -> ColorPalette {
+        switch colorScheme {
+        case .light: ColorPalette.companion.light
+        case .dark: ColorPalette.companion.dark
+        @unknown default: ColorPalette.companion.light
         }
     }
 

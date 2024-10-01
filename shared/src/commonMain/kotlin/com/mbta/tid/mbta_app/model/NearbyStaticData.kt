@@ -513,6 +513,14 @@ fun NearbyStaticData.withRealtimeInfo(
     val cutoffTime = filterAtTime.plus(90.minutes)
     val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
+    val upcomingTripsMap: UpcomingTripsMap =
+        (upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop)
+
+    fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
+        return this.filterNot { it.patterns.isEmpty() }
+            .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.patterns.first() }))
+    }
+
     return rewrittenThis.data
         .asSequence()
         .map { transit ->
@@ -524,21 +532,16 @@ fun NearbyStaticData.withRealtimeInfo(
                             .map {
                                 PatternsByStop(
                                     it,
-                                    upcomingTripsByRoutePatternAndStop +
-                                        upcomingTripsByDirectionAndStop,
+                                    upcomingTripsMap.filterCancellations(
+                                        transit.route.type.isSubway()
+                                    ),
                                     filterAtTime,
                                     cutoffTime,
                                     activeRelevantAlerts,
                                     hasSchedulesTodayByPattern
                                 )
                             }
-                            .filterNot { it.patterns.isEmpty() }
-                            .sortedWith(
-                                compareBy(
-                                    { it.distanceFrom(sortByDistanceFrom) },
-                                    { it.patterns.first() }
-                                )
-                            )
+                            .filterEmptyAndSort()
                     )
                 is NearbyStaticData.TransitWithStops.ByLine ->
                     StopsAssociated.WithLine(
@@ -548,21 +551,16 @@ fun NearbyStaticData.withRealtimeInfo(
                             .map {
                                 PatternsByStop(
                                     it,
-                                    upcomingTripsByRoutePatternAndStop +
-                                        upcomingTripsByDirectionAndStop,
+                                    upcomingTripsMap.filterCancellations(
+                                        transit.routes.min().type.isSubway()
+                                    ),
                                     filterAtTime,
                                     cutoffTime,
                                     activeRelevantAlerts,
                                     hasSchedulesTodayByPattern
                                 )
                             }
-                            .filterNot { it.patterns.isEmpty() }
-                            .sortedWith(
-                                compareBy(
-                                    { it.distanceFrom(sortByDistanceFrom) },
-                                    { it.patterns.first() }
-                                )
-                            )
+                            .filterEmptyAndSort()
                     )
             }
         }

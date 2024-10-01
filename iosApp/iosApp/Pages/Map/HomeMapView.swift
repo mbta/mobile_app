@@ -78,11 +78,6 @@ struct HomeMapView: View {
 
     var body: some View {
         realtimeResponsiveMap
-            .overlay(alignment: .topTrailing) {
-                if !viewportProvider.viewport.isFollowing, locationDataManager.currentLocation != nil {
-                    RecenterButton { Task { viewportProvider.follow() } }
-                }
-            }
             .overlay(alignment: .center) {
                 if nearbyVM.selectingLocation {
                     crosshairs

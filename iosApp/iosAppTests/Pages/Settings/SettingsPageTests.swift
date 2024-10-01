@@ -43,7 +43,7 @@ final class SettingsPageTests: XCTestCase {
         }
     }
 
-    func testLoadsState() throws {
+    @MainActor func testLoadsState() throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
 
         let settingsRepository = FakeSettingsRepository(
@@ -65,7 +65,7 @@ final class SettingsPageTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    func testSavesState() throws {
+    @MainActor func testSavesState() throws {
         let loadedPublisher = PassthroughSubject<Void, Never>()
         let savedExp = expectation(description: "saved state")
 

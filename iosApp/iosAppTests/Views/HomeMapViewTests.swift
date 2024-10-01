@@ -207,7 +207,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testUpdatesRouteAndChildStopsWhenStopSelected() throws {
+    @MainActor func testUpdatesRouteAndChildStopsWhenStopSelected() throws {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
 
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
@@ -261,7 +261,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testSetsRouteSourceWhenStopSelectedWithRouteFilter() throws {
+    @MainActor func testSetsRouteSourceWhenStopSelectedWithRouteFilter() throws {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
@@ -318,7 +318,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testUpdatesRouteSourceWhenStopSelectedWithRouteFilterAndUpcomingDepartures() throws {
+    @MainActor func testUpdatesRouteSourceWhenStopSelectedWithRouteFilterAndUpcomingDepartures() throws {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
         let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
         HelpersKt
@@ -397,7 +397,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testUpdatesSourcesWhenTripSelected() throws {
+    @MainActor func testUpdatesSourcesWhenTripSelected() throws {
         let globalLoadSubject = PassthroughSubject<Void, Never>()
         let tripShapeLoadSubject = PassthroughSubject<Void, Never>()
 
@@ -568,7 +568,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testVehicleChanging() throws {
+    @MainActor func testVehicleChanging() throws {
         class FakeStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
                 StopMapResponse(

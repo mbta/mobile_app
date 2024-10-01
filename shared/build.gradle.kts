@@ -86,7 +86,12 @@ android {
     defaultConfig { minSdk = 28 }
 }
 
-skie { features { group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) } } }
+skie {
+    features {
+        group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) }
+        enableSwiftUIObservingPreview = true
+    }
+}
 
 mokkery {
     ignoreInlineMembers.set(true)

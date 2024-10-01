@@ -8,7 +8,8 @@ import com.mbta.tid.mbta_app.map.style.downcastToColor
 
 object StopLayerGenerator {
     val maxTransferLayers = 3
-    val stopZoomThreshold = 8.0
+    val stopZoomThreshold = 11.0
+    val busStopZoomThreshold = 12.0
 
     val stopLayerId = "stop-layer"
     val stopTouchTargetLayerId = "${stopLayerId}-touch-target"
@@ -23,13 +24,13 @@ object StopLayerGenerator {
 
     fun createStopLayers(colorPalette: ColorPalette): List<SymbolLayer> {
         val sourceId = StopFeaturesBuilder.stopSourceId
+
         val stopLayer = createStopLayer(id = stopLayerId, colorPalette = colorPalette)
-        val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
 
         val stopTouchTargetLayer = SymbolLayer(id = stopTouchTargetLayerId, source = sourceId)
         stopTouchTargetLayer.iconImage = Exp.image(Exp(StopIcons.stopDummyIcon))
         stopTouchTargetLayer.iconPadding = 22.0
-        includeSharedProps(stopTouchTargetLayer)
+        includeSharedProps(stopTouchTargetLayer, forBus = false)
 
         val stopSelectedPinLayer = SymbolLayer(id = stopLayerSelectedPinId, source = sourceId)
         stopSelectedPinLayer.iconImage =
@@ -38,14 +39,19 @@ object StopLayerGenerator {
                 Exp.image(Exp(""))
             )
         stopSelectedPinLayer.iconOffset = offsetPinValue()
-        includeSharedProps(stopSelectedPinLayer)
+        stopTouchTargetLayer.filter =
+            Exp.ge(
+                Exp.zoom(),
+                Exp.case(MapExp.isBusExp to Exp(busStopZoomThreshold), Exp(stopZoomThreshold))
+            )
+        includeSharedProps(stopSelectedPinLayer, forBus = false)
 
         val transferLayers =
             (0.rangeUntil(maxTransferLayers)).map { index ->
                 val transferLayer = SymbolLayer(id = getTransferLayerId(index), source = sourceId)
                 transferLayer.iconImage = (StopIcons.getTransferLayerIcon(index))
                 transferLayer.iconOffset = offsetTransferValue(index)
-                includeSharedProps(transferLayer)
+                includeSharedProps(transferLayer, forBus = false)
 
                 return@map transferLayer
             }
@@ -55,6 +61,7 @@ object StopLayerGenerator {
                 createAlertLayer(id = getAlertLayerId(index), index)
             }
 
+        val busLayer = createStopLayer(id = busLayerId, forBus = true, colorPalette)
         val busAlertLayer = createAlertLayer(id = busAlertLayerId, forBus = true)
 
         return listOf(stopTouchTargetLayer, busLayer, busAlertLayer, stopLayer) +
@@ -68,7 +75,7 @@ object StopLayerGenerator {
         alertLayer.iconImage = AlertIcons.getAlertLayerIcon(index, forBus = forBus)
         alertLayer.iconOffset = offsetAlertValue(index)
         alertLayer.iconAllowOverlap = true
-        includeSharedProps(alertLayer)
+        includeSharedProps(alertLayer, forBus)
 
         return alertLayer
     }
@@ -94,15 +101,15 @@ object StopLayerGenerator {
         stopLayer.textOptional = true
         stopLayer.textOffset = MapExp.labelOffsetExp
 
-        includeSharedProps(stopLayer)
+        includeSharedProps(stopLayer, forBus)
         return stopLayer
     }
 
-    fun includeSharedProps(layer: SymbolLayer) {
+    fun includeSharedProps(layer: SymbolLayer, forBus: Boolean) {
         layer.iconSize = MapExp.selectedSizeExp
 
         layer.iconAllowOverlap = true
-        layer.minZoom = stopZoomThreshold
+        layer.minZoom = if (forBus) busStopZoomThreshold else stopZoomThreshold
         layer.symbolSortKey = Exp.get(StopFeaturesBuilder.propSortOrderKey)
     }
 

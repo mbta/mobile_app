@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class TripDetailsPageTests: XCTestCase {
-    func testLoadsStopList() throws {
+    @MainActor func testLoadsStopList() throws {
         let objects = ObjectCollectionBuilder()
 
         let trip = objects.trip { _ in }
@@ -66,7 +66,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [showsStopsExp], timeout: 5)
     }
 
-    func testIncludesVehicleCard() throws {
+    @MainActor func testIncludesVehicleCard() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
@@ -129,7 +129,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [showVehicleCardExp], timeout: 5)
     }
 
-    func testSplitsWithTarget() throws {
+    @MainActor func testSplitsWithTarget() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
@@ -173,7 +173,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [splitViewExp], timeout: 5)
     }
 
-    func testDisplaysTransferRoutes() throws {
+    @MainActor func testDisplaysTransferRoutes() throws {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in
@@ -290,7 +290,7 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [routeExp], timeout: 5)
     }
 
-    func testTripRequestError() throws {
+    @MainActor func testTripRequestError() throws {
         let objects = ObjectCollectionBuilder()
 
         let trip = objects.trip { trip in
@@ -422,7 +422,7 @@ final class TripDetailsPageTests: XCTestCase {
         subscription.cancel()
     }
 
-    func testResolvesParentStop() {
+    @MainActor func testResolvesParentStop() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let trip = objects.trip { $0.routeId = route.id }
@@ -559,6 +559,8 @@ final class TripDetailsPageTests: XCTestCase {
             onConnect?(tripId)
             onReceive(.init(data: response, error: nil))
         }
+
+        var lastUpdated: Instant?
 
         func disconnect() {}
     }

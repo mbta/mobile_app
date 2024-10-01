@@ -23,6 +23,8 @@ import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -184,6 +186,17 @@ class NearbyTransitPageTest : KoinTest {
                         ) {
                             onReceive(Outcome(PredictionsStreamDataResponse(builder), null))
                         }
+
+                        override fun connectV2(
+                            stopIds: List<String>,
+                            onJoin: (Outcome<PredictionsByStopJoinResponse?, SocketError>) -> Unit,
+                            onMessage:
+                                (Outcome<PredictionsByStopMessageResponse?, SocketError>) -> Unit
+                        ) {
+                            /* no-op */
+                        }
+
+                        override var lastUpdated: Instant? = null
 
                         override fun disconnect() {
                             /* no-op */

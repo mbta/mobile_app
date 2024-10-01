@@ -38,7 +38,10 @@ data class UpcomingTrip(
     ) : this(trip, null, prediction, vehicle)
 
     val time =
-        if (prediction != null) {
+        if (
+            prediction != null &&
+                prediction.scheduleRelationship != Prediction.ScheduleRelationship.Cancelled
+        ) {
             prediction.predictionTime
         } else {
             schedule?.scheduleTime
@@ -50,6 +53,11 @@ data class UpcomingTrip(
         }
         prediction?.stopSequence ?: schedule?.stopSequence
     }
+
+    val isCancelled: Boolean
+        get() =
+            schedule?.scheduleTime != null &&
+                prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled
 
     override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
 
