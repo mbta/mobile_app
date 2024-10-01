@@ -173,8 +173,8 @@ struct NearbyTransitView: View {
     func getGlobal() {
         Task {
             switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(data):
-                globalData = data.data
+            case let .ok(result):
+                globalData = result.data
                 // this should be handled by the onChange but in tests it just isn't
                 getNearby(location: location, globalData: globalData)
             case let .error(error): throw error
@@ -195,7 +195,7 @@ struct NearbyTransitView: View {
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
             switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: stopIdList)) {
-            case let .ok(data): scheduleResponse = data.data
+            case let .ok(result): scheduleResponse = result.data
             case let .error(error): throw error
             }
         }

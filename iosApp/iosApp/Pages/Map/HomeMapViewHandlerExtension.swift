@@ -18,7 +18,7 @@ extension HomeMapView {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
             switch try await onEnum(of: railRouteShapeRepository.getRailRouteShapes()) {
-            case let .ok(data): railRouteShapes = data.data
+            case let .ok(result): railRouteShapes = result.data
             case let .error(error): throw error
             }
         }
@@ -152,8 +152,8 @@ extension HomeMapView {
         viewportProvider.animateTo(coordinates: stop.coordinate, zoom: MapDefaults.shared.stopPageZoom)
 
         Task {
-            if case let .ok(data) = try await onEnum(of: stopRepository.getStopMapData(stopId: stop.id)) {
-                stopMapData = data.data
+            if case let .ok(result) = try await onEnum(of: stopRepository.getStopMapData(stopId: stop.id)) {
+                stopMapData = result.data
                 if let stopMapData {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }

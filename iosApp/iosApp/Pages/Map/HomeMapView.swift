@@ -85,7 +85,7 @@ struct HomeMapView: View {
             }
             .task {
                 switch await callApi({ try await globalRepository.getGlobalData() }) {
-                case let .ok(data): globalData = data.data
+                case let .ok(result): globalData = result.data
                 case let .error(error): debugPrint(error)
                 }
             }

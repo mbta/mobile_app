@@ -46,7 +46,7 @@ struct SearchView: View {
     func loadResults(query: String) {
         Task {
             switch try await onEnum(of: searchResultsRepository.getSearchResults(query: query)) {
-            case let .ok(data): searchResults = data.data
+            case let .ok(result): searchResults = result.data
             case nil: searchResults = nil
             case let .error(error): debugPrint(error)
             }
@@ -71,7 +71,7 @@ struct SearchView: View {
             }
             Task {
                 switch try await onEnum(of: globalRepository.getGlobalData()) {
-                case let .ok(data): globalResponse = data.data
+                case let .ok(result): globalResponse = result.data
                 case let .error(error): debugPrint(error)
                 }
             }

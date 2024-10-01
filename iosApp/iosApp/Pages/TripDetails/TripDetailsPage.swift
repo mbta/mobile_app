@@ -104,13 +104,13 @@ struct TripDetailsPage: View {
         }
         .task {
             switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(data): globalResponse = data.data
+            case let .ok(result): globalResponse = result.data
             case let .error(error): debugPrint(error)
             }
         }
         .task {
             switch await callApi({ try await tripRepository.getTripSchedules(tripId: tripId) }) {
-            case let .ok(data): tripSchedulesResponse = data.data
+            case let .ok(result): tripSchedulesResponse = result.data
             case let .error(error): debugPrint(error)
             }
         }

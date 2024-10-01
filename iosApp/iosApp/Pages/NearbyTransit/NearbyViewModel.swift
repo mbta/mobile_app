@@ -85,9 +85,9 @@ class NearbyViewModel: ObservableObject {
             }
             switch await callApi({
                 try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) }) {
-            case let .ok(data):
+            case let .ok(result):
                 if Task.isCancelled { return }
-                nearbyState.nearbyByRouteAndStop = data.data
+                nearbyState.nearbyByRouteAndStop = result.data
                 nearbyState.loadedLocation = location
                 nearbyState.error = nil
             case let .error(error):
