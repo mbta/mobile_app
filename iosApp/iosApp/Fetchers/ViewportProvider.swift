@@ -124,9 +124,16 @@ class ViewportProvider: ObservableObject {
     }
 
     func restoreNearbyTransitViewport() {
-        if let savedNearbyTransitViewport {
+        if let saved = savedNearbyTransitViewport {
             withViewportAnimation(Defaults.animation) {
-                self.viewport = savedNearbyTransitViewport
+                let currentZoom = cameraStateSubject.value.zoom
+                self.viewport = if let camera = saved.camera {
+                    .camera(center: camera.center, zoom: currentZoom)
+                } else if let _ = saved.followPuck {
+                    .followPuck(zoom: currentZoom)
+                } else {
+                    saved
+                }
             }
         }
         savedNearbyTransitViewport = nil
