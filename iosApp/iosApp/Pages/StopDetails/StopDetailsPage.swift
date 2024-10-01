@@ -250,10 +250,6 @@ struct StopDetailsPage: View {
             predictions ?? self.predictions
         }
 
-        let routeServed: Set<String> = Set(targetPredictions.map { it in it.predictions.values.map { it in
-            it.routeId
-        } } ?? [])
-
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures(
                 stop: stop,
