@@ -60,13 +60,9 @@ struct StopDetailsPage: View {
         self.filter = filter
         self.nearbyVM = nearbyVM
         self.predictionsV2Enabled = predictionsV2Enabled
-        print("TEST: init \(stop.id) \(filter)")
-        print("TEST: filter after init \(self.filter)")
     }
 
     var body: some View {
-        let _ = print("TEST: filter after init in body \(filter)")
-
         VStack {
             if predictionsV2Enabled {
                 Text("Using Predictions Channel V2")
@@ -109,9 +105,6 @@ struct StopDetailsPage: View {
             }
             .onChange(of: filter) { newFilter in
                 nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
-            }
-            .onChange(of: nearbyVM.navigationStack.lastStopDetailsFilter) { newFilter in
-                print("TEST: nav stack lastStopDetailsFilter changed \(newFilter)")
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task(id: stop.id) {
@@ -283,8 +276,6 @@ struct StopDetailsPage: View {
         }
 
         departures = newDepartures
-
-        print("TEST: setting departures \(stop.id) \(newDepartures?.routes.map { it in it.routeIdentifier }) ")
         nearbyVM.setDepartures(stop.id, newDepartures)
     }
 }

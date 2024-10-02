@@ -79,8 +79,6 @@ struct StopDetailsView: View {
                 }
                 .border(Color.halo.opacity(0.15), width: 2)
 
-                let _ = print("TEST: hasDepartures \(departures?.routes.map { it in it.routeIdentifier })")
-
                 if let departures {
                     StopDetailsRoutesView(
                         departures: departures,

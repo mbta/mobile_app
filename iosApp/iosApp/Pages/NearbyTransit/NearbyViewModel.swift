@@ -48,9 +48,7 @@ class NearbyViewModel: ObservableObject {
      */
     func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
         DispatchQueue.main.async { [self] in
-            print("TEST: check setting departures for \(stopId)")
             if stopId == navigationStack.lastStop?.id {
-                print("TEST: setting departures for \(stopId) \(navigationStack.lastStop?.id)")
                 departures = newDepartures
             }
         }
@@ -76,10 +74,7 @@ class NearbyViewModel: ObservableObject {
      */
     func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
         if stopId == navigationStack.lastStop?.id {
-            print("TEST: filter match \(stopId) \(filter)")
             navigationStack.lastStopDetailsFilter = filter
-        } else {
-            print("TEST: filter didn't match \(stopId)")
         }
     }
 
