@@ -856,43 +856,6 @@ final class NearbyTransitViewTests: XCTestCase {
         }
     }
 
-    @MainActor func testPredictionError() throws {
-        let predictionsErroredPublisher = PassthroughSubject<Bool, Never>()
-        let state = NearbyViewModel.NearbyTransitState(
-            loadedLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
-            nearbyByRouteAndStop: NearbyStaticData(data: [])
-        )
-
-        let predictionsRepo = MockPredictionsRepository(onConnect: { predictionsErroredPublisher.send(true) },
-                                                        onConnectV2: {},
-                                                        onDisconnect: {},
-                                                        connectOutcome:
-                                                        ApiResultError(
-                                                            code: nil,
-                                                            message: SocketError.shared.FAILURE
-                                                        ),
-                                                        connectV2Outcome: nil)
-
-        let errorBannerRepo = ErrorBannerStateRepository()
-
-        let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
-            pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: predictionsRepo,
-            schedulesRepository: MockScheduleRepository(),
-            getNearby: { _, _ in },
-            state: .constant(state),
-            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init(),
-            errorBannerRepository: errorBannerRepo
-        )
-        let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 1) { _ in
-            XCTAssertTrue(errorBannerRepo.state.value is ErrorBannerState.DataError)
-        }
-        ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 2)
-    }
-
     func testNoService() throws {
         let objects = ObjectCollectionBuilder()
         objects.alert { alert in

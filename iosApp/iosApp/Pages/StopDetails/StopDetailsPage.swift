@@ -205,14 +205,10 @@ struct StopDetailsPage: View {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
 
                     DispatchQueue.main.async {
-                        let errorKey = "StopDetailsPage.joinPredictions"
+                        // no error handling since persistent errors cause stale predictions
                         switch onEnum(of: outcome) {
-                        case let .ok(result):
-                            errorBannerRepository.clearDataError(key: errorKey)
-                            predictions = result.data
-                        case .error:
-                            errorBannerRepository.setDataError(key: errorKey) { loadEverything() }
-                            predictions = nil
+                        case let .ok(result): predictions = result.data
+                        case .error: break
                         }
                     }
                 }
@@ -221,6 +217,7 @@ struct StopDetailsPage: View {
     }
 
     func joinPredictionsV2(stopIds: Set<String>) {
+        // no error handling since persistent errors cause stale predictions
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 if case let .ok(result) = onEnum(of: outcome) {

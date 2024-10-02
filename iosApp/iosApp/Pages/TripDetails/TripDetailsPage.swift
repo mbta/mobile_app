@@ -191,14 +191,10 @@ struct TripDetailsPage: View {
     private func joinPredictions(tripId: String) {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
-                let errorKey = "TripDetailsPage.joinPredictions"
+                // no error handling since persistent errors cause stale predictions
                 switch onEnum(of: outcome) {
-                case let .ok(result):
-                    errorBannerRepository.clearDataError(key: errorKey)
-                    tripPredictions = result.data
-                case .error:
-                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
-                    tripPredictions = nil
+                case let .ok(result): tripPredictions = result.data
+                case .error: break
                 }
             }
         }

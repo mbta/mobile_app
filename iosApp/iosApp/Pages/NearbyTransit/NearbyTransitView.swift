@@ -212,13 +212,10 @@ struct NearbyTransitView: View {
         } else {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
-                    let errorKey = "NearbyTransitView.joinPredictions"
+                    // no error handling since persistent errors cause stale predictions
                     switch onEnum(of: outcome) {
-                    case let .ok(result):
-                        errorBannerRepository.clearDataError(key: errorKey)
-                        predictions = result.data
-                    case .error:
-                        errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                    case let .ok(result): predictions = result.data
+                    case .error: break
                     }
                 }
             }
@@ -226,23 +223,18 @@ struct NearbyTransitView: View {
     }
 
     func joinPredictionsV2(stopIds: Set<String>) {
+        // no error handling since persistent errors cause stale predictions
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
-                let errorKey = "NearbyTransitView.joinPredictionsV2/onJoin"
                 switch onEnum(of: outcome) {
-                case let .ok(result):
-                    errorBannerRepository.clearDataError(key: errorKey)
-                    predictionsByStop = result.data
-                case .error:
-                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                case let .ok(result): predictionsByStop = result.data
+                case .error: break
                 }
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
-                let errorKey = "NearbyTransitView.joinPredictionsV2/onMessage"
                 switch onEnum(of: outcome) {
                 case let .ok(result):
-                    errorBannerRepository.clearDataError(key: errorKey)
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                     } else {
@@ -252,8 +244,7 @@ struct NearbyTransitView: View {
                             vehicles: result.data.vehicles
                         )
                     }
-                case .error:
-                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                case .error: break
                 }
             }
 
