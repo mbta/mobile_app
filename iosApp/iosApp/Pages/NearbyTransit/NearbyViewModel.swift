@@ -119,24 +119,16 @@ class NearbyViewModel: ObservableObject {
                 self.nearbyState.loading = false
                 self.selectingLocation = false
             }
-            let errorKey = "NearbyViewModel.getNearby"
-            switch await callApi({
-                try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) }) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                if Task.isCancelled { return }
-                nearbyState.nearbyByRouteAndStop = result.data
-                nearbyState.loadedLocation = location
-            case .error:
-                withUnsafeCurrentTask { thisTask in
-                    if self.fetchNearbyTask?.hashValue == thisTask?.hashValue {
-                        errorBannerRepository.setDataError(
-                            key: errorKey,
-                            action: { self.getNearby(global: global, location: location) }
-                        )
-                    }
-                }
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "NearbyViewModel.getNearby",
+                getData: { try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) },
+                onSuccess: {
+                    nearbyState.nearbyByRouteAndStop = $0
+                    nearbyState.loadedLocation = location
+                },
+                onRefreshAfterError: { self.getNearby(global: global, location: location) }
+            )
         }
     }
 

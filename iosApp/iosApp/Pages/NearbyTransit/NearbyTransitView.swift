@@ -162,16 +162,17 @@ struct NearbyTransitView: View {
 
     func getGlobal() {
         Task {
-            let errorKey = "NearbyTransitView.getGlobal"
-            switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalData = result.data
-                // this should be handled by the onChange but in tests it just isn't
-                getNearby(location: location, globalData: globalData)
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "NearbyTransitView.getGlobal",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: {
+                    globalData = $0
+                    // this should be handled by the onChange but in tests it just isn't
+                    getNearby(location: location, globalData: globalData)
+                },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 
@@ -187,14 +188,13 @@ struct NearbyTransitView: View {
             guard let stopIds = state.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
-            let errorKey = "NearbyTransitView.getSchedule"
-            switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: stopIdList)) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                scheduleResponse = result.data
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "NearbyTransitView.getSchedule",
+                getData: { try await schedulesRepository.getSchedule(stopIds: stopIdList) },
+                onSuccess: { scheduleResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 

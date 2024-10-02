@@ -132,14 +132,13 @@ struct StopDetailsPage: View {
 
     func loadGlobalData() {
         Task {
-            let errorKey = "StopDetailsPage.loadGlobalData"
-            switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalResponse = result.data
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadGlobalData)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "StopDetailsPage.loadGlobalData",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 
@@ -185,13 +184,13 @@ struct StopDetailsPage: View {
         Task {
             let errorKey = "StopDetailsPage.getSchedule"
             schedulesResponse = nil
-            switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: [stop.id])) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                schedulesResponse = result.data
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "StopDetailsPage.getSchedule",
+                getData: { try await schedulesRepository.getSchedule(stopIds: [stop.id]) },
+                onSuccess: { schedulesResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 

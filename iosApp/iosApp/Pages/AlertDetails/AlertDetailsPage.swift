@@ -113,14 +113,13 @@ struct AlertDetailsPage: View {
 
     private func loadGlobal() {
         Task {
-            let errorKey = "AlertDetailsPage.loadGlobal"
-            switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalResponse = result.data
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadGlobal)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "AlertDetailsPage.loadGlobal",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadGlobal
+            )
         }
     }
 

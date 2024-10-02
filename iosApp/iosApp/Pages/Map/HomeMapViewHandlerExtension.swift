@@ -17,17 +17,13 @@ extension HomeMapView {
     func handleAppear(location: LocationManager?, map: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
-            let errorKey = "HomeMapView.handleAppear"
-            switch try await onEnum(of: railRouteShapeRepository.getRailRouteShapes()) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                railRouteShapes = result.data
-            case .error:
-                errorBannerRepository.setDataError(
-                    key: errorKey,
-                    action: { handleAppear(location: location, map: map) }
-                )
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.handleAppear",
+                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
+                onSuccess: { railRouteShapes = $0 },
+                onRefreshAfterError: { handleAppear(location: location, map: map) }
+            )
         }
 
         // Set MapBox to use the current location to display puck
@@ -79,14 +75,13 @@ extension HomeMapView {
 
     func loadGlobalData() {
         Task {
-            let errorKey = "HomeMapView.loadGlobalData"
-            switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalData = result.data
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadGlobalData)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.loadGlobalData",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: { globalData = $0 },
+                onRefreshAfterError: loadGlobalData
+            )
         }
     }
 

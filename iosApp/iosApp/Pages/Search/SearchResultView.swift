@@ -52,17 +52,18 @@ struct SearchView: View {
 
     func loadResults(query: String) {
         Task {
-            let errorKey = "SearchView.loadResults"
-            switch try await onEnum(of: searchResultsRepository.getSearchResults(query: query)) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                searchResults = result.data
-            case nil:
-                errorBannerRepository.clearDataError(key: errorKey)
-                searchResults = nil
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: { loadResults(query: query) })
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "SearchView.loadResults",
+                getData: {
+                    guard let result = try await searchResultsRepository.getSearchResults(query: query) else {
+                        throw CancellationError()
+                    }
+                    return result
+                },
+                onSuccess: { searchResults = $0 },
+                onRefreshAfterError: { loadResults(query: query) }
+            )
         }
     }
 
@@ -106,14 +107,13 @@ struct SearchView: View {
 
     private func loadGlobal() {
         Task {
-            let errorKey = "SearchResultView.loadGlobal"
-            switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalResponse = result.data
-            case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadGlobal)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "SearchResultView.loadGlobal",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadGlobal
+            )
         }
     }
 }

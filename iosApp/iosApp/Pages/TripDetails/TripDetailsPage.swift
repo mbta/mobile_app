@@ -141,27 +141,25 @@ struct TripDetailsPage: View {
 
     private func loadGlobalData() {
         Task {
-            let errorKey = "TripDetailsPage.loadGlobalData"
-            switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalResponse = result.data
-            case let .error(error):
-                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "TripDetailsPage.loadGlobalData",
+                getData: globalRepository.getGlobalData,
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 
     private func loadTripSchedules() {
         Task {
-            let errorKey = "TripDetailsPage.loadTripSchedules"
-            switch await callApi({ try await tripRepository.getTripSchedules(tripId: tripId) }) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                tripSchedulesResponse = result.data
-            case let .error(error):
-                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "TripDetailsPage.loadTripSchedules",
+                getData: { try await tripRepository.getTripSchedules(tripId: tripId) },
+                onSuccess: { tripSchedulesResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 

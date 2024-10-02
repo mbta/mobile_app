@@ -115,14 +115,13 @@ struct StopDetailsView: View {
 
     private func loadGlobal() {
         Task {
-            let errorKey = "StopDetailsView.loadGlobal"
-            switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result):
-                errorBannerRepository.clearDataError(key: errorKey)
-                globalResponse = result.data
-            case let .error(error):
-                errorBannerRepository.setDataError(key: errorKey, action: loadGlobal)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "StopDetailsView.loadGlobal",
+                getData: globalRepository.getGlobalData,
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadGlobal
+            )
         }
     }
 
