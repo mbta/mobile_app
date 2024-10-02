@@ -23,7 +23,8 @@ struct StopDetailsPage: View {
 
     @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
-    @Binding var filter: StopDetailsFilter?
+    @State var filter: StopDetailsFilter?
+    @State var departures: StopDetailsDepartures? = nil
     @State var now = Date.now
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
@@ -44,7 +45,7 @@ struct StopDetailsPage: View {
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         viewportProvider: ViewportProvider,
         stop: Stop,
-        filter: Binding<StopDetailsFilter?>,
+        filter: StopDetailsFilter?,
         nearbyVM: NearbyViewModel,
         predictionsV2Enabled: Bool = false
     ) {
@@ -55,19 +56,26 @@ struct StopDetailsPage: View {
         self.errorBannerRepository = errorBannerRepository
         self.viewportProvider = viewportProvider
         self.stop = stop
-        _filter = filter
+        // initialize filter to value it is passed. this will not be re-set on subsequent inits
+        self.filter = filter
         self.nearbyVM = nearbyVM
         self.predictionsV2Enabled = predictionsV2Enabled
+        print("TEST: init \(stop.id) \(filter)")
+        print("TEST: filter after init \(self.filter)")
     }
 
     var body: some View {
+        let _ = print("TEST: filter after init in body \(filter)")
+
         VStack {
             if predictionsV2Enabled {
                 Text("Using Predictions Channel V2")
             }
+
             StopDetailsView(
                 stop: stop,
                 filter: $filter,
+                departures: departures,
                 nearbyVM: nearbyVM,
                 pinnedRoutes: pinnedRoutes,
                 togglePinnedRoute: togglePinnedRoute
@@ -98,6 +106,12 @@ struct StopDetailsPage: View {
             .onChange(of: schedulesResponse) { _ in
 
                 updateDepartures(stop)
+            }
+            .onChange(of: filter) { newFilter in
+                nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
+            }
+            .onChange(of: nearbyVM.navigationStack.lastStopDetailsFilter) { newFilter in
+                print("TEST: nav stack lastStopDetailsFilter changed \(newFilter)")
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task(id: stop.id) {
@@ -268,6 +282,9 @@ struct StopDetailsPage: View {
             filter = newFilter
         }
 
-        nearbyVM.setDepartures(newDepartures)
+        departures = newDepartures
+
+        print("TEST: setting departures \(stop.id) \(newDepartures?.routes.map { it in it.routeIdentifier }) ")
+        nearbyVM.setDepartures(stop.id, newDepartures)
     }
 }

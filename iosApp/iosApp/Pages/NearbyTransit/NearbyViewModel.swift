@@ -43,8 +43,17 @@ class NearbyViewModel: ObservableObject {
         self.analytics = analytics
     }
 
-    func setDepartures(_ newDepartures: StopDetailsDepartures?) {
-        departures = newDepartures
+    /**
+
+     */
+    func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
+        DispatchQueue.main.async { [self] in
+            print("TEST: check setting departures for \(stopId)")
+            if stopId == navigationStack.lastStop?.id {
+                print("TEST: setting departures for \(stopId) \(navigationStack.lastStop?.id)")
+                departures = newDepartures
+            }
+        }
     }
 
     func isNearbyVisible() -> Bool {
@@ -59,6 +68,18 @@ class NearbyViewModel: ObservableObject {
             navigationStack.append(entry)
         } else {
             navigationStack.append(entry)
+        }
+    }
+
+    /**
+     set the filter for the given stop, only if the given stop is still the last stop in the stack
+     */
+    func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
+        if stopId == navigationStack.lastStop?.id {
+            print("TEST: filter match \(stopId) \(filter)")
+            navigationStack.lastStopDetailsFilter = filter
+        } else {
+            print("TEST: filter didn't match \(stopId)")
         }
     }
 

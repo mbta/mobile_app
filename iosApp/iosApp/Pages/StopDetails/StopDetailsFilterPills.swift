@@ -70,6 +70,7 @@ struct StopDetailsFilterPills: View {
                 }
             }
             if filter != nil {
+                let _ = print("TEST: Inside stop details filter \(filter)")
                 Button(action: { filter = nil }) {
                     Text("All")
                         .foregroundStyle(Color.fill1)

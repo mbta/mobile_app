@@ -19,6 +19,7 @@ struct StopDetailsView: View {
     @State var globalResponse: GlobalResponse?
     var stop: Stop
     @Binding var filter: StopDetailsFilter?
+    var departures: StopDetailsDepartures?
     @State var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -34,6 +35,7 @@ struct StopDetailsView: View {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
         filter: Binding<StopDetailsFilter?>,
+        departures: StopDetailsDepartures?,
         nearbyVM: NearbyViewModel,
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
@@ -41,11 +43,12 @@ struct StopDetailsView: View {
         self.globalRepository = globalRepository
         self.stop = stop
         _filter = filter
+        self.departures = departures
         self.nearbyVM = nearbyVM
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
 
-        if let departures = nearbyVM.departures {
+        if let departures {
             servedRoutes = departures.routes.map { patterns in
                 if let line = patterns.line {
                     return .line(line)
@@ -76,7 +79,9 @@ struct StopDetailsView: View {
                 }
                 .border(Color.halo.opacity(0.15), width: 2)
 
-                if let departures = nearbyVM.departures {
+                let _ = print("TEST: hasDepartures \(departures?.routes.map { it in it.routeIdentifier })")
+
+                if let departures {
                     StopDetailsRoutesView(
                         departures: departures,
                         global: globalResponse,
@@ -111,7 +116,7 @@ struct StopDetailsView: View {
             route.id
         }
         if filter?.routeId == filterId { filter = nil; return }
-        guard let departures = nearbyVM.departures else { return }
+        guard let departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
         analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)

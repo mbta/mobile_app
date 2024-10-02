@@ -208,9 +208,10 @@ struct ContentView: View {
                     TabView {
                         StopDetailsPage(
                             viewportProvider: viewportProvider,
-                            stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
+                            stop: stop, filter: filter,
                             nearbyVM: nearbyVM
                         )
+
                         .toolbar(.hidden, for: .tabBar)
                         .onAppear {
                             let filtered = filter != nil
@@ -219,6 +220,7 @@ struct ContentView: View {
                             )
                         }
                     }
+                    .id(stop.id)
                     .transition(transition)
 
                 case let .tripDetails(
