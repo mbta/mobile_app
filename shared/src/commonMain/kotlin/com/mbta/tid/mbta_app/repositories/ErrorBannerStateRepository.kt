@@ -20,6 +20,7 @@ protected constructor(initialState: ErrorBannerState? = null) {
         flow.value =
             when {
                 dataErrors.isNotEmpty() ->
+                    // encapsulate all the different error actions within one error
                     ErrorBannerState.DataError { dataErrors.values.forEach { it.action() } }
                 predictionsStale != null -> predictionsStale
                 else -> null
