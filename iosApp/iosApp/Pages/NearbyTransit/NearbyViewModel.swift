@@ -132,7 +132,7 @@ class NearbyViewModel: ObservableObject {
                     if self.fetchNearbyTask?.hashValue == thisTask?.hashValue {
                         errorBannerRepository.setDataError(
                             key: errorKey,
-                            action: { [self] in getNearby(global: global, location: location) }
+                            action: { self.getNearby(global: global, location: location) }
                         )
                     }
                 }
