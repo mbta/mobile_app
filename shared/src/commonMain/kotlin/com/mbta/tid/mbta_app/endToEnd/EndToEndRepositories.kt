@@ -34,6 +34,7 @@ import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.IdleRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
@@ -42,9 +43,11 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -204,8 +207,10 @@ fun endToEndModule(): Module {
             }
         }
         single<IVehiclesRepository> { MockVehiclesRepository() }
+        single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
         single { ConfigUseCase(get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
+        single { VisitHistoryUsecase(get()) }
     }
 }
