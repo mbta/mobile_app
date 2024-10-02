@@ -1,5 +1,4 @@
 import CoreLocation
-import NavigationTransitions
 import shared
 import SwiftPhoenixClient
 import SwiftUI
