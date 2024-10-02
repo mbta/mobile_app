@@ -20,7 +20,6 @@ struct ContentView: View {
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
 
-    @State var animatedLastEntry: SheetNavigationStackEntry = .nearby
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
 
@@ -181,14 +180,6 @@ struct ContentView: View {
                         },
                         content: coverContents
                     )
-
-                    .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe()) { newEntry in
-                        DispatchQueue.main.async {
-                            withAnimation {
-                                animatedLastEntry = newEntry
-                            }
-                        }
-                    }
                     .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
                         .id) { _ in
                             selectedDetent = .halfScreen
@@ -207,7 +198,7 @@ struct ContentView: View {
     var navSheetContents: some View {
         NavigationStack {
             VStack {
-                switch animatedLastEntry {
+                switch nearbyVM.navigationStack.lastSafe() {
                 case .alertDetails:
                     EmptyView()
 
@@ -260,7 +251,7 @@ struct ContentView: View {
                         }
                 }
             }
-            .animation(.easeInOut, value: animatedLastEntry)
+            .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe())
         }
     }
 
