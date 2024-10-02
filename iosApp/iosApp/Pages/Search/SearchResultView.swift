@@ -13,6 +13,7 @@ import SwiftUI
 
 struct SearchView: View {
     let query: String
+    let errorBannerRepository: IErrorBannerStateRepository
     let globalRepository: IGlobalRepository
     let searchResultsRepository: ISearchResultRepository
     let visitHistoryUsecase: VisitHistoryUsecase
@@ -31,6 +32,7 @@ struct SearchView: View {
         query: String,
         nearbyVM: NearbyViewModel,
         searchVM: SearchViewModel,
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
@@ -40,6 +42,7 @@ struct SearchView: View {
         self.query = query
         self.nearbyVM = nearbyVM
         self.searchVM = searchVM
+        self.errorBannerRepository = errorBannerRepository
         self.globalRepository = globalRepository
         self.searchResultsRepository = searchResultsRepository
         self.visitHistoryUsecase = visitHistoryUsecase
@@ -49,10 +52,16 @@ struct SearchView: View {
 
     func loadResults(query: String) {
         Task {
+            let errorKey = "SearchView.loadResults"
             switch try await onEnum(of: searchResultsRepository.getSearchResults(query: query)) {
-            case let .ok(result): searchResults = result.data
-            case nil: searchResults = nil
-            case let .error(error): debugPrint(error)
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                searchResults = result.data
+            case nil:
+                errorBannerRepository.clearDataError(key: errorKey)
+                searchResults = nil
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: { loadResults(query: query) })
             }
         }
     }
@@ -86,17 +95,25 @@ struct SearchView: View {
             Task {
                 await searchVM.loadSettings()
             }
-            Task {
-                switch try await onEnum(of: globalRepository.getGlobalData()) {
-                case let .ok(result): globalResponse = result.data
-                case let .error(error): debugPrint(error)
-                }
-            }
+            loadGlobal()
             didAppear?(self)
         }
         .onChange(of: query) { query in
             loadResults(query: query)
             didChange?(self)
+        }
+    }
+
+    private func loadGlobal() {
+        Task {
+            let errorKey = "SearchResultView.loadGlobal"
+            switch try await onEnum(of: globalRepository.getGlobalData()) {
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                globalResponse = result.data
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: loadGlobal)
+            }
         }
     }
 }

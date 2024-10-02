@@ -15,7 +15,6 @@ import SwiftUI
 class NearbyViewModel: ObservableObject {
     private static let logger = Logger()
     struct NearbyTransitState: Equatable {
-        var error: String?
         var loadedLocation: CLLocationCoordinate2D?
         var loading: Bool = false
         var nearbyByRouteAndStop: NearbyStaticData?
@@ -42,6 +41,7 @@ class NearbyViewModel: ObservableObject {
     @Published var nearbyState = NearbyTransitState()
     @Published var selectingLocation = false
     private let alertsRepository: IAlertsRepository
+    private let errorBannerRepository: IErrorBannerStateRepository
     private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
@@ -51,6 +51,7 @@ class NearbyViewModel: ObservableObject {
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
@@ -58,6 +59,7 @@ class NearbyViewModel: ObservableObject {
         self.departures = departures
         self.navigationStack = navigationStack
         self.alertsRepository = alertsRepository
+        self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
@@ -117,17 +119,21 @@ class NearbyViewModel: ObservableObject {
                 self.nearbyState.loading = false
                 self.selectingLocation = false
             }
+            let errorKey = "NearbyViewModel.getNearby"
             switch await callApi({
                 try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) }) {
             case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
                 if Task.isCancelled { return }
                 nearbyState.nearbyByRouteAndStop = result.data
                 nearbyState.loadedLocation = location
-                nearbyState.error = nil
-            case let .error(error):
+            case .error:
                 withUnsafeCurrentTask { thisTask in
                     if self.fetchNearbyTask?.hashValue == thisTask?.hashValue {
-                        self.nearbyState.error = error.message
+                        errorBannerRepository.setDataError(
+                            key: errorKey,
+                            action: { [self] in getNearby(global: global, location: location) }
+                        )
                     }
                 }
             }

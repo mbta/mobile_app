@@ -837,22 +837,26 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testNearbyErrorMessage() throws {
-        let state = NearbyViewModel.NearbyTransitState(error: "Failed to load nearby transit, test error")
+        loadKoinMocks(repositories: MockRepositories.companion
+            .buildWithDefaults(errorBanner: MockErrorBannerStateRepository(state: .DataError(action: {}))))
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
-            state: .constant(state),
+            state: .constant(.init()),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             nearbyVM: .init()
         )
-        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self)
-            .find(text: "Failed to load nearby transit, test error"))
+
+        sut.inspection.inspect(after: 0.2) { view in
+            XCTAssertNotNil(try view.view(NearbyTransitView.self)
+                .find(text: "Error loading data"))
+        }
     }
 
-    @MainActor func testPredictionErrorMessage() throws {
+    @MainActor func testPredictionError() throws {
         let predictionsErroredPublisher = PassthroughSubject<Bool, Never>()
         let state = NearbyViewModel.NearbyTransitState(
             loadedLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
@@ -868,6 +872,9 @@ final class NearbyTransitViewTests: XCTestCase {
                                                             message: SocketError.shared.FAILURE
                                                         ),
                                                         connectV2Outcome: nil)
+
+        let errorBannerRepo = ErrorBannerStateRepository()
+
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -876,10 +883,11 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(state),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            errorBannerRepository: errorBannerRepo
         )
-        let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 1) { view in
-            XCTAssertEqual(try view.actualView().predictionsError, SocketError.shared.FAILURE)
+        let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 1) { _ in
+            XCTAssertTrue(errorBannerRepo.state.value is ErrorBannerState.DataError)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)

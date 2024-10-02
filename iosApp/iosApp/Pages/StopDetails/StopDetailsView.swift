@@ -15,6 +15,7 @@ import SwiftUI
 
 struct StopDetailsView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    let errorBannerRepository: IErrorBannerStateRepository
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
@@ -33,6 +34,7 @@ struct StopDetailsView: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
         filter: StopDetailsFilter?,
@@ -43,6 +45,7 @@ struct StopDetailsView: View {
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
     ) {
+        self.errorBannerRepository = errorBannerRepository
         self.globalRepository = globalRepository
         self.stop = stop
         self.filter = filter
@@ -106,9 +109,19 @@ struct StopDetailsView: View {
             }
         }
         .task {
+            loadGlobal()
+        }
+    }
+
+    private func loadGlobal() {
+        Task {
+            let errorKey = "StopDetailsView.loadGlobal"
             switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result): globalResponse = result.data
-            case let .error(error): debugPrint(error)
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                globalResponse = result.data
+            case let .error(error):
+                errorBannerRepository.setDataError(key: errorKey, action: loadGlobal)
             }
         }
     }

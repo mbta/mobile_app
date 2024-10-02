@@ -33,7 +33,6 @@ struct NearbyTransitView: View {
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     @State var predictions: PredictionsStreamDataResponse?
-    @State var predictionsError: String?
     @State var predictionsV2Enabled = false
     var errorBannerRepository = RepositoryDI().errorBanner
 
@@ -49,15 +48,7 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getGlobal()
-            getNearby(location: location, globalData: globalData)
-            Task {
-                await getPredictionsFeatureFlag()
-                joinPredictions(state.nearbyByRouteAndStop?.stopIds())
-            }
-            updateNearbyRoutes()
-            updatePinnedRoutes()
-            getSchedule()
+            loadEverything()
             didAppear?(self)
         }
         .onChange(of: globalData) { globalData in
@@ -106,9 +97,6 @@ struct NearbyTransitView: View {
             onInactive: leavePredictions,
             onBackground: leavePredictions
         )
-        .replaceWhen(state.error) { errorText in
-            errorCard(errorText)
-        }
     }
 
     @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
@@ -154,30 +142,35 @@ struct NearbyTransitView: View {
                         proxy.scrollTo(id, anchor: .top)
                     }
                 }
-                .putAboveWhen(predictionsError) { error in
-                    IconCard(iconName: "network.slash", details: Text(error))
-                }
             }
         }
     }
 
-    private func errorCard(_ errorText: String) -> some View {
-        IconCard(iconName: "network.slash", details: Text(errorText))
-            .refreshable(state.loading) {
-                getNearby(location: location, globalData: globalData)
-            }
-    }
-
     var didAppear: ((Self) -> Void)?
+
+    private func loadEverything() {
+        getGlobal()
+        getNearby(location: location, globalData: globalData)
+        Task {
+            await getPredictionsFeatureFlag()
+            joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+        }
+        updateNearbyRoutes()
+        updatePinnedRoutes()
+        getSchedule()
+    }
 
     func getGlobal() {
         Task {
+            let errorKey = "NearbyTransitView.getGlobal"
             switch try await onEnum(of: globalRepository.getGlobalData()) {
             case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
                 globalData = result.data
                 // this should be handled by the onChange but in tests it just isn't
                 getNearby(location: location, globalData: globalData)
-            case let .error(error): throw error
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
             }
         }
     }
@@ -194,9 +187,13 @@ struct NearbyTransitView: View {
             guard let stopIds = state.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
+            let errorKey = "NearbyTransitView.getSchedule"
             switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: stopIdList)) {
-            case let .ok(result): scheduleResponse = result.data
-            case let .error(error): throw error
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                scheduleResponse = result.data
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
             }
         }
     }
@@ -215,12 +212,13 @@ struct NearbyTransitView: View {
         } else {
             predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
                 DispatchQueue.main.async {
+                    let errorKey = "NearbyTransitView.joinPredictions"
                     switch onEnum(of: outcome) {
                     case let .ok(result):
+                        errorBannerRepository.clearDataError(key: errorKey)
                         predictions = result.data
-                        predictionsError = nil
-                    case let .error(error):
-                        predictionsError = error.message
+                    case .error:
+                        errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
                     }
                 }
             }
@@ -230,31 +228,32 @@ struct NearbyTransitView: View {
     func joinPredictionsV2(stopIds: Set<String>) {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
+                let errorKey = "NearbyTransitView.joinPredictionsV2/onJoin"
                 switch onEnum(of: outcome) {
                 case let .ok(result):
+                    errorBannerRepository.clearDataError(key: errorKey)
                     predictionsByStop = result.data
-                    predictionsError = nil
-                case let .error(error):
-                    predictionsError = error.message
+                case .error:
+                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
                 }
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
+                let errorKey = "NearbyTransitView.joinPredictionsV2/onMessage"
                 switch onEnum(of: outcome) {
                 case let .ok(result):
+                    errorBannerRepository.clearDataError(key: errorKey)
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
-                        predictionsError = nil
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
                             predictionsByStop: [result.data.stopId: result.data.predictions],
                             trips: result.data.trips,
                             vehicles: result.data.vehicles
                         )
-                        predictionsError = nil
                     }
-                case let .error(error):
-                    predictionsError = error.message
+                case .error:
+                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
                 }
             }
 
@@ -270,7 +269,10 @@ struct NearbyTransitView: View {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
                 updateNearbyRoutes(pinnedRoutes: pinnedRoutes)
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -282,7 +284,10 @@ struct NearbyTransitView: View {
                 let pinned = try await togglePinnedUsecase.execute(route: routeId).boolValue
                 analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 updatePinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // execute shouldn't actually fail
                 debugPrint(error)
             }
         }

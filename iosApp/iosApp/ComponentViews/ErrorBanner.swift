@@ -28,6 +28,19 @@ struct ErrorBanner: View {
 
     @ViewBuilder private var content: some View {
         switch onEnum(of: state) {
+        case let .dataError(state):
+            IconCard(
+                iconName: "xmark.octagon",
+                details: Text("Error loading data")
+            ) {
+                AnyView(Button(action: {
+                    repo.clearState()
+                    state.action()
+                }, label: {
+                    Image(systemName: "arrow.clockwise")
+                        .accessibilityLabel("Reload data")
+                }))
+            }
         case let .stalePredictions(state):
             IconCard(
                 iconName: "clock.arrow.circlepath",
@@ -41,7 +54,7 @@ struct ErrorBanner: View {
                         .accessibilityLabel("Refresh predictions")
                 }))
             }
-        default:
+        case nil:
             // for some reason, .collect on an EmptyView doesn't work
             ZStack {}
         }

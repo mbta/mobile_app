@@ -84,9 +84,7 @@ struct StopDetailsPage: View {
                 togglePinnedRoute: togglePinnedRoute
             )
             .onAppear {
-                loadGlobalData()
-                fetchStopData(stop)
-                loadPinnedRoutes()
+                loadEverything()
                 didAppear?(self)
             }
             .onChange(of: stop) { nextStop in
@@ -126,11 +124,21 @@ struct StopDetailsPage: View {
         }
     }
 
+    func loadEverything() {
+        loadGlobalData()
+        fetchStopData(stop)
+        loadPinnedRoutes()
+    }
+
     func loadGlobalData() {
         Task {
+            let errorKey = "StopDetailsPage.loadGlobalData"
             switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(result): globalResponse = result.data
-            case let .error(error): debugPrint(error)
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                globalResponse = result.data
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: loadGlobalData)
             }
         }
     }
@@ -139,7 +147,10 @@ struct StopDetailsPage: View {
         Task {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -150,7 +161,10 @@ struct StopDetailsPage: View {
             do {
                 _ = try await togglePinnedUsecase.execute(route: routeId)
                 loadPinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // execute shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -169,11 +183,14 @@ struct StopDetailsPage: View {
 
     func getSchedule(_ stop: Stop) {
         Task {
+            let errorKey = "StopDetailsPage.getSchedule"
             schedulesResponse = nil
             switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: [stop.id])) {
-            case let .ok(result): schedulesResponse = result.data
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                schedulesResponse = result.data
             case .error:
-                ()
+                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
             }
         }
     }
@@ -189,9 +206,14 @@ struct StopDetailsPage: View {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
 
                     DispatchQueue.main.async {
+                        let errorKey = "StopDetailsPage.joinPredictions"
                         switch onEnum(of: outcome) {
-                        case let .ok(result): predictions = result.data
-                        case .error: predictions = nil
+                        case let .ok(result):
+                            errorBannerRepository.clearDataError(key: errorKey)
+                            predictions = result.data
+                        case .error:
+                            errorBannerRepository.setDataError(key: errorKey) { loadEverything() }
+                            predictions = nil
                         }
                     }
                 }

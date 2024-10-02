@@ -14,6 +14,7 @@ struct AlertDetailsPage: View {
     var line: Line?
     var routes: [Route]?
     var nearbyVM: NearbyViewModel
+    var errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner
     var globalRepository: IGlobalRepository = RepositoryDI().global
 
     @State private var alert: shared.Alert?
@@ -102,15 +103,25 @@ struct AlertDetailsPage: View {
         }
         .background(Color.fill2)
         .task {
-            switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result): globalResponse = result.data
-            case let .error(error): debugPrint(error)
-            }
+            loadGlobal()
         }
         .onAppear { updateAlert() }
         .onChange(of: nearbyVM.alerts) { _ in updateAlert() }
         .onReceive(timer) { input in now = input }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+    }
+
+    private func loadGlobal() {
+        Task {
+            let errorKey = "AlertDetailsPage.loadGlobal"
+            switch await callApi({ try await globalRepository.getGlobalData() }) {
+            case let .ok(result):
+                errorBannerRepository.clearDataError(key: errorKey)
+                globalResponse = result.data
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: loadGlobal)
+            }
+        }
     }
 
     private func updateAlert() {
