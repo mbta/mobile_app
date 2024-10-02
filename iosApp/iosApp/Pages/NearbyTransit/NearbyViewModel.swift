@@ -47,10 +47,8 @@ class NearbyViewModel: ObservableObject {
 
      */
     func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
-        DispatchQueue.main.async { [self] in
-            if stopId == navigationStack.lastStop?.id {
-                departures = newDepartures
-            }
+        if stopId == navigationStack.lastStop?.id {
+            departures = newDepartures
         }
     }
 
