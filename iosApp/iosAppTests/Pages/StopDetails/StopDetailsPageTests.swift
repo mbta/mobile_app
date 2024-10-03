@@ -133,43 +133,7 @@ final class StopDetailsPageTests: XCTestCase {
         XCTAssertNotNil(nearbyVM.navigationStack.lastStopDetailsFilter)
 
         try sut.inspect().find(button: "All").tap()
-        sut.inspection.inspect { view in
-            XCTAssertNil(try view.actualView().internalFilter)
-            // Keeps internal filter in sync with nav stack filter
-            XCTAssertNil(nearbyVM.navigationStack.lastStopDetailsFilter)
-        }
-    }
-
-    func testChangingInternalFilterSyncsWithVM() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-
-        class FakeNearbyVM: NearbyViewModel {
-            var setFilterExp: XCTestExpectation
-
-            init(setFilterExp: XCTestExpectation) {
-                self.setFilterExp = setFilterExp
-            }
-
-            override func setLastStopDetailsFilter(_: String, _: StopDetailsFilter?) {
-                setFilterExp.fulfill()
-            }
-        }
-
-        let setFilterExp: XCTestExpectation = .init(description: "Set filter called")
-
-        let sut = StopDetailsPage(
-            schedulesRepository: MockScheduleRepository(),
-            predictionsRepository: MockPredictionsRepository(),
-            viewportProvider: .init(),
-            stop: stop,
-            filter: nil,
-            nearbyVM: FakeNearbyVM(setFilterExp: setFilterExp)
-        )
-
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: StopDetailsFilter(routeId: "1",
-                                                                                              directionId: 0))
-        wait(for: [setFilterExp], timeout: 1)
+        XCTAssertNil(nearbyVM.navigationStack.lastStopDetailsFilter)
     }
 
     func testDisplaysSchedules() {
@@ -436,6 +400,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: StopDetailsFilter? = nil
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
 
         let sut = StopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(
@@ -450,14 +415,12 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
-            nearbyVM: .init()
+            nearbyVM: nearbyVM
         )
 
-        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { view in
-            XCTAssertEqual(
-                try view.actualView().internalFilter,
-                .init(routeId: route.id, directionId: routePattern.directionId)
-            )
+        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { _ in
+            XCTAssertEqual(nearbyVM.navigationStack.lastStopDetailsFilter,
+                           StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 2)

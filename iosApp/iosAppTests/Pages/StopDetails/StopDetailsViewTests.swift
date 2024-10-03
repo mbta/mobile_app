@@ -33,7 +33,8 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let sut = StopDetailsView(stop: stop,
-                                  filter: .constant(nil),
+                                  filter: nil,
+                                  setFilter: { _ in },
                                   departures: .init(routes: [
                                       .init(route: routeDefaultSort1, stop: stop, patterns: []),
                                       .init(route: routeDefaultSort0, stop: stop, patterns: []),
@@ -56,7 +57,8 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let sut = StopDetailsView(stop: stop,
-                                  filter: .constant(nil),
+                                  filter: nil,
+                                  setFilter: { _ in },
                                   departures: .init(routes: [
                                       .init(route: route, stop: stop, patterns: []),
                                   ]),

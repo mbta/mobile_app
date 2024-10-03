@@ -23,11 +23,11 @@ struct StopDetailsPage: View {
 
     @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
-    // StopDetailsPage maintains its own internal state of the filter & departures presented.
+
+    var filter: StopDetailsFilter?
+    // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
-    // their respective filter / departures rather than both showing the filter and departures for the
-    // newly presented stop.
-    var internalFilter: StopDetailsFilter?
+    // their respective  departures rather than both showing the departures for the newly presented stop.
     @State var internalDepartures: StopDetailsDepartures? = nil
     @State var now = Date.now
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -61,8 +61,7 @@ struct StopDetailsPage: View {
         self.errorBannerRepository = errorBannerRepository
         self.viewportProvider = viewportProvider
         self.stop = stop
-        // initialize filter to value it is passed. this will not be re-set on subsequent calls to init
-        internalFilter = filter
+        self.filter = filter
         self.internalDepartures = internalDepartures // only for testing
         self.nearbyVM = nearbyVM
         self.predictionsV2Enabled = predictionsV2Enabled
@@ -76,7 +75,7 @@ struct StopDetailsPage: View {
 
             StopDetailsView(
                 stop: stop,
-                filter: internalFilter,
+                filter: filter,
                 setFilter: { filter in nearbyVM.pushNavEntry(.stopDetails(stop, filter)) },
                 departures: internalDepartures,
                 nearbyVM: nearbyVM,
@@ -109,9 +108,6 @@ struct StopDetailsPage: View {
             .onChange(of: schedulesResponse) { _ in
 
                 updateDepartures(stop)
-            }
-            .onChange(of: internalFilter) { newFilter in
-                nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task(id: stop.id) {
@@ -278,7 +274,7 @@ struct StopDetailsPage: View {
             nil
         }
 
-        if internalFilter == nil, let newFilter = newDepartures?.autoFilter() {
+        if filter == nil, let newFilter = newDepartures?.autoFilter() {
             nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
         }
 
