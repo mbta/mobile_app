@@ -24,7 +24,8 @@ struct StopDetailsFilterPills: View {
 
     let servedRoutes: [FilterBy]
     let tapRoutePill: (FilterBy) -> Void
-    @Binding var filter: StopDetailsFilter?
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
 
     var body: some View {
         HStack(spacing: 0) {
@@ -70,7 +71,7 @@ struct StopDetailsFilterPills: View {
                 }
             }
             if filter != nil {
-                Button(action: { filter = nil }) {
+                Button(action: { setFilter(nil) }) {
                     Text("All")
                         .foregroundStyle(Color.fill1)
                         .padding(.horizontal, 16)

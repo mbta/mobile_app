@@ -18,7 +18,8 @@ struct StopDetailsView: View {
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
-    @Binding var filter: StopDetailsFilter?
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
     var departures: StopDetailsDepartures?
     @State var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
@@ -34,7 +35,8 @@ struct StopDetailsView: View {
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
-        filter: Binding<StopDetailsFilter?>,
+        filter: StopDetailsFilter?,
+        setFilter: @escaping (StopDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
         nearbyVM: NearbyViewModel,
         pinnedRoutes: Set<String>,
@@ -42,7 +44,8 @@ struct StopDetailsView: View {
     ) {
         self.globalRepository = globalRepository
         self.stop = stop
-        _filter = filter
+        self.filter = filter
+        self.setFilter = setFilter
         self.departures = departures
         self.nearbyVM = nearbyVM
         self.pinnedRoutes = pinnedRoutes
@@ -72,7 +75,8 @@ struct StopDetailsView: View {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
-                            filter: $filter
+                            filter: filter,
+                            setFilter: setFilter
                         )
                         .padding([.bottom], 8)
                     }
@@ -84,7 +88,8 @@ struct StopDetailsView: View {
                         departures: departures,
                         global: globalResponse,
                         now: now.toKotlinInstant(),
-                        filter: $filter,
+                        filter: filter,
+                        setFilter: setFilter,
                         pushNavEntry: nearbyVM.pushNavEntry,
                         pinRoute: togglePinnedRoute,
                         pinnedRoutes: pinnedRoutes
@@ -113,7 +118,7 @@ struct StopDetailsView: View {
         case let .route(route, _):
             route.id
         }
-        if filter?.routeId == filterId { filter = nil; return }
+        if filter?.routeId == filterId { setFilter(nil); return }
         guard let departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
@@ -121,6 +126,6 @@ struct StopDetailsView: View {
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
             headsign.patterns.map { pattern in pattern.directionId }
         }.min() ?? 0
-        filter = .init(routeId: filterId, directionId: defaultDirectionId)
+        setFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }
 }

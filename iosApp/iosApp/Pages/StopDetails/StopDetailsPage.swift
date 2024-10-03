@@ -27,7 +27,7 @@ struct StopDetailsPage: View {
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective filter / departures rather than both showing the filter and departures for the
     // newly presented stop.
-    @State var internalFilter: StopDetailsFilter?
+    var internalFilter: StopDetailsFilter?
     @State var internalDepartures: StopDetailsDepartures? = nil
     @State var now = Date.now
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -76,7 +76,8 @@ struct StopDetailsPage: View {
 
             StopDetailsView(
                 stop: stop,
-                filter: $internalFilter,
+                filter: internalFilter,
+                setFilter: { filter in nearbyVM.pushNavEntry(.stopDetails(stop, filter)) },
                 departures: internalDepartures,
                 nearbyVM: nearbyVM,
                 pinnedRoutes: pinnedRoutes,
@@ -278,7 +279,7 @@ struct StopDetailsPage: View {
         }
 
         if internalFilter == nil, let newFilter = newDepartures?.autoFilter() {
-            internalFilter = newFilter
+            nearbyVM.pushNavEntry(.stopDetails(stop, newFilter))
         }
 
         internalDepartures = newDepartures
