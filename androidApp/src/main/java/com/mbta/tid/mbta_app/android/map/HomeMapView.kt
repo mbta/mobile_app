@@ -54,7 +54,6 @@ import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.ColorPalette
-import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLineData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
@@ -143,8 +142,7 @@ fun HomeMapView(
         val stopPoint =
             stopFeature?.geometry() as? Point ?: Point.fromLngLat(stop.longitude, stop.latitude)
         mapViewportState.easeTo(
-            cameraOptions =
-                CameraOptions.Builder().center(stopPoint).zoom(MapDefaults.stopPageZoom).build(),
+            cameraOptions = CameraOptions.Builder().center(stopPoint).build(),
             animationOptions = MapAnimationDefaults.options
         )
     }
