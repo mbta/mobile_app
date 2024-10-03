@@ -34,10 +34,11 @@ final class StopDetailsViewTests: XCTestCase {
 
         let sut = StopDetailsView(stop: stop,
                                   filter: .constant(nil),
-                                  nearbyVM: .init(departures: .init(routes: [
+                                  departures: .init(routes: [
                                       .init(route: routeDefaultSort1, stop: stop, patterns: []),
                                       .init(route: routeDefaultSort0, stop: stop, patterns: []),
-                                  ])),
+                                  ]),
+                                  nearbyVM: .init(),
                                   pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
@@ -56,9 +57,10 @@ final class StopDetailsViewTests: XCTestCase {
 
         let sut = StopDetailsView(stop: stop,
                                   filter: .constant(nil),
-                                  nearbyVM: .init(departures: .init(routes: [
+                                  departures: .init(routes: [
                                       .init(route: route, stop: stop, patterns: []),
-                                  ])),
+                                  ]),
+                                  nearbyVM: .init(),
                                   pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)

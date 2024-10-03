@@ -23,8 +23,12 @@ struct StopDetailsPage: View {
 
     @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
-    @State var filter: StopDetailsFilter?
-    @State var departures: StopDetailsDepartures? = nil
+    // StopDetailsPage maintains its own internal state of the filter & departures presented.
+    // This way, when transitioning between one StopDetailsPage and another, each separate page shows
+    // their respective filter / departures rather than both showing the filter and departures for the
+    // newly presented stop.
+    @State var internalFilter: StopDetailsFilter?
+    @State var internalDepartures: StopDetailsDepartures? = nil
     @State var now = Date.now
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
@@ -46,6 +50,7 @@ struct StopDetailsPage: View {
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: StopDetailsFilter?,
+        internalDepartures: StopDetailsDepartures? = nil,
         nearbyVM: NearbyViewModel,
         predictionsV2Enabled: Bool = false
     ) {
@@ -56,8 +61,9 @@ struct StopDetailsPage: View {
         self.errorBannerRepository = errorBannerRepository
         self.viewportProvider = viewportProvider
         self.stop = stop
-        // initialize filter to value it is passed. this will not be re-set on subsequent inits
-        self.filter = filter
+        // initialize filter to value it is passed. this will not be re-set on subsequent calls to init
+        internalFilter = filter
+        self.internalDepartures = internalDepartures // only for testing
         self.nearbyVM = nearbyVM
         self.predictionsV2Enabled = predictionsV2Enabled
     }
@@ -70,8 +76,8 @@ struct StopDetailsPage: View {
 
             StopDetailsView(
                 stop: stop,
-                filter: $filter,
-                departures: departures,
+                filter: $internalFilter,
+                departures: internalDepartures,
                 nearbyVM: nearbyVM,
                 pinnedRoutes: pinnedRoutes,
                 togglePinnedRoute: togglePinnedRoute
@@ -103,7 +109,7 @@ struct StopDetailsPage: View {
 
                 updateDepartures(stop)
             }
-            .onChange(of: filter) { newFilter in
+            .onChange(of: internalFilter) { newFilter in
                 nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -271,11 +277,11 @@ struct StopDetailsPage: View {
             nil
         }
 
-        if filter == nil, let newFilter = newDepartures?.autoFilter() {
-            filter = newFilter
+        if internalFilter == nil, let newFilter = newDepartures?.autoFilter() {
+            internalFilter = newFilter
         }
 
-        departures = newDepartures
+        internalDepartures = newDepartures
         nearbyVM.setDepartures(stop.id, newDepartures)
     }
 }

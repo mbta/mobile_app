@@ -44,7 +44,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     /**
-
+     Set the departures from the given stop if it is the last stop in the stack.
      */
     func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
         if stopId == navigationStack.lastStop?.id {
@@ -68,7 +68,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     /**
-     set the filter for the given stop, only if the given stop is still the last stop in the stack
+     set the filter for the given stop if it is the last stop in the stack
      */
     func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
         if stopId == navigationStack.lastStop?.id {

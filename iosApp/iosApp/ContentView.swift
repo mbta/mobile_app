@@ -159,6 +159,16 @@ struct ContentView: View {
             searchObserver.isSearching && nav == .nearby ? .none : nav.sheetItemIdentifiable()
         )
         mapSection
+            .fullScreenCover(
+                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
+                    .coverItemIdentifiable()),
+                onDismiss: {
+                    if case .alertDetails = nearbyVM.navigationStack.last {
+                        nearbyVM.goBack()
+                    }
+                },
+                content: coverContents
+            )
             .sheet(isPresented: .constant(true), content: {
                 GeometryReader { proxy in
                     VStack {
@@ -170,16 +180,6 @@ struct ContentView: View {
                             .interactiveDismissDisabled()
                             .modifier(AllowsBackgroundInteraction())
                     }
-                    .fullScreenCover(
-                        item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
-                            .coverItemIdentifiable()),
-                        onDismiss: {
-                            if case .alertDetails = nearbyVM.navigationStack.last {
-                                nearbyVM.goBack()
-                            }
-                        },
-                        content: coverContents
-                    )
                     .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
                         .id) { _ in
                             selectedDetent = .halfScreen
@@ -220,6 +220,8 @@ struct ContentView: View {
                             )
                         }
                     }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
                     .id(stop.id)
                     .transition(transition)
 

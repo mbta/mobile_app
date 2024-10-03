@@ -349,8 +349,7 @@ final class HomeMapViewTests: XCTestCase {
             prediction.trip = trip
         }
 
-        let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.setDepartures(StopDetailsDepartures(
+        let nearbyVM: NearbyViewModel = .init(departures: StopDetailsDepartures(
             routes: [.init(
                 route: MapTestDataHelper.shared.routeOrange, stop: stop,
                 patterns: [.ByHeadsign(
@@ -517,8 +516,7 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.directionId = 0
         }
 
-        let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.setDepartures(StopDetailsDepartures(
+        let nearbyVM: NearbyViewModel = .init(departures: StopDetailsDepartures(
             routes: [.init(
                 route: MapTestDataHelper.shared.routeOrange, stop: stop,
                 patterns: [.ByHeadsign(
@@ -624,8 +622,7 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.longitude = 2
         }
 
-        let nearbyVM: NearbyViewModel = .init()
-        nearbyVM.setDepartures(StopDetailsDepartures(
+        let nearbyVM: NearbyViewModel = .init(departures: StopDetailsDepartures(
             routes: [.init(
                 route: MapTestDataHelper.shared.routeOrange, stop: stop,
                 patterns: [.ByHeadsign(
