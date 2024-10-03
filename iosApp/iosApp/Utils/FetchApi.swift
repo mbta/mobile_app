@@ -17,7 +17,7 @@ func fetchApi<T>(
     _ errorBannerRepo: IErrorBannerStateRepository,
     errorKey: String,
     getData: () async throws -> ApiResult<T>,
-    onSuccess: (T) -> Void,
+    onSuccess: @MainActor (T) -> Void,
     onRefreshAfterError: @escaping () -> Void
 ) async {
     var result: ApiResult<T>
@@ -31,7 +31,7 @@ func fetchApi<T>(
     switch onEnum(of: result) {
     case let .ok(result):
         errorBannerRepo.clearDataError(key: errorKey)
-        onSuccess(result.data)
+        await onSuccess(result.data)
     case .error:
         errorBannerRepo.setDataError(key: errorKey, action: onRefreshAfterError)
     }
