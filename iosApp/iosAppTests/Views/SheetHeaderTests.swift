@@ -19,16 +19,17 @@ final class SheetHeaderTests: XCTestCase {
     }
 
     func testIncludesBackButtonWhenGivenAction() throws {
-        let exp = XCTestExpectation(description: "Back button pressed")
-        let sut = SheetHeader(onClose: { exp.fulfill() }, title: "Header Text")
+        let backExp = XCTestExpectation(description: "Back button pressed")
+        let closeExp = XCTestExpectation(description: "Close button pressed")
+        let sut = SheetHeader(title: "Header Text", onBack: { backExp.fulfill() }, onClose: { closeExp.fulfill() })
 
         XCTAssertNotNil(try sut.inspect().find(text: "Header Text"))
-        try sut.inspect().find(ActionButton.self).button().tap()
-        wait(for: [exp], timeout: 1)
+        try sut.inspect().find(viewWithAccessibilityLabel: "Back").button().tap()
+        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        wait(for: [backExp, closeExp], timeout: 1)
     }
 
     func testNoBackButtonWhenNoAction() throws {
-        let exp = XCTestExpectation(description: "Back button pressed")
         let sut = SheetHeader(title: "Header Text")
         XCTAssertNotNil(try sut.inspect().find(text: "Header Text"))
         XCTAssertThrowsError(try sut.inspect().find(ActionButton.self))

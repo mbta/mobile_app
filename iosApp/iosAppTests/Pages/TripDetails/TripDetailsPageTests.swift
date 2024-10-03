@@ -378,9 +378,37 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
         )
 
-        try sut.inspect().find(ActionButton.self).button().tap()
+        try sut.inspect().find(viewWithAccessibilityLabel: "Back").button().tap()
 
         wait(for: [backExp], timeout: 2)
+    }
+
+    func testCloseButton() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyVM = NearbyViewModel(
+            navigationStack: [.stopDetails(stop, nil), .stopDetails(stop, nil), .stopDetails(stop, nil)]
+        )
+
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "veicleId",
+            routeId: "routeId",
+            target: nil,
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: objects.trip { _ in }),
+                scheduleResponse: TripSchedulesResponse.StopIds(stopIds: ["stop1"])
+            ),
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
+        )
+
+        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+
+        XCTAssert(nearbyVM.navigationStack.isEmpty)
     }
 
     func testUpdatesMapVMSelectedTrip() throws {

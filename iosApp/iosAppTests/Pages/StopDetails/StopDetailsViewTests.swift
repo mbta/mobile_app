@@ -65,4 +65,59 @@ final class StopDetailsViewTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
         XCTAssertNil(try? sut.inspect().find(button: "All"))
     }
+
+    func testCloseButtonCloses() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let sut = StopDetailsView(
+            stop: stop,
+            filter: .constant(nil),
+            nearbyVM: nearbyVM,
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
+        )
+
+        ViewHosting.host(view: sut)
+        try? sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        XCTAssert(nearbyVM.navigationStack.isEmpty)
+    }
+
+    func testBackButtonGoesBack() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let initialNavStack: [SheetNavigationStackEntry] = [
+            .stopDetails(stop, nil),
+            .tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0),
+            .stopDetails(stop, nil),
+        ]
+        let nearbyVM: NearbyViewModel = .init(navigationStack: initialNavStack)
+        let sut = StopDetailsView(
+            stop: stop,
+            filter: .constant(nil),
+            nearbyVM: nearbyVM,
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
+        )
+
+        ViewHosting.host(view: sut)
+        try? sut.inspect().find(viewWithAccessibilityLabel: "Back").button().tap()
+        XCTAssertEqual(initialNavStack.dropLast(), nearbyVM.navigationStack)
+    }
+
+    func testBackButtonHiddenWhenNearbyIsBack() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let sut = StopDetailsView(
+            stop: stop,
+            filter: .constant(nil),
+            nearbyVM: nearbyVM,
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
+        )
+
+        ViewHosting.host(view: sut)
+        XCTAssertNil(try? sut.inspect().find(viewWithAccessibilityLabel: "Back"))
+    }
 }
