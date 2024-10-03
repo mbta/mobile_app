@@ -279,7 +279,7 @@ struct StopDetailsPage: View {
         }
 
         if internalFilter == nil, let newFilter = newDepartures?.autoFilter() {
-            nearbyVM.pushNavEntry(.stopDetails(stop, newFilter))
+            nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
         }
 
         internalDepartures = newDepartures
