@@ -19,7 +19,7 @@ mapboxTurf = "6.15.0"
 mokkery = "2.3.0"
 okhttp = "4.12.0"
 okio = "3.9.0"
-sentry = "0.8.0"
+sentry = "0.9.0"
 skie = "0.8.4"
 spatialk = "0.3.0"
 
