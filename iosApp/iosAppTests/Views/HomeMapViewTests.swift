@@ -158,11 +158,18 @@ final class HomeMapViewTests: XCTestCase {
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 1)
         XCTAssertEqual(ViewportProvider.Defaults.center, sut.viewportProvider.viewport.camera!.center)
+        XCTAssertEqual(ViewportProvider.Defaults.zoom, sut.viewportProvider.viewport.camera!.zoom)
+
+        let newZoom = 10.0
+        sut.viewportProvider.updateCameraState(
+            .init(center: .init(latitude: 0, longitude: 0), padding: .zero, zoom: newZoom, bearing: 0, pitch: 0)
+        )
 
         let newEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
 
         try sut.inspect().find(ProxyModifiedMap.self).callOnChange(newValue: newEntry)
         XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
+        XCTAssertEqual(newZoom, sut.viewportProvider.viewport.camera!.zoom)
     }
 
     func testUpdatesStopSourceWhenStopSelected() throws {
@@ -877,7 +884,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {
-        var joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+        let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         var sut = HomeMapView(
             mapVM: .init(),
@@ -902,7 +909,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testJoinsVehiclesChannelOnActiveWhenFilteredStopDetails() {
-        var joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+        let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
 
@@ -925,7 +932,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testDoesntJoinsVehiclesChannelOnActiveWhenUnfilteredtopDetails() {
-        var joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+        let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         joinsVehiclesExp.isInverted = true
 
@@ -949,7 +956,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testLeavesVehiclesChannelOnbackground() {
-        var leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
+        let leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
 
@@ -972,7 +979,7 @@ final class HomeMapViewTests: XCTestCase {
     }
 
     func testClearsVehiclesOnNavClear() {
-        var leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
+        let leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
         let vehicle = ObjectCollectionBuilder().vehicle { vehicle in

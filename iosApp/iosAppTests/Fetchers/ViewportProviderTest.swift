@@ -57,11 +57,33 @@ final class ViewportProviderTest: XCTestCase {
     func testSaveFollowing() throws {
         let provider = ViewportProvider(viewport: .followPuck(zoom: 16.0))
 
+        let newCenter: CLLocationCoordinate2D = .init(latitude: 1, longitude: 1)
+        let newZoom: CGFloat = 17.0
         provider.saveNearbyTransitViewport()
-        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1), zoom: 17.0)
+        provider.animateTo(coordinates: newCenter, zoom: newZoom)
+        provider.updateCameraState(
+            .init(center: newCenter, padding: .zero, zoom: newZoom, bearing: 0, pitch: 0)
+        )
         provider.restoreNearbyTransitViewport()
 
-        XCTAssertEqual(provider.viewport.followPuck?.zoom, 16.0)
+        XCTAssertEqual(provider.viewport.followPuck?.zoom, newZoom)
+    }
+
+    func testSaveCameraLocation() throws {
+        let startCenter: CLLocationCoordinate2D = .init(latitude: 0, longitude: 0)
+        let provider = ViewportProvider(viewport: .camera(center: startCenter, zoom: 16.0))
+
+        let newCenter: CLLocationCoordinate2D = .init(latitude: 1, longitude: 1)
+        let newZoom: CGFloat = 14.0
+        provider.saveNearbyTransitViewport()
+        provider.animateTo(coordinates: newCenter, zoom: newZoom)
+        provider.updateCameraState(
+            .init(center: newCenter, padding: .zero, zoom: newZoom, bearing: 0, pitch: 0)
+        )
+        provider.restoreNearbyTransitViewport()
+
+        XCTAssertEqual(provider.viewport.camera?.center, startCenter)
+        XCTAssertEqual(provider.viewport.camera?.zoom, newZoom)
     }
 
     func testSavePanned() throws {
