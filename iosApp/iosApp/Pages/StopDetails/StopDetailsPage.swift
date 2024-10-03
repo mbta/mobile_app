@@ -28,7 +28,7 @@ struct StopDetailsPage: View {
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective  departures rather than both showing the departures for the newly presented stop.
-    @State var internalDepartures: StopDetailsDepartures? = nil
+    @State var internalDepartures: StopDetailsDepartures?
     @State var now = Date.now
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
@@ -92,7 +92,6 @@ struct StopDetailsPage: View {
                 changeStop(nextStop)
             }
             .onChange(of: globalResponse) { _ in
-
                 updateDepartures(stop)
             }
             .onChange(of: pinnedRoutes) { _ in
@@ -106,7 +105,6 @@ struct StopDetailsPage: View {
                 updateDepartures(stop)
             }
             .onChange(of: schedulesResponse) { _ in
-
                 updateDepartures(stop)
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }

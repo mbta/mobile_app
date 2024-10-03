@@ -68,15 +68,12 @@ final class DirectionPickerTests: XCTestCase {
         )
 
         let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter, setFilter: { filter in
-
             if filter?.directionId == 1 {
                 setFilter1Exp.fulfill()
             }
-
             if filter?.directionId == 0 {
                 setFilter0Exp.fulfill()
             }
-
         })
         XCTAssertNotNil(try sut.inspect().find(text: "Selected Destination"))
         XCTAssertNotNil(try? sut.inspect().find(text: "Other Destination"))

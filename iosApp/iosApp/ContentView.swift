@@ -158,17 +158,8 @@ struct ContentView: View {
         let sheetItem: Binding<NearbySheetItem?> = .constant(
             searchObserver.isSearching && nav == .nearby ? .none : nav.sheetItemIdentifiable()
         )
+        let sheetItemId: String? = nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id
         mapSection
-            .fullScreenCover(
-                item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
-                    .coverItemIdentifiable()),
-                onDismiss: {
-                    if case .alertDetails = nearbyVM.navigationStack.last {
-                        nearbyVM.goBack()
-                    }
-                },
-                content: coverContents
-            )
             .sheet(isPresented: .constant(true), content: {
                 GeometryReader { proxy in
                     VStack {
@@ -177,9 +168,19 @@ struct ContentView: View {
                             .interactiveDismissDisabled()
                             .modifier(AllowsBackgroundInteraction())
                     }
-                    .onChange(of: $nearbyVM.navigationStack.wrappedValue.lastSafe().sheetItemIdentifiable()?
-                        .id) { _ in
-                            selectedDetent = .halfScreen
+                    // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                    .fullScreenCover(
+                        item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
+                            .coverItemIdentifiable()),
+                        onDismiss: {
+                            if case .alertDetails = nearbyVM.navigationStack.last {
+                                nearbyVM.goBack()
+                            }
+                        },
+                        content: coverContents
+                    )
+                    .onChange(of: sheetItemId) { _ in
+                        selectedDetent = .halfScreen
                     }
                     .onAppear {
                         recordSheetHeight(proxy.size.height)
@@ -252,7 +253,7 @@ struct ContentView: View {
                         }
                 }
             }
-            .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe())
+            .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
         }
     }
 
