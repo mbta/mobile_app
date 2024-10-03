@@ -53,10 +53,7 @@ struct TripDetailsStopView: View {
         }.padding(.horizontal, -20).onTapGesture {
             onTapLink(.stopDetails(stop.stop, nil), stop, nil)
         }
-        if #available(iOS 16.4, *) {
-            return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
-        }
-        return routeView
+        return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
     }
 }
 

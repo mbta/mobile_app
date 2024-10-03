@@ -280,13 +280,7 @@ struct ContentView: View {
 
     struct AllowsBackgroundInteraction: ViewModifier {
         func body(content: Content) -> some View {
-            if #available(iOS 16.4, *) {
-                content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
-            } else {
-                // This is actually a purely cosmetic issue - the interaction still works, things are just greyed out
-                // We might need to fix that later if it looks too bad to even ship, but for now, it's probably fine
-                content
-            }
+            content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
         }
     }
 }
