@@ -63,7 +63,11 @@ struct StopDetailsView: View {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
                 VStack {
-                    SheetHeader(onClose: { nearbyVM.goBack() }, title: stop.name)
+                    SheetHeader(
+                        title: stop.name,
+                        onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
+                        onClose: { nearbyVM.navigationStack.removeAll() }
+                    )
                     ErrorBanner()
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
