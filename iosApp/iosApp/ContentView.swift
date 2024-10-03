@@ -173,9 +173,6 @@ struct ContentView: View {
                 GeometryReader { proxy in
                     VStack {
                         navSheetContents
-                            // Adding id here prevents the next sheet from opening at the large detent.
-                            // https://stackoverflow.com/a/77429540
-
                             .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
                             .interactiveDismissDisabled()
                             .modifier(AllowsBackgroundInteraction())
