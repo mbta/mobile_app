@@ -149,7 +149,7 @@ extension HomeMapView {
 
     func handleStopDetailsChange(_ stop: Stop, _ filter: StopDetailsFilter?) {
         mapVM.stopSourceData = .init(selectedStopId: stop.id)
-        viewportProvider.animateTo(coordinates: stop.coordinate, zoom: MapDefaults.shared.stopPageZoom)
+        viewportProvider.animateTo(coordinates: stop.coordinate)
 
         Task {
             if case let .ok(result) = try await onEnum(of: stopRepository.getStopMapData(stopId: stop.id)) {
