@@ -23,7 +23,12 @@ struct StopDetailsPage: View {
 
     @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
-    @Binding var filter: StopDetailsFilter?
+
+    var filter: StopDetailsFilter?
+    // StopDetailsPage maintains its own internal state of the departures presented.
+    // This way, when transitioning between one StopDetailsPage and another, each separate page shows
+    // their respective  departures rather than both showing the departures for the newly presented stop.
+    @State var internalDepartures: StopDetailsDepartures?
     @State var now = Date.now
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
@@ -44,7 +49,8 @@ struct StopDetailsPage: View {
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         viewportProvider: ViewportProvider,
         stop: Stop,
-        filter: Binding<StopDetailsFilter?>,
+        filter: StopDetailsFilter?,
+        internalDepartures: StopDetailsDepartures? = nil,
         nearbyVM: NearbyViewModel,
         predictionsV2Enabled: Bool = false
     ) {
@@ -55,7 +61,8 @@ struct StopDetailsPage: View {
         self.errorBannerRepository = errorBannerRepository
         self.viewportProvider = viewportProvider
         self.stop = stop
-        _filter = filter
+        self.filter = filter
+        self.internalDepartures = internalDepartures // only for testing
         self.nearbyVM = nearbyVM
         self.predictionsV2Enabled = predictionsV2Enabled
     }
@@ -65,29 +72,43 @@ struct StopDetailsPage: View {
             if predictionsV2Enabled {
                 Text("Using Predictions Channel V2")
             }
+
             StopDetailsView(
                 stop: stop,
-                filter: $filter,
+                filter: filter,
+                setFilter: { filter in nearbyVM.pushNavEntry(.stopDetails(stop, filter)) },
+                departures: internalDepartures,
                 nearbyVM: nearbyVM,
                 pinnedRoutes: pinnedRoutes,
                 togglePinnedRoute: togglePinnedRoute
             )
             .onAppear {
                 loadGlobalData()
-                changeStop(stop)
+                fetchStopData(stop)
                 loadPinnedRoutes()
                 didAppear?(self)
             }
-            .onChange(of: stop) { nextStop in changeStop(nextStop) }
-            .onChange(of: globalResponse) { _ in updateDepartures() }
-            .onChange(of: pinnedRoutes) { _ in updateDepartures() }
+            .onChange(of: stop) { nextStop in
+                changeStop(nextStop)
+            }
+            .onChange(of: globalResponse) { _ in
+                updateDepartures(stop)
+            }
+            .onChange(of: pinnedRoutes) { _ in
+                updateDepartures(stop)
+            }
             .onChange(of: predictionsByStop) { newPredictionsByStop in
                 updateDepartures(stop, newPredictionsByStop, predictions)
             }
-            .onChange(of: predictions) { _ in updateDepartures() }
-            .onChange(of: schedulesResponse) { _ in updateDepartures() }
+            .onChange(of: predictions) { _ in
+
+                updateDepartures(stop)
+            }
+            .onChange(of: schedulesResponse) { _ in
+                updateDepartures(stop)
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .task {
+            .task(id: stop.id) {
                 while !Task.isCancelled {
                     now = Date.now
                     updateDepartures()
@@ -95,7 +116,9 @@ struct StopDetailsPage: View {
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
-            .onDisappear { leavePredictions() }
+            .onDisappear {
+                leavePredictions()
+            }
             .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
                                     onInactive: leavePredictions,
                                     onBackground: leavePredictions)
@@ -134,6 +157,11 @@ struct StopDetailsPage: View {
     }
 
     func changeStop(_ stop: Stop) {
+        leavePredictions()
+        fetchStopData(stop)
+    }
+
+    func fetchStopData(_ stop: Stop) {
         getSchedule(stop)
         joinPredictions(stop)
         updateDepartures(stop)
@@ -158,6 +186,7 @@ struct StopDetailsPage: View {
                 joinPredictionsV2(stopIds: [stop.id])
             } else {
                 predictionsRepository.connect(stopIds: [stop.id]) { outcome in
+
                     DispatchQueue.main.async {
                         switch onEnum(of: outcome) {
                         case let .ok(result): predictions = result.data
@@ -244,9 +273,10 @@ struct StopDetailsPage: View {
         }
 
         if filter == nil, let newFilter = newDepartures?.autoFilter() {
-            filter = newFilter
+            nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
         }
 
-        nearbyVM.setDepartures(newDepartures)
+        internalDepartures = newDepartures
+        nearbyVM.setDepartures(stop.id, newDepartures)
     }
 }

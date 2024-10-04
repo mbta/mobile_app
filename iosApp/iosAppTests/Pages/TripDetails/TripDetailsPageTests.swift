@@ -518,6 +518,67 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [analyticsExp], timeout: 5)
     }
 
+    func testLeavesAndJoinsPredictionsOnTripChange() throws {
+        let objects = ObjectCollectionBuilder()
+        objects.stop { _ in }
+
+        let predictionsJoinExp = XCTestExpectation(description: "predictions joined")
+        let predictionsLeaveExp = XCTestExpectation(description: "predictions left")
+
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "veicleId",
+            routeId: "routeId",
+            target: nil,
+            nearbyVM: .init(),
+            mapVM: .init(),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects),
+                                                                     onConnect: { _ in predictionsJoinExp.fulfill() },
+                                                                     onDisconnect: { predictionsLeaveExp.fulfill() }),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: objects.trip { _ in }),
+                scheduleResponse: TripSchedulesResponse.StopIds(stopIds: ["stop1"])
+            ),
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
+        )
+
+        try sut.inspect().vStack().callOnChange(newValue: "newTripId", index: 0)
+
+        wait(for: [predictionsLeaveExp, predictionsJoinExp], timeout: 2)
+    }
+
+    func testLeavesAndJoinsVehicleOnChange() throws {
+        let objects = ObjectCollectionBuilder()
+        objects.stop { _ in }
+
+        let vehicleJoinExp = XCTestExpectation(description: "vehicle joined")
+        let vehicleLeaveExp = XCTestExpectation(description: "vehicle left")
+
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "veicleId",
+            routeId: "routeId",
+            target: nil,
+            nearbyVM: .init(),
+            mapVM: .init(),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: objects.trip { _ in }),
+                scheduleResponse: TripSchedulesResponse.StopIds(stopIds: ["stop1"])
+            ),
+            vehicleRepository: FakeVehicleRepository(
+                response: .init(vehicle: nil),
+                onConnect: { vehicleJoinExp.fulfill() },
+                onDisconnect: { vehicleLeaveExp.fulfill() }
+            )
+        )
+
+        // Index 1 because first onChange of a string is for tripId
+        try sut.inspect().vStack().callOnChange(newValue: "newTripId", index: 1)
+
+        wait(for: [vehicleLeaveExp, vehicleJoinExp], timeout: 2)
+    }
+
     class FakeGlobalRepository: IGlobalRepository {
         let response: GlobalResponse
 
@@ -574,10 +635,14 @@ final class TripDetailsPageTests: XCTestCase {
     class FakeTripPredictionsRepository: ITripPredictionsRepository {
         let response: PredictionsStreamDataResponse
         let onConnect: ((_ tripId: String) -> Void)?
+        let onDisconnect: (() -> Void)?
 
-        init(response: PredictionsStreamDataResponse, onConnect: ((_ tripId: String) -> Void)? = nil) {
+        init(response: PredictionsStreamDataResponse,
+             onConnect: ((_ tripId: String) -> Void)? = nil,
+             onDisconnect: (() -> Void)? = nil) {
             self.response = response
             self.onConnect = onConnect
+            self.onDisconnect = onDisconnect
         }
 
         func connect(
@@ -590,13 +655,22 @@ final class TripDetailsPageTests: XCTestCase {
 
         var lastUpdated: Instant?
 
-        func disconnect() {}
+        func disconnect() {
+            onDisconnect?()
+        }
     }
 
     class FakeVehicleRepository: IVehicleRepository {
         let response: VehicleStreamDataResponse?
-        init(response: VehicleStreamDataResponse?) {
+        let onConnect: (() -> Void)?
+        let onDisconnect: (() -> Void)?
+
+        init(response: VehicleStreamDataResponse?,
+             onConnect: (() -> Void)? = nil,
+             onDisconnect: (() -> Void)? = nil) {
             self.response = response
+            self.onConnect = onConnect
+            self.onDisconnect = onDisconnect
         }
 
         func connect(
@@ -606,8 +680,11 @@ final class TripDetailsPageTests: XCTestCase {
             if let response {
                 onReceive(ApiResultOk(data: response))
             }
+            onConnect?()
         }
 
-        func disconnect() {}
+        func disconnect() {
+            onDisconnect?()
+        }
     }
 }
