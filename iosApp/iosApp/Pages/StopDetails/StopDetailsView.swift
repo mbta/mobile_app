@@ -18,7 +18,9 @@ struct StopDetailsView: View {
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
-    @Binding var filter: StopDetailsFilter?
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
+    var departures: StopDetailsDepartures?
     @State var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -33,19 +35,23 @@ struct StopDetailsView: View {
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
-        filter: Binding<StopDetailsFilter?>,
+        filter: StopDetailsFilter?,
+        setFilter: @escaping (StopDetailsFilter?) -> Void,
+        departures: StopDetailsDepartures?,
         nearbyVM: NearbyViewModel,
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
     ) {
         self.globalRepository = globalRepository
         self.stop = stop
-        _filter = filter
+        self.filter = filter
+        self.setFilter = setFilter
+        self.departures = departures
         self.nearbyVM = nearbyVM
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
 
-        if let departures = nearbyVM.departures {
+        if let departures {
             servedRoutes = departures.routes.map { patterns in
                 if let line = patterns.line {
                     return .line(line)
@@ -69,25 +75,27 @@ struct StopDetailsView: View {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
-                            filter: $filter
+                            filter: filter,
+                            setFilter: setFilter
                         )
                         .padding([.bottom], 8)
                     }
                 }
                 .border(Color.halo.opacity(0.15), width: 2)
 
-                if let departures = nearbyVM.departures {
+                if let departures {
                     StopDetailsRoutesView(
                         departures: departures,
                         global: globalResponse,
                         now: now.toKotlinInstant(),
-                        filter: $filter,
+                        filter: filter,
+                        setFilter: setFilter,
                         pushNavEntry: nearbyVM.pushNavEntry,
                         pinRoute: togglePinnedRoute,
                         pinnedRoutes: pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
-                    ProgressView()
+                    LoadingCard()
                 }
             }
         }
@@ -110,14 +118,14 @@ struct StopDetailsView: View {
         case let .route(route, _):
             route.id
         }
-        if filter?.routeId == filterId { filter = nil; return }
-        guard let departures = nearbyVM.departures else { return }
+        if filter?.routeId == filterId { setFilter(nil); return }
+        guard let departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
         analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
             headsign.patterns.map { pattern in pattern.directionId }
         }.min() ?? 0
-        filter = .init(routeId: filterId, directionId: defaultDirectionId)
+        setFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }
 }

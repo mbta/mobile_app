@@ -59,30 +59,39 @@ final class DirectionPickerTests: XCTestCase {
     func testDirectionFilter() throws {
         let patternsByStop = testData()
 
-        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
+        let setFilter1Exp: XCTestExpectation = .init(description: "set filter called with direction 1")
+        let setFilter0Exp: XCTestExpectation = .init(description: "set filter called with direction 0")
+
+        let filter: StopDetailsFilter? = .init(
             routeId: patternsByStop.routeIdentifier,
             directionId: 0
-        ))
+        )
 
-        let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter)
-        XCTAssertEqual(0, filter.wrappedValue?.directionId)
+        let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter, setFilter: { filter in
+            if filter?.directionId == 1 {
+                setFilter1Exp.fulfill()
+            }
+            if filter?.directionId == 0 {
+                setFilter0Exp.fulfill()
+            }
+        })
         XCTAssertNotNil(try sut.inspect().find(text: "Selected Destination"))
         XCTAssertNotNil(try? sut.inspect().find(text: "Other Destination"))
         try sut.inspect().find(button: "Other Destination").tap()
-        XCTAssertEqual(1, filter.wrappedValue?.directionId)
+        wait(for: [setFilter1Exp], timeout: 1)
         try sut.inspect().find(button: "Selected Destination").tap()
-        XCTAssertEqual(0, filter.wrappedValue?.directionId)
+        wait(for: [setFilter0Exp], timeout: 1)
     }
 
     func testFormatsNorthSouth() throws {
         let patternsByStop = testData()
 
-        let filter: Binding<StopDetailsFilter?> = .init(wrappedValue: .init(
+        let filter: StopDetailsFilter? = .init(
             routeId: patternsByStop.routeIdentifier,
             directionId: 0
-        ))
+        )
 
-        let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter)
+        let sut = DirectionPicker(patternsByStop: patternsByStop, filter: filter, setFilter: { _ in })
         XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
         XCTAssertNotNil(try? sut.inspect().find(text: "Southbound to"))
     }

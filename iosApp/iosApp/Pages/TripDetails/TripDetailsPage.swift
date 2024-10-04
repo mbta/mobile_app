@@ -141,8 +141,12 @@ struct TripDetailsPage: View {
         }
         .onAppear { joinRealtime() }
         .onDisappear { leaveRealtime() }
-        .onChange(of: tripId) { joinPredictions(tripId: $0) }
+        .onChange(of: tripId) {
+            leavePredictions()
+            joinPredictions(tripId: $0)
+        }
         .onChange(of: vehicleId) { vehicleId in
+            leaveVehicle()
             joinVehicle(vehicleId: vehicleId)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }

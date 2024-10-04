@@ -20,7 +20,8 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let sut = StopDetailsFilterPills(
             servedRoutes: [.route(route1, nil), .route(route2, nil)],
             tapRoutePill: { _ in },
-            filter: .constant(nil)
+            filter: nil,
+            setFilter: { _ in }
         )
 
         let pills = try sut.inspect().findAll(RoutePill.self)
@@ -35,7 +36,8 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let sut = StopDetailsFilterPills(
             servedRoutes: [.route(route1, nil), .route(route2, nil)],
             tapRoutePill: { _ in },
-            filter: .constant(.init(routeId: route1.id, directionId: 0))
+            filter: .init(routeId: route1.id, directionId: 0),
+            setFilter: { _ in }
         )
 
         let pills = try sut.inspect().findAll(RoutePill.self)
@@ -58,7 +60,8 @@ final class StopDetailsFilterPillsTests: XCTestCase {
                 }
                 XCTAssertEqual(route, route2)
             },
-            filter: .constant(nil)
+            filter: nil,
+            setFilter: { _ in }
         )
 
         let pills = try sut.inspect().findAll(RoutePill.self)
@@ -82,7 +85,8 @@ final class StopDetailsFilterPillsTests: XCTestCase {
                 }
                 XCTAssertEqual(line, line)
             },
-            filter: .constant(nil)
+            filter: nil,
+            setFilter: { _ in }
         )
 
         let pills = try sut.inspect().findAll(RoutePill.self)

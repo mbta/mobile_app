@@ -15,7 +15,8 @@ struct StopDetailsFilteredRouteView: View {
     let patternsByStop: PatternsByStop?
     let alerts: [shared.Alert]
     let now: Instant
-    @Binding var filter: StopDetailsFilter?
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let pinned: Bool
 
@@ -67,12 +68,13 @@ struct StopDetailsFilteredRouteView: View {
         departures: StopDetailsDepartures,
         global: GlobalResponse?,
         now: Instant,
-        filter filterBinding: Binding<StopDetailsFilter?>,
+        filter: StopDetailsFilter?,
+        setFilter: @escaping (StopDetailsFilter?) -> Void,
         pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
         pinned: Bool
     ) {
-        _filter = filterBinding
-        let filter = filterBinding.wrappedValue
+        self.filter = filter
+        self.setFilter = setFilter
         let patternsByStop = departures.routes.first(where: { $0.routeIdentifier == filter?.routeId })
         self.patternsByStop = patternsByStop
         self.now = now
@@ -126,7 +128,8 @@ struct StopDetailsFilteredRouteView: View {
                         }
                         DirectionPicker(
                             patternsByStop: patternsByStop,
-                            filter: $filter
+                            filter: filter,
+                            setFilter: setFilter
                         ).fixedSize(horizontal: false, vertical: true)
 
                         ZStack {

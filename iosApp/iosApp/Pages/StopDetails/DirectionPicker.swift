@@ -10,22 +10,23 @@ import shared
 import SwiftUI
 
 struct DirectionPicker: View {
-    @Binding var filter: StopDetailsFilter?
-
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
     let availableDirections: [Int32]
     let directions: [Direction]
     let route: Route
     let line: Line?
 
-    init(patternsByStop: PatternsByStop, filter: Binding<StopDetailsFilter?>) {
+    init(patternsByStop: PatternsByStop, filter: StopDetailsFilter?,
+         setFilter: @escaping (StopDetailsFilter?) -> Void) {
+        self.filter = filter
+        self.setFilter = setFilter
         availableDirections = Set(patternsByStop.patterns.map { pattern in
             pattern.directionId()
         }).sorted()
         directions = patternsByStop.directions
         route = patternsByStop.representativeRoute
         line = patternsByStop.line
-
-        _filter = filter
     }
 
     var body: some View {
@@ -34,7 +35,7 @@ struct DirectionPicker: View {
             HStack(alignment: .center) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = filter?.directionId == direction
-                    let action = { $filter.wrappedValue = .init(routeId: line?.id ?? route.id, directionId: direction) }
+                    let action = { setFilter(.init(routeId: line?.id ?? route.id, directionId: direction)) }
 
                     Button(action: action) {
                         DirectionLabel(direction: directions[Int(direction)])
@@ -104,7 +105,8 @@ struct DirectionPicker: View {
                 .init(name: "Inbound", destination: "In", id: 1),
             ]
         ),
-        filter: .constant(.init(routeId: route.id, directionId: 0))
+        filter: .init(routeId: route.id, directionId: 0),
+        setFilter: { _ in }
     )
     .fixedSize(horizontal: false, vertical: true)
     .padding(16)
