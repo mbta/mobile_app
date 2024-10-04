@@ -10,19 +10,24 @@ import Foundation
 import SwiftUI
 
 struct SheetHeader: View {
-    var onClose: (() -> Void)?
     var title: String?
+    var onBack: (() -> Void)?
+    var onClose: (() -> Void)?
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            if let onClose {
-                ActionButton(kind: .back, action: { onClose() })
+        HStack(alignment: .center, spacing: 16) {
+            if let onBack {
+                ActionButton(kind: .back, action: { onBack() })
             }
             if let title {
                 Text(title)
                     .font(Typography.title3Semibold)
                     .padding([.top], 1)
                     .accessibilityHeading(.h1)
+            }
+            if let onClose {
+                Spacer()
+                ActionButton(kind: .close, action: { onClose() })
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -33,8 +38,8 @@ struct SheetHeader: View {
 struct SheetHeader_Previews: PreviewProvider {
     static var previews: some View {
         List {
-            SheetHeader(onClose: { print("Pressed") }, title: "This is a very long sheet title it should wrap")
-            SheetHeader(onClose: { print("Pressed") }, title: "short")
+            SheetHeader(title: "This is a very long sheet title it should wrap", onClose: { print("Pressed") })
+            SheetHeader(title: "short", onBack: { print("Pressed") })
             SheetHeader(title: "no back button")
         }
     }

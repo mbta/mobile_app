@@ -245,10 +245,11 @@ struct TripDetailsPage: View {
             nil
         }
         TripDetailsHeader(
-            onBack: nearbyVM.goBack,
             route: route,
             line: globalResponse?.getLine(lineId: route?.lineId),
-            trip: trip
+            trip: trip,
+            onBack: nearbyVM.goBack,
+            onClose: { nearbyVM.navigationStack.removeAll() }
         )
     }
 
