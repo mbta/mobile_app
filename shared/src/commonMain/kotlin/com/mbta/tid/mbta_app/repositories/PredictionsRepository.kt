@@ -130,7 +130,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                     return
                 }
             println(
-                "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions"
+                "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions on join"
             )
             lastUpdated = Clock.System.now()
             onJoin(ApiResult.Ok(newPredictionsByStop))
@@ -159,9 +159,6 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                     onMessage(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
-            println(
-                "Received ${newPredictionsForStop.predictions.size} predictions for stop ${newPredictionsForStop.stopId}"
-            )
             lastUpdated = Clock.System.now()
             onMessage(ApiResult.Ok(newPredictionsForStop))
         } else {

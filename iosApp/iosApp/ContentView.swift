@@ -19,6 +19,8 @@ struct ContentView: View {
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
+
+    let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
@@ -156,32 +158,103 @@ struct ContentView: View {
         let sheetItem: Binding<NearbySheetItem?> = .constant(
             searchObserver.isSearching && nav == .nearby ? .none : nav.sheetItemIdentifiable()
         )
+        let sheetItemId: String? = nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id
         mapSection
-            .fullScreenCover(
-                item: .constant(nav.coverItemIdentifiable()),
-                onDismiss: {
-                    if case .alertDetails = nearbyVM.navigationStack.last {
-                        nearbyVM.goBack()
+            .sheet(isPresented: .constant(true), content: {
+                GeometryReader { proxy in
+                    VStack {
+                        navSheetContents
+                            .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                            .interactiveDismissDisabled()
+                            .modifier(AllowsBackgroundInteraction())
                     }
-                },
-                content: coverContents
-            )
-            .sheet(
-                item: sheetItem,
-                onDismiss: {
-                    selectedDetent = .halfScreen
-
-                    if visibleNearbySheet == nearbyVM.navigationStack.last {
-                        // When the visible sheet matches the last nav entry, then a dismissal indicates
-                        // an intentional action remove the sheet and replace it with the previous one.
-
-                        // When the visible sheet *doesn't* match the latest item in the nav stack, it is
-                        // being dismissed so that it can be automatically replaced with the new one.
-                        nearbyVM.goBack()
+                    // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                    .fullScreenCover(
+                        item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
+                            .coverItemIdentifiable()),
+                        onDismiss: {
+                            if case .alertDetails = nearbyVM.navigationStack.last {
+                                nearbyVM.goBack()
+                            }
+                        },
+                        content: coverContents
+                    )
+                    .onChange(of: sheetItemId) { _ in
+                        selectedDetent = .halfScreen
                     }
-                },
-                content: sheetContents
-            )
+                    .onAppear {
+                        recordSheetHeight(proxy.size.height)
+                    }
+                    .onChange(of: proxy.size.height) { newValue in
+                        recordSheetHeight(newValue)
+                    }
+                }
+            })
+    }
+
+    @ViewBuilder
+    var navSheetContents: some View {
+        NavigationStack {
+            VStack {
+                switch nearbyVM.navigationStack.lastSafe() {
+                case .alertDetails:
+                    EmptyView()
+
+                case let .stopDetails(stop, filter):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        StopDetailsPage(
+                            viewportProvider: viewportProvider,
+                            stop: stop, filter: filter,
+                            nearbyVM: nearbyVM
+                        )
+
+                        .toolbar(.hidden, for: .tabBar)
+                        .onAppear {
+                            let filtered = filter != nil
+                            screenTracker.track(
+                                screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                            )
+                        }
+                    }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
+                    .id(stop.id)
+                    .transition(transition)
+
+                case let .tripDetails(
+                    tripId: tripId,
+                    vehicleId: vehicleId,
+                    target: target,
+                    routeId: routeId,
+                    directionId: _
+                ):
+                    TabView {
+                        TripDetailsPage(
+                            tripId: tripId,
+                            vehicleId: vehicleId,
+                            routeId: routeId,
+                            target: target,
+                            nearbyVM: nearbyVM,
+                            mapVM: mapVM
+                        ).toolbar(.hidden, for: .tabBar)
+                            .onAppear {
+                                screenTracker.track(screen: .tripDetails)
+                            }
+                    }
+                    .transition(transition)
+
+                case .nearby:
+                    nearbySheetContents
+                        .transition(transition)
+                        .onAppear {
+                            screenTracker.track(screen: .nearbyTransit)
+                        }
+                }
+            }
+            .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
+        }
     }
 
     private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {
@@ -192,73 +265,6 @@ struct ContentView: View {
                 AlertDetailsPage(alertId: alertId, line: line, routes: routes, nearbyVM: nearbyVM)
             default:
                 EmptyView()
-            }
-        }
-    }
-
-    private func sheetContents(sheetIdentityEntry: NearbySheetItem) -> some View {
-        let entry = sheetIdentityEntry.stackEntry
-        return GeometryReader { proxy in
-            sheetSwitch(entry: entry)
-                .onAppear {
-                    recordSheetHeight(proxy.size.height)
-                }
-                .onChange(of: proxy.size.height) { newValue in
-                    recordSheetHeight(newValue)
-                }
-                // Adding id here prevents the next sheet from opening at the large detent.
-                // https://stackoverflow.com/a/77429540
-                .id(sheetIdentityEntry.id)
-                .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                .interactiveDismissDisabled(visibleNearbySheet == .nearby)
-                .modifier(AllowsBackgroundInteraction())
-        }
-    }
-
-    private func sheetSwitch(entry: SheetNavigationStackEntry) -> some View {
-        NavigationStack {
-            switch entry {
-            case .alertDetails:
-                EmptyView()
-
-            case let .stopDetails(stop, _):
-                StopDetailsPage(
-                    viewportProvider: viewportProvider,
-                    stop: stop, filter: $nearbyVM.navigationStack.lastStopDetailsFilter,
-                    nearbyVM: nearbyVM
-                ).onAppear {
-                    let filtered = nearbyVM.navigationStack.lastStopDetailsFilter != nil
-                    visibleNearbySheet = entry
-                    screenTracker.track(
-                        screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                    )
-                }
-
-            case let .tripDetails(
-                tripId: tripId,
-                vehicleId: vehicleId,
-                target: target,
-                routeId: routeId,
-                directionId: _
-            ):
-                TripDetailsPage(
-                    tripId: tripId,
-                    vehicleId: vehicleId,
-                    routeId: routeId,
-                    target: target,
-                    nearbyVM: nearbyVM,
-                    mapVM: mapVM
-                ).onAppear {
-                    screenTracker.track(screen: .tripDetails)
-                    visibleNearbySheet = entry
-                }
-
-            case .nearby:
-                nearbySheetContents
-                    .onAppear {
-                        visibleNearbySheet = entry
-                        screenTracker.track(screen: .nearbyTransit)
-                    }
             }
         }
     }
@@ -274,13 +280,7 @@ struct ContentView: View {
 
     struct AllowsBackgroundInteraction: ViewModifier {
         func body(content: Content) -> some View {
-            if #available(iOS 16.4, *) {
-                content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
-            } else {
-                // This is actually a purely cosmetic issue - the interaction still works, things are just greyed out
-                // We might need to fix that later if it looks too bad to even ship, but for now, it's probably fine
-                content
-            }
+            content.presentationBackgroundInteraction(.enabled(upThrough: .halfScreen))
         }
     }
 }

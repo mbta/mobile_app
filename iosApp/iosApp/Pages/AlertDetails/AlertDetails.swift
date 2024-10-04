@@ -255,11 +255,7 @@ struct AlertDetails: View {
                 alertFooter
             }.padding(.horizontal, 16).padding(.top, 24)
         }
-        if #available(iOS 16.4, *) {
-            scrollContent.scrollBounceBehavior(.basedOnSize, axes: [.vertical])
-        } else {
-            scrollContent
-        }
+        scrollContent.scrollBounceBehavior(.basedOnSize, axes: [.vertical])
     }
 
     var body: some View {

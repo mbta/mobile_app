@@ -14,7 +14,8 @@ struct StopDetailsRoutesView: View {
     let departures: StopDetailsDepartures
     let global: GlobalResponse?
     let now: Instant
-    @Binding var filter: StopDetailsFilter?
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let pinRoute: (String) -> Void
     var pinnedRoutes: Set<String> = []
@@ -25,7 +26,8 @@ struct StopDetailsRoutesView: View {
                 departures: departures,
                 global: global,
                 now: now,
-                filter: $filter,
+                filter: filter,
+                setFilter: setFilter,
                 pushNavEntry: pushNavEntry,
                 pinned: pinnedRoutes.contains(filter.routeId)
             )
@@ -135,6 +137,6 @@ struct StopDetailsRoutesView: View {
                 hasSchedulesToday: true
             ),
         ]),
-    ]), global: nil, now: Date.now.toKotlinInstant(), filter: .constant(nil), pushNavEntry: { _ in },
+    ]), global: nil, now: Date.now.toKotlinInstant(), filter: nil, setFilter: { _ in }, pushNavEntry: { _ in },
     pinRoute: { routeId in print("Pinned route \(routeId)") }).font(Typography.body)
 }
