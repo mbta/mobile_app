@@ -243,7 +243,7 @@ final class StopDetailsPageTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: .init(),
             stop: stop,
-            filter: .constant(nil),
+            filter: nil,
             nearbyVM: nearbyVM
         )
 

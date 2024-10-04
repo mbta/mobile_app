@@ -77,7 +77,9 @@ final class StopDetailsViewTests: XCTestCase {
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
         let sut = StopDetailsView(
             stop: stop,
-            filter: .constant(nil),
+            filter: nil,
+            setFilter: { _ in },
+            departures: nil,
             nearbyVM: nearbyVM,
             pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
@@ -99,7 +101,9 @@ final class StopDetailsViewTests: XCTestCase {
         let nearbyVM: NearbyViewModel = .init(navigationStack: initialNavStack)
         let sut = StopDetailsView(
             stop: stop,
-            filter: .constant(nil),
+            filter: nil,
+            setFilter: { _ in },
+            departures: nil,
             nearbyVM: nearbyVM,
             pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
@@ -116,7 +120,9 @@ final class StopDetailsViewTests: XCTestCase {
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
         let sut = StopDetailsView(
             stop: stop,
-            filter: .constant(nil),
+            filter: nil,
+            setFilter: { _ in },
+            departures: nil,
             nearbyVM: nearbyVM,
             pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
