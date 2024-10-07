@@ -128,10 +128,9 @@ struct StopDetailsPage: View {
 
     func loadGlobalData() {
         Task {
-            do {
-                globalResponse = try await globalRepository.getGlobalData()
-            } catch {
-                debugPrint(error)
+            switch try await onEnum(of: globalRepository.getGlobalData()) {
+            case let .ok(result): globalResponse = result.data
+            case let .error(error): debugPrint(error)
             }
         }
     }
@@ -171,10 +170,11 @@ struct StopDetailsPage: View {
     func getSchedule(_ stop: Stop) {
         Task {
             schedulesResponse = nil
-            do {
-                schedulesResponse = try await schedulesRepository
-                    .getSchedule(stopIds: [stop.id])
-            } catch {}
+            switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: [stop.id])) {
+            case let .ok(result): schedulesResponse = result.data
+            case .error:
+                ()
+            }
         }
     }
 

@@ -106,10 +106,9 @@ struct StopDetailsView: View {
             }
         }
         .task {
-            do {
-                globalResponse = try await globalRepository.getGlobalData()
-            } catch {
-                debugPrint(error)
+            switch await callApi({ try await globalRepository.getGlobalData() }) {
+            case let .ok(result): globalResponse = result.data
+            case let .error(error): debugPrint(error)
             }
         }
     }

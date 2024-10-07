@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.util
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.channels.Channel
@@ -25,9 +26,9 @@ class GetGlobalDataTest {
         val requestSync = Channel<Unit>(Channel.RENDEZVOUS)
         val globalRepo =
             object : IGlobalRepository {
-                override suspend fun getGlobalData(): GlobalResponse {
+                override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
                     requestSync.receive()
-                    return globalData
+                    return ApiResult.Ok(globalData)
                 }
             }
 

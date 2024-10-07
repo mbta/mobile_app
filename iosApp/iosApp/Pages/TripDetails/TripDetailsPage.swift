@@ -103,17 +103,15 @@ struct TripDetailsPage: View {
             }
         }
         .task {
-            do {
-                globalResponse = try await globalRepository.getGlobalData()
-            } catch {
-                debugPrint(error)
+            switch await callApi({ try await globalRepository.getGlobalData() }) {
+            case let .ok(result): globalResponse = result.data
+            case let .error(error): debugPrint(error)
             }
         }
         .task {
-            do {
-                tripSchedulesResponse = try await tripRepository.getTripSchedules(tripId: tripId)
-            } catch {
-                debugPrint(error)
+            switch await callApi({ try await tripRepository.getTripSchedules(tripId: tripId) }) {
+            case let .ok(result): tripSchedulesResponse = result.data
+            case let .error(error): debugPrint(error)
             }
         }
         .task {

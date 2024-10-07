@@ -95,17 +95,24 @@ fun endToEndModule(): Module {
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
         single<IGlobalRepository> {
             object : IGlobalRepository {
-                override suspend fun getGlobalData() =
-                    GlobalResponse(
-                        objects,
-                        mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
+                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
+                    ApiResult.Ok(
+                        GlobalResponse(
+                            objects,
+                            mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
+                        )
                     )
             }
         }
         single<INearbyRepository> {
             object : INearbyRepository {
-                override suspend fun getNearby(global: GlobalResponse, location: Coordinate) =
-                    NearbyStaticData(global, NearbyResponse(listOf(stopParkStreet.id)))
+                override suspend fun getNearby(
+                    global: GlobalResponse,
+                    location: Coordinate
+                ): ApiResult<NearbyStaticData> =
+                    ApiResult.Ok(
+                        NearbyStaticData(global, NearbyResponse(listOf(stopParkStreet.id)))
+                    )
             }
         }
         single<IPinnedRoutesRepository> {
@@ -146,24 +153,29 @@ fun endToEndModule(): Module {
         }
         single<ISchedulesRepository> {
             object : ISchedulesRepository {
-                override suspend fun getSchedule(stopIds: List<String>, now: Instant) =
-                    ScheduleResponse(objects)
+                override suspend fun getSchedule(
+                    stopIds: List<String>,
+                    now: Instant
+                ): ApiResult<ScheduleResponse> = ApiResult.Ok(ScheduleResponse(objects))
 
-                override suspend fun getSchedule(stopIds: List<String>) =
-                    getSchedule(stopIds, Clock.System.now())
+                override suspend fun getSchedule(
+                    stopIds: List<String>
+                ): ApiResult<ScheduleResponse> = getSchedule(stopIds, Clock.System.now())
             }
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
-                override suspend fun getStopMapData(stopId: String): StopMapResponse =
-                    StopMapResponse(emptyList(), emptyMap())
+                override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> =
+                    ApiResult.Ok(StopMapResponse(emptyList(), emptyMap()))
             }
         }
         single<ITripRepository> {
             object : ITripRepository {
-                override suspend fun getTripSchedules(tripId: String): TripSchedulesResponse {
+                override suspend fun getTripSchedules(
+                    tripId: String
+                ): ApiResult<TripSchedulesResponse> {
                     TODO("Not yet implemented")
                 }
 

@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -89,54 +90,59 @@ class StopRepositoryTest : KoinTest {
         runBlocking {
             val response = StopRepository().getStopMapData(stopId = "place-wondl")
             assertEquals(
-                StopMapResponse(
-                    routeShapes =
-                        listOf(
-                            MapFriendlyRouteResponse.RouteWithSegmentedShapes(
-                                routeId = "Blue",
-                                segmentedShapes =
-                                    listOf(
-                                        SegmentedRouteShape(
-                                            sourceRoutePatternId = "Blue-6-0",
-                                            sourceRouteId = "Blue",
-                                            directionId = 0,
-                                            routeSegments =
-                                                listOf(
-                                                    RouteSegment(
-                                                        id = "place-wondl-place-bomnl",
-                                                        sourceRouteId = "Blue",
-                                                        stopIds =
-                                                            listOf("place-wondl", "place-bomnl"),
-                                                        otherPatternsByStopId = mapOf(),
-                                                        sourceRoutePatternId = "Blue-6-0"
+                ApiResult.Ok(
+                    StopMapResponse(
+                        routeShapes =
+                            listOf(
+                                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                                    routeId = "Blue",
+                                    segmentedShapes =
+                                        listOf(
+                                            SegmentedRouteShape(
+                                                sourceRoutePatternId = "Blue-6-0",
+                                                sourceRouteId = "Blue",
+                                                directionId = 0,
+                                                routeSegments =
+                                                    listOf(
+                                                        RouteSegment(
+                                                            id = "place-wondl-place-bomnl",
+                                                            sourceRouteId = "Blue",
+                                                            stopIds =
+                                                                listOf(
+                                                                    "place-wondl",
+                                                                    "place-bomnl"
+                                                                ),
+                                                            otherPatternsByStopId = mapOf(),
+                                                            sourceRoutePatternId = "Blue-6-0"
+                                                        )
+                                                    ),
+                                                shape =
+                                                    Shape(
+                                                        id = "canonical-946_0013",
+                                                        polyline = "s|zaG~phpLpBwO"
                                                     )
-                                                ),
-                                            shape =
-                                                Shape(
-                                                    id = "canonical-946_0013",
-                                                    polyline = "s|zaG~phpLpBwO"
-                                                )
+                                            )
                                         )
+                                )
+                            ),
+                        childStops =
+                            mapOf(
+                                Pair(
+                                    "70060",
+                                    Stop(
+                                        id = "70060",
+                                        name = "Wonderland",
+                                        description = "Wonderland - Blue Line - Exit Only",
+                                        locationType = LocationType.STOP,
+                                        latitude = 42.413361,
+                                        longitude = -70.991685,
+                                        platformName = "Exit Only",
+                                        vehicleType = RouteType.HEAVY_RAIL,
+                                        parentStationId = "place-wondl"
                                     )
-                            )
-                        ),
-                    childStops =
-                        mapOf(
-                            Pair(
-                                "70060",
-                                Stop(
-                                    id = "70060",
-                                    name = "Wonderland",
-                                    description = "Wonderland - Blue Line - Exit Only",
-                                    locationType = LocationType.STOP,
-                                    latitude = 42.413361,
-                                    longitude = -70.991685,
-                                    platformName = "Exit Only",
-                                    vehicleType = RouteType.HEAVY_RAIL,
-                                    parentStationId = "place-wondl"
                                 )
                             )
-                        )
+                    )
                 ),
                 response
             )

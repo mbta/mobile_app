@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import kotlinx.coroutines.channels.Channel
@@ -42,13 +43,16 @@ class GetScheduleTest {
                 override suspend fun getSchedule(
                     stopIds: List<String>,
                     now: Instant
-                ): ScheduleResponse {
+                ): ApiResult<ScheduleResponse> {
                     requestSync.receive()
-                    return if (stopIds == stops1 && now == time1) expectedSchedules1
-                    else if (stopIds == stops1) expectedSchedules2 else expectedSchedules3
+                    return if (stopIds == stops1 && now == time1) ApiResult.Ok(expectedSchedules1)
+                    else if (stopIds == stops1) ApiResult.Ok(expectedSchedules2)
+                    else ApiResult.Ok(expectedSchedules3)
                 }
 
-                override suspend fun getSchedule(stopIds: List<String>): ScheduleResponse {
+                override suspend fun getSchedule(
+                    stopIds: List<String>
+                ): ApiResult<ScheduleResponse> {
                     throw IllegalStateException("Can't getSchedule with no time in this mock")
                 }
             }

@@ -49,10 +49,10 @@ struct SearchView: View {
 
     func loadResults(query: String) {
         Task {
-            do {
-                searchResults = try await searchResultsRepository.getSearchResults(query: query)
-            } catch {
-                debugPrint(error)
+            switch try await onEnum(of: searchResultsRepository.getSearchResults(query: query)) {
+            case let .ok(result): searchResults = result.data
+            case nil: searchResults = nil
+            case let .error(error): debugPrint(error)
             }
         }
     }
@@ -87,10 +87,9 @@ struct SearchView: View {
                 await searchVM.loadSettings()
             }
             Task {
-                do {
-                    globalResponse = try await globalRepository.getGlobalData()
-                } catch {
-                    debugPrint(error)
+                switch try await onEnum(of: globalRepository.getGlobalData()) {
+                case let .ok(result): globalResponse = result.data
+                case let .error(error): debugPrint(error)
                 }
             }
             didAppear?(self)

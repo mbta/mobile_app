@@ -59,10 +59,10 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 self.notifier = notifier
             }
 
-            func __getGlobalData() async throws -> GlobalResponse {
+            func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
                 debugPrint("FakeGlobalRepo getting global")
                 notifier.send()
-                return GlobalResponse(objects: .init(), patternIdsByStop: [:])
+                return ApiResultOk(data: GlobalResponse(objects: .init(), patternIdsByStop: [:]))
             }
         }
 

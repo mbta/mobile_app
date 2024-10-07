@@ -172,9 +172,13 @@ struct NearbyTransitView: View {
 
     func getGlobal() {
         Task {
-            globalData = try await globalRepository.getGlobalData()
-            // this should be handled by the onChange but in tests it just isn't
-            getNearby(location: location, globalData: globalData)
+            switch try await onEnum(of: globalRepository.getGlobalData()) {
+            case let .ok(result):
+                globalData = result.data
+                // this should be handled by the onChange but in tests it just isn't
+                getNearby(location: location, globalData: globalData)
+            case let .error(error): throw error
+            }
         }
     }
 
@@ -190,7 +194,10 @@ struct NearbyTransitView: View {
             guard let stopIds = state.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
-            scheduleResponse = try await schedulesRepository.getSchedule(stopIds: stopIdList)
+            switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: stopIdList)) {
+            case let .ok(result): scheduleResponse = result.data
+            case let .error(error): throw error
+            }
         }
     }
 
