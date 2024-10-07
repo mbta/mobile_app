@@ -26,7 +26,7 @@ internal fun List<UpcomingTrip>.filterCancellations(isSubway: Boolean): List<Upc
 internal fun UpcomingTripsMap.filterCancellations(isSubway: Boolean): UpcomingTripsMap =
     this.entries.associate { it.key to it.value.filterCancellations(isSubway) }
 
-sealed class RealtimePatterns : Comparable<RealtimePatterns> {
+sealed class RealtimePatterns {
     sealed class UpcomingTripKey {
         data class ByRoutePattern(
             val routeId: String,
@@ -166,20 +166,6 @@ sealed class RealtimePatterns : Comparable<RealtimePatterns> {
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
         )
     }
-
-    override fun compareTo(other: RealtimePatterns): Int =
-        compareValuesBy(
-            this,
-            other,
-            { it.directionId() },
-            {
-                when (it) {
-                    is ByDirection -> -1
-                    is ByHeadsign -> 1
-                }
-            },
-            { it.patterns.first() }
-        )
 
     fun alertsHereFor(stopIds: Set<String>, directionId: Int): List<Alert>? {
         return alertsHere?.let {

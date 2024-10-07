@@ -3,26 +3,9 @@ package com.mbta.tid.mbta_app.model
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 
-sealed class StopsAssociated() {
+sealed class StopsAssociated {
     abstract val id: String
     abstract val patternsByStop: List<PatternsByStop>
-
-    /**
-     * @property hasServiceOrDisruptionToday This is used to determine whether or not the route
-     *   should be sorted to the bottom of the nearby transit list. If this is false, it means that
-     *   service is not running or expected to run today, and that's not because of a disruption
-     *   which we would want to leave in place.
-     */
-    val hasServiceOrDisruptionToday
-        get() = run {
-            this.patternsByStop.any { byStop ->
-                byStop.patterns.any { patterns ->
-                    patterns.hasSchedulesToday ||
-                        patterns.hasMajorAlerts ||
-                        patterns.upcomingTrips?.isNotEmpty() == true
-                }
-            }
-        }
 
     fun distanceFrom(position: Position): Double = this.distance(position)
 

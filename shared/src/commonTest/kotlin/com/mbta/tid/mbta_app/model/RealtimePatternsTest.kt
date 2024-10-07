@@ -678,15 +678,7 @@ class RealtimePatternsTest {
                             route,
                             station,
                             listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "A",
-                                    null,
-                                    listOf(pattern1),
-                                    emptyList(),
-                                    emptyList(),
-                                    false
-                                ),
+                                // since B has an alert, it sorts above A
                                 RealtimePatterns.ByHeadsign(
                                     route,
                                     "B",
@@ -694,6 +686,15 @@ class RealtimePatternsTest {
                                     listOf(pattern2),
                                     emptyList(),
                                     listOf(alert),
+                                    false
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route,
+                                    "A",
+                                    null,
+                                    listOf(pattern1),
+                                    emptyList(),
+                                    emptyList(),
                                     false
                                 )
                             )
