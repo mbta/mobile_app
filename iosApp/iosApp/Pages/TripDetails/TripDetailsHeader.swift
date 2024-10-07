@@ -38,15 +38,18 @@ struct TripDetailsHeader: View {
             Image(.liveData)
                 .resizable()
                 .frame(width: 16, height: 16)
-            Text("Live")
+            Text("Live", comment: "real-time")
                 .font(Typography.footnote)
         }
     }
 
     func toHeadsign(_ headsign: String) -> some View {
-        Text("to \(headsign)")
-            .font(Typography.headlineBold)
-            .accessibilityHeading(.h1)
+        Text("to \(headsign)", comment: """
+        Label for the destination of a vehicle.
+        For example "[Red Line] to Alewife"
+        """)
+        .font(Typography.headlineBold)
+        .accessibilityHeading(.h1)
     }
 }
 
