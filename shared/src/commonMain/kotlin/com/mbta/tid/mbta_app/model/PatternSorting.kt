@@ -37,7 +37,7 @@ object PatternSorting {
             { it.patterns.first() }
         )
 
-    fun comparePatterns(): Comparator<RealtimePatterns> =
+    fun compareRealtimePatterns(): Comparator<RealtimePatterns> =
         compareBy(
             ::patternServiceBucket,
             { it.directionId() },
@@ -64,7 +64,7 @@ object PatternSorting {
                     { 0 }
                 },
             )
-            .thenBy(comparePatterns()) { it.patterns.first() }
+            .thenBy(compareRealtimePatterns()) { it.patterns.first() }
 
     fun compareTransitWithStops(): Comparator<NearbyStaticData.TransitWithStops> =
         compareBy({ subwayBucket(it.sortRoute()) }, { it.sortRoute() })

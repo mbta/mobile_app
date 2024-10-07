@@ -237,7 +237,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         .filter {
                             loading || ((it.isTypical() || it.isUpcoming()) && !it.isArrivalOnly())
                         }
-                        .sortedWith(PatternSorting.comparePatterns()),
+                        .sortedWith(PatternSorting.compareRealtimePatterns()),
                     Direction.getDirections(global, stop, route, routePatterns)
                 )
             }
@@ -291,7 +291,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                         .filter {
                             loading || ((it.isTypical() || it.isUpcoming()) && !it.isArrivalOnly())
                         }
-                        .sortedWith(PatternSorting.comparePatterns())
+                        .sortedWith(PatternSorting.compareRealtimePatterns())
 
                 return PatternsByStop(
                     groupedPatternsByRoute.map { it.key },

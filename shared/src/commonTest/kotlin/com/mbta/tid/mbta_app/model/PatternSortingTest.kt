@@ -146,7 +146,7 @@ class PatternSortingTest {
     }
 
     @Test
-    fun `test comparePatterns`() {
+    fun `test compareRealtimePatterns`() {
         val line = objects.line()
         objects.route { lineId = line.id }
         objects.stop()
@@ -163,7 +163,7 @@ class PatternSortingTest {
 
         val expected =
             listOf(patterns1, patterns2, patterns3, patterns4, patterns5, patterns6, patterns7)
-        val actual = expected.reversed().sortedWith(PatternSorting.comparePatterns())
+        val actual = expected.reversed().sortedWith(PatternSorting.compareRealtimePatterns())
         assertEquals(expected, actual)
     }
 
