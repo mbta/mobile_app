@@ -296,16 +296,21 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             global: GlobalResponse,
         ): StopPatterns.ForLine {
             val routes = patterns.keys.sorted()
-            val routeDirections =
+
+            val directionsByPattern =
                 patterns
-                    .map { (route, patterns) ->
-                        Pair(route.id, Direction.getDirections(global, stop, route, patterns))
+                    .flatMap { (route, patterns) ->
+                        patterns.map { pattern ->
+                            Pair(
+                                pattern.id,
+                                Direction.getDirectionForPattern(global, stop, route, pattern)
+                            )
+                        }
                     }
                     .toMap()
             val patternsByDirection =
-                patterns.values.flatten().groupBy {
-                    routeDirections[it.routeId]?.get(it.directionId)
-                }
+                patterns.values.flatten().groupBy { directionsByPattern[it.id] }
+
             val linePatterns =
                 patternsByDirection.flatMap { (direction, directionPatterns) ->
                     if (direction == null) {
@@ -344,7 +349,16 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 line = line,
                 routes = routes,
                 stop = stop,
-                patterns = linePatterns,
+                patterns =
+                    linePatterns.filter {
+                        when (it) {
+                            is StaticPatterns.ByDirection ->
+                                // Remove all directions terminating mid-line at Gov Center,
+                                // this direction label should never be displayed.
+                                it.direction.destination != "Government Center"
+                            else -> true
+                        }
+                    },
             )
         }
 

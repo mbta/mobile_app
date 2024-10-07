@@ -185,11 +185,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         ): PatternsByStop {
             global.run {
                 val patternsByHeadsign =
-                    routePatterns.groupBy {
-                        routePatterns.groupBy { trips.getValue(it.representativeTripId) }
-                        val representativeTrip = trips.getValue(it.representativeTripId)
-                        representativeTrip.headsign
-                    }
+                    routePatterns.groupBy { trips.getValue(it.representativeTripId).headsign }
                 return PatternsByStop(
                     listOf(route),
                     null,

@@ -116,6 +116,20 @@ data class Direction(
             }
         }
 
+        fun getDirectionForPattern(
+            global: GlobalResponse,
+            stop: Stop,
+            route: Route,
+            pattern: RoutePattern
+        ): Direction {
+            if (!specialCases.containsKey(idOverrides[route.id] ?: route.id)) {
+                return Direction(pattern.directionId, route)
+            }
+
+            val stopSequence = getStopSequenceForPattern(pattern, global)
+            return Direction(pattern.directionId, route, stop, stopSequence)
+        }
+
         fun getDirectionsForLine(
             global: GlobalResponse,
             stop: Stop,
@@ -176,6 +190,15 @@ data class Direction(
             return null
         }
 
+        private fun getStopSequenceForPattern(
+            pattern: RoutePattern?,
+            global: GlobalResponse
+        ): List<String>? {
+            return global.trips[pattern?.representativeTripId]?.stopIds?.map { stopId ->
+                global.stops[stopId]?.parentStationId ?: stopId
+            }
+        }
+
         private fun getTypicalStopSequenceByDirection(
             patterns: List<RoutePattern>,
             global: GlobalResponse
@@ -183,15 +206,12 @@ data class Direction(
             return patterns
                 .groupBy { pattern -> pattern.directionId }
                 .mapValues { directionPatterns ->
-                    val typicalTripId =
-                        directionPatterns.value
-                            .firstOrNull { pattern ->
-                                pattern.typicality == RoutePattern.Typicality.Typical
-                            }
-                            ?.representativeTripId
-                    global.trips[typicalTripId]?.stopIds?.map { stopId ->
-                        global.stops[stopId]?.parentStationId ?: stopId
-                    }
+                    getStopSequenceForPattern(
+                        directionPatterns.value.firstOrNull { pattern ->
+                            pattern.typicality == RoutePattern.Typicality.Typical
+                        },
+                        global
+                    )
                 }
         }
     }
