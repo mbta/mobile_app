@@ -63,7 +63,7 @@ data class PatternsByStop(
                 (it.isTypical() || it.isUpcomingWithin(filterTime, cutoffTime)) &&
                     !it.isArrivalOnly()
             }
-            .sorted(),
+            .sortedWith(PatternSorting.comparePatterns()),
         staticData.directions
     )
 
