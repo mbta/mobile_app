@@ -68,6 +68,8 @@ struct PredictionRowView: View {
                 UpcomingTripView(prediction: .none, isFirst: true, isOnly: true)
             case .noSchedulesToday:
                 UpcomingTripView(prediction: .noSchedulesToday, isFirst: true, isOnly: true)
+            case .serviceEndedToday:
+                UpcomingTripView(prediction: .serviceEndedToday, isFirst: true, isOnly: true)
             case .loading:
                 UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
             }

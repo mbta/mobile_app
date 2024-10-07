@@ -306,9 +306,6 @@
     "No nearby MBTA stops" : {
 
     },
-    "Predictions unavailable" : {
-
-    },
     "No results found" : {
 
     },
@@ -342,10 +339,16 @@
     "Power Problem" : {
       "comment" : "Possible alert cause"
     },
+    "Predictions unavailable" : {
+
+    },
     "Routes" : {
 
     },
     "select location" : {
+
+    },
+    "Service ended" : {
 
     },
     "Service suspended" : {

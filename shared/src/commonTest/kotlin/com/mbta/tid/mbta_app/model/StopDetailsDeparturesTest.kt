@@ -401,10 +401,10 @@ class StopDetailsDeparturesTest {
         assertEquals(
             expected(
                 scheduledPredicted.patternsByHeadsign(listOf(scheduledPredicted.predictedTrip!!)),
-                scheduledUnpredicted.patternsByHeadsign(emptyList()),
                 unscheduledPredicted.patternsByHeadsign(
                     listOf(unscheduledPredicted.predictedTrip!!)
                 ),
+                scheduledUnpredicted.patternsByHeadsign(emptyList()),
                 unscheduledUnpredicted.patternsByHeadsign(emptyList())
             ),
             actual(includeSchedules = false, includePredictions = true)
@@ -510,7 +510,7 @@ class StopDetailsDeparturesTest {
                         listOf(route),
                         null,
                         stop,
-                        listOf(expectedEarly, expectedLateBeforeLoad),
+                        listOf(expectedLateBeforeLoad, expectedEarly),
                         listOf(Direction("", "", 0), Direction("", "", 1)),
                     )
                 )

@@ -152,13 +152,13 @@ class PatternSortingTest {
         objects.stop()
         val southbound = Direction("Southbound", "Ashmont/Braintree", 0)
         val northbound = Direction("Northbound", "Alewife", 1)
-        // also checking if alerts, trips, and schedules are treated as equal
+        // also checking if alerts and trips are treated as equal
         val patterns1 = realtimePatternsByDirection(southbound, 1, trips = 1)
         val patterns2 = realtimePatternsByDirection(southbound, 2, alerts = 1)
-        val patterns3 = realtimePatternsByDirection(southbound, 3, hasSchedulesToday = true)
-        val patterns4 = realtimePatternsByDirection(southbound, 4, trips = 1)
-        val patterns5 = realtimePatternsByHeadsign("Ashmont", 0, 1, trips = 1)
-        val patterns6 = realtimePatternsByDirection(northbound, 1, trips = 1)
+        val patterns3 = realtimePatternsByDirection(southbound, 3, trips = 1)
+        val patterns4 = realtimePatternsByHeadsign("Ashmont", 0, 1, trips = 1)
+        val patterns5 = realtimePatternsByDirection(northbound, 1, trips = 1)
+        val patterns6 = realtimePatternsByDirection(southbound, 1, hasSchedulesToday = true)
         val patterns7 = realtimePatternsByDirection(southbound, 1)
 
         val expected =
@@ -211,15 +211,24 @@ class PatternSortingTest {
                 stop1,
                 listOf(realtimePatternsByHeadsign(route2, "", 0, 1, trips = 1))
             )
-        // pinned, no service, subway, near, direction 0
+        // pinned, service ended, subway, near, direction 0
         val patternsByStop5 =
+            PatternsByStop(
+                route1,
+                stop1,
+                listOf(
+                    realtimePatternsByHeadsign(route1, "Ashmont", 0, 1, hasSchedulesToday = true)
+                )
+            )
+        // pinned, no service, subway, near, direction 0
+        val patternsByStop6 =
             PatternsByStop(
                 route1,
                 stop1,
                 listOf(realtimePatternsByHeadsign(route1, "Ashmont", 0, 1))
             )
         // unpinned, has service, subway, near, direction 0
-        val patternsByStop6 =
+        val patternsByStop7 =
             PatternsByStop(
                 route3,
                 stop1,
@@ -233,7 +242,8 @@ class PatternSortingTest {
                 patternsByStop3,
                 patternsByStop4,
                 patternsByStop5,
-                patternsByStop6
+                patternsByStop6,
+                patternsByStop7
             )
         val actual =
             expected
@@ -355,8 +365,22 @@ class PatternSortingTest {
                     )
                 )
             )
-        // pinned, no service, subway, near, route sort order 1
+        // pinned, service ended, subway, near, route sort order 1
         val stopsAssociated5 =
+            StopsAssociated.WithRoute(
+                route1,
+                listOf(
+                    PatternsByStop(
+                        route1,
+                        stop1,
+                        listOf(
+                            realtimePatternsByHeadsign(route1, "", 0, 1, hasSchedulesToday = true)
+                        )
+                    )
+                )
+            )
+        // pinned, no service, subway, near, route sort order 1
+        val stopsAssociated6 =
             StopsAssociated.WithRoute(
                 route1,
                 listOf(
@@ -368,7 +392,7 @@ class PatternSortingTest {
                 )
             )
         // not pinned, has service, subway, near, route sort order 1
-        val stopsAssociated6 =
+        val stopsAssociated7 =
             StopsAssociated.WithRoute(
                 route4,
                 listOf(
@@ -387,7 +411,8 @@ class PatternSortingTest {
                 stopsAssociated3,
                 stopsAssociated4,
                 stopsAssociated5,
-                stopsAssociated6
+                stopsAssociated6,
+                stopsAssociated7
             )
         val actual =
             expected

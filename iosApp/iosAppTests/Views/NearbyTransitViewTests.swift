@@ -252,7 +252,7 @@ final class NearbyTransitViewTests: XCTestCase {
             )
 
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
-            XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .none)
+            XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .serviceEndedToday)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
@@ -350,7 +350,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictions)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "Predictions unavailable"))
+                .parent().parent().find(text: "Service ended"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().parent().find(text: "10 min"))
@@ -439,7 +439,7 @@ final class NearbyTransitViewTests: XCTestCase {
             try view.vStack().callOnChange(newValue: predictionsByStop)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "Predictions unavailable"))
+                .parent().parent().find(text: "Service ended"))
 
             XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
                 .parent().parent().find(text: "10 min"))
