@@ -194,4 +194,110 @@ class PatternsByStopTest {
             )
         assertEquals(listOf(alert2), alerts)
     }
+
+    @Test
+    fun `alertsHereFor doesn't duplicate alerts`() {
+        val objects = ObjectCollectionBuilder()
+        lateinit var platform1: Stop
+        lateinit var platform2: Stop
+        val station =
+            objects.stop {
+                platform1 = childStop()
+                platform2 = childStop()
+            }
+
+        val route = objects.route()
+        val pattern1 =
+            objects.routePattern(route) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(platform1.id) }
+            }
+        val pattern2 =
+            objects.routePattern(route) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = listOf(platform2.id) }
+            }
+        val pattern3 =
+            objects.routePattern(route) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { stopIds = listOf(platform1.id) }
+            }
+        val pattern4 =
+            objects.routePattern(route) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { stopIds = listOf(platform2.id) }
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = station.id
+                )
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = platform1.id
+                )
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride
+                    ),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = platform2.id
+                )
+            }
+
+        val patternsByStop =
+            PatternsByStop(
+                route,
+                station,
+                listOf(
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Out",
+                        null,
+                        listOf(pattern1, pattern4),
+                        alertsHere = listOf(alert)
+                    ),
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "In",
+                        null,
+                        listOf(pattern2, pattern3),
+                        alertsHere = listOf(alert)
+                    )
+                )
+            )
+
+        val global =
+            GlobalResponse(
+                objects,
+                mapOf(
+                    platform1.id to listOf(pattern1.id, pattern3.id),
+                    platform2.id to listOf(pattern2.id, pattern4.id)
+                )
+            )
+        assertEquals(listOf(alert), patternsByStop.alertsHereFor(0, global))
+        assertEquals(listOf(alert), patternsByStop.alertsHereFor(1, global))
+    }
 }

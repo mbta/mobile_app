@@ -93,10 +93,12 @@ data class PatternsByStop(
                     }
                 }
                 .toSet()
-        return stopsInDirection.flatMap { stopId ->
-            patternsInDirection
-                .flatMap { it.alertsHereFor(setOf(stopId), directionId) ?: emptyList() }
-                .toSet()
-        }
+        return stopsInDirection
+            .flatMap { stopId ->
+                patternsInDirection
+                    .flatMap { it.alertsHereFor(setOf(stopId), directionId) ?: emptyList() }
+                    .toSet()
+            }
+            .distinct()
     }
 }
