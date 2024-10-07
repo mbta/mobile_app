@@ -40,6 +40,7 @@ final class StopDetailsViewTests: XCTestCase {
                                       .init(route: routeDefaultSort0, stop: stop, patterns: []),
                                   ]),
                                   nearbyVM: .init(),
+                                  now: Date.now,
                                   pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
@@ -63,6 +64,7 @@ final class StopDetailsViewTests: XCTestCase {
                                       .init(route: route, stop: stop, patterns: []),
                                   ]),
                                   nearbyVM: .init(),
+                                  now: Date.now,
                                   pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
@@ -81,6 +83,7 @@ final class StopDetailsViewTests: XCTestCase {
             setFilter: { _ in },
             departures: nil,
             nearbyVM: nearbyVM,
+            now: Date.now,
             pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
 
@@ -105,6 +108,7 @@ final class StopDetailsViewTests: XCTestCase {
             setFilter: { _ in },
             departures: nil,
             nearbyVM: nearbyVM,
+            now: Date.now,
             pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
 
@@ -124,6 +128,7 @@ final class StopDetailsViewTests: XCTestCase {
             setFilter: { _ in },
             departures: nil,
             nearbyVM: nearbyVM,
+            now: Date.now,
             pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
 

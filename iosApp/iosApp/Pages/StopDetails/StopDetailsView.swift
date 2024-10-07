@@ -21,7 +21,7 @@ struct StopDetailsView: View {
     var filter: StopDetailsFilter?
     var setFilter: (StopDetailsFilter?) -> Void
     var departures: StopDetailsDepartures?
-    @State var now = Date.now
+    var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
     @ObservedObject var nearbyVM: NearbyViewModel
     let pinnedRoutes: Set<String>
@@ -39,6 +39,7 @@ struct StopDetailsView: View {
         setFilter: @escaping (StopDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
         nearbyVM: NearbyViewModel,
+        now: Date,
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
     ) {
@@ -48,6 +49,7 @@ struct StopDetailsView: View {
         self.setFilter = setFilter
         self.departures = departures
         self.nearbyVM = nearbyVM
+        self.now = now
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
 
@@ -102,9 +104,6 @@ struct StopDetailsView: View {
                     LoadingCard()
                 }
             }
-        }
-        .onReceive(timer) { input in
-            now = input
         }
         .task {
             do {
