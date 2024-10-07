@@ -237,11 +237,17 @@ sealed class RealtimePatterns {
                     formatUpcomingTrip(now, it, routeType, context, isSubway)
                 }
                 .take(count)
-        if (tripsToShow.isEmpty()) {
-            return if (hasSchedulesToday) Format.None(secondaryAlert)
-            else Format.NoSchedulesToday(secondaryAlert)
+        return when {
+            tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
+            !hasSchedulesToday -> Format.NoSchedulesToday(secondaryAlert)
+            allTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
+                // there are trips in the future but we're not showing them (maybe because we're on
+                // the subway and we have schedules but can't get predictions)
+                Format.None(secondaryAlert)
+            else ->
+                // if there were schedules but there are no trips in the future, service is over
+                Format.ServiceEndedToday(secondaryAlert)
         }
-        return Format.Some(tripsToShow, secondaryAlert)
     }
 
     /**
@@ -336,6 +342,8 @@ sealed class RealtimePatterns {
         data class None(override val secondaryAlert: SecondaryAlert?) : Format()
 
         data class NoSchedulesToday(override val secondaryAlert: SecondaryAlert?) : Format()
+
+        data class ServiceEndedToday(override val secondaryAlert: SecondaryAlert?) : Format()
 
         data class Some(
             val trips: List<FormatWithId>,

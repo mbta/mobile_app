@@ -43,6 +43,8 @@ sealed interface UpcomingTripViewState {
 
     data object NoSchedulesToday : UpcomingTripViewState
 
+    data object ServiceEndedToday : UpcomingTripViewState
+
     data class NoService(val effect: Alert.Effect) : UpcomingTripViewState
 
     data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
@@ -142,6 +144,8 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
         is UpcomingTripViewState.NoService ->
             NoServiceView(NoServiceViewEffect.from(state.effect), modifier)
         is UpcomingTripViewState.None -> Text("No Predictions", modifier, fontSize = 13.sp)
+        is UpcomingTripViewState.ServiceEndedToday ->
+            Text("Service ended", modifier, fontSize = 13.sp)
         is UpcomingTripViewState.NoSchedulesToday ->
             Text("No service today", modifier, fontSize = 13.sp)
         is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
