@@ -20,7 +20,7 @@ sealed class ApiResult<out T : Any> {
             } catch (e: ResponseException) {
                 Error(code = e.response.status.value, message = e.message ?: e.toString())
             } catch (e: Throwable) {
-                // Ktor expectSuccess throws ResponseException on non-success, preserve the HTTP
+                // HttpResponseValidator throws ResponseException on non-success, preserve the HTTP
                 // status code
                 val code =
                     if (e is ResponseException) {

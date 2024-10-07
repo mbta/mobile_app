@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.cache
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.utils.SystemPaths
-import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -130,9 +129,12 @@ class ResponseCache<T : Any>(
                 val httpResponse = fetch(this.data?.metadata?.etag)
                 return when (httpResponse.status) {
                     HttpStatusCode.NotModified -> {
-                        // since MobileAppClient defaults to expectSuccess = true, this shouldn't
-                        // happen
-                        throw RedirectResponseException(httpResponse, httpResponse.bodyAsText())
+                        val data =
+                            this.data
+                                ?: return ApiResult.Error(message = "Failed to update cached data")
+                        data.metadata.fetchTime = TimeSource.Monotonic.markNow()
+                        writeMetadata(data.metadata)
+                        ApiResult.Ok(data.body)
                     }
                     HttpStatusCode.OK -> {
                         this.putData(httpResponse)
@@ -148,17 +150,6 @@ class ResponseCache<T : Any>(
                         )
                 }
             } catch (ex: Exception) {
-                if (
-                    ex is RedirectResponseException &&
-                        ex.response.status == HttpStatusCode.NotModified
-                ) {
-                    val data =
-                        this.data
-                            ?: return ApiResult.Error(message = "Failed to update cached data")
-                    data.metadata.fetchTime = TimeSource.Monotonic.markNow()
-                    writeMetadata(data.metadata)
-                    return ApiResult.Ok(data.body)
-                }
                 return ApiResult.Error(message = ex.message ?: ex.toString())
             }
         }
