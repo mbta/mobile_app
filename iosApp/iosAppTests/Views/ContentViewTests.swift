@@ -16,8 +16,6 @@ import XCTest
 @_spi(Experimental) import MapboxMaps
 
 final class ContentViewTests: XCTestCase {
-    struct NotUnderTestError: Error {}
-
     override func setUp() {
         executionTimeAllowance = 60
         HelpersKt

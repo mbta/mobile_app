@@ -13,8 +13,6 @@ import ViewInspector
 import XCTest
 
 final class SearchResultViewTests: XCTestCase {
-    struct NotUnderTestError: Error {}
-
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -35,7 +33,7 @@ final class SearchResultViewTests: XCTestCase {
 
             func __getSearchResults(query _: String) async throws -> SearchResults? {
                 getSearchResultsExpectation.fulfill()
-                throw NotUnderTestError()
+                return nil
             }
         }
 
