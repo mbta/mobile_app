@@ -79,6 +79,7 @@ struct StopDetailsPage: View {
                 setFilter: { filter in nearbyVM.pushNavEntry(.stopDetails(stop, filter)) },
                 departures: internalDepartures,
                 nearbyVM: nearbyVM,
+                now: now,
                 pinnedRoutes: pinnedRoutes,
                 togglePinnedRoute: togglePinnedRoute
             )
