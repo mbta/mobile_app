@@ -32,6 +32,7 @@ struct UpcomingTripView: View {
         case loading
         case none
         case noSchedulesToday
+        case serviceEndedToday
         case noService(shared.Alert.Effect)
         case some(TripInstantDisplay)
     }
@@ -145,6 +146,8 @@ struct UpcomingTripView: View {
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
             Text("Predictions unavailable").font(Typography.footnote)
+        case .serviceEndedToday:
+            Text("Service ended").font(Typography.footnote)
         case .noSchedulesToday:
             Text("No service today").font(Typography.footnote)
         case .loading:

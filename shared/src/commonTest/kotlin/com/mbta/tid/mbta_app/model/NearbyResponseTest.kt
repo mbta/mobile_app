@@ -757,6 +757,14 @@ class NearbyResponseTest {
                                     listOf(deviationOutbound),
                                     listOf(objects.upcomingTrip(deviationOutboundPrediction))
                                 ),
+                                // since this has trips it's sorted earlier than typical in
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Atypical In",
+                                    null,
+                                    listOf(atypicalInbound),
+                                    listOf(objects.upcomingTrip(atypicalInboundPrediction))
+                                ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
                                     "Typical In",
@@ -764,13 +772,6 @@ class NearbyResponseTest {
                                     listOf(typicalInbound),
                                     emptyList()
                                 ),
-                                RealtimePatterns.ByHeadsign(
-                                    route1,
-                                    "Atypical In",
-                                    null,
-                                    listOf(atypicalInbound),
-                                    listOf(objects.upcomingTrip(atypicalInboundPrediction))
-                                )
                             )
                         )
                     )

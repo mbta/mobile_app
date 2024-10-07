@@ -5,12 +5,13 @@ import io.github.dellisd.spatialk.geojson.Position
 object PatternSorting {
     private fun patternServiceBucket(realtimePatterns: RealtimePatterns) =
         when {
-            // service or alert today
-            realtimePatterns.hasSchedulesToday ||
-                realtimePatterns.hasMajorAlerts ||
+            // showing either a trip or an alert
+            realtimePatterns.hasMajorAlerts ||
                 realtimePatterns.upcomingTrips.orEmpty().isNotEmpty() -> 1
+            // service ended
+            realtimePatterns.hasSchedulesToday -> 2
             // no service today
-            else -> 2
+            else -> 3
         }
 
     private fun pinnedRouteBucket(route: Route, pinnedRoutes: Set<String>) =

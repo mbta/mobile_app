@@ -55,7 +55,7 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `formats as none with no trips and secondary alert`() = parametricTest {
+    fun `formats as ended with no trips but schedules and secondary alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
@@ -80,7 +80,7 @@ class RealtimePatternsTest {
 
         for ((route, icon) in cases) {
             assertEquals(
-                RealtimePatterns.Format.None(
+                RealtimePatterns.Format.ServiceEndedToday(
                     RealtimePatterns.Format.SecondaryAlert(icon, Alert.Effect.ServiceChange)
                 ),
                 RealtimePatterns.ByHeadsign(
@@ -89,7 +89,8 @@ class RealtimePatternsTest {
                         null,
                         emptyList(),
                         emptyList(),
-                        listOf(alert)
+                        listOf(alert),
+                        hasSchedulesToday = true
                     )
                     .format(now, route.type, context)
             )
@@ -171,16 +172,51 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `formats as none with no trips and no alert`() = parametricTest {
+    fun `formats as ended with no trips but schedules and no alert`() = parametricTest {
         val now = Clock.System.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
 
         assertEquals(
-            RealtimePatterns.Format.None(null),
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), emptyList())
+            RealtimePatterns.Format.ServiceEndedToday(null),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    hasSchedulesToday = true
+                )
                 .format(now, anyNonCommuterRailRouteType(), anyContext())
+        )
+    }
+
+    @Test
+    fun `formats as none with subway schedules but no predictions and no alert`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
+        val pattern = objects.routePattern(route)
+        val schedule =
+            objects.schedule {
+                trip = objects.trip(pattern)
+                departureTime = now + 2.minutes
+            }
+        assertEquals(
+            RealtimePatterns.Format.None(null),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    listOf(pattern),
+                    listOf(objects.upcomingTrip(schedule)),
+                    emptyList(),
+                    hasSchedulesToday = true
+                )
+                .format(now, route.type, anyContext())
         )
     }
 
