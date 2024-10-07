@@ -4,7 +4,7 @@ plugins {
     id("com.diffplug.spotless").version("6.21.0")
 }
 
-dependencies { implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") }
+dependencies { implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3") }
 
 spotless {
     kotlinGradle {
