@@ -11,22 +11,23 @@ import shared
 import SwiftUI
 
 struct TripDetailsHeader: View {
-    var onBack: () -> Void
     let route: Route?
     let line: Line?
     let trip: Trip?
+    var onBack: () -> Void = {}
+    var onClose: () -> Void = {}
 
     var body: some View {
-        HStack {
+        HStack(alignment: .center, spacing: 16) {
             ActionButton(kind: .back, action: onBack)
-            Spacer().frame(width: 16)
             if let trip, let route {
-                RoutePill(route: route, line: line, type: .fixed)
-                Spacer().frame(width: 8)
-                toHeadsign(trip.headsign)
-                Spacer()
-                liveIndicator
+                HStack(alignment: .center, spacing: 8) {
+                    RoutePill(route: route, line: line, type: .fixed)
+                    toHeadsign(trip.headsign)
+                }
             }
+            Spacer()
+            ActionButton(kind: .close, action: onClose)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
@@ -82,9 +83,9 @@ struct TripDetailsHeader_Previews: PreviewProvider {
             trip.headsign = "Providence"
         }
         VStack {
-            TripDetailsHeader(onBack: {}, route: route, line: nil, trip: trip)
-            TripDetailsHeader(onBack: {}, route: longestTripNameRoute, line: nil, trip: longestTripName)
-            TripDetailsHeader(onBack: {}, route: crRoute, line: nil, trip: crTrip)
+            TripDetailsHeader(route: route, line: nil, trip: trip)
+            TripDetailsHeader(route: longestTripNameRoute, line: nil, trip: longestTripName)
+            TripDetailsHeader(route: crRoute, line: nil, trip: crTrip)
         }
     }
 }

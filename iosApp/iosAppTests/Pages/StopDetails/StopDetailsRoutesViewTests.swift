@@ -33,7 +33,8 @@ final class StopDetailsRoutesViewTests: XCTestCase {
         let sut = StopDetailsRoutesView(departures: departures,
                                         global: .none,
                                         now: Date.now.toKotlinInstant(),
-                                        filter: .constant(nil),
+                                        filter: nil,
+                                        setFilter: { _ in },
                                         pushNavEntry: { _ in },
                                         pinRoute: { _ in },
                                         pinnedRoutes: [])
@@ -50,7 +51,8 @@ final class StopDetailsRoutesViewTests: XCTestCase {
             departures: departures,
             global: .none,
             now: Date.now.toKotlinInstant(),
-            filter: .constant(filter),
+            filter: filter,
+            setFilter: { _ in },
             pushNavEntry: { _ in },
             pinRoute: { _ in },
             pinnedRoutes: []

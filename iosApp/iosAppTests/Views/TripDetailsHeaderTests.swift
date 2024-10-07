@@ -29,7 +29,7 @@ final class TripDetailsHeaderTests: XCTestCase {
             route.longName = "Red Line"
         }
 
-        let sut = TripDetailsHeader(onBack: {}, route: route, line: nil, trip: trip)
+        let sut = TripDetailsHeader(route: route, line: nil, trip: trip, onBack: {})
         XCTAssertNotNil(try sut.inspect().find(text: "to Alewife"))
         XCTAssertNotNil(try sut.inspect().find(text: "RL"))
     }

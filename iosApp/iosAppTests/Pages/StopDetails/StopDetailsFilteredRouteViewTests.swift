@@ -177,7 +177,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             departures: data.departures,
             global: nil,
             now: data.now,
-            filter: .constant(.init(routeId: data.routeId, directionId: 0)),
+            filter: .init(routeId: data.routeId, directionId: 0),
+            setFilter: { _ in },
             pushNavEntry: { _ in },
             pinned: false
         )
@@ -193,7 +194,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             departures: data.departures,
             global: nil,
             now: data.now,
-            filter: .constant(.init(routeId: data.lineId, directionId: 0)),
+            filter: .init(routeId: data.lineId, directionId: 0),
+            setFilter: { _ in },
             pushNavEntry: { _ in },
             pinned: false
         )
@@ -226,7 +228,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             departures: data.departures,
             global: nil,
             now: data.now,
-            filter: .constant(.init(routeId: data.routeId, directionId: 0)),
+            filter: .init(routeId: data.routeId, directionId: 0),
+            setFilter: { _ in },
             pushNavEntry: pushNavEntry,
             pinned: false
         )

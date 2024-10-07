@@ -28,7 +28,7 @@ struct SearchField: View {
                     .foregroundStyle(Color.deemphasized)
                     .accessibilityHidden(true)
                 TextField("Stops", text: $searchObserver.searchText)
-                    .accessibilityLabel("search")
+                    .accessibilityAddTraits(.isSearchField)
                     .focused($isFocused)
                     .submitLabel(.done)
                     .padding(.horizontal, 2)

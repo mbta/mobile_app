@@ -139,8 +139,12 @@ struct TripDetailsPage: View {
         }
         .onAppear { joinRealtime() }
         .onDisappear { leaveRealtime() }
-        .onChange(of: tripId) { joinPredictions(tripId: $0) }
+        .onChange(of: tripId) {
+            leavePredictions()
+            joinPredictions(tripId: $0)
+        }
         .onChange(of: vehicleId) { vehicleId in
+            leaveVehicle()
             joinVehicle(vehicleId: vehicleId)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -239,10 +243,11 @@ struct TripDetailsPage: View {
             nil
         }
         TripDetailsHeader(
-            onBack: nearbyVM.goBack,
             route: route,
             line: globalResponse?.getLine(lineId: route?.lineId),
-            trip: trip
+            trip: trip,
+            onBack: nearbyVM.goBack,
+            onClose: { nearbyVM.navigationStack.removeAll() }
         )
     }
 

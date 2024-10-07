@@ -8,10 +8,12 @@
 
 import CoreLocation
 import Foundation
+import os
 import shared
 import SwiftUI
 
 class NearbyViewModel: ObservableObject {
+    private static let logger = Logger()
     struct NearbyTransitState: Equatable {
         var error: String?
         var loadedLocation: CLLocationCoordinate2D?
@@ -20,12 +22,28 @@ class NearbyViewModel: ObservableObject {
     }
 
     @Published var departures: StopDetailsDepartures?
-    @Published var navigationStack: [SheetNavigationStackEntry] = []
+    @Published var navigationStack: [SheetNavigationStackEntry] = [] {
+        didSet { Task {
+            let navEntry = navigationStack.lastSafe()
+            do {
+                switch navEntry {
+                case let .stopDetails(stop, _):
+                    try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stop.id))
+                default: break
+                }
+            } catch {
+                let navLabel = navEntry.sheetItemIdentifiable().debugDescription
+                Self.logger.warning("Failed to add to visit history for nav \(navLabel), \(error)")
+            }
+        }}
+    }
+
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
     @Published var selectingLocation = false
     private let alertsRepository: IAlertsRepository
     private let nearbyRepository: INearbyRepository
+    private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
     private var analytics: NearbyTransitAnalytics
 
@@ -34,17 +52,24 @@ class NearbyViewModel: ObservableObject {
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
+        visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     ) {
         self.departures = departures
         self.navigationStack = navigationStack
         self.alertsRepository = alertsRepository
         self.nearbyRepository = nearbyRepository
+        self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
     }
 
-    func setDepartures(_ newDepartures: StopDetailsDepartures?) {
-        departures = newDepartures
+    /**
+     Set the departures from the given stop if it is the last stop in the stack.
+     */
+    func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
+        if stopId == navigationStack.lastStop?.id {
+            departures = newDepartures
+        }
     }
 
     func isNearbyVisible() -> Bool {
@@ -59,6 +84,15 @@ class NearbyViewModel: ObservableObject {
             navigationStack.append(entry)
         } else {
             navigationStack.append(entry)
+        }
+    }
+
+    /**
+     set the filter for the given stop if it is the last stop in the stack
+     */
+    func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
+        if stopId == navigationStack.lastStop?.id {
+            navigationStack.lastStopDetailsFilter = filter
         }
     }
 

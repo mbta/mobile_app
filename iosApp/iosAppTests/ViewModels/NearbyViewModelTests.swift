@@ -51,6 +51,56 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.navigationStack, [entry2])
     }
 
+    func testSetLastStopDetailsFilterWhenIsLast() {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { _ in }
+        let newFilter: StopDetailsFilter = .init(routeId: "2", directionId: 1)
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop1, StopDetailsFilter(routeId: "1",
+                                                                                                      directionId: 0))])
+        nearbyVM.setLastStopDetailsFilter(stop1.id, newFilter)
+        XCTAssertEqual(nearbyVM.navigationStack.last, .stopDetails(stop1, newFilter))
+    }
+
+    func testSetLastStopDetailsFilterWhenIsNotLast() {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { _ in }
+        let stop2 = objects.stop { _ in }
+        let newFilter: StopDetailsFilter = .init(routeId: "2", directionId: 1)
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop1, StopDetailsFilter(routeId: "1",
+                                                                                                      directionId: 0)),
+                                                                .stopDetails(stop2, nil)])
+        nearbyVM.setLastStopDetailsFilter(stop1.id, newFilter)
+        XCTAssertEqual(nearbyVM.navigationStack.last, .stopDetails(stop2, nil))
+    }
+
+    func testSetDeparturesWhenIsLast() {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { _ in }
+        let route1 = objects.route { _ in }
+        let departures: StopDetailsDepartures = .init(routes: [
+            .init(route: route1, stop: stop1, patterns: []),
+        ])
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop1, nil)])
+        nearbyVM.setDepartures(stop1.id, departures)
+        XCTAssertEqual(nearbyVM.departures, departures)
+    }
+
+    func testSetDeparturesWhenIsNotLast() {
+        let objects = ObjectCollectionBuilder()
+        let stop1 = objects.stop { _ in }
+        let stop2 = objects.stop { _ in }
+        let route1 = objects.route { _ in }
+        let departures: StopDetailsDepartures = .init(routes: [
+            .init(route: route1, stop: stop1, patterns: []),
+        ])
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop1, nil),
+                                                                .stopDetails(stop2, nil)])
+        nearbyVM.setDepartures(stop1.id, departures)
+        XCTAssertEqual(nearbyVM.departures, nil)
+    }
+
     func testTargetStop() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
@@ -79,5 +129,48 @@ final class NearbyViewModelTests: XCTestCase {
         // This should succeed unless there's a fatal error thrown
         let nearbyVM: NearbyViewModel = .init(navigationStack: [])
         nearbyVM.goBack()
+    }
+
+    func testVisitHistoryChanges() async {
+        let objects = ObjectCollectionBuilder()
+        let stopA = objects.stop { _ in }
+        let stopB = objects.stop { _ in }
+        let stopC = objects.stop { _ in }
+
+        let visitHistoryRepo = MockVisitHistoryRepository()
+        let visitHistoryUsecase = VisitHistoryUsecase(repository: visitHistoryRepo)
+        let nearbyVM: NearbyViewModel = .init(visitHistoryUsecase: visitHistoryUsecase)
+
+        do {
+            func pause() async throws { try await Task.sleep(nanoseconds: 200_000_000) }
+
+            // Pause after every nav stack update to allow for the didSet to run
+            nearbyVM.pushNavEntry(.stopDetails(stopA, nil))
+            try await pause()
+            nearbyVM.navigationStack.removeAll()
+            try await pause()
+            nearbyVM.pushNavEntry(.stopDetails(stopB, nil))
+            try await pause()
+            nearbyVM.pushNavEntry(.tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0))
+            try await pause()
+            nearbyVM.pushNavEntry(.stopDetails(stopC, StopDetailsFilter(routeId: "route", directionId: 1)))
+            try await pause()
+            nearbyVM.navigationStack.removeAll()
+            try await pause()
+            nearbyVM.pushNavEntry(.stopDetails(stopB, nil))
+            try await pause()
+
+            let visits = try await visitHistoryUsecase.getLatestVisits()
+            XCTAssertEqual(
+                [
+                    Visit.StopVisit(stopId: stopB.id),
+                    Visit.StopVisit(stopId: stopC.id),
+                    Visit.StopVisit(stopId: stopA.id),
+                ],
+                visits
+            )
+        } catch {
+            XCTFail("Getting latest visits failed, \(error)")
+        }
     }
 }
