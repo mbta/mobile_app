@@ -17,10 +17,9 @@ if [ -d $JDK_PATH ]; then
   exit
 fi
 
-brew install asdf
-asdf plugin-add java
-asdf install java
-DEFAULT_JAVA_PATH="$(asdf where java)"
+brew install openjdk@17
+
+DEFAULT_JAVA_PATH="/usr/local/Cellar/openjdk@17/17.0.12/libexec/openjdk.jdk/Contents/Home"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
 rm -rf $JDK_PATH
 mkdir -p $JDK_PATH
