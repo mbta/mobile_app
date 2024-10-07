@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
@@ -2339,113 +2338,5 @@ class NearbyResponseTest {
 
         assertTrue(hasSchedulesToday?.get(routePatternA.id)!!)
         assertNull(hasSchedulesToday[routePatternB.id])
-    }
-
-    @Test
-    fun `StopsAssociated hasServiceOrDisruptionToday is true when expected`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route { sortOrder = 1 }
-        val routePattern = objects.routePattern(route)
-        val trip = objects.trip(routePattern)
-
-        val time = Instant.parse("2024-03-18T10:41:13-04:00")
-
-        assertTrue(
-            StopsAssociated.WithRoute(
-                    route,
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "A",
-                                    null,
-                                    listOf(routePattern),
-                                    emptyList(),
-                                    emptyList(),
-                                    true
-                                )
-                            )
-                        )
-                    )
-                )
-                .hasServiceOrDisruptionToday
-        )
-        assertTrue(
-            StopsAssociated.WithRoute(
-                    route,
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "B",
-                                    null,
-                                    listOf(routePattern),
-                                    listOf(
-                                        objects.upcomingTrip(
-                                            objects.prediction {
-                                                tripId = trip.id
-                                                departureTime = time + 1.5.minutes
-                                            }
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-                .hasServiceOrDisruptionToday
-        )
-        assertTrue(
-            StopsAssociated.WithRoute(
-                    route,
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "B",
-                                    null,
-                                    listOf(routePattern),
-                                    listOf(),
-                                    listOf(objects.alert { effect = Alert.Effect.Suspension })
-                                )
-                            )
-                        )
-                    )
-                )
-                .hasServiceOrDisruptionToday
-        )
-        assertFalse(
-            StopsAssociated.WithRoute(
-                    route,
-                    listOf(
-                        PatternsByStop(
-                            route,
-                            stop,
-                            listOf(
-                                RealtimePatterns.ByHeadsign(
-                                    route,
-                                    "B",
-                                    null,
-                                    listOf(routePattern),
-                                    listOf(),
-                                    listOf(),
-                                    false
-                                )
-                            )
-                        )
-                    )
-                )
-                .hasServiceOrDisruptionToday
-        )
     }
 }

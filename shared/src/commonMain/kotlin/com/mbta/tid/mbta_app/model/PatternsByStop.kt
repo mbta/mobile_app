@@ -63,7 +63,7 @@ data class PatternsByStop(
                 (it.isTypical() || it.isUpcomingWithin(filterTime, cutoffTime)) &&
                     !it.isArrivalOnly()
             }
-            .sorted(),
+            .sortedWith(PatternSorting.compareRealtimePatterns()),
         staticData.directions
     )
 
@@ -93,10 +93,12 @@ data class PatternsByStop(
                     }
                 }
                 .toSet()
-        return stopsInDirection.flatMap { stopId ->
-            patternsInDirection
-                .flatMap { it.alertsHereFor(setOf(stopId), directionId) ?: emptyList() }
-                .toSet()
-        }
+        return stopsInDirection
+            .flatMap { stopId ->
+                patternsInDirection
+                    .flatMap { it.alertsHereFor(setOf(stopId), directionId) ?: emptyList() }
+                    .toSet()
+            }
+            .distinct()
     }
 }

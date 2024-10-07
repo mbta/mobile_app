@@ -25,27 +25,4 @@ data class Route(
             RouteType.COMMUTER_RAIL -> longName.replace("/", " / ")
             else -> longName
         }
-
-    companion object {
-        val subwayFirstComparator =
-            Comparator<Route> { route1, route2 ->
-                if (route1.type.isSubway() && !route2.type.isSubway()) {
-                    -1
-                } else if (route2.type.isSubway() && !route1.type.isSubway()) {
-                    1
-                } else {
-                    0
-                }
-            }
-
-        fun pinnedRoutesComparator(pinnedRoutes: Set<String>): Comparator<Route> = compareBy {
-            !pinnedRoutes.contains(it.id) && !pinnedRoutes.contains(it.lineId)
-        }
-
-        /*
-        Sort by pinned status first, then subway first, then given sort order.
-         */
-        fun relevanceComparator(pinnedRoutes: Set<String>): Comparator<Route> =
-            pinnedRoutesComparator(pinnedRoutes).then(subwayFirstComparator)
-    }
 }

@@ -607,6 +607,19 @@ class StopDetailsDeparturesTest {
                         )
                     ),
                     PatternsByStop(
+                        routeNotPinned2,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                routeNotPinned2,
+                                "C",
+                                null,
+                                listOf(routeNotPinnedPattern2),
+                                listOf()
+                            ),
+                        )
+                    ),
+                    PatternsByStop(
                         routeNotPinned,
                         stop,
                         listOf(
@@ -618,19 +631,6 @@ class StopDetailsDeparturesTest {
                                 listOf(),
                                 null,
                                 false
-                            ),
-                        )
-                    ),
-                    PatternsByStop(
-                        routeNotPinned2,
-                        stop,
-                        listOf(
-                            RealtimePatterns.ByHeadsign(
-                                routeNotPinned2,
-                                "C",
-                                null,
-                                listOf(routeNotPinnedPattern2),
-                                listOf()
                             ),
                         )
                     )

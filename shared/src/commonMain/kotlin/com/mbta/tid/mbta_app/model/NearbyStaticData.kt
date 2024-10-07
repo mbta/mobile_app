@@ -18,7 +18,7 @@ import kotlinx.datetime.Instant
  */
 data class NearbyStaticData(val data: List<TransitWithStops>) {
 
-    sealed class StaticPatterns : Comparable<StaticPatterns> {
+    sealed class StaticPatterns {
         abstract val patterns: List<RoutePattern>
         abstract val stopIds: Set<String>
 
@@ -48,20 +48,6 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             override fun copy(patterns: List<RoutePattern>, stopIds: Set<String>) =
                 copy(line = line, patterns = patterns, stopIds = stopIds)
         }
-
-        override fun compareTo(other: StaticPatterns): Int =
-            compareValuesBy(
-                this,
-                other,
-                { it.patterns.first().directionId },
-                {
-                    when (it) {
-                        is ByDirection -> -1
-                        is ByHeadsign -> 1
-                    }
-                },
-                { it.patterns.first() }
-            )
     }
 
     sealed class StopPatterns {
@@ -254,7 +240,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         )
                     }
                 }
-                .sortedWith(compareBy(Route.subwayFirstComparator) { it.sortRoute() })
+                .sortedWith(PatternSorting.compareTransitWithStops())
         }
     )
 
@@ -297,7 +283,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                                 filterStopsByPatterns(routePatterns, global, allStopIds)
                             )
                         }
-                        .sorted(),
+                        .sortedWith(PatternSorting.compareStaticPatterns()),
                 directions = Direction.getDirections(global, stop, route, patterns)
             )
         }
@@ -518,7 +504,7 @@ fun NearbyStaticData.withRealtimeInfo(
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
-            .sortedWith(compareBy({ it.distanceFrom(sortByDistanceFrom) }, { it.patterns.first() }))
+            .sortedWith(PatternSorting.comparePatternsByStop(pinnedRoutes, sortByDistanceFrom))
     }
 
     return rewrittenThis.data
@@ -566,15 +552,7 @@ fun NearbyStaticData.withRealtimeInfo(
         }
         .filterNot { it.isEmpty() }
         .toList()
-        .sortedWith(
-            compareBy<StopsAssociated, Route>(Route.pinnedRoutesComparator(pinnedRoutes)) {
-                    it.sortRoute()
-                }
-                .thenBy { !it.hasServiceOrDisruptionToday }
-                .thenBy(Route.subwayFirstComparator) { it.sortRoute() }
-                .thenBy { it.distanceFrom(sortByDistanceFrom) }
-                .thenBy { it.sortRoute() }
-        )
+        .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
 }
 
 class NearbyStaticDataBuilder {
