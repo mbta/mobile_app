@@ -391,4 +391,118 @@ class RoutePillSpecTest {
             glFlex
         )
     }
+
+    @Test
+    fun `test stopResultRoute`() {
+        val mattapanLine = StopResultRoute(RouteType.LIGHT_RAIL, "mattapan_line")
+        val commuterRail = StopResultRoute(RouteType.COMMUTER_RAIL, "commuter_rail")
+        val greenLine = StopResultRoute(RouteType.LIGHT_RAIL, "green_line_e")
+        val blueLine = StopResultRoute(RouteType.HEAVY_RAIL, "blue_line")
+        val redLine = StopResultRoute(RouteType.HEAVY_RAIL, "red_line")
+        val orangeLine = StopResultRoute(RouteType.HEAVY_RAIL, "orange_line")
+        val bus = StopResultRoute(RouteType.BUS, "bus")
+        val silverLine = StopResultRoute(RouteType.BUS, "silver_line")
+        val ferry = StopResultRoute(RouteType.FERRY, "ferry")
+
+        val mattapanLineSpec = RoutePillSpec(mattapanLine)
+        val commuterRailSpec = RoutePillSpec(commuterRail)
+        val greenLineSpec = RoutePillSpec(greenLine)
+        val blueLineSpec = RoutePillSpec(blueLine)
+        val redLineSpec = RoutePillSpec(redLine)
+        val orangeLineSpec = RoutePillSpec(orangeLine)
+        val busSpec = RoutePillSpec(bus)
+        val silverLineSpec = RoutePillSpec(silverLine)
+        val ferrySpec = RoutePillSpec(ferry)
+
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "DA291C",
+                RoutePillSpec.Content.Text("M"),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            mattapanLineSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "80276C",
+                RoutePillSpec.Content.Text("CR"),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            commuterRailSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "00843D",
+                RoutePillSpec.Content.Text("E"),
+                RoutePillSpec.Size.CircleSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            greenLineSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "003DA5",
+                RoutePillSpec.Content.Text("BL"),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            blueLineSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "DA291C",
+                RoutePillSpec.Content.Text("RL"),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            redLineSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "ED8B00",
+                RoutePillSpec.Content.Text("OL"),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            orangeLineSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "192026",
+                "FFC72C",
+                RoutePillSpec.Content.ModeImage(RouteType.BUS),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Rectangle
+            ),
+            busSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "7C878E",
+                RoutePillSpec.Content.ModeImage(RouteType.BUS),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Rectangle
+            ),
+            silverLineSpec
+        )
+        assertEquals(
+            RoutePillSpec(
+                "FFFFFF",
+                "008EAA",
+                RoutePillSpec.Content.ModeImage(RouteType.FERRY),
+                RoutePillSpec.Size.FlexPillSmall,
+                RoutePillSpec.Shape.Capsule
+            ),
+            ferrySpec
+        )
+    }
 }

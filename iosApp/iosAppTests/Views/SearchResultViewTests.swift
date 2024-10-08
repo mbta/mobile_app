@@ -18,9 +18,8 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testPending() throws {
-        let sut = SearchResultView(results: nil, handleStopTap: { _ in })
-
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "Loading...")
+        let sut = SearchResultsView(state: .loading, handleStopTap: { _ in })
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResults.self))
     }
 
     @MainActor func testResultLoad() throws {
@@ -39,7 +38,7 @@ final class SearchResultViewTests: XCTestCase {
 
         let getSearchResultsExpectation = expectation(description: "getSearchResults")
 
-        var sut = SearchView(
+        var sut = SearchResultsContainer(
             query: "hay",
             nearbyVM: NearbyViewModel(),
             searchVM: SearchViewModel(),
@@ -71,7 +70,7 @@ final class SearchResultViewTests: XCTestCase {
         getSearchResultsExpectation.assertForOverFulfill = false
         let searchObserver = TextFieldObserver()
 
-        var sut = SearchOverlay(
+        let sut = SearchOverlay(
             searchObserver: searchObserver,
             nearbyVM: NearbyViewModel(),
             searchVM: SearchViewModel(),
@@ -82,12 +81,12 @@ final class SearchResultViewTests: XCTestCase {
 
         // On init, only the search field should be displayed
         XCTAssertNotNil(try sut.inspect().find(SearchField.self))
-        XCTAssertThrowsError(try sut.inspect().find(SearchResultView.self))
+        XCTAssertThrowsError(try sut.inspect().find(SearchResultsView.self))
         XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(button: "Cancel"))
         // On focus, the result view and cancel button should appear,
         // but the clear button should be hidden
         searchObserver.isFocused = true
-        XCTAssertNotNil(try sut.inspect().find(SearchResultView.self))
+        XCTAssertNotNil(try sut.inspect().find(SearchResultsView.self))
         XCTAssertNotNil(try sut.inspect().find(SearchField.self).find(button: "Cancel"))
         XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(ActionButton.self))
         XCTAssert(searchObserver.isSearching)
@@ -97,80 +96,87 @@ final class SearchResultViewTests: XCTestCase {
         XCTAssertEqual("test", searchObserver.searchText)
         // Even if the focus is then lost, the result view should still be displayed
         searchObserver.isFocused = false
-        XCTAssertNotNil(try sut.inspect().find(SearchResultView.self))
+        XCTAssertNotNil(try sut.inspect().find(SearchResultsView.self))
         // When the search field is cleared, the field should be refocused
         try sut.inspect().find(SearchField.self).find(ActionButton.self).button().tap()
         XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(ActionButton.self))
         XCTAssert(searchObserver.isSearching)
-        XCTAssertNotNil(try sut.inspect().find(SearchResultView.self))
+        XCTAssertNotNil(try sut.inspect().find(SearchResultsView.self))
         // When cancel is tapped, the results should disappear and the search field be unfocused
         try sut.inspect().find(SearchField.self).find(button: "Cancel").tap()
-        XCTAssertThrowsError(try sut.inspect().find(SearchResultView.self))
+        XCTAssertThrowsError(try sut.inspect().find(SearchResultsView.self))
         XCTAssertFalse(searchObserver.isSearching)
     }
 
     @MainActor func testNoResults() throws {
-        let sut = SearchResultView(
-            results: SearchResults(routes: [], stops: []),
-            handleStopTap: { _ in }
-        )
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "No results found")
+        let sut = SearchResultsView(state: .empty, handleStopTap: { _ in })
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "No results found 🤔"))
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try a different spelling or name."))
+    }
+
+    @MainActor func testError() throws {
+        let sut = SearchResultsView(state: .error, handleStopTap: { _ in })
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Results failed to load ☹️"))
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try your search again."))
     }
 
     @MainActor func testFullResults() throws {
-        let sut = SearchResultView(
-            results: SearchResults(
-                routes: [
-                    RouteResult(
-                        id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
-                    ),
-                ],
-                stops: [
-                    StopResult(
-                        id: "place-haecl",
-                        rank: 2,
-                        name: "Haymarket",
-                        zone: nil,
-                        isStation: true,
-                        routes: [
-                            StopResultRoute(
-                                type: .heavyRail,
-                                icon: "orange_line"
-                            ),
-                        ]
-                    ),
-                ]
+        let sut = SearchResultsView(
+            state: .results(
+                results: SearchResults(
+                    routes: [
+                        RouteResult(
+                            id: "428",
+                            rank: 5,
+                            longName: "Oaklandvale - Haymarket Station",
+                            shortName: "428",
+                            routeType: RouteType.bus
+                        ),
+                    ],
+                    stops: [
+                        StopResult(
+                            id: "place-haecl",
+                            rank: 2,
+                            name: "Haymarket",
+                            zone: nil,
+                            isStation: true,
+                            routes: [
+                                StopResultRoute(
+                                    type: .heavyRail,
+                                    icon: "orange_line"
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                includeRoutes: true
             ),
-            handleStopTap: { _ in },
-            showRoutes: true
+            handleStopTap: { _ in }
         )
 
-        XCTAssertNoThrow(try sut.inspect().find(text: "Stops"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428 Oaklandvale - Haymarket Station"))
     }
 
     @MainActor func testOnlyRoutes() throws {
-        let sut = SearchResultView(
-            results: SearchResults(
-                routes: [
-                    RouteResult(
-                        id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
-                    ),
-                ],
-                stops: []
+        let sut = SearchResultsView(
+            state: .results(
+                results: SearchResults(
+                    routes: [
+                        RouteResult(
+                            id: "428",
+                            rank: 5,
+                            longName: "Oaklandvale - Haymarket Station",
+                            shortName: "428",
+                            routeType: RouteType.bus
+                        ),
+                    ],
+                    stops: []
+                ),
+                includeRoutes: true
             ),
-            handleStopTap: { _ in },
-            showRoutes: true
+            handleStopTap: { _ in }
         )
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
@@ -179,50 +185,56 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testRoutesHidden() throws {
-        let sut = SearchResultView(
-            results: SearchResults(
-                routes: [
-                    RouteResult(
-                        id: "428",
-                        rank: 5,
-                        longName: "Oaklandvale - Haymarket Station",
-                        shortName: "428",
-                        routeType: RouteType.bus
-                    ),
-                ],
-                stops: []
-            ),
-            handleStopTap: { _ in },
-            showRoutes: false
-        )
-
-        XCTAssertEqual(try sut.inspect().view(SearchResultView.self).text().string(), "No results found")
-    }
-
-    @MainActor func testOnlyStops() throws {
-        let sut = SearchResultView(
-            results: SearchResults(
-                routes: [],
-                stops: [
-                    StopResult(
-                        id: "place-haecl",
-                        rank: 2,
-                        name: "Haymarket",
-                        zone: nil,
-                        isStation: true,
-                        routes: [
-                            StopResultRoute(
-                                type: .heavyRail,
-                                icon: "orange_line"
-                            ),
-                        ]
-                    ),
-                ]
+        let sut = SearchResultsView(
+            state: .results(
+                results: SearchResults(
+                    routes: [
+                        RouteResult(
+                            id: "428",
+                            rank: 5,
+                            longName: "Oaklandvale - Haymarket Station",
+                            shortName: "428",
+                            routeType: RouteType.bus
+                        ),
+                    ],
+                    stops: []
+                ),
+                includeRoutes: false
             ),
             handleStopTap: { _ in }
         )
 
-        XCTAssertNoThrow(try sut.inspect().find(text: "Stops"))
+        XCTAssertThrowsError(
+            try sut.inspect().view(SearchResultsView.self).find(text: "Oaklandvale - Haymarket Station")
+        )
+    }
+
+    @MainActor func testOnlyStops() throws {
+        let sut = SearchResultsView(
+            state: .results(
+                results: SearchResults(
+                    routes: [],
+                    stops: [
+                        StopResult(
+                            id: "place-haecl",
+                            rank: 2,
+                            name: "Haymarket",
+                            zone: nil,
+                            isStation: true,
+                            routes: [
+                                StopResultRoute(
+                                    type: .heavyRail,
+                                    icon: "orange_line"
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                includeRoutes: true
+            ),
+            handleStopTap: { _ in }
+        )
+
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertThrowsError(try sut.inspect().find(text: "Routes"))
     }
@@ -230,24 +242,27 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testStopTapping() async throws {
         let tapStopExpectation = expectation(description: "stop was tapped")
 
-        let sut = SearchResultView(
-            results: SearchResults(
-                routes: [],
-                stops: [
-                    StopResult(
-                        id: "place-haecl",
-                        rank: 2,
-                        name: "Haymarket",
-                        zone: nil,
-                        isStation: true,
-                        routes: [
-                            StopResultRoute(
-                                type: .heavyRail,
-                                icon: "orange_line"
-                            ),
-                        ]
-                    ),
-                ]
+        let sut = SearchResultsView(
+            state: .results(
+                results: SearchResults(
+                    routes: [],
+                    stops: [
+                        StopResult(
+                            id: "place-haecl",
+                            rank: 2,
+                            name: "Haymarket",
+                            zone: nil,
+                            isStation: true,
+                            routes: [
+                                StopResultRoute(
+                                    type: .heavyRail,
+                                    icon: "orange_line"
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                includeRoutes: true
             ),
             handleStopTap: { stopId in
                 XCTAssertEqual("place-haecl", stopId)
@@ -257,9 +272,8 @@ final class SearchResultViewTests: XCTestCase {
 
         XCTAssertNoThrow(
             try sut.inspect()
-                .find(text: "Haymarket")
-                .find(StopResultView.self, relation: .parent)
-                .callOnTapGesture()
+                .find(button: "Haymarket")
+                .tap()
         )
         await fulfillment(of: [tapStopExpectation], timeout: 1)
     }

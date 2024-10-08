@@ -136,6 +136,7 @@ final class StopDetailsPageTests: XCTestCase {
         XCTAssertNil(nearbyVM.navigationStack.lastStopDetailsFilter)
     }
 
+    @MainActor
     func testDisplaysSchedules() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
@@ -369,6 +370,7 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
     }
 
+    @MainActor
     func testAppliesFilterAutomatically() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
