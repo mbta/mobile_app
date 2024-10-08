@@ -510,6 +510,170 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `Green Line routes are grouped together without Government Center direction`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stopGov = objects.stop { id = "place-gover" }
+        // Only get nearby results at Government Center
+        val nearby = NearbyResponse(objects)
+
+        // These stops are included because they're thresholds in Direction.specialCases
+        val stopArlington = objects.stop { id = "place-armnl" }
+        val stopHaymarket = objects.stop { id = "place-haecl" }
+
+        val stop1 = objects.stop { id = "place-lake" }
+        val stop2 = objects.stop { id = "place-clmnl" }
+        val stop3 = objects.stop { id = "place-river" }
+        val stop4 = objects.stop { id = "place-pktrm" }
+        val stop5 = objects.stop { id = "place-unsqu" }
+
+        val line = objects.line { id = "line-Green" }
+
+        val routeB =
+            objects.route {
+                id = "Green-B"
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Government Center")
+            }
+        val routeC =
+            objects.route {
+                id = "Green-C"
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Cleveland Circle", "Government Center")
+            }
+        val routeD =
+            objects.route {
+                id = "Green-D"
+                lineId = line.id
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Riverside", "Union Square")
+            }
+
+        val routeBrp1 =
+            objects.routePattern(routeB) {
+                representativeTrip {
+                    headsign = "Boston College"
+                    stopIds = listOf(stopGov.id, stop4.id, stopArlington.id, stop1.id)
+                }
+                directionId = 0
+                sortOrder = 3
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routeBrp2 =
+            objects.routePattern(routeB) {
+                representativeTrip {
+                    headsign = "Government Center"
+                    stopIds = listOf(stop1.id, stopArlington.id, stop4.id, stopGov.id)
+                }
+                directionId = 1
+                sortOrder = 4
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routeCrp1 =
+            objects.routePattern(routeC) {
+                representativeTrip {
+                    headsign = "Cleveland Circle"
+                    stopIds = listOf(stopGov.id, stop4.id, stopArlington.id, stop2.id)
+                }
+                directionId = 0
+                sortOrder = 3
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routeCrp2 =
+            objects.routePattern(routeC) {
+                representativeTrip {
+                    headsign = "Government Center"
+                    stopIds = listOf(stop2.id, stopArlington.id, stop4.id, stopGov.id)
+                }
+                directionId = 1
+                sortOrder = 4
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routeCrp3 =
+            objects.routePattern(routeC) {
+                representativeTrip {
+                    headsign = "Union Square"
+                    stopIds =
+                        listOf(
+                            stop2.id,
+                            stopArlington.id,
+                            stop4.id,
+                            stopGov.id,
+                            stopHaymarket.id,
+                            stop5.id
+                        )
+                }
+                directionId = 1
+                sortOrder = 5
+                typicality = RoutePattern.Typicality.Atypical
+            }
+        val routeDrp1 =
+            objects.routePattern(routeD) {
+                representativeTrip {
+                    headsign = "Riverside"
+                    stopIds =
+                        listOf(
+                            stop5.id,
+                            stopHaymarket.id,
+                            stopGov.id,
+                            stop4.id,
+                            stopArlington.id,
+                            stop3.id
+                        )
+                }
+                directionId = 0
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routeDrp2 =
+            objects.routePattern(routeD) {
+                representativeTrip {
+                    headsign = "Union Square"
+                    stopIds =
+                        listOf(
+                            stop3.id,
+                            stopArlington.id,
+                            stop4.id,
+                            stopGov.id,
+                            stopHaymarket.id,
+                            stop5.id
+                        )
+                }
+
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+                sortOrder = 2
+            }
+
+        val global = GlobalResponse(objects)
+
+        val westDir = Direction("West", "Copley & West", 0)
+        val northDir = Direction("East", "North Station & North", 1)
+
+        assertEquals(
+            NearbyStaticData.build {
+                line(line, listOf(routeB, routeC, routeD)) {
+                    stop(
+                        stopGov,
+                        listOf(routeB, routeC, routeD),
+                        directions = listOf(westDir, northDir)
+                    ) {
+                        direction(
+                            westDir,
+                            listOf(routeB, routeC, routeD),
+                            listOf(routeDrp1, routeBrp1, routeCrp1)
+                        )
+                        direction(northDir, listOf(routeC, routeD), listOf(routeDrp2, routeCrp3))
+                    }
+                }
+            },
+            NearbyStaticData(global, nearby)
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo includes predictions filtered to the correct stop and pattern`() {
         val objects = ObjectCollectionBuilder()
 
@@ -623,7 +787,7 @@ class NearbyResponseTest {
                 ),
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
@@ -784,7 +948,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
@@ -959,7 +1123,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1074,7 +1238,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = null,
@@ -1192,7 +1356,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1314,7 +1478,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1496,7 +1660,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1621,7 +1785,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeSubwayStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1695,7 +1859,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1765,7 +1929,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1849,7 +2013,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1949,7 +2113,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2025,7 +2189,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2097,7 +2261,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2304,7 +2468,7 @@ class NearbyResponseTest {
         assertEquals(
             listOf(expected),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
