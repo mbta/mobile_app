@@ -212,6 +212,9 @@
     "End" : {
       "comment" : "Label for the end date of a disruption"
     },
+    "Error loading data" : {
+
+    },
     "ferries" : {
       "comment" : "ferries"
     },

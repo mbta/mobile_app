@@ -11,4 +11,6 @@ sealed class ErrorBannerState {
         ErrorBannerState() {
         fun minutesAgo() = (Clock.System.now() - lastUpdated).inWholeMinutes
     }
+
+    data class DataError(override val action: () -> Unit) : ErrorBannerState()
 }

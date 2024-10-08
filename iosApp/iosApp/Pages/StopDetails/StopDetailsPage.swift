@@ -73,9 +73,7 @@ struct StopDetailsPage: View {
                 togglePinnedRoute: togglePinnedRoute
             )
             .onAppear {
-                loadGlobalData()
-                fetchStopData(stop)
-                loadPinnedRoutes()
+                loadEverything()
                 didAppear?(self)
             }
             .onChange(of: stop) { nextStop in
@@ -111,12 +109,21 @@ struct StopDetailsPage: View {
         }
     }
 
+    func loadEverything() {
+        loadGlobalData()
+        fetchStopData(stop)
+        loadPinnedRoutes()
+    }
+
     func loadGlobalData() {
         Task {
-            switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(result): globalResponse = result.data
-            case let .error(error): debugPrint(error)
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "StopDetailsPage.loadGlobalData",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 
@@ -124,7 +131,10 @@ struct StopDetailsPage: View {
         Task {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -135,7 +145,10 @@ struct StopDetailsPage: View {
             do {
                 _ = try await togglePinnedUsecase.execute(route: routeId)
                 loadPinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // execute shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -154,16 +167,20 @@ struct StopDetailsPage: View {
 
     func getSchedule(_ stop: Stop) {
         Task {
+            let errorKey = "StopDetailsPage.getSchedule"
             schedulesResponse = nil
-            switch try await onEnum(of: schedulesRepository.getSchedule(stopIds: [stop.id])) {
-            case let .ok(result): schedulesResponse = result.data
-            case .error:
-                ()
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "StopDetailsPage.getSchedule",
+                getData: { try await schedulesRepository.getSchedule(stopIds: [stop.id]) },
+                onSuccess: { schedulesResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 
     func joinPredictions(_ stop: Stop) {
+        // no error handling since persistent errors cause stale predictions
         predictionsRepository.connectV2(stopIds: [stop.id], onJoin: { outcome in
             DispatchQueue.main.async {
                 if case let .ok(result) = onEnum(of: outcome) {

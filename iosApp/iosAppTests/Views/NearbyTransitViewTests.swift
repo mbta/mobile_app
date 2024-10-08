@@ -683,51 +683,23 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testNearbyErrorMessage() throws {
-        let state = NearbyViewModel.NearbyTransitState(error: "Failed to load nearby transit, test error")
+        loadKoinMocks(repositories: MockRepositories.companion
+            .buildWithDefaults(errorBanner: MockErrorBannerStateRepository(state: .DataError(action: {}))))
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
-            state: .constant(state),
+            state: .constant(.init()),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             nearbyVM: .init()
         )
-        XCTAssertNotNil(try sut.inspect().view(NearbyTransitView.self)
-            .find(text: "Failed to load nearby transit, test error"))
-    }
 
-    @MainActor func testPredictionErrorMessage() throws {
-        let predictionsErroredPublisher = PassthroughSubject<Bool, Never>()
-        let state = NearbyViewModel.NearbyTransitState(
-            loadedLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
-            nearbyByRouteAndStop: NearbyStaticData(data: [])
-        )
-
-        let predictionsRepo = MockPredictionsRepository(onConnect: {},
-                                                        onConnectV2: { _ in predictionsErroredPublisher.send(true) },
-                                                        onDisconnect: {},
-                                                        connectOutcome: nil,
-                                                        connectV2Outcome: ApiResultError(
-                                                            code: nil,
-                                                            message: SocketError.shared.FAILURE
-                                                        ))
-        let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
-            pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: predictionsRepo,
-            schedulesRepository: MockScheduleRepository(),
-            getNearby: { _, _ in },
-            state: .constant(state),
-            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
-        )
-        let exp = sut.inspection.inspect(onReceive: predictionsErroredPublisher, after: 1) { view in
-            XCTAssertEqual(try view.actualView().predictionsError, SocketError.shared.FAILURE)
+        sut.inspection.inspect(after: 0.2) { view in
+            XCTAssertNotNil(try view.view(NearbyTransitView.self)
+                .find(text: "Error loading data"))
         }
-        ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 2)
     }
 
     func testNoService() throws {

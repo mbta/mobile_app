@@ -19,6 +19,8 @@ struct HomeMapView: View {
 
     @Environment(\.colorScheme) var colorScheme
 
+    var errorBannerRepository: IErrorBannerStateRepository
+
     var globalRepository: IGlobalRepository
     @State var globalData: GlobalResponse?
 
@@ -55,6 +57,7 @@ struct HomeMapView: View {
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         railRouteShapeRepository: IRailRouteShapeRepository = RepositoryDI().railRouteShapes,
         stopRepository: IStopRepository = RepositoryDI().stop,
         vehiclesData: [Vehicle]? = nil,
@@ -67,6 +70,7 @@ struct HomeMapView: View {
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
+        self.errorBannerRepository = errorBannerRepository
         self.railRouteShapeRepository = railRouteShapeRepository
         self.stopRepository = stopRepository
         self.vehiclesData = vehiclesData
@@ -84,10 +88,7 @@ struct HomeMapView: View {
                 }
             }
             .task {
-                switch await callApi({ try await globalRepository.getGlobalData() }) {
-                case let .ok(result): globalData = result.data
-                case let .error(error): debugPrint(error)
-                }
+                loadGlobalData()
             }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
