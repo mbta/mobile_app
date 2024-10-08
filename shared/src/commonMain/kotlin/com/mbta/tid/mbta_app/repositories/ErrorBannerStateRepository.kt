@@ -14,13 +14,17 @@ protected constructor(initialState: ErrorBannerState? = null) {
     val state = flow.asStateFlow()
 
     private var predictionsStale: ErrorBannerState.StalePredictions? = null
+    private val dataErrors = mutableMapOf<String, ErrorBannerState.DataError>()
 
     protected open fun updateState() {
-        if (predictionsStale != null) {
-            flow.value = predictionsStale
-        } else {
-            flow.value = null
-        }
+        flow.value =
+            when {
+                dataErrors.isNotEmpty() ->
+                    // encapsulate all the different error actions within one error
+                    ErrorBannerState.DataError { dataErrors.values.forEach { it.action() } }
+                predictionsStale != null -> predictionsStale
+                else -> null
+            }
     }
 
     fun checkPredictionsStale(
@@ -37,8 +41,19 @@ protected constructor(initialState: ErrorBannerState? = null) {
         updateState()
     }
 
+    fun setDataError(key: String, action: () -> Unit) {
+        dataErrors[key] = ErrorBannerState.DataError(action)
+        updateState()
+    }
+
+    fun clearDataError(key: String) {
+        dataErrors.remove(key)
+        updateState()
+    }
+
     fun clearState() {
         predictionsStale = null
+        dataErrors.clear()
         flow.value = null
     }
 }

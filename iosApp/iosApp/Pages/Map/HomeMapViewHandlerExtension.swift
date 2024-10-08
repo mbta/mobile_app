@@ -14,13 +14,16 @@ import SwiftUI
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
  */
 extension HomeMapView {
-    func handleAppear(location: LocationManager?, map _: MapboxMap?) {
+    func handleAppear(location: LocationManager?, map: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
         Task {
-            switch try await onEnum(of: railRouteShapeRepository.getRailRouteShapes()) {
-            case let .ok(result): railRouteShapes = result.data
-            case let .error(error): throw error
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.handleAppear",
+                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
+                onSuccess: { railRouteShapes = $0 },
+                onRefreshAfterError: { handleAppear(location: location, map: map) }
+            )
         }
 
         // Set MapBox to use the current location to display puck
@@ -68,6 +71,18 @@ extension HomeMapView {
         }
 
         lastNavEntry = navigationStack.last
+    }
+
+    func loadGlobalData() {
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.loadGlobalData",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: { globalData = $0 },
+                onRefreshAfterError: loadGlobalData
+            )
+        }
     }
 
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
@@ -123,12 +138,19 @@ extension HomeMapView {
 
     func handleTripDetailsChange(_ tripId: String, _ targetStopId: String?) {
         Task {
+            let dataErrorKey = "HomeMapView.handleTripDetailsChange"
             do {
                 let response: ApiResult<TripShape> = try await RepositoryDI().trip.getTripShape(tripId: tripId)
-                let shapesWithStops: [ShapeWithStops] = switch onEnum(of: response) {
-                case let .ok(okResponse): [okResponse.data.shapeWithStops]
+                let getTripShapeErrorKey = "\(dataErrorKey)/getTripShape"
+                var shapesWithStops: [ShapeWithStops] = []
+                switch onEnum(of: response) {
+                case let .ok(okResponse):
+                    errorBannerRepository.clearDataError(key: getTripShapeErrorKey)
+                    shapesWithStops = [okResponse.data.shapeWithStops]
                 case .error:
-                    []
+                    errorBannerRepository.setDataError(key: getTripShapeErrorKey) {
+                        handleTripDetailsChange(tripId, targetStopId)
+                    }
                 }
                 mapVM.routeSourceData = RouteFeaturesBuilder.shared.shapesWithStopsToMapFriendly(
                     shapesWithStops: shapesWithStops,
@@ -141,8 +163,11 @@ extension HomeMapView {
 
                 mapVM.stopSourceData = .init(filteredStopIds: filteredStopIds, selectedStopId: targetStopId)
 
+                errorBannerRepository.clearDataError(key: dataErrorKey)
             } catch {
-                debugPrint(error)
+                errorBannerRepository.setDataError(key: dataErrorKey) {
+                    handleTripDetailsChange(tripId, targetStopId)
+                }
             }
         }
     }

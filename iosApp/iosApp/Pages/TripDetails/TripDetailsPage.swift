@@ -103,27 +103,7 @@ struct TripDetailsPage: View {
             }
         }
         .task {
-            switch await callApi({ try await globalRepository.getGlobalData() }) {
-            case let .ok(result): globalResponse = result.data
-            case let .error(error): debugPrint(error)
-            }
-        }
-        .task {
-            switch await callApi({ try await tripRepository.getTripSchedules(tripId: tripId) }) {
-            case let .ok(result): tripSchedulesResponse = result.data
-            case let .error(error): debugPrint(error)
-            }
-        }
-        .task {
-            do {
-                let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripId)
-                trip = switch onEnum(of: response) {
-                case let .ok(okResponse): okResponse.data.trip
-                case .error: nil
-                }
-            } catch {
-                debugPrint(error)
-            }
+            loadEverything()
         }
         .task {
             now = Date.now.toKotlinInstant()
@@ -153,6 +133,51 @@ struct TripDetailsPage: View {
                                 onBackground: leaveRealtime)
     }
 
+    private func loadEverything() {
+        loadGlobalData()
+        loadTripSchedules()
+        loadTrip()
+    }
+
+    private func loadGlobalData() {
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "TripDetailsPage.loadGlobalData",
+                getData: globalRepository.getGlobalData,
+                onSuccess: { globalResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
+        }
+    }
+
+    private func loadTripSchedules() {
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "TripDetailsPage.loadTripSchedules",
+                getData: { try await tripRepository.getTripSchedules(tripId: tripId) },
+                onSuccess: { tripSchedulesResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
+        }
+    }
+
+    private func loadTrip() {
+        Task {
+            let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripId)
+            let errorKey = "TripDetailsPage.loadTrip"
+            switch onEnum(of: response) {
+            case let .ok(okResponse):
+                errorBannerRepository.clearDataError(key: errorKey)
+                trip = okResponse.data.trip
+            case .error:
+                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                trip = nil
+            }
+        }
+    }
+
     private func joinRealtime() {
         joinPredictions(tripId: tripId)
         joinVehicle(vehicleId: vehicleId)
@@ -166,9 +191,10 @@ struct TripDetailsPage: View {
     private func joinPredictions(tripId: String) {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
+                // no error handling since persistent errors cause stale predictions
                 switch onEnum(of: outcome) {
                 case let .ok(result): tripPredictions = result.data
-                case .error: tripPredictions = nil
+                case .error: break
                 }
             }
         }
@@ -181,11 +207,15 @@ struct TripDetailsPage: View {
     private func joinVehicle(vehicleId: String) {
         vehicleRepository.connect(vehicleId: vehicleId) { outcome in
             DispatchQueue.main.async {
+                let errorKey = "TripDetailsPage.joinVehicle"
                 switch onEnum(of: outcome) {
                 case let .ok(result):
+                    errorBannerRepository.clearDataError(key: errorKey)
                     vehicleResponse = result.data
                     mapVM.selectedVehicle = result.data.vehicle
-                case .error: vehicleResponse = nil
+                case .error:
+                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                    vehicleResponse = nil
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.repositories
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.days
@@ -30,6 +31,36 @@ class ErrorBannerStateRepositoryTest {
         repo.checkPredictionsStale(lastUpdated, 1, action)
 
         assertEquals(ErrorBannerState.StalePredictions(lastUpdated, action), repo.state.value)
+    }
+
+    @Test
+    fun `data errors override stale predictions`() {
+        val repo = ErrorBannerStateRepository()
+
+        repo.checkPredictionsStale(Clock.System.now() - 2.minutes, 1) {}
+
+        repo.setDataError("global") {}
+
+        assertIs<ErrorBannerState.DataError>(repo.state.value)
+
+        repo.clearDataError("global")
+
+        assertIs<ErrorBannerState.StalePredictions>(repo.state.value)
+    }
+
+    @Test
+    fun `several data errors can exist at once`() {
+        val repo = ErrorBannerStateRepository()
+        val actionsCalled = mutableSetOf<String>()
+
+        repo.setDataError("a") { actionsCalled.add("a") }
+        repo.setDataError("b") { actionsCalled.add("b") }
+        repo.setDataError("c") { actionsCalled.add("c") }
+
+        assertIs<ErrorBannerState.DataError>(repo.state.value)
+        repo.state.value?.action?.invoke()
+
+        assertEquals(setOf("a", "b", "c"), actionsCalled)
     }
 
     @Test
