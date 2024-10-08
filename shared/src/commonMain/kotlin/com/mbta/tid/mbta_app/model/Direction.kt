@@ -110,9 +110,9 @@ data class Direction(
                 return listOf(0, 1).map { directionId -> Direction(directionId, route) }
             }
 
-            val stopSequenceByDirection = getTypicalStopSequenceByDirection(patterns, global)
+            val stopListByDirection = getTypicalStopListByDirection(patterns, global)
             return listOf(0, 1).map { directionId ->
-                Direction(directionId, route, stop, stopSequenceByDirection[directionId])
+                Direction(directionId, route, stop, stopListByDirection[directionId])
             }
         }
 
@@ -126,8 +126,8 @@ data class Direction(
                 return Direction(pattern.directionId, route)
             }
 
-            val stopSequence = getStopSequenceForPattern(pattern, global)
-            return Direction(pattern.directionId, route, stop, stopSequence)
+            val stopList = getStopListForPattern(pattern, global)
+            return Direction(pattern.directionId, route, stop, stopList)
         }
 
         fun getDirectionsForLine(
@@ -190,7 +190,7 @@ data class Direction(
             return null
         }
 
-        private fun getStopSequenceForPattern(
+        private fun getStopListForPattern(
             pattern: RoutePattern?,
             global: GlobalResponse
         ): List<String>? {
@@ -199,14 +199,14 @@ data class Direction(
             }
         }
 
-        private fun getTypicalStopSequenceByDirection(
+        private fun getTypicalStopListByDirection(
             patterns: List<RoutePattern>,
             global: GlobalResponse
         ): Map<Int, List<String>?> {
             return patterns
                 .groupBy { pattern -> pattern.directionId }
                 .mapValues { directionPatterns ->
-                    getStopSequenceForPattern(
+                    getStopListForPattern(
                         directionPatterns.value.firstOrNull { pattern ->
                             pattern.typicality == RoutePattern.Typicality.Typical
                         },
