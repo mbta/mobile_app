@@ -373,11 +373,19 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 routes = routes,
                 stop = stop,
                 patterns =
+                    // Remove all directions terminating mid-line at Gov Ctr, this destination
+                    // should never be displayed as a grouped direction. This will only be generated
+                    // for typical C and B trains when the provided stop is Gov Ctr. At any earlier
+                    // stops, they will be overridden to "Gov Ctr & North". At Gov Ctr, they will
+                    // have no downstream stops so Direction.getSpecialCaseDestination will find no
+                    // override and will return their default destination, "Government Center",
+                    // which doesn't make sense as a direction from Gov Ctr. And after Gov Ctr,
+                    // B and C trains can only be running there if they're using an atypical route
+                    // pattern, which should be overridden or default to a label that matches the
+                    // other E or D trains.
                     linePatterns.filter {
                         when (it) {
                             is StaticPatterns.ByDirection ->
-                                // Remove all directions terminating mid-line at Gov Center,
-                                // this direction label should never be displayed.
                                 it.direction.destination != "Government Center"
                             else -> true
                         }
