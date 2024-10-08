@@ -117,22 +117,17 @@ class NearbyViewModel: ObservableObject {
                 self.nearbyState.loading = false
                 self.selectingLocation = false
             }
-            do {
-                let response = try await nearbyRepository.getNearby(
-                    global: global,
-                    location: location.coordinateKt
-                )
-                try Task.checkCancellation()
-                nearbyState.nearbyByRouteAndStop = response
+            switch await callApi({
+                try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) }) {
+            case let .ok(result):
+                if Task.isCancelled { return }
+                nearbyState.nearbyByRouteAndStop = result.data
                 nearbyState.loadedLocation = location
                 nearbyState.error = nil
-            } catch is CancellationError {
-                // Do nothing when cancelled
-                return
-            } catch let error as NSError {
+            case let .error(error):
                 withUnsafeCurrentTask { thisTask in
                     if self.fetchNearbyTask?.hashValue == thisTask?.hashValue {
-                        self.nearbyState.error = self.nearbyErrorText(error: error)
+                        self.nearbyState.error = error.message
                     }
                 }
             }
@@ -149,21 +144,6 @@ class NearbyViewModel: ObservableObject {
             target != nil ? global.stops[target!.stopId] : nil
         default:
             nil
-        }
-    }
-
-    func nearbyErrorText(error: NSError) -> String {
-        switch error.kotlinException {
-        case is Ktor_client_coreHttpRequestTimeoutException:
-            "Couldn't load nearby transit, no response from the server"
-        case is Ktor_ioIOException:
-            "Couldn't load nearby transit, connection was interrupted"
-        case is Ktor_serializationJsonConvertException:
-            "Couldn't load nearby transit, unable to parse response"
-        case is Ktor_client_coreResponseException:
-            "Couldn't load nearby transit, invalid response"
-        default:
-            "Couldn't load nearby transit, something went wrong"
         }
     }
 

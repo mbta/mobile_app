@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
@@ -74,18 +75,20 @@ class NearbyRepositoryTest {
         }
 
         assertEquals(
-            NearbyStaticData.build {
-                route(nearbySubwayRoute) {
-                    stop(nearbySubwayStop) {
-                        headsign("Nearby Subway", listOf(nearbySubwayRoutePattern))
+            ApiResult.Ok(
+                NearbyStaticData.build {
+                    route(nearbySubwayRoute) {
+                        stop(nearbySubwayStop) {
+                            headsign("Nearby Subway", listOf(nearbySubwayRoutePattern))
+                        }
+                    }
+                    route(nearbyCRRoute) {
+                        stop(nearbyCRStop) {
+                            headsign("Nearby Commuter Rail", listOf(nearbyCRRoutePattern))
+                        }
                     }
                 }
-                route(nearbyCRRoute) {
-                    stop(nearbyCRStop) {
-                        headsign("Nearby Commuter Rail", listOf(nearbyCRRoutePattern))
-                    }
-                }
-            },
+            ),
             staticData
         )
     }
@@ -119,18 +122,20 @@ class NearbyRepositoryTest {
         }
 
         assertEquals(
-            NearbyStaticData.build {
-                route(nearbySubwayRoute) {
-                    stop(nearbySubwayStop) {
-                        headsign("Nearby Subway", listOf(nearbySubwayRoutePattern))
+            ApiResult.Ok(
+                NearbyStaticData.build {
+                    route(nearbySubwayRoute) {
+                        stop(nearbySubwayStop) {
+                            headsign("Nearby Subway", listOf(nearbySubwayRoutePattern))
+                        }
+                    }
+                    route(nearbyCRRoute) {
+                        stop(nearbyCRStop) {
+                            headsign("Nearby Commuter Rail", listOf(nearbyCRRoutePattern))
+                        }
                     }
                 }
-                route(nearbyCRRoute) {
-                    stop(nearbyCRStop) {
-                        headsign("Nearby Commuter Rail", listOf(nearbyCRRoutePattern))
-                    }
-                }
-            },
+            ),
             staticData
         )
     }
@@ -154,6 +159,6 @@ class NearbyRepositoryTest {
             repo.getNearby(globalData, Coordinate(searchPoint.latitude, searchPoint.longitude))
         }
 
-        assertEquals(NearbyStaticData(emptyList()), staticData)
+        assertEquals(ApiResult.Ok(NearbyStaticData(emptyList())), staticData)
     }
 }

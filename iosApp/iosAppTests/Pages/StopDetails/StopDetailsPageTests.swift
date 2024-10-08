@@ -40,14 +40,14 @@ final class StopDetailsPageTests: XCTestCase {
                 self.callback = callback
             }
 
-            func __getSchedule(stopIds: [String]) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds: [String]) async throws -> ApiResult<ScheduleResponse> {
                 callback(stopIds)
-                return ScheduleResponse(objects: ObjectCollectionBuilder())
+                return ApiResultOk(data: ScheduleResponse(objects: ObjectCollectionBuilder()))
             }
 
-            func __getSchedule(stopIds: [String], now _: Instant) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds: [String], now _: Instant) async throws -> ApiResult<ScheduleResponse> {
                 callback(stopIds)
-                return ScheduleResponse(objects: ObjectCollectionBuilder())
+                return ApiResultOk(data: ScheduleResponse(objects: ObjectCollectionBuilder()))
             }
         }
 
@@ -159,14 +159,14 @@ final class StopDetailsPageTests: XCTestCase {
                 self.callback = callback
             }
 
-            func __getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds _: [String]) async throws -> ApiResult<ScheduleResponse> {
                 callback?()
-                return ScheduleResponse(objects: objects)
+                return ApiResultOk(data: ScheduleResponse(objects: objects))
             }
 
-            func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ApiResult<ScheduleResponse> {
                 callback?()
-                return ScheduleResponse(objects: objects)
+                return ApiResultOk(data: ScheduleResponse(objects: objects))
             }
         }
 

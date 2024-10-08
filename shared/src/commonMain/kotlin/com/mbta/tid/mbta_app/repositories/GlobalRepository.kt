@@ -2,30 +2,19 @@ package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.cache.ResponseCache
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
-import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.path
-import io.ktor.serialization.JsonConvertException
-import io.ktor.utils.io.errors.IOException
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface IGlobalRepository {
-    @Throws(
-        IOException::class,
-        CancellationException::class,
-        JsonConvertException::class,
-        ResponseException::class,
-        HttpRequestTimeoutException::class
-    )
-    suspend fun getGlobalData(): GlobalResponse
+    suspend fun getGlobalData(): ApiResult<GlobalResponse>
 }
 
 class GlobalRepository(
@@ -33,7 +22,7 @@ class GlobalRepository(
 ) : IGlobalRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
-    override suspend fun getGlobalData(): GlobalResponse =
+    override suspend fun getGlobalData() =
         cache.getOrFetch { etag: String? ->
             mobileBackendClient.get {
                 timeout { requestTimeoutMillis = 10000 }
@@ -50,14 +39,14 @@ constructor(
         GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
     val onGet: () -> Unit = {}
 ) : IGlobalRepository {
-    override suspend fun getGlobalData(): GlobalResponse {
+    override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
         onGet()
-        return response
+        return ApiResult.Ok(response)
     }
 }
 
 class IdleGlobalRepository : IGlobalRepository {
-    override suspend fun getGlobalData(): GlobalResponse {
+    override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
         return suspendCancellableCoroutine {}
     }
 }

@@ -18,8 +18,6 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
-    struct NotUnderTestError: Error {}
-
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
     private var cancellables = Set<AnyCancellable>()
 

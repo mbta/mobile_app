@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.cache
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.utils.MockSystemPaths
@@ -69,7 +70,7 @@ class ResponseCacheTest {
         }
 
         assertEquals(
-            globalData,
+            ApiResult.Ok(globalData),
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
@@ -104,7 +105,7 @@ class ResponseCacheTest {
                 }
             )
         }
-        assertEquals(globalData, cache.getOrFetch { fail() })
+        assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
     }
 
     @Test
@@ -149,7 +150,7 @@ class ResponseCacheTest {
         }
 
         assertEquals(
-            newData,
+            ApiResult.Ok(newData),
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
@@ -227,30 +228,30 @@ class ResponseCacheTest {
             )
         }
 
-        assertEquals(oldData, cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
         assertEquals(1, fetchCount)
 
         // Assert cached
-        assertEquals(oldData, cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
         assertEquals(1, fetchCount)
         delay(1.seconds)
 
         // Assert that the cache retains the data when it receives a NotModified response
-        assertEquals(oldData, cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
         assertEquals(2, fetchCount)
 
         // And that receiving NotModified resets the cache timer
-        assertEquals(oldData, cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
         assertEquals(2, fetchCount)
         delay(1.seconds)
 
         // Get new data on next request
-        assertEquals(newData, cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(newData), cache.getOrFetch(::fetch))
         assertEquals(3, fetchCount)
         delay(1.seconds)
 
         // Ensure we go back to the old data when sent etag doesn't match
-        assertEquals(oldData, cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
         assertEquals(4, fetchCount)
     }
 
@@ -289,10 +290,10 @@ class ResponseCacheTest {
             )
         }
 
-        assertEquals(globalData, cache.getOrFetch { fail() })
+        assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
         fileSystem.delete(directory / "test.json")
         assertEquals(
-            globalData,
+            ApiResult.Ok(globalData),
             cache.getOrFetch { fail() },
             "Only the initial get is from disk, after that it's stored in memory"
         )
@@ -349,7 +350,7 @@ class ResponseCacheTest {
         var didFetch = false
 
         assertEquals(
-            newData,
+            ApiResult.Ok(newData),
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }
@@ -398,7 +399,7 @@ class ResponseCacheTest {
         var didFetch = false
 
         assertEquals(
-            globalData,
+            ApiResult.Ok(globalData),
             cache.getOrFetch {
                 didFetch = true
                 client.get { url { path("api/global") } }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,10 @@ fun getSchedule(
     LaunchedEffect(stopIds, now) {
         if (stopIds != null) {
             withContext(Dispatchers.IO) {
-                schedules = schedulesRepository.getSchedule(stopIds, now)
+                when (val data = schedulesRepository.getSchedule(stopIds, now)) {
+                    is ApiResult.Ok -> schedules = data.data
+                    is ApiResult.Error -> TODO("handle errors")
+                }
             }
         }
     }
