@@ -97,7 +97,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 routes,
                 stop,
                 patterns,
-                listOf(Direction(0, routes.first()), Direction(1, routes.first()))
+                listOf(groupedDirection(patterns, routes, 0), groupedDirection(patterns, routes, 1))
             )
 
             override fun copy(
@@ -105,6 +105,29 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 patterns: List<StaticPatterns>,
                 directions: List<Direction>
             ) = this.copy(line = line, stop = stop, patterns = patterns, directions = directions)
+
+            companion object {
+                fun groupedDirection(
+                    patterns: List<StaticPatterns>,
+                    routes: List<Route>,
+                    directionId: Int
+                ): Direction {
+                    return patterns
+                        .firstOrNull {
+                            when (it) {
+                                is StaticPatterns.ByDirection -> it.direction.id == directionId
+                                else -> false
+                            }
+                        }
+                        ?.let {
+                            when (it) {
+                                is StaticPatterns.ByDirection -> it.direction
+                                else -> null
+                            }
+                        }
+                        ?: Direction(directionId, routes.first())
+                }
+            }
         }
     }
 
