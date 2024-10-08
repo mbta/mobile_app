@@ -213,7 +213,8 @@ class StopDetailsViewTest {
                                                     ),
                                                 parentStopId = stop.id,
                                                 alerts = null,
-                                                hasSchedulesTodayByPattern = null
+                                                hasSchedulesTodayByPattern = null,
+                                                allDataLoaded = false
                                             )
                                         )
                                 )

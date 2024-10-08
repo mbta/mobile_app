@@ -471,7 +471,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
                                     ],
                                     alertsHere: nil,
-                                    hasSchedulesToday: true
+                                    hasSchedulesToday: true,
+                                    allDataLoaded: true
                                 ),
                             ]
                         ),
@@ -500,7 +501,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
                                     ],
                                     alertsHere: nil,
-                                    hasSchedulesToday: true
+                                    hasSchedulesToday: true,
+                                    allDataLoaded: true
                                 ),
                             ]
                         ),

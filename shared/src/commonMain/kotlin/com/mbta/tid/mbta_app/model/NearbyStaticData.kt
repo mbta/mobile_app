@@ -424,6 +424,8 @@ fun NearbyStaticData.withRealtimeInfo(
             it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
         }
 
+    val allDataLoaded = schedules != null && predictions != null
+
     // this needs to change how the trip keys are constructed
     val (rewrittenThis, rewrittenPredictions) =
         if (
@@ -524,7 +526,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                     filterAtTime,
                                     cutoffTime,
                                     activeRelevantAlerts,
-                                    hasSchedulesTodayByPattern
+                                    hasSchedulesTodayByPattern,
+                                    allDataLoaded
                                 )
                             }
                             .filterEmptyAndSort()
@@ -543,7 +546,8 @@ fun NearbyStaticData.withRealtimeInfo(
                                     filterAtTime,
                                     cutoffTime,
                                     activeRelevantAlerts,
-                                    hasSchedulesTodayByPattern
+                                    hasSchedulesTodayByPattern,
+                                    allDataLoaded
                                 )
                             }
                             .filterEmptyAndSort()

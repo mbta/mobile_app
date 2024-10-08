@@ -366,7 +366,8 @@ final class HomeMapViewTests: XCTestCase {
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                     alertsHere: nil,
-                    hasSchedulesToday: true
+                    hasSchedulesToday: true,
+                    allDataLoaded: true
                 )]
             )]
         ))
@@ -533,7 +534,8 @@ final class HomeMapViewTests: XCTestCase {
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                     alertsHere: nil,
-                    hasSchedulesToday: true
+                    hasSchedulesToday: true,
+                    allDataLoaded: true
                 )]
             )]
         ))
@@ -639,7 +641,8 @@ final class HomeMapViewTests: XCTestCase {
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                     alertsHere: nil,
-                    hasSchedulesToday: true
+                    hasSchedulesToday: true,
+                    allDataLoaded: true
                 )]
             )]
         ))
