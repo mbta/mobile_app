@@ -232,7 +232,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: PredictionsStreamDataResponse(objects: objects))
+            try view.vStack().callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
             let patterns = view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
@@ -330,94 +330,7 @@ final class NearbyTransitViewTests: XCTestCase {
             prediction.stopId = "84791"
             prediction.tripId = objects.trip(routePattern: rp2).id
         }
-        let predictions: PredictionsStreamDataResponse = .init(objects: objects)
 
-        var sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
-            pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
-            schedulesRepository: MockScheduleRepository(),
-            getNearby: { _, _ in },
-            state: .constant(route52State),
-            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init(),
-            now: now
-        )
-
-        let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: predictions)
-            let stops = view.findAll(NearbyStopView.self)
-            XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
-                .parent().parent().find(text: "Service ended"))
-
-            XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().parent().find(text: "10 min"))
-            XCTAssertNotNil(try stops[0].find(text: "Dedham Mall")
-                .parent().parent().find(text: "Overridden"))
-
-            XCTAssertNotNil(try stops[1].find(text: "Watertown Yard")
-                .parent().parent().find(text: "1 min"))
-            let expectedMinutes = distantMinutes
-            let expectedState = UpcomingTripView.State.some(.Minutes(minutes: Int32(expectedMinutes)))
-            XCTAssert(try !stops[1].find(text: "Watertown Yard").parent().parent()
-                .findAll(UpcomingTripView.self, where: { sut in
-                    try sut.actualView().prediction == expectedState
-                }).isEmpty)
-        }
-        ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
-    }
-
-    @MainActor func testWithPredictionsV2() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        let now = Date.now
-        let distantMinutes: Double = 10
-        let distantInstant = now.addingTimeInterval(distantMinutes * 60).toKotlinInstant()
-        let objects = ObjectCollectionBuilder()
-        let route = objects.route()
-
-        let rp1 = objects.routePattern(route: route) { routePattern in
-            routePattern.id = "52-5-0"
-            routePattern.representativeTrip { representativeTrip in
-                representativeTrip.headsign = "Dedham Mall"
-                representativeTrip.routePatternId = routePattern.id
-            }
-        }
-        let rp2 = objects.routePattern(route: route) { routePattern in
-            routePattern.id = "52-4-1"
-            routePattern.representativeTrip { representativeTrip in
-                representativeTrip.headsign = "Watertown Yard"
-                representativeTrip.routePatternId = routePattern.id
-            }
-        }
-        objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(distantMinutes * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval((distantMinutes + 2) * 60).toKotlinInstant()
-            prediction.routeId = "52"
-            prediction.stopId = "8552"
-            prediction.tripId = objects.trip(routePattern: rp1).id
-        }
-        objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval((distantMinutes + 1) * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval((distantMinutes + 5) * 60).toKotlinInstant()
-            prediction.status = "Overridden"
-            prediction.routeId = "52"
-            prediction.stopId = "8552"
-            prediction.tripId = objects.trip(routePattern: rp1).id
-        }
-        objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(2 * 60).toKotlinInstant()
-            prediction.routeId = "52"
-            prediction.stopId = "84791"
-            prediction.tripId = objects.trip(routePattern: rp2).id
-        }
-        objects.prediction { prediction in
-            prediction.departureTime = distantInstant
-            prediction.routeId = "52"
-            prediction.stopId = "84791"
-            prediction.tripId = objects.trip(routePattern: rp2).id
-        }
         let predictionsByStop: PredictionsByStopJoinResponse = .init(objects: objects)
 
         var sut = NearbyTransitView(
@@ -425,7 +338,6 @@ final class NearbyTransitViewTests: XCTestCase {
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
-            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
@@ -526,14 +438,14 @@ final class NearbyTransitViewTests: XCTestCase {
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = objects.trip(routePattern: Green.shared.rpE1).id
         }
-        let predictions: PredictionsStreamDataResponse = .init(objects: Green.shared.objects)
+        let predictions: PredictionsByStopJoinResponse = .init(objects: Green.shared.objects)
 
         let globalLoadedPublisher = PassthroughSubject<Void, Never>()
 
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(response: predictions),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: predictions),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(greenLineState),
@@ -571,44 +483,16 @@ final class NearbyTransitViewTests: XCTestCase {
         let sawmillAtWalshExpectation = expectation(description: "joins predictions for Sawmill @ Walsh")
         let lechmereExpectation = expectation(description: "joins predictions for Lechmere")
 
-        class FakePredictionsRepository: IPredictionsRepository {
-            let sawmillAtWalshExpectation: XCTestExpectation
-            let lechmereExpectation: XCTestExpectation
-
-            init(sawmillAtWalshExpectation: XCTestExpectation, lechmereExpectation: XCTestExpectation) {
-                self.sawmillAtWalshExpectation = sawmillAtWalshExpectation
-                self.lechmereExpectation = lechmereExpectation
+        let predictionsRepo = MockPredictionsRepository(onConnect: {}, onConnectV2: { stopIds in
+            if stopIds.sorted() == ["84791", "8552"] {
+                sawmillAtWalshExpectation.fulfill()
+            } else if stopIds == ["place-lech"] {
+                lechmereExpectation.fulfill()
+            } else {
+                XCTFail("unexpected stop IDs \(stopIds)")
             }
+        }, onDisconnect: {})
 
-            func connect(
-                stopIds: [String],
-                onReceive _: @escaping (ApiResult<PredictionsStreamDataResponse>)
-                    -> Void
-            ) {
-                if stopIds.sorted() == ["84791", "8552"] {
-                    sawmillAtWalshExpectation.fulfill()
-                } else if stopIds == ["place-lech"] {
-                    lechmereExpectation.fulfill()
-                } else {
-                    XCTFail("unexpected stop IDs \(stopIds)")
-                }
-            }
-
-            func connectV2(stopIds _: [String],
-                           onJoin _: @escaping (ApiResult<PredictionsByStopJoinResponse>) -> Void,
-                           onMessage _: @escaping (ApiResult<PredictionsByStopMessageResponse>) -> Void) {
-                /* no-op */
-            }
-
-            var lastUpdated: Instant?
-
-            func disconnect() { /* no-op */ }
-        }
-
-        let predictionsRepo = FakePredictionsRepository(
-            sawmillAtWalshExpectation: sawmillAtWalshExpectation,
-            lechmereExpectation: lechmereExpectation
-        )
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -661,45 +545,6 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        func prediction(minutesAway: Double) -> PredictionsStreamDataResponse {
-            let objects = ObjectCollectionBuilder()
-            let trip = objects.trip { trip in
-                trip.headsign = "Dedham Mall"
-                trip.routePatternId = "52-5-0"
-            }
-            objects.prediction { prediction in
-                prediction.departureTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()
-                prediction.routeId = "52"
-                prediction.stopId = "8552"
-                prediction.tripId = trip.id
-            }
-            return PredictionsStreamDataResponse(objects: objects)
-        }
-
-        let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: prediction(minutesAway: 2))
-            XCTAssertNotNil(try view.vStack().find(text: "2 min"))
-            try view.vStack().callOnChange(newValue: prediction(minutesAway: 3))
-            XCTAssertNotNil(try view.vStack().find(text: "3 min"))
-        }
-        ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
-    }
-
-    func testRendersUpdatedPredictionsV2() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        var sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
-            pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
-            schedulesRepository: MockScheduleRepository(),
-            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
-            getNearby: { _, _ in },
-            state: .constant(route52State),
-            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
-        )
-
         func prediction(minutesAway: Double) -> PredictionsByStopJoinResponse {
             let objects = ObjectCollectionBuilder()
             let trip = objects.trip { trip in
@@ -730,8 +575,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let leaveExpectation = expectation(description: "leaves predictions")
 
         let predictionsRepo = MockPredictionsRepository(
-            onConnect: { joinExpectation.fulfill() },
-            onConnectV2: {},
+            onConnect: {},
+            onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let sut = NearbyTransitView(
@@ -757,8 +602,9 @@ final class NearbyTransitViewTests: XCTestCase {
         let joinExpectation = expectation(description: "joins predictions")
         let leaveExpectation = expectation(description: "leaves predictions")
 
-        let predictionsRepo = MockPredictionsRepository(onConnect: { joinExpectation.fulfill() },
-                                                        onConnectV2: {}, onDisconnect: { leaveExpectation.fulfill() })
+        let predictionsRepo = MockPredictionsRepository(onConnect: {},
+                                                        onConnectV2: { _ in joinExpectation.fulfill() },
+                                                        onDisconnect: { leaveExpectation.fulfill() })
 
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -787,8 +633,8 @@ final class NearbyTransitViewTests: XCTestCase {
         let leaveExpectation = expectation(description: "leaves predictions")
 
         let predictionsRepo = MockPredictionsRepository(
-            onConnect: { joinExpectation.fulfill() },
-            onConnectV2: {},
+            onConnect: {},
+            onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
         let sut = NearbyTransitView(
@@ -859,15 +705,14 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyByRouteAndStop: NearbyStaticData(data: [])
         )
 
-        let predictionsRepo = MockPredictionsRepository(onConnect: { predictionsErroredPublisher.send(true) },
-                                                        onConnectV2: {},
+        let predictionsRepo = MockPredictionsRepository(onConnect: {},
+                                                        onConnectV2: { _ in predictionsErroredPublisher.send(true) },
                                                         onDisconnect: {},
-                                                        connectOutcome:
-                                                        ApiResultError(
+                                                        connectOutcome: nil,
+                                                        connectV2Outcome: ApiResultError(
                                                             code: nil,
                                                             message: SocketError.shared.FAILURE
-                                                        ),
-                                                        connectV2Outcome: nil)
+                                                        ))
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,

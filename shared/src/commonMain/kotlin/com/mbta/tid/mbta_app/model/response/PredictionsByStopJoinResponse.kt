@@ -46,6 +46,7 @@ data class PredictionsByStopJoinResponse(
         }
 
         val updatedTrips = trips.plus(updatedPredictions.trips).filterKeys { it in usedTrips }
+
         val updatedVehicles =
             vehicles.plus(updatedPredictions.vehicles).filterKeys { it in usedVehicles }
 
