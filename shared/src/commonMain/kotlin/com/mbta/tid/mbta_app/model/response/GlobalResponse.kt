@@ -32,8 +32,7 @@ data class GlobalResponse(
                 }
                     ?: emptyList()
             }
-            .groupBy { it.first }
-            .mapValues { it.value.map { stopAndPattern -> stopAndPattern.second } },
+            .groupBy({ it.first }, { it.second }),
         objects.routes,
         objects.routePatterns,
         objects.stops,
