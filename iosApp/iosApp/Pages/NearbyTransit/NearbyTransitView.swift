@@ -20,7 +20,6 @@ struct NearbyTransitView: View {
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
-    var settingsRepository = RepositoryDI().settings
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
@@ -32,8 +31,6 @@ struct NearbyTransitView: View {
     @State var now = Date.now
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
-    @State var predictions: PredictionsStreamDataResponse?
-    @State var predictionsV2Enabled = false
     var errorBannerRepository = RepositoryDI().errorBanner
 
     let inspection = Inspection<Self>()
@@ -74,9 +71,6 @@ struct NearbyTransitView: View {
                 updateNearbyRoutes(predictions: nil)
             }
         }
-        .onChange(of: predictions) { predictions in
-            updateNearbyRoutes(predictions: predictions)
-        }
         .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
@@ -111,9 +105,6 @@ struct NearbyTransitView: View {
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
-                    if predictionsV2Enabled {
-                        Text("Using Predictions Channel V2")
-                    }
                     LazyVStack {
                         ForEach(transit, id: \.id) { nearbyTransit in
                             switch onEnum(of: nearbyTransit) {
@@ -151,10 +142,7 @@ struct NearbyTransitView: View {
     private func loadEverything() {
         getGlobal()
         getNearby(location: location, globalData: globalData)
-        Task {
-            await getPredictionsFeatureFlag()
-            joinPredictions(state.nearbyByRouteAndStop?.stopIds())
-        }
+        joinPredictions(state.nearbyByRouteAndStop?.stopIds())
         updateNearbyRoutes()
         updatePinnedRoutes()
         getSchedule()
@@ -198,32 +186,8 @@ struct NearbyTransitView: View {
         }
     }
 
-    func getPredictionsFeatureFlag() async {
-        do {
-            let settings = try await settingsRepository.getSettings()
-            predictionsV2Enabled = settings.first(where: { $0.key == .predictionsV2Channel })?.isOn ?? false
-        } catch {}
-    }
-
     func joinPredictions(_ stopIds: Set<String>?) {
         guard let stopIds else { return }
-        if predictionsV2Enabled {
-            joinPredictionsV2(stopIds: stopIds)
-        } else {
-            predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
-                DispatchQueue.main.async {
-                    // no error handling since persistent errors cause stale predictions
-                    switch onEnum(of: outcome) {
-                    case let .ok(result): predictions = result.data
-                    case .error: break
-                    }
-                }
-            }
-        }
-    }
-
-    func joinPredictionsV2(stopIds: Set<String>) {
-        // no error handling since persistent errors cause stale predictions
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
@@ -290,7 +254,6 @@ struct NearbyTransitView: View {
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(
                     predictionsByStop?.predictionQuantity() ??
-                        predictions?.predictionQuantity() ??
                         0
                 ),
                 action: {
@@ -312,9 +275,7 @@ struct NearbyTransitView: View {
         alerts: AlertsStreamDataResponse? = nil,
         pinnedRoutes: Set<String>? = nil
     ) {
-        let fallbackPredictions = if let predictionsByStop {
-            predictionsByStop.toPredictionsStreamDataResponse()
-        } else { self.predictions }
+        let fallbackPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
 
         nearbyWithRealtimeInfo = withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
