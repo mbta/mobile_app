@@ -97,7 +97,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 routes,
                 stop,
                 patterns,
-                listOf(Direction(0, routes.first()), Direction(1, routes.first()))
+                listOf(groupedDirection(patterns, routes, 0), groupedDirection(patterns, routes, 1))
             )
 
             override fun copy(
@@ -105,6 +105,29 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 patterns: List<StaticPatterns>,
                 directions: List<Direction>
             ) = this.copy(line = line, stop = stop, patterns = patterns, directions = directions)
+
+            companion object {
+                fun groupedDirection(
+                    patterns: List<StaticPatterns>,
+                    routes: List<Route>,
+                    directionId: Int
+                ): Direction {
+                    return patterns
+                        .firstOrNull {
+                            when (it) {
+                                is StaticPatterns.ByDirection -> it.direction.id == directionId
+                                else -> false
+                            }
+                        }
+                        ?.let {
+                            when (it) {
+                                is StaticPatterns.ByDirection -> it.direction
+                                else -> null
+                            }
+                        }
+                        ?: Direction(directionId, routes.first())
+                }
+            }
         }
     }
 
@@ -296,16 +319,21 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             global: GlobalResponse,
         ): StopPatterns.ForLine {
             val routes = patterns.keys.sorted()
-            val routeDirections =
+
+            val directionsByPattern =
                 patterns
-                    .map { (route, patterns) ->
-                        Pair(route.id, Direction.getDirections(global, stop, route, patterns))
+                    .flatMap { (route, patterns) ->
+                        patterns.map { pattern ->
+                            Pair(
+                                pattern.id,
+                                Direction.getDirectionForPattern(global, stop, route, pattern)
+                            )
+                        }
                     }
                     .toMap()
             val patternsByDirection =
-                patterns.values.flatten().groupBy {
-                    routeDirections[it.routeId]?.get(it.directionId)
-                }
+                patterns.values.flatten().groupBy { directionsByPattern[it.id] }
+
             val linePatterns =
                 patternsByDirection.flatMap { (direction, directionPatterns) ->
                     if (direction == null) {
@@ -344,7 +372,24 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                 line = line,
                 routes = routes,
                 stop = stop,
-                patterns = linePatterns,
+                patterns =
+                    // Remove all directions terminating mid-line at Gov Ctr, this destination
+                    // should never be displayed as a grouped direction. This will only be generated
+                    // for typical C and B trains when the provided stop is Gov Ctr. At any earlier
+                    // stops, they will be overridden to "Gov Ctr & North". At Gov Ctr, they will
+                    // have no downstream stops so Direction.getSpecialCaseDestination will find no
+                    // override and will return their default destination, "Government Center",
+                    // which doesn't make sense as a direction from Gov Ctr. And after Gov Ctr,
+                    // B and C trains can only be running there if they're using an atypical route
+                    // pattern, which should be overridden or default to a label that matches the
+                    // other E or D trains.
+                    linePatterns.filter {
+                        when (it) {
+                            is StaticPatterns.ByDirection ->
+                                it.direction.destination != "Government Center"
+                            else -> true
+                        }
+                    },
             )
         }
 
