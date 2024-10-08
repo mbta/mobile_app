@@ -647,48 +647,7 @@ class NearbyResponseTest {
                 sortOrder = 2
             }
 
-        val global =
-            GlobalResponse(
-                objects,
-                patternIdsByStop =
-                    mapOf(
-                        stop1.id to listOf(routeBrp1.id, routeBrp2.id),
-                        stop2.id to listOf(routeCrp1.id, routeCrp2.id, routeCrp3.id),
-                        stop3.id to listOf(routeDrp1.id, routeDrp2.id),
-                        stopArlington.id to
-                            listOf(
-                                routeBrp1.id,
-                                routeBrp2.id,
-                                routeCrp1.id,
-                                routeCrp2.id,
-                                routeCrp3.id,
-                                routeDrp1.id,
-                                routeDrp2.id
-                            ),
-                        stop4.id to
-                            listOf(
-                                routeBrp1.id,
-                                routeBrp2.id,
-                                routeCrp1.id,
-                                routeCrp2.id,
-                                routeCrp3.id,
-                                routeDrp1.id,
-                                routeDrp2.id
-                            ),
-                        stopGov.id to
-                            listOf(
-                                routeBrp1.id,
-                                routeBrp2.id,
-                                routeCrp1.id,
-                                routeCrp2.id,
-                                routeCrp3.id,
-                                routeDrp1.id,
-                                routeDrp2.id
-                            ),
-                        stopHaymarket.id to listOf(routeCrp3.id, routeDrp1.id, routeDrp2.id),
-                        stop5.id to listOf(routeCrp3.id, routeDrp1.id, routeDrp2.id)
-                    ),
-            )
+        val global = GlobalResponse(objects)
 
         val westDir = Direction("West", "Copley & West", 0)
         val northDir = Direction("East", "North Station & North", 1)
@@ -826,7 +785,7 @@ class NearbyResponseTest {
                 ),
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
@@ -983,7 +942,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1158,7 +1117,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1271,7 +1230,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = null,
@@ -1389,7 +1348,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1511,7 +1470,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1693,7 +1652,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1818,7 +1777,7 @@ class NearbyResponseTest {
 
         val realtimeRoutesSorted =
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = closeSubwayStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
@@ -1891,7 +1850,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
@@ -1961,7 +1920,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2045,7 +2004,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2145,7 +2104,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2221,7 +2180,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2293,7 +2252,7 @@ class NearbyResponseTest {
                 )
             ),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
@@ -2500,7 +2459,7 @@ class NearbyResponseTest {
         assertEquals(
             listOf(expected),
             staticData.withRealtimeInfo(
-                globalData = GlobalResponse(objects, emptyMap()),
+                globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),

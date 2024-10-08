@@ -22,6 +22,25 @@ data class GlobalResponse(
     val trips: Map<String, Trip>,
 ) {
     constructor(
+        objects: ObjectCollectionBuilder
+    ) : this(
+        objects.lines,
+        objects.routePatterns
+            .flatMap {
+                objects.trips[it.value.representativeTripId]?.stopIds?.map { stopId ->
+                    stopId to it.key
+                }
+                    ?: emptyList()
+            }
+            .groupBy { it.first }
+            .mapValues { it.value.map { stopAndPattern -> stopAndPattern.second } },
+        objects.routes,
+        objects.routePatterns,
+        objects.stops,
+        objects.trips
+    )
+
+    constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
     ) : this(
