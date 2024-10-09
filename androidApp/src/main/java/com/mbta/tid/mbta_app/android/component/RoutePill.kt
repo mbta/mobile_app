@@ -49,12 +49,29 @@ fun RoutePill(
             RoutePillSpec.Shape.Capsule -> RoundedCornerShape(percent = 100)
         }
 
+    val fontSize =
+        when (spec.size) {
+            RoutePillSpec.Size.CircleSmall,
+            RoutePillSpec.Size.FlexPillSmall -> 12.sp
+            else -> 16.sp
+        }
+
+    val iconSize =
+        when (spec.size) {
+            RoutePillSpec.Size.CircleSmall,
+            RoutePillSpec.Size.FlexPillSmall -> 16.dp
+            else -> 24.dp
+        }
+
     fun Modifier.withSizePadding() =
         when (spec.size) {
             RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
             RoutePillSpec.Size.Circle -> size(24.dp)
+            RoutePillSpec.Size.CircleSmall -> size(16.dp)
             RoutePillSpec.Size.FlexPill ->
                 height(24.dp).padding(horizontal = 12.dp).widthIn(min = (48 - 12 * 2).dp)
+            RoutePillSpec.Size.FlexPillSmall ->
+                height(16.dp).padding(horizontal = 8.dp).widthIn(min = (36 - 8 * 2).dp)
         }
 
     fun Modifier.withColor() =
@@ -73,7 +90,7 @@ fun RoutePill(
                 pillContent.text.uppercase(),
                 modifier = finalModifier,
                 color = if (isActive) textColor else Color.Unspecified,
-                fontSize = 16.sp,
+                fontSize = fontSize,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
                 textAlign = TextAlign.Center,
@@ -85,7 +102,7 @@ fun RoutePill(
             Icon(
                 painter = painter,
                 contentDescription = contentDescription,
-                modifier = finalModifier,
+                modifier = finalModifier.size(iconSize),
                 tint = if (isActive) textColor else LocalContentColor.current
             )
         }
