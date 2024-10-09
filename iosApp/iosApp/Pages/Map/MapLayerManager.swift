@@ -31,6 +31,7 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addIcons(recreate: Bool = false) {
+        print("KB: adding icons \(recreate)")
         for iconId in StopIcons.shared.all + AlertIcons.shared.all {
             do {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
@@ -57,6 +58,7 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
+        print("KB: adding layers \(recreate)")
         let colorPalette = getColorPalette(colorScheme: colorScheme)
         currentScheme = colorScheme
         let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
@@ -95,6 +97,8 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(sourceId: String, data: MapboxMaps.FeatureCollection) {
+        print("KB: updating  source \(sourceId)")
+
         if map.sourceExists(withId: sourceId) {
             map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
         } else {
@@ -105,10 +109,14 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(routeData: MapboxMaps.FeatureCollection) {
+        print("KB: updating  route source")
+
         updateSourceData(sourceId: RouteFeaturesBuilder.shared.routeSourceId, data: routeData)
     }
 
     func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
+        print("KB: updating  stop source")
+
         updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
     }
 }

@@ -49,6 +49,9 @@ struct AnnotatedMap: View {
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
             .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
+            .onSourceRemoved(action: { removed in
+                print("KB: source removed \(removed.sourceId)")
+            })
             .onStyleLoaded { _ in
                 // The initial run of this happens before any required data is loaded, so it does nothing and
                 // handleTryLayerInit always performs the first layer creation, but once the data is in place,

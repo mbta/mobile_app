@@ -109,6 +109,7 @@ struct HomeMapView: View {
                 nearbyVM.selectingLocation = true
             }
             .onDisappear {
+                print("KB: home map view disappeared")
                 mapVM.layerManager = nil
             }
     }
