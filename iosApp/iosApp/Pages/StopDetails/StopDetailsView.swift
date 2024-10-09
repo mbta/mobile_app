@@ -27,6 +27,7 @@ struct StopDetailsView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     let pinnedRoutes: Set<String>
     @State var predictions: PredictionsStreamDataResponse?
+    let isReturningFromBackground: Bool
 
     let togglePinnedRoute: (String) -> Void
 
@@ -43,7 +44,8 @@ struct StopDetailsView: View {
         nearbyVM: NearbyViewModel,
         now: Date,
         pinnedRoutes: Set<String>,
-        togglePinnedRoute: @escaping (String) -> Void
+        togglePinnedRoute: @escaping (String) -> Void,
+        isReturningFromBackground: Bool
     ) {
         self.errorBannerRepository = errorBannerRepository
         self.globalRepository = globalRepository
@@ -55,6 +57,7 @@ struct StopDetailsView: View {
         self.now = now
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
+        self.isReturningFromBackground = isReturningFromBackground
 
         if let departures {
             servedRoutes = departures.routes.map { patterns in
@@ -79,7 +82,7 @@ struct StopDetailsView: View {
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
-                    ErrorBanner()
+                    ErrorBanner(loadingWhenPredictionsStale: isReturningFromBackground)
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,

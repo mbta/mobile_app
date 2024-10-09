@@ -41,7 +41,7 @@ final class StopDetailsViewTests: XCTestCase {
                                   ]),
                                   nearbyVM: .init(),
                                   now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+                                  pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false)
 
         ViewHosting.host(view: sut)
         let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
@@ -65,7 +65,7 @@ final class StopDetailsViewTests: XCTestCase {
                                   ]),
                                   nearbyVM: .init(),
                                   now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+                                  pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false)
 
         ViewHosting.host(view: sut)
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
@@ -84,7 +84,7 @@ final class StopDetailsViewTests: XCTestCase {
             departures: nil,
             nearbyVM: nearbyVM,
             now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false
         )
 
         ViewHosting.host(view: sut)
@@ -109,7 +109,7 @@ final class StopDetailsViewTests: XCTestCase {
             departures: nil,
             nearbyVM: nearbyVM,
             now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false
         )
 
         ViewHosting.host(view: sut)
@@ -129,7 +129,7 @@ final class StopDetailsViewTests: XCTestCase {
             departures: nil,
             nearbyVM: nearbyVM,
             now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false
         )
 
         ViewHosting.host(view: sut)

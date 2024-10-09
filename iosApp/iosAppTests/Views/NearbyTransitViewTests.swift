@@ -34,6 +34,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
         XCTAssertNotNil(try sut.inspect().find(LoadingCard<Text>.self))
@@ -50,6 +51,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in getNearbyExpectation.fulfill() },
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
+            isReturningFromBackground: .constant(false),
             globalRepository: MockGlobalRepository(),
             nearbyVM: .init()
         )
@@ -145,6 +147,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
@@ -227,6 +230,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
             scheduleResponse: .init(objects: objects)
         )
@@ -272,6 +276,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
             scheduleResponse: .init(objects: objects)
         )
@@ -341,6 +346,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
             now: now
         )
@@ -450,6 +456,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(greenLineState),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])) {
                 globalLoadedPublisher.send()
             },
@@ -501,6 +508,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -542,6 +550,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -587,6 +596,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -614,6 +624,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -645,6 +656,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -669,6 +681,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
         let exp = sut.on(\.didAppear) { view in
@@ -693,6 +706,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(.init()),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -725,6 +739,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
@@ -789,6 +804,7 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(.init(loadedLocation: .init(), nearbyByRouteAndStop: .init(data: []))),
             location: .constant(ViewportProvider.Defaults.center),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
 
