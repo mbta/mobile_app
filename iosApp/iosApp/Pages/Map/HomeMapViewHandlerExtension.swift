@@ -101,7 +101,9 @@ extension HomeMapView {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                vehiclesData = Array(result.data.vehicles.values)
+                if let departures = nearbyVM.departures {
+                    vehiclesData = Array(departures.filterVehiclesByUpcoming(vehicles: result.data).values)
+                }
             }
         }
     }
