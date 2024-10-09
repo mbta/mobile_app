@@ -82,7 +82,7 @@ struct NearbyTransitView: View {
             while !Task.isCancelled {
                 now = Date.now
                 updateNearbyRoutes()
-                await checkPredictionsStale()
+                checkPredictionsStale()
                 try? await Task.sleep(for: .seconds(5))
             }
         }
@@ -191,7 +191,9 @@ struct NearbyTransitView: View {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(result): predictionsByStop = result.data
+                case let .ok(result):
+                    predictionsByStop = result.data
+                    checkPredictionsStale()
                 case .error: break
                 }
             }
@@ -208,6 +210,7 @@ struct NearbyTransitView: View {
                             vehicles: result.data.vehicles
                         )
                     }
+                    checkPredictionsStale()
                 case .error: break
                 }
             }
@@ -248,7 +251,7 @@ struct NearbyTransitView: View {
         }
     }
 
-    private func checkPredictionsStale() async {
+    private func checkPredictionsStale() {
         if let lastPredictions = predictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,

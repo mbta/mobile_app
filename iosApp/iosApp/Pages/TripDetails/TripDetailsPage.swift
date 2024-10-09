@@ -108,7 +108,7 @@ struct TripDetailsPage: View {
         .task {
             now = Date.now.toKotlinInstant()
             while !Task.isCancelled {
-                await checkPredictionsStale()
+                checkPredictionsStale()
                 do {
                     try await Task.sleep(for: .seconds(1))
                 } catch {
@@ -196,6 +196,7 @@ struct TripDetailsPage: View {
                 case let .ok(result): tripPredictions = result.data
                 case .error: break
                 }
+                checkPredictionsStale()
             }
         }
     }
@@ -228,7 +229,7 @@ struct TripDetailsPage: View {
         }
     }
 
-    private func checkPredictionsStale() async {
+    private func checkPredictionsStale() {
         if let lastPredictions = tripPredictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,

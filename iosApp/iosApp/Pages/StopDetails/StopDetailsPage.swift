@@ -96,7 +96,7 @@ struct StopDetailsPage: View {
                 while !Task.isCancelled {
                     now = Date.now
                     updateDepartures()
-                    await checkPredictionsStale()
+                    checkPredictionsStale()
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
@@ -185,6 +185,7 @@ struct StopDetailsPage: View {
             DispatchQueue.main.async {
                 if case let .ok(result) = onEnum(of: outcome) {
                     predictionsByStop = result.data
+                    checkPredictionsStale()
                 }
             }
         }, onMessage: { outcome in
@@ -199,6 +200,7 @@ struct StopDetailsPage: View {
                             vehicles: result.data.vehicles
                         )
                     }
+                    checkPredictionsStale()
                 }
             }
 
@@ -209,7 +211,7 @@ struct StopDetailsPage: View {
         predictionsRepository.disconnect()
     }
 
-    private func checkPredictionsStale() async {
+    private func checkPredictionsStale() {
         if let lastPredictions = predictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
