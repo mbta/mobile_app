@@ -13,9 +13,12 @@ struct ErrorBanner: View {
     var repo: IErrorBannerStateRepository
     @State var state: ErrorBannerState?
 
+    let loadingWhenPredictionsStale: Bool
+
     let inspection = Inspection<Self>()
 
-    init(repo: IErrorBannerStateRepository = RepositoryDI().errorBanner) {
+    init(loadingWhenPredictionsStale: Bool, repo: IErrorBannerStateRepository = RepositoryDI().errorBanner) {
+        self.loadingWhenPredictionsStale = loadingWhenPredictionsStale
         self.repo = repo
         state = repo.state.value
     }
@@ -42,17 +45,21 @@ struct ErrorBanner: View {
                 }))
             }
         case let .stalePredictions(state):
-            IconCard(
-                iconName: "clock.arrow.circlepath",
-                details: Text("Updated \(state.minutesAgo(), specifier: "%ld") minutes ago")
-            ) {
-                AnyView(Button(action: {
-                    repo.clearState()
-                    state.action()
-                }, label: {
-                    Image(systemName: "arrow.clockwise")
-                        .accessibilityLabel("Refresh predictions")
-                }))
+            if loadingWhenPredictionsStale {
+                ProgressView()
+            } else {
+                IconCard(
+                    iconName: "clock.arrow.circlepath",
+                    details: Text("Updated \(state.minutesAgo(), specifier: "%ld") minutes ago")
+                ) {
+                    AnyView(Button(action: {
+                        repo.clearState()
+                        state.action()
+                    }, label: {
+                        Image(systemName: "arrow.clockwise")
+                            .accessibilityLabel("Refresh predictions")
+                    }))
+                }
             }
         case nil:
             // for some reason, .collect on an EmptyView doesn't work
@@ -62,7 +69,15 @@ struct ErrorBanner: View {
 }
 
 #Preview {
-    ErrorBanner(repo: MockErrorBannerStateRepository(
-        state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})
-    ))
+    VStack(spacing: 16) {
+        ErrorBanner(loadingWhenPredictionsStale: false, repo: MockErrorBannerStateRepository(
+            state: .DataError(action: {})
+        ))
+        ErrorBanner(loadingWhenPredictionsStale: false, repo: MockErrorBannerStateRepository(
+            state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})
+        ))
+        ErrorBanner(loadingWhenPredictionsStale: true, repo: MockErrorBannerStateRepository(
+            state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})
+        ))
+    }
 }

@@ -17,7 +17,7 @@ final class ErrorBannerTests: XCTestCase {
     func testRespondsToState() throws {
         let repo = MockErrorBannerStateRepository(state: nil)
 
-        let sut = ErrorBanner(repo: repo)
+        let sut = ErrorBanner(loadingWhenPredictionsStale: false, repo: repo)
 
         ViewHosting.host(view: sut)
 
@@ -44,5 +44,23 @@ final class ErrorBannerTests: XCTestCase {
 
         wait(for: [showedState], timeout: 1)
         wait(for: [callsAction], timeout: 1)
+    }
+
+    func testLoadingWhenPredictionsStale() throws {
+        let sut = ErrorBanner(
+            loadingWhenPredictionsStale: true,
+            repo: MockErrorBannerStateRepository(state: .StalePredictions(
+                lastUpdated: Date.distantPast.toKotlinInstant(),
+                action: {}
+            ))
+        )
+
+        ViewHosting.host(view: sut)
+
+        let showedLoading = sut.inspection.inspect(after: 0.2) { view in
+            XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
+        }
+
+        wait(for: [showedLoading], timeout: 1)
     }
 }

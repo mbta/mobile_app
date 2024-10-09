@@ -29,6 +29,8 @@ struct TripDetailsPage: View {
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
+    @State var isReturningFromBackground = false
+
     var errorBannerRepository: IErrorBannerStateRepository
     let analytics: TripDetailsAnalytics
 
@@ -80,7 +82,7 @@ struct TripDetailsPage: View {
                     vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
                 ) {
                     vehicleCardView
-                    ErrorBanner()
+                    ErrorBanner(loadingWhenPredictionsStale: isReturningFromBackground)
                     if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
                         targetStopSequence: Int32(stopSequence),
@@ -130,7 +132,10 @@ struct TripDetailsPage: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .withScenePhaseHandlers(onActive: joinRealtime,
                                 onInactive: leaveRealtime,
-                                onBackground: leaveRealtime)
+                                onBackground: {
+                                    leaveRealtime()
+                                    isReturningFromBackground = true
+                                })
     }
 
     private func loadEverything() {
@@ -191,6 +196,7 @@ struct TripDetailsPage: View {
     private func joinPredictions(tripId: String) {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
+                isReturningFromBackground = false
                 // no error handling since persistent errors cause stale predictions
                 switch onEnum(of: outcome) {
                 case let .ok(result): tripPredictions = result.data

@@ -23,6 +23,7 @@ struct NearbyTransitView: View {
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
+    @Binding var isReturningFromBackground: Bool
     var globalRepository = RepositoryDI().global
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -89,7 +90,10 @@ struct NearbyTransitView: View {
         .withScenePhaseHandlers(
             onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
             onInactive: leavePredictions,
-            onBackground: leavePredictions
+            onBackground: {
+                leavePredictions()
+                isReturningFromBackground = true
+            }
         )
     }
 
@@ -196,6 +200,7 @@ struct NearbyTransitView: View {
                     checkPredictionsStale()
                 case .error: break
                 }
+                isReturningFromBackground = false
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
@@ -213,6 +218,7 @@ struct NearbyTransitView: View {
                     checkPredictionsStale()
                 case .error: break
                 }
+                isReturningFromBackground = false
             }
 
         })

@@ -18,6 +18,7 @@ struct NearbyTransitPageView: View {
     @ObservedObject var viewportProvider: ViewportProvider
 
     @State var location: CLLocationCoordinate2D?
+    @State var isReturningFromBackground = false
 
     let inspection = Inspection<Self>()
 
@@ -34,7 +35,7 @@ struct NearbyTransitPageView: View {
             Color.fill1.ignoresSafeArea(.all)
             VStack {
                 SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
-                ErrorBanner()
+                ErrorBanner(loadingWhenPredictionsStale: isReturningFromBackground)
                 if viewportProvider.isManuallyCentering {
                     LoadingCard { Text("select location") }
                 } else {
@@ -44,6 +45,7 @@ struct NearbyTransitPageView: View {
                         },
                         state: $nearbyVM.nearbyState,
                         location: $location,
+                        isReturningFromBackground: $isReturningFromBackground,
                         nearbyVM: nearbyVM
                     )
 
