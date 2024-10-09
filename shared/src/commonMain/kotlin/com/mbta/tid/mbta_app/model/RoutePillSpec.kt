@@ -23,7 +23,9 @@ data class RoutePillSpec(
     enum class Size {
         FixedPill,
         Circle,
-        FlexPill
+        CircleSmall,
+        FlexPill,
+        FlexPillSmall
     }
 
     enum class Shape {
@@ -57,7 +59,65 @@ data class RoutePillSpec(
         }
     )
 
+    constructor(
+        stopResultRoute: StopResultRoute,
+    ) : this(
+        if (stopResultRoute.type == RouteType.BUS && stopResultRoute.icon != "silver_line") {
+            "192026"
+        } else {
+            "FFFFFF"
+        },
+        when (stopResultRoute.icon) {
+            "orange_line" -> "ED8B00"
+            "red_line",
+            "mattapan_line" -> "DA291C"
+            "blue_line" -> "003DA5"
+            "commuter_rail" -> "80276C"
+            "bus" -> "FFC72C"
+            "silver_line" -> "7C878E"
+            "ferry" -> "008EAA"
+            else -> if (stopResultRoute.icon.contains("green_line_")) "00843D" else ""
+        },
+        when (stopResultRoute.type) {
+            RouteType.LIGHT_RAIL -> lightRailPillContent(stopResultRoute)
+            RouteType.HEAVY_RAIL -> heavyRailPillContent(stopResultRoute)
+            RouteType.COMMUTER_RAIL -> Content.Text("CR")
+            RouteType.BUS -> Content.ModeImage(RouteType.BUS)
+            RouteType.FERRY -> Content.ModeImage(RouteType.FERRY)
+        },
+        when {
+            stopResultRoute.icon.startsWith("green_line_") -> Size.CircleSmall
+            else -> Size.FlexPillSmall
+        },
+        when {
+            stopResultRoute.type == RouteType.BUS -> Shape.Rectangle
+            else -> Shape.Capsule
+        }
+    )
+
     companion object {
+
+        private fun lightRailPillContent(stopResultRoute: StopResultRoute): Content =
+            if (stopResultRoute.icon.startsWith("green_line_")) {
+                Content.Text(stopResultRoute.icon.replace("green_line_", "").uppercase())
+            } else if (stopResultRoute.icon == "mattapan_line") {
+                Content.Text("M")
+            } else {
+                val text =
+                    when (stopResultRoute.icon) {
+                        "orange_line" -> "Orange Line"
+                        "red_line" -> "Red Line"
+                        "blue_line" -> "Blue Line"
+                        else -> ""
+                    }
+                Content.Text(text)
+            }
+
+        private fun heavyRailPillContent(stopResultRoute: StopResultRoute): Content =
+            Content.Text(
+                stopResultRoute.icon.split("_").joinToString("") { it.first().uppercase() }
+            )
+
         private fun linePillContent(line: Line): Content =
             if (line.longName == "Green Line") {
                 Content.Text("GL")

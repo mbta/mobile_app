@@ -135,6 +135,7 @@ fun drawableByName(name: String): Int =
         "mode-subway" -> R.drawable.mode_subway
         "pinned-route-active" -> R.drawable.pinned_route_active
         "pinned-route-inactive" -> R.drawable.pinned_route_inactive
+        "t-logo" -> R.drawable.t_logo
         "vehicle-halo" -> R.drawable.vehicle_halo
         "vehicle-puck" -> R.drawable.vehicle_puck
         else -> throw IllegalArgumentException("Invalid drawable name $name")

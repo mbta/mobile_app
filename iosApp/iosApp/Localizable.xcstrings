@@ -309,9 +309,6 @@
     "No nearby MBTA stops" : {
 
     },
-    "No results found" : {
-
-    },
     "No Service" : {
 
     },
@@ -343,6 +340,9 @@
       "comment" : "Possible alert cause"
     },
     "Predictions unavailable" : {
+
+    },
+    "Recently Viewed" : {
 
     },
     "Routes" : {
@@ -398,9 +398,6 @@
     },
     "Stop Closure" : {
       "comment" : "Possible alert effect"
-    },
-    "Stops" : {
-
     },
     "Strike" : {
       "comment" : "Possible alert cause"

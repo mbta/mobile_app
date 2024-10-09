@@ -12,18 +12,45 @@ import SwiftUI
 struct RoutePill: View {
     let route: Route?
     let line: Line?
+    let stopResultRoute: StopResultRoute?
     let type: RoutePillSpec.Type_
     let isActive: Bool
     let textColor: Color
     let routeColor: Color
     let spec: RoutePillSpec
 
+    private var fontSize: CGFloat {
+        switch spec.size {
+        case .circleSmall, .flexPillSmall: 12
+        default: 16
+        }
+    }
+
+    private var iconSize: CGFloat {
+        switch spec.size {
+        case .circleSmall, .flexPillSmall: 16
+        default: 24
+        }
+    }
+
     init(route: Route?, line: Line? = nil, type: RoutePillSpec.Type_, isActive: Bool = true) {
         self.route = route
         self.line = line
+        stopResultRoute = nil
         self.type = type
         self.isActive = isActive
         spec = .init(route: route, line: line, type: type)
+        textColor = .init(hex: spec.textColor)
+        routeColor = .init(hex: spec.routeColor)
+    }
+
+    init(stopResultRoute: StopResultRoute, type: RoutePillSpec.Type_, isActive: Bool = true) {
+        route = nil
+        line = nil
+        self.stopResultRoute = stopResultRoute
+        self.type = type
+        self.isActive = isActive
+        spec = .init(stopResultRoute: stopResultRoute)
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
     }
@@ -32,7 +59,10 @@ struct RoutePill: View {
         switch onEnum(of: spec.content) {
         case .empty: EmptyView()
         case let .text(text): Text(text.text)
-        case let .modeImage(mode): routeIcon(mode.mode)
+        case let .modeImage(mode):
+            routeIcon(mode.mode)
+                .resizable()
+                .frame(width: iconSize, height: iconSize)
         }
     }
 
@@ -43,7 +73,9 @@ struct RoutePill: View {
             switch spec.size {
             case .fixedPill: content.frame(width: 50, height: 24)
             case .circle: content.frame(width: 24, height: 24)
+            case .circleSmall: content.frame(width: 16, height: 16)
             case .flexPill: content.frame(height: 24).padding(.horizontal, 12).frame(minWidth: 44)
+            case .flexPillSmall: content.frame(height: 16).padding(.horizontal, 8).frame(minWidth: 36)
             }
         }
     }
@@ -80,12 +112,12 @@ struct RoutePill: View {
     }
 
     var body: some View {
-        if route == nil, line == nil {
+        if route == nil, line == nil, stopResultRoute == nil {
             EmptyView()
         } else {
             getPillBase()
                 .textCase(.uppercase)
-                .font(.custom("Helvetica Neue", size: 16).bold())
+                .font(.custom("Helvetica Neue", size: fontSize).bold())
                 .tracking(0.5)
                 .modifier(FramePaddingModifier(spec: spec))
                 .lineLimit(1)
