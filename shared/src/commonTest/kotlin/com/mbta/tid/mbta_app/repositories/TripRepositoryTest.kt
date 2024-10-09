@@ -39,7 +39,10 @@ class TripRepositoryTest : KoinTest {
         runBlocking {
             val response = TripRepository().getTripSchedules(tripId = "12345")
 
-            assertEquals(TripSchedulesResponse.StopIds(listOf("1", "2", "3")), response)
+            assertEquals(
+                ApiResult.Ok(TripSchedulesResponse.StopIds(listOf("1", "2", "3"))),
+                response
+            )
         }
 
         stopKoin()

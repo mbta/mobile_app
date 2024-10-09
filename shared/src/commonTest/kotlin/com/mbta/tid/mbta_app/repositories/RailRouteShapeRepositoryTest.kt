@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.RoutePatternKey
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Shape
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.engine.mock.MockEngine
@@ -194,7 +195,7 @@ class RailRouteShapeRepositoryTest : KoinTest {
                         )
                     )
                 )
-            assertEquals(expectedResponse, response)
+            assertEquals(ApiResult.Ok(expectedResponse), response)
         }
     }
 }

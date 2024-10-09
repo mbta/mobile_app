@@ -169,7 +169,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
 class MockPredictionsRepository(
     val onConnect: () -> Unit = {},
-    val onConnectV2: () -> Unit = {},
+    val onConnectV2: (List<String>) -> Unit = {},
     val onDisconnect: () -> Unit = {},
     private val connectOutcome: ApiResult<PredictionsStreamDataResponse>? = null,
     private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null
@@ -183,8 +183,12 @@ class MockPredictionsRepository(
     ) : this(connectOutcome = ApiResult.Ok(response))
 
     constructor(
+        connectV2Outcome: PredictionsByStopJoinResponse
+    ) : this(connectV2Outcome = ApiResult.Ok(connectV2Outcome))
+
+    constructor(
         onConnect: () -> Unit = {},
-        onConnectV2: () -> Unit = {},
+        onConnectV2: (List<String>) -> Unit = {},
         onDisconnect: () -> Unit = {},
     ) : this(
         onConnect = onConnect,
@@ -209,7 +213,7 @@ class MockPredictionsRepository(
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
     ) {
-        onConnectV2()
+        onConnectV2(stopIds)
         if (connectV2Outcome != null) {
             onJoin(connectV2Outcome)
         }

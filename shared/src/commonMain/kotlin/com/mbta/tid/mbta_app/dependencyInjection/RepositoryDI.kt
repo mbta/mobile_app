@@ -136,6 +136,7 @@ class MockRepositories(
     companion object {
         @DefaultArgumentInterop.Enabled
         fun buildWithDefaults(
+            errorBanner: IErrorBannerStateRepository = MockErrorBannerStateRepository(),
             global: IGlobalRepository = IdleGlobalRepository(),
             schedules: ISchedulesRepository = IdleScheduleRepository(),
             stop: IStopRepository = IdleStopRepository(),
@@ -145,7 +146,7 @@ class MockRepositories(
                 alerts = MockAlertsRepository(),
                 appCheck = MockAppCheckRepository(),
                 config = MockConfigRepository(),
-                errorBanner = MockErrorBannerStateRepository(),
+                errorBanner = errorBanner,
                 global = global,
                 nearby = IdleNearbyRepository(),
                 pinnedRoutes = PinnedRoutesRepository(),

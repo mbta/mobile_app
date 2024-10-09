@@ -184,12 +184,9 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ): PatternsByStop {
             global.run {
+                val allDataLoaded = !loading
                 val patternsByHeadsign =
-                    routePatterns.groupBy {
-                        routePatterns.groupBy { trips.getValue(it.representativeTripId) }
-                        val representativeTrip = trips.getValue(it.representativeTripId)
-                        representativeTrip.headsign
-                    }
+                    routePatterns.groupBy { trips.getValue(it.representativeTripId).headsign }
                 return PatternsByStop(
                     listOf(route),
                     null,
@@ -231,7 +228,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                 RealtimePatterns.hasSchedulesToday(
                                     hasSchedulesTodayByPattern,
                                     patterns
-                                )
+                                ),
+                                allDataLoaded
                             )
                         }
                         .filter {
@@ -255,6 +253,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
         ): PatternsByStop {
             global.run {
+                val allDataLoaded = !loading
                 val groupedPatternsByRoute = patternsByRoute.filter { it.key.lineId == line.id }
 
                 val staticPatterns =
@@ -276,7 +275,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                         tripMap,
                                         stop.id,
                                         alerts,
-                                        hasSchedulesTodayByPattern
+                                        hasSchedulesTodayByPattern,
+                                        allDataLoaded
                                     )
                                 is NearbyStaticData.StaticPatterns.ByDirection ->
                                     RealtimePatterns.ByDirection(
@@ -284,7 +284,8 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                                         tripMap,
                                         stop.id,
                                         alerts,
-                                        hasSchedulesTodayByPattern
+                                        hasSchedulesTodayByPattern,
+                                        allDataLoaded
                                     )
                             }
                         }

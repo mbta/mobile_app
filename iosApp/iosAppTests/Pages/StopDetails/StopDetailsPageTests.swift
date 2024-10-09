@@ -40,14 +40,14 @@ final class StopDetailsPageTests: XCTestCase {
                 self.callback = callback
             }
 
-            func __getSchedule(stopIds: [String]) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds: [String]) async throws -> ApiResult<ScheduleResponse> {
                 callback(stopIds)
-                return ScheduleResponse(objects: ObjectCollectionBuilder())
+                return ApiResultOk(data: ScheduleResponse(objects: ObjectCollectionBuilder()))
             }
 
-            func __getSchedule(stopIds: [String], now _: Instant) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds: [String], now _: Instant) async throws -> ApiResult<ScheduleResponse> {
                 callback(stopIds)
-                return ScheduleResponse(objects: ObjectCollectionBuilder())
+                return ApiResultOk(data: ScheduleResponse(objects: ObjectCollectionBuilder()))
             }
         }
 
@@ -97,7 +97,8 @@ final class StopDetailsPageTests: XCTestCase {
                 patterns: [routePattern1],
                 upcomingTrips: nil,
                 alertsHere: nil,
-                hasSchedulesToday: true
+                hasSchedulesToday: true,
+                allDataLoaded: true
             )]
         )
         let route2Departures = PatternsByStop(
@@ -110,7 +111,8 @@ final class StopDetailsPageTests: XCTestCase {
                 patterns: [routePattern2],
                 upcomingTrips: nil,
                 alertsHere: nil,
-                hasSchedulesToday: true
+                hasSchedulesToday: true,
+                allDataLoaded: true
             )]
         )
 
@@ -136,6 +138,7 @@ final class StopDetailsPageTests: XCTestCase {
         XCTAssertNil(nearbyVM.navigationStack.lastStopDetailsFilter)
     }
 
+    @MainActor
     func testDisplaysSchedules() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
@@ -159,14 +162,14 @@ final class StopDetailsPageTests: XCTestCase {
                 self.callback = callback
             }
 
-            func __getSchedule(stopIds _: [String]) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds _: [String]) async throws -> ApiResult<ScheduleResponse> {
                 callback?()
-                return ScheduleResponse(objects: objects)
+                return ApiResultOk(data: ScheduleResponse(objects: objects))
             }
 
-            func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ScheduleResponse {
+            func __getSchedule(stopIds _: [String], now _: Instant) async throws -> ApiResult<ScheduleResponse> {
                 callback?()
-                return ScheduleResponse(objects: objects)
+                return ApiResultOk(data: ScheduleResponse(objects: objects))
             }
         }
 
@@ -264,8 +267,8 @@ final class StopDetailsPageTests: XCTestCase {
 
         let leaveExpectation = expectation(description: "leaves predictions")
 
-        let predictionsRepo = MockPredictionsRepository(onConnect: { joinExpectation.fulfill() },
-                                                        onConnectV2: {},
+        let predictionsRepo = MockPredictionsRepository(onConnect: {},
+                                                        onConnectV2: { _ in joinExpectation.fulfill() },
                                                         onDisconnect: { leaveExpectation.fulfill() },
                                                         connectOutcome: nil,
                                                         connectV2Outcome: nil)
@@ -304,13 +307,12 @@ final class StopDetailsPageTests: XCTestCase {
         joinExpectation.assertForOverFulfill = true
 
         let predictionsRepo = MockPredictionsRepository(onConnect: {},
-                                                        onConnectV2: { joinExpectation.fulfill() },
+                                                        onConnectV2: { _ in joinExpectation.fulfill() },
                                                         onDisconnect: { leaveExpectation.fulfill() },
                                                         connectOutcome: nil,
                                                         connectV2Outcome: nil)
         let sut = StopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
-            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,
             stop: stop,
@@ -326,46 +328,7 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
-    func testJoinsPredictionsV2WhenEnabled() throws {
-        let objects = ObjectCollectionBuilder()
-        let route = objects.route()
-        let stop = objects.stop { _ in }
-
-        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let filter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
-        let joinExpectation = expectation(description: "joins predictions")
-        joinExpectation.expectedFulfillmentCount = 2
-        joinExpectation.assertForOverFulfill = true
-
-        let leaveExpectation = expectation(description: "leaves predictions")
-
-        let predictionsRepo = MockPredictionsRepository(onConnect: {},
-                                                        onConnectV2: { joinExpectation.fulfill() },
-                                                        onDisconnect: { leaveExpectation.fulfill() },
-                                                        connectOutcome: nil,
-                                                        connectV2Outcome: nil)
-        let sut = StopDetailsPage(
-            schedulesRepository: MockScheduleRepository(),
-            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
-            predictionsRepository: predictionsRepo,
-            viewportProvider: viewportProvider,
-            stop: stop,
-            filter: filter,
-            nearbyVM: .init()
-        )
-
-        ViewHosting.host(view: sut)
-
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.background)
-
-        wait(for: [leaveExpectation], timeout: 1)
-
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
-
-        wait(for: [joinExpectation], timeout: 1)
-    }
-
-    func testUpdatesDeparturesOnV2PredictionsChange() throws {
+    func testUpdatesDeparturesOnPredictionsChange() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -389,7 +352,6 @@ final class StopDetailsPageTests: XCTestCase {
                                                                    patternIdsByStop: [stop.id: [pattern.id]]),
                                                    onGet: { globalDataLoaded.send() }),
             schedulesRepository: MockScheduleRepository(),
-            settingsRepository: MockSettingsRepository(settings: [.init(key: .predictionsV2Channel, isOn: true)]),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,
             stop: stop,
@@ -410,6 +372,7 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
     }
 
+    @MainActor
     func testAppliesFilterAutomatically() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()

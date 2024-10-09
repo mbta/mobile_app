@@ -14,6 +14,7 @@ import ViewInspector
 import XCTest
 
 final class ErrorBannerTests: XCTestCase {
+    @MainActor
     func testRespondsToState() throws {
         let repo = MockErrorBannerStateRepository(state: nil)
 

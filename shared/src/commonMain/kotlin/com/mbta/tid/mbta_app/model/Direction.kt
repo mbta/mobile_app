@@ -110,10 +110,24 @@ data class Direction(
                 return listOf(0, 1).map { directionId -> Direction(directionId, route) }
             }
 
-            val stopSequenceByDirection = getTypicalStopSequenceByDirection(patterns, global)
+            val stopListByDirection = getTypicalStopListByDirection(patterns, global)
             return listOf(0, 1).map { directionId ->
-                Direction(directionId, route, stop, stopSequenceByDirection[directionId])
+                Direction(directionId, route, stop, stopListByDirection[directionId])
             }
+        }
+
+        fun getDirectionForPattern(
+            global: GlobalResponse,
+            stop: Stop,
+            route: Route,
+            pattern: RoutePattern
+        ): Direction {
+            if (!specialCases.containsKey(idOverrides[route.id] ?: route.id)) {
+                return Direction(pattern.directionId, route)
+            }
+
+            val stopList = getStopListForPattern(pattern, global)
+            return Direction(pattern.directionId, route, stop, stopList)
         }
 
         fun getDirectionsForLine(
@@ -176,22 +190,28 @@ data class Direction(
             return null
         }
 
-        private fun getTypicalStopSequenceByDirection(
+        private fun getStopListForPattern(
+            pattern: RoutePattern?,
+            global: GlobalResponse
+        ): List<String>? {
+            return global.trips[pattern?.representativeTripId]?.stopIds?.map { stopId ->
+                global.stops[stopId]?.parentStationId ?: stopId
+            }
+        }
+
+        private fun getTypicalStopListByDirection(
             patterns: List<RoutePattern>,
             global: GlobalResponse
         ): Map<Int, List<String>?> {
             return patterns
                 .groupBy { pattern -> pattern.directionId }
                 .mapValues { directionPatterns ->
-                    val typicalTripId =
-                        directionPatterns.value
-                            .firstOrNull { pattern ->
-                                pattern.typicality == RoutePattern.Typicality.Typical
-                            }
-                            ?.representativeTripId
-                    global.trips[typicalTripId]?.stopIds?.map { stopId ->
-                        global.stops[stopId]?.parentStationId ?: stopId
-                    }
+                    getStopListForPattern(
+                        directionPatterns.value.firstOrNull { pattern ->
+                            pattern.typicality == RoutePattern.Typicality.Typical
+                        },
+                        global
+                    )
                 }
         }
     }

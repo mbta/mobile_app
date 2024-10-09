@@ -15,7 +15,6 @@ import SwiftUI
 class NearbyViewModel: ObservableObject {
     private static let logger = Logger()
     struct NearbyTransitState: Equatable {
-        var error: String?
         var loadedLocation: CLLocationCoordinate2D?
         var loading: Bool = false
         var nearbyByRouteAndStop: NearbyStaticData?
@@ -42,6 +41,7 @@ class NearbyViewModel: ObservableObject {
     @Published var nearbyState = NearbyTransitState()
     @Published var selectingLocation = false
     private let alertsRepository: IAlertsRepository
+    private let errorBannerRepository: IErrorBannerStateRepository
     private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
@@ -51,6 +51,7 @@ class NearbyViewModel: ObservableObject {
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
+        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
@@ -58,6 +59,7 @@ class NearbyViewModel: ObservableObject {
         self.departures = departures
         self.navigationStack = navigationStack
         self.alertsRepository = alertsRepository
+        self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
@@ -117,25 +119,16 @@ class NearbyViewModel: ObservableObject {
                 self.nearbyState.loading = false
                 self.selectingLocation = false
             }
-            do {
-                let response = try await nearbyRepository.getNearby(
-                    global: global,
-                    location: location.coordinateKt
-                )
-                try Task.checkCancellation()
-                nearbyState.nearbyByRouteAndStop = response
-                nearbyState.loadedLocation = location
-                nearbyState.error = nil
-            } catch is CancellationError {
-                // Do nothing when cancelled
-                return
-            } catch let error as NSError {
-                withUnsafeCurrentTask { thisTask in
-                    if self.fetchNearbyTask?.hashValue == thisTask?.hashValue {
-                        self.nearbyState.error = self.nearbyErrorText(error: error)
-                    }
-                }
-            }
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "NearbyViewModel.getNearby",
+                getData: { try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) },
+                onSuccess: {
+                    nearbyState.nearbyByRouteAndStop = $0
+                    nearbyState.loadedLocation = location
+                },
+                onRefreshAfterError: { self.getNearby(global: global, location: location) }
+            )
         }
     }
 
@@ -149,21 +142,6 @@ class NearbyViewModel: ObservableObject {
             target != nil ? global.stops[target!.stopId] : nil
         default:
             nil
-        }
-    }
-
-    func nearbyErrorText(error: NSError) -> String {
-        switch error.kotlinException {
-        case is Ktor_client_coreHttpRequestTimeoutException:
-            "Couldn't load nearby transit, no response from the server"
-        case is Ktor_ioIOException:
-            "Couldn't load nearby transit, connection was interrupted"
-        case is Ktor_serializationJsonConvertException:
-            "Couldn't load nearby transit, unable to parse response"
-        case is Ktor_client_coreResponseException:
-            "Couldn't load nearby transit, invalid response"
-        default:
-            "Couldn't load nearby transit, something went wrong"
         }
     }
 

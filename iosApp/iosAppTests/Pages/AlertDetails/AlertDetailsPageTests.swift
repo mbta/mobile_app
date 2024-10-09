@@ -23,9 +23,9 @@ final class AlertDetailsPageTests: XCTestCase {
             self.notifier = notifier
         }
 
-        func __getGlobalData() async throws -> GlobalResponse {
+        func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
             notifier.send()
-            return response
+            return ApiResultOk(data: response)
         }
     }
 

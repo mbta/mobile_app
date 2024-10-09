@@ -212,6 +212,9 @@
     "End" : {
       "comment" : "Label for the end date of a disruption"
     },
+    "Error loading data" : {
+
+    },
     "ferries" : {
       "comment" : "ferries"
     },
@@ -306,9 +309,6 @@
     "No nearby MBTA stops" : {
 
     },
-    "No results found" : {
-
-    },
     "No Service" : {
 
     },
@@ -340,6 +340,9 @@
       "comment" : "Possible alert cause"
     },
     "Predictions unavailable" : {
+
+    },
+    "Recently Viewed" : {
 
     },
     "Routes" : {
@@ -395,9 +398,6 @@
     },
     "Stop Closure" : {
       "comment" : "Possible alert effect"
-    },
-    "Stops" : {
-
     },
     "Strike" : {
       "comment" : "Possible alert cause"
@@ -465,9 +465,6 @@
     },
     "Updated: %@" : {
       "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"
-    },
-    "Using Predictions Channel V2" : {
-
     },
     "Weather" : {
       "comment" : "Possible alert cause"

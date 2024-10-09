@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -78,7 +79,7 @@ fun NearbyTransitView(
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null) {
             withContext(Dispatchers.IO) {
-                nearby =
+                val response =
                     nearbyRepository.getNearby(
                         global = globalResponse,
                         location =
@@ -87,7 +88,13 @@ fun NearbyTransitView(
                                 longitude = targetLocation.longitude
                             )
                     )
-                setLastLocation(targetLocation)
+                when (response) {
+                    is ApiResult.Ok -> {
+                        nearby = response.data
+                        setLastLocation(targetLocation)
+                    }
+                    is ApiResult.Error -> TODO("handle errors")
+                }
             }
         }
     }

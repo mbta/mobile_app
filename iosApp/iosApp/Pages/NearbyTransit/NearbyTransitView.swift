@@ -20,7 +20,6 @@ struct NearbyTransitView: View {
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
-    var settingsRepository = RepositoryDI().settings
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
@@ -32,9 +31,6 @@ struct NearbyTransitView: View {
     @State var now = Date.now
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
-    @State var predictions: PredictionsStreamDataResponse?
-    @State var predictionsError: String?
-    @State var predictionsV2Enabled = false
     var errorBannerRepository = RepositoryDI().errorBanner
 
     let inspection = Inspection<Self>()
@@ -49,15 +45,7 @@ struct NearbyTransitView: View {
             }
         }
         .onAppear {
-            getGlobal()
-            getNearby(location: location, globalData: globalData)
-            Task {
-                await getPredictionsFeatureFlag()
-                joinPredictions(state.nearbyByRouteAndStop?.stopIds())
-            }
-            updateNearbyRoutes()
-            updatePinnedRoutes()
-            getSchedule()
+            loadEverything()
             didAppear?(self)
         }
         .onChange(of: globalData) { globalData in
@@ -83,9 +71,6 @@ struct NearbyTransitView: View {
                 updateNearbyRoutes(predictions: nil)
             }
         }
-        .onChange(of: predictions) { predictions in
-            updateNearbyRoutes(predictions: predictions)
-        }
         .onChange(of: nearbyVM.alerts) { alerts in
             updateNearbyRoutes(alerts: alerts)
         }
@@ -106,9 +91,6 @@ struct NearbyTransitView: View {
             onInactive: leavePredictions,
             onBackground: leavePredictions
         )
-        .replaceWhen(state.error) { errorText in
-            errorCard(errorText)
-        }
     }
 
     @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
@@ -123,9 +105,6 @@ struct NearbyTransitView: View {
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
-                    if predictionsV2Enabled {
-                        Text("Using Predictions Channel V2")
-                    }
                     LazyVStack {
                         ForEach(transit, id: \.id) { nearbyTransit in
                             switch onEnum(of: nearbyTransit) {
@@ -154,27 +133,34 @@ struct NearbyTransitView: View {
                         proxy.scrollTo(id, anchor: .top)
                     }
                 }
-                .putAboveWhen(predictionsError) { error in
-                    IconCard(iconName: "network.slash", details: Text(error))
-                }
             }
         }
     }
 
-    private func errorCard(_ errorText: String) -> some View {
-        IconCard(iconName: "network.slash", details: Text(errorText))
-            .refreshable(state.loading) {
-                getNearby(location: location, globalData: globalData)
-            }
-    }
-
     var didAppear: ((Self) -> Void)?
+
+    private func loadEverything() {
+        getGlobal()
+        getNearby(location: location, globalData: globalData)
+        joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+        updateNearbyRoutes()
+        updatePinnedRoutes()
+        getSchedule()
+    }
 
     func getGlobal() {
         Task {
-            globalData = try await globalRepository.getGlobalData()
-            // this should be handled by the onChange but in tests it just isn't
-            getNearby(location: location, globalData: globalData)
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "NearbyTransitView.getGlobal",
+                getData: { try await globalRepository.getGlobalData() },
+                onSuccess: {
+                    globalData = $0
+                    // this should be handled by the onChange but in tests it just isn't
+                    getNearby(location: location, globalData: globalData)
+                },
+                onRefreshAfterError: loadEverything
+            )
         }
     }
 
@@ -190,45 +176,23 @@ struct NearbyTransitView: View {
             guard let stopIds = state.nearbyByRouteAndStop?
                 .stopIds() else { return }
             let stopIdList = Array(stopIds)
-            scheduleResponse = try await schedulesRepository.getSchedule(stopIds: stopIdList)
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "NearbyTransitView.getSchedule",
+                getData: { try await schedulesRepository.getSchedule(stopIds: stopIdList) },
+                onSuccess: { scheduleResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
         }
-    }
-
-    func getPredictionsFeatureFlag() async {
-        do {
-            let settings = try await settingsRepository.getSettings()
-            predictionsV2Enabled = settings.first(where: { $0.key == .predictionsV2Channel })?.isOn ?? false
-        } catch {}
     }
 
     func joinPredictions(_ stopIds: Set<String>?) {
         guard let stopIds else { return }
-        if predictionsV2Enabled {
-            joinPredictionsV2(stopIds: stopIds)
-        } else {
-            predictionsRepository.connect(stopIds: Array(stopIds)) { outcome in
-                DispatchQueue.main.async {
-                    switch onEnum(of: outcome) {
-                    case let .ok(result):
-                        predictions = result.data
-                        predictionsError = nil
-                    case let .error(error):
-                        predictionsError = error.message
-                    }
-                }
-            }
-        }
-    }
-
-    func joinPredictionsV2(stopIds: Set<String>) {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(result):
-                    predictionsByStop = result.data
-                    predictionsError = nil
-                case let .error(error):
-                    predictionsError = error.message
+                case let .ok(result): predictionsByStop = result.data
+                case .error: break
                 }
             }
         }, onMessage: { outcome in
@@ -237,17 +201,14 @@ struct NearbyTransitView: View {
                 case let .ok(result):
                     if let existingPredictionsByStop = predictionsByStop {
                         predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
-                        predictionsError = nil
                     } else {
                         predictionsByStop = PredictionsByStopJoinResponse(
                             predictionsByStop: [result.data.stopId: result.data.predictions],
                             trips: result.data.trips,
                             vehicles: result.data.vehicles
                         )
-                        predictionsError = nil
                     }
-                case let .error(error):
-                    predictionsError = error.message
+                case .error: break
                 }
             }
 
@@ -263,7 +224,10 @@ struct NearbyTransitView: View {
             do {
                 pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
                 updateNearbyRoutes(pinnedRoutes: pinnedRoutes)
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -275,7 +239,10 @@ struct NearbyTransitView: View {
                 let pinned = try await togglePinnedUsecase.execute(route: routeId).boolValue
                 analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 updatePinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
             } catch {
+                // execute shouldn't actually fail
                 debugPrint(error)
             }
         }
@@ -287,7 +254,6 @@ struct NearbyTransitView: View {
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(
                     predictionsByStop?.predictionQuantity() ??
-                        predictions?.predictionQuantity() ??
                         0
                 ),
                 action: {
@@ -309,9 +275,7 @@ struct NearbyTransitView: View {
         alerts: AlertsStreamDataResponse? = nil,
         pinnedRoutes: Set<String>? = nil
     ) {
-        let fallbackPredictions = if let predictionsByStop {
-            predictionsByStop.toPredictionsStreamDataResponse()
-        } else { self.predictions }
+        let fallbackPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
 
         nearbyWithRealtimeInfo = withRealtimeInfo(
             schedules: scheduleResponse ?? self.scheduleResponse,
@@ -507,7 +471,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
                                     ],
                                     alertsHere: nil,
-                                    hasSchedulesToday: true
+                                    hasSchedulesToday: true,
+                                    allDataLoaded: true
                                 ),
                             ]
                         ),
@@ -536,7 +501,8 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
                                     ],
                                     alertsHere: nil,
-                                    hasSchedulesToday: true
+                                    hasSchedulesToday: true,
+                                    allDataLoaded: true
                                 ),
                             ]
                         ),

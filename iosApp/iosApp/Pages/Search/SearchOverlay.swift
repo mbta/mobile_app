@@ -32,20 +32,22 @@ struct SearchOverlay: View {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        VStack(spacing: .zero) {
+            SearchField(searchObserver: searchObserver)
+                .padding(.bottom, 12)
+                .background(searchObserver.isSearching ? Color.fill2 : Color.clear)
             if searchObserver.isSearching {
-                Color.fill2
-            }
-            VStack {
-                SearchField(searchObserver: searchObserver)
-                if searchObserver.isSearching {
-                    SearchView(
+                ZStack(alignment: .top) {
+                    SearchResultsContainer(
                         query: searchObserver.debouncedText,
                         nearbyVM: nearbyVM,
                         searchVM: searchVM,
                         globalRepository: globalRepository,
                         searchResultsRepository: searchResultsRepository
                     )
+                    Divider()
+                        .frame(height: 2)
+                        .overlay(Color.halo)
                 }
             }
         }

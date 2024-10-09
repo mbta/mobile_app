@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,10 @@ fun getRailRouteShapes(
 
     LaunchedEffect(null) {
         withContext(Dispatchers.IO) {
-            railRouteShapes = railRouteShapeRepository.getRailRouteShapes()
+            when (val data = railRouteShapeRepository.getRailRouteShapes()) {
+                is ApiResult.Ok -> railRouteShapes = data.data
+                is ApiResult.Error -> TODO("handle errors")
+            }
         }
     }
 

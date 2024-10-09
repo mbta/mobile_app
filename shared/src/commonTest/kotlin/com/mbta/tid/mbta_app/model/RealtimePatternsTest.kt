@@ -221,6 +221,27 @@ class RealtimePatternsTest {
     }
 
     @Test
+    fun `formats as loading if empty trips but still loading`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = anyEnumValue() }
+        val pattern = objects.routePattern(route)
+        assertEquals(
+            RealtimePatterns.Format.Loading,
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    listOf(pattern),
+                    upcomingTrips = emptyList(),
+                    allDataLoaded = false
+                )
+                .format(now, route.type, anyContext())
+        )
+    }
+
+    @Test
     fun `skips trips that should be hidden`() = parametricTest {
         val now = Clock.System.now()
 

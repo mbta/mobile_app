@@ -28,6 +28,7 @@ data class PatternsByStop(
         cutoffTime: Instant,
         alerts: Collection<Alert>?,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
+        allDataLoaded: Boolean,
     ) : this(
         when (staticData) {
             is NearbyStaticData.StopPatterns.ForRoute -> listOf(staticData.route)
@@ -47,7 +48,8 @@ data class PatternsByStop(
                             upcomingTripsMap,
                             staticData.stop.id,
                             alerts,
-                            hasSchedulesTodayByPattern
+                            hasSchedulesTodayByPattern,
+                            allDataLoaded
                         )
                     is NearbyStaticData.StaticPatterns.ByDirection ->
                         RealtimePatterns.ByDirection(
@@ -55,7 +57,8 @@ data class PatternsByStop(
                             upcomingTripsMap,
                             staticData.stop.id,
                             alerts,
-                            hasSchedulesTodayByPattern
+                            hasSchedulesTodayByPattern,
+                            allDataLoaded
                         )
                 }
             }

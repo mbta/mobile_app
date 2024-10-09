@@ -218,9 +218,9 @@ class NearbyTransitPageTest : KoinTest {
                         override suspend fun getNearby(
                             global: GlobalResponse,
                             location: Coordinate
-                        ): NearbyStaticData {
+                        ): ApiResult<NearbyStaticData> {
                             val data = NearbyStaticData(global, NearbyResponse(builder))
-                            return data
+                            return ApiResult.Ok(data)
                         }
                     }
                 }

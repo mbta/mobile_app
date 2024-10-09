@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.utils.MockSystemPaths
@@ -180,7 +181,7 @@ class GlobalRepositoryTest : KoinTest {
                     stops = mapOf("3992" to stop),
                     trips = mapOf("62145526_2" to trip)
                 )
-            assertEquals(expectedResponse, response)
+            assertEquals(ApiResult.Ok(expectedResponse), response)
         }
     }
 }

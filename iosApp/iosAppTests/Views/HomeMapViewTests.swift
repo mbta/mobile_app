@@ -45,10 +45,10 @@ final class HomeMapViewTests: XCTestCase {
             self.filteredRouteIds = filteredRouteIds
         }
 
-        func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
+        func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
             onGetStopMapData()
 
-            return StopMapResponse(
+            return ApiResultOk(data: StopMapResponse(
                 routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
                     .filter { if let filteredRouteIds = self.filteredRouteIds {
                         filteredRouteIds.contains($0.routeId)
@@ -57,7 +57,7 @@ final class HomeMapViewTests: XCTestCase {
                     }
                     },
                 childStops: [:]
-            )
+            ))
         }
     }
 
@@ -366,7 +366,8 @@ final class HomeMapViewTests: XCTestCase {
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                     alertsHere: nil,
-                    hasSchedulesToday: true
+                    hasSchedulesToday: true,
+                    allDataLoaded: true
                 )]
             )]
         ))
@@ -488,11 +489,11 @@ final class HomeMapViewTests: XCTestCase {
 
     func testVehicleTapping() throws {
         class FakeStopRepository: IStopRepository {
-            func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
-                StopMapResponse(
+            func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
+                ApiResultOk(data: StopMapResponse(
                     routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
                     childStops: [:]
-                )
+                ))
             }
         }
         HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
@@ -533,7 +534,8 @@ final class HomeMapViewTests: XCTestCase {
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                     alertsHere: nil,
-                    hasSchedulesToday: true
+                    hasSchedulesToday: true,
+                    allDataLoaded: true
                 )]
             )]
         ))
@@ -575,11 +577,11 @@ final class HomeMapViewTests: XCTestCase {
 
     @MainActor func testVehicleChanging() throws {
         class FakeStopRepository: IStopRepository {
-            func __getStopMapData(stopId _: String) async throws -> StopMapResponse {
-                StopMapResponse(
+            func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
+                ApiResultOk(data: StopMapResponse(
                     routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
                     childStops: [:]
-                )
+                ))
             }
         }
         HelpersKt.loadKoinMocks(repositories: MockRepositories.companion.buildWithDefaults(stop: FakeStopRepository()))
@@ -639,7 +641,8 @@ final class HomeMapViewTests: XCTestCase {
                     patterns: [MapTestDataHelper.shared.patternOrange30],
                     upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
                     alertsHere: nil,
-                    hasSchedulesToday: true
+                    hasSchedulesToday: true,
+                    allDataLoaded: true
                 )]
             )]
         ))

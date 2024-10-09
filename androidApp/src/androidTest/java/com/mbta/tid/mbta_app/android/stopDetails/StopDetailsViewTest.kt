@@ -158,9 +158,9 @@ class StopDetailsViewTest {
                         override suspend fun getNearby(
                             global: GlobalResponse,
                             location: Coordinate
-                        ): NearbyStaticData {
+                        ): ApiResult<NearbyStaticData> {
                             val data = NearbyStaticData(global, NearbyResponse(builder))
-                            return data
+                            return ApiResult.Ok(data)
                         }
                     }
                 }
@@ -213,7 +213,8 @@ class StopDetailsViewTest {
                                                     ),
                                                 parentStopId = stop.id,
                                                 alerts = null,
-                                                hasSchedulesTodayByPattern = null
+                                                hasSchedulesTodayByPattern = null,
+                                                allDataLoaded = false
                                             )
                                         )
                                 )

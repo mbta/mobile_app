@@ -1,9 +1,8 @@
 package com.mbta.tid.mbta_app.cache
 
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.utils.SystemPaths
-import io.ktor.client.call.body
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -31,7 +30,7 @@ data class ResponseMetadata(
 
 @Serializable data class Response<T>(val metadata: ResponseMetadata, val body: T)
 
-class ResponseCache<T>(
+class ResponseCache<T : Any>(
     private val cacheKey: String,
     val maxAge: Duration,
     private val serializer: KSerializer<T>
@@ -39,7 +38,7 @@ class ResponseCache<T>(
     companion object {
         const val CACHE_SUBDIRECTORY = "responseCache"
 
-        inline fun <reified T> create(cacheKey: String, maxAge: Duration = 1.hours) =
+        inline fun <reified T : Any> create(cacheKey: String, maxAge: Duration = 1.hours) =
             ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer())
     }
 
@@ -119,26 +118,39 @@ class ResponseCache<T>(
         }
     }
 
-    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): T {
+    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): ApiResult<T> {
         lock.withLock {
             val cachedData = this.getData()
             if (cachedData != null) {
-                return cachedData.body
+                return ApiResult.Ok(cachedData.body)
             }
 
-            val httpResponse = fetch(this.data?.metadata?.etag)
-            return when (httpResponse.status) {
-                HttpStatusCode.NotModified -> {
-                    val data = this.data ?: throw RuntimeException("Failed to update cached data")
-                    data.metadata.fetchTime = TimeSource.Monotonic.markNow()
-                    writeMetadata(data.metadata)
-                    data.body
+            try {
+                val httpResponse = fetch(this.data?.metadata?.etag)
+                return when (httpResponse.status) {
+                    HttpStatusCode.NotModified -> {
+                        val data =
+                            this.data
+                                ?: return ApiResult.Error(message = "Failed to update cached data")
+                        data.metadata.fetchTime = TimeSource.Monotonic.markNow()
+                        writeMetadata(data.metadata)
+                        ApiResult.Ok(data.body)
+                    }
+                    HttpStatusCode.OK -> {
+                        this.putData(httpResponse)
+                        ApiResult.Ok(
+                            this.getData()?.body
+                                ?: throw RuntimeException("Failed to set cached data")
+                        )
+                    }
+                    else ->
+                        ApiResult.Error(
+                            code = httpResponse.status.value,
+                            message = httpResponse.bodyAsText()
+                        )
                 }
-                HttpStatusCode.OK -> {
-                    this.putData(httpResponse)
-                    this.getData()?.body ?: throw RuntimeException("Failed to set cached data")
-                }
-                else -> throw ResponseException(httpResponse, "Failed to load global data")
+            } catch (ex: Exception) {
+                return ApiResult.Error(message = ex.message ?: ex.toString())
             }
         }
     }
