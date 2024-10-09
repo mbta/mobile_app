@@ -682,6 +682,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [exp, scrollPositionSetExpectation], timeout: 1)
     }
 
+    @MainActor
     func testNearbyErrorMessage() throws {
         loadKoinMocks(repositories: MockRepositories.companion
             .buildWithDefaults(errorBanner: MockErrorBannerStateRepository(state: .DataError(action: {}))))
