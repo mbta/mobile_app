@@ -39,12 +39,12 @@ final class DirectionPickerTests: XCTestCase {
                 .ByHeadsign(
                     route: route, headsign: "North", line: nil,
                     patterns: [patternNorth], upcomingTrips: [],
-                    alertsHere: nil, hasSchedulesToday: true
+                    alertsHere: nil, hasSchedulesToday: true, allDataLoaded: true
                 ),
                 .ByHeadsign(
                     route: route, headsign: "South", line: nil,
                     patterns: [patternSouth], upcomingTrips: [],
-                    alertsHere: nil, hasSchedulesToday: true
+                    alertsHere: nil, hasSchedulesToday: true, allDataLoaded: true
                 ),
             ],
             directions: [
