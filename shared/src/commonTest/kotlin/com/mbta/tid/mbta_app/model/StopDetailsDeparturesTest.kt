@@ -308,7 +308,11 @@ class StopDetailsDeparturesTest {
             val scheduledTrip: UpcomingTrip?,
             val predictedTrip: UpcomingTrip?,
         ) {
-            fun patternsByHeadsign(trips: List<UpcomingTrip>?, hasSchedulesToday: Boolean = true) =
+            fun patternsByHeadsign(
+                trips: List<UpcomingTrip>?,
+                hasSchedulesToday: Boolean = true,
+                allDataLoaded: Boolean = true
+            ) =
                 RealtimePatterns.ByHeadsign(
                     route,
                     headsign,
@@ -316,7 +320,8 @@ class StopDetailsDeparturesTest {
                     listOf(routePattern),
                     trips,
                     null,
-                    hasSchedulesToday
+                    hasSchedulesToday,
+                    allDataLoaded
                 )
         }
 
@@ -390,34 +395,50 @@ class StopDetailsDeparturesTest {
 
         assertEquals(
             expected(
-                scheduledPredicted.patternsByHeadsign(null),
-                scheduledUnpredicted.patternsByHeadsign(null),
-                unscheduledPredicted.patternsByHeadsign(null),
-                unscheduledUnpredicted.patternsByHeadsign(null)
+                scheduledPredicted.patternsByHeadsign(null, allDataLoaded = false),
+                scheduledUnpredicted.patternsByHeadsign(null, allDataLoaded = false),
+                unscheduledPredicted.patternsByHeadsign(null, allDataLoaded = false),
+                unscheduledUnpredicted.patternsByHeadsign(null, allDataLoaded = false)
             ),
             actual(includeSchedules = false, includePredictions = false)
         )
 
         assertEquals(
             expected(
-                scheduledPredicted.patternsByHeadsign(listOf(scheduledPredicted.predictedTrip!!)),
-                unscheduledPredicted.patternsByHeadsign(
-                    listOf(unscheduledPredicted.predictedTrip!!)
+                scheduledPredicted.patternsByHeadsign(
+                    listOf(scheduledPredicted.predictedTrip!!),
+                    allDataLoaded = false
                 ),
-                scheduledUnpredicted.patternsByHeadsign(emptyList()),
-                unscheduledUnpredicted.patternsByHeadsign(emptyList())
+                unscheduledPredicted.patternsByHeadsign(
+                    listOf(unscheduledPredicted.predictedTrip!!),
+                    allDataLoaded = false
+                ),
+                scheduledUnpredicted.patternsByHeadsign(emptyList(), allDataLoaded = false),
+                unscheduledUnpredicted.patternsByHeadsign(emptyList(), allDataLoaded = false)
             ),
             actual(includeSchedules = false, includePredictions = true)
         )
 
         assertEquals(
             expected(
-                scheduledPredicted.patternsByHeadsign(listOf(scheduledPredicted.scheduledTrip!!)),
-                scheduledUnpredicted.patternsByHeadsign(
-                    listOf(scheduledUnpredicted.scheduledTrip!!)
+                scheduledPredicted.patternsByHeadsign(
+                    listOf(scheduledPredicted.scheduledTrip!!),
+                    allDataLoaded = false
                 ),
-                unscheduledPredicted.patternsByHeadsign(emptyList(), hasSchedulesToday = false),
-                unscheduledUnpredicted.patternsByHeadsign(emptyList(), hasSchedulesToday = false)
+                scheduledUnpredicted.patternsByHeadsign(
+                    listOf(scheduledUnpredicted.scheduledTrip!!),
+                    allDataLoaded = false
+                ),
+                unscheduledPredicted.patternsByHeadsign(
+                    emptyList(),
+                    hasSchedulesToday = false,
+                    allDataLoaded = false
+                ),
+                unscheduledUnpredicted.patternsByHeadsign(
+                    emptyList(),
+                    hasSchedulesToday = false,
+                    allDataLoaded = false
+                )
             ),
             actual(includeSchedules = true, includePredictions = false)
         )
@@ -485,6 +506,7 @@ class StopDetailsDeparturesTest {
                 null,
                 listOf(earlyPattern),
                 emptyList(),
+                allDataLoaded = false
             )
         val expectedLateBeforeLoad =
             RealtimePatterns.ByHeadsign(
@@ -493,6 +515,7 @@ class StopDetailsDeparturesTest {
                 null,
                 listOf(latePattern),
                 listOf(UpcomingTrip(lateTrip, latePrediction)),
+                allDataLoaded = false
             )
         val expectedLateAfterLoad =
             RealtimePatterns.ByHeadsign(

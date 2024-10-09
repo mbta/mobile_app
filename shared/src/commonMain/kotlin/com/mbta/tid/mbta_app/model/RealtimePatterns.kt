@@ -44,6 +44,7 @@ sealed class RealtimePatterns {
     abstract val upcomingTrips: List<UpcomingTrip>?
     abstract val alertsHere: List<Alert>?
     abstract val hasSchedulesToday: Boolean
+    abstract val allDataLoaded: Boolean
 
     val hasMajorAlerts
         get() = run {
@@ -63,6 +64,7 @@ sealed class RealtimePatterns {
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
         override val hasSchedulesToday: Boolean = true,
+        override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
         override val id = headsign
 
@@ -72,6 +74,7 @@ sealed class RealtimePatterns {
             parentStopId: String,
             alerts: Collection<Alert>?,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
         ) : this(
             staticData.route,
             staticData.headsign,
@@ -100,6 +103,7 @@ sealed class RealtimePatterns {
                 )
             },
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
+            allDataLoaded,
         )
     }
 
@@ -116,6 +120,7 @@ sealed class RealtimePatterns {
         override val upcomingTrips: List<UpcomingTrip>? = null,
         override val alertsHere: List<Alert>? = null,
         override val hasSchedulesToday: Boolean = true,
+        override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
         override val id = "${line.id}:${direction.id}"
         val representativeRoute = routes.min()
@@ -136,6 +141,7 @@ sealed class RealtimePatterns {
             parentStopId: String,
             alerts: Collection<Alert>?,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
         ) : this(
             staticData.line,
             staticData.routes,
@@ -164,6 +170,7 @@ sealed class RealtimePatterns {
                 )
             },
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
+            allDataLoaded,
         )
     }
 
@@ -239,6 +246,7 @@ sealed class RealtimePatterns {
                 .take(count)
         return when {
             tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
+            !allDataLoaded -> Format.Loading
             !hasSchedulesToday -> Format.NoSchedulesToday(secondaryAlert)
             allTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
                 // there are trips in the future but we're not showing them (maybe because we're on

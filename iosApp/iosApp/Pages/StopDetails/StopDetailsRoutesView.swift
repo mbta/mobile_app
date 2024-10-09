@@ -103,7 +103,8 @@ struct StopDetailsRoutesView: View {
                 patterns: [],
                 upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
                 alertsHere: nil,
-                hasSchedulesToday: true
+                hasSchedulesToday: true,
+                allDataLoaded: true
             ),
         ]),
         .init(route: route2, stop: stop, patterns: [
@@ -114,7 +115,8 @@ struct StopDetailsRoutesView: View {
                 patterns: [],
                 upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
                 alertsHere: nil,
-                hasSchedulesToday: true
+                hasSchedulesToday: true,
+                allDataLoaded: true
             ),
             .ByHeadsign(
                 route: route2,
@@ -123,7 +125,8 @@ struct StopDetailsRoutesView: View {
                 patterns: [],
                 upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
                 alertsHere: nil,
-                hasSchedulesToday: true
+                hasSchedulesToday: true,
+                allDataLoaded: true
             ),
             .ByHeadsign(
                 route: route2,
@@ -134,7 +137,8 @@ struct StopDetailsRoutesView: View {
                     .init(trip: trip4, schedule: schedule3, prediction: prediction3),
                 ],
                 alertsHere: nil,
-                hasSchedulesToday: true
+                hasSchedulesToday: true,
+                allDataLoaded: true
             ),
         ]),
     ]), global: nil, now: Date.now.toKotlinInstant(), filter: nil, setFilter: { _ in }, pushNavEntry: { _ in },
