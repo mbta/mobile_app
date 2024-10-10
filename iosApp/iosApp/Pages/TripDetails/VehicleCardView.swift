@@ -78,10 +78,18 @@ struct VehicleOnTripView: View {
                     .font(Typography.headlineBold)
                     .foregroundColor(textColor)
             }
+            .accessibilityElement()
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityHeading(.h2)
+            .accessibilityLabel(
+                "\(route.type.typeText(isOnly: true)) \(vehicleStatusDescription(vehicle.currentStatus)) \(stop.name)"
+            )
         } else {
             Text("This vehicle is completing another trip.")
                 .font(Typography.headlineBold)
                 .foregroundColor(textColor)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h2)
         }
     }
 
