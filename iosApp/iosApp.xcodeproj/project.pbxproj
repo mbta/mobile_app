@@ -2106,7 +2106,7 @@
 			repositoryURL = "https://github.com/nalexn/ViewInspector";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.11;
+				minimumVersion = 0.10.0;
 			};
 		};
 		9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
