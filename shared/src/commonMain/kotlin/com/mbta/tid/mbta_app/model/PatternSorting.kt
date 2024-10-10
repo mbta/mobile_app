@@ -72,13 +72,17 @@ object PatternSorting {
 
     fun compareStopsAssociated(
         pinnedRoutes: Set<String>,
-        sortByDistanceFrom: Position
+        sortByDistanceFrom: Position?
     ): Comparator<StopsAssociated> =
         compareBy(
             { pinnedRouteBucket(it.sortRoute(), pinnedRoutes) },
             { patternServiceBucket(it.patternsByStop.first().patterns.first()) },
             { subwayBucket(it.sortRoute()) },
-            { it.distanceFrom(sortByDistanceFrom) },
+            if (sortByDistanceFrom != null) {
+                { it.distanceFrom(sortByDistanceFrom) }
+            } else {
+                { 0 }
+            },
             { it.sortRoute() },
         )
 }

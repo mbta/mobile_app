@@ -1221,7 +1221,7 @@ class NearbyResponseTest {
                                     "Typical Out",
                                     null,
                                     listOf(typicalOutbound),
-                                    emptyList(),
+                                    null,
                                     allDataLoaded = false
                                 ),
                                 RealtimePatterns.ByHeadsign(
@@ -1229,7 +1229,7 @@ class NearbyResponseTest {
                                     "Typical In",
                                     null,
                                     listOf(typicalInbound),
-                                    emptyList(),
+                                    null,
                                     allDataLoaded = false
                                 ),
                             )
