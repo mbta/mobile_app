@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
@@ -42,6 +42,7 @@ extension HomeMapView {
     }
 
     func handleGlobalMapDataChange(now: Date) {
+        print("KB: handle global map data change \(now)")
         guard let globalData else { return }
 
         globalMapData = GlobalMapData(

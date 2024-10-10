@@ -9,12 +9,12 @@
 import Combine
 import CoreLocation
 @testable import iosApp
+import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {

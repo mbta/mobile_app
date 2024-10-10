@@ -1,8 +1,8 @@
 import CoreLocation
+import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase

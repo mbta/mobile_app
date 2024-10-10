@@ -6,10 +6,10 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
@@ -77,6 +77,7 @@ struct HomeMapView: View {
         self.vehiclesRepository = vehiclesRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
+        print("KB: init global map data")
         _globalMapData = State(wrappedValue: globalMapData)
     }
 
@@ -118,6 +119,7 @@ struct HomeMapView: View {
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
             .onChange(of: nearbyVM.alerts) { _ in
+                print("KB: alerts changed")
                 handleGlobalMapDataChange(now: now)
             }
             .onChange(of: nearbyVM.departures) { _ in
@@ -144,6 +146,7 @@ struct HomeMapView: View {
                                     onBackground: leaveVehiclesChannel)
             .onReceive(timer) { input in
                 now = input
+                print("KB: timer changed")
                 handleGlobalMapDataChange(now: now)
             }
     }
@@ -158,6 +161,7 @@ struct HomeMapView: View {
             globalMapData: globalMapData
         )
         .onChange(of: globalData) { _ in
+            print("KB: globalData changed")
             handleGlobalMapDataChange(now: now)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
@@ -186,6 +190,7 @@ struct HomeMapView: View {
             vehicles: vehicles,
             viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
+            handleMissingImage: refreshIcons,
             handleStyleLoaded: refreshMap,
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle

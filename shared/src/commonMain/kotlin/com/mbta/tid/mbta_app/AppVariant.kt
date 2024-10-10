@@ -6,7 +6,7 @@ enum class AppVariant(
     val darkMapStyle: String
 ) {
     Staging(
-        "mobile-app-backend-staging.mbtace.com",
+        "mobile-app-backend-dev-orange.mbtace.com",
         "mapbox://styles/mbtamobileapp/cm02vf0cf00cu01pnfgnu5onh",
         "mapbox://styles/mbtamobileapp/cm02vgvsp003c01ombyewgu70"
     ),

@@ -8,10 +8,10 @@
 
 import Combine
 import CoreLocation
+import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitPageView: View {
     @ObservedObject var nearbyVM: NearbyViewModel

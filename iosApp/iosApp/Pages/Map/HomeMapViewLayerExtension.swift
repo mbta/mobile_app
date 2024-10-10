@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for manipulating the layers displayed on the map.
@@ -69,7 +69,15 @@ extension HomeMapView {
             } else {
                 addLayers(layerManager)
             }
+            print("KB: update global map data in refresh")
             updateGlobalMapDataSources()
+        }
+    }
+
+    func refreshIcons() {
+        print("KB: refreshing icons")
+        if let layerManager = mapVM.layerManager {
+            layerManager.addIcons(recreate: true)
         }
     }
 

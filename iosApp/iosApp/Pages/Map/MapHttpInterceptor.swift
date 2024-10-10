@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@_spi(Experimental) import MapboxMaps
+import MapboxMaps
 
 class MapHttpInterceptor: HttpServiceInterceptorInterface {
     var updateLastErrorTimestamp: () -> Void

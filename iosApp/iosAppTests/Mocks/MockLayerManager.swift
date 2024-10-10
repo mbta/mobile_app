@@ -8,7 +8,7 @@
 
 import Foundation
 @testable import iosApp
-@_spi(Experimental) import MapboxMaps
+import MapboxMaps
 import SwiftUI
 
 class MockLayerManager: IMapLayerManager {

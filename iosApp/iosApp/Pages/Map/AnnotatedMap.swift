@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct AnnotatedMap: View {
     static let annotationTextZoomThreshold = 19.0
@@ -30,6 +30,7 @@ struct AnnotatedMap: View {
     @Environment(\.colorScheme) var colorScheme
 
     var handleCameraChange: (CameraChanged) -> Void
+    var handleMissingImage: () -> Void
     var handleStyleLoaded: () -> Void
     var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
     var handleTapVehicle: (Vehicle) -> Void
@@ -52,11 +53,17 @@ struct AnnotatedMap: View {
             .onSourceRemoved(action: { removed in
                 print("KB: source removed \(removed.sourceId)")
             })
+
             .onStyleLoaded { _ in
+                print("KB: handle style loaded")
                 // The initial run of this happens before any required data is loaded, so it does nothing and
                 // handleTryLayerInit always performs the first layer creation, but once the data is in place,
                 // this handles any time the map is reloaded again, like for a light/dark mode switch.
                 handleStyleLoaded()
+            }
+            .onStyleImageMissing { _ in
+                print("KB: image missing")
+                handleMissingImage()
             }
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
