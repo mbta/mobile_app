@@ -59,25 +59,14 @@ extension HomeMapView {
     }
 
     func refreshMap() {
-        print("KB: refreshing map")
         if let layerManager = mapVM.layerManager {
-            print("KB: refreshing map - layer manager present")
-
+            updateGlobalMapDataSources()
             if layerManager.currentScheme != colorScheme {
                 layerManager.addIcons(recreate: true)
                 addLayers(layerManager, recreate: true)
             } else {
                 addLayers(layerManager)
             }
-            print("KB: update global map data in refresh")
-            updateGlobalMapDataSources()
-        }
-    }
-
-    func refreshIcons() {
-        print("KB: refreshing icons")
-        if let layerManager = mapVM.layerManager {
-            layerManager.addIcons(recreate: true)
         }
     }
 
@@ -107,7 +96,6 @@ extension HomeMapView {
     }
 
     func updateGlobalMapDataSources() {
-        print("KB: update global map source data")
         updateStopSource(stopData: mapVM.stopSourceData)
         updateRouteSources(routeData: mapVM.routeSourceData)
     }
@@ -115,8 +103,6 @@ extension HomeMapView {
     func updateRouteSources(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]) {
         let globalStops = globalData?.stops
         let globalRoutes = globalData?.routes
-        print("KB: update route source - global stop size = \(globalStops?.count)")
-        print("KB: update route source - global route size = \(globalRoutes?.count)")
 
         mapVM.updateRouteSource(routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
             routeData: routeData,
@@ -128,7 +114,6 @@ extension HomeMapView {
 
     func updateStopSource(stopData: StopSourceData) {
         let globalStops = globalMapData?.mapStops ?? [:]
-        print("KB: update stop source - global stop size = \(globalStops.count)")
         mapVM.updateStopSource(StopFeaturesBuilder.shared.buildCollection(
             stopData: stopData,
             stops: globalStops,

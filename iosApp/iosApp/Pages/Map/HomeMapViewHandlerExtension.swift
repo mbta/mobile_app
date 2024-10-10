@@ -42,7 +42,6 @@ extension HomeMapView {
     }
 
     func handleGlobalMapDataChange(now: Date) {
-        print("KB: handle global map data change \(now)")
         guard let globalData else { return }
 
         globalMapData = GlobalMapData(

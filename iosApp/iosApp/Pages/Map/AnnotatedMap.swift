@@ -28,9 +28,9 @@ struct AnnotatedMap: View {
 
     @ObservedObject var viewportProvider: ViewportProvider
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) var scenePhase
 
     var handleCameraChange: (CameraChanged) -> Void
-    var handleMissingImage: () -> Void
     var handleStyleLoaded: () -> Void
     var handleTapStopLayer: (QueriedFeature, MapContentGestureContext) -> Bool
     var handleTapVehicle: (Vehicle) -> Void
@@ -50,26 +50,22 @@ struct AnnotatedMap: View {
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
             .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
-            .onSourceRemoved(action: { removed in
-                print("KB: source removed \(removed.sourceId)")
-            })
-
             .onStyleLoaded { _ in
-                print("KB: handle style loaded")
                 // The initial run of this happens before any required data is loaded, so it does nothing and
                 // handleTryLayerInit always performs the first layer creation, but once the data is in place,
                 // this handles any time the map is reloaded again, like for a light/dark mode switch.
-                handleStyleLoaded()
-            }
-            .onStyleImageMissing { _ in
-                print("KB: image missing")
-                handleMissingImage()
+                if scenePhase == .active {
+                    // onStyleLoaded was unexpectedly called when app moved to background because the colorScheme
+                    // changes twice while backgrounding. Ensure it is only called when the app is active.
+                    handleStyleLoaded()
+                }
             }
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom
             }
+            .withScenePhaseHandlers(onActive: onActive)
             .task {
                 do {
                     mapDebug = try await getSettingUsecase.execute(setting: .map).boolValue
@@ -77,6 +73,11 @@ struct AnnotatedMap: View {
                     debugPrint("Failed to load map debug", error)
                 }
             }
+    }
+
+    func onActive() {
+        // re-load styles in case the colorScheme changed while in the background
+        handleStyleLoaded()
     }
 
     private var allVehicles: [Vehicle]? {
