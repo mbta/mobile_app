@@ -101,22 +101,18 @@ extension HomeMapView {
     }
 
     func updateRouteSources(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]) {
-        let globalStops = globalData?.stops
-        let globalRoutes = globalData?.routes
-
         mapVM.updateRouteSource(routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
             routeData: routeData,
-            routesById: globalRoutes,
-            stopsById: globalStops,
+            routesById: globalData?.routes,
+            stopsById: globalData?.stops,
             alertsByStop: globalMapData?.alertsByStop
         ))
     }
 
     func updateStopSource(stopData: StopSourceData) {
-        let globalStops = globalMapData?.mapStops ?? [:]
         mapVM.updateStopSource(StopFeaturesBuilder.shared.buildCollection(
             stopData: stopData,
-            stops: globalStops,
+            stops: globalMapData?.mapStops ?? [:],
             linesToSnap: mapVM.snappedStopRouteLines
         )
         .toMapbox())

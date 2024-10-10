@@ -46,22 +46,6 @@ class MapLayerManager: IMapLayerManager {
                 Logger().error("Failed to add map icon image \(iconId)\n\(error)")
             }
         }
-
-        for iconId in StopIcons.shared.all + AlertIcons.shared.all {
-            do {
-                guard let image = UIImage(named: iconId) else { throw MapImageError() }
-                if map.imageExists(withId: iconId) {
-                    if recreate {
-                        try map.removeImage(withId: iconId)
-                    } else {
-                        continue
-                    }
-                }
-                try map.addImage(image, id: iconId)
-            } catch {
-                Logger().error("Failed to add map icon image \(iconId)\n\(error)")
-            }
-        }
     }
 
     private func addSource(source: GeoJSONSource) {
