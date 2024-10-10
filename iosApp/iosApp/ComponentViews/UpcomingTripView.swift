@@ -44,23 +44,6 @@ struct UpcomingTripView: View {
             .padding(.trailing, 4)
     }
 
-    var vehicleTypeText: String {
-        // hardcoding plurals because pluralized strings that don't include the number are not supported
-        // https://developer.apple.com/forums/thread/737329#737329021
-        switch routeType {
-        case .bus:
-            isOnly ? NSLocalizedString("bus", comment: "bus") : NSLocalizedString("buses", comment: "buses")
-
-        case .commuterRail, .heavyRail, .lightRail:
-            isOnly ? NSLocalizedString("train", comment: "train") : NSLocalizedString("trains", comment: "trains")
-
-        case .ferry: isOnly ? NSLocalizedString("ferry", comment: "ferry")
-            : NSLocalizedString("ferries", comment: "ferries")
-
-        case nil: ""
-        }
-    }
-
     @ViewBuilder
     var predictionView: some View {
         switch prediction {
@@ -74,17 +57,20 @@ struct UpcomingTripView: View {
             case .now:
                 Text("Now").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters
+                        .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .boarding:
                 Text("BRD").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.boardingFirst(vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters
+                        .boardingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.boardingOther())
             case .arriving:
                 Text("ARR").font(Typography.headlineBold)
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters
+                        .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
                 PredictionText(minutes: 1)
@@ -93,7 +79,7 @@ struct UpcomingTripView: View {
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
                             date: format.predictionTime.toNSDate(),
-                            vehicleText: vehicleTypeText
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
                         )
                         : accessibilityFormatters
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
@@ -104,7 +90,7 @@ struct UpcomingTripView: View {
                         .accessibilityLabel(isFirst
                             ? accessibilityFormatters.scheduledFirst(
                                 date: schedule.scheduleTime.toNSDate(),
-                                vehicleText: vehicleTypeText
+                                vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
                             )
                             : accessibilityFormatters
                             .scheduledOther(date: schedule.scheduleTime.toNSDate()))
@@ -120,7 +106,8 @@ struct UpcomingTripView: View {
                 PredictionText(minutes: format.minutes)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
-                                                                         vehicleText: vehicleTypeText)
+                                                                         vehicleText: routeType?
+                                                                             .typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
             case let .cancelled(schedule):
                 HStack(spacing: Self.subjectSpacing) {
@@ -137,7 +124,7 @@ struct UpcomingTripView: View {
                     isFirst
                         ? accessibilityFormatters.scheduledFirst(
                             date: schedule.scheduledTime.toNSDate(),
-                            vehicleText: vehicleTypeText
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
                         )
                         : accessibilityFormatters.scheduledOther(date: schedule.scheduledTime.toNSDate())
                 )

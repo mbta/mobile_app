@@ -26,9 +26,33 @@ struct TripDetailsStopView: View {
                         Spacer()
                         UpcomingTripView(prediction: upcomingTripViewState, routeType: routeType)
                     }
+                    .accessibilityElement()
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h2)
+                    // TODO: When the accessibility status of the station
+                    // is propogated from the backend, add the accessibility
+                    // status of the station to the label
+                    .accessibilityLabel(accessibilityLabel)
                 }
             )
             scrollRoutes
+        }
+    }
+
+    var accessibilityLabel: String {
+        let base = "\(stop.stop.name), arriving at \(stop.format(now: now, routeType: routeType))."
+        if stop.routes.isEmpty {
+            return base
+        } else if stop.routes.count == 1 {
+            return base +
+                "Connection to \(stop.routes.first!.shortName) \(stop.routes.first!.type.typeText(isOnly: true))"
+        } else {
+            let lastConnection = stop.routes.last
+            return base + stop.routes.prefix(stop.routes.count - 1).map {
+                "\($0.shortName) \($0.type.typeText(isOnly: true))"
+            }
+            .joined(separator: ", ") +
+            "and \(lastConnection!.shortName) \(lastConnection!.type.typeText(isOnly: true))"
         }
     }
 
@@ -45,9 +69,6 @@ struct TripDetailsStopView: View {
             HStack {
                 ForEach(stop.routes, id: \.id) { route in
                     RoutePill(route: route, line: nil, type: .flex)
-                        .onTapGesture {
-                            onTapLink(.stopDetails(stop.stop, nil), stop, route.id)
-                        }
                 }
             }.padding(.horizontal, 20)
         }.padding(.horizontal, -20).onTapGesture {
