@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
 import kotlinx.datetime.Instant
 
@@ -87,6 +88,15 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 )
         }
     )
+
+    val allUpcomingTrips = routes.flatMap { it.allUpcomingTrips() }
+
+    val upcomingPatternIds = allUpcomingTrips.mapNotNull { it.trip.routePatternId }.toSet()
+
+    fun filterVehiclesByUpcoming(vehicles: VehiclesStreamDataResponse): Map<String, Vehicle> {
+        val routeIds = allUpcomingTrips.map { it.trip.routeId }.toSet()
+        return vehicles.vehicles.filter { routeIds.contains(it.value.routeId) }
+    }
 
     fun autoFilter(): StopDetailsFilter? {
         if (routes.size != 1) {

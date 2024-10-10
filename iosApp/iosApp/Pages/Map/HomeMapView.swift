@@ -34,8 +34,6 @@ struct HomeMapView: View {
     @State var vehiclesRepository: IVehiclesRepository
     @State var vehiclesData: [Vehicle]?
 
-    @State var upcomingRoutePatterns: Set<String> = .init()
-
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
