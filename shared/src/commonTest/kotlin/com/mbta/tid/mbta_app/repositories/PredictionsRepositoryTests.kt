@@ -18,9 +18,14 @@ import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.koin.test.KoinTest
 
 class PredictionsRepositoryTests : KoinTest {
@@ -415,5 +420,34 @@ class PredictionsRepositoryTests : KoinTest {
                 assertEquals(SocketError.FAILED_TO_PARSE, outcome.message)
             }
         )
+    }
+
+    @Test
+    fun `shouldForgetPredictions false when never updated`() {
+        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
+        predictionsRepo.lastUpdated = null
+        // there will not, in practice, be ten predictions and no last updated time
+        assertFalse(predictionsRepo.shouldForgetPredictions(10))
+    }
+
+    @Test
+    fun `shouldForgetPredictions false when no predictions`() {
+        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
+        predictionsRepo.lastUpdated = Instant.DISTANT_PAST
+        assertFalse(predictionsRepo.shouldForgetPredictions(0))
+    }
+
+    @Test
+    fun `shouldForgetPredictions false when within ten minutes`() {
+        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
+        predictionsRepo.lastUpdated = Clock.System.now() - 9.9.minutes
+        assertFalse(predictionsRepo.shouldForgetPredictions(10))
+    }
+
+    @Test
+    fun `shouldForgetPredictions true when old and nonempty`() {
+        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
+        predictionsRepo.lastUpdated = Clock.System.now() - 10.1.minutes
+        assertTrue(predictionsRepo.shouldForgetPredictions(10))
     }
 }

@@ -133,6 +133,8 @@ fun endToEndModule(): Module {
 
                 override var lastUpdated: Instant? = null
 
+                override fun shouldForgetPredictions(predictionCount: Int) = false
+
                 override fun connectV2(
                     stopIds: List<String>,
                     onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
@@ -198,6 +200,8 @@ fun endToEndModule(): Module {
                 }
 
                 override var lastUpdated: Instant? = null
+
+                override fun shouldForgetPredictions(predictionCount: Int) = false
 
                 override fun disconnect() {
                     TODO("Not yet implemented")

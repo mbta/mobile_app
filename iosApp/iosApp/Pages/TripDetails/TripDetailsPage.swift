@@ -130,12 +130,21 @@ struct TripDetailsPage: View {
             joinVehicle(vehicleId: vehicleId)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .withScenePhaseHandlers(onActive: joinRealtime,
-                                onInactive: leaveRealtime,
-                                onBackground: {
-                                    leaveRealtime()
-                                    isReturningFromBackground = true
-                                })
+        .withScenePhaseHandlers(
+            onActive: {
+                if let tripPredictions,
+                   tripPredictionsRepository
+                   .shouldForgetPredictions(predictionCount: tripPredictions.predictionQuantity()) {
+                    self.tripPredictions = nil
+                }
+                joinRealtime()
+            },
+            onInactive: leaveRealtime,
+            onBackground: {
+                leaveRealtime()
+                isReturningFromBackground = true
+            }
+        )
     }
 
     private func loadEverything() {
