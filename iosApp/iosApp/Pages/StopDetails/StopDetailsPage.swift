@@ -106,11 +106,20 @@ struct StopDetailsPage: View {
             .onDisappear {
                 leavePredictions()
             }
-            .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
-                                    onInactive: leavePredictions,
-                                    onBackground: { leavePredictions()
-                                        isReturningFromBackground = true
-                                    })
+            .withScenePhaseHandlers(
+                onActive: {
+                    if let predictionsByStop,
+                       predictionsRepository
+                       .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
+                        self.predictionsByStop = nil
+                    }
+                    joinPredictions(stop)
+                },
+                onInactive: leavePredictions,
+                onBackground: { leavePredictions()
+                    isReturningFromBackground = true
+                }
+            )
         }
     }
 
