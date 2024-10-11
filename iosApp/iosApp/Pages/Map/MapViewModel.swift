@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import shared
 
 class MapViewModel: ObservableObject {

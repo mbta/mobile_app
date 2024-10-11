@@ -7,7 +7,7 @@
 //
 
 @testable import iosApp
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import XCTest
 
 final class MapHttpInterceptorTests: XCTestCase {

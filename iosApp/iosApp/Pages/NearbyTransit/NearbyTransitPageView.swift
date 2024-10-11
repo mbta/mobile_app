@@ -8,7 +8,7 @@
 
 import Combine
 import CoreLocation
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI

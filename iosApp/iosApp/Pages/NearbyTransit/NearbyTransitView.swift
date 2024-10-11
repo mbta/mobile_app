@@ -9,7 +9,7 @@
 import Combine
 import CoreLocation
 import FirebaseAnalytics
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI

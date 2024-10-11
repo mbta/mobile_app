@@ -7,7 +7,7 @@
 //
 
 import Combine
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
 

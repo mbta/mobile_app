@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import shared
 
 class ContentViewModel: ObservableObject {

@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import SwiftUI
 
 extension View {

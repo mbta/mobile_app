@@ -1,5 +1,5 @@
 import CoreLocation
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI

@@ -9,7 +9,7 @@
 import Combine
 import CoreLocation
 @testable import iosApp
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
