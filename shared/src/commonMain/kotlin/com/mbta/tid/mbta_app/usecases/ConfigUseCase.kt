@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ConfigResponse
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
+import io.sentry.kotlin.multiplatform.Sentry
 import org.koin.core.component.KoinComponent
 
 class ConfigUseCase(
@@ -14,13 +15,18 @@ class ConfigUseCase(
     suspend fun getConfig(): ApiResult<ConfigResponse> =
         try {
             when (val tokenResult = appCheckRepo.getToken()) {
-                is ApiResult.Error ->
+                is ApiResult.Error -> {
+                    Sentry.captureMessage(
+                        "AppCheck token error ${tokenResult.code} ${tokenResult.message}"
+                    )
                     ApiResult.Error(message = "app check token failure ${tokenResult.message}")
+                }
                 is ApiResult.Ok -> {
                     configRepo.getConfig(tokenResult.data.token)
                 }
             }
         } catch (e: Exception) {
+            Sentry.captureException(e)
             ApiResult.Error(message = e.message ?: e.toString())
         }
 }
