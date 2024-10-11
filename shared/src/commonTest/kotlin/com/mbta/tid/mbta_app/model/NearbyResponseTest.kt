@@ -1250,6 +1250,187 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `withRealtimeInfo hideNonTypicalPatternsBeyondNext when null doesn't filter`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop1 = objects.stop()
+
+        val route1 = objects.route()
+
+        // should be included because typical and has prediction
+        val typicalOutbound =
+            objects.routePattern(route1) {
+                directionId = 0
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Typical Out" }
+            }
+
+        // should be included because hideNonTypicalPatternsBeyondNext is null
+        val deviationInbound =
+            objects.routePattern(route1) {
+                directionId = 1
+                sortOrder = 4
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip { headsign = "Deviation In" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) {
+                    stop(stop1) {
+                        headsign("Typical Out", listOf(typicalOutbound))
+                        headsign("Deviation In", listOf(deviationInbound))
+                    }
+                }
+            }
+
+        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+
+        val typicalOutboundPrediction =
+            objects.prediction {
+                departureTime = time
+                routeId = route1.id
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
+
+        val deviationInboundPrediction =
+            objects.prediction {
+                departureTime = time + 95.minutes
+                routeId = route1.id
+                stopId = stop1.id
+                tripId = deviationInbound.representativeTripId
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            route1,
+                            stop1,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Typical Out",
+                                    null,
+                                    listOf(typicalOutbound),
+                                    listOf(objects.upcomingTrip(typicalOutboundPrediction)),
+                                    allDataLoaded = false
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Deviation In",
+                                    null,
+                                    listOf(deviationInbound),
+                                    listOf(objects.upcomingTrip(deviationInboundPrediction)),
+                                    allDataLoaded = false
+                                ),
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = stop1.position,
+                schedules = null,
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = null,
+                filterAtTime = time,
+                showAllPatternsWhileLoading = false,
+                hideNonTypicalPatternsBeyondNext = null,
+                filterCancellations = false,
+                pinnedRoutes = setOf(),
+            )
+        )
+    }
+
+    @Test
+    fun `withRealtimeInfo includes cancellations when filterCancellations false`() {
+        val objects = ObjectCollectionBuilder()
+        val stop1 = objects.stop()
+        val route1 = objects.route()
+
+        // should be included because typical and has cancelled prediction
+        val typicalOutbound =
+            objects.routePattern(route1) {
+                directionId = 0
+                sortOrder = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Typical Out" }
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(route1) { stop(stop1) { headsign("Typical Out", listOf(typicalOutbound)) } }
+            }
+
+        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+
+        val typicalOutboundSchedule =
+            objects.schedule {
+                routeId = route1.id
+                tripId = typicalOutbound.representativeTripId
+                stopId = stop1.id
+                arrivalTime = time
+                departureTime = time
+            }
+
+        val typicalOutboundPrediction =
+            objects.prediction {
+                departureTime = null
+                routeId = route1.id
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    route1,
+                    listOf(
+                        PatternsByStop(
+                            route1,
+                            stop1,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    route1,
+                                    "Typical Out",
+                                    null,
+                                    listOf(typicalOutbound),
+                                    listOf(
+                                        objects.upcomingTrip(
+                                            typicalOutboundSchedule,
+                                            typicalOutboundPrediction
+                                        )
+                                    ),
+                                    allDataLoaded = true
+                                ),
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = stop1.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = null,
+                filterAtTime = time,
+                showAllPatternsWhileLoading = false,
+                hideNonTypicalPatternsBeyondNext = null,
+                filterCancellations = false,
+                pinnedRoutes = setOf(),
+            )
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo sorts subway first then by distance`() {
         val objects = ObjectCollectionBuilder()
 
