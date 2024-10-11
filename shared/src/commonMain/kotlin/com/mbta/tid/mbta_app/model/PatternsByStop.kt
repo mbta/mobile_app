@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import io.github.dellisd.spatialk.geojson.Position
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
-import kotlinx.datetime.Instant
 
 /**
  * @property patterns [RealtimePatterns]s serving the stop grouped by headsign or direction. The
@@ -24,8 +23,7 @@ data class PatternsByStop(
     constructor(
         staticData: NearbyStaticData.StopPatterns,
         upcomingTripsMap: UpcomingTripsMap?,
-        filterTime: Instant,
-        cutoffTime: Instant,
+        patternsPredicate: (RealtimePatterns) -> Boolean,
         alerts: Collection<Alert>?,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
         allDataLoaded: Boolean,
@@ -62,10 +60,7 @@ data class PatternsByStop(
                         )
                 }
             }
-            .filter {
-                (it.isTypical() || it.isUpcomingWithin(filterTime, cutoffTime)) &&
-                    !it.isArrivalOnly()
-            }
+            .filter(patternsPredicate)
             .sortedWith(PatternSorting.compareRealtimePatterns()),
         staticData.directions
     )
