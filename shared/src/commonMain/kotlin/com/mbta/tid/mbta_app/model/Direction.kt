@@ -11,11 +11,12 @@ data class Direction(
         directionId: Int,
         route: Route,
         stop: Stop? = null,
-        routeStopIds: List<String>? = null
+        routeStopIds: List<String>? = null,
+        patternDestination: String? = null
     ) : this(
         name = route.directionNames[directionId] ?: "",
         destination = getSpecialCaseDestination(directionId, route.id, stop?.id, routeStopIds)
-                ?: route.directionDestinations[directionId] ?: "",
+                ?: patternDestination ?: route.directionDestinations[directionId] ?: "",
         directionId
     )
 
@@ -126,8 +127,9 @@ data class Direction(
                 return Direction(pattern.directionId, route)
             }
 
+            val patternDestination = global.trips[pattern.representativeTripId]?.headsign
             val stopList = getStopListForPattern(pattern, global)
-            return Direction(pattern.directionId, route, stop, stopList)
+            return Direction(pattern.directionId, route, stop, stopList, patternDestination)
         }
 
         fun getDirectionsForLine(
