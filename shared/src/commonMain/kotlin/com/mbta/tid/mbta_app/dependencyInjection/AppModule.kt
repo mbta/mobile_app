@@ -64,7 +64,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
-        single { ConfigUseCase(get(), get()) }
+        single { ConfigUseCase(get(), get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }

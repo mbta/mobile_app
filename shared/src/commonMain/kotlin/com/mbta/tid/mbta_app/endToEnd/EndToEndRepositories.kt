@@ -224,7 +224,7 @@ fun endToEndModule(): Module {
         }
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
-        single { ConfigUseCase(get(), get()) }
+        single { ConfigUseCase(get(), get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
