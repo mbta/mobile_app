@@ -6,7 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import MapboxMaps
+@_spi(Experimental) import MapboxMaps
 import shared
 
 private func bridgeStyleObject<T: Decodable>(_ object: MapboxStyleObject) -> T {
