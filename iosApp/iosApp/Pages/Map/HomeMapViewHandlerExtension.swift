@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for handling interactions with the map, like prop change, navigation, and tapping.

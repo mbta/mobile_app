@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import shared
 @_spi(Experimental) import MapboxMaps
+import shared
 
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?

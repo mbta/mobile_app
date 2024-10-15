@@ -8,10 +8,10 @@
 
 import Combine
 @testable import iosApp
-import ViewInspector
 @_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
+import ViewInspector
 import XCTest
 
 // swiftlint:disable:next type_body_length
