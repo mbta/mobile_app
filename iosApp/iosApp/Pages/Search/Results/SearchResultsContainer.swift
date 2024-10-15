@@ -14,10 +14,17 @@ import SwiftUI
 struct SearchResultsContainer: View {
     enum ResultsState: Equatable {
         case loading
-        case recentStops(stops: [StopResult])
-        case results(results: SearchResults, includeRoutes: Bool)
+        case recentStops(stops: [Result])
+        case results(stops: [Result], routes: [RouteResult], includeRoutes: Bool)
         case empty
         case error
+    }
+
+    struct Result: Identifiable, Equatable {
+        let id: String
+        let isStation: Bool
+        let name: String
+        let routePills: [RoutePillSpec]
     }
 
     let query: String
@@ -26,7 +33,7 @@ struct SearchResultsContainer: View {
     let visitHistoryUsecase: VisitHistoryUsecase
 
     @State var globalResponse: GlobalResponse?
-    @State var latestVisits: [StopResult]?
+    @State var latestVisits: [Result]?
     @State var resultsState: ResultsState?
 
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -55,8 +62,8 @@ struct SearchResultsContainer: View {
         self.didChange = didChange
     }
 
-    func loadResults(query: String) {
-        Task {
+    func loadResults(query: String) async {
+        do {
             resultsState = .loading
             switch try await onEnum(of: searchResultsRepository.getSearchResults(query: query)) {
             case let .ok(result):
@@ -65,40 +72,60 @@ struct SearchResultsContainer: View {
                 resultsState = if results.stops.isEmpty, !showRoutes || results.routes.isEmpty {
                     .empty
                 } else {
-                    .results(results: results, includeRoutes: showRoutes)
+                    .results(
+                        stops: results.stops.compactMap { mapStopIdToResult(id: $0.id) },
+                        routes: results.routes,
+                        includeRoutes: showRoutes
+                    )
                 }
             case nil: resultsState = .error
             case let .error(error):
                 resultsState = .error
                 debugPrint(error)
             }
-        }
+        } catch {}
     }
 
-    func loadVisitHistory() {
-        Task {
-            do {
-                latestVisits = try await visitHistoryUsecase.getLatestVisits()
-                    .compactMap { visit in
-                        switch onEnum(of: visit) {
-                        case let .stopVisit(stopVisit):
-                            // TODO: https://app.asana.com/0/1205425564113216/1208355161933391/f
-                            globalResponse?
-                                .stops[stopVisit.stopId]
-                                .map { stop in
-                                    StopResult(
-                                        id: stop.id,
-                                        rank: 0,
-                                        name: stop.name,
-                                        zone: nil,
-                                        isStation: true,
-                                        routes: []
-                                    )
-                                }
-                        }
+    func loadVisitHistory() async {
+        do {
+            latestVisits = try await visitHistoryUsecase.getLatestVisits()
+                .compactMap { visit in
+                    switch onEnum(of: visit) {
+                    case let .stopVisit(stopVisit):
+                        mapStopIdToResult(id: stopVisit.stopId)
                     }
-            } catch {}
-        }
+                }
+        } catch {}
+    }
+
+    private func mapStopIdToResult(id: String) -> Result? {
+        guard let globalResponse, let stop = globalResponse.stops[id] else { return nil }
+        let isStation = stop.locationType == .station
+        let routePills: [RoutePillSpec] = globalResponse.trips
+            .filter { trip in
+                trip.value.stopIds?.contains(stop.id) == true ||
+                    trip.value.stopIds?.contains(where: stop.childStopIds.contains) == true &&
+                    /**
+                        * Is there a better way to determine whether this route should be displayed? I assume more cases like these
+                        * exist or will exist and I'd rather this not be hardcoded like this. I am filtering these to be consistent with web
+                        * and what's returned from Algolia.
+                        */
+                    (!trip.value.routeId.hasPrefix("Shuttle") && !trip.value.routeId.hasPrefix("CapeFlyer"))
+            }
+            .compactMap { trip -> Route? in return globalResponse.routes[trip.value.routeId] }
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+            .map { route in
+                let line: Line? = if let lineId = route.lineId { globalResponse.lines[lineId] } else { nil }
+                let context: RoutePillSpec.Context = isStation ? .searchStation : .default
+                return RoutePillSpec(route: route, line: line, type: .flexCompact, context: context)
+            }
+
+        return Result(
+            id: stop.id,
+            isStation: isStation,
+            name: stop.name,
+            routePills: routePills.removingDuplicates()
+        )
     }
 
     func handleStopTap(stopId: String) {
@@ -107,10 +134,8 @@ struct SearchResultsContainer: View {
     }
 
     func showRecentStops() {
-        resultsState = nil
-        // TODO: https://app.asana.com/0/1205425564113216/1208355161933391/f
-        // guard let latestVisits, !latestVisits.isEmpty else { return }
-        // resultsState = .recentStops(stops: latestVisits)
+        guard let latestVisits, !latestVisits.isEmpty else { return }
+        resultsState = .recentStops(stops: latestVisits)
     }
 
     var body: some View {
@@ -120,12 +145,10 @@ struct SearchResultsContainer: View {
         )
         .onAppear {
             if !query.isEmpty {
-                loadResults(query: query)
+                Task { await loadResults(query: query) }
             }
-            loadVisitHistory()
-            Task {
-                await searchVM.loadSettings()
-            }
+            Task { await loadVisitHistory() }
+            Task { await searchVM.loadSettings() }
             Task {
                 switch try await onEnum(of: globalRepository.getGlobalData()) {
                 case let .ok(result): globalResponse = result.data
@@ -138,7 +161,7 @@ struct SearchResultsContainer: View {
             if query.isEmpty {
                 showRecentStops()
             } else {
-                loadResults(query: query)
+                Task { await loadResults(query: query) }
             }
             didChange?(self)
         }
@@ -151,35 +174,41 @@ struct SearchResultsContainer: View {
 }
 
 struct SearchResultView_Previews: PreviewProvider {
+    /*
+     StopResult(
+         id: "place-haecl",
+         rank: 2,
+         name: "Haymarket",
+         zone: nil,
+         isStation: true,
+         routes: [
+             StopResultRoute(
+                 type: RouteType.heavyRail,
+                 icon: "orange_line"
+             ),
+         ]
+     )
+     */
     static var previews: some View {
         SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: RouteType.heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchResultsContainer.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
