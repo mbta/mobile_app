@@ -152,41 +152,41 @@ struct ContentView: View {
 
     @ViewBuilder var mapWithSheets: some View {
         let nav = $nearbyVM.navigationStack.wrappedValue.lastSafe()
-        let sheetItem: Binding<NearbySheetItem?> = .constant(
-            searchObserver.isSearching && nav == .nearby ? .none : nav.sheetItemIdentifiable()
-        )
         let sheetItemId: String? = nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id
         mapSection
-            .sheet(isPresented: .constant(true), content: {
-                GeometryReader { proxy in
-                    VStack {
-                        navSheetContents
-                            .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                            .interactiveDismissDisabled()
-                            .modifier(AllowsBackgroundInteraction())
-                    }
-                    // within the sheet to prevent issues on iOS 16 with two modal views open at once
-                    .fullScreenCover(
-                        item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
-                            .coverItemIdentifiable()),
-                        onDismiss: {
-                            if case .alertDetails = nearbyVM.navigationStack.last {
-                                nearbyVM.goBack()
-                            }
-                        },
-                        content: coverContents
-                    )
-                    .onChange(of: sheetItemId) { _ in
-                        selectedDetent = .halfScreen
-                    }
-                    .onAppear {
-                        recordSheetHeight(proxy.size.height)
-                    }
-                    .onChange(of: proxy.size.height) { newValue in
-                        recordSheetHeight(newValue)
+            .sheet(
+                isPresented: .constant(!(searchObserver.isSearching && nav == .nearby)),
+                content: {
+                    GeometryReader { proxy in
+                        VStack {
+                            navSheetContents
+                                .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                                .interactiveDismissDisabled()
+                                .modifier(AllowsBackgroundInteraction())
+                        }
+                        // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                        .fullScreenCover(
+                            item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
+                                .coverItemIdentifiable()),
+                            onDismiss: {
+                                if case .alertDetails = nearbyVM.navigationStack.last {
+                                    nearbyVM.goBack()
+                                }
+                            },
+                            content: coverContents
+                        )
+                        .onChange(of: sheetItemId) { _ in
+                            selectedDetent = .halfScreen
+                        }
+                        .onAppear {
+                            recordSheetHeight(proxy.size.height)
+                        }
+                        .onChange(of: proxy.size.height) { newValue in
+                            recordSheetHeight(newValue)
+                        }
                     }
                 }
-            })
+            )
     }
 
     @ViewBuilder

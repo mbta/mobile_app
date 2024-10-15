@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+
 data class RoutePillSpec(
     val textColor: String,
     val routeColor: String,
@@ -9,7 +11,8 @@ data class RoutePillSpec(
 ) {
     enum class Type {
         Fixed,
-        Flex
+        Flex,
+        FlexCompact
     }
 
     sealed interface Content {
@@ -33,10 +36,17 @@ data class RoutePillSpec(
         Rectangle
     }
 
+    enum class Context {
+        SearchStation,
+        Default
+    }
+
+    @DefaultArgumentInterop.Enabled
     constructor(
         route: Route?,
         line: Line?,
-        type: Type
+        type: Type,
+        context: Context = Context.Default
     ) : this(
         route?.takeUnless { it.id.startsWith("Shuttle") }?.textColor ?: line?.textColor ?: "",
         route?.takeUnless { it.id.startsWith("Shuttle") }?.color ?: line?.color ?: "",
@@ -45,12 +55,18 @@ data class RoutePillSpec(
             RouteType.LIGHT_RAIL -> lightRailPillContent(route, type)
             RouteType.HEAVY_RAIL -> heavyRailPillContent(route)
             RouteType.COMMUTER_RAIL -> commuterRailPillContent(route, type)
-            RouteType.BUS -> busPillContent(route, type)
+            RouteType.BUS -> busPillContent(route, type, context)
             RouteType.FERRY -> ferryPillContent(route, type)
         },
         when {
             type == Type.Fixed -> Size.FixedPill
-            route?.longName?.startsWith("Green Line ") ?: false -> Size.Circle
+            route?.longName?.startsWith("Green Line ") ?: false ->
+                if (type == Type.FlexCompact) {
+                    Size.CircleSmall
+                } else {
+                    Size.Circle
+                }
+            type == Type.FlexCompact -> Size.FlexPillSmall
             else -> Size.FlexPill
         },
         when {
@@ -59,64 +75,7 @@ data class RoutePillSpec(
         }
     )
 
-    constructor(
-        stopResultRoute: StopResultRoute,
-    ) : this(
-        if (stopResultRoute.type == RouteType.BUS && stopResultRoute.icon != "silver_line") {
-            "192026"
-        } else {
-            "FFFFFF"
-        },
-        when (stopResultRoute.icon) {
-            "orange_line" -> "ED8B00"
-            "red_line",
-            "mattapan_line" -> "DA291C"
-            "blue_line" -> "003DA5"
-            "commuter_rail" -> "80276C"
-            "bus" -> "FFC72C"
-            "silver_line" -> "7C878E"
-            "ferry" -> "008EAA"
-            else -> if (stopResultRoute.icon.contains("green_line_")) "00843D" else ""
-        },
-        when (stopResultRoute.type) {
-            RouteType.LIGHT_RAIL -> lightRailPillContent(stopResultRoute)
-            RouteType.HEAVY_RAIL -> heavyRailPillContent(stopResultRoute)
-            RouteType.COMMUTER_RAIL -> Content.Text("CR")
-            RouteType.BUS -> Content.ModeImage(RouteType.BUS)
-            RouteType.FERRY -> Content.ModeImage(RouteType.FERRY)
-        },
-        when {
-            stopResultRoute.icon.startsWith("green_line_") -> Size.CircleSmall
-            else -> Size.FlexPillSmall
-        },
-        when {
-            stopResultRoute.type == RouteType.BUS -> Shape.Rectangle
-            else -> Shape.Capsule
-        }
-    )
-
     companion object {
-
-        private fun lightRailPillContent(stopResultRoute: StopResultRoute): Content =
-            if (stopResultRoute.icon.startsWith("green_line_")) {
-                Content.Text(stopResultRoute.icon.replace("green_line_", "").uppercase())
-            } else if (stopResultRoute.icon == "mattapan_line") {
-                Content.Text("M")
-            } else {
-                val text =
-                    when (stopResultRoute.icon) {
-                        "orange_line" -> "Orange Line"
-                        "red_line" -> "Red Line"
-                        "blue_line" -> "Blue Line"
-                        else -> ""
-                    }
-                Content.Text(text)
-            }
-
-        private fun heavyRailPillContent(stopResultRoute: StopResultRoute): Content =
-            Content.Text(
-                stopResultRoute.icon.split("_").joinToString("") { it.first().uppercase() }
-            )
 
         private fun linePillContent(line: Line): Content =
             if (line.longName == "Green Line") {
@@ -129,7 +88,8 @@ data class RoutePillSpec(
             if (route.longName.startsWith("Green Line ")) {
                 when (type) {
                     Type.Fixed -> Content.Text(route.longName.replace("Green Line ", "GL "))
-                    Type.Flex -> Content.Text(route.shortName)
+                    Type.Flex,
+                    Type.FlexCompact -> Content.Text(route.shortName)
                 }
             } else if (route.longName == "Mattapan Trolley") {
                 Content.Text("M")
@@ -142,12 +102,16 @@ data class RoutePillSpec(
 
         private fun commuterRailPillContent(route: Route, type: Type): Content =
             when (type) {
-                Type.Fixed -> Content.Text("CR")
+                Type.Fixed,
+                Type.FlexCompact -> Content.Text("CR")
                 Type.Flex -> Content.Text(route.longName.removeSuffix(" Line"))
             }
 
-        private fun busPillContent(route: Route, type: Type): Content =
-            if (route.id.startsWith("Shuttle") && type == Type.Fixed) {
+        private fun busPillContent(route: Route, type: Type, context: Context): Content =
+            if (
+                (route.id.startsWith("Shuttle") && type != Type.Flex) ||
+                    context == Context.SearchStation
+            ) {
                 Content.ModeImage(RouteType.BUS)
             } else {
                 Content.Text(route.shortName)
@@ -155,7 +119,8 @@ data class RoutePillSpec(
 
         private fun ferryPillContent(route: Route, type: Type): Content =
             when (type) {
-                Type.Fixed -> Content.ModeImage(RouteType.FERRY)
+                Type.Fixed,
+                Type.FlexCompact -> Content.ModeImage(RouteType.FERRY)
                 Type.Flex -> Content.Text(route.longName)
             }
     }
