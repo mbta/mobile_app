@@ -30,7 +30,7 @@ final class ErrorBannerTests: XCTestCase {
 
         let stateSetPublisher = PassthroughSubject<Void, Never>()
 
-        let showedState = sut.inspection.inspect(onReceive: stateSetPublisher, after: 0.2) { view in
+        let showedState = sut.inspection.inspect(onReceive: stateSetPublisher, after: 0.5) { view in
             XCTAssertEqual(try view.find(ViewType.Text.self).string(), "Updated \(minutesAgo) minutes ago")
 
             try view.find(ViewType.Button.self).tap()
