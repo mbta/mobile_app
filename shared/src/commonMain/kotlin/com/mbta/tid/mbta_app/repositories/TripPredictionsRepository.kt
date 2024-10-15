@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -16,6 +17,8 @@ interface ITripPredictionsRepository {
     fun connect(tripId: String, onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit)
 
     var lastUpdated: Instant?
+
+    fun shouldForgetPredictions(predictionCount: Int): Boolean
 
     fun disconnect()
 }
@@ -26,6 +29,10 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
     var channel: PhoenixChannel? = null
 
     override var lastUpdated: Instant? = null
+
+    override fun shouldForgetPredictions(predictionCount: Int) =
+        (Clock.System.now() - (lastUpdated ?: Instant.DISTANT_FUTURE)) > 10.minutes &&
+            predictionCount > 0
 
     override fun connect(
         tripId: String,
@@ -88,6 +95,8 @@ class MockTripPredictionsRepository : ITripPredictionsRepository {
     }
 
     override var lastUpdated: Instant? = null
+
+    override fun shouldForgetPredictions(predictionCount: Int) = false
 
     override fun disconnect() {
         /* no-op */

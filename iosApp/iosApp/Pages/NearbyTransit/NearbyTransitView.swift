@@ -88,7 +88,14 @@ struct NearbyTransitView: View {
             }
         }
         .withScenePhaseHandlers(
-            onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
+            onActive: {
+                if let predictionsByStop,
+                   predictionsRepository
+                   .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
+                    self.predictionsByStop = nil
+                }
+                joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+            },
             onInactive: leavePredictions,
             onBackground: {
                 leavePredictions()
