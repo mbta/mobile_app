@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPush
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
+import com.mbta.tid.mbta_app.phoenix.VehiclesOnRouteChannel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
@@ -44,7 +44,7 @@ class VehiclesRepositoryTest : KoinTest {
         val vehiclesRepo = VehiclesRepository(socket)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         vehiclesRepo.channel =
-            socket.getChannel(topic = PredictionsForStopsChannel.topic, params = emptyMap())
+            socket.getChannel(topic = VehiclesOnRouteChannel.topic, params = emptyMap())
         assertNotNull(vehiclesRepo.channel)
 
         vehiclesRepo.disconnect()
