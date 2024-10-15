@@ -655,6 +655,10 @@ final class TripDetailsPageTests: XCTestCase {
 
         var lastUpdated: Instant?
 
+        func shouldForgetPredictions(predictionCount _: Int32) -> Bool {
+            false
+        }
+
         func disconnect() {
             onDisconnect?()
         }
