@@ -167,6 +167,7 @@ fun endToEndModule(): Module {
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
+        single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
                 override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> =
