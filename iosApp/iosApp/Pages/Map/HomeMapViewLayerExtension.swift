@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for manipulating the layers displayed on the map.
@@ -60,13 +60,13 @@ extension HomeMapView {
 
     func refreshMap() {
         if let layerManager = mapVM.layerManager {
+            updateGlobalMapDataSources()
             if layerManager.currentScheme != colorScheme {
                 layerManager.addIcons(recreate: true)
                 addLayers(layerManager, recreate: true)
             } else {
                 addLayers(layerManager)
             }
-            updateGlobalMapDataSources()
         }
     }
 

@@ -7,8 +7,8 @@
 //
 
 @testable import iosApp
-import XCTest
 @_spi(Experimental) import MapboxMaps
+import XCTest
 
 final class MapHttpInterceptorTests: XCTestCase {
     override func setUp() {

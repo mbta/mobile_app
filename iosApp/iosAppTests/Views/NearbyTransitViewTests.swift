@@ -9,12 +9,12 @@
 import Combine
 import CoreLocation
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
@@ -463,7 +463,7 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.2) { view in
+        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.5) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 
@@ -710,7 +710,7 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        sut.inspection.inspect(after: 0.2) { view in
+        sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.view(NearbyTransitView.self)
                 .find(text: "Error loading data"))
         }

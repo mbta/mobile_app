@@ -9,10 +9,10 @@
 import Combine
 import CoreLocation
 import FirebaseAnalytics
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
@@ -88,7 +88,14 @@ struct NearbyTransitView: View {
             }
         }
         .withScenePhaseHandlers(
-            onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
+            onActive: {
+                if let predictionsByStop,
+                   predictionsRepository
+                   .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
+                    self.predictionsByStop = nil
+                }
+                joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+            },
             onInactive: leavePredictions,
             onBackground: {
                 leavePredictions()
