@@ -32,6 +32,7 @@ struct AlertDetails: View {
         switch alert.effect {
         case .detour: NSLocalizedString("Detour", comment: "Possible alert effect")
         case .dockClosure: NSLocalizedString("Dock Closure", comment: "Possible alert effect")
+        case .serviceChange: NSLocalizedString("Service Change", comment: "Possible alert effect")
         case .shuttle: NSLocalizedString("Shuttle", comment: "Possible alert effect")
         case .stationClosure: NSLocalizedString("Station Closure", comment: "Possible alert effect")
         case .stopClosure: NSLocalizedString("Stop Closure", comment: "Possible alert effect")
