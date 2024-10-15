@@ -683,10 +683,18 @@ class NearbyStaticDataBuilder {
             route: Route,
             headsign: String,
             patterns: List<RoutePattern>,
-            stopIds: Set<String> = allStopIds
+            stopIds: Set<String> = allStopIds,
+            direction: Direction? = null
         ) {
             data.add(
-                NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns, stopIds)
+                NearbyStaticData.StaticPatterns.ByHeadsign(
+                    route,
+                    headsign,
+                    line,
+                    patterns,
+                    stopIds,
+                    direction
+                )
             )
         }
 

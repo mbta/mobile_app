@@ -491,7 +491,7 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 line(line, listOf(route1, route2)) {
                     stop(stop1, routes = listOf(route1), directions = listOf(bDir, parkDir)) {
-                        headsign(route1, "Boston College", listOf(route1rp1))
+                        headsign(route1, "Boston College", listOf(route1rp1), direction = bDir)
                     }
                     stop(
                         stop3,
@@ -501,7 +501,7 @@ class NearbyResponseTest {
                         direction(parkDir, listOf(route1, route2), listOf(route1rp2, route2rp2))
                     }
                     stop(stop2, listOf(route2), directions = listOf(cDir, parkDir)) {
-                        headsign(route2, "Cleveland Circle", listOf(route2rp1))
+                        headsign(route2, "Cleveland Circle", listOf(route2rp1), direction = cDir)
                     }
                 }
             },
