@@ -351,6 +351,9 @@
     "select location" : {
 
     },
+    "Service Change" : {
+      "comment" : "Possible alert effect"
+    },
     "Service ended" : {
 
     },
