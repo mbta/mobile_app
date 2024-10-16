@@ -120,6 +120,25 @@ final class SearchResultViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try your search again."))
     }
 
+    @MainActor func testRecentStops() throws {
+        let sut = SearchResultsView(
+            state: .recentStops(
+                stops: [
+                    SearchResultsContainer.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ]
+            ),
+            handleStopTap: { _ in }
+        )
+
+        XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Recently Viewed"))
+    }
+
     @MainActor func testFullResults() throws {
         let sut = SearchResultsView(
             state: .results(
