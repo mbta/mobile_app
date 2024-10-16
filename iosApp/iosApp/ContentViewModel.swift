@@ -12,31 +12,17 @@ import shared
 
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
-    @Published var searchEnabled: Bool
-    private var settings: Set<Setting> = []
 
     var configUseCase: ConfigUseCase
-    var settingsRepo: ISettingsRepository
 
     init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
-         configResponse: ApiResult<ConfigResponse>? = nil,
-         searchEnabled: Bool = false,
-         settingsRepo: ISettingsRepository = RepositoryDI().settings) {
+         configResponse: ApiResult<ConfigResponse>? = nil) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
-        self.searchEnabled = searchEnabled
-        self.settingsRepo = settingsRepo
     }
 
     func configureMapboxToken(token: String) {
         MapboxOptions.accessToken = token
-    }
-
-    @MainActor func loadSettings() async {
-        do {
-            let settings = try await settingsRepo.getSettings()
-            searchEnabled = settings.first(where: { $0.key == .search })?.isOn ?? false
-        } catch {}
     }
 
     @MainActor func loadConfig() async {
