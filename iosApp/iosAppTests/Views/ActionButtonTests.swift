@@ -25,7 +25,7 @@ final class ActionButtonTests: XCTestCase {
             exp.fulfill()
         }
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Close"))
-        try sut.inspect().button().tap()
+        try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
 }
