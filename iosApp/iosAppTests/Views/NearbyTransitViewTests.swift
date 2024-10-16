@@ -232,7 +232,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
+            try view.implicitAnyView().vStack().callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
             let patterns = view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
@@ -346,7 +346,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: predictionsByStop)
+            try view.implicitAnyView().vStack().callOnChange(newValue: predictionsByStop)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
                 .parent().parent().find(ViewType.ProgressView.self))
@@ -381,6 +381,19 @@ final class NearbyTransitViewTests: XCTestCase {
             .toKotlinInstant()
         typealias Green = GreenLineTestHelper.Companion
         let objects = Green.shared.objects
+
+        objects.schedule { schedule in
+            schedule.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
+            schedule.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
+            schedule.stopId = Green.shared.stopWestbound.id
+            schedule.trip = objects.trip(routePattern: Green.shared.rpB0)
+        }
+        objects.schedule { schedule in
+            schedule.arrivalTime = Date.now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
+            schedule.departureTime = Date.now.addingTimeInterval(3 * 60).toKotlinInstant()
+            schedule.stopId = Green.shared.stopEastbound.id
+            schedule.trip = objects.trip(routePattern: Green.shared.rpB1)
+        }
 
         objects.prediction { prediction in
             prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
@@ -446,7 +459,7 @@ final class NearbyTransitViewTests: XCTestCase {
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(connectV2Outcome: predictions),
-            schedulesRepository: MockScheduleRepository(),
+            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects), callback: { _ in }),
             getNearby: { _, _ in },
             state: .constant(greenLineState),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
@@ -456,12 +469,13 @@ final class NearbyTransitViewTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.2) { view in
+        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.5) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 
             let kenmoreDirection = try stops[0].find(text: "Kenmore & West")
-                .parent().parent().parent().parent()
+                .find(DirectionRowView.self, relation: .parent)
+            try debugPrint(kenmoreDirection.actualView().predictions)
             XCTAssertNotNil(try kenmoreDirection.find(text: "1 min"))
             XCTAssertNotNil(try kenmoreDirection.find(text: "3 min"))
             XCTAssertNotNil(try kenmoreDirection.find(text: "Overridden"))
@@ -470,7 +484,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 .parent().parent().find(text: "5 min"))
 
             let parkDirection = try stops[0].find(text: "Park St & North")
-                .parent().parent().parent().parent()
+                .find(DirectionRowView.self, relation: .parent)
+            try debugPrint(parkDirection.actualView().predictions)
             XCTAssertNotNil(try parkDirection.find(text: "2 min"))
             XCTAssertNotNil(try parkDirection.find(text: "4 min"))
             XCTAssertNotNil(try parkDirection.find(text: "6 min"))
@@ -527,7 +542,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 }
             }
         }
-        try sut.inspect().vStack().callOnChange(newValue: newState as NearbyStaticData?)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: newState as NearbyStaticData?)
 
         wait(for: [lechmereExpectation], timeout: 1)
     }
@@ -561,10 +576,10 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: prediction(minutesAway: 2))
-            XCTAssertNotNil(try view.vStack().find(text: "2 min"))
-            try view.vStack().callOnChange(newValue: prediction(minutesAway: 3))
-            XCTAssertNotNil(try view.vStack().find(text: "3 min"))
+            try view.implicitAnyView().vStack().callOnChange(newValue: prediction(minutesAway: 2))
+            XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "2 min"))
+            try view.implicitAnyView().vStack().callOnChange(newValue: prediction(minutesAway: 3))
+            XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "3 min"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
@@ -593,7 +608,7 @@ final class NearbyTransitViewTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [joinExpectation], timeout: 1)
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
     }
@@ -620,7 +635,7 @@ final class NearbyTransitViewTests: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [joinExpectation], timeout: 1)
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
     }
@@ -650,11 +665,11 @@ final class NearbyTransitViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
     }
@@ -676,7 +691,8 @@ final class NearbyTransitViewTests: XCTestCase {
             actualView.scrollSubject.sink { _ in
                 scrollPositionSetExpectation.fulfill()
             }.store(in: &self.cancellables)
-            try actualView.inspect().vStack().callOnChange(newValue: self.route52State.nearbyByRouteAndStop)
+            try actualView.inspect().implicitAnyView().vStack()
+                .callOnChange(newValue: self.route52State.nearbyByRouteAndStop)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp, scrollPositionSetExpectation], timeout: 1)
@@ -730,7 +746,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: AlertsStreamDataResponse(objects: objects))
+            try view.implicitAnyView().vStack().callOnChange(newValue: AlertsStreamDataResponse(objects: objects))
             XCTAssertNotNil(try view.find(text: "Suspension"))
         }
         ViewHosting.host(view: sut)

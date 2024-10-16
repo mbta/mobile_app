@@ -542,7 +542,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: nil))
         )
 
-        try sut.inspect().vStack().callOnChange(newValue: "newTripId", index: 0)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: "newTripId", index: 0)
 
         wait(for: [predictionsLeaveExp, predictionsJoinExp], timeout: 2)
     }
@@ -574,7 +574,7 @@ final class TripDetailsPageTests: XCTestCase {
         )
 
         // Index 1 because first onChange of a string is for tripId
-        try sut.inspect().vStack().callOnChange(newValue: "newTripId", index: 1)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: "newTripId", index: 1)
 
         wait(for: [vehicleLeaveExp, vehicleJoinExp], timeout: 2)
     }

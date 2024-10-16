@@ -111,7 +111,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 objects: .init(),
                 patternIdsByStop: [:]
             )
-            try view.find(NearbyTransitView.self).vStack().callOnChange(newValue: newCameraState.center)
+            try view.find(NearbyTransitView.self).implicitAnyView().vStack()
+                .callOnChange(newValue: newCameraState.center)
         }
 
         ViewHosting.host(view: sut)
