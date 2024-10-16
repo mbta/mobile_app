@@ -32,6 +32,8 @@ final class HomeMapViewUITests: XCTestCase {
         app.activate()
         app.launch()
 
+        app.buttons["Allow Location"].tap()
+
         acceptLocationPermissionAlert(timeout: 10)
 
         let map = app.otherElements.matching(identifier: "transitMap").element
@@ -50,6 +52,8 @@ final class HomeMapViewUITests: XCTestCase {
     func testNoRecenterWithNoLocation() throws {
         app.activate()
         app.launch()
+
+        app.buttons["Allow Location"].tap()
 
         denyLocationPermissionAlert(timeout: 10)
 
