@@ -26,29 +26,24 @@ struct TripDetailsStopView: View {
                         Spacer()
                         UpcomingTripView(prediction: upcomingTripViewState, routeType: routeType)
                     }
-                    .accessibilityElement()
+                    .accessibilityElement(children: .combine)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h2)
-                    // TODO: When the accessibility status of the station
-                    // is propogated from the backend, add the accessibility
-                    // status of the station to the label
-                    .accessibilityLabel(accessibilityLabel)
                 }
             )
             scrollRoutes
+                .accessibilityLabel(scrollRoutesAccessibilityLabel)
         }
     }
 
-    var accessibilityLabel: String {
-        let base = "\(stop.stop.name), arriving at \(stop.format(now: now, routeType: routeType))."
+    var scrollRoutesAccessibilityLabel: String {
         if stop.routes.isEmpty {
-            return base
+            return ""
         } else if stop.routes.count == 1 {
-            return base +
-                "Connection to \(stop.routes.first!.shortName) \(stop.routes.first!.type.typeText(isOnly: true))"
+            return "Connection to \(stop.routes.first!.shortName) \(stop.routes.first!.type.typeText(isOnly: true))"
         } else {
             let lastConnection = stop.routes.last
-            return base + stop.routes.prefix(stop.routes.count - 1).map {
+            return stop.routes.prefix(stop.routes.count - 1).map {
                 "\($0.shortName) \($0.type.typeText(isOnly: true))"
             }
             .joined(separator: ", ") +

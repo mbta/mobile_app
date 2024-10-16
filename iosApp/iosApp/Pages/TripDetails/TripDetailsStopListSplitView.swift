@@ -24,16 +24,14 @@ struct TripDetailsStopListSplitView: View {
                     }
                 }
                 .accessibilityElement()
-                .accessibilityAddTraits(/*@START_MENU_TOKEN@*/ .isHeader/*@END_MENU_TOKEN@*/)
+                .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h2)
                 .accessibilityLabel(
                     LocalizedStringKey(
                         "\(routeType?.typeText(isOnly: true) ?? "") is \(splitStops.collapsedStops.count, specifier: "%ld") stops away from \(splitStops.targetStop.stop.name)"
                     )
                 )
-                .accessibilityHint(
-                    splitStops.collapsedStops.map(\.stop.name).joined(separator: ", ")
-                )
+                .accessibilityHint("List remaining stops")
             }
             TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink, routeType: routeType)
                 .listRowBackground(Color.keyInverse.opacity(0.15))
