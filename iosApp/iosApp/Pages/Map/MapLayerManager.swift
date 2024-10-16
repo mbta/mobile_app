@@ -6,10 +6,10 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
@@ -56,6 +56,13 @@ class MapLayerManager: IMapLayerManager {
         }
     }
 
+    /*
+     Adds persistent layers so that they are persisted even if the underlying map style changes. To intentionally
+     re-create the layers due to a change that corresponds with a style change (such as colorScheme changing),
+     set recreate to true.
+
+     https://docs.mapbox.com/ios/maps/api/11.5.0/documentation/mapboxmaps/stylemanager/addpersistentlayer(_:layerposition:)
+     */
     func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
         let colorPalette = getColorPalette(colorScheme: colorScheme)
         currentScheme = colorScheme
@@ -76,9 +83,9 @@ class MapLayerManager: IMapLayerManager {
                 }
 
                 if map.layerExists(withId: "puck") {
-                    try map.addLayer(layer, layerPosition: .below("puck"))
+                    try map.addPersistentLayer(layer, layerPosition: .below("puck"))
                 } else {
-                    try map.addLayer(layer)
+                    try map.addPersistentLayer(layer)
                 }
             } catch {
                 Logger().error("Failed to add layer \(layer.id)\n\(error)")

@@ -23,6 +23,8 @@ struct StopDetailsPage: View {
     @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
 
+    @State var isReturningFromBackground = false
+
     var filter: StopDetailsFilter?
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
@@ -70,7 +72,8 @@ struct StopDetailsPage: View {
                 nearbyVM: nearbyVM,
                 now: now,
                 pinnedRoutes: pinnedRoutes,
-                togglePinnedRoute: togglePinnedRoute
+                togglePinnedRoute: togglePinnedRoute,
+                isReturningFromBackground: isReturningFromBackground
             )
             .onAppear {
                 loadEverything()
@@ -96,16 +99,27 @@ struct StopDetailsPage: View {
                 while !Task.isCancelled {
                     now = Date.now
                     updateDepartures()
-                    await checkPredictionsStale()
+                    checkPredictionsStale()
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
             .onDisappear {
                 leavePredictions()
             }
-            .withScenePhaseHandlers(onActive: { joinPredictions(stop) },
-                                    onInactive: leavePredictions,
-                                    onBackground: leavePredictions)
+            .withScenePhaseHandlers(
+                onActive: {
+                    if let predictionsByStop,
+                       predictionsRepository
+                       .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
+                        self.predictionsByStop = nil
+                    }
+                    joinPredictions(stop)
+                },
+                onInactive: leavePredictions,
+                onBackground: { leavePredictions()
+                    isReturningFromBackground = true
+                }
+            )
         }
     }
 
@@ -185,7 +199,9 @@ struct StopDetailsPage: View {
             DispatchQueue.main.async {
                 if case let .ok(result) = onEnum(of: outcome) {
                     predictionsByStop = result.data
+                    checkPredictionsStale()
                 }
+                isReturningFromBackground = false
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
@@ -199,7 +215,9 @@ struct StopDetailsPage: View {
                             vehicles: result.data.vehicles
                         )
                     }
+                    checkPredictionsStale()
                 }
+                isReturningFromBackground = false
             }
 
         })
@@ -209,7 +227,7 @@ struct StopDetailsPage: View {
         predictionsRepository.disconnect()
     }
 
-    private func checkPredictionsStale() async {
+    private func checkPredictionsStale() {
         if let lastPredictions = predictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,

@@ -8,12 +8,12 @@
 
 import Combine
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 final class StopDetailsPageTests: XCTestCase {
     override func setUp() {

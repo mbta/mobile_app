@@ -241,11 +241,7 @@ object RouteFeaturesBuilder {
 
         if (targetRouteData.isNotEmpty()) {
             return departures?.let {
-                val upcomingRoutePatternIds =
-                    departures.routes
-                        .flatMap { it.allUpcomingTrips() }
-                        .mapNotNull { it.trip.routePatternId }
-                val targetRoutePatternIds = upcomingRoutePatternIds.toSet()
+                val targetRoutePatternIds = departures.upcomingPatternIds
                 targetRouteData.map { routeData ->
                     val filteredShapes =
                         routeData.segmentedShapes.filter {

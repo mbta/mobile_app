@@ -25,7 +25,7 @@ class ErrorBannerStateRepositoryTest {
     fun `updates if predictions are stale`() = runBlocking {
         val repo = ErrorBannerStateRepository()
 
-        val lastUpdated = Clock.System.now() - 2.minutes
+        val lastUpdated = Clock.System.now() - 3.minutes
         val action = {}
 
         repo.checkPredictionsStale(lastUpdated, 1, action)
@@ -37,7 +37,7 @@ class ErrorBannerStateRepositoryTest {
     fun `data errors override stale predictions`() {
         val repo = ErrorBannerStateRepository()
 
-        repo.checkPredictionsStale(Clock.System.now() - 2.minutes, 1) {}
+        repo.checkPredictionsStale(Clock.System.now() - 3.minutes, 1) {}
 
         repo.setDataError("global") {}
 
@@ -67,7 +67,7 @@ class ErrorBannerStateRepositoryTest {
     fun `clears if predictions stop being stale`() = runBlocking {
         val repo = ErrorBannerStateRepository()
 
-        repo.checkPredictionsStale(Clock.System.now() - 2.minutes, 1) {}
+        repo.checkPredictionsStale(Clock.System.now() - 3.minutes, 1) {}
 
         assertNotNull(repo.state.value)
 
@@ -102,7 +102,7 @@ class ErrorBannerStateRepositoryTest {
 
         assertEquals(null, channel.receive())
 
-        val lastUpdated = Clock.System.now() - 2.minutes
+        val lastUpdated = Clock.System.now() - 3.minutes
         val action = {}
         repo.checkPredictionsStale(lastUpdated, 1, action)
 

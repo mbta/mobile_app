@@ -6,10 +6,10 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
@@ -33,8 +33,6 @@ struct HomeMapView: View {
 
     @State var vehiclesRepository: IVehiclesRepository
     @State var vehiclesData: [Vehicle]?
-
-    @State var upcomingRoutePatterns: Set<String> = .init()
 
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat

@@ -189,6 +189,8 @@ class NearbyTransitViewTest : KoinTest {
 
                         override var lastUpdated: Instant? = null
 
+                        override fun shouldForgetPredictions(predictionCount: Int) = false
+
                         override fun disconnect() {
                             /* no-op */
                         }

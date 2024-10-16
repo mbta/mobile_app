@@ -33,7 +33,7 @@ protected constructor(initialState: ErrorBannerState? = null) {
         action: () -> Unit
     ) {
         predictionsStale =
-            if (predictionQuantity > 0 && Clock.System.now() - predictionsLastUpdated > 1.minutes) {
+            if (predictionQuantity > 0 && Clock.System.now() - predictionsLastUpdated > 2.minutes) {
                 ErrorBannerState.StalePredictions(predictionsLastUpdated, action)
             } else {
                 null

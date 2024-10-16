@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
@@ -449,19 +450,22 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
 /**
  * Attaches [schedules] and [predictions] to the route, stop, and routePattern to which they apply.
- * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
- * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
- * sort order.
+ * Removes non-typical route patterns which are not happening either at all or between
+ * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext]. Sorts routes by subway
+ * first then nearest stop, stops by distance, and headsigns by route pattern sort order.
  *
  * Runs static data and predictions through [TemporaryTerminalRewriter].
  */
 fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
-    sortByDistanceFrom: Position,
+    sortByDistanceFrom: Position?,
     schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
+    showAllPatternsWhileLoading: Boolean,
+    hideNonTypicalPatternsBeyondNext: Duration?,
+    filterCancellations: Boolean,
     pinnedRoutes: Set<String>
 ): List<StopsAssociated> {
     val activeRelevantAlerts =
@@ -543,11 +547,26 @@ fun NearbyStaticData.withRealtimeInfo(
             )
             .orEmpty()
 
-    val cutoffTime = filterAtTime.plus(90.minutes)
+    val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
     val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
-    val upcomingTripsMap: UpcomingTripsMap =
-        (upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop)
+    val upcomingTripsMap: UpcomingTripsMap? =
+        (upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop).takeUnless {
+            schedules == null && predictions == null
+        }
+
+    fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
+        if (filterCancellations) this.filterCancellations(isSubway) else this
+
+    fun RealtimePatterns.shouldShow(): Boolean {
+        if (!allDataLoaded && showAllPatternsWhileLoading) return true
+        val isUpcoming =
+            when (cutoffTime) {
+                null -> this.isUpcoming()
+                else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
+            }
+        return (isTypical() || isUpcoming) && !isArrivalOnly()
+    }
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
@@ -562,14 +581,13 @@ fun NearbyStaticData.withRealtimeInfo(
                     StopsAssociated.WithRoute(
                         transit.route,
                         transit.patternsByStop
-                            .map {
+                            .map { stopPatterns ->
                                 PatternsByStop(
-                                    it,
-                                    upcomingTripsMap.filterCancellations(
+                                    stopPatterns,
+                                    upcomingTripsMap?.maybeFilterCancellations(
                                         transit.route.type.isSubway()
                                     ),
-                                    filterAtTime,
-                                    cutoffTime,
+                                    { it.shouldShow() },
                                     activeRelevantAlerts,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -582,14 +600,13 @@ fun NearbyStaticData.withRealtimeInfo(
                         transit.line,
                         transit.routes,
                         transit.patternsByStop
-                            .map {
+                            .map { stopPatterns ->
                                 PatternsByStop(
-                                    it,
-                                    upcomingTripsMap.filterCancellations(
+                                    stopPatterns,
+                                    upcomingTripsMap?.maybeFilterCancellations(
                                         transit.routes.min().type.isSubway()
                                     ),
-                                    filterAtTime,
-                                    cutoffTime,
+                                    { it.shouldShow() },
                                     activeRelevantAlerts,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -602,6 +619,29 @@ fun NearbyStaticData.withRealtimeInfo(
         .filterNot { it.isEmpty() }
         .toList()
         .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
+}
+
+fun NearbyStaticData.withRealtimeInfo(
+    globalData: GlobalResponse?,
+    sortByDistanceFrom: Position,
+    schedules: ScheduleResponse?,
+    predictions: PredictionsStreamDataResponse?,
+    alerts: AlertsStreamDataResponse?,
+    filterAtTime: Instant,
+    pinnedRoutes: Set<String>
+): List<StopsAssociated> {
+    return this.withRealtimeInfo(
+        globalData,
+        sortByDistanceFrom,
+        schedules,
+        predictions,
+        alerts,
+        filterAtTime,
+        showAllPatternsWhileLoading = false,
+        hideNonTypicalPatternsBeyondNext = 90.minutes,
+        filterCancellations = true,
+        pinnedRoutes
+    )
 }
 
 class NearbyStaticDataBuilder {
