@@ -82,7 +82,7 @@ struct VehicleOnTripView: View {
             .accessibilityAddTraits(.isHeader)
             .accessibilityHeading(.h2)
             .accessibilityLabel(
-                "\(route.type.typeText(isOnly: true)) \(vehicleStatusDescription(vehicle.currentStatus)) \(stop.name)"
+                "\(route.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)"
             )
         } else {
             Text("This vehicle is completing another trip.")
@@ -97,10 +97,16 @@ struct VehicleOnTripView: View {
     private func vehicleStatusDescription(
         _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
     ) -> some View {
+        Text(vehicleStatusText(vehicleStatus))
+    }
+
+    private func vehicleStatusText(
+        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
+    ) -> String {
         switch vehicleStatus {
-        case .incomingAt: Text("Approaching")
-        case .inTransitTo: Text("Next stop")
-        case .stoppedAt: Text("Now at")
+        case .incomingAt: "Approaching"
+        case .inTransitTo: "Next stop"
+        case .stoppedAt: "Now at"
         }
     }
 

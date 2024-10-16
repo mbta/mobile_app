@@ -47,7 +47,6 @@ struct TripDetailsHeader: View {
         }
         .accessibilityElement()
         .accessibilityAddTraits(.isHeader)
-        .accessibilityHeading(.h1)
         .accessibilityLabel("Real-time arrivals updating live")
     }
 

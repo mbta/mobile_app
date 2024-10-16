@@ -143,9 +143,6 @@
     "and in %@ min" : {
 
     },
-    "Approaching" : {
-
-    },
     "ARR" : {
 
     },
@@ -300,9 +297,6 @@
     "Medical Emergency" : {
       "comment" : "Possible alert cause"
     },
-    "Next stop" : {
-
-    },
     "No nearby MBTA stops" : {
 
     },
@@ -313,9 +307,6 @@
 
     },
     "Now" : {
-
-    },
-    "Now at" : {
 
     },
     "Open for more arrivals" : {
