@@ -7,10 +7,9 @@
 //
 
 import Combine
-import shared
-import SwiftUI
 @_spi(Experimental) import MapboxMaps
 import shared
+import SwiftUI
 
 class ViewportProvider: ObservableObject {
     enum Defaults {

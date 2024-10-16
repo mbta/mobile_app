@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
@@ -228,6 +229,30 @@ class StopDetailsDeparturesTest {
         val directionWest = Direction("West", "Kenmore & West", 0)
         val directionEast = Direction("East", "Park St & North", 1)
 
+        val departures =
+            StopDetailsDepartures(
+                stop,
+                GlobalResponse(
+                    objects,
+                    mapOf(
+                        stop.id to
+                            listOf(
+                                routePatternB1.id,
+                                routePatternB2.id,
+                                routePatternC1.id,
+                                routePatternC2.id,
+                                routePatternE1.id,
+                                routePatternE2.id
+                            )
+                    )
+                ),
+                ScheduleResponse(objects),
+                PredictionsStreamDataResponse(objects),
+                null,
+                setOf(),
+                filterAtTime = time,
+            )
+
         assertEquals(
             StopDetailsDepartures(
                 listOf(
@@ -265,10 +290,119 @@ class StopDetailsDeparturesTest {
                                 )
                             ),
                         ),
-                        listOf(Direction("West", null, 0), directionEast)
+                        listOf(directionWest, directionEast)
                     )
                 )
             ),
+            departures
+        )
+
+        assertEquals(
+            setOf(
+                routePatternB1.id,
+                routePatternC1.id,
+                routePatternE1.id,
+                routePatternB2.id,
+                routePatternC2.id,
+                routePatternE2.id
+            ),
+            departures.upcomingPatternIds
+        )
+    }
+
+    @Test
+    fun `StopDetailsDepartures filters vehicles by relevant routes`() {
+        val objects = ObjectCollectionBuilder()
+
+        val stop = objects.stop()
+        objects.line { id = "line-Green" }
+        val routeB =
+            objects.route {
+                id = "B"
+                sortOrder = 1
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Kenmore & West", "Park St & North")
+            }
+        val routePatternB =
+            objects.routePattern(routeB) {
+                representativeTrip { headsign = "B" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripB = objects.trip(routePatternB)
+
+        val routeC =
+            objects.route {
+                id = "C"
+                sortOrder = 2
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Kenmore & West", "Park St & North")
+            }
+        val routePatternC =
+            objects.routePattern(routeC) {
+                representativeTrip { headsign = "C" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val tripC = objects.trip(routePatternC)
+
+        val routeD =
+            objects.route {
+                id = "D"
+                sortOrder = 3
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Riverside", "Park St & North")
+            }
+
+        val routeE =
+            objects.route {
+                id = "E"
+                sortOrder = 3
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Heath Street", "Park St & North")
+            }
+        val routePatternE =
+            objects.routePattern(routeE) {
+                representativeTrip { headsign = "Heath Street" }
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                id = "test-hs"
+            }
+        val tripE = objects.trip(routePatternE)
+
+        val time = Instant.parse("2024-03-18T10:41:13-04:00")
+
+        val schedB =
+            objects.schedule {
+                trip = tripB
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+        val schedC =
+            objects.schedule {
+                trip = tripC
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+            }
+        val schedE =
+            objects.schedule {
+                trip = tripE
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 3.minutes
+            }
+
+        objects.prediction(schedB) { departureTime = time + 1.5.minutes }
+        objects.prediction(schedC) { departureTime = time + 2.3.minutes }
+        objects.prediction(schedE) { departureTime = time + 2.3.minutes }
+
+        val departures =
             StopDetailsDepartures(
                 stop,
                 GlobalResponse(
@@ -276,12 +410,9 @@ class StopDetailsDeparturesTest {
                     mapOf(
                         stop.id to
                             listOf(
-                                routePatternB1.id,
-                                routePatternB2.id,
-                                routePatternC1.id,
-                                routePatternC2.id,
-                                routePatternE1.id,
-                                routePatternE2.id
+                                routePatternB.id,
+                                routePatternC.id,
+                                routePatternE.id,
                             )
                     )
                 ),
@@ -291,6 +422,42 @@ class StopDetailsDeparturesTest {
                 setOf(),
                 filterAtTime = time,
             )
+        val vehicleB =
+            objects.vehicle {
+                routeId = routeB.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+        val vehicleC =
+            objects.vehicle {
+                routeId = routeC.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+        val vehicleD =
+            objects.vehicle {
+                routeId = routeD.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+        val vehicleE =
+            objects.vehicle {
+                routeId = routeE.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+        val vehicleResponse =
+            VehiclesStreamDataResponse(
+                mapOf(
+                    vehicleB.id to vehicleB,
+                    vehicleC.id to vehicleC,
+                    vehicleD.id to vehicleD,
+                    vehicleE.id to vehicleE,
+                )
+            )
+        assertEquals(
+            mapOf(
+                vehicleB.id to vehicleB,
+                vehicleC.id to vehicleC,
+                vehicleE.id to vehicleE,
+            ),
+            departures.filterVehiclesByUpcoming(vehicleResponse)
         )
     }
 

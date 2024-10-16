@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
@@ -101,7 +101,9 @@ extension HomeMapView {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                vehiclesData = Array(result.data.vehicles.values)
+                if let departures = nearbyVM.departures {
+                    vehiclesData = Array(departures.filterVehiclesByUpcoming(vehicles: result.data).values)
+                }
             }
         }
     }

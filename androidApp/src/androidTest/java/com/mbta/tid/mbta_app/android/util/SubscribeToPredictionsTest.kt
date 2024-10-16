@@ -59,6 +59,8 @@ class SubscribeToPredictionsTest {
 
                 override var lastUpdated: Instant? = null
 
+                override fun shouldForgetPredictions(predictionCount: Int) = false
+
                 override fun disconnect() {
                     check(isConnected) { "called disconnect when not connected" }
                     isConnected = false
