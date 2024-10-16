@@ -11,15 +11,18 @@ import SwiftUI
 import ViewInspector
 
 extension InspectableView {
-    func findAndCallOnChange<E: Equatable>(
+    func findAndCallOnChange(
         relation: ViewSearch.Relation = .child,
-        newValue value: E,
+        newValue value: some Equatable,
         index: Int = 0
     ) throws {
+        do {
+            try callOnChange(newValue: value, index: index)
+            return
+        } catch {}
         _ = try find(relation: relation, where: { child in
             do {
                 try child.callOnChange(newValue: value, index: index)
-                print("found onChange<\(E.self)> at", child.pathToRoot)
                 return true
             } catch {
                 return false
