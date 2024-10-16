@@ -626,7 +626,6 @@
 				9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */,
 				9A4E8E572B7EC49A0066B936 /* ComponentViews */,
 				7555FF82242A565900829871 /* ContentView.swift */,
-				6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */,
 				6E20278D2BD989630037554F /* DummyTestAppView.swift */,
 				9A9E05F22B6D6D9F0086B437 /* Fetchers */,
 				9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */,
@@ -641,6 +640,7 @@
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				6E20278F2BD989AC0037554F /* ProductionAppView.swift */,
 				9AC10BD82B80060E00EA4605 /* Utils */,
+				9A392C952CC03ACF00DE1FBE /* ViewModels */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -687,7 +687,6 @@
 				EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */,
 				8C3D640F2BE19DBA0026DD53 /* SettingsPage.swift */,
 				EDE92FA92C408A50007AD2F6 /* SettingsSection.swift */,
-				EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -777,7 +776,6 @@
 				9A2005C62B97B63300F562E1 /* NearbyStopView.swift */,
 				9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */,
 				8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */,
-				6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */,
 				6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */,
 			);
 			path = NearbyTransit;
@@ -793,7 +791,6 @@
 				9A15DA3C2BF51BA7003A861C /* HomeMapViewLayerExtension.swift */,
 				6EA00B6B2C513D1600B1334C /* MapHttpInterceptor.swift */,
 				9A5B27572BB22BF8009A6FC6 /* MapLayerManager.swift */,
-				8CB28DB82C2CC5AD0036258E /* MapViewModel.swift */,
 				9A5B275B2BB237DE009A6FC6 /* RecenterButton.swift */,
 				8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */,
 			);
@@ -804,12 +801,23 @@
 			isa = PBXGroup;
 			children = (
 				ED93D5FA2CB6BFF4003B1C12 /* Results */,
-				9A4DB7772C937EE300E8755B /* SearchViewModel.swift */,
 				9A4DB7792CA47E6D00E8755B /* SearchField.swift */,
 				9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */,
 				9A4DB7802CA5A23200E8755B /* TextFieldObserver.swift */,
 			);
 			path = Search;
+			sourceTree = "<group>";
+		};
+		9A392C952CC03ACF00DE1FBE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */,
+				8CB28DB82C2CC5AD0036258E /* MapViewModel.swift */,
+				6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */,
+				9A4DB7772C937EE300E8755B /* SearchViewModel.swift */,
+				EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		9A4E8E572B7EC49A0066B936 /* ComponentViews */ = {
