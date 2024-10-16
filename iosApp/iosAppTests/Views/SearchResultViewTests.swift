@@ -123,32 +123,23 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testFullResults() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: .heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchResultsContainer.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
@@ -162,18 +153,16 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testOnlyRoutes() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: []
-                ),
+                stops: [],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
@@ -187,18 +176,16 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testRoutesHidden() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: []
-                ),
+                stops: [],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: false
             ),
             handleStopTap: { _ in }
@@ -212,24 +199,15 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testOnlyStops() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: .heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchResultsContainer.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
@@ -244,24 +222,15 @@ final class SearchResultViewTests: XCTestCase {
 
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: .heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchResultsContainer.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [],
                 includeRoutes: true
             ),
             handleStopTap: { stopId in

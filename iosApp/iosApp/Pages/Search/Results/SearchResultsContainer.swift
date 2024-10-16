@@ -102,19 +102,17 @@ struct SearchResultsContainer: View {
         guard let globalResponse, let stop = globalResponse.stops[id] else { return nil }
         let isStation = stop.locationType == .station
         let routePills: [RoutePillSpec] = globalResponse.trips
-            .filter { trip in
-                trip.value.stopIds?.contains(stop.id) == true ||
+            .filter { trip -> Bool in
+                let routePattern: RoutePattern? = if let routePatternId = trip.value.routePatternId {
+                    globalResponse.routePatterns[routePatternId]
+                } else { nil }
+                return trip.value.stopIds?.contains(stop.id) == true ||
                     trip.value.stopIds?.contains(where: stop.childStopIds.contains) == true &&
-                    /**
-                        * Is there a better way to determine whether this route should be displayed? I assume more cases like these
-                        * exist or will exist and I'd rather this not be hardcoded like this. I am filtering these to be consistent with web
-                        * and what's returned from Algolia.
-                        */
-                    (!trip.value.routeId.hasPrefix("Shuttle") && !trip.value.routeId.hasPrefix("CapeFlyer"))
+                    (routePattern?.typicality == .typical)
             }
             .compactMap { trip -> Route? in return globalResponse.routes[trip.value.routeId] }
             .sorted(by: { $0.sortOrder < $1.sortOrder })
-            .map { route in
+            .map { route -> RoutePillSpec in
                 let line: Line? = if let lineId = route.lineId { globalResponse.lines[lineId] } else { nil }
                 let context: RoutePillSpec.Context = isStation ? .searchStation : .default
                 return RoutePillSpec(route: route, line: line, type: .flexCompact, context: context)
@@ -174,21 +172,6 @@ struct SearchResultsContainer: View {
 }
 
 struct SearchResultView_Previews: PreviewProvider {
-    /*
-     StopResult(
-         id: "place-haecl",
-         rank: 2,
-         name: "Haymarket",
-         zone: nil,
-         isStation: true,
-         routes: [
-             StopResultRoute(
-                 type: RouteType.heavyRail,
-                 icon: "orange_line"
-             ),
-         ]
-     )
-     */
     static var previews: some View {
         SearchResultsView(
             state: .results(
@@ -197,7 +180,15 @@ struct SearchResultView_Previews: PreviewProvider {
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
-                        routePills: []
+                        routePills: [
+                            RoutePillSpec(
+                                textColor: "#FFFFFF",
+                                routeColor: "#ED8B00",
+                                content: RoutePillSpecContentText(text: "OL"),
+                                size: RoutePillSpec.Size.flexPillSmall,
+                                shape: RoutePillSpec.Shape.capsule
+                            ),
+                        ]
                     ),
                 ],
                 routes: [
