@@ -17,8 +17,6 @@ struct DirectionPicker: View {
     let route: Route
     let line: Line?
 
-    @State private var directionId = ""
-
     init(patternsByStop: PatternsByStop, filter: StopDetailsFilter?,
          setFilter: @escaping (StopDetailsFilter?) -> Void) {
         self.filter = filter
@@ -29,11 +27,6 @@ struct DirectionPicker: View {
         directions = patternsByStop.directions
         route = patternsByStop.representativeRoute
         line = patternsByStop.line
-        directionId = if filter != nil {
-            String(filter!.directionId)
-        } else {
-            ""
-        }
     }
 
     var body: some View {
@@ -65,18 +58,6 @@ struct DirectionPicker: View {
             .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 8))
         }
-
-        HStack(alignment: .center, content: {
-            Picker("Select Direction", selection: $directionId) {
-                let availableDirectionIds = availableDirections.map { String($0) }
-
-                ForEach(availableDirectionIds, id: \.self) { direction in
-                    let direction = directions[Int(direction)!]
-                    Text(direction.name)
-                }
-            }
-            .pickerStyle(.segmented)
-        })
     }
 
     private func deselectedBackgroundColor(_ route: Route) -> Color {
