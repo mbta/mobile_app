@@ -14,6 +14,6 @@ internal fun createDataStore(context: Context): DataStore<Preferences> =
 fun initKoin(appVariant: AppVariant, nativeModule: Module, context: Context) {
     startKoin {
         androidContext(context)
-        modules(appModule(appVariant) + platformModule() + nativeModule)
+        modules(platformModule() + appModule(appVariant) + nativeModule)
     }
 }

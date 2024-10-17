@@ -182,6 +182,9 @@
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause"
     },
+    "Custom message" : {
+
+    },
     "Demonstration" : {
       "comment" : "Possible alert cause"
     },
@@ -316,6 +319,9 @@
 
     },
     "Now at" : {
+
+    },
+    "OFFLINE DETECTED" : {
 
     },
     "Open for more arrivals" : {

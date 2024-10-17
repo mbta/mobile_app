@@ -60,6 +60,7 @@ class NearbyViewModel: ObservableObject {
         self.navigationStack = navigationStack
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
+        self.errorBannerRepository.subscribeToNetworkStatusChanges()
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics

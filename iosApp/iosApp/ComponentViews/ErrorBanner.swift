@@ -61,6 +61,8 @@ struct ErrorBanner: View {
                     }))
                 }
             }
+        case let .networkError(state):
+            IconCard(iconName: "clock.arrow.circlepath", details: Text("OFFLINE DETECTED"))
         case nil:
             // for some reason, .collect on an EmptyView doesn't work
             ZStack {}
