@@ -37,7 +37,7 @@ struct DirectionPicker: View {
                     let isSelected = filter?.directionId == direction
                     let action = { setFilter(.init(routeId: line?.id ?? route.id, directionId: direction)) }
 
-                    Button(action: action) {
+                    let button = Button(action: action) {
                         DirectionLabel(direction: directions[Int(direction)])
                             .padding(8)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -45,6 +45,13 @@ struct DirectionPicker: View {
                     .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
                     .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 6))
+
+                    if isSelected {
+                        button
+                            .accessibilityAddTraits(.isSelected)
+                    } else {
+                        button
+                    }
                 }
             }
             .padding(2)

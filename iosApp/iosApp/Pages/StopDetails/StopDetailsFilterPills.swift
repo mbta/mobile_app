@@ -28,6 +28,7 @@ struct StopDetailsFilterPills: View {
     var setFilter: (StopDetailsFilter?) -> Void
 
     var body: some View {
+        let routePillHint = "Applies a filter so that only arrivals from this route are displayed"
         HStack(spacing: 0) {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -41,6 +42,7 @@ struct StopDetailsFilterPills: View {
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == route.id
                                 )
+                                .accessibilityHint(routePillHint)
                                 .frame(minWidth: 44, minHeight: 44, alignment: .center)
                                 .onTapGesture { tapRoutePill(filterBy) }
                             case let .line(line):
@@ -50,6 +52,7 @@ struct StopDetailsFilterPills: View {
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == line.id
                                 )
+                                .accessibilityHint(routePillHint)
                                 .frame(minWidth: 44, minHeight: 44, alignment: .center)
                                 .onTapGesture { tapRoutePill(filterBy) }
                             }
@@ -78,6 +81,8 @@ struct StopDetailsFilterPills: View {
                         .padding(.vertical, 7)
                         .background(Color.contrast)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .accessibilityLabel("All routes")
+                        .accessibilityHint("Removes selected filter so that arrivals from all routes are displayed")
                 }
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
                 .padding(.trailing, 16)
