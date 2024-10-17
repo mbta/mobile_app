@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct StopResultsView: View {
-    let stops: [SearchResultsContainer.Result]
+    let stops: [SearchViewModel.Result]
     let handleStopTap: (String) -> Void
 
     var body: some View {
@@ -30,7 +30,7 @@ struct StopResultsView: View {
         }
     }
 
-    private func result(_ stop: SearchResultsContainer.Result) -> some View {
+    private func result(_ stop: SearchViewModel.Result) -> some View {
         HStack(spacing: 12) {
             Image(stop.isStation ? .tLogo : .mapStopCloseBUS)
                 .frame(width: 32, height: 32)
@@ -47,6 +47,7 @@ struct StopResultsView: View {
                         }
                     }
                 }
+                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             Spacer()

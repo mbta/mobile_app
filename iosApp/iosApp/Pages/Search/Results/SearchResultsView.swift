@@ -11,11 +11,11 @@ import shared
 import SwiftUI
 
 struct SearchResultsView: View {
-    private var state: SearchResultsContainer.ResultsState?
+    private var state: SearchViewModel.ResultsState?
     private var handleStopTap: (String) -> Void
 
     init(
-        state: SearchResultsContainer.ResultsState?,
+        state: SearchViewModel.ResultsState?,
         handleStopTap: @escaping (String) -> Void
     ) {
         self.state = state
