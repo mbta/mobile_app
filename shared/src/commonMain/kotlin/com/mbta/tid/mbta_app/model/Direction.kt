@@ -7,6 +7,18 @@ data class Direction(
     var destination: String?,
     var id: Int,
 ) {
+    /**
+     * This constructor is used to provide additional context to a Direction to allow for overriding
+     * the destination label in cases where a route or line has branching. We want to display a
+     * different label when you're on the trunk or a branch to match station signage. First, this
+     * checks if any special case overrides should be applied for the provided route, stop, and
+     * direction (ex "Copley & West" at any GL stop upstream of the E and B/C/D fork at Copley). If
+     * no special case is found, fall back to an optional pattern destination, used when a pattern
+     * goes to an atypical destination that doesn't match the route's destination. If one of those
+     * isn't provided, then use the value from route.directionDestinations, which should be accurate
+     * in the majority of typical cases. If this doesn't exist for some reason, fall back to null so
+     * that the direction label will just display the direction name.
+     */
     constructor(
         directionId: Int,
         route: Route,
@@ -16,7 +28,7 @@ data class Direction(
     ) : this(
         name = route.directionNames[directionId] ?: "",
         destination = getSpecialCaseDestination(directionId, route.id, stop?.id, routeStopIds)
-                ?: patternDestination ?: route.directionDestinations[directionId] ?: "",
+                ?: patternDestination ?: route.directionDestinations[directionId],
         directionId
     )
 

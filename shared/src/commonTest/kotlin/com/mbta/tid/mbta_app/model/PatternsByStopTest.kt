@@ -301,8 +301,7 @@ class PatternsByStopTest {
         assertEquals(listOf(alert), patternsByStop.alertsHereFor(1, global))
     }
 
-    @Test
-    fun `resolveRealtimePatternForDirection splits direction groups into headsigns when needed`() {
+    object GroupedGLTestPatterns {
         val objects = ObjectCollectionBuilder()
 
         val line = objects.line()
@@ -473,136 +472,132 @@ class PatternsByStopTest {
                 routePatternEMedford.id to true,
             )
 
-        assertEquals(
-            listOf(
-                RealtimePatterns.ByHeadsign(
-                    routeE,
-                    "Heath Street",
-                    line,
-                    listOf(routePatternEHeath),
-                    upcomingTrips = listOf(upcomingTripEHeath1),
-                    null,
-                    true
-                )
-            ),
-            PatternsByStop.resolveRealtimePatternForDirection(
-                staticPatternsWest,
-                typicalUpcomingTrips,
+        fun resolveWith(
+            staticData: NearbyStaticData.StaticPatterns.ByDirection,
+            upcomingTripsMap: UpcomingTripsMap?
+        ): List<RealtimePatterns> {
+            return PatternsByStop.resolveRealtimePatternForDirection(
+                staticData,
+                upcomingTripsMap,
                 stop.id,
                 null,
                 hasSchedules,
                 true
             )
-        )
+        }
+    }
 
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when only typical trips are predicted with distinct atypical static headsigns in a direction`() {
+        val data = GroupedGLTestPatterns
         assertEquals(
             listOf(
                 RealtimePatterns.ByHeadsign(
-                    routeE,
+                    data.routeE,
                     "Heath Street",
-                    line,
-                    listOf(routePatternEHeath),
-                    upcomingTrips = listOf(upcomingTripEHeath1),
+                    data.line,
+                    listOf(data.routePatternEHeath),
+                    upcomingTrips = listOf(data.upcomingTripEHeath1),
                     null,
                     true
                 )
             ),
-            PatternsByStop.resolveRealtimePatternForDirection(
-                staticPatternsWest,
-                atypicalScheduledTripsMap,
-                stop.id,
-                null,
-                hasSchedules,
-                true
-            )
+            data.resolveWith(data.staticPatternsWest, data.typicalUpcomingTrips)
         )
+    }
 
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when atypical trips are scheduled but not predicted with distinct atypical static headsigns in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByHeadsign(
+                    data.routeE,
+                    "Heath Street",
+                    data.line,
+                    listOf(data.routePatternEHeath),
+                    upcomingTrips = listOf(data.upcomingTripEHeath1),
+                    null,
+                    true
+                )
+            ),
+            data.resolveWith(data.staticPatternsWest, data.atypicalScheduledTripsMap)
+        )
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByDirection when atypical trips are predicted with distinct headsigns in a direction`() {
+        val data = GroupedGLTestPatterns
         assertEquals(
             listOf(
                 RealtimePatterns.ByDirection(
-                    line,
-                    listOf(routeC, routeE),
+                    data.line,
+                    listOf(data.routeC, data.routeE),
                     Direction("West", "Copley & West", 0),
-                    listOf(routePatternCCleveland, routePatternEHeath),
-                    upcomingTrips = listOf(upcomingTripEHeath1, upcomingTripCCleveland1),
+                    listOf(data.routePatternCCleveland, data.routePatternEHeath),
+                    upcomingTrips = listOf(data.upcomingTripEHeath1, data.upcomingTripCCleveland1),
                     null,
                     true
                 )
             ),
-            PatternsByStop.resolveRealtimePatternForDirection(
-                staticPatternsWest,
-                atypicalUpcomingTripsMap,
-                stop.id,
-                null,
-                hasSchedules,
-                true
-            )
+            data.resolveWith(data.staticPatternsWest, data.atypicalUpcomingTripsMap)
         )
+    }
 
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when only typical trips are predicted with the same static headsign in a direction`() {
+        val data = GroupedGLTestPatterns
         assertEquals(
             listOf(
                 RealtimePatterns.ByHeadsign(
-                    routeE,
+                    data.routeE,
                     "Medford/Tufts",
-                    line,
-                    listOf(routePatternEMedford),
-                    upcomingTrips = listOf(upcomingTripEMedford1),
+                    data.line,
+                    listOf(data.routePatternEMedford),
+                    upcomingTrips = listOf(data.upcomingTripEMedford1),
                     null,
                     true
                 )
             ),
-            PatternsByStop.resolveRealtimePatternForDirection(
-                staticPatternsEast,
-                typicalUpcomingTrips,
-                stop.id,
-                null,
-                hasSchedules,
-                true
-            )
+            data.resolveWith(data.staticPatternsEast, data.typicalUpcomingTrips)
         )
+    }
 
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when atypical trips are scheduled but not predicted with the same static headsign in a direction`() {
+        val data = GroupedGLTestPatterns
         assertEquals(
             listOf(
                 RealtimePatterns.ByHeadsign(
-                    routeE,
+                    data.routeE,
                     "Medford/Tufts",
-                    line,
-                    listOf(routePatternEMedford),
-                    upcomingTrips = listOf(upcomingTripEMedford1),
+                    data.line,
+                    listOf(data.routePatternEMedford),
+                    upcomingTrips = listOf(data.upcomingTripEMedford1),
                     null,
                     true
                 )
             ),
-            PatternsByStop.resolveRealtimePatternForDirection(
-                staticPatternsEast,
-                atypicalScheduledTripsMap,
-                stop.id,
-                null,
-                hasSchedules,
-                true
-            )
+            data.resolveWith(data.staticPatternsEast, data.atypicalScheduledTripsMap)
         )
+    }
 
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByDirection when atypical trips are predicted with the same headsign in a direction`() {
+        val data = GroupedGLTestPatterns
         assertEquals(
             listOf(
                 RealtimePatterns.ByDirection(
-                    line,
-                    listOf(routeC, routeE),
+                    data.line,
+                    listOf(data.routeC, data.routeE),
                     Direction("East", "Medford/Tufts", 1),
-                    listOf(routePatternCMedford, routePatternEMedford),
-                    upcomingTrips = listOf(upcomingTripEMedford1, upcomingTripCMedford1),
+                    listOf(data.routePatternCMedford, data.routePatternEMedford),
+                    upcomingTrips = listOf(data.upcomingTripEMedford1, data.upcomingTripCMedford1),
                     null,
                     true
                 )
             ),
-            PatternsByStop.resolveRealtimePatternForDirection(
-                staticPatternsEast,
-                atypicalUpcomingTripsMap,
-                stop.id,
-                null,
-                hasSchedules,
-                true
-            )
+            data.resolveWith(data.staticPatternsEast, data.atypicalUpcomingTripsMap)
         )
     }
 }

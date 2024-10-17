@@ -133,6 +133,10 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     } else {
                         when (val it = typicalHere.first()) {
                             is StaticPatterns.ByDirection -> it.direction
+                            // When buildStopPatternsForLine creates a StaticPatterns.ByHeadsign,
+                            // it should always set it.direction to a non-null value, this fallback
+                            // is only here to make the compiler happy and do something sensible if
+                            // there are possible edge cases where one is set to null.
                             is StaticPatterns.ByHeadsign -> it.direction
                                     ?: Direction(
                                         it.route.directionNames[directionId] ?: "",
@@ -326,7 +330,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             )
         }
 
-        fun buildStopPatternsForLine(
+        private fun buildStopPatternsForLine(
             stop: Stop,
             patterns: Map<Route, List<RoutePattern>>,
             line: Line,
