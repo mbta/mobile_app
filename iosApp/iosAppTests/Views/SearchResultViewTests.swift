@@ -73,8 +73,9 @@ final class SearchResultViewTests: XCTestCase {
         let sut = SearchOverlay(
             searchObserver: searchObserver,
             nearbyVM: NearbyViewModel(),
-            searchVM: SearchViewModel(),
-            searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            searchVM: SearchViewModel(
+                searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            )
         )
 
         ViewHosting.host(view: sut)

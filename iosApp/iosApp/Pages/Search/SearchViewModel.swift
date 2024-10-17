@@ -139,19 +139,7 @@ class SearchViewModel: ObservableObject {
     private func mapStopIdToResult(id: String) -> Result? {
         guard let globalResponse, let stop = globalResponse.stops[id] else { return nil }
         let isStation = stop.locationType == .station
-
-        let routePills: [RoutePillSpec] = globalResponse.routePatterns
-            .compactMap { routePattern -> Route? in
-                let tripId = routePattern.value.representativeTripId
-                return if let trip = globalResponse.trips[tripId],
-                          trip.stopIds?.contains(stop.id) == true ||
-                          trip.stopIds?.contains(where: stop.childStopIds.contains) == true &&
-                          routePattern.value.typicality == .typical {
-                    globalResponse.routes[trip.routeId]
-                } else {
-                    nil
-                }
-            }
+        let routePills: [RoutePillSpec] = globalResponse.getRoutesFor(stopId: id)
             .sorted(by: { $0.sortOrder < $1.sortOrder })
             .map { route -> RoutePillSpec in
                 let line: Line? = if let lineId = route.lineId { globalResponse.lines[lineId] } else { nil }
