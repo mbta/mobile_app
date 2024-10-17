@@ -18,18 +18,18 @@ struct TripDetailsStopListSplitView: View {
     var body: some View {
         List {
             if !splitStops.collapsedStops.isEmpty {
-                DisclosureGroup(LocalizedStringKey("\(splitStops.collapsedStops.count, specifier: "%ld") stops")) {
+                DisclosureGroup(LocalizedStringKey("\(splitStops.collapsedStops.count, specifier: "%ld") stops away")) {
                     ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
                         TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
                     }
-                }
+                }.padding(.bottom, 16)
             }
             TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink, routeType: routeType)
                 .listRowBackground(Color.keyInverse.opacity(0.15))
             ForEach(splitStops.followingStops, id: \.stopSequence) { stop in
                 TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
             }
-        }
+        }.listStyle(.plain)
     }
 }
 

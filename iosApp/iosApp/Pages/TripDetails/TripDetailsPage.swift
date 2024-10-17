@@ -69,7 +69,7 @@ struct TripDetailsPage: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             header
             if let trip, let globalResponse {
                 let vehicle = vehicleResponse?.vehicle
@@ -80,7 +80,7 @@ struct TripDetailsPage: View {
                     vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
                 ) {
                     vehicleCardView
-                    ErrorBanner(errorBannerVM)
+                    ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                     if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
                         targetStopSequence: Int32(stopSequence),

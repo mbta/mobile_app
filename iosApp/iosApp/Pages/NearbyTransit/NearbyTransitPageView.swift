@@ -35,11 +35,11 @@ struct NearbyTransitPageView: View {
     var body: some View {
         ZStack {
             Color.fill1.ignoresSafeArea(.all)
-            VStack {
+            VStack(spacing: 16) {
                 SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
-                ErrorBanner(errorBannerVM)
+                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                 if viewportProvider.isManuallyCentering {
-                    LoadingCard { Text("select location") }
+                    LoadingCard { Text("select location") }.padding(.horizontal, 16).padding(.bottom, 16)
                 } else {
                     NearbyTransitView(
                         getNearby: { global, location in

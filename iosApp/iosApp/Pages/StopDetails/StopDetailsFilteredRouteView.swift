@@ -186,11 +186,9 @@ struct StopDetailsFilteredRouteView: View {
                         .withRoundedBorder()
                     }
                     .padding([.top, .horizontal], 8)
-                    .padding([.bottom], 32)
+                    .padding([.bottom], 48)
                 }
-
             }.ignoresSafeArea(.all)
-
         } else {
             EmptyView()
         }

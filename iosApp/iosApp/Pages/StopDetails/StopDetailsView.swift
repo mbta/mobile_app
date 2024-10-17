@@ -73,13 +73,13 @@ struct StopDetailsView: View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
-                VStack {
+                VStack(spacing: 16) {
                     SheetHeader(
                         title: stop.name,
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
-                    ErrorBanner(errorBannerVM)
+                    ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
@@ -87,9 +87,9 @@ struct StopDetailsView: View {
                             filter: filter,
                             setFilter: setFilter
                         )
-                        .padding([.bottom], 8)
                     }
                 }
+                .padding(.bottom, 16)
                 .border(Color.halo.opacity(0.15), width: 2)
 
                 if let departures {

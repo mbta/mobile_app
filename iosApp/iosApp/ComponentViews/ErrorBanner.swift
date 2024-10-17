@@ -12,6 +12,7 @@ import SwiftUI
 struct ErrorBanner: View {
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
 
+    let minHeight = 60.0
     let inspection = Inspection<Self>()
 
     init(_ errorBannerVM: ErrorBannerViewModel) {
@@ -26,38 +27,28 @@ struct ErrorBanner: View {
         let state = errorBannerVM.errorState
         switch onEnum(of: state) {
         case let .dataError(state):
-            IconCard(
-                iconName: "xmark.octagon",
-                details: Text("Error loading data")
-            ) {
-                AnyView(Button(action: {
-                    repo.clearState()
+            ErrorCard { Text("Error loading data") }
+                .refreshable(label: "Reload data") {
+                    errorBannerVM.clearState()
                     state.action()
-                }, label: {
-                    Image(systemName: "arrow.clockwise")
-                        .accessibilityLabel("Reload data")
-                }))
-            }
+                }
+                .frame(minHeight: minHeight)
         case let .stalePredictions(state):
             if errorBannerVM.loadingWhenPredictionsStale {
-                ProgressView()
+                ProgressView().frame(minHeight: minHeight)
             } else {
-                IconCard(
-                    iconName: "clock.arrow.circlepath",
-                    details: Text("Updated \(state.minutesAgo(), specifier: "%ld") minutes ago")
-                ) {
-                    AnyView(Button(action: {
-                        repo.clearState()
-                        state.action()
-                    }, label: {
-                        Image(systemName: "arrow.clockwise")
-                            .accessibilityLabel("Refresh predictions")
-                    }))
+                ErrorCard {
+                    Text("Updated \(state.minutesAgo(), specifier: "%ld") minutes ago")
                 }
+                .refreshable(label: "Refresh predictions") {
+                    errorBannerVM.clearState()
+                    state.action()
+                }
+                .frame(minHeight: minHeight)
             }
         case nil:
             // for some reason, .collect on an EmptyView doesn't work
-            ZStack {}
+            EmptyView()
         }
     }
 }

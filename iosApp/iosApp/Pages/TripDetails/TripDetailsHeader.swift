@@ -30,7 +30,8 @@ struct TripDetailsHeader: View {
             ActionButton(kind: .close, action: onClose)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
+        .padding(.horizontal, 16)
+        .padding(.top, 16)
     }
 
     var liveIndicator: some View {
