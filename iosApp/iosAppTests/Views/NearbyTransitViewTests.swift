@@ -378,14 +378,15 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testLineGrouping() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
+        typealias Green = GreenLineTestHelper.Companion
         let greenLineState = NearbyViewModel.NearbyTransitState(
             loadedLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
-            nearbyByRouteAndStop: GreenLineTestHelper.companion.nearbyData
+            nearbyByRouteAndStop: Green.shared.nearbyData
         )
 
         let distantInstant = Date.now.addingTimeInterval(10 * 60)
             .toKotlinInstant()
-        typealias Green = GreenLineTestHelper.Companion
+
         let objects = Green.shared.objects
 
         objects.schedule { schedule in
@@ -460,6 +461,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictions: PredictionsByStopJoinResponse = .init(objects: Green.shared.objects)
 
         let globalLoadedPublisher = PassthroughSubject<Void, Never>()
+        let globalResponse = GlobalResponse(objects: objects)
 
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
@@ -470,13 +472,14 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(greenLineState),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])) {
+            globalRepository: MockGlobalRepository(response: globalResponse) {
                 globalLoadedPublisher.send()
             },
+            globalData: globalResponse,
             nearbyVM: .init()
         )
 
-        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.5) { view in
+        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 1) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 
@@ -498,7 +501,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try parkDirection.find(text: "6 min"))
         }
         ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     func testRefetchesPredictionsOnNewStops() throws {

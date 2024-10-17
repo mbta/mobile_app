@@ -491,7 +491,7 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 line(line, listOf(route1, route2)) {
                     stop(stop1, routes = listOf(route1), directions = listOf(bDir, parkDir)) {
-                        headsign(route1, "Boston College", listOf(route1rp1))
+                        headsign(route1, "Boston College", listOf(route1rp1), direction = bDir)
                     }
                     stop(
                         stop3,
@@ -501,7 +501,7 @@ class NearbyResponseTest {
                         direction(parkDir, listOf(route1, route2), listOf(route1rp2, route2rp2))
                     }
                     stop(stop2, listOf(route2), directions = listOf(cDir, parkDir)) {
-                        headsign(route2, "Cleveland Circle", listOf(route2rp1))
+                        headsign(route2, "Cleveland Circle", listOf(route2rp1), direction = cDir)
                     }
                 }
             },
@@ -670,6 +670,131 @@ class NearbyResponseTest {
                 }
             },
             NearbyStaticData(global, nearby)
+        )
+    }
+
+    @Test
+    fun `StopPatterns ForLine groupedDirection helper returns expected Direction objects`() {
+        val objects = ObjectCollectionBuilder()
+        val route1 =
+            objects.route {
+                directionNames = listOf("North", "South")
+                directionDestinations = listOf("Unique Place", "Shared Place")
+            }
+        val route2 =
+            objects.route {
+                directionNames = listOf("North", "South")
+                directionDestinations = listOf("Other Unique Place", "Shared Place")
+            }
+        val line = objects.line()
+        val headsignPattern1Route1 =
+            objects.routePattern(route1) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+            }
+        val headsignPattern2Route1 =
+            objects.routePattern(route1) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+            }
+        val headsignPattern3Route1 =
+            objects.routePattern(route1) {
+                typicality = RoutePattern.Typicality.Atypical
+                directionId = 0
+            }
+        val headsignPattern1Route2 =
+            objects.routePattern(route2) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+            }
+        val headsignPattern2Route2 =
+            objects.routePattern(route2) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+            }
+        val staticByHeadsign1 =
+            NearbyStaticData.StaticPatterns.ByHeadsign(
+                route1,
+                "Unique Place",
+                line,
+                listOf(headsignPattern1Route1),
+                emptySet(),
+            )
+        val staticByHeadsign1Atypical =
+            NearbyStaticData.StaticPatterns.ByHeadsign(
+                route1,
+                "Third Unique Place",
+                line,
+                listOf(headsignPattern3Route1),
+                emptySet(),
+            )
+        val staticByHeadsign2 =
+            NearbyStaticData.StaticPatterns.ByHeadsign(
+                route2,
+                "Other Unique Place",
+                line,
+                listOf(headsignPattern1Route2),
+                emptySet(),
+            )
+        val overriddenDirection = Direction("South", "Overridden Value", 0)
+        val staticByHeadsign2WithDirection =
+            NearbyStaticData.StaticPatterns.ByHeadsign(
+                route2,
+                "Other Unique Place",
+                line,
+                listOf(headsignPattern1Route2),
+                emptySet(),
+                overriddenDirection
+            )
+        val sharedDirection = Direction("South", "Shared Place", 1)
+        val staticByDirection =
+            NearbyStaticData.StaticPatterns.ByDirection(
+                line,
+                listOf(route1, route2),
+                sharedDirection,
+                listOf(headsignPattern2Route1, headsignPattern2Route2),
+                emptySet()
+            )
+
+        assertEquals(
+            Direction("North", null, 0),
+            NearbyStaticData.StopPatterns.ForLine.groupedDirection(
+                listOf(staticByHeadsign1, staticByHeadsign2, staticByDirection),
+                listOf(route1, route2),
+                0
+            )
+        )
+        assertEquals(
+            Direction("North", "Other Unique Place", 0),
+            NearbyStaticData.StopPatterns.ForLine.groupedDirection(
+                listOf(staticByHeadsign1Atypical, staticByHeadsign2, staticByDirection),
+                listOf(route1, route2),
+                0
+            )
+        )
+        assertEquals(
+            Direction("North", "Unique Place", 0),
+            NearbyStaticData.StopPatterns.ForLine.groupedDirection(
+                listOf(staticByHeadsign1Atypical, staticByDirection),
+                listOf(route1, route2),
+                0
+            )
+        )
+        assertEquals(
+            overriddenDirection,
+            NearbyStaticData.StopPatterns.ForLine.groupedDirection(
+                listOf(staticByHeadsign2WithDirection, staticByDirection),
+                listOf(route1, route2),
+                0
+            )
+        )
+        assertEquals(
+            sharedDirection,
+            NearbyStaticData.StopPatterns.ForLine.groupedDirection(
+                listOf(staticByHeadsign1, staticByHeadsign2, staticByDirection),
+                listOf(route1, route2),
+                1
+            )
         )
     }
 

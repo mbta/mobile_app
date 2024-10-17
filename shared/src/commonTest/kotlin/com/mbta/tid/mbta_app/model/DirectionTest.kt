@@ -152,4 +152,73 @@ class DirectionTest {
         assertEquals("Heath Street", directions[0].destination)
         assertEquals("Gov Ctr & North", directions[1].destination)
     }
+
+    @Test
+    fun `atypical headsigns override route destination`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { id = "place-bckhl" }
+        objects.stop {
+            id = "70199"
+            parentStationId = "place-pktrm"
+        }
+        val route =
+            objects.route {
+                id = "Green-E"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Heath Street", "Medford/Tufts")
+            }
+        val routePattern1 =
+            objects.routePattern(route) {
+                id = "rp1"
+                representativeTripId = "trp1"
+                directionId = 0
+                typicality = RoutePattern.Typicality.Atypical
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                id = "rp2"
+                representativeTripId = "trp2"
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val routePattern3 =
+            objects.routePattern(route) {
+                id = "rp3"
+                representativeTripId = "trp3"
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+            }
+        objects.trip(routePattern1) {
+            id = "trp1"
+            headsign = "Other Headsign"
+            stopIds = listOf("place-mdftf", "place-armnl", "place-bckhl", "place-hsmnl")
+        }
+        objects.trip(routePattern2) {
+            id = "trp2"
+            headsign = "Heath Street"
+            stopIds = listOf("place-mdftf", "place-prmnl", "place-bckhl", "place-hsmnl")
+        }
+        objects.trip(routePattern3) {
+            id = "trp3"
+            headsign = "Medford/Tufts"
+            stopIds = listOf("place-hsmnl", "place-bckhl", "70199", "place-mdftf")
+        }
+
+        val patterns = listOf(routePattern1, routePattern2, routePattern3)
+        val globalResponse =
+            GlobalResponse(
+                objects = objects,
+                patternIdsByStop = mapOf(Pair(stop.id, patterns.map { pattern -> pattern.id }))
+            )
+
+        val directionRp1 =
+            Direction.getDirectionForPattern(globalResponse, stop, route, routePattern1)
+        val directionRp2 =
+            Direction.getDirectionForPattern(globalResponse, stop, route, routePattern2)
+        val directionRp3 =
+            Direction.getDirectionForPattern(globalResponse, stop, route, routePattern3)
+        assertEquals("Other Headsign", directionRp1.destination)
+        assertEquals("Heath Street", directionRp2.destination)
+        assertEquals("Gov Ctr & North", directionRp3.destination)
+    }
 }

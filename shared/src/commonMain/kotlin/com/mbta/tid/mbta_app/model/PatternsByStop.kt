@@ -38,19 +38,21 @@ data class PatternsByStop(
         },
         staticData.stop,
         staticData.patterns
-            .map {
+            .flatMap {
                 when (it) {
                     is NearbyStaticData.StaticPatterns.ByHeadsign ->
-                        RealtimePatterns.ByHeadsign(
-                            it,
-                            upcomingTripsMap,
-                            staticData.stop.id,
-                            alerts,
-                            hasSchedulesTodayByPattern,
-                            allDataLoaded
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                it,
+                                upcomingTripsMap,
+                                staticData.stop.id,
+                                alerts,
+                                hasSchedulesTodayByPattern,
+                                allDataLoaded
+                            )
                         )
                     is NearbyStaticData.StaticPatterns.ByDirection ->
-                        RealtimePatterns.ByDirection(
+                        resolveRealtimePatternForDirection(
                             it,
                             upcomingTripsMap,
                             staticData.stop.id,
@@ -98,5 +100,173 @@ data class PatternsByStop(
                     .toSet()
             }
             .distinct()
+    }
+
+    companion object {
+        // Even if a direction can serve multiple routes according to the static data, it's possible
+        // that only one of those routes is typical, in which case we don't want to display it as a
+        // grouped direction in the UI. If there are only predicted trips on a single route, this
+        // will split the grouped direction up into as many headsign rows as there are headsigns.
+        fun resolveRealtimePatternForDirection(
+            staticData: NearbyStaticData.StaticPatterns.ByDirection,
+            upcomingTripsMap: UpcomingTripsMap?,
+            parentStopId: String,
+            alerts: Collection<Alert>?,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
+        ): List<RealtimePatterns> {
+            val typicalPatternsByRoute = getTypicalPatternsByRoute(staticData)
+
+            // If data hasn't loaded, or there are more than one typical routes in this direction,
+            // we never want to split into individual headsign rows.
+            if (!allDataLoaded || typicalPatternsByRoute.size > 1) {
+                return listOf(
+                    RealtimePatterns.ByDirection(
+                        staticData,
+                        upcomingTripsMap,
+                        parentStopId,
+                        alerts,
+                        hasSchedulesTodayByPattern,
+                        allDataLoaded
+                    )
+                )
+            }
+
+            val patternsById = staticData.patterns.associateBy { it.id }
+            val headsignsAndPatternsToDisplayByRoute =
+                getHeadsignsAndPatternsToDisplayByRoute(
+                    staticData,
+                    upcomingTripsMap,
+                    parentStopId,
+                    patternsById,
+                    typicalPatternsByRoute
+                )
+
+            // If there is only a single route with predicted or typical trips, we want to break up
+            // the grouped direction instead into individual headsign rows.
+            val firstDisplayedRoute =
+                staticData.routes.firstOrNull {
+                    it.id == headsignsAndPatternsToDisplayByRoute.keys.firstOrNull()
+                }
+            if (headsignsAndPatternsToDisplayByRoute.size == 1 && firstDisplayedRoute != null) {
+                val headsignsToDisplay =
+                    (headsignsAndPatternsToDisplayByRoute[firstDisplayedRoute.id] ?: emptyMap())
+                return headsignsToDisplay.map { (headsign, patternIds) ->
+                    val patternsForHeadsign = patternIds.mapNotNull { patternsById[it] }
+                    RealtimePatterns.ByHeadsign(
+                        NearbyStaticData.StaticPatterns.ByHeadsign(
+                            firstDisplayedRoute,
+                            headsign,
+                            staticData.line,
+                            patternsForHeadsign,
+                            staticData.stopIds
+                        ),
+                        upcomingTripsMap,
+                        parentStopId,
+                        alerts,
+                        hasSchedulesTodayByPattern,
+                        allDataLoaded
+                    )
+                }
+            }
+
+            return listOf(
+                RealtimePatterns.ByDirection(
+                    staticData,
+                    upcomingTripsMap,
+                    parentStopId,
+                    alerts,
+                    hasSchedulesTodayByPattern,
+                    allDataLoaded
+                )
+            )
+        }
+
+        private fun getHeadsignsAndPatternsToDisplayByRoute(
+            staticData: NearbyStaticData.StaticPatterns.ByDirection,
+            upcomingTripsMap: UpcomingTripsMap?,
+            parentStopId: String,
+            patternsById: Map<String, RoutePattern>,
+            typicalPatternsByRoute: Map<String, List<String>>,
+        ): Map<String, Map<String, Set<String?>>> {
+            val tripsByPattern = getTripsByPattern(upcomingTripsMap, patternsById, parentStopId)
+            val predictedPatternsByRoute = getPredictedPatternsByRoute(staticData, tripsByPattern)
+            val upcomingPatternsByRouteAndHeadsign =
+                tripsByPattern.values
+                    .flatten()
+                    .groupBy({ it.trip.routeId }, { it.trip.headsign to it.trip.routePatternId })
+                    .mapValues { routeEntry ->
+                        routeEntry.value.groupBy({ it.first }, { it.second })
+                    }
+
+            // We don't have access to global data or representative trips here, so the only way
+            // that we can determine headsigns is by looking at the actual upcoming trips.
+            return upcomingPatternsByRouteAndHeadsign
+                .mapNotNull {
+                    val headsignsToDisplay =
+                        it.value
+                            .mapNotNull { headsignsToPatterns ->
+                                val patternsToDisplay =
+                                    (typicalPatternsByRoute[it.key].orEmpty() +
+                                            predictedPatternsByRoute[it.key].orEmpty())
+                                        .toSet()
+                                        .intersect(headsignsToPatterns.value.toSet())
+                                if (patternsToDisplay.isEmpty()) {
+                                    null
+                                } else {
+                                    headsignsToPatterns.key to patternsToDisplay
+                                }
+                            }
+                            .toMap()
+                    if (headsignsToDisplay.isEmpty()) {
+                        null
+                    } else {
+                        it.key to headsignsToDisplay
+                    }
+                }
+                .toMap()
+        }
+
+        private fun getPredictedPatternsByRoute(
+            staticData: NearbyStaticData.StaticPatterns.ByDirection,
+            tripsByPattern: Map<String, List<UpcomingTrip>>
+        ): Map<String, List<String>> {
+            return staticData.patterns
+                .filter { tripsByPattern[it.id]?.any { trip -> trip.prediction != null } == true }
+                .groupBy({ it.routeId }, { it.id })
+        }
+
+        private fun getTripsByPattern(
+            upcomingTripsMap: UpcomingTripsMap?,
+            patternsById: Map<String, RoutePattern>,
+            parentStopId: String,
+        ): Map<String, List<UpcomingTrip>> {
+            return upcomingTripsMap
+                .orEmpty()
+                .mapNotNull {
+                    when (val key = it.key) {
+                        is RealtimePatterns.UpcomingTripKey.ByRoutePattern ->
+                            if (
+                                key.routePatternId != null &&
+                                    patternsById.containsKey(key.routePatternId) &&
+                                    key.parentStopId == parentStopId
+                            ) {
+                                key.routePatternId to it.value
+                            } else {
+                                null
+                            }
+                        else -> null
+                    }
+                }
+                .toMap()
+        }
+
+        private fun getTypicalPatternsByRoute(
+            staticData: NearbyStaticData.StaticPatterns.ByDirection
+        ): Map<String, List<String>> {
+            return staticData.patterns
+                .filter { it.typicality == RoutePattern.Typicality.Typical }
+                .groupBy({ it.routeId }, { it.id })
+        }
     }
 }

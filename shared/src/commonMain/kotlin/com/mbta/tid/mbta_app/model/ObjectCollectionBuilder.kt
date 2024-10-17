@@ -380,19 +380,24 @@ class ObjectCollectionBuilder {
 
     fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(vehicles, VehicleBuilder(), block)
 
-    fun upcomingTrip(schedule: Schedule) =
-        UpcomingTrip(trips.getValue(schedule.tripId), schedule, null, null)
+    fun upcomingTrip(schedule: Schedule, prediction: Prediction, vehicle: Vehicle): UpcomingTrip {
+        check(schedule.tripId == prediction.tripId)
+        return UpcomingTrip(trips.getValue(prediction.tripId), schedule, prediction, vehicle)
+    }
 
     fun upcomingTrip(schedule: Schedule, prediction: Prediction): UpcomingTrip {
         check(schedule.tripId == prediction.tripId)
         return UpcomingTrip(trips.getValue(prediction.tripId), schedule, prediction, null)
     }
 
-    fun upcomingTrip(prediction: Prediction) =
-        UpcomingTrip(trips.getValue(prediction.tripId), null, prediction, null)
-
     fun upcomingTrip(prediction: Prediction, vehicle: Vehicle) =
         UpcomingTrip(trips.getValue(prediction.tripId), null, prediction, vehicle)
+
+    fun upcomingTrip(schedule: Schedule) =
+        UpcomingTrip(trips.getValue(schedule.tripId), schedule, null, null)
+
+    fun upcomingTrip(prediction: Prediction) =
+        UpcomingTrip(trips.getValue(prediction.tripId), null, prediction, null)
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
         source: MutableMap<String, Built>,
