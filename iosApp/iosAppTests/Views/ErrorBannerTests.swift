@@ -47,7 +47,7 @@ final class ErrorBannerTests: XCTestCase {
         wait(for: [callsAction], timeout: 1)
     }
 
-    func testLoadingWhenPredictionsStale() throws {
+    @MainActor func testLoadingWhenPredictionsStale() throws {
         let sut = ErrorBanner(
             loadingWhenPredictionsStale: true,
             repo: MockErrorBannerStateRepository(state: .StalePredictions(
