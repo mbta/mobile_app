@@ -57,6 +57,9 @@ struct SearchResultsContainer: View {
             searchVM.determineStateFor(query: query)
             didChange?(self)
         }
+        .onDisappear {
+            searchVM.resultsState = nil
+        }
     }
 }
 
