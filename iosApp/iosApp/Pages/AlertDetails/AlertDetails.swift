@@ -150,7 +150,10 @@ struct AlertDetails: View {
                 },
                 label: {
                     HStack(alignment: .center, spacing: 16) {
-                        Text("**\(affectedStops.count)** affected stops").multilineTextAlignment(.leading)
+                        Text(
+                            "**\(affectedStops.count)** affected stops",
+                            comment: "The number of stops affected by an alert"
+                        ).multilineTextAlignment(.leading)
                         Spacer()
                         Image(.faChevronRight)
                             .resizable()
