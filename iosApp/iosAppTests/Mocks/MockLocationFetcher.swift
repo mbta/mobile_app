@@ -25,9 +25,7 @@ class MockLocationFetcher: LocationFetcher {
         handleStartUpdatingLocation?()
     }
 
-    func requestWhenInUseAuthorization() {
-        XCTFail("should not have requested when-in-use authorization")
-    }
+    func requestWhenInUseAuthorization() {}
 
     func updateLocations(locations: [CLLocation]) {
         locationFetcherDelegate?.locationFetcher(self, didUpdateLocations: locations)

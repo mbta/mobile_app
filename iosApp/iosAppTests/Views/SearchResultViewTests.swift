@@ -98,7 +98,7 @@ final class SearchResultViewTests: XCTestCase {
         searchObserver.isFocused = false
         XCTAssertNotNil(try sut.inspect().find(SearchResultsView.self))
         // When the search field is cleared, the field should be refocused
-        try sut.inspect().find(SearchField.self).find(ActionButton.self).button().tap()
+        try sut.inspect().find(SearchField.self).find(ActionButton.self).implicitAnyView().button().tap()
         XCTAssertThrowsError(try sut.inspect().find(SearchField.self).find(ActionButton.self))
         XCTAssert(searchObserver.isSearching)
         XCTAssertNotNil(try sut.inspect().find(SearchResultsView.self))

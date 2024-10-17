@@ -328,6 +328,7 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
+    @MainActor
     func testUpdatesDeparturesOnPredictionsChange() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()

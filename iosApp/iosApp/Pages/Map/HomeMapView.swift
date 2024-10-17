@@ -106,6 +106,9 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
+            .onAppear {
+                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+            }
             .onDisappear {
                 mapVM.layerManager = nil
             }

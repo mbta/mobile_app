@@ -37,7 +37,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
 
@@ -55,9 +56,11 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 
@@ -74,7 +77,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [joinAlertsExp], timeout: 5)
     }
 
@@ -89,7 +93,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.background)
         wait(for: [leavesAlertsExp], timeout: 5)
     }
 
@@ -112,13 +117,14 @@ final class ContentViewTests: XCTestCase {
         let fakeVM = FakeContentVM(
             configMapboxCallback: { tokenConfigExpectation.fulfill() }
         )
-        let sut = ContentView(contentVM: fakeVM)
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
 
-        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        ViewHosting.host(view: sut)
 
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
-        try sut.inspect().vStack()
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+            .vStack()
             .callOnChange(newValue: newConfig)
         wait(for: [tokenConfigExpectation], timeout: 5)
     }
