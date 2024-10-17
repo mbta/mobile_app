@@ -17,6 +17,7 @@ struct TripDetailsPage: View {
     let routeId: String
     let target: TripDetailsTarget?
 
+    @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
     var globalRepository: IGlobalRepository
@@ -29,9 +30,6 @@ struct TripDetailsPage: View {
     @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
 
-    @State var isReturningFromBackground = false
-
-    var errorBannerRepository: IErrorBannerStateRepository
     let analytics: TripDetailsAnalytics
 
     @State var now = Date.now.toKotlinInstant()
@@ -47,26 +45,26 @@ struct TripDetailsPage: View {
         vehicleId: String,
         routeId: String,
         target: TripDetailsTarget?,
+        errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle,
-        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         analytics: TripDetailsAnalytics = AnalyticsProvider.shared
     ) {
         self.tripId = tripId
         self.vehicleId = vehicleId
         self.routeId = routeId
         self.target = target
+        self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.globalRepository = globalRepository
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
-        self.errorBannerRepository = errorBannerRepository
         self.analytics = analytics
     }
 
@@ -82,7 +80,7 @@ struct TripDetailsPage: View {
                     vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
                 ) {
                     vehicleCardView
-                    ErrorBanner(loadingWhenPredictionsStale: isReturningFromBackground)
+                    ErrorBanner(errorBannerVM)
                     if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                         targetStopId: target.stopId,
                         targetStopSequence: Int32(stopSequence),
@@ -142,7 +140,7 @@ struct TripDetailsPage: View {
             onInactive: leaveRealtime,
             onBackground: {
                 leaveRealtime()
-                isReturningFromBackground = true
+                errorBannerVM.loadingWhenPredictionsStale = true
             }
         )
     }
@@ -156,7 +154,7 @@ struct TripDetailsPage: View {
     private func loadGlobalData() {
         Task {
             await fetchApi(
-                errorBannerRepository,
+                errorBannerVM.errorRepository,
                 errorKey: "TripDetailsPage.loadGlobalData",
                 getData: globalRepository.getGlobalData,
                 onSuccess: { globalResponse = $0 },
@@ -168,7 +166,7 @@ struct TripDetailsPage: View {
     private func loadTripSchedules() {
         Task {
             await fetchApi(
-                errorBannerRepository,
+                errorBannerVM.errorRepository,
                 errorKey: "TripDetailsPage.loadTripSchedules",
                 getData: { try await tripRepository.getTripSchedules(tripId: tripId) },
                 onSuccess: { tripSchedulesResponse = $0 },
@@ -183,10 +181,10 @@ struct TripDetailsPage: View {
             let errorKey = "TripDetailsPage.loadTrip"
             switch onEnum(of: response) {
             case let .ok(okResponse):
-                errorBannerRepository.clearDataError(key: errorKey)
+                errorBannerVM.errorRepository.clearDataError(key: errorKey)
                 trip = okResponse.data.trip
             case .error:
-                errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                errorBannerVM.errorRepository.setDataError(key: errorKey, action: loadEverything)
                 trip = nil
             }
         }
@@ -205,7 +203,7 @@ struct TripDetailsPage: View {
     private func joinPredictions(tripId: String) {
         tripPredictionsRepository.connect(tripId: tripId) { outcome in
             DispatchQueue.main.async {
-                isReturningFromBackground = false
+                errorBannerVM.loadingWhenPredictionsStale = false
                 // no error handling since persistent errors cause stale predictions
                 switch onEnum(of: outcome) {
                 case let .ok(result): tripPredictions = result.data
@@ -226,11 +224,11 @@ struct TripDetailsPage: View {
                 let errorKey = "TripDetailsPage.joinVehicle"
                 switch onEnum(of: outcome) {
                 case let .ok(result):
-                    errorBannerRepository.clearDataError(key: errorKey)
+                    errorBannerVM.errorRepository.clearDataError(key: errorKey)
                     vehicleResponse = result.data
                     mapVM.selectedVehicle = result.data.vehicle
                 case .error:
-                    errorBannerRepository.setDataError(key: errorKey, action: loadEverything)
+                    errorBannerVM.errorRepository.setDataError(key: errorKey, action: loadEverything)
                     vehicleResponse = nil
                 }
             }
@@ -246,7 +244,7 @@ struct TripDetailsPage: View {
 
     private func checkPredictionsStale() {
         if let lastPredictions = tripPredictionsRepository.lastUpdated {
-            errorBannerRepository.checkPredictionsStale(
+            errorBannerVM.errorRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(tripPredictions?.predictionQuantity() ?? 0),
                 action: {

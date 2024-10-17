@@ -10,26 +10,20 @@ import shared
 import SwiftUI
 
 struct ErrorBanner: View {
-    var repo: IErrorBannerStateRepository
-    @State var state: ErrorBannerState?
-
-    let loadingWhenPredictionsStale: Bool
+    @ObservedObject var errorBannerVM: ErrorBannerViewModel
 
     let inspection = Inspection<Self>()
 
-    init(loadingWhenPredictionsStale: Bool, repo: IErrorBannerStateRepository = RepositoryDI().errorBanner) {
-        self.loadingWhenPredictionsStale = loadingWhenPredictionsStale
-        self.repo = repo
-        state = repo.state.value
+    init(_ errorBannerVM: ErrorBannerViewModel) {
+        self.errorBannerVM = errorBannerVM
     }
 
     var body: some View {
-        content
-            .collect(flow: repo.state, into: $state)
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        content.onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder private var content: some View {
+        let state = errorBannerVM.errorState
         switch onEnum(of: state) {
         case let .dataError(state):
             IconCard(
@@ -45,7 +39,7 @@ struct ErrorBanner: View {
                 }))
             }
         case let .stalePredictions(state):
-            if loadingWhenPredictionsStale {
+            if errorBannerVM.loadingWhenPredictionsStale {
                 ProgressView()
             } else {
                 IconCard(
@@ -70,14 +64,20 @@ struct ErrorBanner: View {
 
 #Preview {
     VStack(spacing: 16) {
-        ErrorBanner(loadingWhenPredictionsStale: false, repo: MockErrorBannerStateRepository(
+        ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
             state: .DataError(action: {})
-        ))
-        ErrorBanner(loadingWhenPredictionsStale: false, repo: MockErrorBannerStateRepository(
+        )))
+        ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
             state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})
-        ))
-        ErrorBanner(loadingWhenPredictionsStale: true, repo: MockErrorBannerStateRepository(
-            state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})
+        )))
+        ErrorBanner(ErrorBannerViewModel(
+            errorRepository: MockErrorBannerStateRepository(
+                state: .StalePredictions(
+                    lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(),
+                    action: {}
+                )
+            ),
+            initialLoadingWhenPredictionsStale: true
         ))
     }
 }

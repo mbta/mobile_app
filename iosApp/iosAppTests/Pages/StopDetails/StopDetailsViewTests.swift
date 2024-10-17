@@ -39,9 +39,10 @@ final class StopDetailsViewTests: XCTestCase {
                                       .init(route: routeDefaultSort1, stop: stop, patterns: []),
                                       .init(route: routeDefaultSort0, stop: stop, patterns: []),
                                   ]),
+                                  errorBannerVM: .init(),
                                   nearbyVM: .init(),
                                   now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false)
+                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
         let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
@@ -63,9 +64,10 @@ final class StopDetailsViewTests: XCTestCase {
                                   departures: .init(routes: [
                                       .init(route: route, stop: stop, patterns: []),
                                   ]),
+                                  errorBannerVM: .init(),
                                   nearbyVM: .init(),
                                   now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false)
+                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
@@ -82,9 +84,10 @@ final class StopDetailsViewTests: XCTestCase {
             filter: nil,
             setFilter: { _ in },
             departures: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
 
         ViewHosting.host(view: sut)
@@ -107,9 +110,10 @@ final class StopDetailsViewTests: XCTestCase {
             filter: nil,
             setFilter: { _ in },
             departures: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
 
         ViewHosting.host(view: sut)
@@ -127,9 +131,10 @@ final class StopDetailsViewTests: XCTestCase {
             filter: nil,
             setFilter: { _ in },
             departures: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }, isReturningFromBackground: false
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
         )
 
         ViewHosting.host(view: sut)
