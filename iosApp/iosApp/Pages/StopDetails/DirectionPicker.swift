@@ -17,6 +17,8 @@ struct DirectionPicker: View {
     let route: Route
     let line: Line?
 
+    @State private var directionId = ""
+
     init(patternsByStop: PatternsByStop, filter: StopDetailsFilter?,
          setFilter: @escaping (StopDetailsFilter?) -> Void) {
         self.filter = filter
@@ -27,6 +29,11 @@ struct DirectionPicker: View {
         directions = patternsByStop.directions
         route = patternsByStop.representativeRoute
         line = patternsByStop.line
+        directionId = if filter != nil {
+            String(filter!.directionId)
+        } else {
+            ""
+        }
     }
 
     var body: some View {
@@ -37,7 +44,7 @@ struct DirectionPicker: View {
                     let isSelected = filter?.directionId == direction
                     let action = { setFilter(.init(routeId: line?.id ?? route.id, directionId: direction)) }
 
-                    Button(action: action) {
+                    let button = Button(action: action) {
                         DirectionLabel(direction: directions[Int(direction)])
                             .padding(8)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -45,12 +52,31 @@ struct DirectionPicker: View {
                     .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
                     .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 6))
+
+                    if isSelected {
+                        button
+                            .accessibilityAddTraits(.isSelected)
+                    } else {
+                        button
+                    }
                 }
             }
             .padding(2)
             .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 8))
         }
+
+        HStack(alignment: .center, content: {
+            Picker("Select Direction", selection: $directionId) {
+                let availableDirectionIds = availableDirections.map { String($0) }
+
+                ForEach(availableDirectionIds, id: \.self) { direction in
+                    let direction = directions[Int(direction)!]
+                    Text(direction.name)
+                }
+            }
+            .pickerStyle(.segmented)
+        })
     }
 
     private func deselectedBackgroundColor(_ route: Route) -> Color {
