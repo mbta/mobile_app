@@ -41,8 +41,9 @@ final class SearchResultViewTests: XCTestCase {
         var sut = SearchResultsContainer(
             query: "hay",
             nearbyVM: NearbyViewModel(),
-            searchVM: SearchViewModel(),
-            searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            searchVM: SearchViewModel(
+                searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            )
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
