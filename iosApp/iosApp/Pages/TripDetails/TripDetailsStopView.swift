@@ -32,6 +32,7 @@ struct TripDetailsStopView: View {
                 }
             )
             scrollRoutes
+                .accessibilityElement()
                 .accessibilityLabel(scrollRoutesAccessibilityLabel)
         }
     }
@@ -40,14 +41,14 @@ struct TripDetailsStopView: View {
         if stop.routes.isEmpty {
             return ""
         } else if stop.routes.count == 1 {
-            return "Connection to \(stop.routes.first!.shortName) \(stop.routes.first!.type.typeText(isOnly: true))"
+            return "Connection to \(stop.routes.first!.label) \(stop.routes.first!.type.typeText(isOnly: true))"
         } else {
             let lastConnection = stop.routes.last
             return stop.routes.prefix(stop.routes.count - 1).map {
-                "\($0.shortName) \($0.type.typeText(isOnly: true))"
+                "\($0.label) \($0.type.typeText(isOnly: true))"
             }
             .joined(separator: ", ") +
-            "and \(lastConnection!.shortName) \(lastConnection!.type.typeText(isOnly: true))"
+            "and \(lastConnection!.label) \(lastConnection!.type.typeText(isOnly: true))"
         }
     }
 

@@ -123,6 +123,7 @@ struct VehicleOnTripView: View {
                 .frame(width: 24, height: 24)
                 .foregroundColor(textColor)
         }
+        .accessibilityHidden(true)
         .padding([.bottom], 4)
         .frame(width: 56, height: 56)
     }

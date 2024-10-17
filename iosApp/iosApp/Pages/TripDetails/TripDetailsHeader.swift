@@ -28,7 +28,7 @@ struct TripDetailsHeader: View {
                 .accessibilityElement()
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h1)
-                .accessibilityLabel("\(line?.shortName ?? "") \(route.type.typeText(isOnly: true)) to \(trip.headsign)")
+                .accessibilityLabel("\(route.label) \(route.type.typeText(isOnly: true)) to \(trip.headsign)")
             }
             Spacer()
             ActionButton(kind: .close, action: onClose)
