@@ -321,9 +321,6 @@
     "Now at" : {
 
     },
-    "OFFLINE DETECTED" : {
-
-    },
     "Open for more arrivals" : {
 
     },
@@ -440,6 +437,9 @@
     },
     "trains" : {
       "comment" : "trains"
+    },
+    "Unable to connect" : {
+
     },
     "Unruly Passenger" : {
       "comment" : "Possible alert cause"

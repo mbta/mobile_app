@@ -64,7 +64,10 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
         updateState()
     }
 
-    private fun setNetworkStatus(newStatus: NetworkStatus) {}
+    private fun setNetworkStatus(newStatus: NetworkStatus) {
+        networkStatus = networkStatus
+        updateState()
+    }
 
     fun setDataError(key: String, action: () -> Unit) {
         dataErrors[key] = ErrorBannerState.DataError(action)
