@@ -28,6 +28,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let viewportProvider = ViewportProvider(viewport: nil,
                                                 isManuallyCentering: true)
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider
         )
@@ -42,6 +43,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
                                      nearbyByRouteAndStop: .init(data: []))
 
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider
         )
@@ -102,6 +104,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider
         )
@@ -141,6 +144,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider
         )

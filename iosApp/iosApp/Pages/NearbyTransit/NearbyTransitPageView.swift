@@ -14,18 +14,20 @@ import shared
 import SwiftUI
 
 struct NearbyTransitPageView: View {
+    @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
     @State var location: CLLocationCoordinate2D?
-    @State var isReturningFromBackground = false
 
     let inspection = Inspection<Self>()
 
     init(
+        errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider
     ) {
+        self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
     }
@@ -33,11 +35,11 @@ struct NearbyTransitPageView: View {
     var body: some View {
         ZStack {
             Color.fill1.ignoresSafeArea(.all)
-            VStack {
+            VStack(spacing: 16) {
                 SheetHeader(title: String(localized: "Nearby Transit", comment: "Header for nearby transit sheet"))
-                ErrorBanner(loadingWhenPredictionsStale: isReturningFromBackground)
+                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                 if viewportProvider.isManuallyCentering {
-                    LoadingCard { Text("select location") }
+                    LoadingCard { Text("select location") }.padding(.horizontal, 16).padding(.bottom, 16)
                 } else {
                     NearbyTransitView(
                         getNearby: { global, location in
@@ -45,7 +47,7 @@ struct NearbyTransitPageView: View {
                         },
                         state: $nearbyVM.nearbyState,
                         location: $location,
-                        isReturningFromBackground: $isReturningFromBackground,
+                        isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
                         nearbyVM: nearbyVM
                     )
 

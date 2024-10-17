@@ -26,7 +26,6 @@ struct LoadingCard<Message: View>: View {
             }
         }
         .withRoundedBorder()
-        .padding(32)
     }
 }
 

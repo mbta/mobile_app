@@ -17,8 +17,10 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor
     func testRespondsToState() throws {
         let repo = MockErrorBannerStateRepository(state: nil)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repo)
+        Task { await errorBannerVM.activate() }
 
-        let sut = ErrorBanner(loadingWhenPredictionsStale: false, repo: repo)
+        let sut = ErrorBanner(errorBannerVM)
 
         ViewHosting.host(view: sut)
 
@@ -48,13 +50,13 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testLoadingWhenPredictionsStale() throws {
-        let sut = ErrorBanner(
-            loadingWhenPredictionsStale: true,
-            repo: MockErrorBannerStateRepository(state: .StalePredictions(
+        let sut = ErrorBanner(.init(
+            errorRepository: MockErrorBannerStateRepository(state: .StalePredictions(
                 lastUpdated: Date.distantPast.toKotlinInstant(),
                 action: {}
-            ))
-        )
+            )),
+            initialLoadingWhenPredictionsStale: true
+        ))
 
         ViewHosting.host(view: sut)
 

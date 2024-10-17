@@ -64,6 +64,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -129,6 +130,7 @@ final class StopDetailsPageTests: XCTestCase {
             stop: stop,
             filter: filter,
             internalDepartures: .init(routes: [route1Departures, route2Departures]),
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -189,6 +191,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -225,6 +228,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: .init(),
             stop: stop,
             filter: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -247,6 +251,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: .init(),
             stop: stop,
             filter: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -278,6 +283,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -317,6 +323,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -357,6 +364,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -402,6 +410,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 

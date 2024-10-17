@@ -23,18 +23,16 @@ struct StopDetailsPage: View {
     @State var predictionsRepository: IPredictionsRepository
     var stop: Stop
 
-    @State var isReturningFromBackground = false
-
     var filter: StopDetailsFilter?
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective  departures rather than both showing the departures for the newly presented stop.
     @State var internalDepartures: StopDetailsDepartures?
     @State var now = Date.now
+    @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
-    var errorBannerRepository: IErrorBannerStateRepository
 
     let inspection = Inspection<Self>()
 
@@ -44,21 +42,21 @@ struct StopDetailsPage: View {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
-        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         viewportProvider: ViewportProvider,
         stop: Stop,
         filter: StopDetailsFilter?,
         internalDepartures: StopDetailsDepartures? = nil,
+        errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel
     ) {
         self.globalRepository = globalRepository
         self.schedulesRepository = schedulesRepository
         self.predictionsRepository = predictionsRepository
-        self.errorBannerRepository = errorBannerRepository
         self.viewportProvider = viewportProvider
         self.stop = stop
         self.filter = filter
         self.internalDepartures = internalDepartures // only for testing
+        self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
     }
 
@@ -69,11 +67,11 @@ struct StopDetailsPage: View {
                 filter: filter,
                 setFilter: { filter in nearbyVM.pushNavEntry(.stopDetails(stop, filter)) },
                 departures: internalDepartures,
+                errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
                 now: now,
                 pinnedRoutes: pinnedRoutes,
-                togglePinnedRoute: togglePinnedRoute,
-                isReturningFromBackground: isReturningFromBackground
+                togglePinnedRoute: togglePinnedRoute
             )
             .onAppear {
                 loadEverything()
@@ -116,8 +114,9 @@ struct StopDetailsPage: View {
                     joinPredictions(stop)
                 },
                 onInactive: leavePredictions,
-                onBackground: { leavePredictions()
-                    isReturningFromBackground = true
+                onBackground: {
+                    leavePredictions()
+                    errorBannerVM.loadingWhenPredictionsStale = true
                 }
             )
         }
@@ -132,7 +131,7 @@ struct StopDetailsPage: View {
     func loadGlobalData() {
         Task {
             await fetchApi(
-                errorBannerRepository,
+                errorBannerVM.errorRepository,
                 errorKey: "StopDetailsPage.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
                 onSuccess: { globalResponse = $0 },
@@ -184,7 +183,7 @@ struct StopDetailsPage: View {
             let errorKey = "StopDetailsPage.getSchedule"
             schedulesResponse = nil
             await fetchApi(
-                errorBannerRepository,
+                errorBannerVM.errorRepository,
                 errorKey: "StopDetailsPage.getSchedule",
                 getData: { try await schedulesRepository.getSchedule(stopIds: [stop.id]) },
                 onSuccess: { schedulesResponse = $0 },
@@ -201,7 +200,7 @@ struct StopDetailsPage: View {
                     predictionsByStop = result.data
                     checkPredictionsStale()
                 }
-                isReturningFromBackground = false
+                errorBannerVM.loadingWhenPredictionsStale = false
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
@@ -217,7 +216,7 @@ struct StopDetailsPage: View {
                     }
                     checkPredictionsStale()
                 }
-                isReturningFromBackground = false
+                errorBannerVM.loadingWhenPredictionsStale = false
             }
 
         })
@@ -229,7 +228,7 @@ struct StopDetailsPage: View {
 
     private func checkPredictionsStale() {
         if let lastPredictions = predictionsRepository.lastUpdated {
-            errorBannerRepository.checkPredictionsStale(
+            errorBannerVM.errorRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(
                     predictionsByStop?.predictionQuantity() ??

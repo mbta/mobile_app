@@ -22,7 +22,6 @@ struct SheetHeader: View {
             if let title {
                 Text(title)
                     .font(Typography.title3Semibold)
-                    .padding([.top], 1)
                     .accessibilityHeading(.h1)
             }
             if let onClose {
@@ -31,7 +30,8 @@ struct SheetHeader: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
+        .padding(.horizontal, 16)
+        .padding(.top, 16)
     }
 }
 
