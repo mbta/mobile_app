@@ -167,6 +167,7 @@ fun endToEndModule(): Module {
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
+        single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
                 override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> =
@@ -224,7 +225,7 @@ fun endToEndModule(): Module {
         }
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
-        single { ConfigUseCase(get(), get()) }
+        single { ConfigUseCase(get(), get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
