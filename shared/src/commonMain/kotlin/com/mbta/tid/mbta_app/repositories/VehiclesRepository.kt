@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
@@ -29,8 +30,16 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
     ) {
-        val joinPayload = VehiclesOnRouteChannel.joinPayload(routeId, directionId)
-        channel = socket.getChannel(VehiclesOnRouteChannel.topic, joinPayload)
+        val topic =
+            VehiclesOnRouteChannel.topic(
+                if (routeId == "line-Green") {
+                    greenRoutes.toList()
+                } else {
+                    listOf(routeId)
+                },
+                directionId
+            )
+        channel = socket.getChannel(topic, emptyMap())
 
         channel?.onEvent(VehiclesOnRouteChannel.newDataEvent) { message ->
             handleNewDataMessage(message, onReceive)

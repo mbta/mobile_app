@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct AnnotatedMap: View {
     static let annotationTextZoomThreshold = 19.0
@@ -28,6 +28,7 @@ struct AnnotatedMap: View {
 
     @ObservedObject var viewportProvider: ViewportProvider
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) var scenePhase
 
     var handleCameraChange: (CameraChanged) -> Void
     var handleStyleLoaded: () -> Void
@@ -53,13 +54,18 @@ struct AnnotatedMap: View {
                 // The initial run of this happens before any required data is loaded, so it does nothing and
                 // handleTryLayerInit always performs the first layer creation, but once the data is in place,
                 // this handles any time the map is reloaded again, like for a light/dark mode switch.
-                handleStyleLoaded()
+                if scenePhase == .active {
+                    // onStyleLoaded was unexpectedly called when app moved to background because the colorScheme
+                    // changes twice while backgrounding. Ensure it is only called when the app is active.
+                    handleStyleLoaded()
+                }
             }
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom
             }
+            .withScenePhaseHandlers(onActive: onActive)
             .task {
                 do {
                     mapDebug = try await getSettingUsecase.execute(setting: .map).boolValue
@@ -67,6 +73,11 @@ struct AnnotatedMap: View {
                     debugPrint("Failed to load map debug", error)
                 }
             }
+    }
+
+    func onActive() {
+        // re-load styles in case the colorScheme changed while in the background
+        handleStyleLoaded()
     }
 
     private var allVehicles: [Vehicle]? {

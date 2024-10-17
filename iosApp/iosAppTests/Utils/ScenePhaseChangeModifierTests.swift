@@ -27,7 +27,8 @@ final class ScenePhaseChangeModifierTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(ViewType.Text.self).modifier(ScenePhaseChangeModifier.self).implicitAnyView()
+            .viewModifierContent().callOnChange(newValue: ScenePhase.active)
 
         wait(for: [activeCalledExpectation], timeout: 1)
     }
@@ -41,7 +42,8 @@ final class ScenePhaseChangeModifierTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().callOnChange(newValue: ScenePhase.inactive)
+        try sut.inspect().find(ViewType.Text.self).modifier(ScenePhaseChangeModifier.self).implicitAnyView()
+            .viewModifierContent().callOnChange(newValue: ScenePhase.inactive)
 
         wait(for: [inactiveCalledExpectation], timeout: 1)
     }
@@ -55,7 +57,8 @@ final class ScenePhaseChangeModifierTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().find(ViewType.Text.self).modifier(ScenePhaseChangeModifier.self).implicitAnyView()
+            .viewModifierContent().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [backgroundCalledExpectation], timeout: 1)
     }

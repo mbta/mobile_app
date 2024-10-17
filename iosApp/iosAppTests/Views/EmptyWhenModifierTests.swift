@@ -18,17 +18,17 @@ final class EmptyWhenModifierTests: XCTestCase {
 
     @MainActor func testEmptyOnFalse() throws {
         let sut = Text("hello").emptyWhen(true)
-        let modifier = try sut.inspect().text().modifier(EmptyWhenModifier.self)
+        let modifier = try sut.inspect().implicitAnyView().text().modifier(EmptyWhenModifier.self)
 
-        XCTAssertNotNil(try modifier.emptyView())
+        XCTAssertNotNil(try modifier.implicitAnyView().emptyView())
         XCTAssertThrowsError(try modifier.viewModifierContent())
     }
 
     @MainActor func testNotEmptyOnTrue() throws {
         let sut = Text("hello").emptyWhen(false)
-        let modifier = try sut.inspect().text().modifier(EmptyWhenModifier.self)
+        let modifier = try sut.inspect().implicitAnyView().text().modifier(EmptyWhenModifier.self)
 
-        XCTAssertNotNil(try modifier.viewModifierContent())
+        XCTAssertNotNil(try modifier.implicitAnyView().viewModifierContent())
         XCTAssertThrowsError(try modifier.emptyView())
     }
 }

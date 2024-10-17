@@ -6,8 +6,8 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import shared
 @_spi(Experimental) import MapboxMaps
+import shared
 
 class SearchViewModel: ObservableObject {
     @Published var routeResultsEnabled: Bool

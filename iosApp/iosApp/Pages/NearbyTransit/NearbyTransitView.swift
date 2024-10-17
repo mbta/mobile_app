@@ -9,10 +9,10 @@
 import Combine
 import CoreLocation
 import FirebaseAnalytics
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared

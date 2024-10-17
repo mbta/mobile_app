@@ -9,12 +9,12 @@
 import Combine
 import CoreLocation
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageViewTests: XCTestCase {
@@ -111,7 +111,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 objects: .init(),
                 patternIdsByStop: [:]
             )
-            try view.find(NearbyTransitView.self).vStack().callOnChange(newValue: newCameraState.center)
+            try view.find(NearbyTransitView.self).implicitAnyView().vStack()
+                .callOnChange(newValue: newCameraState.center)
         }
 
         ViewHosting.host(view: sut)

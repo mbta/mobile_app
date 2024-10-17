@@ -8,6 +8,9 @@ object VehiclesOnRouteChannel {
 
     val newDataEvent = "stream_data"
 
+    fun topic(routeIds: List<String>, directionId: Int) =
+        "vehicles:routes:${routeIds.joinToString(",")}:${directionId}"
+
     fun joinPayload(routeId: String, directionId: Int): Map<String, Any> {
         return mapOf("route_id" to routeId, "direction_id" to directionId)
     }

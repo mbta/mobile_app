@@ -6,8 +6,8 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import SwiftUI
 @_spi(Experimental) import MapboxMaps
+import SwiftUI
 
 extension View {
     func annotationLabel<Content: View>(_ content: Content) -> ModifiedContent<Self, FloatingLabel<Content>> {

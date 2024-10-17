@@ -8,8 +8,8 @@
 
 import Combine
 import Foundation
-import shared
 @_spi(Experimental) import MapboxMaps
+import shared
 
 class MapViewModel: ObservableObject {
     @Published var selectedVehicle: Vehicle?
