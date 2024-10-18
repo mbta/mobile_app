@@ -27,7 +27,9 @@ fun getSchedule(
             withContext(Dispatchers.IO) {
                 when (val data = schedulesRepository.getSchedule(stopIds, now)) {
                     is ApiResult.Ok -> schedules = data.data
-                    is ApiResult.Error -> TODO("handle errors")
+                    is ApiResult.Error -> {
+                        /* TODO("handle errors") */
+                    }
                 }
             }
         }
