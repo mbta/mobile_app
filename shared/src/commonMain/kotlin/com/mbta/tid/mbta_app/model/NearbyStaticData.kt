@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.NearbyStaticData.StopPatterns.ForLine.Companion.groupedDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -33,7 +34,8 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             val headsign: String,
             val line: Line?,
             override val patterns: List<RoutePattern>,
-            override val stopIds: Set<String>
+            override val stopIds: Set<String>,
+            val direction: Direction? = null,
         ) : StaticPatterns() {
             override fun copy(patterns: List<RoutePattern>, stopIds: Set<String>) =
                 copy(route = route, patterns = patterns, stopIds = stopIds)
@@ -113,20 +115,36 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     routes: List<Route>,
                     directionId: Int
                 ): Direction {
-                    return patterns
-                        .firstOrNull {
-                            when (it) {
-                                is StaticPatterns.ByDirection -> it.direction.id == directionId
-                                else -> false
+                    val typicalHere =
+                        patterns.filter {
+                            it.patterns.any { pattern ->
+                                pattern.typicality == RoutePattern.Typicality.Typical &&
+                                    pattern.directionId == directionId
                             }
                         }
-                        ?.let {
-                            when (it) {
-                                is StaticPatterns.ByDirection -> it.direction
-                                else -> null
-                            }
+                    return if (typicalHere.isEmpty()) {
+                        Direction(directionId, routes.first())
+                    } else if (typicalHere.size > 1) {
+                        Direction(
+                            routes.first().directionNames[directionId] ?: "",
+                            null,
+                            directionId
+                        )
+                    } else {
+                        when (val it = typicalHere.first()) {
+                            is StaticPatterns.ByDirection -> it.direction
+                            // When buildStopPatternsForLine creates a StaticPatterns.ByHeadsign,
+                            // it should always set it.direction to a non-null value, this fallback
+                            // is only here to make the compiler happy and do something sensible if
+                            // there are possible edge cases where one is set to null.
+                            is StaticPatterns.ByHeadsign -> it.direction
+                                    ?: Direction(
+                                        it.route.directionNames[directionId] ?: "",
+                                        it.headsign,
+                                        directionId
+                                    )
                         }
-                        ?: Direction(directionId, routes.first())
+                    }
                 }
             }
         }
@@ -312,7 +330,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             )
         }
 
-        fun buildStopPatternsForLine(
+        private fun buildStopPatternsForLine(
             stop: Stop,
             patterns: Map<Route, List<RoutePattern>>,
             line: Line,
@@ -354,7 +372,8 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                                 headsign,
                                 line,
                                 patterns.sorted(),
-                                filterStopsByPatterns(patterns, global, allStopIds)
+                                filterStopsByPatterns(patterns, global, allStopIds),
+                                direction
                             )
                         }
                     }
@@ -668,10 +687,18 @@ class NearbyStaticDataBuilder {
             route: Route,
             headsign: String,
             patterns: List<RoutePattern>,
-            stopIds: Set<String> = allStopIds
+            stopIds: Set<String> = allStopIds,
+            direction: Direction? = null
         ) {
             data.add(
-                NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns, stopIds)
+                NearbyStaticData.StaticPatterns.ByHeadsign(
+                    route,
+                    headsign,
+                    line,
+                    patterns,
+                    stopIds,
+                    direction
+                )
             )
         }
 
