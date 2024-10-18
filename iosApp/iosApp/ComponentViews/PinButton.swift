@@ -21,7 +21,9 @@ struct PinButton: View {
                 Image(pinned ? .pinnedRouteActive : .pinnedRouteInactive)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .accessibilityLabel("pin route")
+                    .accessibilityLabel("Star route")
+                    .accessibilityHint(pinned ? "Removes route from the top of the list" :
+                        "Pins route to the top of the list")
             }
         )
         .accessibilityIdentifier("pinButton")

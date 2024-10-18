@@ -123,6 +123,11 @@ struct RoutePill: View {
                 .lineLimit(1)
                 .modifier(ColorModifier(pill: self))
                 .modifier(ClipShapeModifier(spec: spec))
+                .accessibilityElement()
+                .accessibilityAddTraits(isActive ? [.isSelected] : [])
+                .accessibilityLabel(
+                    "\(route?.label ?? line?.longName ?? "") \(route?.type.typeText(isOnly: true) ?? "")"
+                )
         }
     }
 }
