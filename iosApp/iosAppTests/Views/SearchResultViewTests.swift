@@ -126,7 +126,7 @@ final class SearchResultViewTests: XCTestCase {
         let sut = SearchResultsView(
             state: .recentStops(
                 stops: [
-                    SearchResultsContainer.Result(
+                    SearchViewModel.Result(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -145,7 +145,7 @@ final class SearchResultViewTests: XCTestCase {
         let sut = SearchResultsView(
             state: .results(
                 stops: [
-                    SearchResultsContainer.Result(
+                    SearchViewModel.Result(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -221,7 +221,7 @@ final class SearchResultViewTests: XCTestCase {
         let sut = SearchResultsView(
             state: .results(
                 stops: [
-                    SearchResultsContainer.Result(
+                    SearchViewModel.Result(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",
@@ -244,7 +244,7 @@ final class SearchResultViewTests: XCTestCase {
         let sut = SearchResultsView(
             state: .results(
                 stops: [
-                    SearchResultsContainer.Result(
+                    SearchViewModel.Result(
                         id: "place-haecl",
                         isStation: true,
                         name: "Haymarket",

@@ -137,9 +137,12 @@ class SearchViewModel: ObservableObject {
     }
 
     private func mapStopIdToResult(id: String) -> Result? {
-        guard let globalResponse, let stop = globalResponse.stops[id] else { return nil }
+        guard let globalResponse,
+              let stop = globalResponse.stops[id]
+        else { return nil }
         let isStation = stop.locationType == .station
-        let routePills: [RoutePillSpec] = globalResponse.getRoutesFor(stopId: id)
+        let routes = globalResponse.getTypicalRoutesFor(stopId: id)
+        let routePills: [RoutePillSpec] = routes
             .sorted(by: { $0.sortOrder < $1.sortOrder })
             .map { route -> RoutePillSpec in
                 let line: Line? = if let lineId = route.lineId { globalResponse.lines[lineId] } else { nil }
