@@ -166,7 +166,7 @@ fun endToEndModule(): Module {
             }
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
-        single<ISettingsRepository> { MockSettingsRepository() }
+        single<ISentryRepository> { MockSentryRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
