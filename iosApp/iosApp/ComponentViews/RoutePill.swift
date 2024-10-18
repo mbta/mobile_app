@@ -124,7 +124,8 @@ struct RoutePill: View {
                 .modifier(ColorModifier(pill: self))
                 .modifier(ClipShapeModifier(spec: spec))
                 .accessibilityElement()
-                .accessibilityLabel("\(route?.label ?? "") \(route?.type.typeText(isOnly: true) ?? "")")
+                .accessibilityAddTraits(isActive ? [.isSelected] : [])
+                .accessibilityLabel("\(route?.label ?? line!.longName) \(route?.type.typeText(isOnly: true) ?? "")")
         }
     }
 }
