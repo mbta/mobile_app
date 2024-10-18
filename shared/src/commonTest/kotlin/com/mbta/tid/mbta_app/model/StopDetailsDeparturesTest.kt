@@ -290,7 +290,7 @@ class StopDetailsDeparturesTest {
                                 )
                             ),
                         ),
-                        listOf(directionWest, directionEast)
+                        listOf(Direction("West", null, 0), directionEast)
                     )
                 )
             ),
