@@ -25,6 +25,10 @@ struct TripDetailsHeader: View {
                     RoutePill(route: route, line: line, type: .fixed)
                     toHeadsign(trip.headsign)
                 }
+                .accessibilityElement()
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h1)
+                .accessibilityLabel("\(route.label) \(route.type.typeText(isOnly: true)) to \(trip.headsign)")
             }
             Spacer()
             ActionButton(kind: .close, action: onClose)
@@ -42,12 +46,14 @@ struct TripDetailsHeader: View {
             Text("Live")
                 .font(Typography.footnote)
         }
+        .accessibilityElement()
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel("Real-time arrivals updating live")
     }
 
     func toHeadsign(_ headsign: String) -> some View {
         Text("to \(headsign)")
             .font(Typography.headlineBold)
-            .accessibilityHeading(.h1)
     }
 }
 

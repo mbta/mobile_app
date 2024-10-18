@@ -22,7 +22,17 @@ struct TripDetailsStopListSplitView: View {
                     ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
                         TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
                     }
-                }.padding(.bottom, 16)
+                }
+                .padding(.bottom, 16)
+                .accessibilityElement()
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h2)
+                .accessibilityLabel(
+                    LocalizedStringKey(
+                        "\(routeType?.typeText(isOnly: true) ?? "") is \(splitStops.collapsedStops.count, specifier: "%ld") stops away from \(splitStops.targetStop.stop.name)"
+                    )
+                )
+                .accessibilityHint("List remaining stops")
             }
             TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink, routeType: routeType)
                 .listRowBackground(Color.keyInverse.opacity(0.15))

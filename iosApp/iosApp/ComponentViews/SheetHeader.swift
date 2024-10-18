@@ -22,6 +22,7 @@ struct SheetHeader: View {
             if let title {
                 Text(title)
                     .font(Typography.title3Semibold)
+                    .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h1)
             }
             if let onClose {
