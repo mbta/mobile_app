@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.response.ConfigResponse
 import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
-import io.sentry.kotlin.multiplatform.Sentry
 import org.koin.core.component.KoinComponent
 
 class ConfigUseCase(
@@ -28,7 +27,7 @@ class ConfigUseCase(
                 }
             }
         } catch (e: Exception) {
-            Sentry.captureException(e)
+            sentryRepo.captureException(e)
             ApiResult.Error(message = e.message ?: e.toString())
         }
 }
