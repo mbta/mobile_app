@@ -16,6 +16,7 @@ struct ContentView: View {
     @ObservedObject var contentVM: ContentViewModel
 
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
+    @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
@@ -66,6 +67,7 @@ struct ContentView: View {
         VStack {
             TabView(selection: $selectedTab) {
                 NearbyTransitPageView(
+                    errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     viewportProvider: viewportProvider
                 )
@@ -114,12 +116,9 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            Task {
-                await contentVM.loadSettings()
-            }
-            Task {
-                await contentVM.loadConfig()
-            }
+            Task { await errorBannerVM.activate() }
+            Task { await contentVM.loadSettings() }
+            Task { await contentVM.loadConfig() }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -138,9 +137,7 @@ struct ContentView: View {
         }
         .onReceive(mapVM.lastMapboxErrorSubject
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
-                Task {
-                    await contentVM.loadConfig()
-                }
+                Task { await contentVM.loadConfig() }
         }
     }
 
@@ -207,6 +204,7 @@ struct ContentView: View {
                         StopDetailsPage(
                             viewportProvider: viewportProvider,
                             stop: stop, filter: filter,
+                            errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM
                         )
 
@@ -236,6 +234,7 @@ struct ContentView: View {
                             vehicleId: vehicleId,
                             routeId: routeId,
                             target: target,
+                            errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM
                         ).toolbar(.hidden, for: .tabBar)

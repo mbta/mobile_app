@@ -15,7 +15,6 @@ import SwiftUI
 
 struct StopDetailsView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
-    let errorBannerRepository: IErrorBannerStateRepository
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
@@ -24,10 +23,10 @@ struct StopDetailsView: View {
     var departures: StopDetailsDepartures?
     var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
+    @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     let pinnedRoutes: Set<String>
     @State var predictions: PredictionsStreamDataResponse?
-    let isReturningFromBackground: Bool
 
     let togglePinnedRoute: (String) -> Void
 
@@ -35,29 +34,27 @@ struct StopDetailsView: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
         filter: StopDetailsFilter?,
         setFilter: @escaping (StopDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
+        errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         now: Date,
         pinnedRoutes: Set<String>,
-        togglePinnedRoute: @escaping (String) -> Void,
-        isReturningFromBackground: Bool
+        togglePinnedRoute: @escaping (String) -> Void
     ) {
-        self.errorBannerRepository = errorBannerRepository
         self.globalRepository = globalRepository
         self.stop = stop
         self.filter = filter
         self.setFilter = setFilter
         self.departures = departures
+        self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.now = now
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
-        self.isReturningFromBackground = isReturningFromBackground
 
         if let departures {
             servedRoutes = departures.routes.map { patterns in
@@ -76,13 +73,13 @@ struct StopDetailsView: View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
-                VStack {
+                VStack(spacing: 16) {
                     SheetHeader(
                         title: stop.name,
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
-                    ErrorBanner(loadingWhenPredictionsStale: isReturningFromBackground)
+                    ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
@@ -90,9 +87,9 @@ struct StopDetailsView: View {
                             filter: filter,
                             setFilter: setFilter
                         )
-                        .padding([.bottom], 8)
                     }
                 }
+                .padding(.bottom, 16)
                 .border(Color.halo.opacity(0.15), width: 2)
 
                 if let departures {
@@ -119,7 +116,7 @@ struct StopDetailsView: View {
     private func loadGlobal() {
         Task {
             await fetchApi(
-                errorBannerRepository,
+                errorBannerVM.errorRepository,
                 errorKey: "StopDetailsView.loadGlobal",
                 getData: globalRepository.getGlobalData,
                 onSuccess: { globalResponse = $0 },

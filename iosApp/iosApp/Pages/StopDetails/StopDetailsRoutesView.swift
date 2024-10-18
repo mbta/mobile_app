@@ -35,7 +35,7 @@ struct StopDetailsRoutesView: View {
             ZStack {
                 Color.fill1.ignoresSafeArea(.all)
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 0) {
                         ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                             StopDetailsRouteView(
                                 patternsByStop: patternsByStop,
@@ -45,8 +45,8 @@ struct StopDetailsRoutesView: View {
                                 onPin: pinRoute
                             )
                         }
-                    }
-                }.padding([.top], 16)
+                    }.padding(.top, 16)
+                }
             }
         }
     }

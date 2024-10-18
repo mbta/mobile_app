@@ -38,11 +38,11 @@ struct NearbyTransitView: View {
     let scrollSubject = PassthroughSubject<String, Never>()
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
             } else {
-                LoadingCard()
+                LoadingCard().padding(.horizontal, 16).padding(.bottom, 16)
             }
         }
         .onAppear {
@@ -116,7 +116,7 @@ struct NearbyTransitView: View {
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 0) {
                         ForEach(transit, id: \.id) { nearbyTransit in
                             switch onEnum(of: nearbyTransit) {
                             case let .withRoute(nearbyRoute):

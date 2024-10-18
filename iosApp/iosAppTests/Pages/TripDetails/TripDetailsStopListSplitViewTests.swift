@@ -63,7 +63,10 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(ViewType.DisclosureGroup.self))
 
         XCTAssertFalse(try sut.inspect().find(ViewType.DisclosureGroup.self).isExpanded())
-        XCTAssertEqual(try sut.inspect().find(ViewType.DisclosureGroup.self).labelView().text().string(), "2 stops")
+        XCTAssertEqual(
+            try sut.inspect().find(ViewType.DisclosureGroup.self).labelView().text().string(),
+            "2 stops away"
+        )
 
         XCTAssertNotNil(try sut.inspect()
             .find(TripDetailsStopView.self, where: { try $0.actualView().stop.stop == stop1 })

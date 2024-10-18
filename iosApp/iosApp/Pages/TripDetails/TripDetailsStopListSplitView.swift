@@ -18,11 +18,12 @@ struct TripDetailsStopListSplitView: View {
     var body: some View {
         List {
             if !splitStops.collapsedStops.isEmpty {
-                DisclosureGroup(LocalizedStringKey("\(splitStops.collapsedStops.count, specifier: "%ld") stops")) {
+                DisclosureGroup(LocalizedStringKey("\(splitStops.collapsedStops.count, specifier: "%ld") stops away")) {
                     ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
                         TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
                     }
                 }
+                .padding(.bottom, 16)
                 .accessibilityElement()
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h2)
@@ -38,7 +39,7 @@ struct TripDetailsStopListSplitView: View {
             ForEach(splitStops.followingStops, id: \.stopSequence) { stop in
                 TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
             }
-        }
+        }.listStyle(.plain)
     }
 }
 
