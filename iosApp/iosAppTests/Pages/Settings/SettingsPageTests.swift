@@ -20,13 +20,13 @@ final class SettingsPageTests: XCTestCase {
 
         init(
             mapDebug: Bool,
-            searchFeatureFlag: Bool,
+            searchRouteResults: Bool,
             onGet: (() -> Void)? = nil,
             onSet: ((Set<Setting>) -> Void)? = nil
         ) {
             settings = [
                 Setting(key: .map, isOn: mapDebug),
-                Setting(key: .search, isOn: searchFeatureFlag),
+                Setting(key: .searchRouteResults, isOn: searchRouteResults),
             ]
             self.onGet = onGet
             self.onSet = onSet
@@ -48,7 +48,7 @@ final class SettingsPageTests: XCTestCase {
 
         let settingsRepository = FakeSettingsRepository(
             mapDebug: true,
-            searchFeatureFlag: false,
+            searchRouteResults: false,
             onGet: {
                 loadedPublisher.send(())
             }
@@ -71,7 +71,7 @@ final class SettingsPageTests: XCTestCase {
 
         let settingsRepository = FakeSettingsRepository(
             mapDebug: false,
-            searchFeatureFlag: false,
+            searchRouteResults: false,
             onGet: {
                 loadedPublisher.send(())
             },
