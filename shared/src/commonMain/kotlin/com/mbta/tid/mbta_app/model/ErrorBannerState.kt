@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 
 sealed class ErrorBannerState {
     /** What to do when the button in the error banner is pressed */
-    abstract val action: () -> Unit
+    abstract val action: (() -> Unit)?
 
     data class StalePredictions(val lastUpdated: Instant, override val action: () -> Unit) :
         ErrorBannerState() {
@@ -13,4 +13,6 @@ sealed class ErrorBannerState {
     }
 
     data class DataError(override val action: () -> Unit) : ErrorBannerState()
+
+    data class NetworkError(override val action: (() -> Unit)?) : ErrorBannerState()
 }

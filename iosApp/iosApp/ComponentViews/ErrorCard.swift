@@ -8,16 +8,16 @@
 
 import SwiftUI
 
-struct ErrorCard: View {
-    var details: Text
+struct ErrorCard<Content: View>: View {
+    @ViewBuilder let details: Content
     var button: (() -> AnyView)?
 
-    init(_ details: () -> Text) {
+    init(_ details: () -> Content) {
         self.details = details()
         button = nil
     }
 
-    init(details: Text, button: (() -> AnyView)? = nil) {
+    init(details: Content, button: (() -> AnyView)? = nil) {
         self.details = details
         self.button = button
     }

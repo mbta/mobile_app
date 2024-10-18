@@ -179,6 +179,9 @@
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause"
     },
+    "Custom message" : {
+
+    },
     "Demonstration" : {
       "comment" : "Possible alert cause"
     },
@@ -425,6 +428,9 @@
     },
     "trains" : {
       "comment" : "trains"
+    },
+    "Unable to connect" : {
+
     },
     "Unruly Passenger" : {
       "comment" : "Possible alert cause"
