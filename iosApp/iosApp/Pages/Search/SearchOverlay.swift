@@ -41,9 +41,7 @@ struct SearchOverlay: View {
                     SearchResultsContainer(
                         query: searchObserver.debouncedText,
                         nearbyVM: nearbyVM,
-                        searchVM: searchVM,
-                        globalRepository: globalRepository,
-                        searchResultsRepository: searchResultsRepository
+                        searchVM: searchVM
                     )
                     Divider()
                         .frame(height: 2)

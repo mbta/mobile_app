@@ -11,11 +11,11 @@ import shared
 import SwiftUI
 
 struct SearchResultsView: View {
-    private var state: SearchResultsContainer.ResultsState?
+    private var state: SearchViewModel.ResultsState?
     private var handleStopTap: (String) -> Void
 
     init(
-        state: SearchResultsContainer.ResultsState?,
+        state: SearchViewModel.ResultsState?,
         handleStopTap: @escaping (String) -> Void
     ) {
         self.state = state
@@ -36,11 +36,11 @@ struct SearchResultsView: View {
                         StopResultsView(stops: stops, handleStopTap: handleStopTap)
                     }
                     .padding(.top, 8)
-                case let .results(results, includeRoutes):
+                case let .results(stopResults, routeResults, includeRoutes):
                     VStack(spacing: 8) {
-                        StopResultsView(stops: results.stops, handleStopTap: handleStopTap)
-                        if includeRoutes, !results.routes.isEmpty {
-                            RouteResultsView(routes: results.routes)
+                        StopResultsView(stops: stopResults, handleStopTap: handleStopTap)
+                        if includeRoutes, !routeResults.isEmpty {
+                            RouteResultsView(routes: routeResults)
                                 .padding(.top, 8)
                         }
                     }

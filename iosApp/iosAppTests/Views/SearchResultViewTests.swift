@@ -41,8 +41,9 @@ final class SearchResultViewTests: XCTestCase {
         var sut = SearchResultsContainer(
             query: "hay",
             nearbyVM: NearbyViewModel(),
-            searchVM: SearchViewModel(),
-            searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            searchVM: SearchViewModel(
+                searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            )
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
@@ -73,8 +74,9 @@ final class SearchResultViewTests: XCTestCase {
         let sut = SearchOverlay(
             searchObserver: searchObserver,
             nearbyVM: NearbyViewModel(),
-            searchVM: SearchViewModel(),
-            searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            searchVM: SearchViewModel(
+                searchResultsRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation)
+            )
         )
 
         ViewHosting.host(view: sut)
@@ -120,35 +122,45 @@ final class SearchResultViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try your search again."))
     }
 
+    @MainActor func testRecentStops() throws {
+        let sut = SearchResultsView(
+            state: .recentStops(
+                stops: [
+                    SearchViewModel.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ]
+            ),
+            handleStopTap: { _ in }
+        )
+
+        XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
+        XCTAssertNoThrow(try sut.inspect().find(text: "Recently Viewed"))
+    }
+
     @MainActor func testFullResults() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: .heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchViewModel.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
@@ -162,18 +174,16 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testOnlyRoutes() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: []
-                ),
+                stops: [],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
@@ -187,18 +197,16 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testRoutesHidden() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [
-                        RouteResult(
-                            id: "428",
-                            rank: 5,
-                            longName: "Oaklandvale - Haymarket Station",
-                            shortName: "428",
-                            routeType: RouteType.bus
-                        ),
-                    ],
-                    stops: []
-                ),
+                stops: [],
+                routes: [
+                    RouteResult(
+                        id: "428",
+                        rank: 5,
+                        longName: "Oaklandvale - Haymarket Station",
+                        shortName: "428",
+                        routeType: RouteType.bus
+                    ),
+                ],
                 includeRoutes: false
             ),
             handleStopTap: { _ in }
@@ -212,24 +220,15 @@ final class SearchResultViewTests: XCTestCase {
     @MainActor func testOnlyStops() throws {
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: .heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchViewModel.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [],
                 includeRoutes: true
             ),
             handleStopTap: { _ in }
@@ -244,24 +243,15 @@ final class SearchResultViewTests: XCTestCase {
 
         let sut = SearchResultsView(
             state: .results(
-                results: SearchResults(
-                    routes: [],
-                    stops: [
-                        StopResult(
-                            id: "place-haecl",
-                            rank: 2,
-                            name: "Haymarket",
-                            zone: nil,
-                            isStation: true,
-                            routes: [
-                                StopResultRoute(
-                                    type: .heavyRail,
-                                    icon: "orange_line"
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                stops: [
+                    SearchViewModel.Result(
+                        id: "place-haecl",
+                        isStation: true,
+                        name: "Haymarket",
+                        routePills: []
+                    ),
+                ],
+                routes: [],
                 includeRoutes: true
             ),
             handleStopTap: { stopId in
