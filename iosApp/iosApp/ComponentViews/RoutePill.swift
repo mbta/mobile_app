@@ -125,7 +125,9 @@ struct RoutePill: View {
                 .modifier(ClipShapeModifier(spec: spec))
                 .accessibilityElement()
                 .accessibilityAddTraits(isActive ? [.isSelected] : [])
-                .accessibilityLabel("\(route?.label ?? line!.longName) \(route?.type.typeText(isOnly: true) ?? "")")
+                .accessibilityLabel(
+                    "\(route?.label ?? line?.longName ?? "") \(route?.type.typeText(isOnly: true) ?? "")"
+                )
         }
     }
 }
