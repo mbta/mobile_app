@@ -44,11 +44,11 @@ struct TripDetailsStopView: View {
             return "Connection to \(stop.routes.first!.label) \(stop.routes.first!.type.typeText(isOnly: true))"
         } else {
             let lastConnection = stop.routes.last
-            return stop.routes.prefix(stop.routes.count - 1).map {
+            return "Connections to" + stop.routes.prefix(stop.routes.count - 1).map {
                 "\($0.label) \($0.type.typeText(isOnly: true))"
             }
             .joined(separator: ", ") +
-            "and \(lastConnection!.label) \(lastConnection!.type.typeText(isOnly: true))"
+            " and \(lastConnection!.label) \(lastConnection!.type.typeText(isOnly: true))"
         }
     }
 
