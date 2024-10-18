@@ -24,11 +24,4 @@ final class ContentViewModelTests: XCTestCase {
         await contentVM.loadConfig()
         XCTAssertEqual(contentVM.configResponse, expectedResult)
     }
-
-    func testLoadSettingsSetsSettings() async {
-        let expectedResult: Set<Setting> = [.init(key: .search, isOn: true)]
-        let contentVM = ContentViewModel(settingsRepo: MockSettingsRepository(settings: expectedResult))
-        await contentVM.loadSettings()
-        XCTAssertTrue(contentVM.searchEnabled)
-    }
 }

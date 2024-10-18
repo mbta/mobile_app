@@ -103,7 +103,7 @@ struct ContentView: View {
             ZStack(alignment: .top) {
                 mapWithSheets
                 VStack(alignment: .trailing, spacing: 0) {
-                    if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
+                    if nearbyVM.navigationStack.lastSafe() == .nearby {
                         SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                     }
                     if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
@@ -114,9 +114,6 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            Task {
-                await contentVM.loadSettings()
-            }
             Task {
                 await contentVM.loadConfig()
             }
