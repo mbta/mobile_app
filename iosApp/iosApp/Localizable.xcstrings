@@ -300,15 +300,11 @@
     "Medical Emergency" : {
       "comment" : "Possible alert cause"
     },
-    "No nearby MBTA stops" : {
-    },
     "Next stop" : {
       "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife"
     },
-    "No real-time data" : {
+    "No nearby MBTA stops" : {
 
-    },
-    "No results found" : {
     },
     "No Service" : {
 
@@ -319,7 +315,6 @@
     "Now" : {
 
     },
-
     "Now at" : {
       "comment" : "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
     },
