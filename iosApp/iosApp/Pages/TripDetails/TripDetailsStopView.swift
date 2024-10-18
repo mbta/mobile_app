@@ -26,9 +26,29 @@ struct TripDetailsStopView: View {
                         Spacer()
                         UpcomingTripView(prediction: upcomingTripViewState, routeType: routeType)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h2)
                 }
             )
             scrollRoutes
+                .accessibilityElement()
+                .accessibilityLabel(scrollRoutesAccessibilityLabel)
+        }
+    }
+
+    var scrollRoutesAccessibilityLabel: String {
+        if stop.routes.isEmpty {
+            return ""
+        } else if stop.routes.count == 1 {
+            return "Connection to \(stop.routes.first!.label) \(stop.routes.first!.type.typeText(isOnly: true))"
+        } else {
+            let lastConnection = stop.routes.last
+            return "Connections to" + stop.routes.prefix(stop.routes.count - 1).map {
+                "\($0.label) \($0.type.typeText(isOnly: true))"
+            }
+            .joined(separator: ", ") +
+            " and \(lastConnection!.label) \(lastConnection!.type.typeText(isOnly: true))"
         }
     }
 
@@ -45,9 +65,6 @@ struct TripDetailsStopView: View {
             HStack {
                 ForEach(stop.routes, id: \.id) { route in
                     RoutePill(route: route, line: nil, type: .flex)
-                        .onTapGesture {
-                            onTapLink(.stopDetails(stop.stop, nil), stop, route.id)
-                        }
                 }
             }.padding(.horizontal, 20)
         }.padding(.horizontal, -20).onTapGesture {

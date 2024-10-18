@@ -113,6 +113,7 @@
 		9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3B09352B967CEC00691427 /* NonNilModifier.swift */; };
 		9A3BAB722BEAB8E200DAFDE2 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */; };
 		9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */; };
+		9A4850572CB56A1600F50EE7 /* RouteTypeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */; };
 		9A4DB7782C937EE300E8755B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7772C937EE300E8755B /* SearchViewModel.swift */; };
 		9A4DB77A2CA47E6D00E8755B /* SearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7792CA47E6D00E8755B /* SearchField.swift */; };
 		9A4DB77F2CA4A32800E8755B /* SearchOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */; };
@@ -353,6 +354,7 @@
 		9A3B09352B967CEC00691427 /* NonNilModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonNilModifier.swift; sourceTree = "<group>"; };
 		9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssetExtension.swift; sourceTree = "<group>"; };
+		9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTypeExtension.swift; sourceTree = "<group>"; };
 		9A4DB7772C937EE300E8755B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		9A4DB7792CA47E6D00E8755B /* SearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchField.swift; sourceTree = "<group>"; };
 		9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchOverlay.swift; sourceTree = "<group>"; };
@@ -918,6 +920,7 @@
 				8C0923A62C210C8C00813454 /* Typography.swift */,
 				8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */,
 				9A5830552BA3A2CE0039876E /* ViewportExtension.swift */,
+				9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1362,6 +1365,7 @@
 				8C815AF32BF5257B009BB51C /* TripDetailsStopListView.swift in Sources */,
 				8C3D64102BE19DBA0026DD53 /* SettingsPage.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
+				9A4850572CB56A1600F50EE7 /* RouteTypeExtension.swift in Sources */,
 				EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */,
 				8CA1FB752BF7EB3500384658 /* TripDetailsStopListSplitView.swift in Sources */,
 				8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */,
