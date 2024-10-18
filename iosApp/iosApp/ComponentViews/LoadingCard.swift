@@ -32,6 +32,6 @@ struct LoadingCard<Message: View>: View {
 #Preview {
     List {
         LoadingCard()
-        LoadingCard { Text("Custom message") }
+        LoadingCard { Text(verbatim: "Custom message") }
     }
 }

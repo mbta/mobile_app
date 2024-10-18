@@ -104,9 +104,12 @@ struct VehicleOnTripView: View {
         _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
     ) -> String {
         switch vehicleStatus {
-        case .incomingAt: "Approaching"
-        case .inTransitTo: "Next stop"
-        case .stoppedAt: "Now at"
+        case .incomingAt: NSLocalizedString("Approaching",
+                                            comment: "Label for a vehicle's next stop. For example: Approaching Alewife")
+        case .inTransitTo: NSLocalizedString("Next stop",
+                                             comment: "Label for a vehicle's next stop. For example: Next stop Alewife")
+        case .stoppedAt: NSLocalizedString("Now at",
+                                           comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife")
         }
     }
 
