@@ -25,20 +25,6 @@ class RealtimePatternsTest {
         anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.FERRY)
 
     @Test
-    fun `formats as loading when null trips`() = parametricTest {
-        val now = Clock.System.now()
-
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route()
-
-        assertEquals(
-            RealtimePatterns.Format.Loading,
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
-        )
-    }
-
-    @Test
     fun `formats as alert with no trips and major alert`() = parametricTest {
         val now = Clock.System.now()
 
