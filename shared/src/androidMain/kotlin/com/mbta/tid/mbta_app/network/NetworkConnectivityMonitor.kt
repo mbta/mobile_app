@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
@@ -10,6 +11,8 @@ class NetworkConnectivityMonitor(context: Context) : INetworkConnectivityMonitor
     private val connectivityManager =
         context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
+    @SuppressLint("MissingPermission")
+    // Permission is included in AndroidManifest.xml
     override fun registerListener(onNetworkAvailable: () -> Unit, onNetworkLost: () -> Unit) {
         networkCallback =
             object : ConnectivityManager.NetworkCallback() {
