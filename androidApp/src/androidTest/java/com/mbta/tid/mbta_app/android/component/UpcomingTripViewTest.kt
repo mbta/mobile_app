@@ -74,16 +74,16 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeAsTime() {
         val instant = Instant.fromEpochSeconds(1722535384)
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.AsTime(instant)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant)))
         }
         composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
     }
 
     @Test
-    fun testUpcomingTripViewWithSomeSchedule() {
+    fun testUpcomingTripViewWithSomeScheduleTime() {
         val instant = Instant.fromEpochSeconds(1722535384)
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Schedule(instant)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant)))
         }
         composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
     }
@@ -92,6 +92,15 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeMinutes() {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
+        }
+        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeScheduleMinutes() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5)))
         }
         composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
     }
