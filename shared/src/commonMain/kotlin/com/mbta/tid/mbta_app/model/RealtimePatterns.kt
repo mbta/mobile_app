@@ -411,7 +411,9 @@ sealed class RealtimePatterns {
                 it.format is TripInstantDisplay.Hidden ||
                     it.format is TripInstantDisplay.Skipped ||
                     // API best practices call for hiding scheduled times on subway
-                    (isSubway && it.format is TripInstantDisplay.Schedule)
+                    (isSubway &&
+                        (it.format is TripInstantDisplay.ScheduleTime ||
+                            it.format is TripInstantDisplay.ScheduleMinutes))
             }
         }
 

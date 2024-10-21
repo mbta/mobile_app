@@ -22,15 +22,19 @@ sealed class TripInstantDisplay {
 
     data object Now : TripInstantDisplay()
 
-    data class AsTime(val predictionTime: Instant) : TripInstantDisplay()
+    data class Time(val predictionTime: Instant, val headline: Boolean = false) :
+        TripInstantDisplay()
 
-    data class Schedule(val scheduleTime: Instant) : TripInstantDisplay()
+    data class Minutes(val minutes: Int) : TripInstantDisplay()
+
+    data class ScheduleTime(val scheduledTime: Instant, val headline: Boolean = false) :
+        TripInstantDisplay()
+
+    data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
 
     data class Skipped(val scheduledTime: Instant?) : TripInstantDisplay()
 
     data class Cancelled(val scheduledTime: Instant) : TripInstantDisplay()
-
-    data class Minutes(val minutes: Int) : TripInstantDisplay()
 
     enum class Context {
         NearbyTransit,
@@ -42,7 +46,7 @@ sealed class TripInstantDisplay {
     companion object {
         fun from(
             prediction: Prediction?,
-            schedule: com.mbta.tid.mbta_app.model.Schedule?,
+            schedule: Schedule?,
             vehicle: Vehicle?,
             routeType: RouteType?,
             now: Instant,
@@ -89,18 +93,40 @@ sealed class TripInstantDisplay {
             if (!(hasDepartureToDisplay || hasArrivalToDisplay)) {
                 return Hidden
             }
+
+            val scheduleBasedRouteType =
+                routeType == RouteType.COMMUTER_RAIL || routeType == RouteType.FERRY
             if (prediction == null) {
                 val scheduleTime = schedule?.scheduleTime
                 return if (scheduleTime == null) {
                     Hidden
                 } else {
-                    Schedule(scheduleTime)
+                    val scheduleTimeRemaining = scheduleTime.minus(now)
+                    if (
+                        scheduleTimeRemaining > SCHEDULE_CLOCK_CUTOFF ||
+                            scheduleBasedRouteType ||
+                            forceAsTime
+                    ) {
+                        ScheduleTime(
+                            scheduleTime,
+                            headline = scheduleBasedRouteType && !forceAsTime
+                        )
+                    } else {
+                        val scheduleMinutes =
+                            scheduleTimeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
+                        ScheduleMinutes(scheduleMinutes)
+                    }
                 }
             }
             // since we checked departureTime or arrivalTime as non-null, we don't have to also
             // check  predictionTime
             val timeRemaining = prediction.predictionTime!!.minus(now)
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
+
+            if (forceAsTime) {
+                return Time(prediction.predictionTime)
+            }
+
             /**
              * Because the gap between boarding and arriving is much smaller for bus, having
              * different states doesn’t provide much rider value so we return Now instead
@@ -121,11 +147,11 @@ sealed class TripInstantDisplay {
             if (timeRemaining <= ARRIVAL_CUTOFF) {
                 return Arriving
             }
-            if (timeRemaining <= APPROACH_CUTOFF && !forceAsTime) {
+            if (timeRemaining <= APPROACH_CUTOFF) {
                 return Approaching
             }
-            if (routeType == RouteType.COMMUTER_RAIL || forceAsTime) {
-                return AsTime(prediction.predictionTime)
+            if (scheduleBasedRouteType) {
+                return Time(prediction.predictionTime, headline = true)
             }
             return Minutes(minutes)
         }

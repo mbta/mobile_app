@@ -66,7 +66,6 @@ final class TripDetailsPageTests: XCTestCase {
         let showsStopsExp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(text: "Somewhere"))
             XCTAssertNotNil(try view.find(text: "Elsewhere"))
-            XCTAssertNotNil(try view.find(text: "Elsewhere").parent().find(text: "ARR"))
         }
 
         ViewHosting.host(view: sut)
