@@ -9,6 +9,7 @@
 import Combine
 @testable import iosApp
 import shared
+import Shimmer
 import ViewInspector
 import XCTest
 
@@ -23,6 +24,12 @@ final class TripDetailsPageTests: XCTestCase {
         }
         let stop2 = objects.stop { stop in
             stop.name = "Elsewhere"
+        }
+
+        objects.prediction { prediction in
+            prediction.stopId = stop1.id
+            prediction.stopSequence = 1
+            prediction.departureTime = Date.now.addingTimeInterval(15).toKotlinInstant()
         }
 
         objects.prediction { prediction in
@@ -349,7 +356,7 @@ final class TripDetailsPageTests: XCTestCase {
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
 
         let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
-            XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
+            XCTAssertNotNil(try view.find(where: { view in (try? view.modifier(Shimmer.self)) != nil }))
         }
 
         ViewHosting.host(view: sut)

@@ -91,6 +91,7 @@
 		8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */; };
 		8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */; };
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
+		8CCBF2CD2CC162E900B29806 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 8CCBF2CC2CC162E900B29806 /* Shimmer */; };
 		8CD58ECD2BEC115B0004E031 /* TripDetailsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD58ECC2BEC115B0004E031 /* TripDetailsPageTests.swift */; };
 		8CD79F112C46F6E200AFF17D /* MapboxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */; };
 		8CD81A242BE55B2C0090585F /* SettingsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD81A232BE55B2C0090585F /* SettingsPageTests.swift */; };
@@ -476,6 +477,7 @@
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
 				6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */,
+				8CCBF2CD2CC162E900B29806 /* Shimmer in Frameworks */,
 				A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1053,6 +1055,7 @@
 				9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				6E55C1812C2489030086A424 /* Collections */,
 				6E45D8A82C4170890006934E /* FirebaseAppCheck */,
+				8CCBF2CC2CC162E900B29806 /* Shimmer */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -1102,6 +1105,7 @@
 				6EE7457F2B965AEA0052227E /* XCRemoteSwiftPackageReference "SwiftPhoenixClient" */,
 				9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				6E55C1802C2489030086A424 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				8CCBF2CB2CC162E900B29806 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -2146,6 +2150,14 @@
 				minimumVersion = 0.10.0;
 			};
 		};
+		8CCBF2CB2CC162E900B29806 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
 		9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -2180,6 +2192,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		8CCBF2CC2CC162E900B29806 /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8CCBF2CB2CC162E900B29806 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
 		};
 		9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -104,13 +104,26 @@ struct StopDetailsView: View {
                         pinnedRoutes: pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
-                    LoadingCard()
+                    loadingBody()
                 }
             }
         }
         .task {
             loadGlobal()
         }
+    }
+
+    @ViewBuilder private func loadingBody() -> some View {
+        StopDetailsRoutesView(
+            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: filter),
+            global: globalResponse,
+            now: now.toKotlinInstant(),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinRoute: { _ in }
+        )
+        .redacted(reason: .placeholder)
+        .shimmering()
     }
 
     private func loadGlobal() {
