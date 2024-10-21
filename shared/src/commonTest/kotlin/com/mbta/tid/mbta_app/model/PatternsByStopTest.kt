@@ -476,13 +476,13 @@ class PatternsByStopTest {
 
         fun resolveWith(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
-            upcomingTripsMap: UpcomingTripsMap?
+            upcomingTripsMap: UpcomingTripsMap
         ): List<RealtimePatterns> {
             return PatternsByStop.resolveRealtimePatternForDirection(
                 staticData,
                 upcomingTripsMap,
                 stop.id,
-                null,
+                emptyList(),
                 hasSchedules,
                 true
             )
@@ -500,8 +500,6 @@ class PatternsByStopTest {
                     data.line,
                     listOf(data.routePatternEHeath),
                     upcomingTrips = listOf(data.upcomingTripEHeath1),
-                    null,
-                    true
                 )
             ),
             data.resolveWith(data.staticPatternsWest, data.typicalUpcomingTrips)
@@ -519,8 +517,6 @@ class PatternsByStopTest {
                     data.line,
                     listOf(data.routePatternEHeath),
                     upcomingTrips = listOf(data.upcomingTripEHeath1),
-                    null,
-                    true
                 )
             ),
             data.resolveWith(data.staticPatternsWest, data.atypicalScheduledTripsMap)
@@ -538,8 +534,6 @@ class PatternsByStopTest {
                     Direction("West", "Copley & West", 0),
                     listOf(data.routePatternCCleveland, data.routePatternEHeath),
                     upcomingTrips = listOf(data.upcomingTripEHeath1, data.upcomingTripCCleveland1),
-                    null,
-                    true
                 )
             ),
             data.resolveWith(data.staticPatternsWest, data.atypicalUpcomingTripsMap)
@@ -557,8 +551,6 @@ class PatternsByStopTest {
                     data.line,
                     listOf(data.routePatternEMedford),
                     upcomingTrips = listOf(data.upcomingTripEMedford1),
-                    null,
-                    true
                 )
             ),
             data.resolveWith(data.staticPatternsEast, data.typicalUpcomingTrips)
@@ -576,8 +568,6 @@ class PatternsByStopTest {
                     data.line,
                     listOf(data.routePatternEMedford),
                     upcomingTrips = listOf(data.upcomingTripEMedford1),
-                    null,
-                    true
                 )
             ),
             data.resolveWith(data.staticPatternsEast, data.atypicalScheduledTripsMap)
@@ -595,8 +585,6 @@ class PatternsByStopTest {
                     Direction("East", "Medford/Tufts", 1),
                     listOf(data.routePatternCMedford, data.routePatternEMedford),
                     upcomingTrips = listOf(data.upcomingTripEMedford1, data.upcomingTripCMedford1),
-                    null,
-                    true
                 )
             ),
             data.resolveWith(data.staticPatternsEast, data.atypicalUpcomingTripsMap)
