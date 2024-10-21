@@ -109,9 +109,9 @@ data class PatternsByStop(
         // will split the grouped direction up into as many headsign rows as there are headsigns.
         fun resolveRealtimePatternForDirection(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
-            upcomingTripsMap: UpcomingTripsMap?,
+            upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>?,
+            alerts: Collection<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ): List<RealtimePatterns> {
