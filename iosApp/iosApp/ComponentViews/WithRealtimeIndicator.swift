@@ -1,5 +1,5 @@
 //
-//  RealtimeIndicator.swift
+//  WithRealtimeIndicator.swift
 //  iosApp
 //
 //  Created by esimon on 10/18/24.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct RealtimeIndicator: View {
+struct WithRealtimeIndicator: View {
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 12
     let prediction: any View
@@ -36,14 +36,14 @@ struct RealtimeIndicator: View {
     }
 }
 
-struct RealtimeIndicatorModifier: ViewModifier {
+struct WithRealtimeIndicatorModifier: ViewModifier {
     func body(content: Content) -> some View {
-        RealtimeIndicator(content)
+        WithRealtimeIndicator(content)
     }
 }
 
 extension View {
     func realtime() -> some View {
-        modifier(RealtimeIndicatorModifier())
+        modifier(WithRealtimeIndicatorModifier())
     }
 }
