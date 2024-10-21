@@ -14,7 +14,7 @@ import kotlinx.datetime.Instant
 
 class StopDetailsDeparturesTest {
     @Test
-    fun `StopDetailsDepartures finds trips`() {
+    fun `fromData finds trips`() {
         val objects = ObjectCollectionBuilder()
 
         val route = objects.route()
@@ -83,7 +83,7 @@ class StopDetailsDeparturesTest {
                     )
                 )
             ),
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(
                     objects,
@@ -91,7 +91,7 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
-                null,
+                AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time1,
             )
@@ -99,7 +99,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures finds trips for line`() {
+    fun `fromData finds trips for line`() {
         val objects = ObjectCollectionBuilder()
 
         val stop = objects.stop()
@@ -230,7 +230,7 @@ class StopDetailsDeparturesTest {
         val directionEast = Direction("East", "Park St & North", 1)
 
         val departures =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(
                     objects,
@@ -248,7 +248,7 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
-                null,
+                AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
             )
@@ -306,12 +306,12 @@ class StopDetailsDeparturesTest {
                 routePatternC2.id,
                 routePatternE2.id
             ),
-            departures.upcomingPatternIds
+            checkNotNull(departures).upcomingPatternIds
         )
     }
 
     @Test
-    fun `StopDetailsDepartures filters vehicles by relevant routes`() {
+    fun `fromData filters vehicles by relevant routes`() {
         val objects = ObjectCollectionBuilder()
 
         val stop = objects.stop()
@@ -403,7 +403,7 @@ class StopDetailsDeparturesTest {
         objects.prediction(schedE) { departureTime = time + 2.3.minutes }
 
         val departures =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(
                     objects,
@@ -418,7 +418,7 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
-                null,
+                AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
             )
@@ -457,12 +457,12 @@ class StopDetailsDeparturesTest {
                 vehicleC.id to vehicleC,
                 vehicleE.id to vehicleE,
             ),
-            departures.filterVehiclesByUpcoming(vehicleResponse)
+            checkNotNull(departures).filterVehiclesByUpcoming(vehicleResponse)
         )
     }
 
     @Test
-    fun `StopDetailsDepartures shows partial data and filters after loading`() {
+    fun `fromData shows partial data and filters after loading`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val stop = objects.stop()
@@ -476,7 +476,7 @@ class StopDetailsDeparturesTest {
             val predictedTrip: UpcomingTrip?,
         ) {
             fun patternsByHeadsign(
-                trips: List<UpcomingTrip>?,
+                trips: List<UpcomingTrip>,
                 hasSchedulesToday: Boolean = true,
                 allDataLoaded: Boolean = true
             ) =
@@ -486,7 +486,7 @@ class StopDetailsDeparturesTest {
                     null,
                     listOf(routePattern),
                     trips,
-                    null,
+                    alertsHere = emptyList(),
                     hasSchedulesToday,
                     allDataLoaded
                 )
@@ -550,25 +550,17 @@ class StopDetailsDeparturesTest {
             StopDetailsDepartures(listOf(PatternsByStop(route, stop, pattern.toList())))
 
         fun actual(includeSchedules: Boolean = true, includePredictions: Boolean = true) =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(objects, mapOf(stop.id to objects.routePatterns.keys.toList())),
                 ScheduleResponse(objects).takeIf { includeSchedules },
                 PredictionsStreamDataResponse(objects).takeIf { includePredictions },
-                null,
+                AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time
             )
 
-        assertEquals(
-            expected(
-                scheduledPredicted.patternsByHeadsign(null, allDataLoaded = false),
-                scheduledUnpredicted.patternsByHeadsign(null, allDataLoaded = false),
-                unscheduledPredicted.patternsByHeadsign(null, allDataLoaded = false),
-                unscheduledUnpredicted.patternsByHeadsign(null, allDataLoaded = false)
-            ),
-            actual(includeSchedules = false, includePredictions = false)
-        )
+        assertEquals(null, actual(includeSchedules = false, includePredictions = false))
 
         assertEquals(
             expected(
@@ -586,36 +578,16 @@ class StopDetailsDeparturesTest {
             actual(includeSchedules = false, includePredictions = true)
         )
 
-        assertEquals(
-            expected(
-                scheduledPredicted.patternsByHeadsign(
-                    listOf(scheduledPredicted.scheduledTrip!!),
-                    allDataLoaded = false
-                ),
-                scheduledUnpredicted.patternsByHeadsign(
-                    listOf(scheduledUnpredicted.scheduledTrip!!),
-                    allDataLoaded = false
-                ),
-                unscheduledPredicted.patternsByHeadsign(
-                    emptyList(),
-                    hasSchedulesToday = false,
-                    allDataLoaded = false
-                ),
-                unscheduledUnpredicted.patternsByHeadsign(
-                    emptyList(),
-                    hasSchedulesToday = false,
-                    allDataLoaded = false
-                )
-            ),
-            actual(includeSchedules = true, includePredictions = false)
-        )
+        assertEquals(null, actual(includeSchedules = true, includePredictions = false))
 
         assertEquals(
             expected(
                 scheduledPredicted.patternsByHeadsign(
-                    listOf(scheduledPredicted.scheduledTrip, scheduledPredicted.predictedTrip)
+                    listOf(scheduledPredicted.scheduledTrip!!, scheduledPredicted.predictedTrip)
                 ),
-                scheduledUnpredicted.patternsByHeadsign(listOf(scheduledUnpredicted.scheduledTrip)),
+                scheduledUnpredicted.patternsByHeadsign(
+                    listOf(scheduledUnpredicted.scheduledTrip!!)
+                ),
                 unscheduledPredicted.patternsByHeadsign(
                     listOf(unscheduledPredicted.predictedTrip),
                     hasSchedulesToday = false
@@ -626,7 +598,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures keeps late patterns but drops early patterns after loading`() {
+    fun `fromData keeps late patterns but drops early patterns after loading`() {
         val now = Instant.parse("2024-08-16T10:32:38-04:00")
         val late = Instant.parse("2024-08-16T20:00:00-04:00")
 
@@ -706,12 +678,12 @@ class StopDetailsDeparturesTest {
                 )
             )
         val actualBeforeLoaded =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(objects, mapOf(stop.id to listOf(earlyPattern.id, latePattern.id))),
                 null,
                 PredictionsStreamDataResponse(objects),
-                null,
+                AlertsStreamDataResponse(objects),
                 emptySet(),
                 now
             )
@@ -730,12 +702,12 @@ class StopDetailsDeparturesTest {
                 )
             )
         val actualAfterLoaded =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(objects, mapOf(stop.id to listOf(earlyPattern.id, latePattern.id))),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
-                null,
+                AlertsStreamDataResponse(objects),
                 setOf(),
                 now
             )
@@ -743,7 +715,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures sorts by route preference order`() {
+    fun `fromData sorts by route preference order`() {
         val objects = ObjectCollectionBuilder()
 
         val time = Instant.parse("2024-04-02T16:29:22Z")
@@ -818,15 +790,14 @@ class StopDetailsDeparturesTest {
                                 "B",
                                 null,
                                 listOf(routeNotPinnedPattern),
-                                listOf(),
-                                null,
-                                false
+                                upcomingTrips = emptyList(),
+                                hasSchedulesToday = false
                             ),
                         )
                     )
                 )
             ),
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(
                     objects,
@@ -841,7 +812,7 @@ class StopDetailsDeparturesTest {
                 ),
                 ScheduleResponse(objects),
                 PredictionsStreamDataResponse(objects),
-                null,
+                AlertsStreamDataResponse(objects),
                 setOf(routePinned.id),
                 filterAtTime = time,
             )
@@ -849,7 +820,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures picks out alerts by platform`() {
+    fun `fromData picks out alerts by platform`() {
         val objects = ObjectCollectionBuilder()
         lateinit var platform1: Stop
         lateinit var platform2: Stop
@@ -913,7 +884,7 @@ class StopDetailsDeparturesTest {
             }
 
         val departures =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(
                     objects,
@@ -961,7 +932,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartues provides a default StopDetailsFilter given a single route and direction`() {
+    fun `StopDetailsDepartures provides a default StopDetailsFilter given a single route and direction`() {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
@@ -973,7 +944,7 @@ class StopDetailsDeparturesTest {
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
         val departures =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
                 ScheduleResponse(objects),
@@ -985,7 +956,7 @@ class StopDetailsDeparturesTest {
 
         assertEquals(
             StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId),
-            departures.autoFilter()
+            checkNotNull(departures).autoFilter()
         )
     }
 
@@ -1008,7 +979,7 @@ class StopDetailsDeparturesTest {
         val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
         val departures =
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                 stop,
                 GlobalResponse(
                     objects,
@@ -1021,6 +992,6 @@ class StopDetailsDeparturesTest {
                 time
             )
 
-        assertEquals(null, departures.autoFilter())
+        assertEquals(null, checkNotNull(departures).autoFilter())
     }
 }

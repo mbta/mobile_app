@@ -277,6 +277,7 @@ class PatternsByStopTest {
                         "Out",
                         null,
                         listOf(pattern1, pattern4),
+                        upcomingTrips = emptyList(),
                         alertsHere = listOf(alert)
                     ),
                     RealtimePatterns.ByHeadsign(
@@ -284,6 +285,7 @@ class PatternsByStopTest {
                         "In",
                         null,
                         listOf(pattern2, pattern3),
+                        upcomingTrips = emptyList(),
                         alertsHere = listOf(alert)
                     )
                 )

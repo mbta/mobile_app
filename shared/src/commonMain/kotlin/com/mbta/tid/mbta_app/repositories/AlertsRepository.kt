@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -79,10 +80,13 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
     }
 }
 
-class MockAlertsRepository : IAlertsRepository {
+class MockAlertsRepository
+@DefaultArgumentInterop.Enabled
+constructor(private val response: AlertsStreamDataResponse = AlertsStreamDataResponse(emptyMap())) :
+    IAlertsRepository {
 
     override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
-        /* no-op */
+        onReceive(ApiResult.Ok(response))
     }
 
     override fun disconnect() {

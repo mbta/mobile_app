@@ -486,23 +486,20 @@ fun NearbyStaticData.withRealtimeInfo(
     hideNonTypicalPatternsBeyondNext: Duration?,
     filterCancellations: Boolean,
     pinnedRoutes: Set<String>
-): List<StopsAssociated> {
+): List<StopsAssociated>? {
+    // if predictions or alerts are still loading, this is the loading state
+    if (predictions == null || alerts == null) return null
+
     val activeRelevantAlerts =
-        alerts?.alerts?.values?.filter {
+        alerts.alerts.values.filter {
             it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
         }
 
-    val allDataLoaded = schedules != null && predictions != null
+    val allDataLoaded = schedules != null
 
     // this needs to change how the trip keys are constructed
     val (rewrittenThis, rewrittenPredictions) =
-        if (
-            predictions == null ||
-                globalData == null ||
-                activeRelevantAlerts == null ||
-                schedules == null
-        )
-            Pair(this, predictions)
+        if (globalData == null || schedules == null) Pair(this, predictions)
         else
             TemporaryTerminalRewriter(
                     this,
@@ -569,10 +566,8 @@ fun NearbyStaticData.withRealtimeInfo(
     val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
     val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
-    val upcomingTripsMap: UpcomingTripsMap? =
-        (upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop).takeUnless {
-            schedules == null && predictions == null
-        }
+    val upcomingTripsMap: UpcomingTripsMap =
+        upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop
 
     fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
         if (filterCancellations) this.filterCancellations(isSubway) else this
@@ -603,7 +598,7 @@ fun NearbyStaticData.withRealtimeInfo(
                             .map { stopPatterns ->
                                 PatternsByStop(
                                     stopPatterns,
-                                    upcomingTripsMap?.maybeFilterCancellations(
+                                    upcomingTripsMap.maybeFilterCancellations(
                                         transit.route.type.isSubway()
                                     ),
                                     { it.shouldShow() },
@@ -622,7 +617,7 @@ fun NearbyStaticData.withRealtimeInfo(
                             .map { stopPatterns ->
                                 PatternsByStop(
                                     stopPatterns,
-                                    upcomingTripsMap?.maybeFilterCancellations(
+                                    upcomingTripsMap.maybeFilterCancellations(
                                         transit.routes.min().type.isSubway()
                                     ),
                                     { it.shouldShow() },
@@ -648,7 +643,7 @@ fun NearbyStaticData.withRealtimeInfo(
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
     pinnedRoutes: Set<String>
-): List<StopsAssociated> {
+): List<StopsAssociated>? {
     return this.withRealtimeInfo(
         globalData,
         sortByDistanceFrom,

@@ -173,9 +173,6 @@
     "Construction" : {
       "comment" : "Possible alert cause"
     },
-    "Couldn't load stop list" : {
-
-    },
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause"
     },

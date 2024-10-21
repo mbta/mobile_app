@@ -22,9 +22,9 @@ data class PatternsByStop(
 
     constructor(
         staticData: NearbyStaticData.StopPatterns,
-        upcomingTripsMap: UpcomingTripsMap?,
+        upcomingTripsMap: UpcomingTripsMap,
         patternsPredicate: (RealtimePatterns) -> Boolean,
-        alerts: Collection<Alert>?,
+        alerts: Collection<Alert>,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
         allDataLoaded: Boolean,
     ) : this(

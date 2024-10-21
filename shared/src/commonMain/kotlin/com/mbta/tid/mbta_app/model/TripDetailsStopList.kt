@@ -133,11 +133,12 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
         ): TripDetailsStopList? {
+            if (tripPredictions == null || alertsData == null) return null
             val entries = mutableMapOf<Int, WorkingEntry>()
 
             val predictions =
                 deduplicatePredictionsByStopSequence(
-                    tripPredictions?.predictions?.values.orEmpty(),
+                    tripPredictions.predictions.values,
                     tripSchedules,
                     globalData
                 )

@@ -348,12 +348,12 @@ class TemporaryTerminalTest {
                     alerts,
                     now,
                     emptySet()
-                )
+                )!!
                 .condensed()
         )
         assertEquals(
             expected.condensed(),
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                     harvard.station,
                     globalData,
                     schedules,
@@ -361,7 +361,7 @@ class TemporaryTerminalTest {
                     alerts,
                     emptySet(),
                     now
-                )
+                )!!
                 .asNearby()
                 .condensed()
         )
@@ -408,12 +408,12 @@ class TemporaryTerminalTest {
                     alerts,
                     now,
                     emptySet()
-                )
+                )!!
                 .condensed()
         )
         assertEquals(
             expected.condensed(),
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                     parkStreet.station,
                     globalData,
                     schedules,
@@ -421,7 +421,7 @@ class TemporaryTerminalTest {
                     alerts,
                     emptySet(),
                     now
-                )
+                )!!
                 .asNearby()
                 .condensed()
         )
@@ -469,12 +469,12 @@ class TemporaryTerminalTest {
                     alerts,
                     now,
                     emptySet()
-                )
+                )!!
                 .condensed()
         )
         assertEquals(
             expected.condensed(),
-            StopDetailsDepartures(
+            StopDetailsDepartures.fromData(
                     jfkUmass.station,
                     globalData,
                     schedules,
@@ -482,7 +482,7 @@ class TemporaryTerminalTest {
                     alerts,
                     emptySet(),
                     now
-                )
+                )!!
                 .asNearby()
                 .condensed()
         )
