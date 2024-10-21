@@ -50,32 +50,40 @@ struct UpcomingTripView: View {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
-                Text(overridden.textWithLocale())
+                Text(overridden.textWithLocale()).realtime()
             case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")
             case .now:
-                Text("Now").font(Typography.headlineBold)
+                Text("Now")
+                    .font(Typography.headlineBold)
+                    .realtime()
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .boarding:
-                Text("BRD", comment: "Shorthand for boarding").font(Typography.headlineBold)
+                Text("BRD", comment: "Shorthand for boarding")
+                    .font(Typography.headlineBold)
+                    .realtime()
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .boardingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.boardingOther())
             case .arriving:
-                Text("ARR", comment: "Shorthand for arriving").font(Typography.headlineBold)
+                Text("ARR", comment: "Shorthand for arriving")
+                    .font(Typography.headlineBold)
+                    .realtime()
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
-                PredictionText(minutes: 1)
-            case let .asTime(format):
+                PredictionText(minutes: 1).realtime()
+            case let .time(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+                    .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .realtime()
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
                             date: format.predictionTime.toNSDate(),
@@ -83,51 +91,51 @@ struct UpcomingTripView: View {
                         )
                         : accessibilityFormatters
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
-                    .font(Typography.footnoteSemibold)
-            case let .schedule(schedule):
-                HStack(spacing: Self.subjectSpacing) {
-                    Text(schedule.scheduleTime.toNSDate(), style: .time)
-                        .accessibilityLabel(isFirst
-                            ? accessibilityFormatters.scheduledFirst(
-                                date: schedule.scheduleTime.toNSDate(),
-                                vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
-                            )
-                            : accessibilityFormatters
-                            .scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(Typography.footnoteSemibold)
-                    Image(.faClock)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: iconSize, height: iconSize)
-                        .padding(4)
-                        .foregroundStyle(Color.deemphasized)
-                }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
+                    .realtime()
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
-                                                                         vehicleText: routeType?
-                                                                             .typeText(isOnly: isOnly) ?? "")
+                        ? accessibilityFormatters.predictionMinutesFirst(
+                            minutes: format.minutes,
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
                         : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
-            case let .cancelled(schedule):
+            case let .scheduleTime(format):
+                Text(format.scheduledTime.toNSDate(), style: .time)
+                    .opacity(0.6)
+                    .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.scheduleTimeFirst(
+                            date: format.scheduledTime.toNSDate(),
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
+                        : accessibilityFormatters.scheduleTimeOther(date: format.scheduledTime.toNSDate()))
+            case let .scheduleMinutes(format):
+                PredictionText(minutes: format.minutes)
+                    .opacity(0.6)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.scheduleMinutesFirst(
+                            minutes: format.minutes,
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
+                        : accessibilityFormatters.scheduleMinutesOther(minutes: format.minutes))
+            case let .cancelled(format):
                 HStack(spacing: Self.subjectSpacing) {
                     Text("Cancelled")
                         .font(Typography.footnote)
                         .foregroundStyle(Color.deemphasized)
-                    Text(schedule.scheduledTime.toNSDate(), style: .time)
+                    Text(format.scheduledTime.toNSDate(), style: .time)
                         .font(Typography.footnoteSemibold)
                         .strikethrough()
                         .foregroundStyle(Color.deemphasized)
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(
-                    isFirst
-                        ? accessibilityFormatters.scheduledFirst(
-                            date: schedule.scheduledTime.toNSDate(),
-                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
-                        )
-                        : accessibilityFormatters.scheduledOther(date: schedule.scheduledTime.toNSDate())
-                )
+                .accessibilityLabel(isFirst
+                    ? accessibilityFormatters.scheduleTimeFirst(
+                        date: format.scheduledTime.toNSDate(),
+                        vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                    )
+                    : accessibilityFormatters.scheduleTimeOther(date: format.scheduledTime.toNSDate()))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
@@ -195,21 +203,29 @@ class UpcomingTripAccessibilityFormatters {
              """)
     }
 
-    public func scheduledFirst(date: Date, vehicleText: String) -> Text {
+    public func scheduleTimeFirst(date: Date, vehicleText: String) -> Text {
         Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) scheduled",
              comment: """
              Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
              First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
              For example, 'bus arriving at 10:30AM scheduled'
-             """)
+             "")
     }
 
-    public func scheduledOther(date: Date) -> Text {
+    public func scheduleTimeOther(date: Date) -> Text {
         Text("and at \(timeFormatter.string(from: date)) scheduled",
              comment: """
              The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.
              For example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'
              """)
+    }
+
+    public func scheduleMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
+        Text("\(vehicleText) arriving in \(minutes) min scheduled")
+    }
+
+    public func scheduleMinutesOther(minutes: Int32) -> Text {
+        Text("and in \(minutes) min scheduled")
     }
 
     public func predictionMinutesFirst(minutes: Int32, vehicleText: String) -> Text {

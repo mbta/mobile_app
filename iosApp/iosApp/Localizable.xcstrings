@@ -58,6 +58,16 @@
         }
       }
     },
+    "%@ arriving in %@ min scheduled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arriving in %2$@ min scheduled"
+          }
+        }
+      }
+    },
     "%@ arriving now" : {
       "comment" : "Describe that a vehicle is arriving now, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'"
     },
@@ -149,6 +159,9 @@
     "Approaching" : {
       "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife"
     },
+    "and in %@ min scheduled" : {
+
+    },
     "ARR" : {
       "comment" : "Shorthand for arriving"
     },
@@ -184,6 +197,9 @@
     },
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause"
+    },
+    "Custom message" : {
+
     },
     "Demonstration" : {
       "comment" : "Possible alert cause"

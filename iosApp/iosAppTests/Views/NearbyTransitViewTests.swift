@@ -243,15 +243,16 @@ final class NearbyTransitViewTests: XCTestCase {
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
             XCTAssertEqual(
                 try upcomingSchedule.actualView().prediction,
-                .some(.Schedule(scheduleTime: time1))
+                .some(.ScheduleMinutes(minutes: 45))
             )
-            XCTAssertEqual(try upcomingSchedule.find(ViewType.Image.self).actualImage().name(), "fa-clock")
 
             XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
+            let upcomingPrediction = try patterns[1].find(UpcomingTripView.self)
             XCTAssertEqual(
-                try patterns[1].find(UpcomingTripView.self).actualView().prediction,
+                try upcomingPrediction.actualView().prediction,
                 .some(.Minutes(minutes: 10))
             )
+            XCTAssertEqual(try upcomingPrediction.find(ViewType.Image.self).actualImage().name(), "live-data")
 
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
             XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .serviceEndedToday)
