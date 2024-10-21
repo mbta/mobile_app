@@ -29,6 +29,7 @@
 		6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C17E2C247D480086A424 /* StopDetailsView.swift */; };
 		6E55C1822C2489030086A424 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 6E55C1812C2489030086A424 /* Collections */; };
 		6E55C1862C249EF20086A424 /* StopDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C1852C249EF20086A424 /* StopDetailsViewTests.swift */; };
+		6E6D45F72CC6E865002A3663 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6E6D45F52CC6E865002A3663 /* InfoPlist.strings */; };
 		6E973DA52C17384C00CBF341 /* SheetHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA42C17384C00CBF341 /* SheetHeader.swift */; };
 		6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */; };
 		6E973DA92C178BF500CBF341 /* ActionButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA82C178BF500CBF341 /* ActionButtonTests.swift */; };
@@ -262,6 +263,12 @@
 		6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* StopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* StopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsViewTests.swift; sourceTree = "<group>"; };
+		6E6D45F62CC6E865002A3663 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		6E6D45F82CC6E873002A3663 /* zh-Hans-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans-CN"; path = "zh-Hans-CN.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		6E6D45F92CC6E8B0002A3663 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6E6D45FA2CC6E8BF002A3663 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		6E6D45FB2CC6E8E0002A3663 /* ht */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ht; path = ht.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6E6D45FC2CC6E8EC002A3663 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6E973DA42C17384C00CBF341 /* SheetHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetHeader.swift; sourceTree = "<group>"; };
 		6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationLink.swift; sourceTree = "<group>"; };
 		6E973DA82C178BF500CBF341 /* ActionButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonTests.swift; sourceTree = "<group>"; };
@@ -642,6 +649,7 @@
 				9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */,
 				058557BA273AAA24004C7B11 /* Icons.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
+				6E6D45F52CC6E865002A3663 /* InfoPlist.strings */,
 				8C0923A42C21054100813454 /* Inter.ttc */,
 				2152FB032600AC8F00CF470E /* IOSApp.swift */,
 				9AF88E042B48913C00E08C7C /* Localizable.xcstrings */,
@@ -1134,6 +1142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C0923A52C21054100813454 /* Inter.ttc in Resources */,
+				6E6D45F72CC6E865002A3663 /* InfoPlist.strings in Resources */,
 				9A3BAB722BEAB8E200DAFDE2 /* Colors.xcassets in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				9AB3F50F2BE45382008D9E40 /* GoogleService-Info.plist in Resources */,
@@ -1459,6 +1468,22 @@
 			targetProxy = 6EED5E9F2B3DC6C10052A1B8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6E6D45F52CC6E865002A3663 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6E6D45F62CC6E865002A3663 /* zh-Hant-TW */,
+				6E6D45F82CC6E873002A3663 /* zh-Hans-CN */,
+				6E6D45F92CC6E8B0002A3663 /* vi */,
+				6E6D45FA2CC6E8BF002A3663 /* pt-BR */,
+				6E6D45FB2CC6E8E0002A3663 /* ht */,
+				6E6D45FC2CC6E8EC002A3663 /* es */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		6EED5E922B3DC6A00052A1B8 /* ProdDebug */ = {
