@@ -209,7 +209,7 @@ class UpcomingTripAccessibilityFormatters {
              Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
              First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
              For example, 'bus arriving at 10:30AM scheduled'
-             "")
+             """)
     }
 
     public func scheduleTimeOther(date: Date) -> Text {
