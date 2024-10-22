@@ -603,6 +603,29 @@
         }
       }
     },
+    "%ld stops away" : {
+      "comment" : "How many stops away the vehicle is from the target stop",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ld stop away"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%ld stops away"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Accident" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2728,6 +2751,9 @@
           }
         }
       }
+    },
+    "Nearby Transit" : {
+      "comment" : "Header for nearby transit sheet"
     },
     "Next stop" : {
       "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife",
