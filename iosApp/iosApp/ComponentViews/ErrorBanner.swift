@@ -46,6 +46,12 @@ struct ErrorBanner: View {
                 }
                 .frame(minHeight: minHeight)
             }
+        case .networkError:
+            ErrorCard { HStack {
+                Image(systemName: "wifi.slash")
+                Text("Unable to connect")
+                Spacer()
+            }}
         case nil:
             // for some reason, .collect on an EmptyView doesn't work
             EmptyView()
