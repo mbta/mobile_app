@@ -17,6 +17,8 @@ class MapViewModel: ObservableObject {
     @Published var stopSourceData: StopSourceData = .init()
     @Published var stopMapData: StopMapResponse?
     @Published var allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
+    var stopUpdateTask: Task<Void, Error>? = nil
+    var routeUpdateTask: Task<Void, Error>? = nil
     var snappedStopRouteLines: [RouteLineData] = []
 
     var lastMapboxErrorSubject: PassthroughSubject<Date?, Never>
@@ -45,12 +47,54 @@ class MapViewModel: ObservableObject {
         lastMapboxErrorSubject.send(Date.now)
     }
 
-    func updateRouteSource(routeLines: [RouteLineData]) {
-        layerManager?
-            .updateSourceData(routeData: RouteFeaturesBuilder.shared.buildCollection(routeLines: routeLines).toMapbox())
+    func updateSources(globalData: GlobalResponse?, globalMapData: GlobalMapData?) {
+        updateStopSource(globalMapData: globalMapData)
+        updateRouteSource(globalData: globalData, globalMapData: globalMapData)
     }
 
-    func updateStopSource(_ stopData: MapboxMaps.FeatureCollection) {
-        layerManager?.updateSourceData(stopData: stopData)
+    private func getLineFeatures(globalData: GlobalResponse?, globalMapData: GlobalMapData?) -> MapboxMaps
+        .FeatureCollection {
+        RouteFeaturesBuilder.shared.buildCollection(
+            routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
+                routeData: routeSourceData,
+                routesById: globalData?.routes,
+                stopsById: globalData?.stops,
+                alertsByStop: globalMapData?.alertsByStop
+            )
+        ).toMapbox()
+    }
+
+    func updateRouteSource(globalData: GlobalResponse?, globalMapData: GlobalMapData?) {
+        guard let layerManager else { return }
+        if routeUpdateTask != nil, routeUpdateTask?.isCancelled != true {
+            routeUpdateTask?.cancel()
+        }
+        routeUpdateTask = Task(priority: .high) {
+            try Task.checkCancellation()
+            let routeFeatures = self.getLineFeatures(globalData: globalData, globalMapData: globalMapData)
+            try Task.checkCancellation()
+            layerManager.updateSourceData(routeData: routeFeatures)
+        }
+    }
+
+    private func getStopFeatures(globalMapData: GlobalMapData) -> MapboxMaps.FeatureCollection {
+        StopFeaturesBuilder.shared.buildCollection(
+            stopData: stopSourceData,
+            stops: globalMapData.mapStops,
+            linesToSnap: snappedStopRouteLines
+        ).toMapbox()
+    }
+
+    func updateStopSource(globalMapData: GlobalMapData?) {
+        guard let globalMapData, let layerManager else { return }
+        if stopUpdateTask != nil, stopUpdateTask?.isCancelled != true {
+            stopUpdateTask?.cancel()
+        }
+        stopUpdateTask = Task(priority: .high) {
+            try Task.checkCancellation()
+            let stopFeatures = self.getStopFeatures(globalMapData: globalMapData)
+            try Task.checkCancellation()
+            layerManager.updateSourceData(stopData: stopFeatures)
+        }
     }
 }
