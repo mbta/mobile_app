@@ -1,0 +1,5 @@
+/* Bundle name */
+"CFBundleName" = "MBTA Go";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "位置功能将用于显示附近的交通选择。";

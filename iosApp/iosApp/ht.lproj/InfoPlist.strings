@@ -1,0 +1,5 @@
+/* Bundle name */
+"CFBundleName" = "MBTA Go";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "N ap itilize pozisyon w pou montre w opsyon transpò piblik ki pi pre w.";
