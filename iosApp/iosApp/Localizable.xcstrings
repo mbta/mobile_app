@@ -55,6 +55,16 @@
         }
       }
     },
+    "%@ arriving in %@ min scheduled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arriving in %2$@ min scheduled"
+          }
+        }
+      }
+    },
     "%@ arriving now" : {
 
     },
@@ -141,6 +151,9 @@
 
     },
     "and in %@ min" : {
+
+    },
+    "and in %@ min scheduled" : {
 
     },
     "ARR" : {
