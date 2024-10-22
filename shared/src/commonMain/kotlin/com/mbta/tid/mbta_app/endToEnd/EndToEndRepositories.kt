@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripShape
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -89,7 +90,7 @@ fun endToEndModule(): Module {
             departureTime = now + 10.minutes
         }
     return module {
-        single<IAlertsRepository> { MockAlertsRepository() }
+        single<IAlertsRepository> { MockAlertsRepository(AlertsStreamDataResponse(objects)) }
         single<IAppCheckRepository> { MockAppCheckRepository() }
         single<IConfigRepository> { MockConfigRepository() }
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
