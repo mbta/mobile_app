@@ -1,17 +1,39 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.model.ErrorBannerState
+import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-abstract class IErrorBannerStateRepository
-protected constructor(initialState: ErrorBannerState? = null) {
+sealed class NetworkStatus {
+    data object Connected : NetworkStatus()
+
+    data object Disconnected : NetworkStatus()
+}
+
+abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = null) : KoinComponent {
+
+    private val networkConnectivityMonitor: INetworkConnectivityMonitor by inject()
+
+    /*
+    Registers platform-specific observer of network status changes.
+     */
+    open fun subscribeToNetworkStatusChanges() {
+        this.networkConnectivityMonitor.registerListener(
+            onNetworkAvailable = { setNetworkStatus(NetworkStatus.Connected) },
+            onNetworkLost = { setNetworkStatus(NetworkStatus.Disconnected) }
+        )
+    }
+
     protected val flow = MutableStateFlow(initialState)
     val state = flow.asStateFlow()
+
+    private var networkStatus: NetworkStatus? = null
 
     private var predictionsStale: ErrorBannerState.StalePredictions? = null
     private val dataErrors = mutableMapOf<String, ErrorBannerState.DataError>()
@@ -19,6 +41,7 @@ protected constructor(initialState: ErrorBannerState? = null) {
     protected open fun updateState() {
         flow.value =
             when {
+                networkStatus == NetworkStatus.Disconnected -> ErrorBannerState.NetworkError(null)
                 dataErrors.isNotEmpty() ->
                     // encapsulate all the different error actions within one error
                     ErrorBannerState.DataError { dataErrors.values.forEach { it.action() } }
@@ -41,6 +64,11 @@ protected constructor(initialState: ErrorBannerState? = null) {
         updateState()
     }
 
+    private fun setNetworkStatus(newStatus: NetworkStatus) {
+        networkStatus = newStatus
+        updateState()
+    }
+
     fun setDataError(key: String, action: () -> Unit) {
         dataErrors[key] = ErrorBannerState.DataError(action)
         updateState()
@@ -60,8 +88,15 @@ protected constructor(initialState: ErrorBannerState? = null) {
 
 class ErrorBannerStateRepository : IErrorBannerStateRepository(), KoinComponent
 
-class MockErrorBannerStateRepository(state: ErrorBannerState? = null) :
-    IErrorBannerStateRepository(state) {
+class MockErrorBannerStateRepository(
+    state: ErrorBannerState? = null,
+    onSubscribeToNetworkChanges: (() -> Unit)? = null
+) : IErrorBannerStateRepository(state) {
+    private val onSubscribeToNetworkChanges = onSubscribeToNetworkChanges
     val mutableFlow
         get() = flow
+
+    override fun subscribeToNetworkStatusChanges() {
+        onSubscribeToNetworkChanges?.invoke()
+    }
 }

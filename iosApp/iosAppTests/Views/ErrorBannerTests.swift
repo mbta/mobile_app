@@ -49,6 +49,14 @@ final class ErrorBannerTests: XCTestCase {
         wait(for: [callsAction], timeout: 1)
     }
 
+    @MainActor func testWhenNetworkError() throws {
+        let sut = ErrorBanner(.init(
+            errorRepository: MockErrorBannerStateRepository(state: .NetworkError()),
+            initialLoadingWhenPredictionsStale: true
+        ))
+        XCTAssertNotNil(try sut.inspect().find(text: "Unable to connect"))
+    }
+
     @MainActor func testLoadingWhenPredictionsStale() throws {
         let sut = ErrorBanner(.init(
             errorRepository: MockErrorBannerStateRepository(state: .StalePredictions(

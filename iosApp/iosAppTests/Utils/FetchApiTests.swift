@@ -54,7 +54,12 @@ final class FetchApiTests: XCTestCase {
             onRefreshAfterError: { expRefresh.fulfill() }
         )
         XCTAssertNotNil(errorBannerRepo.state.value)
-        errorBannerRepo.state.value?.action()
+
+        if let action = errorBannerRepo.state.value?.action {
+            action()
+        } else {
+            XCTFail("data error missing action")
+        }
         await fulfillment(of: [expRefresh], timeout: 1)
     }
 
