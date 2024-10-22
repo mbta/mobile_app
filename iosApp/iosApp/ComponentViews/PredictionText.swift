@@ -31,7 +31,8 @@ struct PredictionText: View {
     }
 
     var predictionString: AttributedString {
-        var prediction = AttributedString(localized: predictionKey)
+        var prediction = AttributedString(localized: predictionKey,
+                                          comment: "Shorthand displayed number of minutes until arrival")
         for run in prediction.runs {
             if run.localizedNumericArgument != nil {
                 prediction[run.range].font = Typography.headlineBold

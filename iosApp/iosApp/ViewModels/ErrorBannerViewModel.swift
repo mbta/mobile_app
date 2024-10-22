@@ -18,19 +18,28 @@ class ErrorBannerViewModel: ObservableObject {
     @Published
     var loadingWhenPredictionsStale: Bool
 
+    // option for testing
+    var skipListeningForStateChanges = false
+
     init(
         errorRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
-        initialLoadingWhenPredictionsStale: Bool = false
+        initialLoadingWhenPredictionsStale: Bool = false,
+        skipListeningForStateChanges: Bool = false
     ) {
         self.errorRepository = errorRepository
         loadingWhenPredictionsStale = initialLoadingWhenPredictionsStale
         errorState = self.errorRepository.state.value
+        self.skipListeningForStateChanges = skipListeningForStateChanges
     }
 
     @MainActor
     func activate() async {
-        for await errorState in errorRepository.state {
-            self.errorState = errorState
+        errorRepository.subscribeToNetworkStatusChanges()
+
+        if !skipListeningForStateChanges {
+            for await errorState in errorRepository.state {
+                self.errorState = errorState
+            }
         }
     }
 
