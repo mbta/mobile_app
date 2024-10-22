@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Fail this script if any subcommand fails.
 set -e
@@ -34,7 +34,7 @@ JDK_PATH="${CI_DERIVED_DATA_PATH}/JDK"
 echo "Checking for cached JDK"
 # If the JDK isn't already installed, download it JDK and move it to JDK_PATH
 # JAVA_HOME env var must be manually configured to match JDK_PATH
-if [[ -d "$JDK_PATH" ]]; then
+if [ -d $JDK_PATH ]; then
   echo "JDK already found, skipping download"
   exit
 fi
@@ -44,12 +44,12 @@ retry asdf plugin-add java
 retry asdf install java
 DEFAULT_JAVA_PATH="$(asdf where java)"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
-rm -rf "$JDK_PATH"
-mkdir -p "$JDK_PATH"
+rm -rf $JDK_PATH
+mkdir -p $JDK_PATH
 # Temporary move into generically named JDK folder
-mv "$DEFAULT_JAVA_PATH" "${DEFAULT_JAVA_ROOT_DIR}/JDK"
+mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
-mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" "$CI_DERIVED_DATA_PATH"
+mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
 # Install cocoapods
 retry brew install cocoapods
@@ -60,7 +60,7 @@ retry pod install
 cd ..
 
 # Configure Mapbox token for installation
-cd "$CI_PRIMARY_REPOSITORY_PATH"
+cd $CI_PRIMARY_REPOSITORY_PATH
 touch ~/.netrc
 echo "machine api.mapbox.com" > ~/.netrc
 echo "login mapbox" >> ~/.netrc
@@ -68,14 +68,14 @@ echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 
 
 # Run tests from shared directory
-if [[ "$CI_XCODEBUILD_ACTION" == "build-for-testing" ]]; then
+if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   echo "Running shared tests"
-  cd "$CI_PRIMARY_REPOSITORY_PATH"
+  cd $CI_PRIMARY_REPOSITORY_PATH
   RETRIES=2 retry ./gradlew shared:iosX64Test
 fi
 
 echo "Adding build environment variables"
-cd "${CI_PRIMARY_REPOSITORY_PATH}"
+cd ${CI_PRIMARY_REPOSITORY_PATH}
 touch .envrc
 echo "export SENTRY_DSN=${SENTRY_DSN}" >> .envrc
 echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}" >> .envrc
