@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "**%@** affected stops" : {
-
+      "comment" : "The number of stops affected by an alert"
     },
     "%@ %@" : {
       "comment" : "First value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
@@ -16,6 +16,7 @@
       }
     },
     "%@ arriving at %@" : {
+      "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36,6 +37,7 @@
       }
     },
     "%@ arriving at %@ scheduled" : {
+      "comment" : "Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM scheduled'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -46,6 +48,7 @@
       }
     },
     "%@ arriving in %@ min" : {
+      "comment" : "Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives\nFor example, 'bus arriving in 5 minutes'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -66,10 +69,10 @@
       }
     },
     "%@ arriving now" : {
-
+      "comment" : "Describe that a vehicle is arriving now, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'"
     },
     "%@ boarding now" : {
-
+      "comment" : "Describe that a vehicle is boarding now, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry). For example, 'bus boarding now'"
     },
     "%@ Bus" : {
       "extractionState" : "manual"
@@ -86,7 +89,7 @@
       }
     },
     "%@ to" : {
-
+      "comment" : "Label the direction a list of arrivals is for. Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound. For example, \"[Northbound] to [Alewife]"
     },
     "%ld min" : {
       "extractionState" : "manual"
@@ -136,34 +139,37 @@
       "comment" : "Possible alert cause"
     },
     "and arriving now" : {
-
+      "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n For example, '[bus arriving in 1 minute], and arriving now'"
     },
     "and at %@" : {
-
+      "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM'"
     },
     "and at %@ cancelled" : {
 
     },
     "and at %@ scheduled" : {
-
+      "comment" : "The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'"
     },
     "and boarding now" : {
-
+      "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\n For example, '[bus arriving in 1 minute], and boarding now'"
     },
     "and in %@ min" : {
-
+      "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes'"
+    },
+    "Approaching" : {
+      "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife"
     },
     "and in %@ min scheduled" : {
 
     },
     "ARR" : {
-
+      "comment" : "Shorthand for arriving"
     },
     "Autos Impeding Service" : {
       "comment" : "Possible alert cause"
     },
     "BRD" : {
-
+      "comment" : "Shorthand for boarding"
     },
     "bus" : {
       "comment" : "bus"
@@ -212,9 +218,6 @@
     },
     "Drawbridge Being Raised" : {
       "comment" : "Possible alert cause"
-    },
-    "Dummy app for launching unit tests" : {
-
     },
     "Electrical Work" : {
       "comment" : "Possible alert cause"
@@ -290,7 +293,7 @@
       }
     },
     "Live" : {
-
+      "comment" : "real-time"
     },
     "loading" : {
 
@@ -313,6 +316,9 @@
     "Medical Emergency" : {
       "comment" : "Possible alert cause"
     },
+    "Next stop" : {
+      "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife"
+    },
     "No nearby MBTA stops" : {
 
     },
@@ -324,6 +330,9 @@
     },
     "Now" : {
 
+    },
+    "Now at" : {
+      "comment" : "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
     },
     "Open for more arrivals" : {
 
@@ -425,7 +434,7 @@
       "comment" : "Possible alert cause"
     },
     "to %@" : {
-
+      "comment" : "Label for the destination of a vehicle.\nFor example \"[Red Line] to Alewife\""
     },
     "Track Problem" : {
       "comment" : "Possible alert cause"
@@ -441,6 +450,9 @@
     },
     "trains" : {
       "comment" : "trains"
+    },
+    "Unable to connect" : {
+
     },
     "Unruly Passenger" : {
       "comment" : "Possible alert cause"
