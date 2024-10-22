@@ -34,7 +34,7 @@ JDK_PATH="${CI_DERIVED_DATA_PATH}/JDK"
 echo "Checking for cached JDK"
 # If the JDK isn't already installed, download it JDK and move it to JDK_PATH
 # JAVA_HOME env var must be manually configured to match JDK_PATH
-if [ -d "$JDK_PATH" ]; then
+if [[ -d "$JDK_PATH" ]]; then
   echo "JDK already found, skipping download"
   exit
 fi
@@ -68,7 +68,7 @@ echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 
 
 # Run tests from shared directory
-if [ "$CI_XCODEBUILD_ACTION" == "build-for-testing" ]; then
+if [[ "$CI_XCODEBUILD_ACTION" == "build-for-testing" ]]; then
   echo "Running shared tests"
   cd "$CI_PRIMARY_REPOSITORY_PATH"
   RETRIES=2 retry ./gradlew shared:iosX64Test
