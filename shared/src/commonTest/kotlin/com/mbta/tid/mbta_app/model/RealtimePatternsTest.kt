@@ -25,20 +25,6 @@ class RealtimePatternsTest {
         anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.FERRY)
 
     @Test
-    fun `formats as loading when null trips`() = parametricTest {
-        val now = Clock.System.now()
-
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route()
-
-        assertEquals(
-            RealtimePatterns.Format.Loading,
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
-                .format(now, anyNonScheduleBasedRouteType(), anyContext())
-        )
-    }
-
-    @Test
     fun `formats as alert with no trips and major alert`() = parametricTest {
         val now = Clock.System.now()
 
@@ -368,7 +354,14 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.NoSchedulesToday(null),
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), listOf(), null, false)
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(),
+                    hasSchedulesToday = false
+                )
                 .format(now, RouteType.BUS, anyContext())
         )
     }
@@ -459,11 +452,13 @@ class RealtimePatternsTest {
         val routePattern1 = objects.routePattern(route) { directionId = 1 }
         assertEquals(
             0,
-            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0), emptyList())
+                .directionId()
         )
         assertEquals(
             1,
-            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1), emptyList())
+                .directionId()
         )
     }
 
@@ -474,6 +469,7 @@ class RealtimePatternsTest {
                     ObjectCollectionBuilder.Single.route(),
                     "",
                     null,
+                    emptyList(),
                     emptyList()
                 )
                 .directionId()

@@ -41,6 +41,7 @@ struct NearbyTransitView: View {
         VStack(spacing: 0) {
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
+                    .onAppear { didLoadData?(self) }
             } else {
                 LoadingCard().padding(.horizontal, 16).padding(.bottom, 16)
             }
@@ -149,6 +150,7 @@ struct NearbyTransitView: View {
     }
 
     var didAppear: ((Self) -> Void)?
+    var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
         getGlobal()
@@ -485,10 +487,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
-                                    ],
-                                    alertsHere: nil,
-                                    hasSchedulesToday: true,
-                                    allDataLoaded: true
+                                    ]
                                 ),
                             ]
                         ),
@@ -515,10 +514,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
-                                    ],
-                                    alertsHere: nil,
-                                    hasSchedulesToday: true,
-                                    allDataLoaded: true
+                                    ]
                                 ),
                             ]
                         ),

@@ -68,4 +68,8 @@ data class PredictionsByStopJoinResponse(
     }
 
     fun predictionQuantity() = predictionsByStop.map { it.value.size }.sum()
+
+    companion object {
+        val empty = PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
+    }
 }

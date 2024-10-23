@@ -141,26 +141,16 @@ class TripDetailsStopListTest {
     @Test fun `fromPieces returns null with no data`() = test { assertNull(fromPieces(null, null)) }
 
     @Test
-    fun `fromPieces preserves schedules with real schedules and no predictions`() = test {
+    fun `fromPieces returns null with real schedules and no predictions`() = test {
         val sched1 = schedule("A", 10)
         val sched2 = schedule("B", 20)
         val sched3 = schedule("C", 30)
-        assertEquals(
-            stopListOf(
-                entry("A", 10, schedule = sched1),
-                entry("B", 20, schedule = sched2),
-                entry("C", 30, schedule = sched3)
-            ),
-            fromPieces(schedulesResponseOf(sched1, sched2, sched3), null)
-        )
+        assertEquals(null, fromPieces(schedulesResponseOf(sched1, sched2, sched3), null))
     }
 
     @Test
-    fun `fromPieces fabricates sequence with scheduled IDs and no predictions`() = test {
-        assertEquals(
-            stopListOf(entry("A", 997), entry("B", 998), entry("C", 999)),
-            fromPieces(schedulesResponseOf("A", "B", "C"), null)
-        )
+    fun `fromPieces returns null with scheduled IDs and no predictions`() = test {
+        assertEquals(null, fromPieces(schedulesResponseOf("A", "B", "C"), null))
     }
 
     @Test
@@ -599,7 +589,7 @@ class TripDetailsStopListTest {
         val pred = prediction(stopB.id, 20, routeCurrent.id)
 
         assertEquals(
-            stopListOf(entry(stopA.id, 10, schedule = sched, routes = listOf(routeOther))),
+            null,
             fromPieces(
                 schedulesResponseOf(sched),
                 null,

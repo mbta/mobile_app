@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.datetime.Instant
 
 typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>
@@ -56,13 +57,15 @@ sealed class RealtimePatterns {
      * @property upcomingTrips Every [UpcomingTrip] for the [Stop] in the containing
      *   [PatternsByStop] for any of these [patterns]
      */
-    data class ByHeadsign(
+    data class ByHeadsign
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val route: Route,
         val headsign: String,
         val line: Line?,
         override val patterns: List<RoutePattern>,
-        override val upcomingTrips: List<UpcomingTrip>? = null,
-        override val alertsHere: List<Alert>? = null,
+        override val upcomingTrips: List<UpcomingTrip>,
+        override val alertsHere: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -70,9 +73,9 @@ sealed class RealtimePatterns {
 
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
-            upcomingTripsMap: UpcomingTripsMap?,
+            upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>?,
+            alerts: Collection<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -80,28 +83,22 @@ sealed class RealtimePatterns {
             staticData.headsign,
             staticData.line,
             staticData.patterns,
-            if (upcomingTripsMap != null) {
-                staticData.patterns
-                    .mapNotNull { pattern ->
-                        upcomingTripsMap[
-                            UpcomingTripKey.ByRoutePattern(
-                                staticData.route.id,
-                                pattern.id,
-                                parentStopId
-                            )]
-                    }
-                    .flatten()
-                    .sorted()
-            } else {
-                null
-            },
-            alerts?.let {
-                applicableAlerts(
-                    routes = listOf(staticData.route),
-                    stopIds = staticData.stopIds,
-                    alerts = alerts
-                )
-            },
+            staticData.patterns
+                .mapNotNull { pattern ->
+                    upcomingTripsMap[
+                        UpcomingTripKey.ByRoutePattern(
+                            staticData.route.id,
+                            pattern.id,
+                            parentStopId
+                        )]
+                }
+                .flatten()
+                .sorted(),
+            applicableAlerts(
+                routes = listOf(staticData.route),
+                stopIds = staticData.stopIds,
+                alerts = alerts
+            ),
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
@@ -112,13 +109,15 @@ sealed class RealtimePatterns {
      * @property upcomingTrips Every [UpcomingTrip] for the [Stop] in the containing
      *   [PatternsByStop] for any of these [patterns]
      */
-    data class ByDirection(
+    data class ByDirection
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val line: Line,
         val routes: List<Route>,
         val direction: Direction,
         override val patterns: List<RoutePattern>,
-        override val upcomingTrips: List<UpcomingTrip>? = null,
-        override val alertsHere: List<Alert>? = null,
+        override val upcomingTrips: List<UpcomingTrip>,
+        override val alertsHere: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -126,20 +125,19 @@ sealed class RealtimePatterns {
         val representativeRoute = routes.min()
         val routesByTrip =
             upcomingTrips
-                ?.mapNotNull {
+                .mapNotNull {
                     val route =
                         routes.firstOrNull { route -> route.id == it.trip.routeId }
                             ?: return@mapNotNull null
                     Pair(it.trip.id, route)
                 }
-                ?.toMap()
-                ?: emptyMap()
+                .toMap()
 
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
-            upcomingTripsMap: UpcomingTripsMap?,
+            upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>?,
+            alerts: Collection<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -147,28 +145,22 @@ sealed class RealtimePatterns {
             staticData.routes,
             staticData.direction,
             staticData.patterns,
-            if (upcomingTripsMap != null) {
-                staticData.routes
-                    .mapNotNull { route ->
-                        upcomingTripsMap[
-                            UpcomingTripKey.ByDirection(
-                                route.id,
-                                staticData.direction.id,
-                                parentStopId
-                            )]
-                    }
-                    .flatten()
-                    .sorted()
-            } else {
-                null
-            },
-            alerts?.let {
-                applicableAlerts(
-                    routes = staticData.routes,
-                    stopIds = staticData.stopIds,
-                    alerts = alerts
-                )
-            },
+            staticData.routes
+                .mapNotNull { route ->
+                    upcomingTripsMap[
+                        UpcomingTripKey.ByDirection(
+                            route.id,
+                            staticData.direction.id,
+                            parentStopId
+                        )]
+                }
+                .flatten()
+                .sorted(),
+            applicableAlerts(
+                routes = staticData.routes,
+                stopIds = staticData.stopIds,
+                alerts = alerts
+            ),
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
