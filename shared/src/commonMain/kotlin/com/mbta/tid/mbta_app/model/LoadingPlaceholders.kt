@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 
@@ -12,7 +13,7 @@ object LoadingPlaceholders {
         )
     }
 
-    fun patternsByStop(routeId: String? = null): PatternsByStop {
+    fun patternsByStop(routeId: String? = null, trips: Int = 2): PatternsByStop {
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
@@ -21,40 +22,32 @@ object LoadingPlaceholders {
                 longName = "Loading"
                 shortName = "00"
                 textColor = "FFFFFF"
+                directionNames = listOf("Loading", "Loading")
+                directionDestinations = listOf("Loading", "Loading")
             }
         val pattern1 =
-            objects.routePattern(route = route) { typicality = RoutePattern.Typicality.Typical }
+            objects.routePattern(route = route) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+            }
         val pattern2 =
-            objects.routePattern(route = route) { typicality = RoutePattern.Typicality.Typical }
+            objects.routePattern(route = route) {
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+            }
         val stop = objects.stop { name = "Loading" }
-        val trip1 = objects.trip(routePattern = pattern1)
-        val prediction1 =
-            objects.prediction {
-                trip = trip1
-                stopId = stop.id
-                departureTime = Clock.System.now() + 5.minutes
-            }
-        val trip2 = objects.trip(routePattern = pattern1)
-        val prediction2 =
-            objects.prediction {
-                trip = trip2
-                stopId = stop.id
-                departureTime = Clock.System.now() + 8.minutes
-            }
-        val trip3 = objects.trip(routePattern = pattern2)
-        val prediction3 =
-            objects.prediction {
-                trip = trip3
-                stopId = stop.id
-                departureTime = Clock.System.now() + 5.minutes
-            }
-        val trip4 = objects.trip(routePattern = pattern2)
-        val prediction4 =
-            objects.prediction {
-                trip = trip4
-                stopId = stop.id
-                departureTime = Clock.System.now() + 8.minutes
-            }
+
+        fun newTrip(routePattern: RoutePattern, departsIn: Duration): UpcomingTrip {
+            val trip = objects.trip(routePattern)
+            val prediction =
+                objects.prediction {
+                    this.trip = trip
+                    stopId = stop.id
+                    departureTime = Clock.System.now() + departsIn
+                }
+            return UpcomingTrip(trip, prediction)
+        }
+
         return PatternsByStop(
             route = route,
             stop = stop,
@@ -65,11 +58,7 @@ object LoadingPlaceholders {
                         headsign = "Loading 1",
                         line = null,
                         patterns = listOf(pattern1),
-                        upcomingTrips =
-                            listOf(
-                                UpcomingTrip(trip = trip1, prediction = prediction1),
-                                UpcomingTrip(trip = trip2, prediction = prediction2),
-                            ),
+                        upcomingTrips = (1..trips).map { newTrip(pattern1, (it * 2).minutes) },
                         alertsHere = emptyList(),
                         hasSchedulesToday = true,
                         allDataLoaded = false
@@ -79,11 +68,7 @@ object LoadingPlaceholders {
                         headsign = "Loading 2",
                         line = null,
                         patterns = listOf(pattern2),
-                        upcomingTrips =
-                            listOf(
-                                UpcomingTrip(trip = trip3, prediction = prediction3),
-                                UpcomingTrip(trip = trip4, prediction = prediction4),
-                            ),
+                        upcomingTrips = (1..trips).map { newTrip(pattern2, (it * 2).minutes) },
                         alertsHere = emptyList(),
                         hasSchedulesToday = true,
                         allDataLoaded = false
@@ -94,7 +79,7 @@ object LoadingPlaceholders {
 
     fun stopDetailsDepartures(filter: StopDetailsFilter?) =
         if (filter != null) {
-            StopDetailsDepartures(listOf(patternsByStop(filter.routeId)))
+            StopDetailsDepartures(listOf(patternsByStop(filter.routeId, 10)))
         } else {
             StopDetailsDepartures((1..5).map { patternsByStop("loading-$it") })
         }

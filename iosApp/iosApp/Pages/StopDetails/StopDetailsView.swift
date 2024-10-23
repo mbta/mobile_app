@@ -118,9 +118,11 @@ struct StopDetailsView: View {
             departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: filter),
             global: globalResponse,
             now: now.toKotlinInstant(),
+            filter: filter,
             setFilter: { _ in },
             pushNavEntry: { _ in },
-            pinRoute: { _ in }
+            pinRoute: { _ in },
+            pinnedRoutes: pinnedRoutes
         )
         .redacted(reason: .placeholder)
         .shimmering()
