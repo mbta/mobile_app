@@ -26,6 +26,12 @@ final class TripDetailsPageTests: XCTestCase {
         }
 
         objects.prediction { prediction in
+            prediction.stopId = stop1.id
+            prediction.stopSequence = 1
+            prediction.departureTime = Date.now.addingTimeInterval(15).toKotlinInstant()
+        }
+
+        objects.prediction { prediction in
             prediction.stopId = stop2.id
             prediction.stopSequence = 2
             prediction.departureTime = Date.now.addingTimeInterval(30).toKotlinInstant()
@@ -349,7 +355,9 @@ final class TripDetailsPageTests: XCTestCase {
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
 
         let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
-            XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
+            XCTAssertNotNil(try view.find(where: { view in
+                (try? view.modifier(LoadingPlaceholderModifier.self)) != nil
+            }))
         }
 
         ViewHosting.host(view: sut)

@@ -81,7 +81,6 @@ struct TripDetailsPage: View {
                    globalData: globalResponse
                ) {
                 vehicleCardView
-                    .onAppear { didLoadData?(self) }
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                 if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                     targetStopId: target.stopId,
@@ -94,11 +93,13 @@ struct TripDetailsPage: View {
                         onTapLink: onTapStop,
                         routeType: routeType
                     )
+                    .onAppear { didLoadData?(self) }
                 } else {
                     TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop, routeType: routeType)
+                        .onAppear { didLoadData?(self) }
                 }
             } else {
-                ProgressView()
+                loadingBody()
             }
         }
         .task {
@@ -145,6 +146,16 @@ struct TripDetailsPage: View {
     }
 
     var didLoadData: ((Self) -> Void)?
+
+    @ViewBuilder private func loadingBody() -> some View {
+        TripDetailsStopListView(
+            stops: LoadingPlaceholders.shared.tripDetailsStops(),
+            now: now,
+            onTapLink: { _, _, _ in },
+            routeType: nil
+        )
+        .loadingPlaceholder()
+    }
 
     private func loadEverything() {
         loadGlobalData()

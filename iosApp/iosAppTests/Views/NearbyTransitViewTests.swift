@@ -37,7 +37,11 @@ final class NearbyTransitViewTests: XCTestCase {
             isReturningFromBackground: .constant(false),
             nearbyVM: .init()
         )
-        XCTAssertNotNil(try sut.inspect().find(LoadingCard<Text>.self))
+        let cards = try sut.inspect().findAll(NearbyRouteView.self)
+        XCTAssertEqual(cards.count, 5)
+        for card in cards {
+            XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
+        }
     }
 
     func testLoading() throws {
@@ -57,7 +61,11 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            XCTAssertNotNil(try view.find(LoadingCard<Text>.self))
+            let cards = view.findAll(NearbyRouteView.self)
+            XCTAssertEqual(cards.count, 5)
+            for card in cards {
+                XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
+            }
         }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)

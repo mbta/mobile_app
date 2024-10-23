@@ -43,7 +43,7 @@ struct NearbyTransitView: View {
                 nearbyList(nearbyWithRealtimeInfo)
                     .onAppear { didLoadData?(self) }
             } else {
-                LoadingCard().padding(.horizontal, 16).padding(.bottom, 16)
+                loadingBody()
             }
         }
         .onAppear {
@@ -144,6 +144,23 @@ struct NearbyTransitView: View {
                     withAnimation {
                         proxy.scrollTo(id, anchor: .top)
                     }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private func loadingBody() -> some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(1 ... 5, id: \.self) { _ in
+                    NearbyRouteView(
+                        nearbyRoute: LoadingPlaceholders.shared.nearbyRoute(),
+                        pinned: false,
+                        onPin: { _ in },
+                        pushNavEntry: { _ in },
+                        now: now.toKotlinInstant()
+                    )
+                    .loadingPlaceholder()
                 }
             }
         }
