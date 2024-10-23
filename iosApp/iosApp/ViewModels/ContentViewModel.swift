@@ -12,13 +12,19 @@ import shared
 
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
+    @Published var hideMaps: Bool
 
     var configUseCase: ConfigUseCase
+    var settingsRepository: ISettingsRepository
 
     init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
-         configResponse: ApiResult<ConfigResponse>? = nil) {
+         configResponse: ApiResult<ConfigResponse>? = nil,
+         settingsRepository: ISettingsRepository = RepositoryDI().settings,
+         hideMaps: Bool = false) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
+        self.settingsRepository = settingsRepository
+        self.hideMaps = hideMaps
     }
 
     func configureMapboxToken(token: String) {
@@ -31,5 +37,9 @@ class ContentViewModel: ObservableObject {
         } catch {
             configResponse = ApiResultError(code: nil, message: "\(error.localizedDescription)")
         }
+    }
+
+    @MainActor func loadHideMaps() async {
+        hideMaps = await (try? settingsRepository.getSettings().first { $0.key == .hideMaps }?.isOn) ?? false
     }
 }
