@@ -11,7 +11,6 @@ import CoreLocation
 @testable import iosApp
 @_spi(Experimental) import MapboxMaps
 import shared
-import Shimmer
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
@@ -41,7 +40,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let cards = try sut.inspect().findAll(NearbyRouteView.self)
         XCTAssertEqual(cards.count, 5)
         for card in cards {
-            XCTAssertNotNil(try card.modifier(Shimmer.self))
+            XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
         }
     }
 
@@ -65,7 +64,7 @@ final class NearbyTransitViewTests: XCTestCase {
             let cards = view.findAll(NearbyRouteView.self)
             XCTAssertEqual(cards.count, 5)
             for card in cards {
-                XCTAssertNotNil(try card.modifier(Shimmer.self))
+                XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
             }
         }
         ViewHosting.host(view: sut)

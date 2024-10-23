@@ -9,7 +9,6 @@
 import Combine
 @testable import iosApp
 import shared
-import Shimmer
 import ViewInspector
 import XCTest
 
@@ -356,7 +355,9 @@ final class TripDetailsPageTests: XCTestCase {
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
 
         let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
-            XCTAssertNotNil(try view.find(where: { view in (try? view.modifier(Shimmer.self)) != nil }))
+            XCTAssertNotNil(try view.find(where: { view in
+                (try? view.modifier(LoadingPlaceholderModifier.self)) != nil
+            }))
         }
 
         ViewHosting.host(view: sut)

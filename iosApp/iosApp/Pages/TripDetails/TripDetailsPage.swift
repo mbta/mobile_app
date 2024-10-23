@@ -8,7 +8,6 @@
 
 import Combine
 import shared
-import Shimmer
 import SwiftPhoenixClient
 import SwiftUI
 
@@ -155,8 +154,7 @@ struct TripDetailsPage: View {
             onTapLink: { _, _, _ in },
             routeType: nil
         )
-        .redacted(reason: .placeholder)
-        .shimmering()
+        .loadingPlaceholder()
     }
 
     private func loadEverything() {

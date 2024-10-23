@@ -100,6 +100,7 @@
 		8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */; };
 		8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */; };
 		8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */; };
+		8CE1D6762CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */; };
 		8CE36C8F2CAB231500D77F22 /* FetchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE36C8E2CAB231500D77F22 /* FetchApi.swift */; };
 		8CE36C932CADEDD300D77F22 /* FetchApiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE36C922CADEDD300D77F22 /* FetchApiTests.swift */; };
 		8CF5ABF72C70001200CF26B0 /* VehicleMarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */; };
@@ -344,6 +345,7 @@
 		8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesView.swift; sourceTree = "<group>"; };
 		8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteView.swift; sourceTree = "<group>"; };
 		8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntry.swift; sourceTree = "<group>"; };
+		8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingPlaceholderModifier.swift; sourceTree = "<group>"; };
 		8CE36C8E2CAB231500D77F22 /* FetchApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchApi.swift; sourceTree = "<group>"; };
 		8CE36C922CADEDD300D77F22 /* FetchApiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchApiTests.swift; sourceTree = "<group>"; };
 		8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarkerView.swift; sourceTree = "<group>"; };
@@ -922,6 +924,7 @@
 			isa = PBXGroup;
 			children = (
 				8C1587032C76524600AB5036 /* AppVariantExtension.swift */,
+				EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */,
 				9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */,
 				9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */,
 				9A37F3062BACCCA5001714FE /* CoordinateExtension.swift */,
@@ -931,18 +934,18 @@
 				9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */,
 				8CE36C8E2CAB231500D77F22 /* FetchApi.swift */,
 				9ADB849C2BAD05BC006581CE /* Inspection.swift */,
+				8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */,
 				8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */,
 				9A3B09352B967CEC00691427 /* NonNilModifier.swift */,
 				ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */,
 				6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */,
+				9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */,
 				6EFEE42C2BED0FA800810319 /* ScenePhaseChangeModifier.swift */,
 				8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */,
 				9ADB84A12BAE37C0006581CE /* StopExtension.swift */,
 				8C0923A62C210C8C00813454 /* Typography.swift */,
 				8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */,
 				9A5830552BA3A2CE0039876E /* ViewportExtension.swift */,
-				9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */,
-				EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1389,6 +1392,7 @@
 				9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */,
 				9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */,
+				8CE1D6762CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift in Sources */,
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
 				9A887D572B683103006F5B80 /* SearchResultsContainer.swift in Sources */,
 				EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */,

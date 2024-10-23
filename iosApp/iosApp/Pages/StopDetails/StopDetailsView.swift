@@ -124,8 +124,7 @@ struct StopDetailsView: View {
             pinRoute: { _ in },
             pinnedRoutes: pinnedRoutes
         )
-        .redacted(reason: .placeholder)
-        .shimmering()
+        .loadingPlaceholder()
     }
 
     private func loadGlobal() {

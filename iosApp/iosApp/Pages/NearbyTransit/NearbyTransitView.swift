@@ -12,7 +12,6 @@ import FirebaseAnalytics
 @_spi(Experimental) import MapboxMaps
 import os
 import shared
-import Shimmer
 import SwiftUI
 
 struct NearbyTransitView: View {
@@ -161,8 +160,7 @@ struct NearbyTransitView: View {
                         pushNavEntry: { _ in },
                         now: now.toKotlinInstant()
                     )
-                    .redacted(reason: .placeholder)
-                    .shimmering()
+                    .loadingPlaceholder()
                 }
             }
         }
