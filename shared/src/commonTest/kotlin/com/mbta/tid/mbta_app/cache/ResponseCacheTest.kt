@@ -28,7 +28,6 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import okio.FileSystem
@@ -412,22 +411,19 @@ class ResponseCacheTest {
 
         var didFetch = false
 
-        assertNull(cache.state.value)
-        launch {
-            cache.state.test {
-                assertEquals(oldData, awaitItem())
-                assertEquals(newData, awaitItem())
-            }
+        cache.state.test {
+            assertNull(awaitItem())
+            val result =
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
+
+            assertEquals(oldData, awaitItem())
+            assertTrue(didFetch)
+            assertEquals(ApiResult.Ok(newData), result)
+            assertEquals(newData, awaitItem())
         }
-
-        val result =
-            cache.getOrFetch {
-                didFetch = true
-                client.get { url { path("api/global") } }
-            }
-
-        assertTrue(didFetch)
-        assertEquals(ApiResult.Ok(newData), result)
     }
 
     @Test
