@@ -198,6 +198,9 @@
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause"
     },
+    "Custom message" : {
+
+    },
     "Demonstration" : {
       "comment" : "Possible alert cause"
     },
@@ -308,9 +311,6 @@
 
     },
     "Loading..." : {
-
-    },
-    "Location access denied or restricted" : {
 
     },
     "Location access state unknown" : {
@@ -529,6 +529,9 @@
     },
     "Weather" : {
       "comment" : "Possible alert cause"
+    },
+    "You'll get turn-by-turn directions, estimated travel times, and improved search results when you turn on Location Services for Maps" : {
+
     },
     "Your current location is outside of our search area." : {
 
