@@ -68,7 +68,6 @@ class SearchViewModel: ObservableObject {
 
     func loadGlobalDataAndHistory() async {
         await getGlobalData()
-        await loadVisitHistory()
     }
 
     func loadSettings() async {
@@ -80,12 +79,23 @@ class SearchViewModel: ObservableObject {
         } catch {}
     }
 
-    private func getGlobalData() async {
-        do {
-            switch try await onEnum(of: globalRepository.getGlobalData()) {
-            case let .ok(result): globalResponse = result.data
-            case let .error(error): debugPrint(error)
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            globalResponse = globalData
+            Task {
+                await loadVisitHistory()
             }
+        }
+    }
+
+    private func getGlobalData() async {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
+        do {
+            let result = try await onEnum(of: globalRepository.getGlobalData())
+            if case let .error(error) = result { debugPrint(error) }
         } catch {}
     }
 

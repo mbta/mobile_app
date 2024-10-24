@@ -28,7 +28,7 @@ final class MapViewModelTests: XCTestCase {
         })
 
         let mapVM = MapViewModel(layerManager: layerManager)
-        mapVM.updateRouteSource(routeLines: [])
+        mapVM.updateRouteSource(globalData: nil, globalMapData: nil)
 
         wait(for: [updateRouteSourceCalled], timeout: 1)
     }

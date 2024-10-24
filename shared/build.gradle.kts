@@ -68,6 +68,7 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.ktor.client.mock)
                 implementation(libs.okio.fakefilesystem)
+                implementation(libs.turbine)
             }
         }
         val androidMain by getting {
