@@ -197,8 +197,9 @@ struct NearbyTransitView: View {
     func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
         self.location = location
         self.globalData = globalData
-        guard let location, let globalData else {
-            debugPrint("forgetting loaded data")
+        guard let globalData else { return }
+        guard let location else {
+            // if location was set to nil, forget previously loaded data
             predictionsByStop = nil
             scheduleResponse = nil
             return
