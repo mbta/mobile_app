@@ -41,8 +41,9 @@ struct NearbyTransitView: View {
         VStack(spacing: 0) {
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
+                    .onAppear { didLoadData?(self) }
             } else {
-                LoadingCard().padding(.horizontal, 16).padding(.bottom, 16)
+                loadingBody()
             }
         }
         .onAppear {
@@ -148,7 +149,25 @@ struct NearbyTransitView: View {
         }
     }
 
+    @ViewBuilder private func loadingBody() -> some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(1 ... 5, id: \.self) { _ in
+                    NearbyRouteView(
+                        nearbyRoute: LoadingPlaceholders.shared.nearbyRoute(),
+                        pinned: false,
+                        onPin: { _ in },
+                        pushNavEntry: { _ in },
+                        now: now.toKotlinInstant()
+                    )
+                    .loadingPlaceholder()
+                }
+            }
+        }
+    }
+
     var didAppear: ((Self) -> Void)?
+    var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
         getGlobal()
@@ -485,10 +504,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
-                                    ],
-                                    alertsHere: nil,
-                                    hasSchedulesToday: true,
-                                    allDataLoaded: true
+                                    ]
                                 ),
                             ]
                         ),
@@ -515,10 +531,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
-                                    ],
-                                    alertsHere: nil,
-                                    hasSchedulesToday: true,
-                                    allDataLoaded: true
+                                    ]
                                 ),
                             ]
                         ),

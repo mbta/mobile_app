@@ -916,7 +916,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -1077,7 +1077,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -1230,8 +1230,7 @@ class NearbyResponseTest {
                                             predictionBrdVehicle
                                         )
                                     ),
-                                    null,
-                                    false
+                                    hasSchedulesToday = false
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     route1,
@@ -1239,8 +1238,7 @@ class NearbyResponseTest {
                                     null,
                                     listOf(predictionSoon),
                                     listOf(objects.upcomingTrip(predictionSoonPrediction)),
-                                    null,
-                                    false
+                                    hasSchedulesToday = false
                                 )
                             )
                         )
@@ -1252,7 +1250,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -1346,7 +1344,7 @@ class NearbyResponseTest {
                                     "Typical Out",
                                     null,
                                     listOf(typicalOutbound),
-                                    null,
+                                    upcomingTrips = emptyList(),
                                     allDataLoaded = false
                                 ),
                                 RealtimePatterns.ByHeadsign(
@@ -1354,7 +1352,7 @@ class NearbyResponseTest {
                                     "Typical In",
                                     null,
                                     listOf(typicalInbound),
-                                    null,
+                                    upcomingTrips = emptyList(),
                                     allDataLoaded = false
                                 ),
                             )
@@ -1366,8 +1364,8 @@ class NearbyResponseTest {
                 globalData = GlobalResponse(objects),
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
-                predictions = null,
-                alerts = null,
+                predictions = PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -1463,7 +1461,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 showAllPatternsWhileLoading = false,
                 hideNonTypicalPatternsBeyondNext = null,
@@ -1545,7 +1543,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop1.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 showAllPatternsWhileLoading = false,
                 hideNonTypicalPatternsBeyondNext = null,
@@ -1666,13 +1664,13 @@ class NearbyResponseTest {
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
         assertEquals(
             listOf(closeSubwayRoute, farSubwayRoute, closeBusRoute, farBusRoute),
-            realtimeRoutesSorted.flatMap {
+            checkNotNull(realtimeRoutesSorted).flatMap {
                 when (it) {
                     is StopsAssociated.WithRoute -> listOf(it.route)
                     is StopsAssociated.WithLine -> it.routes
@@ -1788,13 +1786,13 @@ class NearbyResponseTest {
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(farBusRoute.id, farSubwayRoute.id),
             )
         assertEquals(
             listOf(farSubwayRoute, farBusRoute, closeSubwayRoute, closeBusRoute),
-            realtimeRoutesSorted.flatMap {
+            checkNotNull(realtimeRoutesSorted).flatMap {
                 when (it) {
                     is StopsAssociated.WithRoute -> listOf(it.route)
                     is StopsAssociated.WithLine -> it.routes
@@ -1970,7 +1968,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = closeBusStop.position,
                 predictions = PredictionsStreamDataResponse(objects),
                 schedules = ScheduleResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(midSubwayRoute.id, farSubwayRoute.id),
             )
@@ -1991,7 +1989,7 @@ class NearbyResponseTest {
                 closeBusRoute,
                 farBusRoute
             ),
-            realtimeRoutesSorted.flatMap {
+            checkNotNull(realtimeRoutesSorted).flatMap {
                 when (it) {
                     is StopsAssociated.WithRoute -> listOf(it.route)
                     is StopsAssociated.WithLine -> it.routes
@@ -2108,7 +2106,7 @@ class NearbyResponseTest {
                 farSubwayRoute,
                 closeSubwayRoute,
             ),
-            realtimeRoutesSorted.flatMap {
+            checkNotNull(realtimeRoutesSorted).flatMap {
                 when (it) {
                     is StopsAssociated.WithRoute -> listOf(it.route)
                     is StopsAssociated.WithLine -> it.routes
@@ -2169,7 +2167,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = parentStop.position,
                 schedules = null,
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -2239,7 +2237,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -2310,8 +2308,7 @@ class NearbyResponseTest {
                                     null,
                                     listOf(routePatternB),
                                     emptyList(),
-                                    null,
-                                    false
+                                    hasSchedulesToday = false
                                 )
                             )
                         )
@@ -2323,7 +2320,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -2423,7 +2420,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -2571,7 +2568,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(objects),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )
@@ -2778,7 +2775,7 @@ class NearbyResponseTest {
                 sortByDistanceFrom = stop.position,
                 schedules = ScheduleResponse(objects),
                 predictions = PredictionsStreamDataResponse(objects),
-                alerts = null,
+                alerts = AlertsStreamDataResponse(emptyMap()),
                 filterAtTime = time,
                 pinnedRoutes = setOf(),
             )

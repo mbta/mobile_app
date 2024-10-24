@@ -369,10 +369,7 @@ final class HomeMapViewTests: XCTestCase {
                     headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
                 )]
             )]
         ))
@@ -380,7 +377,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             mapVM: mapVM,
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -537,10 +534,7 @@ final class HomeMapViewTests: XCTestCase {
                     headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
                 )]
             )]
         ))
@@ -644,10 +638,7 @@ final class HomeMapViewTests: XCTestCase {
                     headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
                 )]
             )]
         ))

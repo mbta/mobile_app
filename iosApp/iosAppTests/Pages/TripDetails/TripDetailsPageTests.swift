@@ -26,9 +26,19 @@ final class TripDetailsPageTests: XCTestCase {
         }
 
         objects.prediction { prediction in
+            prediction.stopId = stop1.id
+            prediction.stopSequence = 1
+            prediction.departureTime = Date.now.addingTimeInterval(15).toKotlinInstant()
+        }
+
+        objects.prediction { prediction in
             prediction.stopId = stop2.id
             prediction.stopSequence = 2
             prediction.departureTime = Date.now.addingTimeInterval(30).toKotlinInstant()
+        }
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
         }
 
         let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
@@ -41,22 +51,25 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripPredictionsRepository = FakeTripPredictionsRepository(response: .init(objects: objects))
 
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         let tripId = trip.id
         let vehicleId = "999"
-        let sut = TripDetailsPage(
+        var sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
             routeId: trip.routeId,
             target: nil,
             errorBannerVM: .init(),
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             mapVM: .init(),
             globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: tripPredictionsRepository,
-            tripRepository: tripRepository
+            tripRepository: tripRepository,
+            vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
 
-        let showsStopsExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 1) { view in
+        let showsStopsExp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(text: "Somewhere"))
             XCTAssertNotNil(try view.find(text: "Elsewhere"))
         }
@@ -107,13 +120,15 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripId = trip.id
         let vehicleId = vehicle.id
-        let sut = TripDetailsPage(
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
+        var sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
             routeId: route.id,
             target: nil,
             errorBannerVM: .init(),
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             mapVM: .init(),
             globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: tripPredictionsRepository,
@@ -121,7 +136,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
-        let showVehicleCardExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 1) { view in
+        let showVehicleCardExp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(VehicleOnTripView.self))
         }
 
@@ -150,23 +165,28 @@ final class TripDetailsPageTests: XCTestCase {
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
+        }
         let tripId = trip.id
         let vehicleId = "999"
-        let sut = TripDetailsPage(
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
+        var sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
             routeId: trip.routeId,
             target: .init(stopId: stop1.id, stopSequence: 998),
             errorBannerVM: .init(),
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             mapVM: .init(),
             globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripRepository: tripRepository,
-            vehicleRepository: FakeVehicleRepository(response: nil)
+            vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
-        let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 1) { view in
+        let splitViewExp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(TripDetailsStopListSplitView.self))
         }
 
@@ -246,30 +266,26 @@ final class TripDetailsPageTests: XCTestCase {
             stop2.id: [pattern1.id, pattern3.id],
         ])
 
-        let tripSchedulesLoaded = PassthroughSubject<Void, Never>()
-
         let tripRepository = FakeTripRepository(
             tripResponse: .init(trip: trip),
-            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
-            onGetTripSchedules: { tripSchedulesLoaded.send() }
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id])
         )
-
-        let tripPredictionsLoaded = PassthroughSubject<Void, Never>()
 
         let tripPredictionsRepository = FakeTripPredictionsRepository(
-            response: .init(objects: objects),
-            onConnect: { _ in tripPredictionsLoaded.send() }
+            response: .init(objects: objects)
         )
 
+        let nearbyVM = NearbyViewModel(alertsRepository: MockAlertsRepository())
+        nearbyVM.alerts = .init(alerts: [:])
         let tripId = trip.id
         let vehicleId = vehicle.id
-        let sut = TripDetailsPage(
+        var sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
             routeId: trip.routeId,
             target: nil,
             errorBannerVM: .init(),
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             mapVM: .init(),
             globalRepository: FakeGlobalRepository(response: globalData),
             tripPredictionsRepository: tripPredictionsRepository,
@@ -277,9 +293,7 @@ final class TripDetailsPageTests: XCTestCase {
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
-        let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
-
-        let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 1) { view in
+        let routeExp = sut.on(\.didLoadData) { view in
             let stop1Row = try view.find(TripDetailsStopView.self, containing: stop1.name)
             let stop2Row = try view.find(TripDetailsStopView.self, containing: stop2.name)
             XCTAssertNotNil(try stop1Row.find(RoutePill.self, containing: "Green Line"))
@@ -341,7 +355,9 @@ final class TripDetailsPageTests: XCTestCase {
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
 
         let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
-            XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
+            XCTAssertNotNil(try view.find(where: { view in
+                (try? view.modifier(LoadingPlaceholderModifier.self)) != nil
+            }))
         }
 
         ViewHosting.host(view: sut)

@@ -29,6 +29,8 @@ final class EndToEndOpenStopDetailsTest: XCTestCase {
     func testOpenStopDetails() throws {
         // UI tests must launch the application that they test.
         app.launch()
+        let alewifeHeadsign = app.staticTexts["Alewife"]
+        XCTAssert(alewifeHeadsign.waitForExistence(timeout: 30))
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         app.staticTexts["Alewife"].tap()

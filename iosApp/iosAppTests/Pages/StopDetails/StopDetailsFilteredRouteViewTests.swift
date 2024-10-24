@@ -108,20 +108,14 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 headsign: "North",
                 line: nil,
                 patterns: [patternNorth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)]
             ),
             RealtimePatterns.ByHeadsign(
                 route: route,
                 headsign: "South",
                 line: nil,
                 patterns: [patternSouth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)]
             ),
         ])
 
@@ -138,20 +132,14 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                     upcomingTrips: [
                         objects.upcomingTrip(prediction: linePredictionTrunk1),
                         objects.upcomingTrip(prediction: linePredictionTrunk2),
-                    ],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    ]
                 ),
                 RealtimePatterns.ByHeadsign(
                     route: lineRoute3,
                     headsign: "Branch",
                     line: line,
                     patterns: [linePatternBranch],
-                    upcomingTrips: [objects.upcomingTrip(prediction: linePredictionBranch)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [objects.upcomingTrip(prediction: linePredictionBranch)]
                 ),
             ],
             directions: [

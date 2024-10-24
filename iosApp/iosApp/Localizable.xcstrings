@@ -1496,46 +1496,6 @@
         }
       }
     },
-    "Couldn't load stop list" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se pudo cargar la lista de paradas"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Li enposib pou lis arè a monte"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível carregar lista de paradas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không tải được danh sách điểm dừng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法加载站点列表"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無法載入網站清單"
-          }
-        }
-      }
-    },
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause",
       "localizations" : {

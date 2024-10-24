@@ -51,7 +51,7 @@ fun StopDetailsPage(
             now
         ) {
             if (globalResponse != null) {
-                StopDetailsDepartures(
+                StopDetailsDepartures.fromData(
                     stop,
                     globalResponse,
                     schedulesResponse,

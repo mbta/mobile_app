@@ -71,35 +71,35 @@ struct TripDetailsPage: View {
     var body: some View {
         VStack(spacing: 16) {
             header
-            if let trip, let globalResponse {
-                let vehicle = vehicleResponse?.vehicle
-                if let stops = TripDetailsStopList.companion.fromPieces(
-                    trip: trip,
-                    tripSchedules: tripSchedulesResponse,
-                    tripPredictions: tripPredictions,
-                    vehicle: vehicle, alertsData: nearbyVM.alerts, globalData: globalResponse
+            if let trip, let globalResponse, let vehicle = vehicleResponse?.vehicle,
+               let stops = TripDetailsStopList.companion.fromPieces(
+                   trip: trip,
+                   tripSchedules: tripSchedulesResponse,
+                   tripPredictions: tripPredictions,
+                   vehicle: vehicle,
+                   alertsData: nearbyVM.alerts,
+                   globalData: globalResponse
+               ) {
+                vehicleCardView
+                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+                if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
+                    targetStopId: target.stopId,
+                    targetStopSequence: Int32(stopSequence),
+                    globalData: globalResponse
                 ) {
-                    vehicleCardView
-                    ErrorBanner(errorBannerVM).padding(.horizontal, 16)
-                    if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
-                        targetStopId: target.stopId,
-                        targetStopSequence: Int32(stopSequence),
-                        globalData: globalResponse
-                    ) {
-                        TripDetailsStopListSplitView(
-                            splitStops: splitStops,
-                            now: now,
-                            onTapLink: onTapStop,
-                            routeType: routeType
-                        )
-                    } else {
-                        TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop, routeType: routeType)
-                    }
+                    TripDetailsStopListSplitView(
+                        splitStops: splitStops,
+                        now: now,
+                        onTapLink: onTapStop,
+                        routeType: routeType
+                    )
+                    .onAppear { didLoadData?(self) }
                 } else {
-                    Text("Couldn't load stop list")
+                    TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop, routeType: routeType)
+                        .onAppear { didLoadData?(self) }
                 }
             } else {
-                ProgressView()
+                loadingBody()
             }
         }
         .task {
@@ -143,6 +143,18 @@ struct TripDetailsPage: View {
                 errorBannerVM.loadingWhenPredictionsStale = true
             }
         )
+    }
+
+    var didLoadData: ((Self) -> Void)?
+
+    @ViewBuilder private func loadingBody() -> some View {
+        TripDetailsStopListView(
+            stops: LoadingPlaceholders.shared.tripDetailsStops(),
+            now: now,
+            onTapLink: { _, _, _ in },
+            routeType: nil
+        )
+        .loadingPlaceholder()
     }
 
     private func loadEverything() {

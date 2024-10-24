@@ -252,7 +252,7 @@ struct StopDetailsPage: View {
         let targetPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
-            StopDetailsDepartures(
+            StopDetailsDepartures.companion.fromData(
                 stop: stop,
                 global: globalResponse,
                 schedules: schedulesResponse,
