@@ -19,6 +19,7 @@ class ViewportProvider: ObservableObject {
     }
 
     @Published private(set) var isManuallyCentering: Bool
+    @Published private(set) var isFollowingPuck: Bool = false
     @Published private(set) var isFollowingVehicle: Bool = false
     @Published private(set) var followedVehicle: Vehicle?
 
@@ -35,6 +36,7 @@ class ViewportProvider: ObservableObject {
 
     init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
         self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
+        isFollowingPuck = viewport?.isFollowing ?? false
         let viewportCamera = viewport?.camera
         let initialCameraState = CameraState(
             center: viewportCamera?.center ?? Defaults.center,
@@ -48,6 +50,7 @@ class ViewportProvider: ObservableObject {
     }
 
     func follow(animation: ViewportAnimation = Defaults.animation) {
+        isFollowingPuck = true
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
@@ -141,6 +144,7 @@ class ViewportProvider: ObservableObject {
     func setIsManuallyCentering(_ isManuallyCentering: Bool) {
         self.isManuallyCentering = isManuallyCentering
         if isManuallyCentering {
+            isFollowingPuck = false
             isFollowingVehicle = false
         }
     }

@@ -42,7 +42,7 @@ sealed class RealtimePatterns {
     abstract val id: String
 
     abstract val patterns: List<RoutePattern>
-    abstract val upcomingTrips: List<UpcomingTrip>?
+    abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
     abstract val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
@@ -221,10 +221,8 @@ sealed class RealtimePatterns {
                         )
                     )
                 }
-        if (this.upcomingTrips == null) return Format.Loading
-        val allTrips = upcomingTrips ?: emptyList()
         val tripsToShow =
-            allTrips
+            upcomingTrips
                 .mapNotNull {
                     val isSubway =
                         when (this) {
@@ -240,7 +238,7 @@ sealed class RealtimePatterns {
             tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
             !allDataLoaded -> Format.Loading
             !hasSchedulesToday -> Format.NoSchedulesToday(secondaryAlert)
-            allTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
+            upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
                 // there are trips in the future but we're not showing them (maybe because we're on
                 // the subway and we have schedules but can't get predictions)
                 Format.None(secondaryAlert)
@@ -266,54 +264,42 @@ sealed class RealtimePatterns {
      * should be hidden until data is available.
      */
     fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
-        upcomingTrips?.any {
+        upcomingTrips.any {
             val tripTime = it.time
             tripTime != null &&
                 tripTime < cutoffTime &&
                 (tripTime >= currentTime ||
                     (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
         }
-            ?: false
 
-    /**
-     * Checks if a trip exists.
-     *
-     * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
-     * should be hidden until data is available.
-     */
+    /** Checks if a trip exists. */
     fun isUpcoming() =
-        upcomingTrips?.any {
+        upcomingTrips.any {
             val tripTime = it.time
             tripTime != null
         }
-            ?: false
 
     /**
      * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
      *
      * Criteria:
-     * - Trips are loaded
      * - At least one trip is scheduled as arrival-only
      * - No trips are scheduled or predicted with a departure
      */
     fun isArrivalOnly(): Boolean {
         // Intermediate variable set because kotlin can't smart cast properties with open getters
         val upcoming = upcomingTrips
-        return upcoming != null &&
-            upcoming
-                .mapTo(mutableSetOf()) { it.isArrivalOnly() }
-                .let { upcomingTripsArrivalOnly ->
-                    upcomingTripsArrivalOnly.contains(true) &&
-                        !upcomingTripsArrivalOnly.contains(false)
-                }
+        return upcoming
+            .mapTo(mutableSetOf()) { it.isArrivalOnly() }
+            .let { upcomingTripsArrivalOnly ->
+                upcomingTripsArrivalOnly.contains(true) && !upcomingTripsArrivalOnly.contains(false)
+            }
     }
 
     fun directionId(): Int {
         val upcoming = upcomingTrips
-        if (upcoming != null) {
-            for (upcomingTrip in upcoming) {
-                return upcomingTrip.trip.directionId
-            }
+        for (upcomingTrip in upcoming) {
+            return upcomingTrip.trip.directionId
         }
         for (pattern in patterns) {
             return pattern.directionId
