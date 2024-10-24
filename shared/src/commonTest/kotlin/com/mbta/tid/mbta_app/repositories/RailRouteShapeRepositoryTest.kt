@@ -8,6 +8,8 @@ import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.utils.MockSystemPaths
+import com.mbta.tid.mbta_app.utils.SystemPaths
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -17,7 +19,10 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
+import okio.FileSystem
+import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -129,10 +134,18 @@ class RailRouteShapeRepositoryTest : KoinTest {
         }
 
         startKoin {
-            modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
+            modules(
+                module {
+                    single { MobileBackendClient(mockEngine, AppVariant.Staging) }
+                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
+                    single<FileSystem> { FakeFileSystem() }
+                }
+            )
         }
         runBlocking {
-            val response = RailRouteShapeRepository().getRailRouteShapes()
+            val repo = RailRouteShapeRepository()
+            assertNull(repo.state.value)
+            val response = repo.getRailRouteShapes()
             val shape =
                 Shape(
                     "canonical-931_0009",
@@ -196,6 +209,7 @@ class RailRouteShapeRepositoryTest : KoinTest {
                     )
                 )
             assertEquals(ApiResult.Ok(expectedResponse), response)
+            assertEquals(expectedResponse, repo.state.value)
         }
     }
 }
