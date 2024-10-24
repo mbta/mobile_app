@@ -10,6 +10,7 @@ import shared
 
 struct SettingsSection: Identifiable, Equatable {
     enum Category: String {
+        case settings
         case debug
         case featureFlags
     }
@@ -17,6 +18,8 @@ struct SettingsSection: Identifiable, Equatable {
     var id: Category
     var name: String {
         switch id {
+        case .settings:
+            "Settings"
         case .debug:
             "Debug"
         case .featureFlags:
@@ -27,6 +30,8 @@ struct SettingsSection: Identifiable, Equatable {
     var settings: [Setting]
     var requiresStaging: Bool {
         switch id {
+        case .settings:
+            false
         case .debug:
             false
         case .featureFlags:
