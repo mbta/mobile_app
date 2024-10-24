@@ -17,8 +17,8 @@ class MapViewModel: ObservableObject {
     @Published var stopSourceData: StopSourceData = .init()
     @Published var stopMapData: StopMapResponse?
     @Published var allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
-    var stopUpdateTask: Task<Void, Error>? = nil
-    var routeUpdateTask: Task<Void, Error>? = nil
+    var stopUpdateTask: Task<Void, Error>?
+    var routeUpdateTask: Task<Void, Error>?
     var snappedStopRouteLines: [RouteLineData] = []
 
     var lastMapboxErrorSubject: PassthroughSubject<Date?, Never>

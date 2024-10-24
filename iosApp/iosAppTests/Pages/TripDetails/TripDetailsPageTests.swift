@@ -63,7 +63,7 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: tripPredictionsRepository,
             tripRepository: tripRepository,
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
@@ -130,7 +130,7 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: tripPredictionsRepository,
             tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -180,7 +180,7 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -287,7 +287,7 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            globalRepository: FakeGlobalRepository(response: globalData),
+            globalRepository: MockGlobalRepository(response: globalData),
             tripPredictionsRepository: tripPredictionsRepository,
             tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -346,7 +346,7 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
-            globalRepository: FakeGlobalRepository(response: globalData),
+            globalRepository: MockGlobalRepository(response: globalData),
             tripPredictionsRepository: tripPredictionsRepository,
             tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
@@ -505,7 +505,7 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            globalRepository: FakeGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             tripRepository: FakeTripRepository(
                 tripResponse: .init(trip: trip),
                 scheduleResponse: .Unknown.shared,
@@ -603,18 +603,6 @@ final class TripDetailsPageTests: XCTestCase {
         try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: "newTripId", index: 1)
 
         wait(for: [vehicleLeaveExp, vehicleJoinExp], timeout: 2)
-    }
-
-    class FakeGlobalRepository: IGlobalRepository {
-        let response: GlobalResponse
-
-        init(response: GlobalResponse) {
-            self.response = response
-        }
-
-        func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
-            ApiResultOk(data: response)
-        }
     }
 
     class FakeTripRepository: IdleTripRepository {
