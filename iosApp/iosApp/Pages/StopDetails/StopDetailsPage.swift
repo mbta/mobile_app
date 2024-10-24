@@ -128,13 +128,22 @@ struct StopDetailsPage: View {
         loadPinnedRoutes()
     }
 
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            globalResponse = globalData
+        }
+    }
+
     func loadGlobalData() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
         Task {
             await fetchApi(
                 errorBannerVM.errorRepository,
                 errorKey: "StopDetailsPage.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: { globalResponse = $0 },
                 onRefreshAfterError: loadEverything
             )
         }
