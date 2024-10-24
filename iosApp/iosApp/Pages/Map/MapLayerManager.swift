@@ -32,27 +32,35 @@ class MapLayerManager: IMapLayerManager {
 
     func addIcons(recreate: Bool = false) {
         for iconId in StopIcons.shared.all + AlertIcons.shared.all {
-            do {
+            Task {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
-                if map.imageExists(withId: iconId) {
-                    if recreate {
-                        try map.removeImage(withId: iconId)
-                    } else {
-                        continue
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    do {
+                        if map.imageExists(withId: iconId) {
+                            if recreate {
+                                try map.removeImage(withId: iconId)
+                            } else {
+                                return
+                            }
+                        }
+                        try map.addImage(image, id: iconId)
+                    } catch {
+                        Logger().error("Failed to add map icon image \(iconId)\n\(error)")
                     }
                 }
-                try map.addImage(image, id: iconId)
-            } catch {
-                Logger().error("Failed to add map icon image \(iconId)\n\(error)")
             }
         }
     }
 
     private func addSource(source: GeoJSONSource) {
-        do {
-            try map.addSource(source)
-        } catch {
-            Logger().error("Failed to add source \(source.id)\n\(error)")
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            do {
+                try map.addSource(source)
+            } catch {
+                Logger().error("Failed to add source \(source.id)\n\(error)")
+            }
         }
     }
 
@@ -64,31 +72,36 @@ class MapLayerManager: IMapLayerManager {
      https://docs.mapbox.com/ios/maps/api/11.5.0/documentation/mapboxmaps/stylemanager/addpersistentlayer(_:layerposition:)
      */
     func addLayers(colorScheme: ColorScheme, recreate: Bool = false) {
-        let colorPalette = getColorPalette(colorScheme: colorScheme)
-        currentScheme = colorScheme
-        let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
-            .map { $0.toMapbox() } + StopLayerGenerator.shared.createStopLayers(
-                colorPalette: colorPalette
-            ).map { $0.toMapbox() }
+        Task {
+            let colorPalette = getColorPalette(colorScheme: colorScheme)
+            currentScheme = colorScheme
+            let layers: [MapboxMaps.Layer] = RouteLayerGenerator.shared.createAllRouteLayers(colorPalette: colorPalette)
+                .map { $0.toMapbox() } + StopLayerGenerator.shared.createStopLayers(
+                    colorPalette: colorPalette
+                ).map { $0.toMapbox() }
 
-        for layer in layers {
-            do {
-                if map.layerExists(withId: layer.id) {
-                    if recreate {
-                        try map.removeLayer(withId: layer.id)
-                    } else {
-                        // Skip attempting to add layer if it already exists
-                        continue
+            for layer in layers {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    do {
+                        if map.layerExists(withId: layer.id) {
+                            if recreate {
+                                try map.removeLayer(withId: layer.id)
+                            } else {
+                                // Skip attempting to add layer if it already exists
+                                return
+                            }
+                        }
+
+                        if map.layerExists(withId: "puck") {
+                            try map.addPersistentLayer(layer, layerPosition: .below("puck"))
+                        } else {
+                            try map.addPersistentLayer(layer)
+                        }
+                    } catch {
+                        Logger().error("Failed to add layer \(layer.id)\n\(error)")
                     }
                 }
-
-                if map.layerExists(withId: "puck") {
-                    try map.addPersistentLayer(layer, layerPosition: .below("puck"))
-                } else {
-                    try map.addPersistentLayer(layer)
-                }
-            } catch {
-                Logger().error("Failed to add layer \(layer.id)\n\(error)")
             }
         }
     }
@@ -102,12 +115,15 @@ class MapLayerManager: IMapLayerManager {
     }
 
     func updateSourceData(sourceId: String, data: MapboxMaps.FeatureCollection) {
-        if map.sourceExists(withId: sourceId) {
-            map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
-        } else {
-            var source = GeoJSONSource(id: sourceId)
-            source.data = .featureCollection(data)
-            addSource(source: source)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            if map.sourceExists(withId: sourceId) {
+                map.updateGeoJSONSource(withId: sourceId, data: .featureCollection(data))
+            } else {
+                var source = GeoJSONSource(id: sourceId)
+                source.data = .featureCollection(data)
+                addSource(source: source)
+            }
         }
     }
 

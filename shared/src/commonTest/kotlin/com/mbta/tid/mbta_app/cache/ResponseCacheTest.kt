@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.cache
 
+import app.cash.turbine.test
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -20,6 +21,7 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.minutes
@@ -357,6 +359,71 @@ class ResponseCacheTest {
             }
         )
         assertTrue(didFetch)
+    }
+
+    @Test
+    fun `passes stale data into flow immediately`() = runBlocking {
+        val oldObjects = ObjectCollectionBuilder()
+        val oldData = GlobalResponse(oldObjects, emptyMap())
+
+        val newObjects = ObjectCollectionBuilder()
+        newObjects.stop()
+        newObjects.stop()
+        newObjects.route()
+        val newData = GlobalResponse(newObjects, emptyMap())
+
+        val mockEngine = MockEngine { _ ->
+            respond(
+                content = ByteReadChannel(json.encodeToString(newData)),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+        val client = MobileBackendClient(mockEngine, AppVariant.Staging)
+
+        val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
+
+        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val fileSystem = FakeFileSystem()
+        fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
+        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json") {
+            writeUtf8(
+                json.encodeToString(
+                    ResponseMetadata(
+                        null,
+                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes)
+                    )
+                )
+            )
+        }
+        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
+            writeUtf8(json.encodeToString(oldData))
+        }
+
+        startKoin {
+            modules(
+                module {
+                    single<SystemPaths> { mockPaths }
+                    single<FileSystem> { fileSystem }
+                }
+            )
+        }
+
+        var didFetch = false
+
+        cache.state.test {
+            assertNull(awaitItem())
+            val result =
+                cache.getOrFetch {
+                    didFetch = true
+                    client.get { url { path("api/global") } }
+                }
+
+            assertEquals(oldData, awaitItem())
+            assertTrue(didFetch)
+            assertEquals(ApiResult.Ok(newData), result)
+            assertEquals(newData, awaitItem())
+        }
     }
 
     @Test

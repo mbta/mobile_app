@@ -6,6 +6,9 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -26,6 +29,9 @@ class GetGlobalDataTest {
         val requestSync = Channel<Unit>(Channel.RENDEZVOUS)
         val globalRepo =
             object : IGlobalRepository {
+                override val state: StateFlow<GlobalResponse?> =
+                    MutableStateFlow<GlobalResponse?>(globalData).asStateFlow()
+
                 override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
                     requestSync.receive()
                     return ApiResult.Ok(globalData)

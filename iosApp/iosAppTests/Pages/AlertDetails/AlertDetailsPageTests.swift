@@ -14,21 +14,6 @@ import ViewInspector
 import XCTest
 
 final class AlertDetailsPageTests: XCTestCase {
-    class FakeGlobalRepository: IGlobalRepository {
-        let response: GlobalResponse
-        let notifier: any Subject<Void, Never>
-
-        init(response: GlobalResponse, notifier: any Subject<Void, Never>) {
-            self.response = response
-            self.notifier = notifier
-        }
-
-        func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
-            notifier.send()
-            return ApiResultOk(data: response)
-        }
-    }
-
     @MainActor func testAlertDetailsPageParentStopResolution() throws {
         let objects = ObjectCollectionBuilder()
 
@@ -117,9 +102,9 @@ final class AlertDetailsPageTests: XCTestCase {
             line: nil,
             routes: [route],
             nearbyVM: nearbyVM,
-            globalRepository: FakeGlobalRepository(
+            globalRepository: MockGlobalRepository(
                 response: .init(objects: objects, patternIdsByStop: [:]),
-                notifier: globalDataLoaded
+                onGet: { globalDataLoaded.send() }
             )
         )
 

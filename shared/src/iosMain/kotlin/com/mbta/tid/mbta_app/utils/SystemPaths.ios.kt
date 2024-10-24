@@ -6,9 +6,9 @@ import okio.Path.Companion.toPath
 import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSLocalDomainMask
 import platform.Foundation.NSSearchPathDirectory
 import platform.Foundation.NSURL
+import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class)
 class IOSSystemPaths() : SystemPaths {
@@ -25,7 +25,7 @@ class IOSSystemPaths() : SystemPaths {
     private fun getURL(directory: NSSearchPathDirectory): NSURL? {
         return NSFileManager.defaultManager.URLForDirectory(
             directory = directory,
-            inDomain = NSLocalDomainMask,
+            inDomain = NSUserDomainMask,
             appropriateForURL = null,
             create = true,
             error = null,

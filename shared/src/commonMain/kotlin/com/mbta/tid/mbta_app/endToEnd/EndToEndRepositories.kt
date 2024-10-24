@@ -50,6 +50,7 @@ import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.module.Module
@@ -96,13 +97,16 @@ fun endToEndModule(): Module {
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
         single<IGlobalRepository> {
             object : IGlobalRepository {
-                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
-                    ApiResult.Ok(
+                override val state =
+                    MutableStateFlow(
                         GlobalResponse(
                             objects,
                             mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
                         )
                     )
+
+                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
+                    ApiResult.Ok(state.value)
             }
         }
         single<INearbyRepository> {

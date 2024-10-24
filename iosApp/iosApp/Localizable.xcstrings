@@ -156,11 +156,11 @@
     "and in %@ min" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes'"
     },
-    "Approaching" : {
-      "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife"
-    },
     "and in %@ min scheduled" : {
 
+    },
+    "Approaching" : {
+      "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife"
     },
     "ARR" : {
       "comment" : "Shorthand for arriving"
