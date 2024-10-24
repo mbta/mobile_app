@@ -61,6 +61,8 @@ struct ContentView: View {
     @State var selectedDetent: PresentationDetent = .halfScreen
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
 
+    @State private var showingLocationPermissionAlert = false
+
     @ViewBuilder var nearbySheetContents: some View {
         // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
         // when re-opening nearby transit
@@ -83,16 +85,34 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    var locationAuthHeader: some View {
+    var locationAuthButton: some View {
         switch locationDataManager.authorizationStatus {
-        case .notDetermined:
-            Button("Allow Location", action: {
-                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+        case .notDetermined, .denied, .restricted:
+            Button("Location Services is off", action: {
+                showingLocationPermissionAlert = true
             })
+            .alert(
+                "Maps work best with Location Services turned on",
+                isPresented: $showingLocationPermissionAlert,
+                actions: {
+                    Button("Turn On in Settings") {
+                        showingLocationPermissionAlert = false
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Keep Location Services off", role: .cancel) {
+                        showingLocationPermissionAlert = false
+                    }
+                },
+                message: {
+                    Text(
+                        "You'll get turn-by-turn directions, estimated travel times, and improved search results when you turn on Location Services for Maps"
+                    )
+                }
+            )
         case .authorizedAlways, .authorizedWhenInUse:
             EmptyView()
-        case .denied, .restricted:
-            Text("Location access denied or restricted")
         @unknown default:
             Text("Location access state unknown")
         }
@@ -101,10 +121,10 @@ struct ContentView: View {
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            locationAuthHeader
             ZStack(alignment: .top) {
                 mapWithSheets
                 VStack(alignment: .trailing, spacing: 0) {
+                    locationAuthButton
                     if nearbyVM.navigationStack.lastSafe() == .nearby {
                         SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                     }
