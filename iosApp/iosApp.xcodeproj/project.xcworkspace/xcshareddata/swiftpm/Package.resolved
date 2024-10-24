@@ -1,5 +1,5 @@
 {
-  "originHash" : "a2b59b5f418a8d823aba805c1d48e270cea70150d3532564422dca3335b31290",
+  "originHash" : "e617080b0d8c905c709b45cc004aaf8646fc086a0dbbe47ba9df4d3cf913bc0d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "7d2688de038d5484866d835acb47b379722d610e",
         "version" : "10.19.0"
-      }
-    },
-    {
-      "identity" : "appcues-ios-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/appcues/appcues-ios-sdk",
-      "state" : {
-        "revision" : "5b3668a18154dcfc37a5b551658c29985a5f80e1",
-        "version" : "3.2.0"
       }
     },
     {
@@ -137,15 +128,6 @@
       }
     },
     {
-      "identity" : "polyline",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raphaelmor/Polyline.git",
-      "state" : {
-        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23",
-        "version" : "5.1.0"
-      }
-    },
-    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
@@ -177,8 +159,16 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/davidstump/SwiftPhoenixClient",
       "state" : {
-        "revision" : "588bf6baab5d049752748e19a4bff32421ea40ec",
-        "version" : "5.3.2"
+        "revision" : "4e548e4ce4d46574a20b8a539d52d367fb0eae24"
+      }
+    },
+    {
+      "identity" : "swiftui-shimmer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/markiv/SwiftUI-Shimmer",
+      "state" : {
+        "revision" : "0226e21f9bf355d40e07e5f5e1c33679d50e167f",
+        "version" : "1.5.1"
       }
     },
     {
@@ -195,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector",
       "state" : {
-        "revision" : "7b1732802ffe30e6a67754bda6c7819e5cb0eb70",
-        "version" : "0.9.11"
+        "revision" : "5acfa0a3c095ac9ad050abe51c60d1831e8321da",
+        "version" : "0.10.0"
       }
     }
   ],
