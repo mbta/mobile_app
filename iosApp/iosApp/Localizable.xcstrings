@@ -319,6 +319,9 @@
     "Made with ♥ in Boston, for Boston" : {
 
     },
+    "Location Services is off" : {
+
+    },
     "Maintenance" : {
       "comment" : "Possible alert cause"
     },

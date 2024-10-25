@@ -91,13 +91,48 @@ struct ContentView: View {
         }
     }
 
+    struct LocationAuthButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .padding()
+                .background(Color.key)
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+        }
+    }
+
+    struct LocationAuthLabelStyle: LabelStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            HStack(alignment: .center, spacing: 8) {
+                configuration.title
+                configuration.icon
+            }
+            .fontWeight(.bold)
+        }
+    }
+
     @ViewBuilder
     var locationAuthButton: some View {
         switch locationDataManager.authorizationStatus {
         case .notDetermined, .denied, .restricted:
-            Button("Location Services is off", action: {
+            Button(action: {
                 showingLocationPermissionAlert = true
+            }, label: {
+                Label(title: {
+                    Text("Location Services is off")
+                }, icon: {
+                    Image(.faChevronRight)
+                        .resizable()
+                        .scaleEffect(0.6)
+                        .frame(width: 20, height: 20, alignment: .center)
+                        .backgroundStyle(.white)
+                        .background(in: .circle)
+                        .foregroundColor(Color.key)
+                })
+                .labelStyle(LocationAuthLabelStyle())
             })
+            .buttonStyle(LocationAuthButtonStyle())
+            .accessibilityIdentifier("locationServicesButton")
             .alert(
                 "Maps work best with Location Services turned on",
                 isPresented: $showingLocationPermissionAlert,
@@ -150,7 +185,7 @@ struct ContentView: View {
                 }
             ZStack(alignment: .top) {
                 mapWithSheets
-                VStack(alignment: .trailing, spacing: 0) {
+                VStack(alignment: .center, spacing: 0) {
                     if nearbyVM.navigationStack.lastSafe() == .nearby {
                         SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                     }
@@ -214,6 +249,7 @@ struct ContentView: View {
                     isPresented: .constant(
                         !(searchObserver.isSearching && nav == .nearby)
                             && selectedTab == .nearby
+                            && !showingLocationPermissionAlert
                     ),
                     content: {
                         GeometryReader { proxy in
