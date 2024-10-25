@@ -708,6 +708,28 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `scheduled trip cancelled in past is hidden`() = parametricTest {
+        val now = Clock.System.now()
+        assertEquals(
+            TripInstantDisplay.Hidden,
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+                        arrivalTime = null
+                        departureTime = null
+                    },
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule { departureTime = now - 15.minutes },
+                vehicle = null,
+                routeType = RouteType.BUS,
+                now = now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered
+            )
+        )
+    }
+
+    @Test
     fun `cancelled subway trip is hidden`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(

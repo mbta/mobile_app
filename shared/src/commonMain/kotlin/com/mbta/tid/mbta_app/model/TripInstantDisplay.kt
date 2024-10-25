@@ -63,14 +63,6 @@ sealed class TripInstantDisplay {
                 }
                 return Hidden
             }
-            if (
-                prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
-                    schedule?.scheduleTime != null &&
-                    routeType?.isSubway() == false &&
-                    context == Context.StopDetailsFiltered
-            ) {
-                return Cancelled(schedule.scheduleTime)
-            }
             val departureTime =
                 if (prediction != null) {
                     prediction.departureTime
@@ -92,6 +84,15 @@ sealed class TripInstantDisplay {
                 allowArrivalOnly && !(arrivalTime == null || arrivalTime < now)
             if (!(hasDepartureToDisplay || hasArrivalToDisplay)) {
                 return Hidden
+            }
+
+            if (
+                prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
+                    schedule?.scheduleTime != null &&
+                    routeType?.isSubway() == false &&
+                    context == Context.StopDetailsFiltered
+            ) {
+                return Cancelled(schedule.scheduleTime)
             }
 
             val scheduleBasedRouteType =
