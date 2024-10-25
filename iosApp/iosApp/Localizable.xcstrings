@@ -198,9 +198,6 @@
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause"
     },
-    "Custom message" : {
-
-    },
     "Demonstration" : {
       "comment" : "Possible alert cause"
     },

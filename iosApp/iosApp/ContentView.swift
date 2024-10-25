@@ -143,7 +143,7 @@ struct ContentView: View {
                             UIApplication.shared.open(url)
                         }
                     }
-                    Button("Keep Location Services off", role: .cancel) {
+                    Button("Keep Location Services off") {
                         showingLocationPermissionAlert = false
                     }
                 },
@@ -173,28 +173,17 @@ struct ContentView: View {
             } else {
                 ZStack(alignment: .top) {
                     mapWithSheets
-                    VStack(alignment: .trailing, spacing: 0) {
+                    VStack(alignment: .center, spacing: 0) {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                         }
+                        locationAuthButton
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
                             RecenterButton { Task { viewportProvider.follow() } }
                         }
                     }.frame(maxWidth: .infinity, alignment: .trailing)
                 }
-            ZStack(alignment: .top) {
-                mapWithSheets
-                VStack(alignment: .center, spacing: 0) {
-                    if nearbyVM.navigationStack.lastSafe() == .nearby {
-                        SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
-                    }
-                    locationAuthButton
-                    if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
-                       locationDataManager.currentLocation != nil {
-                        RecenterButton { Task { viewportProvider.follow() } }
-                    }
-                }.frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
         .onAppear {
@@ -246,11 +235,16 @@ struct ContentView: View {
         } else {
             mapSection
                 .sheet(
+<<<<<<< HEAD
                     isPresented: .constant(
                         !(searchObserver.isSearching && nav == .nearby)
                             && selectedTab == .nearby
                             && !showingLocationPermissionAlert
                     ),
+=======
+                    isPresented: .constant(!showingLocationPermissionAlert &&
+                        !(searchObserver.isSearching && nav == .nearby)),
+>>>>>>> 1ce4a580 (fix rebase issues)
                     content: {
                         GeometryReader { proxy in
                             VStack {
