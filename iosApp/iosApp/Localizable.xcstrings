@@ -240,6 +240,9 @@
     "Fog" : {
       "comment" : "Possible alert cause"
     },
+    "For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise." : {
+
+    },
     "Freight Train Interference" : {
       "comment" : "Possible alert cause"
     },
@@ -303,6 +306,9 @@
     },
     "Maintenance" : {
       "comment" : "Possible alert cause"
+    },
+    "MBTA Go is just getting started! We’re actively making improvements based on feedback from riders like you." : {
+
     },
     "Mechanical Problem" : {
       "comment" : "Possible alert cause"
@@ -478,6 +484,9 @@
     },
     "Updated: %@" : {
       "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"
+    },
+    "We’ll use your location to show the lines and bus routes near you." : {
+
     },
     "Weather" : {
       "comment" : "Possible alert cause"

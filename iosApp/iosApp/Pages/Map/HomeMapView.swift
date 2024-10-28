@@ -105,8 +105,13 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
-            .onAppear {
-                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+            .task {
+                // we specifically want to not request location authorization during the instant where onboarding is
+                // loading for the first time
+                try? await Task.sleep(for: .milliseconds(100))
+                if !Task.isCancelled {
+                    locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+                }
             }
             .onDisappear {
                 mapVM.layerManager = nil

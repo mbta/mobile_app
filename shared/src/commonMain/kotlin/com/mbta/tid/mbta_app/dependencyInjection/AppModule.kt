@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
@@ -24,7 +25,7 @@ import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
-import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
+import com.mbta.tid.mbta_app.usecases.SettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import okio.FileSystem
@@ -47,6 +48,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IErrorBannerStateRepository> { repositories.errorBanner }
         single<IGlobalRepository> { repositories.global }
         single<INearbyRepository> { repositories.nearby }
+        single<IOnboardingRepository> { repositories.onboarding }
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }
         single<IRailRouteShapeRepository> { repositories.railRouteShapes }
         single<ISchedulesRepository> { repositories.schedules }
@@ -67,7 +69,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
         single { ConfigUseCase(get(), get(), get()) }
-        single { GetSettingUsecase(get()) }
+        single { SettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
     }

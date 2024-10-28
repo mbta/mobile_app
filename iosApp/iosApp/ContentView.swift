@@ -36,6 +36,9 @@ struct ContentView: View {
     var body: some View {
         contents
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .onAppear {
+                Task { await contentVM.loadOnboardingScreens() }
+            }
             .task {
                 // We can't set stale caches in ResponseCache on init because of our Koin setup,
                 // so this is here to get the cached data into the global flow and kick off an async request asap.
@@ -47,7 +50,9 @@ struct ContentView: View {
 
     @ViewBuilder
     var contents: some View {
-        if selectedTab == .settings {
+        if let onboardingScreensPending = contentVM.onboardingScreensPending, !onboardingScreensPending.isEmpty {
+            OnboardingPage(screens: onboardingScreensPending, onFinish: { contentVM.onboardingScreensPending = [] })
+        } else if selectedTab == .settings {
             TabView(selection: $selectedTab) {
                 nearbyTab
                     .tag(SelectedTab.nearby)
@@ -178,7 +183,8 @@ struct ContentView: View {
         } else {
             mapSection
                 .sheet(
-                    isPresented: .constant(!(searchObserver.isSearching && nav == .nearby)),
+                    isPresented: .constant(!(searchObserver.isSearching && nav == .nearby) && contentVM
+                        .onboardingScreensPending != nil),
                     content: {
                         GeometryReader { proxy in
                             VStack {
