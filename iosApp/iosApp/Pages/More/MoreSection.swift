@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Foundation
 import shared
 
 struct MoreSection: Identifiable, Equatable {
@@ -24,17 +25,32 @@ struct MoreSection: Identifiable, Equatable {
     var name: String? {
         switch id {
         case .feedback: nil
-        case .resources: "Resources"
-        case .settings: "Settings"
-        case .featureFlags: "Feature Flags"
+        case .resources: NSLocalizedString(
+                "Resources",
+                comment: "More page section header, includes links to MBTA.com and mTicket app"
+            )
+        case .settings: NSLocalizedString(
+                "Settings",
+                comment: "More page section header, includes settings that the user can configure"
+            )
+        case .featureFlags: NSLocalizedString(
+                "Feature Flags",
+                comment: "More page section header, only displayed in the developer app for enabling in-progress features"
+            )
         case .other: nil
-        case .support: "General MBTA Information & Support"
+        case .support: NSLocalizedString(
+                "General MBTA Information & Support",
+                comment: "More page section header, includes user support resources"
+            )
         }
     }
 
     var note: String? {
         switch id {
-        case .support: "Monday through Friday: 6:30 AM - 8 PM"
+        case .support: NSLocalizedString(
+                "Monday through Friday: 6:30 AM - 8 PM",
+                comment: "Footnote under the More page support header, these are the hours for the support call center"
+            )
         default: nil
         }
     }

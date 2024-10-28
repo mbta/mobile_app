@@ -22,8 +22,11 @@ struct MorePage: View {
                 Spacer()
                 let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
                 if let version {
-                    Text("version \(version)")
-                        .font(Typography.footnote)
+                    Text(
+                        "version \(version)",
+                        comment: "Version number label on the More page"
+                    )
+                    .font(Typography.footnote)
                 }
             }
             .padding(.horizontal, 16)

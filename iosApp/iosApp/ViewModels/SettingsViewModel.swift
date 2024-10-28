@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Foundation
 import shared
 
 class SettingsViewModel: ObservableObject {
@@ -34,12 +35,30 @@ class SettingsViewModel: ObservableObject {
             settings = try await settingsRepository.getSettings()
             sections = [
                 MoreSection(id: .resources, items: [
-                    .link(label: "Trip Planner", url: "https://www.mbta.com/trip-planner"),
-                    .link(label: "Fare Information", url: "https://www.mbta.com/fares"),
                     .link(
-                        label: "Commuter Rail and Ferry tickets",
+                        label: NSLocalizedString(
+                            "Trip Planner",
+                            comment: "Label for a More page link to the MBTA.com trip planner"
+                        ),
+                        url: "https://www.mbta.com/trip-planner"
+                    ),
+                    .link(
+                        label: NSLocalizedString(
+                            "Fare Information",
+                            comment: "Label for a More page link to fare information on MBTA.com"
+                        ),
+                        url: "https://www.mbta.com/fares"
+                    ),
+                    .link(
+                        label: NSLocalizedString(
+                            "Commuter Rail and Ferry tickets",
+                            comment: "Label for a More page link to the MBTA mTicket app"
+                        ),
                         url: "https://apps.apple.com/us/app/mbta-mticket/id560487958",
-                        note: "mTicket App"
+                        note: NSLocalizedString(
+                            "mTicket App",
+                            comment: "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app"
+                        )
                     ),
                 ]),
                 MoreSection(
@@ -51,8 +70,20 @@ class SettingsViewModel: ObservableObject {
                     items: settings.filter { $0.category == .featureFlags }.map { MoreItem.toggle(setting: $0) }
                 ),
                 MoreSection(id: .other, items: [
-                    .link(label: "Terms of Use", url: "https://www.mbta.com/policies/terms-use"),
-                    .link(label: "Privacy Policy", url: "https://www.mbta.com/policies/privacy-policy"),
+                    .link(
+                        label: NSLocalizedString(
+                            "Terms of Use",
+                            comment: "Label for a More page link to the MBTA.com terms of use"
+                        ),
+                        url: "https://www.mbta.com/policies/terms-use"
+                    ),
+                    .link(
+                        label: NSLocalizedString(
+                            "Privacy Policy",
+                            comment: "Label for a More page link to the MBTA.com privacy policy"
+                        ),
+                        url: "https://www.mbta.com/policies/privacy-policy"
+                    ),
                 ]),
                 MoreSection(id: .support, items: [
                     .phone(label: "617-222-3200", phoneNumber: "6172223200"),

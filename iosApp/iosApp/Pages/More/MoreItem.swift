@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Foundation
 import shared
 
 enum MoreItem: Identifiable, Equatable {
@@ -25,9 +26,18 @@ enum MoreItem: Identifiable, Equatable {
         switch self {
         case let .toggle(setting: setting):
             switch setting.key {
-            case .hideMaps: "Hide Maps"
-            case .searchRouteResults: "Route Search"
-            case .map: "Map Debug"
+            case .hideMaps: NSLocalizedString(
+                    "Hide Maps",
+                    comment: "A setting on the More page to remove the app component from the app"
+                )
+            case .searchRouteResults: NSLocalizedString(
+                    "Route Search",
+                    comment: "A setting on the More page to display routes in search (only visible for developers)"
+                )
+            case .map: NSLocalizedString(
+                    "Map Debug",
+                    comment: "A setting on the More page to display map debug information (only visible for developers)"
+                )
             }
 
         case let .link(label: label, url: _, note: _): label
