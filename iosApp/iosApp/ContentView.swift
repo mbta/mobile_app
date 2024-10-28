@@ -20,6 +20,7 @@ struct ContentView: View {
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
+    @StateObject var settingsVM = SettingsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
@@ -52,7 +53,7 @@ struct ContentView: View {
                 nearbyTab
                     .tag(SelectedTab.nearby)
                     .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
-                MorePage()
+                MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
                     .tabItem { TabLabel("More", image: .tabIconMore) }
                     .onAppear {
@@ -134,6 +135,7 @@ struct ContentView: View {
             Task { await errorBannerVM.activate() }
             Task { await contentVM.loadConfig() }
             Task { await contentVM.loadHideMaps() }
+            Task { await settingsVM.getSections() }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {

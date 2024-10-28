@@ -301,8 +301,14 @@
     "Location access state unknown" : {
 
     },
+    "Made with ♥ in Boston, for Boston" : {
+
+    },
     "Maintenance" : {
       "comment" : "Possible alert cause"
+    },
+    "MBTA Go" : {
+
     },
     "Mechanical Problem" : {
       "comment" : "Possible alert cause"
@@ -365,9 +371,6 @@
 
     },
     "Service suspended" : {
-
-    },
-    "Settings" : {
 
     },
     "Severe Weather" : {
@@ -478,6 +481,9 @@
     },
     "Updated: %@" : {
       "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"
+    },
+    "version %@" : {
+
     },
     "Weather" : {
       "comment" : "Possible alert cause"

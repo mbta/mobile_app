@@ -53,7 +53,7 @@ final class SettingsPageTests: XCTestCase {
                 loadedPublisher.send(())
             }
         )
-        let sut = SettingsPage(
+        let sut = MorePage(
             viewModel: SettingsViewModel(settingsRepository: settingsRepository)
         )
         let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
@@ -81,7 +81,7 @@ final class SettingsPageTests: XCTestCase {
                 savedExp.fulfill()
             }
         )
-        let sut = SettingsPage(
+        let sut = MorePage(
             viewModel: SettingsViewModel(settingsRepository: settingsRepository)
         )
 
