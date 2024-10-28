@@ -90,4 +90,30 @@ final class MorePageTests: XCTestCase {
 
         await fulfillment(of: [tapExp, savedExp], timeout: 5)
     }
+
+    @MainActor func testLinksExist() async throws {
+        let loadedPublisher = PassthroughSubject<Void, Never>()
+
+        let settingsRepository = FakeSettingsRepository(
+            mapDebug: false,
+            searchRouteResults: false,
+            onGet: { loadedPublisher.send(()) }
+        )
+        let viewModel = SettingsViewModel(settingsRepository: settingsRepository)
+
+        let sut = MorePage(viewModel: viewModel)
+        let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
+            try XCTAssertNotNil(view.find(text: "Trip Planner"))
+            try XCTAssertNotNil(view.find(text: "Fare Information"))
+            try XCTAssertNotNil(view.find(text: "Commuter Rail and Ferry tickets"))
+            try XCTAssertNotNil(view.find(text: "Terms of Use"))
+            try XCTAssertNotNil(view.find(text: "Privacy Policy"))
+            try XCTAssertNotNil(view.find(text: "617-222-3200"))
+        }
+
+        ViewHosting.host(view: sut)
+        await viewModel.getSections()
+
+        await fulfillment(of: [exp], timeout: 5)
+    }
 }
