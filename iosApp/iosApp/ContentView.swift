@@ -67,7 +67,6 @@ struct ContentView: View {
 
     @State var selectedDetent: PresentationDetent = .halfScreen
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
-
     @State private var showingLocationPermissionAlert = false
 
     @ViewBuilder var nearbySheetContents: some View {
@@ -91,75 +90,6 @@ struct ContentView: View {
         }
     }
 
-    struct LocationAuthButtonStyle: ButtonStyle {
-        func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .padding()
-                .background(Color.key)
-                .foregroundStyle(.white)
-                .clipShape(Capsule())
-        }
-    }
-
-    struct LocationAuthLabelStyle: LabelStyle {
-        func makeBody(configuration: Configuration) -> some View {
-            HStack(alignment: .center, spacing: 8) {
-                configuration.title
-                configuration.icon
-            }
-            .fontWeight(.bold)
-        }
-    }
-
-    @ViewBuilder
-    var locationAuthButton: some View {
-        switch locationDataManager.authorizationStatus {
-        case .notDetermined, .denied, .restricted:
-            Button(action: {
-                showingLocationPermissionAlert = true
-            }, label: {
-                Label(title: {
-                    Text("Location Services is off")
-                }, icon: {
-                    Image(.faChevronRight)
-                        .resizable()
-                        .scaleEffect(0.6)
-                        .frame(width: 20, height: 20, alignment: .center)
-                        .backgroundStyle(.white)
-                        .background(in: .circle)
-                        .foregroundColor(Color.key)
-                })
-                .labelStyle(LocationAuthLabelStyle())
-            })
-            .buttonStyle(LocationAuthButtonStyle())
-            .accessibilityIdentifier("locationServicesButton")
-            .alert(
-                "Maps work best with Location Services turned on",
-                isPresented: $showingLocationPermissionAlert,
-                actions: {
-                    Button("Turn On in Settings") {
-                        showingLocationPermissionAlert = false
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
-                    Button("Keep Location Services off") {
-                        showingLocationPermissionAlert = false
-                    }
-                },
-                message: {
-                    Text(
-                        "You'll get turn-by-turn directions, estimated travel times, and improved search results when you turn on Location Services for Maps"
-                    )
-                }
-            )
-        case .authorizedAlways, .authorizedWhenInUse:
-            EmptyView()
-        @unknown default:
-            Text("Location access state unknown")
-        }
-    }
-
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
@@ -177,7 +107,9 @@ struct ContentView: View {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
                         }
-                        locationAuthButton
+                        if !searchObserver.isSearching {
+                            LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                        }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
                             RecenterButton { Task { viewportProvider.follow() } }
