@@ -36,6 +36,13 @@ struct ContentView: View {
     var body: some View {
         contents
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .task {
+                // We can't set stale caches in ResponseCache on init because of our Koin setup,
+                // so this is here to get the cached data into the global flow and kick off an async request asap.
+                do {
+                    let _ = try await RepositoryDI().global.getGlobalData()
+                } catch {}
+            }
     }
 
     @ViewBuilder
@@ -52,7 +59,6 @@ struct ContentView: View {
                         screenTracker.track(screen: .settings)
                     }
             }
-
         } else {
             nearbyTab
         }

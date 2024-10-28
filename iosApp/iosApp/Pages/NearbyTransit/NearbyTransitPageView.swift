@@ -70,6 +70,13 @@ struct NearbyTransitPageView: View {
                     location = nil
                 }
             }
+            .onChange(of: viewportProvider.isFollowingPuck) { isFollowingPuck in
+                if isFollowingPuck {
+                    // The user just recentered the map, clear the nearby state
+                    nearbyVM.nearbyState = .init()
+                    location = nil
+                }
+            }
         }
     }
 }

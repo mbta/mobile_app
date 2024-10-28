@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
@@ -50,6 +51,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IRailRouteShapeRepository> { repositories.railRouteShapes }
         single<ISchedulesRepository> { repositories.schedules }
         single<ISearchResultRepository> { repositories.searchResults }
+        single<ISentryRepository> { repositories.sentry }
         single<ISettingsRepository> { repositories.settings }
         single<IStopRepository> { repositories.stop }
         single<ITripRepository> { repositories.trip }
@@ -64,7 +66,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
-        single { ConfigUseCase(get(), get()) }
+        single { ConfigUseCase(get(), get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }

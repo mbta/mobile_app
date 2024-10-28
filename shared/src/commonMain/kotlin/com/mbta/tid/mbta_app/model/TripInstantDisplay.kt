@@ -63,9 +63,12 @@ sealed class TripInstantDisplay {
                 }
                 return Hidden
             }
+
+            val isScheduleUpcoming = schedule?.scheduleTime?.let { it >= now } ?: false
             if (
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
                     schedule?.scheduleTime != null &&
+                    isScheduleUpcoming &&
                     routeType?.isSubway() == false &&
                     context == Context.StopDetailsFiltered
             ) {

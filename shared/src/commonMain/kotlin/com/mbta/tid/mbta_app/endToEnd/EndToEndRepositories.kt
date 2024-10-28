@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
@@ -42,6 +43,7 @@ import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
@@ -50,6 +52,7 @@ import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.module.Module
@@ -96,13 +99,16 @@ fun endToEndModule(): Module {
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
         single<IGlobalRepository> {
             object : IGlobalRepository {
-                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
-                    ApiResult.Ok(
+                override val state =
+                    MutableStateFlow(
                         GlobalResponse(
                             objects,
                             mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
                         )
                     )
+
+                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
+                    ApiResult.Ok(state.value)
             }
         }
         single<INearbyRepository> {
@@ -167,6 +173,7 @@ fun endToEndModule(): Module {
             }
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
+        single<ISentryRepository> { MockSentryRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
@@ -225,7 +232,7 @@ fun endToEndModule(): Module {
         }
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
-        single { ConfigUseCase(get(), get()) }
+        single { ConfigUseCase(get(), get(), get()) }
         single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }

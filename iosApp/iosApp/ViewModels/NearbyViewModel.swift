@@ -122,10 +122,10 @@ class NearbyViewModel: ObservableObject {
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "NearbyViewModel.getNearby",
-                getData: { try await nearbyRepository.getNearby(global: global, location: location.coordinateKt) },
+                getData: { try await self.nearbyRepository.getNearby(global: global, location: location.coordinateKt) },
                 onSuccess: {
-                    nearbyState.nearbyByRouteAndStop = $0
-                    nearbyState.loadedLocation = location
+                    self.nearbyState.nearbyByRouteAndStop = $0
+                    self.nearbyState.loadedLocation = location
                 },
                 onRefreshAfterError: { self.getNearby(global: global, location: location) }
             )

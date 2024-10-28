@@ -178,17 +178,26 @@ struct NearbyTransitView: View {
         getSchedule()
     }
 
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            self.globalData = globalData
+            Task {
+                // this should be handled by the onChange but in tests it just isn't
+                getNearby(location: location, globalData: globalData)
+            }
+        }
+    }
+
     func getGlobal() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
         Task {
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "NearbyTransitView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: {
-                    globalData = $0
-                    // this should be handled by the onChange but in tests it just isn't
-                    getNearby(location: location, globalData: globalData)
-                },
                 onRefreshAfterError: loadEverything
             )
         }
@@ -197,7 +206,13 @@ struct NearbyTransitView: View {
     func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
         self.location = location
         self.globalData = globalData
-        guard let location, let globalData else { return }
+        guard let globalData else { return }
+        guard let location else {
+            // if location was set to nil, forget previously loaded data
+            predictionsByStop = nil
+            scheduleResponse = nil
+            return
+        }
         getNearby(globalData, location)
     }
 
