@@ -111,13 +111,22 @@ struct AlertDetailsPage: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            globalResponse = globalData
+        }
+    }
+
     private func loadGlobal() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
         Task {
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "AlertDetailsPage.loadGlobal",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: { globalResponse = $0 },
                 onRefreshAfterError: loadGlobal
             )
         }

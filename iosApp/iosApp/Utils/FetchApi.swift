@@ -17,7 +17,7 @@ func fetchApi<T>(
     _ errorBannerRepo: IErrorBannerStateRepository,
     errorKey: String,
     getData: () async throws -> ApiResult<T>,
-    onSuccess: @MainActor (T) -> Void,
+    onSuccess: @MainActor (T) -> Void = { _ in },
     onRefreshAfterError: @escaping () -> Void
 ) async {
     var result: ApiResult<T>

@@ -54,20 +54,6 @@ final class NearbyTransitPageViewTests: XCTestCase {
     }
 
     @MainActor func testReloadsWhenLocationChanges() throws {
-        class FakeGlobalRepository: IGlobalRepository {
-            let notifier: any Subject<Void, Never>
-
-            init(notifier: any Subject<Void, Never>) {
-                self.notifier = notifier
-            }
-
-            func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
-                debugPrint("FakeGlobalRepo getting global")
-                notifier.send()
-                return ApiResultOk(data: GlobalResponse(objects: .init(), patternIdsByStop: [:]))
-            }
-        }
-
         class FakeNearbyVM: NearbyViewModel {
             let expectation: XCTestExpectation
             let closure: (CLLocationCoordinate2D) -> Void
@@ -88,7 +74,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let globalDataLoaded = PassthroughSubject<Void, Never>()
 
         loadKoinMocks(repositories: MockRepositories.companion
-            .buildWithDefaults(global: FakeGlobalRepository(notifier: globalDataLoaded)))
+            .buildWithDefaults(global: MockGlobalRepository(onGet: { globalDataLoaded.send() })))
 
         let getNearbyExpectation = expectation(description: "getNearby")
         getNearbyExpectation.assertForOverFulfill = false

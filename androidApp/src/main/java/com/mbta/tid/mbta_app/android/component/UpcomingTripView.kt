@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
@@ -94,7 +96,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                         text = stringResource(R.string.approaching_abbr),
                         modifier = modifier
                     )
-                is TripInstantDisplay.AsTime ->
+                is TripInstantDisplay.Time ->
                     Text(
                         formatTime(state.trip.predictionTime),
                         modifier,
@@ -102,22 +104,29 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
-                is TripInstantDisplay.Schedule ->
-                    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            formatTime(state.trip.scheduleTime),
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(painterResource(R.drawable.baseline_access_time_24), "Scheduled")
-                    }
+                is TripInstantDisplay.ScheduleTime ->
+                    Text(
+                        formatTime(state.trip.scheduledTime),
+                        modifier.then(Modifier.alpha(0.6F)),
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        fontSize =
+                            if (state.trip.headline) {
+                                TextUnit.Unspecified
+                            } else {
+                                13.sp
+                            }
+                    )
                 is TripInstantDisplay.Minutes ->
                     BoldedTripStatus(
                         text = stringResource(R.string.minutes_abbr, state.trip.minutes),
                         modifier = modifier
+                    )
+                is TripInstantDisplay.ScheduleMinutes ->
+                    BoldedTripStatus(
+                        text = stringResource(R.string.minutes_abbr, state.trip.minutes),
+                        modifier = modifier.then(Modifier.alpha(0.6F))
                     )
                 is TripInstantDisplay.Cancelled ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -204,10 +213,18 @@ fun NoServiceView(effect: NoServiceViewEffect, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun UpcomingTripViewPreview() {
-    Row {
+    Column(horizontalAlignment = Alignment.End) {
+        UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
         UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
         UpcomingTripView(
-            UpcomingTripViewState.Some(TripInstantDisplay.Schedule(Clock.System.now() + 10.minutes))
+            UpcomingTripViewState.Some(
+                TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes, true)
+            )
+        )
+        UpcomingTripView(
+            UpcomingTripViewState.Some(
+                TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes)
+            )
         )
     }
 }

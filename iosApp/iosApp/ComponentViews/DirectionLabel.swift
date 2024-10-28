@@ -24,9 +24,12 @@ struct DirectionLabel: View {
     var body: some View {
         VStack(alignment: .leading) {
             if let destination = direction.destination {
-                Text("\(directionNameFormatted(direction)) to")
-                    .font(Typography.footnote)
-                    .textCase(.none)
+                Text("\(directionNameFormatted(direction)) to",
+                     comment: """
+                     Label the direction a list of arrivals is for. Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound. For example, "[Northbound] to [Alewife]
+                     """)
+                     .font(Typography.footnote)
+                     .textCase(.none)
                 Text(destination)
                     .font(Typography.bodySemibold)
                     .textCase(.none)

@@ -15,6 +15,7 @@
 		6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */; };
 		6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278D2BD989630037554F /* DummyTestAppView.swift */; };
 		6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278F2BD989AC0037554F /* ProductionAppView.swift */; };
+		6E2D6CA12CC2EDD700959605 /* ErrorBannerViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6CA02CC2EDD700959605 /* ErrorBannerViewModelTests.swift */; };
 		6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 6E35D4CD2B72C74500A2BF95 /* MapboxMaps */; };
 		6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */; };
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
@@ -90,6 +91,7 @@
 		8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DA2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift */; };
 		8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */; };
 		8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */; };
+		8CCBF2CD2CC162E900B29806 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 8CCBF2CC2CC162E900B29806 /* Shimmer */; };
 		8CD58ECD2BEC115B0004E031 /* TripDetailsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD58ECC2BEC115B0004E031 /* TripDetailsPageTests.swift */; };
 		8CD79F112C46F6E200AFF17D /* MapboxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */; };
 		8CD81A242BE55B2C0090585F /* SettingsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD81A232BE55B2C0090585F /* SettingsPageTests.swift */; };
@@ -98,6 +100,7 @@
 		8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */; };
 		8CE014122BBDB96900918FAE /* StopDetailsRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */; };
 		8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */; };
+		8CE1D6762CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */; };
 		8CE36C8F2CAB231500D77F22 /* FetchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE36C8E2CAB231500D77F22 /* FetchApi.swift */; };
 		8CE36C932CADEDD300D77F22 /* FetchApiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE36C922CADEDD300D77F22 /* FetchApiTests.swift */; };
 		8CF5ABF72C70001200CF26B0 /* VehicleMarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */; };
@@ -121,6 +124,7 @@
 		9A4DB7812CA5A23200E8755B /* TextFieldObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7802CA5A23200E8755B /* TextFieldObserver.swift */; };
 		9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4E8E582B7EC4B90066B936 /* RoutePill.swift */; };
 		9A4F3B9F2C580C820040D6C9 /* StopDetailsAlertHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4F3B9E2C580C820040D6C9 /* StopDetailsAlertHeaderTests.swift */; };
+		9A52A2B32CC3035F00CC01D6 /* WithRealtimeIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A52A2B22CC3035F00CC01D6 /* WithRealtimeIndicator.swift */; };
 		9A52B3362C6A93390028EEAB /* AlertDetailsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A52B3352C6A93390028EEAB /* AlertDetailsTests.swift */; };
 		9A52B3382C6A99790028EEAB /* AlertDetailsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A52B3372C6A99790028EEAB /* AlertDetailsPageTests.swift */; };
 		9A52B33A2C6E7C7D0028EEAB /* AlertDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A52B3392C6E7C7D0028EEAB /* AlertDetailsAnalytics.swift */; };
@@ -248,6 +252,7 @@
 		6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyViewModel.swift; sourceTree = "<group>"; };
 		6E20278D2BD989630037554F /* DummyTestAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyTestAppView.swift; sourceTree = "<group>"; };
 		6E20278F2BD989AC0037554F /* ProductionAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductionAppView.swift; sourceTree = "<group>"; };
+		6E2D6CA02CC2EDD700959605 /* ErrorBannerViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBannerViewModelTests.swift; sourceTree = "<group>"; };
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
 		6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
@@ -340,6 +345,7 @@
 		8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRoutesView.swift; sourceTree = "<group>"; };
 		8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsRouteView.swift; sourceTree = "<group>"; };
 		8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetNavigationStackEntry.swift; sourceTree = "<group>"; };
+		8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingPlaceholderModifier.swift; sourceTree = "<group>"; };
 		8CE36C8E2CAB231500D77F22 /* FetchApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchApi.swift; sourceTree = "<group>"; };
 		8CE36C922CADEDD300D77F22 /* FetchApiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchApiTests.swift; sourceTree = "<group>"; };
 		8CF5ABF62C70001200CF26B0 /* VehicleMarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarkerView.swift; sourceTree = "<group>"; };
@@ -364,6 +370,7 @@
 		9A4DB7802CA5A23200E8755B /* TextFieldObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldObserver.swift; sourceTree = "<group>"; };
 		9A4E8E582B7EC4B90066B936 /* RoutePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutePill.swift; sourceTree = "<group>"; };
 		9A4F3B9E2C580C820040D6C9 /* StopDetailsAlertHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsAlertHeaderTests.swift; sourceTree = "<group>"; };
+		9A52A2B22CC3035F00CC01D6 /* WithRealtimeIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithRealtimeIndicator.swift; sourceTree = "<group>"; };
 		9A52B3352C6A93390028EEAB /* AlertDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDetailsTests.swift; sourceTree = "<group>"; };
 		9A52B3372C6A99790028EEAB /* AlertDetailsPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDetailsPageTests.swift; sourceTree = "<group>"; };
 		9A52B3392C6E7C7D0028EEAB /* AlertDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDetailsAnalytics.swift; sourceTree = "<group>"; };
@@ -472,6 +479,7 @@
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
 				6E35D4CE2B72C74500A2BF95 /* MapboxMaps in Frameworks */,
+				8CCBF2CD2CC162E900B29806 /* Shimmer in Frameworks */,
 				A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,6 +600,7 @@
 			isa = PBXGroup;
 			children = (
 				6EFEE42A2BEC100100810319 /* NearbyViewModelTests.swift */,
+				6E2D6CA02CC2EDD700959605 /* ErrorBannerViewModelTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -854,6 +863,7 @@
 				9A9E7DD22C2203BE000DA1FD /* TransitCard.swift */,
 				9A9E7DD02C2200F4000DA1FD /* TransitHeader.swift */,
 				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
+				9A52A2B22CC3035F00CC01D6 /* WithRealtimeIndicator.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -914,6 +924,7 @@
 			isa = PBXGroup;
 			children = (
 				8C1587032C76524600AB5036 /* AppVariantExtension.swift */,
+				EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */,
 				9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */,
 				9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */,
 				9A37F3062BACCCA5001714FE /* CoordinateExtension.swift */,
@@ -923,18 +934,18 @@
 				9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */,
 				8CE36C8E2CAB231500D77F22 /* FetchApi.swift */,
 				9ADB849C2BAD05BC006581CE /* Inspection.swift */,
+				8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */,
 				8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */,
 				9A3B09352B967CEC00691427 /* NonNilModifier.swift */,
 				ED3581672BB470C4005DDC34 /* PresentationDetentExtension.swift */,
 				6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */,
+				9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */,
 				6EFEE42C2BED0FA800810319 /* ScenePhaseChangeModifier.swift */,
 				8CE0141A2BBF059A00918FAE /* SheetNavigationStackEntry.swift */,
 				9ADB84A12BAE37C0006581CE /* StopExtension.swift */,
 				8C0923A62C210C8C00813454 /* Typography.swift */,
 				8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */,
 				9A5830552BA3A2CE0039876E /* ViewportExtension.swift */,
-				9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */,
-				EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1047,6 +1058,7 @@
 				9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				6E55C1812C2489030086A424 /* Collections */,
 				6E45D8A82C4170890006934E /* FirebaseAppCheck */,
+				8CCBF2CC2CC162E900B29806 /* Shimmer */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -1083,6 +1095,11 @@
 				en,
 				es,
 				Base,
+				"pt-BR",
+				vi,
+				ht,
+				"zh-Hans-CN",
+				"zh-Hant-TW",
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
@@ -1091,6 +1108,7 @@
 				6EE7457F2B965AEA0052227E /* XCRemoteSwiftPackageReference "SwiftPhoenixClient" */,
 				9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				6E55C1802C2489030086A424 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				8CCBF2CB2CC162E900B29806 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -1289,6 +1307,7 @@
 				8C5F47662C40842200FB71DA /* TripDetailsStopViewTests.swift in Sources */,
 				8CDF2C342BE9357E007FC912 /* OptionalNavigationLinkTests.swift in Sources */,
 				8CA1FB772BF813F500384658 /* TripDetailsStopListSplitViewTests.swift in Sources */,
+				6E2D6CA12CC2EDD700959605 /* ErrorBannerViewModelTests.swift in Sources */,
 				8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */,
 				6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */,
 				8CE36C932CADEDD300D77F22 /* FetchApiTests.swift in Sources */,
@@ -1316,6 +1335,7 @@
 				6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
 				8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */,
+				9A52A2B32CC3035F00CC01D6 /* WithRealtimeIndicator.swift in Sources */,
 				9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */,
 				6E99CBB72B9892C80047E78D /* SocketProvider.swift in Sources */,
 				ED5C93F42C496FB90086D017 /* TripDetailsHeader.swift in Sources */,
@@ -1372,6 +1392,7 @@
 				9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */,
 				9A3B09362B967CEC00691427 /* NonNilModifier.swift in Sources */,
+				8CE1D6762CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift in Sources */,
 				2152FB042600AC8F00CF470E /* IOSApp.swift in Sources */,
 				9A887D572B683103006F5B80 /* SearchResultsContainer.swift in Sources */,
 				EDE92FAA2C408A50007AD2F6 /* SettingsSection.swift in Sources */,
@@ -2133,6 +2154,14 @@
 				minimumVersion = 0.10.0;
 			};
 		};
+		8CCBF2CB2CC162E900B29806 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
 		9AB3F50B2BE44B49008D9E40 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -2167,6 +2196,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6EED5EAC2B3E1BA80052A1B8 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		8CCBF2CC2CC162E900B29806 /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8CCBF2CB2CC162E900B29806 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
 		};
 		9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
 			isa = XCSwiftPackageProductDependency;

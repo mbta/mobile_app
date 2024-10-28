@@ -74,7 +74,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testFirstScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().scheduledFirst(date: date, vehicleText: "buses")
+        let text: any View = UpcomingTripAccessibilityFormatters().scheduleTimeFirst(date: date, vehicleText: "buses")
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
 
@@ -83,7 +83,7 @@ final class UpcomingTripViewTests: XCTestCase {
 
     func testScheduledAccessibilityLabel() throws {
         let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let text: any View = UpcomingTripAccessibilityFormatters().scheduledOther(date: date)
+        let text: any View = UpcomingTripAccessibilityFormatters().scheduleTimeOther(date: date)
         let foundText: String = try text.inspect().text()
             .string(locale: Locale(identifier: "en"))
 

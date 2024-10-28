@@ -1,10 +1,32 @@
-#!/bin/sh
+#!/bin/bash
 
 # Fail this script if any subcommand fails.
 set -e
 
+# Outgoing network connections from Xcode Cloud frequently just break, so retry everything a lot.
+# https://unix.stackexchange.com/a/137639
+function retry() {
+  local n=1
+  # for some reason, the syntax for "$foo or bar if $foo is unset" is ${foo-bar}
+  local max=${RETRIES-5}
+  local delay=5
+  while true; do
+    if "$@"; then
+      break
+    else
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $delay
+      else
+        return 1
+      fi
+    fi
+  done
+}
+
 # Install SwiftLint
-brew install swiftlint
+retry brew install swiftlint
 
 # Install Java
 JDK_PATH="${CI_DERIVED_DATA_PATH}/JDK"
@@ -17,9 +39,9 @@ if [ -d $JDK_PATH ]; then
   exit
 fi
 
-brew install asdf
-asdf plugin-add java
-asdf install java
+retry brew install asdf
+retry asdf plugin-add java
+retry asdf install java
 DEFAULT_JAVA_PATH="$(asdf where java)"
 DEFAULT_JAVA_ROOT_DIR="$(dirname DEFAULT_JAVA_PATH)"
 rm -rf $JDK_PATH
@@ -30,11 +52,11 @@ mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
 # Install cocoapods
-brew install cocoapods
+retry brew install cocoapods
 cd "${CI_PRIMARY_REPOSITORY_PATH}"
-./gradlew :shared:generateDummyFramework
+retry ./gradlew :shared:generateDummyFramework
 cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-pod install
+retry pod install
 cd ..
 
 # Configure Mapbox token for installation
@@ -49,7 +71,7 @@ echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   echo "Running shared tests"
   cd $CI_PRIMARY_REPOSITORY_PATH
-  ./gradlew shared:iosX64Test
+  RETRIES=2 retry ./gradlew shared:iosX64Test
 fi
 
 echo "Adding build environment variables"

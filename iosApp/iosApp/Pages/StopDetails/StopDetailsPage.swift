@@ -128,13 +128,22 @@ struct StopDetailsPage: View {
         loadPinnedRoutes()
     }
 
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            globalResponse = globalData
+        }
+    }
+
     func loadGlobalData() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
         Task {
             await fetchApi(
                 errorBannerVM.errorRepository,
                 errorKey: "StopDetailsPage.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: { globalResponse = $0 },
                 onRefreshAfterError: loadEverything
             )
         }
@@ -252,7 +261,7 @@ struct StopDetailsPage: View {
         let targetPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
-            StopDetailsDepartures(
+            StopDetailsDepartures.companion.fromData(
                 stop: stop,
                 global: globalResponse,
                 schedules: schedulesResponse,

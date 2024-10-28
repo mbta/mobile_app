@@ -16,6 +16,8 @@ extension Setting: Identifiable {
 
     var name: String {
         switch key {
+        case .hideMaps:
+            "Hide Maps"
         case .searchRouteResults:
             "Search - Route Results"
         case .map:
@@ -25,6 +27,8 @@ extension Setting: Identifiable {
 
     var icon: String {
         switch key {
+        case .hideMaps:
+            "map"
         case .searchRouteResults:
             "point.topleft.down.to.point.bottomright.curvepath.fill"
         case .map:
@@ -34,6 +38,8 @@ extension Setting: Identifiable {
 
     var category: SettingsSection.Category {
         switch key {
+        case .hideMaps:
+            .settings
         case .searchRouteResults:
             .featureFlags
         case .map:

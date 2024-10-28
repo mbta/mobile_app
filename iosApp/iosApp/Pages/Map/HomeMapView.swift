@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 @_spi(Experimental) import MapboxMaps
 import os
 import shared
@@ -85,17 +86,15 @@ struct HomeMapView: View {
                     crosshairs
                 }
             }
-            .task {
-                loadGlobalData()
-            }
+            .task { loadGlobalData() }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
             }
-            .onChange(of: mapVM.routeSourceData) { routeData in
-                updateRouteSources(routeData: routeData)
+            .onChange(of: mapVM.routeSourceData) { _ in
+                updateRouteSource()
             }
-            .onChange(of: mapVM.stopSourceData) { stopData in
-                updateStopSource(stopData: stopData)
+            .onChange(of: mapVM.stopSourceData) { _ in
+                updateStopSource()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
@@ -135,13 +134,15 @@ struct HomeMapView: View {
                 leaveVehiclesChannel()
                 viewportProvider.saveCurrentViewport()
             }
-            .withScenePhaseHandlers(onActive: {
-                                        if let lastNavEntry {
-                                            joinVehiclesChannel(navStackEntry: lastNavEntry)
-                                        }
-                                    },
-                                    onInactive: leaveVehiclesChannel,
-                                    onBackground: leaveVehiclesChannel)
+            .withScenePhaseHandlers(
+                onActive: {
+                    if let lastNavEntry {
+                        joinVehiclesChannel(navStackEntry: lastNavEntry)
+                    }
+                },
+                onInactive: leaveVehiclesChannel,
+                onBackground: leaveVehiclesChannel
+            )
             .onReceive(timer) { input in
                 now = input
                 handleGlobalMapDataChange(now: now)

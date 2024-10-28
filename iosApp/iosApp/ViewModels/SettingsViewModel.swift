@@ -40,6 +40,10 @@ class SettingsViewModel: ObservableObject {
             let storedSettings = try await settingsRepository.getSettings()
             settings = [
                 SettingsSection(
+                    id: .settings,
+                    settings: storedSettings.filter { $0.category == .settings }
+                ),
+                SettingsSection(
                     id: .debug,
                     settings: storedSettings.filter { $0.category == .debug }
                 ),

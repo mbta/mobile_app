@@ -9,42 +9,6 @@ import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import kotlinx.datetime.Instant
 
 data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
-    constructor(
-        stop: Stop,
-        global: GlobalResponse,
-        schedules: ScheduleResponse?,
-        predictions: PredictionsStreamDataResponse?,
-        alerts: AlertsStreamDataResponse?,
-        pinnedRoutes: Set<String>,
-        filterAtTime: Instant
-    ) : this(
-        global.run {
-            val allStopIds =
-                if (patternIdsByStop.containsKey(stop.id)) {
-                    listOf(stop.id)
-                } else {
-                    stop.childStopIds.filter { global.stops.containsKey(it) }
-                }
-
-            val staticData = NearbyStaticData(global, NearbyResponse(allStopIds))
-
-            staticData
-                .withRealtimeInfo(
-                    global,
-                    null,
-                    schedules,
-                    predictions,
-                    alerts,
-                    filterAtTime,
-                    showAllPatternsWhileLoading = true,
-                    hideNonTypicalPatternsBeyondNext = null,
-                    filterCancellations = false,
-                    pinnedRoutes
-                )
-                .flatMap { it.patternsByStop }
-        }
-    )
-
     val allUpcomingTrips = routes.flatMap { it.allUpcomingTrips() }
 
     val upcomingPatternIds = allUpcomingTrips.mapNotNull { it.trip.routePatternId }.toSet()
@@ -65,5 +29,43 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         }
         val direction = directions.first()
         return StopDetailsFilter(route.routeIdentifier, direction)
+    }
+
+    companion object {
+        fun fromData(
+            stop: Stop,
+            global: GlobalResponse,
+            schedules: ScheduleResponse?,
+            predictions: PredictionsStreamDataResponse?,
+            alerts: AlertsStreamDataResponse?,
+            pinnedRoutes: Set<String>,
+            filterAtTime: Instant
+        ): StopDetailsDepartures? {
+            val allStopIds =
+                if (global.patternIdsByStop.containsKey(stop.id)) {
+                    listOf(stop.id)
+                } else {
+                    stop.childStopIds.filter { global.stops.containsKey(it) }
+                }
+
+            val staticData = NearbyStaticData(global, NearbyResponse(allStopIds))
+            val routes =
+                staticData
+                    .withRealtimeInfo(
+                        global,
+                        null,
+                        schedules,
+                        predictions,
+                        alerts,
+                        filterAtTime,
+                        showAllPatternsWhileLoading = true,
+                        hideNonTypicalPatternsBeyondNext = null,
+                        filterCancellations = false,
+                        pinnedRoutes
+                    )
+                    ?.flatMap { it.patternsByStop }
+
+            return routes?.let { StopDetailsDepartures(it) }
+        }
     }
 }
