@@ -21,21 +21,26 @@ struct StopDetailsFilteredRouteView: View {
     let pinned: Bool
 
     struct RowData {
-        let tripId: String
         let route: Route
         let headsign: String
         let formatted: RealtimePatterns.Format
         let navigationTarget: SheetNavigationStackEntry?
 
-        init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection: Int32?, now: Instant) {
-            let trip = upcoming.trip
-            if trip.directionId != expectedDirection {
-                return nil
-            }
-
-            tripId = trip.id
+        init(
+            route: Route,
+            headsign: String,
+            formatted: RealtimePatterns.Format,
+            navigationTarget: SheetNavigationStackEntry? = nil
+        ) {
             self.route = route
-            headsign = trip.headsign
+            self.headsign = headsign
+            self.formatted = formatted
+            self.navigationTarget = navigationTarget
+        }
+
+        init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection _: Int32?, now: Instant) {
+            self.route = route
+            headsign = upcoming.trip.headsign
             formatted = if let formattedUpcomingTrip = RealtimePatterns.companion.formatUpcomingTrip(
                 now: now,
                 upcomingTrip: upcoming,
@@ -49,9 +54,13 @@ struct StopDetailsFilteredRouteView: View {
             }
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
-                navigationTarget = .tripDetails(tripId: tripId, vehicleId: vehicleId,
-                                                target: .init(stopId: stopId, stopSequence: stopSequence.intValue),
-                                                routeId: upcoming.trip.routeId, directionId: upcoming.trip.directionId)
+                navigationTarget = .tripDetails(
+                    tripId: upcoming.trip.id,
+                    vehicleId: vehicleId,
+                    target: .init(stopId: stopId, stopSequence: stopSequence.intValue),
+                    routeId: upcoming.trip.routeId,
+                    directionId: upcoming.trip.directionId
+                )
             } else {
                 navigationTarget = nil
             }
@@ -89,7 +98,8 @@ struct StopDetailsFilteredRouteView: View {
                 alerts = []
             }
 
-            rows = patternsByStop.allUpcomingTrips().compactMap { upcoming in
+            var rows: [RowData] = patternsByStop.allUpcomingTrips().compactMap { upcoming in
+                guard upcoming.trip.directionId == expectedDirection else { return nil }
                 guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
                     Logger().error("""
                     Failed to find route ID \(upcoming.trip.routeId) from upcoming \
@@ -105,9 +115,50 @@ struct StopDetailsFilteredRouteView: View {
                     now: now
                 )
             }
+            let realtimePatterns = patternsByStop.patterns
+                .filter { $0.directionId() == expectedDirection }
+            let statusRows = Self.getStatusDepartures(realtimePatterns: realtimePatterns, now: now)
+            rows.append(contentsOf: statusRows)
+            self.rows = rows
         } else {
             alerts = []
             rows = []
+        }
+    }
+
+    static func getStatusDepartures(realtimePatterns: [RealtimePatterns], now: Instant) -> [RowData] {
+        realtimePatterns.compactMap { pattern in
+            switch onEnum(of: pattern) {
+            case let .byHeadsign(patternsByHeadsign):
+                let noPredictions = patternsByHeadsign.upcomingTrips.contains(
+                    where: {
+                        if let time = $0.time, time.toNSDate() > now.toNSDate(), !$0.isCancelled {
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                )
+                let format: RealtimePatterns.Format? = if noPredictions {
+                    RealtimePatterns.FormatNone(secondaryAlert: nil)
+                } else if !patternsByHeadsign.hasSchedulesToday {
+                    RealtimePatterns.FormatNoSchedulesToday(secondaryAlert: nil)
+                } else if !patternsByHeadsign.upcomingTrips.isEmpty ||
+                    !patternsByHeadsign.allDataLoaded {
+                    nil
+                } else {
+                    RealtimePatterns.FormatServiceEndedToday(secondaryAlert: nil)
+                }
+                return if let format {
+                    RowData(
+                        route: patternsByHeadsign.route,
+                        headsign: patternsByHeadsign.headsign,
+                        formatted: format
+                    )
+                } else { nil }
+            default:
+                return nil
+            }
         }
     }
 
@@ -155,7 +206,7 @@ struct StopDetailsFilteredRouteView: View {
                                         }
                                     }
                                 }
-                                ForEach(Array(rows.enumerated()), id: \.element.tripId) { index, row in
+                                ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                                     VStack(spacing: 0) {
                                         OptionalNavigationLink(value: row.navigationTarget, action: { entry in
                                             pushNavEntry(entry)
