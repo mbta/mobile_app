@@ -180,7 +180,10 @@ struct ContentView: View {
         } else {
             mapSection
                 .sheet(
-                    isPresented: .constant(!(searchObserver.isSearching && nav == .nearby)),
+                    isPresented: .constant(
+                        !(searchObserver.isSearching && nav == .nearby)
+                            && selectedTab == .nearby
+                    ),
                     content: {
                         GeometryReader { proxy in
                             VStack {
