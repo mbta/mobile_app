@@ -37,7 +37,10 @@ final class OnboardingScreenViewTests: XCTestCase {
 
     func testHideMapsFlow() throws {
         let saveSettingExp = expectation(description: "saves hide maps setting")
-        let settingsRepo = MockSettingsRepository(saveSettingExp: saveSettingExp)
+        let settingsRepo = MockSettingsRepository(settings: [.init(key: .hideMaps, isOn: false)], onSaveSettings: {
+            XCTAssertEqual($0, [.init(key: .hideMaps, isOn: true)])
+            saveSettingExp.fulfill()
+        })
         let advanceExp = expectation(description: "calls advance()")
         let sut = OnboardingScreenView(
             screen: .hideMaps,
@@ -85,23 +88,6 @@ final class OnboardingScreenViewTests: XCTestCase {
 
         func requestWhenInUseAuthorization() {
             requestExp.fulfill()
-        }
-    }
-
-    private class MockSettingsRepository: ISettingsRepository {
-        let saveSettingExp: XCTestExpectation
-
-        init(saveSettingExp: XCTestExpectation) {
-            self.saveSettingExp = saveSettingExp
-        }
-
-        func __getSettings() async throws -> Set<Setting> {
-            [.init(key: .hideMaps, isOn: false)]
-        }
-
-        func __setSettings(settings: Set<Setting>) async throws {
-            XCTAssertEqual([.init(key: .hideMaps, isOn: true)], settings)
-            saveSettingExp.fulfill()
         }
     }
 }

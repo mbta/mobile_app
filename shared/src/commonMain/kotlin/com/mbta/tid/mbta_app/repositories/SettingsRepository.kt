@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
@@ -42,10 +43,13 @@ enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
 
 data class Setting(val key: Settings, var isOn: Boolean)
 
-class MockSettingsRepository(private var settings: Set<Setting> = setOf()) : ISettingsRepository {
-    override suspend fun getSettings(): Set<Setting> {
-        return settings
-    }
+class MockSettingsRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    private var settings: Set<Setting> = setOf(),
+    private var onSaveSettings: (Set<Setting>) -> Unit = {}
+) : ISettingsRepository {
+    override suspend fun getSettings() = settings
 
-    override suspend fun setSettings(settings: Set<Setting>) {}
+    override suspend fun setSettings(settings: Set<Setting>) = onSaveSettings(settings)
 }
