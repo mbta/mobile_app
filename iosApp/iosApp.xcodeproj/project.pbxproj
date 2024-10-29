@@ -175,6 +175,7 @@
 		9AC10BDA2B80067400EA4605 /* ColorHexExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */; };
 		9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */; };
 		9ACA9DF32BA1EC8B003F0E9E /* HomeMapViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */; };
+		9AD039362CCFC5E8008D9318 /* LocationAuthButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD039352CCFC5E8008D9318 /* LocationAuthButton.swift */; };
 		9AD1D1FE2BA4D5C600182060 /* ViewportProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */; };
 		9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849C2BAD05BC006581CE /* Inspection.swift */; };
 		9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */; };
@@ -425,6 +426,7 @@
 		9AC10BD92B80067400EA4605 /* ColorHexExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHexExtension.swift; sourceTree = "<group>"; };
 		9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageView.swift; sourceTree = "<group>"; };
 		9ACA9DF22BA1EC8B003F0E9E /* HomeMapViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewUITests.swift; sourceTree = "<group>"; };
+		9AD039352CCFC5E8008D9318 /* LocationAuthButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAuthButton.swift; sourceTree = "<group>"; };
 		9AD1D1FD2BA4D5C600182060 /* ViewportProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewportProviderTest.swift; sourceTree = "<group>"; };
 		9ADB849C2BAD05BC006581CE /* Inspection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspection.swift; sourceTree = "<group>"; };
 		9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncerTests.swift; sourceTree = "<group>"; };
@@ -879,6 +881,7 @@
 				9A2005CA2B97B68700F562E1 /* UpcomingTripView.swift */,
 				9A52A2B22CC3035F00CC01D6 /* WithRealtimeIndicator.swift */,
 				9A7F12122CCB185D0042B0F1 /* TabLabel.swift */,
+				9AD039352CCFC5E8008D9318 /* LocationAuthButton.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -1388,6 +1391,7 @@
 				6EA00B6A2C5137A800B1334C /* MockSocket.swift in Sources */,
 				ED24EADC2C1A95A900A7BE4D /* StopDetailsAnalytics.swift in Sources */,
 				9A4E8E592B7EC4B90066B936 /* RoutePill.swift in Sources */,
+				9AD039362CCFC5E8008D9318 /* LocationAuthButton.swift in Sources */,
 				9A9E3DC22C62AE12004AADC7 /* AlertDetailsPage.swift in Sources */,
 				9A4DB7782C937EE300E8755B /* SearchViewModel.swift in Sources */,
 				6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */,
