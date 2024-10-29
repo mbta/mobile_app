@@ -72,6 +72,7 @@ struct ContentView: View {
 
     @State var selectedDetent: PresentationDetent = .halfScreen
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
+    @State private var showingLocationPermissionAlert = false
 
     @ViewBuilder var nearbySheetContents: some View {
         // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
@@ -95,25 +96,8 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    var locationAuthHeader: some View {
-        switch locationDataManager.authorizationStatus {
-        case .notDetermined:
-            Button("Allow Location", action: {
-                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
-            })
-        case .authorizedAlways, .authorizedWhenInUse:
-            EmptyView()
-        case .denied, .restricted:
-            Text("Location access denied or restricted")
-        @unknown default:
-            Text("Location access state unknown")
-        }
-    }
-
-    @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            locationAuthHeader
             if contentVM.hideMaps {
                 if nearbyVM.navigationStack.lastSafe() == .nearby {
                     SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
@@ -124,9 +108,13 @@ struct ContentView: View {
             } else {
                 ZStack(alignment: .top) {
                     mapWithSheets
-                    VStack(alignment: .trailing, spacing: 0) {
+                    VStack(alignment: .center, spacing: 0) {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+
+                            if !searchObserver.isSearching {
+                                LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                            }
                         }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
@@ -187,7 +175,9 @@ struct ContentView: View {
                 .sheet(
                     isPresented: .constant(
                         !(searchObserver.isSearching && nav == .nearby)
-                            && selectedTab == .nearby && contentVM.onboardingScreensPending != nil
+                            && selectedTab == .nearby
+                            && !showingLocationPermissionAlert
+                            && contentVM.onboardingScreensPending != nil
                     ),
                     content: {
                         GeometryReader { proxy in

@@ -62,6 +62,26 @@ final class HomeMapViewUITests: XCTestCase {
         map.swipeDown()
         XCTAssertFalse(recenterButton.exists)
     }
+
+    func testLocationServicesButtonWithNoLocation() throws {
+        app.activate()
+        app.launch()
+
+        denyLocationPermissionAlert(timeout: 10)
+        let map = app.otherElements.matching(identifier: "transitMap").element
+        XCTAssert(map.waitForExistence(timeout: 30))
+
+        let locationServicesButton = app.buttons.matching(identifier: "locationServicesButton").element
+        XCTAssert(locationServicesButton.exists)
+
+        locationServicesButton.tap()
+
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+        let alert = app.alerts.firstMatch
+        XCTAssert(alert.waitForExistence(timeout: 10))
+        XCTAssert(alert.labelContains(text: "turned on"))
+    }
 }
 
 extension XCUIElement {
