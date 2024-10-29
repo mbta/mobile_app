@@ -46,6 +46,7 @@ struct LocationAuthButton: View {
                     Image(.faChevronRight)
                         .resizable()
                         .scaleEffect(0.6)
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20, alignment: .center)
                         .backgroundStyle(.white)
                         .background(in: .circle)
