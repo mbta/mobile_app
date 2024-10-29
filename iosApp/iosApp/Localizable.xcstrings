@@ -319,7 +319,7 @@
     "Location access state unknown" : {
 
     },
-    "Made with ♥ in Boston, for Boston" : {
+    "Made with ♥ by the T" : {
 
     },
     "Maintenance" : {
@@ -530,11 +530,11 @@
     "Updated: %@" : {
       "comment" : "Interpolated value is a timestamp for when displayed alert details were last changed"
     },
-    "We’ll use your location to show the lines and bus routes near you." : {
-
-    },
     "version %@" : {
       "comment" : "Version number label on the More page"
+    },
+    "We’ll use your location to show the lines and bus routes near you." : {
+
     },
     "Weather" : {
       "comment" : "Possible alert cause"
