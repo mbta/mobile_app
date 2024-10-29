@@ -11,26 +11,25 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISettingsRepository {
-    suspend fun getSettings(): Set<Setting>
+    suspend fun getSettings(): Map<Settings, Boolean>
 
-    suspend fun setSettings(settings: Set<Setting>)
+    suspend fun setSettings(settings: Map<Settings, Boolean>)
 }
 
 class SettingsRepository : ISettingsRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
-    override suspend fun getSettings(): Set<Setting> {
+    override suspend fun getSettings(): Map<Settings, Boolean> {
         return dataStore.data
             .map { dataStore ->
-                Settings.entries.map { Setting(it, dataStore[it.dataStoreKey] ?: false) }
+                Settings.entries.associateWith { dataStore[it.dataStoreKey] ?: false }
             }
             .first()
-            .toSet()
     }
 
-    override suspend fun setSettings(settings: Set<Setting>) {
+    override suspend fun setSettings(settings: Map<Settings, Boolean>) {
         dataStore.edit { dataStore ->
-            settings.forEach { dataStore[it.key.dataStoreKey] = it.isOn }
+            settings.forEach { dataStore[it.key.dataStoreKey] = it.value }
         }
     }
 }
@@ -41,15 +40,13 @@ enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     HideMaps(booleanPreferencesKey("hide_maps")),
 }
 
-data class Setting(val key: Settings, var isOn: Boolean)
-
 class MockSettingsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    private var settings: Set<Setting> = setOf(),
-    private var onSaveSettings: (Set<Setting>) -> Unit = {}
+    private var settings: Map<Settings, Boolean> = emptyMap(),
+    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {}
 ) : ISettingsRepository {
-    override suspend fun getSettings() = settings
+    override suspend fun getSettings(): Map<Settings, Boolean> = settings
 
-    override suspend fun setSettings(settings: Set<Setting>) = onSaveSettings(settings)
+    override suspend fun setSettings(settings: Map<Settings, Boolean>) = onSaveSettings(settings)
 }

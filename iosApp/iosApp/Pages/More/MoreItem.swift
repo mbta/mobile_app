@@ -10,13 +10,13 @@ import Foundation
 import shared
 
 enum MoreItem: Identifiable, Equatable {
-    case toggle(setting: Setting)
+    case toggle(setting: Settings, value: Bool)
     case link(label: String, url: String, note: String? = nil)
     case phone(label: String, phoneNumber: String)
 
     var id: String {
         switch self {
-        case let .toggle(setting: setting): setting.key.name
+        case let .toggle(setting: setting, value: _): setting.name
         case let .link(label: _, url: url, note: _): url
         case let .phone(label: _, phoneNumber: number): number
         }
@@ -24,8 +24,8 @@ enum MoreItem: Identifiable, Equatable {
 
     var label: String {
         switch self {
-        case let .toggle(setting: setting):
-            switch setting.key {
+        case let .toggle(setting: setting, value: _):
+            switch setting {
             case .hideMaps: NSLocalizedString(
                     "Hide Maps",
                     comment: "A setting on the More page to remove the app component from the app"
