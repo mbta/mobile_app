@@ -27,7 +27,7 @@ final class OnboardingScreenViewTests: XCTestCase {
                 markCompleteExp.fulfill()
             })
         )
-        let exp = sut.inspection.inspect(after: 0.2) { view in
+        let exp = sut.inspection.inspect { view in
             XCTAssertNotNil(try view.find(text: "We’ll use your location to show the lines and bus routes near you."))
             XCTAssertNotNil(try view.find(button: "Not now"))
             try view.find(button: "Share location").tap()
