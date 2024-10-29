@@ -310,13 +310,13 @@
     "Loading..." : {
 
     },
-    "Location access denied or restricted" : {
-
-    },
     "Location access state unknown" : {
 
     },
-    "Made with ♥ in Boston, for Boston" : {
+    "Location Services is off" : {
+
+    },
+    "Made with ♥ by the T" : {
 
     },
     "Maintenance" : {
@@ -529,6 +529,9 @@
     },
     "Weather" : {
       "comment" : "Possible alert cause"
+    },
+    "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go." : {
+
     },
     "Your current location is outside of our search area." : {
 
