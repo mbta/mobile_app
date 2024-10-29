@@ -138,7 +138,6 @@ struct ContentView: View {
         }
         .onAppear {
             Task { await errorBannerVM.activate() }
-            Task { await contentVM.loadConfig() }
             Task { await contentVM.loadHideMaps() }
             Task { await settingsVM.getSections() }
         }
