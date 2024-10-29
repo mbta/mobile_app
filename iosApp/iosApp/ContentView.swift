@@ -20,6 +20,7 @@ struct ContentView: View {
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
+    @StateObject var settingsVM = SettingsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
@@ -28,7 +29,7 @@ struct ContentView: View {
 
     private enum SelectedTab: Hashable {
         case nearby
-        case settings
+        case more
     }
 
     @State private var selectedTab = SelectedTab.nearby
@@ -47,14 +48,14 @@ struct ContentView: View {
 
     @ViewBuilder
     var contents: some View {
-        if selectedTab == .settings {
+        if selectedTab == .more {
             TabView(selection: $selectedTab) {
                 nearbyTab
                     .tag(SelectedTab.nearby)
-                    .tabItem { Label("Nearby", systemImage: "mappin") }
-                SettingsPage()
-                    .tag(SelectedTab.settings)
-                    .tabItem { Label("Settings", systemImage: "gear") }
+                    .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
+                MorePage(viewModel: settingsVM)
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel("More", image: .tabIconMore) }
                     .onAppear {
                         screenTracker.track(screen: .settings)
                     }
@@ -78,12 +79,12 @@ struct ContentView: View {
                     viewportProvider: viewportProvider
                 )
                 .tag(SelectedTab.nearby)
-                .tabItem { Label("Nearby", systemImage: "mappin") }
+                .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
                 // we want to show nothing in the sheet when the settings tab is open,
                 // but an EmptyView here causes the tab to not be listed
                 VStack {}
-                    .tag(SelectedTab.settings)
-                    .tabItem { Label("Settings", systemImage: "gear") }
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel("More", image: .tabIconMore) }
             }
         }
     }
@@ -134,6 +135,7 @@ struct ContentView: View {
             Task { await errorBannerVM.activate() }
             Task { await contentVM.loadConfig() }
             Task { await contentVM.loadHideMaps() }
+            Task { await settingsVM.getSections() }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
