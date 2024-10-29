@@ -21,7 +21,7 @@ class OnboardingRepository : IOnboardingRepository, KoinComponent {
     private val accessibilityStatus: IAccessibilityStatusRepository by inject()
     private val dataStore: DataStore<Preferences> by inject()
 
-    private val onboardingCompletedKey = stringSetPreferencesKey("onboardingCompleted")
+    private val onboardingCompletedKey = stringSetPreferencesKey("onboardingScreensCompleted")
 
     override suspend fun getPendingOnboarding(): List<OnboardingScreen> {
         val onboardingCompleted =

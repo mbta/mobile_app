@@ -57,7 +57,7 @@ class OnboardingRepositoryTest : KoinTest {
         repo.markOnboardingCompleted(OnboardingScreen.Location)
         assertEquals(
             preferencesOf(
-                stringSetPreferencesKey("onboardingCompleted") to
+                stringSetPreferencesKey("onboardingScreensCompleted") to
                     setOf(OnboardingScreen.Location.name)
             ),
             storage.preferences
@@ -69,7 +69,7 @@ class OnboardingRepositoryTest : KoinTest {
         val storage = MockDatastoreStorage()
         storage.preferences =
             preferencesOf(
-                stringSetPreferencesKey("onboardingCompleted") to
+                stringSetPreferencesKey("onboardingScreensCompleted") to
                     setOf(OnboardingScreen.Location.name)
             )
         startKoin(isScreenReaderEnabled = true, storage)
