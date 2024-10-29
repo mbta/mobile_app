@@ -57,7 +57,7 @@ struct LocationAuthButton: View {
             .buttonStyle(LocationAuthButtonStyle())
             .accessibilityIdentifier("locationServicesButton")
             .alert(
-                "Maps work best with Location Services turned on",
+                "MBTA Go works best with Location Services turned on",
                 isPresented: $showingAlert,
                 actions: {
                     Button("Turn On in Settings") {
@@ -66,7 +66,7 @@ struct LocationAuthButton: View {
                             UIApplication.shared.open(url)
                         }
                     }
-                    Button("Keep Location Services off") {
+                    Button("Keep Location Services Off") {
                         showingAlert = false
                     }
                 },

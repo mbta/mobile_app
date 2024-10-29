@@ -168,16 +168,11 @@ struct ContentView: View {
         } else {
             mapSection
                 .sheet(
-<<<<<<< HEAD
                     isPresented: .constant(
                         !(searchObserver.isSearching && nav == .nearby)
                             && selectedTab == .nearby
                             && !showingLocationPermissionAlert
                     ),
-=======
-                    isPresented: .constant(!showingLocationPermissionAlert &&
-                        !(searchObserver.isSearching && nav == .nearby)),
->>>>>>> 1ce4a580 (fix rebase issues)
                     content: {
                         GeometryReader { proxy in
                             VStack {
