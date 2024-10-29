@@ -14,6 +14,7 @@ import SwiftUI
 
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
@@ -53,6 +54,7 @@ struct HomeMapView: View {
 
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
+        contentVM: ContentViewModel,
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
@@ -66,6 +68,7 @@ struct HomeMapView: View {
         globalMapData: GlobalMapData? = nil
     ) {
         self.globalRepository = globalRepository
+        self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
@@ -105,13 +108,11 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
-            .task {
-                // we specifically want to not request location authorization during the instant where onboarding is
-                // loading for the first time
-                try? await Task.sleep(for: .milliseconds(100))
-                if !Task.isCancelled {
-                    locationDataManager.locationFetcher.requestWhenInUseAuthorization()
-                }
+            .onChange(of: contentVM.onboardingScreensPending) { _ in
+                checkOnboardingLoaded()
+            }
+            .onAppear {
+                checkOnboardingLoaded()
             }
             .onDisappear {
                 mapVM.layerManager = nil

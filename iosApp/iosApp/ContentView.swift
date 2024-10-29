@@ -163,6 +163,7 @@ struct ContentView: View {
 
     @ViewBuilder var mapSection: some View {
         HomeMapView(
+            contentVM: contentVM,
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,

@@ -80,6 +80,12 @@ extension HomeMapView {
         lastNavEntry = navigationStack.last
     }
 
+    func checkOnboardingLoaded() {
+        if contentVM.onboardingScreensPending == [] {
+            locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+        }
+    }
+
     func loadGlobalData() {
         Task(priority: .high) {
             await activateGlobalListener()
