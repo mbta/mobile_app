@@ -47,7 +47,7 @@ struct MorePage: View {
                     }
                     HStack(alignment: .center, spacing: 16) {
                         Image(.mbtaLogo).resizable().frame(width: 64, height: 64)
-                        Text("Made with ♥ in Boston, for Boston").font(Typography.callout)
+                        Text("Made with ♥ by the T").font(Typography.callout)
                     }
                 }
                 .padding(.horizontal, 16)
