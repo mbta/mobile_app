@@ -18,8 +18,9 @@ struct OnboardingPage: View {
 
     var body: some View {
         OnboardingScreenView(screen: screens[selectedIndex], advance: {
-            selectedIndex += 1
-            if !screens.indices.contains(selectedIndex) {
+            if selectedIndex < screens.count - 1 {
+                selectedIndex += 1
+            } else {
                 onFinish()
             }
         })
