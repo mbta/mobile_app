@@ -106,9 +106,10 @@ struct ContentView: View {
                     VStack(alignment: .center, spacing: 0) {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
-                        }
-                        if !searchObserver.isSearching {
-                            LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+
+                            if !searchObserver.isSearching {
+                                LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                            }
                         }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
