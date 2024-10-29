@@ -14,8 +14,13 @@ import XCTest
 
 final class OnboardingPageTests: XCTestCase {
     @MainActor func testFlow() throws {
+        let onboardingRepository = MockOnboardingRepository()
         let finishExp = expectation(description: "calls onFinish")
-        let sut = OnboardingPage(screens: [.location, .hideMaps, .feedback], onFinish: { finishExp.fulfill() })
+        let sut = OnboardingPage(
+            screens: OnboardingScreen.allCases,
+            onFinish: { finishExp.fulfill() },
+            onboardingRepository: onboardingRepository
+        )
         ViewHosting.host(view: sut)
 
         let stepChannel = PassthroughSubject<Void, Never>()
@@ -32,5 +37,18 @@ final class OnboardingPageTests: XCTestCase {
         }
         stepChannel.send()
         wait(for: [locationExp, hideMapsExp, feedbackExp, finishExp], timeout: 1)
+        XCTAssertEqual(onboardingRepository.finished, [.location, .hideMaps, .feedback])
+    }
+
+    private class MockOnboardingRepository: IOnboardingRepository {
+        var finished: [OnboardingScreen] = []
+
+        func __getPendingOnboarding() async throws -> [OnboardingScreen] {
+            OnboardingScreen.allCases.filter { !finished.contains($0) }
+        }
+
+        func __markOnboardingCompleted(screen: OnboardingScreen) async throws {
+            finished += [screen]
+        }
     }
 }

@@ -15,7 +15,6 @@ struct OnboardingScreenView: View {
     let advance: () -> Void
 
     let createLocationFetcher: () -> any LocationFetcher
-    let onboardingRepository: IOnboardingRepository
     let settingUseCase: SettingUsecase
     @State private var locationFetcher: LocationFetcher?
     private let locationPermissionHandler: LocationPermissionHandler
@@ -26,17 +25,14 @@ struct OnboardingScreenView: View {
         screen: OnboardingScreen,
         advance: @escaping () -> Void,
         createLocationFetcher: @escaping () -> any LocationFetcher = { CLLocationManager() },
-        onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding,
         settingUseCase: SettingUsecase = UsecaseDI().settingUsecase
     ) {
         self.screen = screen
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
-        self.onboardingRepository = onboardingRepository
         self.settingUseCase = settingUseCase
         locationPermissionHandler = LocationPermissionHandler(
             screen: screen,
-            onboardingRepository: onboardingRepository,
             advance: advance
         )
     }
@@ -49,24 +45,19 @@ struct OnboardingScreenView: View {
                     "MBTA Go is just getting started! We’re actively making improvements based on feedback from riders like you."
                 )
                 Button("Get started") {
-                    Task {
-                        try? await onboardingRepository.markOnboardingCompleted(screen: screen)
-                        advance()
-                    }
+                    advance()
                 }
             case .hideMaps:
                 Text("For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise.")
                 Button("Hide maps") {
                     Task {
                         try await settingUseCase.set(setting: .hideMaps, value: true)
-                        try? await onboardingRepository.markOnboardingCompleted(screen: screen)
                         advance()
                     }
                 }
                 Button("Show maps") {
                     Task {
                         try await settingUseCase.set(setting: .hideMaps, value: false)
-                        try? await onboardingRepository.markOnboardingCompleted(screen: screen)
                         advance()
                     }
                 }
@@ -78,10 +69,7 @@ struct OnboardingScreenView: View {
                     locationFetcher?.locationFetcherDelegate = locationPermissionHandler
                 }
                 Button("Not now") {
-                    Task {
-                        try? await onboardingRepository.markOnboardingCompleted(screen: screen)
-                        advance()
-                    }
+                    advance()
                 }
             }
         }
@@ -90,12 +78,10 @@ struct OnboardingScreenView: View {
 
     private class LocationPermissionHandler: NSObject, LocationFetcherDelegate, CLLocationManagerDelegate {
         let screen: OnboardingScreen
-        let onboardingRepository: IOnboardingRepository
         let advance: () -> Void
 
-        init(screen: OnboardingScreen, onboardingRepository: IOnboardingRepository, advance: @escaping () -> Void) {
+        init(screen: OnboardingScreen, advance: @escaping () -> Void) {
             self.screen = screen
-            self.onboardingRepository = onboardingRepository
             self.advance = advance
         }
 
@@ -104,10 +90,7 @@ struct OnboardingScreenView: View {
             case .notDetermined:
                 fetcher.requestWhenInUseAuthorization()
             default:
-                Task {
-                    try? await onboardingRepository.markOnboardingCompleted(screen: screen)
-                    advance()
-                }
+                advance()
             }
         }
 

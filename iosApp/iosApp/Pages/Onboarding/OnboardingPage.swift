@@ -14,14 +14,30 @@ struct OnboardingPage: View {
     @State var selectedIndex: Int = 0
     let onFinish: () -> Void
 
+    let onboardingRepository: IOnboardingRepository
+
     let inspection = Inspection<Self>()
 
+    init(
+        screens: [OnboardingScreen],
+        onFinish: @escaping () -> Void,
+        onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding
+    ) {
+        self.screens = screens
+        self.onFinish = onFinish
+        self.onboardingRepository = onboardingRepository
+    }
+
     var body: some View {
-        OnboardingScreenView(screen: screens[selectedIndex], advance: {
-            if selectedIndex < screens.count - 1 {
-                selectedIndex += 1
-            } else {
-                onFinish()
+        let screen = screens[selectedIndex]
+        OnboardingScreenView(screen: screen, advance: {
+            Task {
+                try? await onboardingRepository.markOnboardingCompleted(screen: screen)
+                if selectedIndex < screens.count - 1 {
+                    selectedIndex += 1
+                } else {
+                    onFinish()
+                }
             }
         })
         .padding(16)
@@ -30,5 +46,5 @@ struct OnboardingPage: View {
 }
 
 #Preview {
-    OnboardingPage(screens: [.location, .hideMaps, .feedback], onFinish: {})
+    OnboardingPage(screens: OnboardingScreen.allCases, onFinish: {})
 }
