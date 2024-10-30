@@ -64,11 +64,17 @@ struct OnboardingScreenView: View {
             case .location:
                 Text("We’ll use your location to show the lines and bus routes near you.")
                 Button("Share location") {
+                    Task {
+                        try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: false)])
+                    }
                     locationFetcher = createLocationFetcher()
 
                     locationFetcher?.locationFetcherDelegate = locationPermissionHandler
                 }
                 Button("Not now") {
+                    Task {
+                        try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: true)])
+                    }
                     advance()
                 }
             }

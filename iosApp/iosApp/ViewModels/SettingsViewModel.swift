@@ -57,11 +57,32 @@ class SettingsViewModel: ObservableObject {
                     ),
                 ]),
                 MoreSection(id: .settings, items: [
-                    .toggle(setting: .hideMaps, value: settings[.hideMaps] ?? false),
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Hide Maps",
+                            comment: "A setting on the More page to remove the app component from the app"
+                        ),
+                        setting: .hideMaps,
+                        value: settings[.hideMaps] ?? false
+                    ),
                 ]),
                 MoreSection(id: .featureFlags, items: [
-                    .toggle(setting: .map, value: settings[.map] ?? false),
-                    .toggle(setting: .searchRouteResults, value: settings[.searchRouteResults] ?? false),
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Map Debug",
+                            comment: "A setting on the More page to display map debug information (only visible for developers)"
+                        ),
+                        setting: .map,
+                        value: settings[.map] ?? false
+                    ),
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Route Search",
+                            comment: "A setting on the More page to display routes in search (only visible for developers)"
+                        ),
+                        setting: .searchRouteResults,
+                        value: settings[.searchRouteResults] ?? false
+                    ),
                 ]),
                 MoreSection(id: .other, items: [
                     .link(

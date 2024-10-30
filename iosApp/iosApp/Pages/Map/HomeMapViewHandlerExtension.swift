@@ -82,7 +82,7 @@ extension HomeMapView {
 
     func checkOnboardingLoaded() {
         if contentVM.onboardingScreensPending == [] {
-            locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+            locationDataManager.requestWhenInUseAuthorization()
         }
     }
 
