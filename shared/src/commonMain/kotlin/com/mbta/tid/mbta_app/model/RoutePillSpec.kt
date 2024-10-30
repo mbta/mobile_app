@@ -48,8 +48,8 @@ data class RoutePillSpec(
         type: Type,
         context: Context = Context.Default
     ) : this(
-        route?.takeUnless { it.id.startsWith("Shuttle") }?.textColor ?: line?.textColor ?: "",
-        route?.takeUnless { it.id.startsWith("Shuttle") }?.color ?: line?.color ?: "",
+        route?.textColor ?: line?.textColor ?: "FFFFFF",
+        route?.color ?: line?.color ?: "000000",
         when (route?.type) {
             null -> if (line == null) Content.Empty else linePillContent(line)
             RouteType.LIGHT_RAIL -> lightRailPillContent(route, type)
@@ -70,7 +70,7 @@ data class RoutePillSpec(
             else -> Size.FlexPill
         },
         when {
-            route?.type == RouteType.BUS && !route.id.startsWith("Shuttle") -> Shape.Rectangle
+            route?.type == RouteType.BUS && !route.isShuttle -> Shape.Rectangle
             else -> Shape.Capsule
         }
     )
@@ -108,10 +108,7 @@ data class RoutePillSpec(
             }
 
         private fun busPillContent(route: Route, type: Type, context: Context): Content =
-            if (
-                (route.id.startsWith("Shuttle") && type != Type.Flex) ||
-                    context == Context.SearchStation
-            ) {
+            if ((route.isShuttle && type != Type.Flex) || context == Context.SearchStation) {
                 Content.ModeImage(RouteType.BUS)
             } else {
                 Content.Text(route.shortName)

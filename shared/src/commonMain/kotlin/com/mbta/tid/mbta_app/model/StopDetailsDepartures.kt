@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.RealtimePatterns.ByHeadsign
+import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -66,6 +68,43 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     ?.flatMap { it.patternsByStop }
 
             return routes?.let { StopDetailsDepartures(it) }
+        }
+
+        fun getStatusDepartues(
+            realtimePatterns: List<RealtimePatterns>,
+            now: Instant
+        ): List<StopDetailsStatusRowData> {
+            return realtimePatterns.mapNotNull { pattern ->
+                when (pattern) {
+                    is ByHeadsign -> {
+                        getStatusFormat(pattern, now)?.let {
+                            StopDetailsStatusRowData(pattern.route, pattern.headsign, it)
+                        }
+                    }
+                    else -> null
+                }
+            }
+        }
+
+        private fun getStatusFormat(pattern: ByHeadsign, now: Instant): RealtimePatterns.Format? {
+            val noPredictions =
+                pattern.upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+            val hasTripsToShow =
+                pattern.upcomingTrips.any {
+                    formatUpcomingTrip(
+                        now,
+                        it,
+                        pattern.route.type,
+                        TripInstantDisplay.Context.StopDetailsFiltered,
+                        pattern.route.type.isSubway()
+                    ) != null
+                }
+            return when {
+                hasTripsToShow || !pattern.allDataLoaded -> null
+                noPredictions -> RealtimePatterns.Format.None(null)
+                !pattern.hasSchedulesToday -> RealtimePatterns.Format.NoSchedulesToday(null)
+                else -> RealtimePatterns.Format.ServiceEndedToday(null)
+            }
         }
     }
 }

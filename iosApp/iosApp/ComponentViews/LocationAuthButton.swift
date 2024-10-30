@@ -81,10 +81,10 @@ struct LocationAuthButton: View {
                     )
                 }
             )
-        case .authorizedAlways, .authorizedWhenInUse:
+        case .authorizedAlways, .authorizedWhenInUse, nil:
             EmptyView()
         @unknown default:
-            Text("Location access state unknown")
+            EmptyView()
         }
     }
 }

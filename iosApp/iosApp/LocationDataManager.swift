@@ -16,7 +16,7 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     let settingsRepository: ISettingsRepository
     let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
-    @Published public var authorizationStatus = CLAuthorizationStatus.notDetermined
+    @Published public var authorizationStatus: CLAuthorizationStatus?
     private(set) var locationDeferred: Bool = false
 
     public init(

@@ -62,8 +62,7 @@ struct StopDetailsView: View {
                     return .line(line)
                 }
                 return .route(
-                    patterns.representativeRoute,
-                    globalResponse?.getLine(lineId: patterns.representativeRoute.lineId)
+                    patterns.representativeRoute
                 )
             }
         }
@@ -143,7 +142,7 @@ struct StopDetailsView: View {
         let filterId = switch filterBy {
         case let .line(line):
             line.id
-        case let .route(route, _):
+        case let .route(route):
             route.id
         }
         if filter?.routeId == filterId { setFilter(nil); return }

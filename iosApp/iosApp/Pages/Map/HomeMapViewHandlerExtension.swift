@@ -16,19 +16,8 @@ import SwiftUI
  */
 extension HomeMapView {
     func handleAppear(location: LocationManager?, map: MapboxMap?) {
-        handleTryLayerInit(map: map)
         lastNavEntry = nearbyVM.navigationStack.last
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "HomeMapView.handleAppear",
-                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
-                onSuccess: { result in
-                    railRouteShapes = result
-                },
-                onRefreshAfterError: { handleAppear(location: location, map: map) }
-            )
-        }
+        handleTryLayerInit(map: map)
 
         // Set MapBox to use the current location to display puck
         location?.override(locationProvider: locationDataManager.$currentLocation.map {
@@ -86,25 +75,54 @@ extension HomeMapView {
         }
     }
 
-    func loadGlobalData() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "HomeMapView.loadGlobalData",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: loadGlobalData
-            )
-        }
-    }
-
     @MainActor
     func activateGlobalListener() async {
         for await globalData in globalRepository.state {
             self.globalData = globalData
         }
+    }
+
+    func fetchGlobalData() {
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.loadGlobalData",
+                getData: { try await globalRepository.getGlobalData() },
+                onRefreshAfterError: fetchGlobalData
+            )
+        }
+    }
+
+    func loadGlobalData() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
+        fetchGlobalData()
+    }
+
+    @MainActor
+    func activateRouteShapeListener() async {
+        for await railRouteShapes in railRouteShapeRepository.state {
+            self.railRouteShapes = railRouteShapes
+        }
+    }
+
+    func fetchRouteShapes() {
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.handleAppear",
+                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
+                onRefreshAfterError: fetchRouteShapes
+            )
+        }
+    }
+
+    func loadRouteShapes() {
+        Task(priority: .high) {
+            await activateRouteShapeListener()
+        }
+        fetchRouteShapes()
     }
 
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {

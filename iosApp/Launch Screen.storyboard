@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ftz-KW-YBv">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--More-->
+        <scene sceneID="CDp-vW-hsk">
+            <objects>
+                <viewController id="rh8-Wh-S2v" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fzw-W8-pv6">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="769"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="sp9-jc-DYA"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="More" image="tab-icon-more" id="urW-Ul-Ojw"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IML-rh-EDR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-280" y="-77"/>
+        </scene>
+        <!--Nearby-->
+        <scene sceneID="YPg-5f-9cT">
+            <objects>
+                <viewController id="sqa-ng-KwG" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Kck-9R-Faz">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="769"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-map-grid" translatesAutoresizingMaskIntoConstraints="NO" id="XRc-HZ-h9m">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="769"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-search" translatesAutoresizingMaskIntoConstraints="NO" id="06y-uy-U7k">
+                                <rect key="frame" x="0.0" y="59" width="393" height="68"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="HQS-pf-pis"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="HQS-pf-pis" firstAttribute="trailing" secondItem="06y-uy-U7k" secondAttribute="trailing" id="10b-CO-xF9"/>
+                            <constraint firstItem="XRc-HZ-h9m" firstAttribute="leading" secondItem="HQS-pf-pis" secondAttribute="leading" id="4kV-Hg-oou"/>
+                            <constraint firstItem="06y-uy-U7k" firstAttribute="leading" secondItem="HQS-pf-pis" secondAttribute="leading" id="EmL-9b-JH7"/>
+                            <constraint firstItem="XRc-HZ-h9m" firstAttribute="top" secondItem="Kck-9R-Faz" secondAttribute="top" id="bR7-U6-QZV"/>
+                            <constraint firstItem="HQS-pf-pis" firstAttribute="trailing" secondItem="XRc-HZ-h9m" secondAttribute="trailing" id="m95-0D-EOv"/>
+                            <constraint firstAttribute="bottom" secondItem="XRc-HZ-h9m" secondAttribute="bottom" id="uKU-eB-wDX"/>
+                            <constraint firstItem="06y-uy-U7k" firstAttribute="top" secondItem="HQS-pf-pis" secondAttribute="top" id="yrr-2x-K91"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Nearby" image="tab-icon-nearby" id="0Ae-j7-PL3"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1Dj-uT-BQI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-280" y="-685"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="lWV-Yp-0Th">
+            <objects>
+                <tabBarController id="Ftz-KW-YBv" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="azW-1M-7Xb">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="sqa-ng-KwG" kind="relationship" relationship="viewControllers" id="nJR-WF-N9E"/>
+                        <segue destination="rh8-Wh-S2v" kind="relationship" relationship="viewControllers" id="Gd7-w7-wQP"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AR5-Y2-7Nm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1185" y="-381"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="empty-map-grid" width="390" height="844"/>
+        <image name="empty-search" width="390" height="68"/>
+        <image name="tab-icon-more" width="25" height="25"/>
+        <image name="tab-icon-nearby" width="25" height="25"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

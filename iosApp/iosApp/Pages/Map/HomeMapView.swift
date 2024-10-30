@@ -90,6 +90,7 @@ struct HomeMapView: View {
                 }
             }
             .task { loadGlobalData() }
+            .task { loadRouteShapes() }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
             }
