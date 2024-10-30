@@ -1414,6 +1414,9 @@
         }
       }
     },
+    "Commuter Rail and Ferry tickets" : {
+      "comment" : "Label for a More page link to the MBTA mTicket app"
+    },
     "Congestion" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1868,6 +1871,12 @@
     "Error loading data" : {
 
     },
+    "Fare Information" : {
+      "comment" : "Label for a More page link to fare information on MBTA.com"
+    },
+    "Feature Flags" : {
+      "comment" : "More page section header, only displayed in the developer app for enabling in-progress features"
+    },
     "ferries" : {
       "comment" : "ferries",
       "localizations" : {
@@ -2120,6 +2129,9 @@
         }
       }
     },
+    "General MBTA Information & Support" : {
+      "comment" : "More page section header, includes user support resources"
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2201,6 +2213,9 @@
           }
         }
       }
+    },
+    "Hide Maps" : {
+      "comment" : "A setting on the More page to remove the app component from the app"
     },
     "High Winds" : {
       "comment" : "Possible alert cause",
@@ -2589,6 +2604,12 @@
         }
       }
     },
+    "Location Services is off" : {
+
+    },
+    "Made with ♥ by the T" : {
+
+    },
     "Maintenance" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2629,6 +2650,12 @@
           }
         }
       }
+    },
+    "Map Debug" : {
+      "comment" : "A setting on the More page to display map debug information (only visible for developers)"
+    },
+    "MBTA Go" : {
+
     },
     "Mechanical Problem" : {
       "comment" : "Possible alert cause",
@@ -2714,6 +2741,12 @@
     },
     "Nearby Transit" : {
       "comment" : "Header for nearby transit sheet"
+    },
+    "Monday through Friday: 6:30 AM - 8 PM" : {
+      "comment" : "Footnote under the More page support header, these are the hours for the support call center"
+    },
+    "mTicket App" : {
+      "comment" : "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app"
     },
     "Next stop" : {
       "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife",
@@ -3093,8 +3126,17 @@
     "Predictions unavailable" : {
 
     },
+    "Privacy Policy" : {
+      "comment" : "Label for a More page link to the MBTA.com privacy policy"
+    },
     "Recently Viewed" : {
 
+    },
+    "Resources" : {
+      "comment" : "More page section header, includes links to MBTA.com and mTicket app"
+    },
+    "Route Search" : {
+      "comment" : "A setting on the More page to display routes in search (only visible for developers)"
     },
     "Routes" : {
       "localizations" : {
@@ -3260,7 +3302,8 @@
             "value" : "設定"
           }
         }
-      }
+      },
+      "comment" : "More page section header, includes settings that the user can configure"
     },
     "Severe Weather" : {
       "comment" : "Possible alert cause",
@@ -3957,6 +4000,9 @@
         }
       }
     },
+    "Terms of Use" : {
+      "comment" : "Label for a More page link to the MBTA.com terms of use"
+    },
     "This vehicle is completing another trip." : {
       "localizations" : {
         "es" : {
@@ -4284,6 +4330,9 @@
         }
       }
     },
+    "Trip Planner" : {
+      "comment" : "Label for a More page link to the MBTA.com trip planner"
+    },
     "Unable to connect" : {
 
     },
@@ -4546,6 +4595,9 @@
         }
       }
     },
+    "version %@" : {
+      "comment" : "Version number label on the More page"
+    },
     "Weather" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4586,6 +4638,9 @@
           }
         }
       }
+    },
+    "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go." : {
+
     },
     "Your current location is outside of our search area." : {
 
