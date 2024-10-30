@@ -13,7 +13,6 @@ import SwiftUI
 struct VehicleCardView: View {
     let vehicle: Vehicle?
     let route: Route?
-    let line: Line?
     let stop: Stop?
     let trip: Trip?
 
@@ -22,7 +21,6 @@ struct VehicleCardView: View {
             VehicleOnTripView(
                 vehicle: vehicle,
                 route: route,
-                line: line,
                 stop: stop,
                 trip: trip
             )
@@ -35,24 +33,15 @@ struct VehicleCardView: View {
 struct VehicleOnTripView: View {
     let vehicle: Vehicle
     let route: Route
-    let line: Line?
     let stop: Stop
     let trip: Trip
 
     var backgroundColor: Color {
-        if route.id.starts(with: "Shuttle"), let line {
-            Color(hex: line.color)
-        } else {
-            Color(hex: route.color)
-        }
+        Color(hex: route.color)
     }
 
     var textColor: Color {
-        if route.id.starts(with: "Shuttle"), let line {
-            Color(hex: line.textColor)
-        } else {
-            Color(hex: route.textColor)
-        }
+        Color(hex: route.textColor)
     }
 
     var body: some View {
@@ -162,7 +151,7 @@ struct VehicleCardView_Previews: PreviewProvider {
         }
 
         List {
-            VehicleCardView(vehicle: vehicle, route: red, line: nil, stop: stop, trip: trip)
+            VehicleCardView(vehicle: vehicle, route: red, stop: stop, trip: trip)
         }
         .previewDisplayName("VehicleCard")
     }

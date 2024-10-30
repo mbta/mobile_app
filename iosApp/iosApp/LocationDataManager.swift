@@ -13,7 +13,7 @@ import Foundation
 public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableObject {
     var locationFetcher: LocationFetcher
     @Published public var currentLocation: CLLocation?
-    @Published public var authorizationStatus = CLAuthorizationStatus.notDetermined
+    @Published public var authorizationStatus: CLAuthorizationStatus?
 
     public init(
         locationFetcher: LocationFetcher = CLLocationManager(),
