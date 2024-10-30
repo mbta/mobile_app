@@ -18,9 +18,10 @@ struct OnboardingScreenView: View {
     let settingUseCase: SettingUsecase
     @State private var locationFetcher: LocationFetcher?
 
-    @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     private let locationPermissionHandler: LocationPermissionHandler
 
+    @AccessibilityFocusState private var focusHeader: OnboardingScreen?
+    @Environment(\.dynamicTypeSize) var typeSize
     @State private var pulse: CGFloat = 1
 
     private var haloOffset: CGFloat {
@@ -62,22 +63,26 @@ struct OnboardingScreenView: View {
             switch screen {
             case .feedback:
                 ZStack {
-                    Image(.onboardingMoreButton)
-                        .resizable()
-                        .scaledToFill()
-                        .edgesIgnoringSafeArea(.all)
-                        .accessibilityHidden(true)
-                    Image(.onboardingHalo)
-                        .resizable()
-                        .frame(width: moreHaloSize, height: moreHaloSize)
-                        .scaleEffect(pulse)
-                        .offset(x: 0, y: haloOffset)
-                        .onAppear {
-                            withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
-                                pulse = 1.22 * pulse
+                    Color.fill2.edgesIgnoringSafeArea(.all)
+                    if typeSize < .accessibility2 {
+                        Image(.onboardingMoreButton)
+                            .resizable()
+                            .scaledToFill()
+                            .edgesIgnoringSafeArea(.all)
+                            .accessibilityHidden(true)
+                        Image(.onboardingHalo)
+                            .resizable()
+                            .frame(width: moreHaloSize, height: moreHaloSize)
+                            .scaleEffect(pulse)
+                            .offset(x: 0, y: haloOffset)
+                            .onAppear {
+                                pulse = 1
+                                withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                                    pulse = 1.22 * pulse
+                                }
                             }
-                        }
-                        .accessibilityHidden(true)
+                            .accessibilityHidden(true)
+                    }
                     VStack(alignment: .leading, spacing: 16) {
                         Spacer()
                         Text("Help us improve")
@@ -91,6 +96,10 @@ struct OnboardingScreenView: View {
                         .font(Typography.title3)
                         .padding(.bottom, 16)
                         .accessibilityHint(Text("Use the \"More\" navigation tab to send app feedback"))
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                        if typeSize >= .accessibility2, typeSize < .accessibility5 {
+                            Spacer()
+                        }
                         Button(action: advance) {
                             Text("Get started").onboardingKeyButton()
                         }
@@ -123,6 +132,7 @@ struct OnboardingScreenView: View {
                         .background(Color.fill2)
                         .clipShape(.rect(cornerRadius: 32.0))
                         .shadow(radius: 16)
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                         Spacer()
                         Button(action: { Task {
                             try await settingUseCase.set(setting: .hideMaps, value: true)
@@ -147,22 +157,25 @@ struct OnboardingScreenView: View {
                         .scaledToFill()
                         .edgesIgnoringSafeArea(.all)
                         .accessibilityHidden(true)
-                    Image(.onboardingHalo)
-                        .resizable()
-                        .frame(width: locationHaloSize, height: locationHaloSize)
-                        .scaleEffect(pulse)
-                        .offset(x: 0, y: haloOffset)
-                        .onAppear {
-                            withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
-                                pulse = 1.15 * pulse
+                    if typeSize < .xxxLarge {
+                        Image(.onboardingHalo)
+                            .resizable()
+                            .frame(width: locationHaloSize, height: locationHaloSize)
+                            .scaleEffect(pulse)
+                            .offset(x: 0, y: haloOffset)
+                            .onAppear {
+                                pulse = 1
+                                withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                                    pulse = 1.15 * pulse
+                                }
                             }
-                        }
-                        .accessibilityHidden(true)
-                    Image(.onboardingTransitLines)
-                        .resizable()
-                        .scaledToFill()
-                        .edgesIgnoringSafeArea(.all)
-                        .accessibilityHidden(true)
+                            .accessibilityHidden(true)
+                        Image(.onboardingTransitLines)
+                            .resizable()
+                            .scaledToFill()
+                            .edgesIgnoringSafeArea(.all)
+                            .accessibilityHidden(true)
+                    }
                     VStack(alignment: .leading, spacing: 16) {
                         Spacer()
                         Text("See transit near you")
@@ -173,6 +186,9 @@ struct OnboardingScreenView: View {
                         Text("We use your location to show you nearby transit options.")
                             .font(Typography.title3)
                             .padding(.bottom, 16)
+                        if typeSize >= .xxxLarge {
+                            Spacer()
+                        }
                         Button(action: {
                             locationFetcher = createLocationFetcher()
                             locationFetcher?.locationFetcherDelegate = locationPermissionHandler
@@ -183,6 +199,7 @@ struct OnboardingScreenView: View {
                             Text("Skip for now").onboardingSecondaryButton()
                         }
                     }
+                    .dynamicTypeSize(...DynamicTypeSize.accessibility4)
                     .padding(.horizontal, 32)
                     .padding(.bottom, 56)
                 }
