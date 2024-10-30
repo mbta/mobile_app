@@ -343,8 +343,22 @@ struct NearbyTransitView: View {
         filterAtTime: Instant,
         pinnedRoutes: Set<String>
     ) -> [StopsAssociated]? {
+        state.nearbyByRouteAndStop?.data.forEach { transit in
+            switch onEnum(of: transit) {
+            case let .byRoute(byRoute):
+                if byRoute.route.id == "Orange" {
+                    print("=====")
+                    print("OL DATA incoming")
+
+                    print(byRoute.patternsByStop.map { "\($0.stop.id): \(printPatternsHelper($0.patterns))" })
+                }
+            case .byLine:
+                break
+            }
+        }
+
         guard let loadedLocation = state.loadedLocation else { return nil }
-        return state.nearbyByRouteAndStop?.withRealtimeInfo(
+        let output = state.nearbyByRouteAndStop?.withRealtimeInfo(
             globalData: globalData,
             sortByDistanceFrom: .init(longitude: loadedLocation.longitude, latitude: loadedLocation.latitude),
             schedules: schedules,
@@ -353,6 +367,47 @@ struct NearbyTransitView: View {
             filterAtTime: filterAtTime,
             pinnedRoutes: pinnedRoutes
         )
+
+        output?.forEach { stopsAssociated in
+            switch onEnum(of: stopsAssociated) {
+            case let .withRoute(withRoute):
+
+                if withRoute.route.id == "Orange" {
+                    print("realtime OL data incoming")
+
+                    withRoute.patternsByStop.map { patternsByStop in
+
+                        patternsByStop.patterns.map { realtimePattern in
+
+                            let rps = realtimePattern.patterns.map { routePattern in
+                                "\(routePattern.id)"
+
+                            }.joined(separator: ",")
+
+                            let upcomingTripRps = realtimePattern.upcomingTrips.map { upcomingTrip in
+                                "\(upcomingTrip.trip.routePatternId)"
+                            }.joined(separator: ",")
+
+                            print("rps: \(rps), upcoming trip rps: \(upcomingTripRps)")
+                        }
+                    }
+                }
+            case .withLine: break
+            }
+        }
+
+        return output
+    }
+
+    func printPatternsHelper(_ patterns: [NearbyStaticData.StaticPatterns]) -> String {
+        patterns.map { staticPatterns in
+            switch onEnum(of: staticPatterns) {
+            case let .byHeadsign(byHeadsign):
+
+                "headsign: \(byHeadsign.headsign)" + byHeadsign.patterns.map { "\($0.id)" }.joined(separator: ",")
+            case .byDirection: ""
+            }
+        }.joined(separator: ",")
     }
 }
 
