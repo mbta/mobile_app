@@ -203,6 +203,7 @@
 		ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */; };
 		EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */; };
 		EDDE72EF2CBF19EF0000180D /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */; };
+		EDE692382CD038990081A4D2 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */; };
 		EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */; };
 		EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */; };
 		EDE92FAA2C408A50007AD2F6 /* MoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA92C408A50007AD2F6 /* MoreSection.swift */; };
@@ -463,6 +464,7 @@
 		ED98F6322BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPinnedRoutesRepository.swift; sourceTree = "<group>"; };
 		EDC768C62BCF6FD6008BAE58 /* RouteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCard.swift; sourceTree = "<group>"; };
 		EDDE72EE2CBF19EF0000180D /* ArrayExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
+		EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTracker.swift; sourceTree = "<group>"; };
 		EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		EDE92FA92C408A50007AD2F6 /* MoreSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSection.swift; sourceTree = "<group>"; };
@@ -627,6 +629,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */,
 				8C304C652B69C0C300263886 /* .swift-version */,
 				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
 				8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */,
@@ -1173,6 +1176,7 @@
 				9AB3F50F2BE45382008D9E40 /* GoogleService-Info.plist in Resources */,
 				058557BB273AAA24004C7B11 /* Icons.xcassets in Resources */,
 				9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */,
+				EDE692382CD038990081A4D2 /* Launch Screen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
