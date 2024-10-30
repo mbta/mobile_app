@@ -147,6 +147,8 @@
 		9A6FA0232BC70D0B0067769C /* InspectionEmissary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0222BC70D0A0067769C /* InspectionEmissary.swift */; };
 		9A6FA0252BC714360067769C /* HomeMapViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0242BC714360067769C /* HomeMapViewTest.swift */; };
 		9A6FA0282BC72F110067769C /* StopDetailsPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6FA0272BC72F110067769C /* StopDetailsPageTests.swift */; };
+		9A719E152CD12309007377F7 /* OnboardingButtonModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A719E142CD12309007377F7 /* OnboardingButtonModifiers.swift */; };
+		9A719E172CD1725E007377F7 /* UIWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A719E162CD1725E007377F7 /* UIWindowExtension.swift */; };
 		9A74A2112BE2D71400E57102 /* AnnotationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A74A2102BE2D71400E57102 /* AnnotationLabel.swift */; };
 		9A76022D2C5468C300B69A35 /* AlertIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A76022C2C5468C300B69A35 /* AlertIcon.swift */; };
 		9A76022F2C546CE300B69A35 /* StopDetailsAlertHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */; };
@@ -410,6 +412,8 @@
 		9A6FA0222BC70D0A0067769C /* InspectionEmissary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionEmissary.swift; sourceTree = "<group>"; };
 		9A6FA0242BC714360067769C /* HomeMapViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTest.swift; sourceTree = "<group>"; };
 		9A6FA0272BC72F110067769C /* StopDetailsPageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StopDetailsPageTests.swift; sourceTree = "<group>"; };
+		9A719E142CD12309007377F7 /* OnboardingButtonModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingButtonModifiers.swift; sourceTree = "<group>"; };
+		9A719E162CD1725E007377F7 /* UIWindowExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIWindowExtension.swift; sourceTree = "<group>"; };
 		9A74A2102BE2D71400E57102 /* AnnotationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationLabel.swift; sourceTree = "<group>"; };
 		9A76022C2C5468C300B69A35 /* AlertIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertIcon.swift; sourceTree = "<group>"; };
 		9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsAlertHeader.swift; sourceTree = "<group>"; };
@@ -774,6 +778,7 @@
 			children = (
 				8C97F7C82CCBF4E100A06B34 /* OnboardingPage.swift */,
 				8C97F7CF2CCC01E200A06B34 /* OnboardingScreenView.swift */,
+				9A719E142CD12309007377F7 /* OnboardingButtonModifiers.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -1003,6 +1008,7 @@
 				8C0923A62C210C8C00813454 /* Typography.swift */,
 				8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */,
 				9A5830552BA3A2CE0039876E /* ViewportExtension.swift */,
+				9A719E162CD1725E007377F7 /* UIWindowExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1462,6 +1468,7 @@
 				9A76022D2C5468C300B69A35 /* AlertIcon.swift in Sources */,
 				9A4DB7812CA5A23200E8755B /* TextFieldObserver.swift in Sources */,
 				8C815AF32BF5257B009BB51C /* TripDetailsStopListView.swift in Sources */,
+				9A719E172CD1725E007377F7 /* UIWindowExtension.swift in Sources */,
 				8C3D64102BE19DBA0026DD53 /* MorePage.swift in Sources */,
 				EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */,
 				9A4850572CB56A1600F50EE7 /* RouteTypeExtension.swift in Sources */,
@@ -1490,6 +1497,7 @@
 				9ADB84A22BAE37C0006581CE /* StopExtension.swift in Sources */,
 				9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */,
 				9AB44A112B8FC43E00E8FFB3 /* ErrorCard.swift in Sources */,
+				9A719E152CD12309007377F7 /* OnboardingButtonModifiers.swift in Sources */,
 				ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */,
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
 				9A7F12132CCB185D0042B0F1 /* TabLabel.swift in Sources */,

@@ -17,7 +17,26 @@ struct OnboardingScreenView: View {
     let createLocationFetcher: () -> any LocationFetcher
     let settingUseCase: SettingUsecase
     @State private var locationFetcher: LocationFetcher?
+
+    @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     private let locationPermissionHandler: LocationPermissionHandler
+
+    @State private var pulse: CGFloat = 1
+
+    private var haloOffset: CGFloat {
+        let height = UIScreen.current?.bounds.height ?? 852.0
+        return -((height / 2) - (height / 3) + 2)
+    }
+
+    private var locationHaloSize: CGFloat {
+        let width = UIScreen.current?.bounds.width ?? 393.0
+        return width * 0.8
+    }
+
+    private var moreHaloSize: CGFloat {
+        let width = UIScreen.current?.bounds.width ?? 393.0
+        return width * 0.55
+    }
 
     let inspection = Inspection<Self>()
 
@@ -35,42 +54,144 @@ struct OnboardingScreenView: View {
             screen: screen,
             advance: advance
         )
+        focusHeader = screen
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             switch screen {
             case .feedback:
-                Text(
-                    "MBTA Go is just getting started! We’re actively making improvements based on feedback from riders like you."
-                )
-                Button("Get started") {
-                    advance()
+                ZStack {
+                    Image(.onboardingMoreButton)
+                        .resizable()
+                        .scaledToFill()
+                        .edgesIgnoringSafeArea(.all)
+                        .accessibilityHidden(true)
+                    Image(.onboardingHalo)
+                        .resizable()
+                        .frame(width: moreHaloSize, height: moreHaloSize)
+                        .scaleEffect(pulse)
+                        .offset(x: 0, y: haloOffset)
+                        .onAppear {
+                            withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                                pulse = 1.22 * pulse
+                            }
+                        }
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Spacer()
+                        Text("Help us improve")
+                            .font(Typography.title1Bold)
+                            .accessibilityHeading(.h1)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityFocused($focusHeader, equals: .feedback)
+                        Text(
+                            "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features."
+                        )
+                        .font(Typography.title3)
+                        .padding(.bottom, 16)
+                        .accessibilityHint(Text("Use the \"More\" navigation tab to send app feedback"))
+                        Button(action: advance) {
+                            Text("Get started").onboardingKeyButton()
+                        }
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 56)
                 }
             case .hideMaps:
-                Text("For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise.")
-                Button("Hide maps") {
-                    Task {
-                        try await settingUseCase.set(setting: .hideMaps, value: true)
-                        advance()
+                ZStack {
+                    Image(.onboardingBackgroundMap)
+                        .resizable()
+                        .scaledToFill()
+                        .edgesIgnoringSafeArea(.all)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Spacer()
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Set map preference")
+                                .font(Typography.title1Bold)
+                                .accessibilityHeading(.h1)
+                                .accessibilityAddTraits(.isHeader)
+                                .accessibilityFocused($focusHeader, equals: .hideMaps)
+
+                            Text(
+                                "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
+                            )
+                            .font(Typography.title3)
+                        }
+                        .padding(32)
+                        .background(Color.fill2)
+                        .clipShape(.rect(cornerRadius: 32.0))
+                        .shadow(radius: 16)
+                        Spacer()
+                        Button(action: { Task {
+                            try await settingUseCase.set(setting: .hideMaps, value: true)
+                            advance()
+                        }}) {
+                            Text("Hide maps").onboardingKeyButton()
+                        }
+                        Button(action: { Task {
+                            try await settingUseCase.set(setting: .hideMaps, value: false)
+                            advance()
+                        }}) {
+                            Text("Show maps").onboardingSecondaryButton()
+                        }
                     }
-                }
-                Button("Show maps") {
-                    Task {
-                        try await settingUseCase.set(setting: .hideMaps, value: false)
-                        advance()
-                    }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 56)
                 }
             case .location:
-                Text("We’ll use your location to show the lines and bus routes near you.")
-                Button("Share location") {
-                    locationFetcher = createLocationFetcher()
-
-                    locationFetcher?.locationFetcherDelegate = locationPermissionHandler
+                ZStack(alignment: .center) {
+                    Image(.onboardingBackgroundMap)
+                        .resizable()
+                        .scaledToFill()
+                        .edgesIgnoringSafeArea(.all)
+                        .accessibilityHidden(true)
+                    Image(.onboardingHalo)
+                        .resizable()
+                        .frame(width: locationHaloSize, height: locationHaloSize)
+                        .scaleEffect(pulse)
+                        .offset(x: 0, y: haloOffset)
+                        .onAppear {
+                            withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                                pulse = 1.15 * pulse
+                            }
+                        }
+                        .accessibilityHidden(true)
+                    Image(.onboardingTransitLines)
+                        .resizable()
+                        .scaledToFill()
+                        .edgesIgnoringSafeArea(.all)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Spacer()
+                        Text("See transit near you")
+                            .font(Typography.title1Bold)
+                            .accessibilityHeading(.h1)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityFocused($focusHeader, equals: .location)
+                        Text("We use your location to show you nearby transit options.")
+                            .font(Typography.title3)
+                            .padding(.bottom, 16)
+                        Button(action: {
+                            locationFetcher = createLocationFetcher()
+                            locationFetcher?.locationFetcherDelegate = locationPermissionHandler
+                        }) {
+                            Text("Allow Location Services").onboardingKeyButton()
+                        }
+                        Button(action: advance) {
+                            Text("Skip for now").onboardingSecondaryButton()
+                        }
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 56)
                 }
-                Button("Not now") {
-                    advance()
-                }
+            }
+        }
+        .onChange(of: screen) { nextScreen in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                // Voiceover won't pick this up if it's not delayed slightly
+                focusHeader = nextScreen
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }

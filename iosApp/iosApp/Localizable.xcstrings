@@ -787,6 +787,9 @@
         }
       }
     },
+    "Allow Location Services" : {
+
+    },
     "Amtrak" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2047,9 +2050,6 @@
         }
       }
     },
-    "For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise." : {
-
-    },
     "Freight Train Interference" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2135,6 +2135,9 @@
     "General MBTA Information & Support" : {
       "comment" : "More page section header, includes user support resources"
     },
+    "Get started" : {
+
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2216,6 +2219,12 @@
           }
         }
       }
+    },
+    "Help us improve" : {
+
+    },
+    "Hide maps" : {
+
     },
     "Hide Maps" : {
       "comment" : "A setting on the More page to remove the app component from the app"
@@ -2665,7 +2674,7 @@
     "MBTA Go" : {
 
     },
-    "MBTA Go is just getting started! We’re actively making improvements based on feedback from riders like you." : {
+    "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features." : {
 
     },
     "MBTA Logo" : {
@@ -3192,6 +3201,9 @@
         }
       }
     },
+    "See transit near you" : {
+
+    },
     "select location" : {
       "localizations" : {
         "es" : {
@@ -3281,6 +3293,9 @@
         }
       }
     },
+    "Set map preference" : {
+
+    },
     "Settings" : {
       "comment" : "More page section header, includes settings that the user can configure",
       "localizations" : {
@@ -3362,6 +3377,9 @@
           }
         }
       }
+    },
+    "Show maps" : {
+
     },
     "Shuttle" : {
       "comment" : "Possible alert effect",
@@ -3484,6 +3502,9 @@
           }
         }
       }
+    },
+    "Skip for now" : {
+
     },
     "Slippery Rail" : {
       "comment" : "Possible alert cause",
@@ -4612,10 +4633,13 @@
         }
       }
     },
+    "Use the \"More\" navigation tab to send app feedback" : {
+
+    },
     "version %@" : {
       "comment" : "Version number label on the More page"
     },
-    "We’ll use your location to show the lines and bus routes near you." : {
+    "We use your location to show you nearby transit options." : {
 
     },
     "Weather" : {
@@ -4658,6 +4682,9 @@
           }
         }
       }
+    },
+    "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
+
     },
     "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go." : {
 
