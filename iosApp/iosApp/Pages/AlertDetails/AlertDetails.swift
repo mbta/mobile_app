@@ -138,39 +138,44 @@ struct AlertDetails: View {
     @ViewBuilder
     private var affectedStopCollapsible: some View {
         if !affectedStops.isEmpty {
-            asTile(DisclosureGroup(
-                isExpanded: $areStopsExpanded,
-                content: {
-                    VStack(alignment: .leading, spacing: 0) {
-                        ForEach(affectedStops, id: \.id) { stop in
-                            Divider().background(Color.halo)
-                            Text(stop.name).bold().padding(16)
+            asTile(
+                DisclosureGroup(
+                    isExpanded: $areStopsExpanded,
+                    content: {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(affectedStops, id: \.id) { stop in
+                                Divider().background(Color.halo)
+                                Text(stop.name).bold().padding(16)
+                            }
                         }
+                    },
+                    label: {
+                        HStack(alignment: .center, spacing: 16) {
+                            Text(
+                                "**\(affectedStops.count)** affected stops",
+                                comment: "The number of stops affected by an alert"
+                            ).multilineTextAlignment(.leading)
+                            Spacer()
+                            Image(.faChevronRight)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: iconSize)
+                                .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
+                        }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
                     }
-                },
-                label: {
-                    HStack(alignment: .center, spacing: 16) {
-                        Text(
-                            "**\(affectedStops.count)** affected stops",
-                            comment: "The number of stops affected by an alert"
-                        ).multilineTextAlignment(.leading)
-                        Spacer()
-                        Image(.faChevronRight)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: iconSize)
-                            .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
-                    }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
+                )
+                .tint(.clear) // Hide default chevron
+                .foregroundStyle(Color.text, .clear)
+                .onChange(of: areStopsExpanded) { expanded in
+                    if expanded {
+                        analytics.tappedAffectedStops(
+                            routeId: line?.id ?? routes?.first?.id ?? "",
+                            stopId: stopId ?? "",
+                            alertId: alert.id
+                        )
+                    }
                 }
-            ).foregroundStyle(Color.text, .clear).onChange(of: areStopsExpanded) { expanded in
-                if expanded {
-                    analytics.tappedAffectedStops(
-                        routeId: line?.id ?? routes?.first?.id ?? "",
-                        stopId: stopId ?? "",
-                        alertId: alert.id
-                    )
-                }
-            })
+            )
         }
     }
 
