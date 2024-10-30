@@ -22,6 +22,7 @@ okio = "3.9.1"
 sentry = "0.9.0"
 skie = "0.9.3"
 spatialk = "0.3.0"
+turbine = "1.2.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
@@ -64,6 +65,7 @@ sentry = { module = "io.sentry:sentry-kotlin-multiplatform", version.ref = "sent
 skie-configuration-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
 spatialk-geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "spatialk" }
 spatialk-turf = { module = "io.github.dellisd.spatialk:turf", version.ref = "spatialk" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

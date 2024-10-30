@@ -21,6 +21,7 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.fakefilesystem.FakeFileSystem
@@ -127,7 +128,9 @@ class GlobalRepositoryTest : KoinTest {
             )
         }
         runBlocking {
-            val response = GlobalRepository().getGlobalData()
+            val repo = GlobalRepository()
+            assertNull(repo.state.value)
+            val response = repo.getGlobalData()
             val route =
                 Route(
                     id = "Shuttle-AirportGovernmentCenterLocal",
@@ -182,6 +185,7 @@ class GlobalRepositoryTest : KoinTest {
                     trips = mapOf("62145526_2" to trip)
                 )
             assertEquals(ApiResult.Ok(expectedResponse), response)
+            assertEquals(expectedResponse, repo.state.value)
         }
     }
 }

@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
@@ -32,6 +33,7 @@ import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -41,6 +43,7 @@ import com.mbta.tid.mbta_app.repositories.PinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.RailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.SchedulesRepository
 import com.mbta.tid.mbta_app.repositories.SearchResultRepository
+import com.mbta.tid.mbta_app.repositories.SentryRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
 import com.mbta.tid.mbta_app.repositories.TripRepository
@@ -60,6 +63,7 @@ interface IRepositories {
     val railRouteShapes: IRailRouteShapeRepository
     val schedules: ISchedulesRepository
     val searchResults: ISearchResultRepository
+    val sentry: ISentryRepository
     val settings: ISettingsRepository
     val stop: IStopRepository
     val trip: ITripRepository
@@ -81,6 +85,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val railRouteShapes: IRailRouteShapeRepository by inject()
     override val schedules: ISchedulesRepository by inject()
     override val searchResults: ISearchResultRepository by inject()
+    override val sentry: ISentryRepository by inject()
     override val settings: ISettingsRepository by inject()
     override val stop: IStopRepository by inject()
     override val trip: ITripRepository by inject()
@@ -105,6 +110,7 @@ class RealRepositories : IRepositories {
     override val railRouteShapes = RailRouteShapeRepository()
     override val schedules = SchedulesRepository()
     override val searchResults = SearchResultRepository()
+    override val sentry = SentryRepository()
     override val settings = SettingsRepository()
     override val stop = StopRepository()
     override val trip = TripRepository()
@@ -126,6 +132,7 @@ class MockRepositories(
     override val railRouteShapes: IRailRouteShapeRepository,
     override val schedules: ISchedulesRepository,
     override val searchResults: ISearchResultRepository,
+    override val sentry: ISentryRepository,
     override val settings: ISettingsRepository,
     override val stop: IStopRepository,
     override val trip: ITripRepository,
@@ -155,6 +162,7 @@ class MockRepositories(
                 railRouteShapes = IdleRailRouteShapeRepository(),
                 schedules = schedules,
                 searchResults = IdleSearchResultRepository(),
+                sentry = MockSentryRepository(),
                 settings = MockSettingsRepository(),
                 stop = stop,
                 trip = trip,

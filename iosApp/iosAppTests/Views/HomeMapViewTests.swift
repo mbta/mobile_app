@@ -653,19 +653,22 @@ final class HomeMapViewTests: XCTestCase {
         )
         nearbyVM.navigationStack = [initialNav]
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        let globalResponse = GlobalResponse(objects: objectCollection, patternIdsByStop: [:])
 
         let viewportProvider = ViewportProvider()
         var sut = HomeMapView(
+            globalRepository: MockGlobalRepository(response: globalResponse),
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle1]),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            globalMapData: .init(globalData: globalResponse, alertsByStop: [:])
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.actualView().globalData = GlobalResponse(objects: objectCollection, patternIdsByStop: [:])
+            try sut.actualView().globalData = globalResponse
             XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
             XCTAssertFalse(viewportProvider.isFollowingVehicle)
             nearbyVM.navigationStack.append(.tripDetails(
@@ -679,7 +682,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let following1 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle, after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(), after: 5
         ) { sut in
             XCTAssertTrue(viewportProvider.isFollowingVehicle)
             XCTAssertEqual(viewportProvider.followedVehicle, vehicle1)
@@ -687,7 +690,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let following2 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle.dropFirst(), after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(2), after: 1.1
         ) { sut in
             // Viewport setting happens after the followed vehicle is set,
             // so this is actually the viewport for vehicle 1
@@ -698,7 +701,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let following3 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle.dropFirst(2), after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(3), after: 1.1
         ) { sut in
             XCTAssertTrue(viewportProvider.isFollowingVehicle)
             XCTAssertEqual(viewportProvider.followedVehicle, vehicle3)
@@ -706,7 +709,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         let following4 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle.dropFirst(3), after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(4), after: 1.1
         ) { _ in
             // And this is checking the viewport for vehicle 3
             XCTAssertNotNil(viewportProvider.viewport.overview)
@@ -811,19 +814,22 @@ final class HomeMapViewTests: XCTestCase {
         let updateRouteSourcesExpectation = XCTestExpectation(description: "Update route source called")
         let updateStopSourceExpectation = XCTestExpectation(description: "Update stop source called")
 
-        let layerManager = MockLayerManager(addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
-                                            updateRouteDataCallback: { _ in
-                                                updateRouteSourcesExpectation.fulfill()
-                                            },
-                                            updateStopDataCallback: { _ in
-                                                updateStopSourceExpectation.fulfill()
-                                            })
+        let layerManager = MockLayerManager(
+            addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
+            updateRouteDataCallback: { _ in
+                updateRouteSourcesExpectation.fulfill()
+            },
+            updateStopDataCallback: { _ in
+                updateStopSourceExpectation.fulfill()
+            }
+        )
         var sut = HomeMapView(
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            globalMapData: GlobalMapData(mapStops: [:], alertsByStop: [:])
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -877,7 +883,8 @@ final class HomeMapViewTests: XCTestCase {
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            globalMapData: .init(mapStops: [:], alertsByStop: [:])
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -885,6 +892,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut)
+
         wait(for: [hasAppeared, updateStopSourcesCalledExpectation], timeout: 5)
     }
 

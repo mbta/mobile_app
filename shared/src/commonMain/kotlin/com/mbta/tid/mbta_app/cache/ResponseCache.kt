@@ -10,6 +10,8 @@ import io.ktor.http.etag
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.TimeSource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
@@ -44,6 +46,9 @@ class ResponseCache<T : Any>(
 
     internal var data: Response<T>? = null
 
+    private val flow = MutableStateFlow<T?>(null)
+    val state = flow.asStateFlow()
+
     private val fileSystem: FileSystem by inject()
     private val systemPaths: SystemPaths by inject()
     private val cacheDirectory: Path
@@ -67,9 +72,16 @@ class ResponseCache<T : Any>(
         return json.decodeFromString(serializer, body)
     }
 
+    private fun getPossiblyStaleData(): Response<T>? {
+        return this.data ?: readData()
+    }
+
     private fun getData(): Response<T>? {
-        val data = this.data ?: readData() ?: return null
-        return if (data.metadata.fetchTime.elapsedNow() < maxAge) {
+        val data = getPossiblyStaleData()
+        if (data != null) {
+            flow.value = data.body
+        }
+        return if (data != null && data.metadata.fetchTime.elapsedNow() < maxAge) {
             data
         } else {
             null
@@ -77,12 +89,12 @@ class ResponseCache<T : Any>(
     }
 
     private suspend fun putData(response: HttpResponse) {
+        val body = decodeData(response.bodyAsText())
         val nextData =
-            Response(
-                ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()),
-                decodeData(response.bodyAsText())
-            )
+            Response(ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow()), body)
         this.data = nextData
+        this.flow.value = body
+
         this.writeData(nextData)
     }
 
