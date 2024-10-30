@@ -26,7 +26,7 @@ final class LocationDataManagerTests: XCTestCase {
 
         let manager = LocationDataManager(locationFetcher: locationFetcher)
 
-        XCTAssertEqual(manager.authorizationStatus, .notDetermined)
+        XCTAssertEqual(manager.authorizationStatus, nil)
         XCTAssertNil(manager.currentLocation)
         XCTAssertIdentical(manager, locationFetcher.locationFetcherDelegate)
 
