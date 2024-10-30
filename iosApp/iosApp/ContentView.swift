@@ -20,6 +20,7 @@ struct ContentView: View {
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
+    @StateObject var settingsVM = SettingsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
@@ -28,7 +29,7 @@ struct ContentView: View {
 
     private enum SelectedTab: Hashable {
         case nearby
-        case settings
+        case more
     }
 
     @State private var selectedTab = SelectedTab.nearby
@@ -47,14 +48,14 @@ struct ContentView: View {
 
     @ViewBuilder
     var contents: some View {
-        if selectedTab == .settings {
+        if selectedTab == .more {
             TabView(selection: $selectedTab) {
                 nearbyTab
                     .tag(SelectedTab.nearby)
-                    .tabItem { Label("Nearby", systemImage: "mappin") }
-                SettingsPage()
-                    .tag(SelectedTab.settings)
-                    .tabItem { Label("Settings", systemImage: "gear") }
+                    .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
+                MorePage(viewModel: settingsVM)
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel("More", image: .tabIconMore) }
                     .onAppear {
                         screenTracker.track(screen: .settings)
                     }
@@ -66,6 +67,7 @@ struct ContentView: View {
 
     @State var selectedDetent: PresentationDetent = .halfScreen
     @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
+    @State private var showingLocationPermissionAlert = false
 
     @ViewBuilder var nearbySheetContents: some View {
         // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
@@ -78,36 +80,19 @@ struct ContentView: View {
                     viewportProvider: viewportProvider
                 )
                 .tag(SelectedTab.nearby)
-                .tabItem { Label("Nearby", systemImage: "mappin") }
+                .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
                 // we want to show nothing in the sheet when the settings tab is open,
                 // but an EmptyView here causes the tab to not be listed
                 VStack {}
-                    .tag(SelectedTab.settings)
-                    .tabItem { Label("Settings", systemImage: "gear") }
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel("More", image: .tabIconMore) }
             }
-        }
-    }
-
-    @ViewBuilder
-    var locationAuthHeader: some View {
-        switch locationDataManager.authorizationStatus {
-        case .notDetermined:
-            Button("Allow Location", action: {
-                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
-            })
-        case .authorizedAlways, .authorizedWhenInUse:
-            EmptyView()
-        case .denied, .restricted:
-            Text("Location access denied or restricted")
-        @unknown default:
-            Text("Location access state unknown")
         }
     }
 
     @ViewBuilder
     var nearbyTab: some View {
         VStack {
-            locationAuthHeader
             if contentVM.hideMaps {
                 if nearbyVM.navigationStack.lastSafe() == .nearby {
                     SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
@@ -118,13 +103,19 @@ struct ContentView: View {
             } else {
                 ZStack(alignment: .top) {
                     mapWithSheets
-                    VStack(alignment: .trailing, spacing: 0) {
+                    VStack(alignment: .center, spacing: 0) {
                         if nearbyVM.navigationStack.lastSafe() == .nearby {
                             SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+
+                            if !searchObserver.isSearching {
+                                LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                            }
                         }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
-                            RecenterButton { Task { viewportProvider.follow() } }
+                            VStack(alignment: .trailing) {
+                                RecenterButton { Task { viewportProvider.follow() } }
+                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
                     }.frame(maxWidth: .infinity, alignment: .trailing)
                 }
@@ -134,6 +125,7 @@ struct ContentView: View {
             Task { await errorBannerVM.activate() }
             Task { await contentVM.loadConfig() }
             Task { await contentVM.loadHideMaps() }
+            Task { await settingsVM.getSections() }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -178,7 +170,11 @@ struct ContentView: View {
         } else {
             mapSection
                 .sheet(
-                    isPresented: .constant(!(searchObserver.isSearching && nav == .nearby)),
+                    isPresented: .constant(
+                        !(searchObserver.isSearching && nav == .nearby)
+                            && selectedTab == .nearby
+                            && !showingLocationPermissionAlert
+                    ),
                     content: {
                         GeometryReader { proxy in
                             VStack {
