@@ -17,8 +17,7 @@ struct OnboardingScreenView: View {
     let createLocationFetcher: () -> any LocationFetcher
     let settingUseCase: SettingUsecase
     @State private var locationFetcher: LocationFetcher?
-
-    private let locationPermissionHandler: LocationPermissionHandler
+    @State private var locationPermissionHandler: LocationPermissionHandler?
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.dynamicTypeSize) var typeSize
@@ -51,10 +50,6 @@ struct OnboardingScreenView: View {
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
         self.settingUseCase = settingUseCase
-        locationPermissionHandler = LocationPermissionHandler(
-            screen: screen,
-            advance: advance
-        )
         focusHeader = screen
     }
 
@@ -122,7 +117,6 @@ struct OnboardingScreenView: View {
                                 .accessibilityHeading(.h1)
                                 .accessibilityAddTraits(.isHeader)
                                 .accessibilityFocused($focusHeader, equals: .hideMaps)
-
                             Text(
                                 "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
                             )
@@ -190,6 +184,7 @@ struct OnboardingScreenView: View {
                             Spacer()
                         }
                         Button(action: {
+                            guard let locationPermissionHandler else { return }
                             locationFetcher = createLocationFetcher()
                             locationFetcher?.locationFetcherDelegate = locationPermissionHandler
                         }) {
@@ -210,6 +205,12 @@ struct OnboardingScreenView: View {
                 // Voiceover won't pick this up if it's not delayed slightly
                 focusHeader = nextScreen
             }
+        }
+        .onAppear {
+            locationPermissionHandler = LocationPermissionHandler(
+                screen: screen,
+                advance: advance
+            )
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
