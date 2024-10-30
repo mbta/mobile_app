@@ -332,12 +332,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let stopSequence = 92
 
         let tripNorth = objects.trip(routePattern: patternNorth)
-        let vehicleNorth = objects.vehicle {
-            $0.currentStatus = .stoppedAt
-        }
-        let predictionNorth = objects.prediction {
+        let scheduleNorth = objects.schedule {
             $0.trip = tripNorth
-            $0.vehicleId = vehicleNorth.id
             $0.departureTime = (now + 5).toKotlinInstant()
             $0.stopSequence = Int32(stopSequence)
         }
@@ -348,7 +344,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 headsign: "North",
                 line: nil,
                 patterns: [patternNorth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
+                upcomingTrips: [objects.upcomingTrip(schedule: scheduleNorth)],
                 hasSchedulesToday: true
             ),
         ])

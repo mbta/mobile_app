@@ -127,39 +127,14 @@ struct StopDetailsFilteredRouteView: View {
     }
 
     static func getStatusDepartures(realtimePatterns: [RealtimePatterns], now: Instant) -> [RowData] {
-        realtimePatterns.compactMap { pattern in
-            switch onEnum(of: pattern) {
-            case let .byHeadsign(patternsByHeadsign):
-                let noPredictions = patternsByHeadsign.upcomingTrips.contains(
-                    where: {
-                        if let time = $0.time, time.toNSDate() > now.toNSDate(), !$0.isCancelled {
-                            true
-                        } else {
-                            false
-                        }
-                    }
+        StopDetailsDepartures.companion.getStatusDepartues(realtimePatterns: realtimePatterns, now: now)
+            .map {
+                RowData(
+                    route: $0.route,
+                    headsign: $0.headsign,
+                    formatted: $0.formatted
                 )
-                let format: RealtimePatterns.Format? = if noPredictions {
-                    RealtimePatterns.FormatNone(secondaryAlert: nil)
-                } else if !patternsByHeadsign.hasSchedulesToday {
-                    RealtimePatterns.FormatNoSchedulesToday(secondaryAlert: nil)
-                } else if !patternsByHeadsign.upcomingTrips.isEmpty ||
-                    !patternsByHeadsign.allDataLoaded {
-                    nil
-                } else {
-                    RealtimePatterns.FormatServiceEndedToday(secondaryAlert: nil)
-                }
-                return if let format {
-                    RowData(
-                        route: patternsByHeadsign.route,
-                        headsign: patternsByHeadsign.headsign,
-                        formatted: format
-                    )
-                } else { nil }
-            default:
-                return nil
             }
-        }
     }
 
     var body: some View {
