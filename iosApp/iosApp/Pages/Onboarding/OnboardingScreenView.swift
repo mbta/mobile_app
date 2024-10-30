@@ -77,7 +77,7 @@ struct OnboardingScreenView: View {
                             .offset(x: 0, y: haloOffset)
                             .onAppear {
                                 pulse = 1
-                                withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                                withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
                                     pulse = 1.22 * pulse
                                 }
                             }
@@ -165,7 +165,7 @@ struct OnboardingScreenView: View {
                             .offset(x: 0, y: haloOffset)
                             .onAppear {
                                 pulse = 1
-                                withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                                withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
                                     pulse = 1.15 * pulse
                                 }
                             }
