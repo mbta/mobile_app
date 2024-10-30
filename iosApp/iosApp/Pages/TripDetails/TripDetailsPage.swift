@@ -284,7 +284,6 @@ struct TripDetailsPage: View {
         VehicleCardView(
             vehicle: vehicle,
             route: route,
-            line: globalResponse?.getLine(lineId: route?.lineId),
             stop: vehicleStop,
             trip: trip
         )
