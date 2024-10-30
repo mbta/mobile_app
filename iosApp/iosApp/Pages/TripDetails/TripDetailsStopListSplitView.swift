@@ -18,21 +18,29 @@ struct TripDetailsStopListSplitView: View {
     var body: some View {
         List {
             if !splitStops.collapsedStops.isEmpty {
-                DisclosureGroup(LocalizedStringKey("\(splitStops.collapsedStops.count, specifier: "%ld") stops away")) {
-                    ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
-                        TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
-                    }
-                }
-                .padding(.bottom, 16)
-                .accessibilityElement()
-                .accessibilityAddTraits(.isHeader)
-                .accessibilityHeading(.h2)
-                .accessibilityLabel(
-                    LocalizedStringKey(
-                        "\(routeType?.typeText(isOnly: true) ?? "") is \(splitStops.collapsedStops.count, specifier: "%ld") stops away from \(splitStops.targetStop.stop.name)"
-                    )
-                )
-                .accessibilityHint("List remaining stops")
+                DisclosureGroup(content: {
+                                    ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
+                                        TripDetailsStopView(
+                                            stop: stop,
+                                            now: now,
+                                            onTapLink: onTapLink,
+                                            routeType: routeType
+                                        )
+                                    }
+                                },
+                                label: { Text("\(splitStops.collapsedStops.count, specifier: "%ld") stops away",
+                                              comment: "How many stops away the vehicle is from the target stop")
+                                })
+                                .padding(.bottom, 16)
+                                .accessibilityElement()
+                                .accessibilityAddTraits(.isHeader)
+                                .accessibilityHeading(.h2)
+                                .accessibilityLabel(
+                                    LocalizedStringKey(
+                                        "\(routeType?.typeText(isOnly: true) ?? "") is \(splitStops.collapsedStops.count, specifier: "%ld") stops away from \(splitStops.targetStop.stop.name)"
+                                    )
+                                )
+                                .accessibilityHint("List remaining stops")
             }
             TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink, routeType: routeType)
                 .listRowBackground(Color.keyInverse.opacity(0.15))

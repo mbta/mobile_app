@@ -13,12 +13,12 @@ struct StopDetailsFilterPills: View {
     enum FilterBy {
         var id: String {
             switch self {
-            case let .route(route, _): route.id
+            case let .route(route): route.id
             case let .line(line): line.id
             }
         }
 
-        case route(Route, Line?)
+        case route(Route)
         case line(Line)
     }
 
@@ -35,10 +35,10 @@ struct StopDetailsFilterPills: View {
                     HStack {
                         ForEach(servedRoutes, id: \.id) { filterBy in
                             switch filterBy {
-                            case let .route(route, line):
+                            case let .route(route):
                                 RoutePill(
                                     route: route,
-                                    line: line,
+                                    line: nil,
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == route.id
                                 )

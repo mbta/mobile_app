@@ -118,7 +118,9 @@ struct ContentView: View {
                         }
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
-                            RecenterButton { Task { viewportProvider.follow() } }
+                            VStack(alignment: .trailing) {
+                                RecenterButton { Task { viewportProvider.follow() } }
+                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
                     }.frame(maxWidth: .infinity, alignment: .trailing)
                 }
