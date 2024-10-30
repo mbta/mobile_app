@@ -28,6 +28,7 @@ struct MorePhone: View {
                 .frame(width: iconSize, height: iconSize, alignment: .center)
                 .foregroundStyle(Color.deemphasized)
                 .fontWeight(.semibold)
+                .accessibilityHidden(true)
         }
         .contentShape(Rectangle())
         .padding(.vertical, 10)
@@ -38,5 +39,7 @@ struct MorePhone: View {
                 UIApplication.shared.open(url)
             }
         }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(Text("Select to call"))
     }
 }

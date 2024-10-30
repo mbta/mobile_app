@@ -2615,6 +2615,9 @@
     "Made with ♥ by the T" : {
 
     },
+    "Made with love, by the T" : {
+
+    },
     "Maintenance" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2664,6 +2667,9 @@
     },
     "MBTA Go is just getting started! We’re actively making improvements based on feedback from riders like you." : {
 
+    },
+    "MBTA Logo" : {
+      "comment" : "Accessibility text for logo"
     },
     "Mechanical Problem" : {
       "comment" : "Possible alert cause",
@@ -3225,6 +3231,9 @@
           }
         }
       }
+    },
+    "Select to call" : {
+
     },
     "Service Change" : {
       "comment" : "Possible alert effect"
