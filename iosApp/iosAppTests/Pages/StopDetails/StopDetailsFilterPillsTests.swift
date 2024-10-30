@@ -18,7 +18,7 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let route1 = objects.route()
         let route2 = objects.route()
         let sut = StopDetailsFilterPills(
-            servedRoutes: [.route(route1, nil), .route(route2, nil)],
+            servedRoutes: [.route(route1), .route(route2)],
             tapRoutePill: { _ in },
             filter: nil,
             setFilter: { _ in }
@@ -34,7 +34,7 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let route1 = objects.route()
         let route2 = objects.route()
         let sut = StopDetailsFilterPills(
-            servedRoutes: [.route(route1, nil), .route(route2, nil)],
+            servedRoutes: [.route(route1), .route(route2)],
             tapRoutePill: { _ in },
             filter: .init(routeId: route1.id, directionId: 0),
             setFilter: { _ in }
@@ -51,10 +51,10 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let route2 = objects.route()
         let tapExpectation = XCTestExpectation()
         let sut = StopDetailsFilterPills(
-            servedRoutes: [.route(route1, nil), .route(route2, nil)],
+            servedRoutes: [.route(route1), .route(route2)],
             tapRoutePill: { filter in
                 tapExpectation.fulfill()
-                guard case let .route(route, _) = filter else {
+                guard case let .route(route) = filter else {
                     XCTFail("Filter was not by route")
                     return
                 }
@@ -76,7 +76,7 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let line = objects.line()
         let tapExpectation = XCTestExpectation()
         let sut = StopDetailsFilterPills(
-            servedRoutes: [.route(route1, nil), .route(route2, nil), .line(line)],
+            servedRoutes: [.route(route1), .route(route2), .line(line)],
             tapRoutePill: { filter in
                 tapExpectation.fulfill()
                 guard case let .line(line) = filter else {
