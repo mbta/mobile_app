@@ -2525,6 +2525,7 @@
       }
     },
     "Location access denied or restricted" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2565,6 +2566,7 @@
       }
     },
     "Location access state unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2739,14 +2741,14 @@
         }
       }
     },
-    "Nearby Transit" : {
-      "comment" : "Header for nearby transit sheet"
-    },
     "Monday through Friday: 6:30 AM - 8 PM" : {
       "comment" : "Footnote under the More page support header, these are the hours for the support call center"
     },
     "mTicket App" : {
       "comment" : "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app"
+    },
+    "Nearby Transit" : {
+      "comment" : "Header for nearby transit sheet"
     },
     "Next stop" : {
       "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife",
@@ -3265,6 +3267,7 @@
       }
     },
     "Settings" : {
+      "comment" : "More page section header, includes settings that the user can configure",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3302,8 +3305,7 @@
             "value" : "設定"
           }
         }
-      },
-      "comment" : "More page section header, includes settings that the user can configure"
+      }
     },
     "Severe Weather" : {
       "comment" : "Possible alert cause",
