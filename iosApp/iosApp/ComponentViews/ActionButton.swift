@@ -18,11 +18,11 @@ struct ActionButton: View {
         var accessibilityLabel: String {
             switch self {
             case .back:
-                "Back"
+                NSLocalizedString("Back", comment: "VoiceOver label for a generic back button")
             case .close:
-                "Close"
+                NSLocalizedString("Close", comment: "VoiceOver label for a generic close button")
             case .clear:
-                "Clear"
+                NSLocalizedString("Clear", comment: "VoiceOver label for a generic clear button")
             }
         }
 
