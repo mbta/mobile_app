@@ -150,12 +150,12 @@ final class ContentViewTests: XCTestCase {
         wait(for: [hasAppeared, loadConfigCallback], timeout: 5)
     }
 
-    @MainActor func testHidesMap() throws {
+    @MainActor func testDoesNotHideMap() throws {
         let contentVM = FakeContentVM()
         contentVM.hideMaps = true
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
 
-        XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
+        XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
     }
 
     func testShowsMap() throws {

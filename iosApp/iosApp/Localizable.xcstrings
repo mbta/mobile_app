@@ -2218,7 +2218,8 @@
       }
     },
     "Hide Maps" : {
-      "comment" : "A setting on the More page to remove the app component from the app"
+      "comment" : "A setting on the More page to remove the app component from the app",
+      "extractionState" : "manual"
     },
     "High Winds" : {
       "comment" : "Possible alert cause",

@@ -12,7 +12,11 @@ import shared
 
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
-    @Published var hideMaps: Bool
+    var hideMaps: Bool {
+        get { false }
+        set {}
+    }
+
     @Published var onboardingScreensPending: [OnboardingScreen]?
 
     var configUseCase: ConfigUseCase
@@ -23,14 +27,12 @@ class ContentViewModel: ObservableObject {
          configResponse: ApiResult<ConfigResponse>? = nil,
          onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding,
          onboardingScreensPending: [OnboardingScreen]? = nil,
-         settingsRepository: ISettingsRepository = RepositoryDI().settings,
-         hideMaps: Bool = false) {
+         settingsRepository: ISettingsRepository = RepositoryDI().settings) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
         self.onboardingRepository = onboardingRepository
         self.onboardingScreensPending = onboardingScreensPending
         self.settingsRepository = settingsRepository
-        self.hideMaps = hideMaps
     }
 
     func configureMapboxToken(token: String) {
@@ -45,9 +47,7 @@ class ContentViewModel: ObservableObject {
         }
     }
 
-    @MainActor func loadHideMaps() async {
-        hideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
-    }
+    @MainActor func loadHideMaps() async {}
 
     @MainActor func loadOnboardingScreens() async {
         onboardingScreensPending = await (try? onboardingRepository.getPendingOnboarding()) ?? []

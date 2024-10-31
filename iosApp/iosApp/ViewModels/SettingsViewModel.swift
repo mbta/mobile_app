@@ -56,16 +56,6 @@ class SettingsViewModel: ObservableObject {
                         )
                     ),
                 ]),
-                MoreSection(id: .settings, items: [
-                    .toggle(
-                        label: NSLocalizedString(
-                            "Hide Maps",
-                            comment: "A setting on the More page to remove the app component from the app"
-                        ),
-                        setting: .hideMaps,
-                        value: settings[.hideMaps] ?? false
-                    ),
-                ]),
                 MoreSection(id: .featureFlags, items: [
                     .toggle(
                         label: NSLocalizedString(
