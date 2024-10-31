@@ -2334,6 +2334,7 @@ class NearbyResponseTest {
             objects.stop {
                 id = "place-north"
                 locationType = LocationType.STATION
+                childStopIds = listOf("70027", "70026")
             }
 
         val northStationNorthboundPlatform =
@@ -2349,6 +2350,34 @@ class NearbyResponseTest {
                 locationType = LocationType.STOP
                 parentStationId = "place-north"
             }
+
+        val oakGrove =
+            objects.stop {
+                id = "place-ogmnl"
+                locationType = LocationType.STATION
+                childStopIds = listOf("70036")
+            }
+
+        val oakGrovePlatform =
+            objects.stop {
+                id = "70036"
+                locationType = LocationType.STOP
+                parentStationId = "place-ogmnl"
+            }
+
+        val forestHills =
+            objects.stop {
+                id = "place-forhl"
+                locationType = LocationType.STATION
+                childStopIds = listOf("70001")
+            }
+
+        val foresetHillsPlatform =
+            objects.stop {
+                id = "70001"
+                locationType = LocationType.STOP
+                parentStationId = "place-forhl"
+            }
         val orangeRoute = objects.route { id = "Orange" }
         val orangeNorthboundTypical =
             objects.routePattern(orangeRoute) {
@@ -2359,29 +2388,7 @@ class NearbyResponseTest {
                     id = "canonical-Orange-C1-1"
                     headsign = "Oak Grove"
                     directionId = 1
-                    stopIds =
-                        listOf(
-                            "70001",
-                            "70003",
-                            "70005",
-                            "70007",
-                            "70009",
-                            "70011",
-                            "70013",
-                            "70015",
-                            "70017",
-                            "70019",
-                            "70021",
-                            "70023",
-                            "70025",
-                            "70027",
-                            "70029",
-                            "70031",
-                            "70279",
-                            "70033",
-                            "70035",
-                            "70036"
-                        )
+                    stopIds = listOf("70001", "70027", "70036")
                 }
             }
 
@@ -2394,23 +2401,7 @@ class NearbyResponseTest {
                     id = "65686489"
                     headsign = "North Station"
                     directionId = 1
-                    stopIds =
-                        listOf(
-                            "70001",
-                            "70003",
-                            "70005",
-                            "70007",
-                            "70009",
-                            "70011",
-                            "70013",
-                            "70015",
-                            "70017",
-                            "70019",
-                            "70021",
-                            "70023",
-                            "70025",
-                            "70027"
-                        )
+                    stopIds = listOf("70001", "70027")
                 }
             }
 
@@ -2423,29 +2414,7 @@ class NearbyResponseTest {
                     id = "canonical-Orange-C1-0"
                     headsign = "Forest Hills"
                     directionId = 0
-                    stopIds =
-                        listOf(
-                            "70036",
-                            "70034",
-                            "70032",
-                            "70278",
-                            "70030",
-                            "70028",
-                            "70026",
-                            "70024",
-                            "70022",
-                            "70020",
-                            "70018",
-                            "70016",
-                            "70014",
-                            "70012",
-                            "70010",
-                            "70008",
-                            "70006",
-                            "70004",
-                            "70002",
-                            "70001"
-                        )
+                    stopIds = listOf("70036", "70026", "70001")
                 }
             }
 
@@ -2458,27 +2427,14 @@ class NearbyResponseTest {
                     id = "65743311"
                     headsign = "Forest Hills"
                     directionId = 0
-                    stopIds =
-                        listOf(
-                            "70026",
-                            "70024",
-                            "70022",
-                            "70020",
-                            "70018",
-                            "70016",
-                            "70014",
-                            "70012",
-                            "70010",
-                            "70008",
-                            "70006",
-                            "70004",
-                            "70002",
-                            "70001"
-                        )
+                    stopIds = listOf("70026", "70001")
                 }
             }
 
+        val orangeNorthboundTypicalTrip = objects.trip(orangeNorthboundTypical)
+
         val orangeNorthboundDiversionTrip = objects.trip(orangeNorthboundDiversion)
+
         val orangeSouthboundDiversionTrip = objects.trip(orangeSouthboundDiversion)
 
         val time = Instant.parse("2024-10-30T16:40:00-04:00")
@@ -2495,7 +2451,7 @@ class NearbyResponseTest {
 
         val northboundPrediction =
             objects.prediction {
-                trip = orangeNorthboundDiversionTrip
+                trip = orangeNorthboundTypicalTrip
                 stopId = northStationNorthboundPlatform.id
                 stopSequence = 130
                 arrivalTime = time + 8.minutes
@@ -2554,8 +2510,29 @@ class NearbyResponseTest {
                             route = orangeRoute.id,
                             routeType = RouteType.HEAVY_RAIL,
                             stop = northStation.id
+                        ),
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride
+                                ),
+                            route = orangeRoute.id,
+                            routeType = RouteType.HEAVY_RAIL,
+                            stop = oakGrove.id
+                        ),
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride
+                                ),
+                            route = orangeRoute.id,
+                            routeType = RouteType.HEAVY_RAIL,
+                            stop = oakGrovePlatform.id
                         )
-                        // TODO: other entities if needed
                     )
             }
 
@@ -2604,7 +2581,7 @@ class NearbyResponseTest {
                                     emptyList(),
                                     alertsHere = listOf(alert),
                                     hasSchedulesToday = false
-                                )
+                                ),
                             )
                         )
                     )
