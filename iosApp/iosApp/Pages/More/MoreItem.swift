@@ -21,12 +21,4 @@ enum MoreItem: Identifiable, Equatable {
         case let .phone(label: _, phoneNumber: number): number
         }
     }
-
-    var label: String {
-        switch self {
-        case let .toggle(label: label, setting: _, value: _): label
-        case let .link(label: label, url: _, note: _): label
-        case let .phone(label: label, phoneNumber: _): label
-        }
-    }
 }
