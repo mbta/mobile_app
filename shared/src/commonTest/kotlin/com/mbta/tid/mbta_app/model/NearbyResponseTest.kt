@@ -2328,6 +2328,301 @@ class NearbyResponseTest {
     }
 
     @Test
+    fun `withRealtimeInfo north station disruption case`() {
+        val objects = ObjectCollectionBuilder()
+        val northStation =
+            objects.stop {
+                id = "place-north"
+                locationType = LocationType.STATION
+            }
+
+        val northStationNorthboundPlatform =
+            objects.stop {
+                id = "70027"
+                locationType = LocationType.STOP
+                parentStationId = "place-north"
+            }
+
+        val northStationSouthboundPlatform =
+            objects.stop {
+                id = "70026"
+                locationType = LocationType.STOP
+                parentStationId = "place-north"
+            }
+        val orangeRoute = objects.route { id = "Orange" }
+        val orangeNorthboundTypical =
+            objects.routePattern(orangeRoute) {
+                id = "Orange-3-1"
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 1
+                representativeTrip {
+                    id = "canonical-Orange-C1-1"
+                    headsign = "Oak Grove"
+                    directionId = 1
+                    stopIds =
+                        listOf(
+                            "70001",
+                            "70003",
+                            "70005",
+                            "70007",
+                            "70009",
+                            "70011",
+                            "70013",
+                            "70015",
+                            "70017",
+                            "70019",
+                            "70021",
+                            "70023",
+                            "70025",
+                            "70027",
+                            "70029",
+                            "70031",
+                            "70279",
+                            "70033",
+                            "70035",
+                            "70036"
+                        )
+                }
+            }
+
+        val orangeNorthboundDiversion =
+            objects.routePattern(orangeRoute) {
+                id = "Orange-6-1"
+                typicality = RoutePattern.Typicality.Diversion
+                directionId = 1
+                representativeTrip {
+                    id = "65686489"
+                    headsign = "North Station"
+                    directionId = 1
+                    stopIds =
+                        listOf(
+                            "70001",
+                            "70003",
+                            "70005",
+                            "70007",
+                            "70009",
+                            "70011",
+                            "70013",
+                            "70015",
+                            "70017",
+                            "70019",
+                            "70021",
+                            "70023",
+                            "70025",
+                            "70027"
+                        )
+                }
+            }
+
+        val orangeSouthboundTypical =
+            objects.routePattern(orangeRoute) {
+                id = "Orange-3-0"
+                typicality = RoutePattern.Typicality.Typical
+                directionId = 0
+                representativeTrip {
+                    id = "canonical-Orange-C1-0"
+                    headsign = "Forest Hills"
+                    directionId = 0
+                    stopIds =
+                        listOf(
+                            "70036",
+                            "70034",
+                            "70032",
+                            "70278",
+                            "70030",
+                            "70028",
+                            "70026",
+                            "70024",
+                            "70022",
+                            "70020",
+                            "70018",
+                            "70016",
+                            "70014",
+                            "70012",
+                            "70010",
+                            "70008",
+                            "70006",
+                            "70004",
+                            "70002",
+                            "70001"
+                        )
+                }
+            }
+
+        val orangeSouthboundDiversion =
+            objects.routePattern(orangeRoute) {
+                id = "Orange-6-0"
+                typicality = RoutePattern.Typicality.Diversion
+                directionId = 0
+                representativeTrip {
+                    id = "65743311"
+                    headsign = "Forest Hills"
+                    directionId = 0
+                    stopIds =
+                        listOf(
+                            "70026",
+                            "70024",
+                            "70022",
+                            "70020",
+                            "70018",
+                            "70016",
+                            "70014",
+                            "70012",
+                            "70010",
+                            "70008",
+                            "70006",
+                            "70004",
+                            "70002",
+                            "70001"
+                        )
+                }
+            }
+
+        val orangeNorthboundDiversionTrip = objects.trip(orangeNorthboundDiversion)
+        val orangeSouthboundDiversionTrip = objects.trip(orangeSouthboundDiversion)
+
+        val time = Instant.parse("2024-10-30T16:40:00-04:00")
+
+        // Scheduled northbound arrivals with North station as last stop
+        val northboundSchedule =
+            objects.schedule {
+                trip = orangeNorthboundDiversionTrip
+                stopId = northStationNorthboundPlatform.id
+                stopSequence = 130
+                arrivalTime = time + 4.minutes
+                departureTime = null
+            }
+
+        val northboundPrediction =
+            objects.prediction {
+                trip = orangeNorthboundDiversionTrip
+                stopId = northStationNorthboundPlatform.id
+                stopSequence = 130
+                arrivalTime = time + 8.minutes
+                departureTime = null
+            }
+
+        // Scheduled southbound departures
+        val southboundSchedule =
+            objects.schedule {
+                trip = orangeSouthboundDiversionTrip
+                stopId = northStationSouthboundPlatform.id
+                stopSequence = 60
+                arrivalTime = null
+                departureTime = time + 6.minutes
+            }
+
+        val alert =
+            objects.alert {
+                id = "601685"
+                activePeriod(
+                    Instant.parse("2024-10-28T03:00:00-04:00"),
+                    Instant.parse("2024-11-02T03:00:00-04:00")
+                )
+                cause = Alert.Cause.Maintenance
+                effect = Alert.Effect.Shuttle
+                informedEntity =
+                    mutableListOf(
+                        // North station entities
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride
+                                ),
+                            route = orangeRoute.id,
+                            routeType = RouteType.HEAVY_RAIL,
+                            stop = northStationSouthboundPlatform.id
+                        ),
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Ride
+                                ),
+                            route = orangeRoute.id,
+                            routeType = RouteType.HEAVY_RAIL,
+                            stop = northStationNorthboundPlatform.id
+                        ),
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride
+                                ),
+                            route = orangeRoute.id,
+                            routeType = RouteType.HEAVY_RAIL,
+                            stop = northStation.id
+                        )
+                        // TODO: other entities if needed
+                    )
+            }
+
+        val staticData =
+            NearbyStaticData.build {
+                route(orangeRoute) {
+                    stop(northStation) {
+                        headsign(
+                            "Forest Hills",
+                            listOf(orangeSouthboundTypical, orangeSouthboundDiversion)
+                        )
+                        headsign("Oak Grove", listOf(orangeNorthboundTypical))
+                        headsign("North Station", listOf(orangeNorthboundDiversion))
+                    }
+                }
+            }
+
+        assertEquals(
+            listOf(
+                StopsAssociated.WithRoute(
+                    orangeRoute,
+                    listOf(
+                        PatternsByStop(
+                            orangeRoute,
+                            northStation,
+                            listOf(
+                                RealtimePatterns.ByHeadsign(
+                                    orangeRoute,
+                                    "Forest Hills",
+                                    null,
+                                    listOf(orangeSouthboundTypical, orangeSouthboundDiversion),
+                                    listOf(
+                                        UpcomingTrip(
+                                            orangeSouthboundDiversionTrip,
+                                            southboundSchedule
+                                        )
+                                    ),
+                                    alertsHere = listOf(alert),
+                                    hasSchedulesToday = true
+                                ),
+                                RealtimePatterns.ByHeadsign(
+                                    orangeRoute,
+                                    "Oak Grove",
+                                    null,
+                                    listOf(orangeNorthboundTypical),
+                                    emptyList(),
+                                    alertsHere = listOf(alert),
+                                    hasSchedulesToday = false
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            staticData.withRealtimeInfo(
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = northStation.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
+                filterAtTime = time,
+                pinnedRoutes = setOf(),
+            )
+        )
+    }
+
+    @Test
     fun `withRealtimeInfo checks route along with route pattern and stop`() {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()

@@ -579,6 +579,20 @@ fun NearbyStaticData.withRealtimeInfo(
                 null -> this.isUpcoming()
                 else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
             }
+
+        if (patterns.any { it.routeId == "Orange" }) {
+
+            when (this) {
+                is RealtimePatterns.ByHeadsign -> println("Headsign: ${headsign}")
+                else -> println("NOT reached")
+            }
+
+            patterns.forEach { println("pattern id ${it.id}") }
+            println(
+                "Stats: typical: ${isTypical()} isUpcoming: ${isUpcoming} arrivalOnly: ${isArrivalOnly()}"
+            )
+        }
+
         return (isTypical() || isUpcoming) && !isArrivalOnly()
     }
 

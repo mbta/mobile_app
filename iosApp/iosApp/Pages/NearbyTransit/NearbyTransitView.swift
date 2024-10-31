@@ -388,7 +388,7 @@ struct NearbyTransitView: View {
                                 "\(upcomingTrip.trip.routePatternId)"
                             }.joined(separator: ",")
 
-                            print("rps: \(rps), upcoming trip rps: \(upcomingTripRps)")
+                            //     print("rps: \(rps), upcoming trip rps: \(upcomingTripRps)")
                         }
                     }
                 }
