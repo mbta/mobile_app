@@ -44,7 +44,7 @@ struct MoreSectionView: View {
                                     .padding(.horizontal, 16)
                                     .frame(minHeight: 44)
                             case let .link(label: label, url: url, note: note):
-                                MoreLink(label: label, url: url, note: note)
+                                MoreLink(label: label, url: url, note: note, isKey: section.id == .feedback)
                             case let .phone(label: label, phoneNumber: phoneNumber):
                                 MorePhone(label: label, phoneNumber: phoneNumber)
                             }
@@ -57,7 +57,7 @@ struct MoreSectionView: View {
                         }
                     }
                 }
-                .background(Color.fill3)
+                .background(section.id == .feedback ? Color.key : Color.fill3)
                 .clipShape(.rect(cornerRadius: 8.0))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8.0)
