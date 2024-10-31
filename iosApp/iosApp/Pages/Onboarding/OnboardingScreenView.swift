@@ -23,19 +23,29 @@ struct OnboardingScreenView: View {
     @Environment(\.dynamicTypeSize) var typeSize
     @State private var pulse: CGFloat = 1
 
+    private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
+    private var screenWidth: CGFloat { UIScreen.current?.bounds.width ?? 393.0 }
+
+    // Use less padding on smaller screens
+    private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 52 }
+    private var sidePadding: CGFloat { screenWidth < 393 ? 16 : 32 }
+
+    private var locationHaloSize: CGFloat { screenWidth * 0.8 }
+    private var moreHaloSize: CGFloat { screenWidth * 0.55 }
+
     private var haloOffset: CGFloat {
-        let height = UIScreen.current?.bounds.height ?? 852.0
-        return -((height / 2) - (height / 3) + 2)
-    }
-
-    private var locationHaloSize: CGFloat {
-        let width = UIScreen.current?.bounds.width ?? 393.0
-        return width * 0.8
-    }
-
-    private var moreHaloSize: CGFloat {
-        let width = UIScreen.current?.bounds.width ?? 393.0
-        return width * 0.55
+        let height = screenHeight
+        let width = screenWidth
+        // If the aspect ratio of the screen is greater than the image,
+        // it will be cut off on the top and bottom, which changes the
+        // position of the icon we want the halo to be centered on
+        // (390x844 are the background image dimensions)
+        if width / height >= 390 / 844 {
+            let scaledHeight = (width / 390) * 844
+            return -((scaledHeight / 2) - (scaledHeight / 3) - 6)
+        } else {
+            return -((height / 2) - (height / 3))
+        }
     }
 
     let inspection = Inspection<Self>()
@@ -57,147 +67,145 @@ struct OnboardingScreenView: View {
         VStack(spacing: 0) {
             switch screen {
             case .feedback:
-                ZStack {
-                    Color.fill2.edgesIgnoringSafeArea(.all)
-                    if typeSize < .accessibility2 {
-                        Image(.onboardingMoreButton)
-                            .resizable()
-                            .scaledToFill()
-                            .edgesIgnoringSafeArea(.all)
-                            .accessibilityHidden(true)
-                        Image(.onboardingHalo)
-                            .resizable()
-                            .frame(width: moreHaloSize, height: moreHaloSize)
-                            .scaleEffect(pulse)
-                            .offset(x: 0, y: haloOffset)
-                            .onAppear {
-                                pulse = 1
-                                withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
-                                    pulse = 1.22 * pulse
-                                }
-                            }
-                            .accessibilityHidden(true)
-                    }
-                    VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Spacer()
+                    Text("Help us improve")
+                        .font(Typography.title1Bold)
+                        .accessibilityHeading(.h1)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityFocused($focusHeader, equals: .feedback)
+                    Text(
+                        "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features."
+                    )
+                    .font(Typography.title3)
+                    .padding(.bottom, 16)
+                    .accessibilityHint(Text("Use the \"More\" navigation tab to send app feedback"))
+                    .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                    if typeSize >= .accessibility2, typeSize < .accessibility5 {
                         Spacer()
-                        Text("Help us improve")
+                    }
+                    Button(action: advance) {
+                        Text("Get started").onboardingKeyButton()
+                    }
+                }
+                .padding(.horizontal, sidePadding)
+                .padding(.bottom, bottomPadding)
+                .background {
+                    ZStack(alignment: .center) {
+                        Color.fill2.edgesIgnoringSafeArea(.all)
+                        if typeSize < .accessibility2 {
+                            Image(.onboardingMoreButton)
+                                .resizable()
+                                .scaledToFill()
+                                .edgesIgnoringSafeArea(.all)
+                                .accessibilityHidden(true)
+                            Image(.onboardingHalo)
+                                .resizable()
+                                .frame(width: moreHaloSize, height: moreHaloSize)
+                                .scaleEffect(pulse)
+                                .offset(x: 0, y: haloOffset)
+                                .onAppear {
+                                    pulse = 1
+                                    withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
+                                        pulse = 1.22 * pulse
+                                    }
+                                }
+                                .accessibilityHidden(true)
+                        }
+                    }
+                }
+
+            case .hideMaps:
+                VStack(alignment: .leading, spacing: 16) {
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Set map preference")
                             .font(Typography.title1Bold)
                             .accessibilityHeading(.h1)
                             .accessibilityAddTraits(.isHeader)
-                            .accessibilityFocused($focusHeader, equals: .feedback)
+                            .accessibilityFocused($focusHeader, equals: .hideMaps)
                         Text(
-                            "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features."
+                            "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
                         )
                         .font(Typography.title3)
-                        .padding(.bottom, 16)
-                        .accessibilityHint(Text("Use the \"More\" navigation tab to send app feedback"))
-                        .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-                        if typeSize >= .accessibility2, typeSize < .accessibility5 {
-                            Spacer()
-                        }
-                        Button(action: advance) {
-                            Text("Get started").onboardingKeyButton()
-                        }
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 56)
+                    .padding(32)
+                    .background(Color.fill2)
+                    .clipShape(.rect(cornerRadius: 32.0))
+                    .shadow(radius: 16)
+                    .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+                    Spacer()
+                    Button(action: { hideMaps(true) }) {
+                        Text("Hide maps").onboardingKeyButton()
+                    }
+                    Button(action: { hideMaps(false) }) {
+                        Text("Show maps").onboardingSecondaryButton()
+                    }
                 }
-            case .hideMaps:
-                ZStack {
+                .padding(.horizontal, sidePadding)
+                .padding(.bottom, bottomPadding)
+                .background {
                     Image(.onboardingBackgroundMap)
                         .resizable()
                         .scaledToFill()
                         .edgesIgnoringSafeArea(.all)
                         .accessibilityHidden(true)
-                    VStack(alignment: .leading, spacing: 16) {
-                        Spacer()
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Set map preference")
-                                .font(Typography.title1Bold)
-                                .accessibilityHeading(.h1)
-                                .accessibilityAddTraits(.isHeader)
-                                .accessibilityFocused($focusHeader, equals: .hideMaps)
-                            Text(
-                                "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
-                            )
-                            .font(Typography.title3)
-                        }
-                        .padding(32)
-                        .background(Color.fill2)
-                        .clipShape(.rect(cornerRadius: 32.0))
-                        .shadow(radius: 16)
-                        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
-                        Spacer()
-                        Button(action: { Task {
-                            try await settingUseCase.set(setting: .hideMaps, value: true)
-                            advance()
-                        }}) {
-                            Text("Hide maps").onboardingKeyButton()
-                        }
-                        Button(action: { Task {
-                            try await settingUseCase.set(setting: .hideMaps, value: false)
-                            advance()
-                        }}) {
-                            Text("Show maps").onboardingSecondaryButton()
-                        }
-                    }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 56)
                 }
+
             case .location:
-                ZStack(alignment: .center) {
-                    Image(.onboardingBackgroundMap)
-                        .resizable()
-                        .scaledToFill()
-                        .edgesIgnoringSafeArea(.all)
-                        .accessibilityHidden(true)
-                    if typeSize < .xxxLarge {
-                        Image(.onboardingHalo)
-                            .resizable()
-                            .frame(width: locationHaloSize, height: locationHaloSize)
-                            .scaleEffect(pulse)
-                            .offset(x: 0, y: haloOffset)
-                            .onAppear {
-                                pulse = 1
-                                withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
-                                    pulse = 1.15 * pulse
-                                }
-                            }
-                            .accessibilityHidden(true)
-                        Image(.onboardingTransitLines)
+                VStack(alignment: .leading, spacing: 16) {
+                    Spacer()
+                    Text("See transit near you")
+                        .font(Typography.title1Bold)
+                        .accessibilityHeading(.h1)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityFocused($focusHeader, equals: .location)
+                    Text("We use your location to show you nearby transit options.")
+                        .font(Typography.title3)
+                        .padding(.bottom, 16)
+                    if typeSize >= .xxxLarge, typeSize < .accessibility3 {
+                        Spacer()
+                    }
+                    Button(action: {
+                        guard let locationPermissionHandler else { return }
+                        locationFetcher = createLocationFetcher()
+                        locationFetcher?.locationFetcherDelegate = locationPermissionHandler
+                    }) {
+                        Text("Allow Location Services").onboardingKeyButton()
+                    }
+                    Button(action: advance) {
+                        Text("Skip for now").onboardingSecondaryButton()
+                    }
+                }
+                .dynamicTypeSize(...DynamicTypeSize.accessibility4)
+                .padding(.horizontal, sidePadding)
+                .padding(.bottom, bottomPadding)
+                .background {
+                    ZStack(alignment: .center) {
+                        Image(.onboardingBackgroundMap)
                             .resizable()
                             .scaledToFill()
-                            .edgesIgnoringSafeArea(.all)
                             .accessibilityHidden(true)
-                    }
-                    VStack(alignment: .leading, spacing: 16) {
-                        Spacer()
-                        Text("See transit near you")
-                            .font(Typography.title1Bold)
-                            .accessibilityHeading(.h1)
-                            .accessibilityAddTraits(.isHeader)
-                            .accessibilityFocused($focusHeader, equals: .location)
-                        Text("We use your location to show you nearby transit options.")
-                            .font(Typography.title3)
-                            .padding(.bottom, 16)
-                        if typeSize >= .xxxLarge {
-                            Spacer()
-                        }
-                        Button(action: {
-                            guard let locationPermissionHandler else { return }
-                            locationFetcher = createLocationFetcher()
-                            locationFetcher?.locationFetcherDelegate = locationPermissionHandler
-                        }) {
-                            Text("Allow Location Services").onboardingKeyButton()
-                        }
-                        Button(action: advance) {
-                            Text("Skip for now").onboardingSecondaryButton()
+                        if typeSize < .xxxLarge {
+                            Image(.onboardingHalo)
+                                .resizable()
+                                .frame(width: locationHaloSize, height: locationHaloSize)
+                                .scaleEffect(pulse)
+                                .offset(x: 0, y: haloOffset)
+                                .onAppear {
+                                    pulse = 1
+                                    withAnimation(.easeInOut(duration: 1.25).repeatForever(autoreverses: true)) {
+                                        pulse = 1.15 * pulse
+                                    }
+                                }
+                                .accessibilityHidden(true)
+                            Image(.onboardingTransitLines)
+                                .resizable()
+                                .scaledToFill()
+                                .accessibilityHidden(true)
                         }
                     }
-                    .dynamicTypeSize(...DynamicTypeSize.accessibility4)
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 56)
-                }
+                }.edgesIgnoringSafeArea(.all)
             }
         }
         .onChange(of: screen) { nextScreen in
@@ -213,6 +221,13 @@ struct OnboardingScreenView: View {
             )
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+    }
+
+    func hideMaps(_ hide: Bool) {
+        Task {
+            try await settingUseCase.set(setting: .hideMaps, value: hide)
+            advance()
+        }
     }
 
     private class LocationPermissionHandler: NSObject, LocationFetcherDelegate, CLLocationManagerDelegate {
