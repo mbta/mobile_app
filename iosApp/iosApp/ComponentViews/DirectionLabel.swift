@@ -38,6 +38,7 @@ struct DirectionLabel: View {
                      .textCase(.none)
                 Text(destination)
                     .font(Typography.bodySemibold)
+                    .multilineTextAlignment(.leading)
                     .textCase(.none)
             } else {
                 Text(directionNameFormatted(direction))
