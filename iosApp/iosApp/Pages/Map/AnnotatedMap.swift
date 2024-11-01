@@ -46,6 +46,7 @@ struct AnnotatedMap: View {
             ))
             .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
             .debugOptions(mapDebug ? .camera : [])
+            .cameraBounds(.init(maxZoom: 18, minZoom: 6))
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
             .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
