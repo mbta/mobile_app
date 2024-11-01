@@ -35,11 +35,11 @@ struct MoreSectionView: View {
                     ForEach(Array(section.items.enumerated()), id: \.element.id) { index, row in
                         VStack(alignment: .leading, spacing: 0) {
                             switch row {
-                            case let .toggle(setting: toggle):
+                            case let .toggle(label: label, setting: setting, value: value):
                                 Toggle(isOn: Binding<Bool>(
-                                    get: { toggle.isOn },
-                                    set: { _ in toggleSetting(toggle.key) }
-                                )) { Text(row.label) }
+                                    get: { value },
+                                    set: { _ in toggleSetting(setting) }
+                                )) { Text(label) }
                                     .padding(.vertical, 6)
                                     .padding(.horizontal, 16)
                                     .frame(minHeight: 44)

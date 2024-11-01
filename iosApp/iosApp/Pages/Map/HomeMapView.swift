@@ -14,6 +14,7 @@ import SwiftUI
 
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
@@ -53,6 +54,7 @@ struct HomeMapView: View {
 
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
+        contentVM: ContentViewModel,
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
@@ -66,6 +68,7 @@ struct HomeMapView: View {
         globalMapData: GlobalMapData? = nil
     ) {
         self.globalRepository = globalRepository
+        self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
@@ -106,8 +109,11 @@ struct HomeMapView: View {
                  */
                 nearbyVM.selectingLocation = true
             }
+            .onChange(of: contentVM.onboardingScreensPending) { _ in
+                checkOnboardingLoaded()
+            }
             .onAppear {
-                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
+                checkOnboardingLoaded()
             }
             .onDisappear {
                 mapVM.layerManager = nil
@@ -166,6 +172,7 @@ struct HomeMapView: View {
             guard status == .authorizedAlways || status == .authorizedWhenInUse,
                   viewportProvider.isDefault() else { return }
             viewportProvider.follow(animation: .easeInOut(duration: 0))
+            mapVM.layerManager?.resetPuckPosition()
         }
         .onChange(of: nearbyVM.navigationStack) { nextNavStack in
             handleNavStackChange(navigationStack: nextNavStack)

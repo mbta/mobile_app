@@ -34,6 +34,7 @@ struct PredictionRowView: View {
         HStack(spacing: 0) {
             if let secondaryAlert = predictions.secondaryAlert {
                 Image(secondaryAlert.iconName)
+                    // TODO: Properly localize all possible alert effects for VoiceOver
                     .accessibilityLabel(secondaryAlert.alertEffect.name)
                     .frame(width: 18, height: 18)
                     .padding(.trailing, 8)

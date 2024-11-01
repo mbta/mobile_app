@@ -69,6 +69,12 @@ extension HomeMapView {
         lastNavEntry = navigationStack.last
     }
 
+    func checkOnboardingLoaded() {
+        if contentVM.onboardingScreensPending == [] {
+            locationDataManager.requestWhenInUseAuthorization()
+        }
+    }
+
     @MainActor
     func activateGlobalListener() async {
         for await globalData in globalRepository.state {

@@ -31,24 +31,47 @@ struct TripDetailsStopView: View {
                     .accessibilityHeading(.h2)
                 }
             )
-            scrollRoutes
-                .accessibilityElement()
-                .accessibilityLabel(scrollRoutesAccessibilityLabel)
+            if !stop.routes.isEmpty {
+                scrollRoutes
+                    .accessibilityElement()
+                    .accessibilityLabel(scrollRoutesAccessibilityLabel)
+            }
         }
+    }
+
+    func connectionLabel(route: Route) -> String {
+        String(format: NSLocalizedString(
+            "%@ %@",
+            comment: """
+            A route label and route type pair,
+            ex 'Red Line train' or '73 bus', used in connecting stop labels
+            """
+        ), route.label, route.type.typeText(isOnly: true))
     }
 
     var scrollRoutesAccessibilityLabel: String {
         if stop.routes.isEmpty {
             return ""
         } else if stop.routes.count == 1 {
-            return "Connection to \(stop.routes.first!.label) \(stop.routes.first!.type.typeText(isOnly: true))"
+            return String(format: NSLocalizedString(
+                "Connection to %@",
+                comment: "VoiceOver label for a single connecting route at a stop, ex 'Connection to 1 bus'"
+            ), connectionLabel(route: stop.routes.first!))
         } else {
-            let lastConnection = stop.routes.last
-            return "Connections to" + stop.routes.prefix(stop.routes.count - 1).map {
-                "\($0.label) \($0.type.typeText(isOnly: true))"
-            }
-            .joined(separator: ", ") +
-            " and \(lastConnection!.label) \(lastConnection!.type.typeText(isOnly: true))"
+            let firstConnections = stop.routes.prefix(stop.routes.count - 1)
+            let lastConnection = stop.routes.last!
+            return String(
+                format: NSLocalizedString(
+                    "Connections to %@ and %@",
+                    comment: """
+                    VoiceOver label for multiple connecting routes at a stop,
+                    ex 'Connections to Red Line train, 71 bus, and 73 bus',
+                    the first replaced value can be any number of comma separated route labels
+                    """
+                ),
+                firstConnections.map(connectionLabel).joined(separator: ", "),
+                connectionLabel(route: lastConnection)
+            )
         }
     }
 

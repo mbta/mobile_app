@@ -31,7 +31,7 @@ final class VehicleCardViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let sut = VehicleCardView(vehicle: vehicle, route: route, stop: stop, trip: trip)
-        XCTAssertNotNil(try sut.inspect().find(text: "This vehicle is completing another trip."))
+        XCTAssertNotNil(try sut.inspect().find(text: "This vehicle is completing another trip"))
     }
 
     func testVehicleApproaching() {

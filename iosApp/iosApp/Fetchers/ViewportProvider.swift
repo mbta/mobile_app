@@ -79,7 +79,7 @@ class ViewportProvider: ObservableObject {
     }
 
     func isDefault() -> Bool {
-        viewport.camera?.center == Defaults.center
+        viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
     }
 
     func animateTo(
@@ -100,6 +100,13 @@ class ViewportProvider: ObservableObject {
         withViewportAnimation(animation) {
             self.viewport = viewport
         }
+    }
+
+    func updateCameraState(_ location: CLLocation?) {
+        guard let coordinate = location?.coordinate else { return }
+        updateCameraState(
+            .init(center: coordinate, padding: .zero, zoom: 0, bearing: 0, pitch: 0)
+        )
     }
 
     func updateCameraState(_ state: CameraState) {

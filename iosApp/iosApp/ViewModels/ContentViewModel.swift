@@ -13,16 +13,22 @@ import shared
 class ContentViewModel: ObservableObject {
     @Published var configResponse: ApiResult<ConfigResponse>?
     @Published var hideMaps: Bool
+    @Published var onboardingScreensPending: [OnboardingScreen]?
 
     var configUseCase: ConfigUseCase
+    var onboardingRepository: IOnboardingRepository
     var settingsRepository: ISettingsRepository
 
     init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
          configResponse: ApiResult<ConfigResponse>? = nil,
+         onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding,
+         onboardingScreensPending: [OnboardingScreen]? = nil,
          settingsRepository: ISettingsRepository = RepositoryDI().settings,
          hideMaps: Bool = false) {
         self.configUseCase = configUseCase
         self.configResponse = configResponse
+        self.onboardingRepository = onboardingRepository
+        self.onboardingScreensPending = onboardingScreensPending
         self.settingsRepository = settingsRepository
         self.hideMaps = hideMaps
     }
@@ -40,6 +46,10 @@ class ContentViewModel: ObservableObject {
     }
 
     @MainActor func loadHideMaps() async {
-        hideMaps = await (try? settingsRepository.getSettings().first { $0.key == .hideMaps }?.isOn) ?? false
+        hideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
+    }
+
+    @MainActor func loadOnboardingScreens() async {
+        onboardingScreensPending = await (try? onboardingRepository.getPendingOnboarding()) ?? []
     }
 }

@@ -24,6 +24,7 @@ final class HomeMapViewTest: XCTestCase {
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider,

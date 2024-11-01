@@ -15,7 +15,7 @@ class SettingsViewModel: ObservableObject {
     @Published var sections = [MoreSection]()
 
     private let settingsRepository: ISettingsRepository
-    private var settings: Set<Setting> = Set()
+    private var settings: [Settings: Bool] = [:]
     private var cancellables = Set<AnyCancellable>()
 
     init(settingsRepository: ISettingsRepository = RepositoryDI().settings) {
@@ -23,17 +23,12 @@ class SettingsViewModel: ObservableObject {
     }
 
     func toggleSetting(key: Settings) {
-        setSettings(settings.map { setting in
-            if key == setting.key {
-                setting.isOn = !setting.isOn
-            }
-            return setting
-        })
+        setSettings([key: !(settings[key] ?? false)])
     }
 
     @MainActor func getSections() async {
         do {
-            settings = try await settingsRepository.getSettings()
+            settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
             sections = [
                 MoreSection(id: .feedback, items: [
                     .link(
@@ -71,14 +66,34 @@ class SettingsViewModel: ObservableObject {
                         )
                     ),
                 ]),
-                MoreSection(
-                    id: .settings,
-                    items: settings.filter { $0.category == .settings }.map { MoreItem.toggle(setting: $0) }
-                ),
-                MoreSection(
-                    id: .featureFlags,
-                    items: settings.filter { $0.category == .featureFlags }.map { MoreItem.toggle(setting: $0) }
-                ),
+                MoreSection(id: .settings, items: [
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Hide Maps",
+                            comment: "A setting on the More page to remove the app component from the app"
+                        ),
+                        setting: .hideMaps,
+                        value: settings[.hideMaps] ?? false
+                    ),
+                ]),
+                MoreSection(id: .featureFlags, items: [
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Map Debug",
+                            comment: "A setting on the More page to display map debug information (only visible for developers)"
+                        ),
+                        setting: .map,
+                        value: settings[.map] ?? false
+                    ),
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Route Search",
+                            comment: "A setting on the More page to display routes in search (only visible for developers)"
+                        ),
+                        setting: .searchRouteResults,
+                        value: settings[.searchRouteResults] ?? false
+                    ),
+                ]),
                 MoreSection(id: .other, items: [
                     .link(
                         label: NSLocalizedString(
@@ -111,9 +126,10 @@ class SettingsViewModel: ObservableObject {
         }
     }
 
-    private func setSettings(_ settings: [Setting]) {
+    private func setSettings(_ settings: [Settings: Bool]) {
         Task {
-            try await settingsRepository.setSettings(settings: Set(settings))
+            try await settingsRepository.setSettings(settings: settings.mapValues { KotlinBoolean(bool: $0) })
+            await self.getSections()
         }
     }
 }

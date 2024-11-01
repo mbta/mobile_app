@@ -46,8 +46,13 @@ struct MorePage: View {
                         )
                     }
                     HStack(alignment: .center, spacing: 16) {
-                        Image(.mbtaLogo).resizable().frame(width: 64, height: 64)
-                        Text("Made with ♥ by the T").font(Typography.callout)
+                        Image(.mbtaLogo)
+                            .resizable()
+                            .frame(width: 64, height: 64)
+                            .accessibilityLabel(Text("MBTA Logo", comment: "Accessibility text for logo"))
+                        Text("Made with ♥ by the T")
+                            .font(Typography.callout)
+                            .accessibilityLabel(Text("Made with love, by the T"))
                     }
                 }
                 .padding(.horizontal, 16)

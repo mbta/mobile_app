@@ -14,32 +14,33 @@ import XCTest
 
 final class MorePageTests: XCTestCase {
     class FakeSettingsRepository: ISettingsRepository {
-        var settings: Set<Setting>
+        var settings: [Settings: Bool]
         let onGet: (() -> Void)?
-        let onSet: ((Set<Setting>) -> Void)?
+        let onSet: (([Settings: Bool]) -> Void)?
 
         init(
             mapDebug: Bool,
             searchRouteResults: Bool,
             onGet: (() -> Void)? = nil,
-            onSet: ((Set<Setting>) -> Void)? = nil
+            onSet: (([Settings: Bool]) -> Void)? = nil
         ) {
             settings = [
-                Setting(key: .map, isOn: mapDebug),
-                Setting(key: .searchRouteResults, isOn: searchRouteResults),
+                .map: mapDebug,
+                .searchRouteResults: searchRouteResults,
             ]
             self.onGet = onGet
             self.onSet = onSet
         }
 
-        func __getSettings() async throws -> Set<Setting> {
+        func __getSettings() async throws -> [Settings: KotlinBoolean] {
             onGet?()
-            return settings
+            return settings.mapValues { KotlinBoolean(bool: $0) }
         }
 
-        func __setSettings(settings: Set<Setting>) async throws {
-            onSet?(settings)
-            self.settings = settings
+        func __setSettings(settings: [Settings: KotlinBoolean]) async throws {
+            let settingsUnboxed = settings.mapValues { $0.boolValue }
+            onSet?(settingsUnboxed)
+            self.settings = settingsUnboxed
         }
     }
 
@@ -73,8 +74,8 @@ final class MorePageTests: XCTestCase {
             searchRouteResults: false,
             onGet: { loadedPublisher.send(()) },
             onSet: {
-                let mapSetting = $0.first(where: { $0.key == .map })
-                XCTAssertTrue(mapSetting?.isOn == true)
+                let mapSetting = $0[.map] ?? false
+                XCTAssertTrue(mapSetting)
                 savedExp.fulfill()
             }
         )

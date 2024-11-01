@@ -39,7 +39,12 @@ struct NearbyTransitPageView: View {
                 SheetHeader(title: NSLocalizedString("Nearby Transit", comment: "Header for nearby transit sheet"))
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                 if viewportProvider.isManuallyCentering {
-                    LoadingCard { Text("select location") }.padding(.horizontal, 16).padding(.bottom, 16)
+                    LoadingCard {
+                        Text(
+                            "Select location",
+                            comment: "Visible when the user is panning the map to search for nearby transit"
+                        )
+                    }.padding(.horizontal, 16).padding(.bottom, 16)
                 } else {
                     NearbyTransitView(
                         getNearby: { global, location in

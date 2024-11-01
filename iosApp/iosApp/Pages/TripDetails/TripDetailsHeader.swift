@@ -28,7 +28,14 @@ struct TripDetailsHeader: View {
                 .accessibilityElement()
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h1)
-                .accessibilityLabel("\(route.label) \(route.type.typeText(isOnly: true)) to \(trip.headsign)")
+                .accessibilityLabel(Text(
+                    "\(route.label) \(route.type.typeText(isOnly: true)) to \(trip.headsign)",
+                    comment: """
+                    VoiceOver text for the trip details page header,
+                    describes the route and destination of the vehicle,
+                    ex 'Red Line train to Alewife'
+                    """
+                ))
             }
             Spacer()
             ActionButton(kind: .close, action: onClose)
@@ -43,12 +50,15 @@ struct TripDetailsHeader: View {
             Image(.liveData)
                 .resizable()
                 .frame(width: 16, height: 16)
-            Text("Live", comment: "real-time")
+            Text("Live", comment: "Indicates that data is being updated in real-time")
                 .font(Typography.footnote)
         }
         .accessibilityElement()
         .accessibilityAddTraits(.isHeader)
-        .accessibilityLabel("Real-time arrivals updating live")
+        .accessibilityLabel(Text(
+            "Real-time arrivals updating live",
+            comment: "VoiceOver label for real-time indicator icon"
+        ))
     }
 
     func toHeadsign(_ headsign: String) -> some View {
