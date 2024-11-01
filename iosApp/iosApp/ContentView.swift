@@ -172,6 +172,12 @@ struct ContentView: View {
                         nearbyVM.goBack()
                     }
                 }, content: coverContents)
+                .onAppear {
+                    viewportProvider.updateCameraState(locationDataManager.currentLocation)
+                }
+                .onChange(of: locationDataManager.currentLocation) { location in
+                    viewportProvider.updateCameraState(location)
+                }
         } else {
             mapSection
                 .sheet(
