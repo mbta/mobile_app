@@ -35,17 +35,33 @@ final class OnboardingScreenViewTests: XCTestCase {
         wait(for: [exp], timeout: 5)
     }
 
+    func testLocationDeferred() throws {
+        let saveSettingExp = expectation(description: "saves location deferred setting")
+        let settingsRepo = MockSettingsRepository(settings: [:], onSaveSettings: {
+            XCTAssertEqual($0, [.locationDeferred: true])
+            saveSettingExp.fulfill()
+        })
+        let advanceExp = expectation(description: "calls advance()")
+        let sut = OnboardingScreenView(
+            screen: .location,
+            advance: { advanceExp.fulfill() },
+            settingsRepository: settingsRepo
+        )
+        try sut.inspect().find(button: "Not now").tap()
+        wait(for: [saveSettingExp, advanceExp], timeout: 1)
+    }
+
     func testHideMapsFlow() throws {
         let saveSettingExp = expectation(description: "saves hide maps setting")
-        let settingsRepo = MockSettingsRepository(settings: [.init(key: .hideMaps, isOn: false)], onSaveSettings: {
-            XCTAssertEqual($0, [.init(key: .hideMaps, isOn: true)])
+        let settingsRepo = MockSettingsRepository(settings: [.hideMaps: false], onSaveSettings: {
+            XCTAssertEqual($0, [.hideMaps: true])
             saveSettingExp.fulfill()
         })
         let advanceExp = expectation(description: "calls advance()")
         let sut = OnboardingScreenView(
             screen: .hideMaps,
             advance: { advanceExp.fulfill() },
-            settingUseCase: SettingUsecase(repository: settingsRepo)
+            settingsRepository: settingsRepo
         )
         XCTAssertNotNil(try sut.inspect()
             .find(text: "For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise."))

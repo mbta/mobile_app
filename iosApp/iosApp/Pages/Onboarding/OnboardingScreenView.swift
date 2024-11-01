@@ -15,7 +15,7 @@ struct OnboardingScreenView: View {
     let advance: () -> Void
 
     let createLocationFetcher: () -> any LocationFetcher
-    let settingUseCase: SettingUsecase
+    let settingsRepository: ISettingsRepository
     @State private var locationFetcher: LocationFetcher?
     private let locationPermissionHandler: LocationPermissionHandler
 
@@ -25,12 +25,12 @@ struct OnboardingScreenView: View {
         screen: OnboardingScreen,
         advance: @escaping () -> Void,
         createLocationFetcher: @escaping () -> any LocationFetcher = { CLLocationManager() },
-        settingUseCase: SettingUsecase = UsecaseDI().settingUsecase
+        settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
         self.screen = screen
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
-        self.settingUseCase = settingUseCase
+        self.settingsRepository = settingsRepository
         locationPermissionHandler = LocationPermissionHandler(
             screen: screen,
             advance: advance
@@ -51,24 +51,30 @@ struct OnboardingScreenView: View {
                 Text("For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise.")
                 Button("Hide maps") {
                     Task {
-                        try await settingUseCase.set(setting: .hideMaps, value: true)
+                        try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: true)])
                         advance()
                     }
                 }
                 Button("Show maps") {
                     Task {
-                        try await settingUseCase.set(setting: .hideMaps, value: false)
+                        try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: false)])
                         advance()
                     }
                 }
             case .location:
                 Text("We’ll use your location to show the lines and bus routes near you.")
                 Button("Share location") {
+                    Task {
+                        try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: false)])
+                    }
                     locationFetcher = createLocationFetcher()
 
                     locationFetcher?.locationFetcherDelegate = locationPermissionHandler
                 }
                 Button("Not now") {
+                    Task {
+                        try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: true)])
+                    }
                     advance()
                 }
             }
