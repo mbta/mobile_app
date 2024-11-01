@@ -12,6 +12,7 @@ struct MoreLink: View {
     var label: String
     var url: String
     var note: String? = nil
+    var isKey: Bool = false
 
     @ScaledMetric
     private var iconSize: CGFloat = 10.5
@@ -21,11 +22,11 @@ struct MoreLink: View {
             HStack(alignment: .center, spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(label)
-                        .foregroundStyle(Color.text)
+                        .foregroundStyle(isKey ? Color.fill3 : Color.text)
                         .font(Typography.body)
                     if let note {
                         Text(note)
-                            .foregroundStyle(Color.text)
+                            .foregroundStyle(isKey ? Color.fill3 : Color.text)
                             .font(Typography.footnote)
                             .opacity(0.6)
                             .padding(.top, 2)
@@ -35,7 +36,7 @@ struct MoreLink: View {
                 Image(systemName: "arrow.up.right")
                     .resizable()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
-                    .foregroundStyle(Color.deemphasized)
+                    .foregroundStyle(isKey ? Color.fill3 : Color.deemphasized)
                     .fontWeight(.bold)
             }
         }

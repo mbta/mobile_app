@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import shared
+import SwiftUI
 
 class SettingsViewModel: ObservableObject {
     @Published var sections = [MoreSection]()
@@ -29,6 +30,15 @@ class SettingsViewModel: ObservableObject {
         do {
             settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
             sections = [
+                MoreSection(id: .feedback, items: [
+                    .link(
+                        label: NSLocalizedString(
+                            "Send app feedback",
+                            comment: "Label for a More page link to a form to provide feedback on the app itself"
+                        ),
+                        url: "https://mbta.com/appfeedback"
+                    ),
+                ]),
                 MoreSection(id: .resources, items: [
                     .link(
                         label: NSLocalizedString(
@@ -98,6 +108,13 @@ class SettingsViewModel: ObservableObject {
                             comment: "Label for a More page link to the MBTA.com privacy policy"
                         ),
                         url: "https://www.mbta.com/policies/privacy-policy"
+                    ),
+                    .link(
+                        label: NSLocalizedString(
+                            "View source on GitHub",
+                            comment: "Label for a More page link to the MBTA Go source code"
+                        ),
+                        url: "https://github.com/mbta/mobile_app"
                     ),
                 ]),
                 MoreSection(id: .support, items: [

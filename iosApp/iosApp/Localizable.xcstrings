@@ -2983,6 +2983,9 @@
     "Select to call" : {
 
     },
+    "Send app feedback" : {
+      "comment" : "Label for a More page link to a form to provide feedback on the app itself"
+    },
     "Service Change" : {
       "comment" : "Possible alert effect"
     },
@@ -4398,6 +4401,9 @@
     },
     "version %@" : {
       "comment" : "Version number label on the More page"
+    },
+    "View source on GitHub" : {
+      "comment" : "Label for a More page link to the MBTA Go source code"
     },
     "We use your location to show you nearby transit options." : {
 
