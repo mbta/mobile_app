@@ -47,6 +47,8 @@ struct MoreSectionView: View {
                                 MoreLink(label: label, url: url, note: note, isKey: section.id == .feedback)
                             case let .phone(label: label, phoneNumber: phoneNumber):
                                 MorePhone(label: label, phoneNumber: phoneNumber)
+                            case let .navLink(label: label, destination: destination):
+                                MoreNavLink(label: label, destination: destination)
                             }
                             if index < section.items.count {
                                 Rectangle()

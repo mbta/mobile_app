@@ -34,6 +34,15 @@ dependencyResolutionManagement {
     }
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    }
+}
+
 rootProject.name = "MBTA_App"
 
 include(":androidApp")

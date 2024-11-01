@@ -3341,6 +3341,9 @@
         }
       }
     },
+    "Software Licenses" : {
+      "comment" : "Label for a More page link to view dependency licenses"
+    },
     "Southbound" : {
       "comment" : "A route direction label"
     },

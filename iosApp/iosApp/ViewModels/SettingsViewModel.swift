@@ -26,6 +26,7 @@ class SettingsViewModel: ObservableObject {
         setSettings([key: !(settings[key] ?? false)])
     }
 
+    // swiftlint:disable:next function_body_length
     @MainActor func getSections() async {
         do {
             settings = try await settingsRepository.getSettings().mapValues { $0.boolValue }
@@ -108,6 +109,13 @@ class SettingsViewModel: ObservableObject {
                             comment: "Label for a More page link to the MBTA.com privacy policy"
                         ),
                         url: "https://www.mbta.com/policies/privacy-policy"
+                    ),
+                    .navLink(
+                        label: NSLocalizedString(
+                            "Software Licenses",
+                            comment: "Label for a More page link to view dependency licenses"
+                        ),
+                        destination: .licenses
                     ),
                     .link(
                         label: NSLocalizedString(

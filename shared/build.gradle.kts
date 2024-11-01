@@ -1,15 +1,34 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
+import de.undercouch.gradle.tasks.download.Download
+import java.util.Base64
+import kotlin.io.path.writeText
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.cyclonedx.Version
+import org.cyclonedx.generators.json.BomJsonGenerator
+import org.cyclonedx.generators.xml.BomXmlGenerator
+import org.cyclonedx.model.AttachmentText
+import org.cyclonedx.model.Bom
+import org.cyclonedx.model.Component
+import org.cyclonedx.model.License
+import org.cyclonedx.model.LicenseChoice
+import org.cyclonedx.parsers.JsonParser
+import org.cyclonedx.parsers.XmlParser
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry)
     alias(libs.plugins.serialization)
     alias(libs.plugins.skie)
+    id("de.undercouch.download").version("5.6.0")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -25,6 +44,7 @@ kotlin {
     cocoapods {
         summary = "Common library for the MBTA mobile app"
         homepage = "https://github.com/mbta/mobile_app"
+        license = "MIT"
         version = "1.0"
         ios.deploymentTarget = "15.0"
         podfile = project.file("../iosApp/Podfile")
@@ -92,6 +112,349 @@ skie {
         group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) }
         enableSwiftUIObservingPreview = true
     }
+}
+
+task("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }
+
+abstract class DependencyCodegenTask : DefaultTask() {
+    @get:InputFile abstract var inputPath: Provider<RegularFile>
+    @get:OutputFile abstract var outputPath: RegularFile
+
+    private fun AttachmentText.decoded(): String =
+        when (this.encoding) {
+            null -> this.text
+            "base64" -> String(Base64.getDecoder().decode(this.text))
+            else -> throw NotImplementedError("encoding $encoding not supported")
+        }
+
+    private val Component.displayName: String
+        get() =
+            if (group == null) name
+            else if (purl.startsWith("pkg:maven/")) "${group}:${name}"
+            else "${group.removePrefix("github.com/")}/${name}"
+
+    @TaskAction
+    fun run() {
+        val inputPath = this.inputPath.get().asFile
+        val outputPath = this.outputPath.asFile
+        val bom =
+            (if (inputPath.extension == "json") JsonParser() else XmlParser()).parse(inputPath)
+        val dependencyLines =
+            bom.components
+                .sortedBy { it.displayName.lowercase() }
+                .mapNotNull { component ->
+                    val purl = component.purl
+                    val name = component.displayName
+                    val licenseText =
+                        try {
+                            component.licenses.licenses.joinToString("\n") {
+                                it.attachmentText.decoded()
+                            }
+                        } catch (e: Throwable) {
+                            logger.error("bad license for $purl: $e")
+                            return@mapNotNull null
+                        }
+                    "Dependency(\"$purl\", \"$name\", \"\"\"$licenseText\"\"\")"
+                }
+        val outputText =
+            """
+            package com.mbta.tid.mbta_app.model
+
+            actual fun Dependency.Companion.getAllDependencies(): List<Dependency> = listOf(
+            ${dependencyLines.joinToString(",\n")}
+            )
+            """
+                .trimIndent()
+        outputPath.writeText(outputText)
+    }
+}
+
+abstract class CycloneDxBomTransformTask : DefaultTask() {
+    @get:InputFile abstract var inputPath: Provider<RegularFile>
+    @get:OutputFile abstract var outputPath: Provider<RegularFile>
+    @get:Internal abstract var transform: Bom.() -> Unit
+
+    @TaskAction
+    fun run() {
+        val inputPath = this.inputPath.get().asFile
+        val outputPath = this.outputPath.get().asFile
+        val bom =
+            (if (inputPath.extension == "json") JsonParser() else XmlParser()).parse(inputPath)
+        bom.transform()
+        val outputText =
+            if (outputPath.extension == "json") {
+                BomJsonGenerator(bom, Version.VERSION_16).toJsonString()
+            } else {
+                BomXmlGenerator(bom, Version.VERSION_16).toXmlString()
+            }
+        outputPath.toPath().writeText(outputText)
+    }
+}
+
+tasks.getByName("preBuild").dependsOn("bomCodegenAndroid", "bomCodegenIos")
+
+task<DependencyCodegenTask>("bomCodegenAndroid") {
+    dependsOn("bomAndroid")
+    inputPath = layout.buildDirectory.file("boms/bom-android.json")
+    outputPath =
+        layout.projectDirectory.file(
+            "src/androidMain/kotlin/com/mbta/tid/mbta_app/model/Dependency.android.kt"
+        )
+}
+
+task<DependencyCodegenTask>("bomCodegenIos") {
+    dependsOn("bomIos")
+    inputPath = layout.buildDirectory.file("boms/bom-ios.xml")
+    outputPath =
+        layout.projectDirectory.file(
+            "src/iosMain/kotlin/com/mbta/tid/mbta_app/model/Dependency.ios.kt"
+        )
+}
+
+task<CycloneDxBomTransformTask>("bomAndroid") {
+    dependsOn(":androidApp:cyclonedxBom")
+    inputPath = projects.androidApp.dependencyProject.layout.buildDirectory.file("reports/bom.json")
+    outputPath = layout.buildDirectory.file("boms/bom-android.json")
+    transform = {
+        components =
+            components.filter { it.purl != "pkg:maven/MBTA_App/shared@unspecified?type=jar" }
+    }
+}
+
+task<CycloneDxBomTransformTask>("bomIos") {
+    dependsOn("bomIosMerged")
+    inputPath = layout.buildDirectory.file("boms/bom-ios-merged.xml")
+    outputPath = layout.buildDirectory.file("boms/bom-ios.xml")
+    transform = {
+        components =
+            components.filterNot {
+                setOf(
+                        "pkg:maven/MBTA_App/shared@unspecified?type=jar",
+                        "pkg:swift/iosApp.xcworkspace@latest",
+                        "pkg:swift/iosApp@latest"
+                    )
+                    .contains(it.purl)
+            }
+        // the hardcoded stdlib bom doesn't handle this
+        components
+            .single { it.group == "org.jetbrains.kotlin" && it.name == "kotlin-stdlib" }
+            .licenses
+            .addLicense(
+                License().apply {
+                    name = "Apache Harmony copyright notice"
+                    setLicenseText(
+                        AttachmentText().apply {
+                            // this MIME type is backwards but it is consistent with other tools
+                            contentType = "plain/text"
+                            text =
+                                """
+Apache Harmony
+Copyright 2006, 2010 The Apache Software Foundation.
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+Portions of Apache Harmony were originally developed by
+Intel Corporation and are licensed to the Apache Software
+Foundation under the "Software Grant and Corporate Contribution
+License Agreement" and for which the following copyright notices
+apply
+         (C) Copyright 2005 Intel Corporation
+         (C) Copyright 2005-2006 Intel Corporation
+         (C) Copyright 2006 Intel Corporation
+                                """
+                                    .trim()
+                        }
+                    )
+                }
+            )
+    }
+}
+
+task<Exec>("bomIosMerged") {
+    dependsOn(
+        "bomIosKotlinDeps",
+        "bomIosKotlinStdlib",
+        "bomIosCocoapods",
+        "bomIosSwiftPM",
+        "bomCycloneDxCliDownload"
+    )
+    workingDir = layout.buildDirectory.dir("boms").get().asFile
+    commandLine(
+        layout.buildDirectory.file("bom/cyclonedx-cli").get(),
+        "merge",
+        "--input-files",
+        "bom-ios-kotlin-deps.xml",
+        "bom-ios-kotlin-stdlib.xml",
+        "bom-ios-cocoapods.xml",
+        "bom-ios-swiftpm.json",
+        "--output-file",
+        "bom-ios-merged.xml"
+    )
+}
+
+task<Download>("bomCycloneDxCliDownload") {
+    val os =
+        DefaultNativePlatform.getCurrentOperatingSystem().let {
+            when {
+                it.isLinux -> "linux"
+                it.isMacOsX -> "osx"
+                else -> throw IllegalStateException("can't download CycloneDX CLI for $it")
+            }
+        }
+    val arch =
+        DefaultNativePlatform.getCurrentArchitecture().let {
+            when {
+                it.isArm64 -> "arm64"
+                it.isAmd64 -> "x64"
+                else -> throw IllegalStateException("can't download CycloneDX CLI for $it")
+            }
+        }
+    src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.27.1/cyclonedx-$os-$arch")
+    dest(layout.buildDirectory.file("bom/cyclonedx-cli"))
+    onlyIfModified(true)
+    doLast {
+        exec { commandLine("chmod", "+x", layout.buildDirectory.file("bom/cyclonedx-cli").get()) }
+    }
+}
+
+task<Copy>("bomIosKotlinDeps") {
+    dependsOn(tasks.cyclonedxBom)
+    mustRunAfter("bomCodegenAndroid")
+    from(layout.buildDirectory.file("reports/bom-ios.xml"))
+    rename { "bom-ios-kotlin-deps.xml" }
+    into(layout.buildDirectory.dir("boms"))
+}
+
+task<Copy>("bomIosKotlinStdlib") {
+    mustRunAfter("bomCodegenAndroid")
+    from(layout.projectDirectory.file("src/iosMain/xml/bom-ios-kotlin-stdlib.xml"))
+    into(layout.buildDirectory.dir("boms"))
+}
+
+task<CycloneDxBomTransformTask>("bomIosCocoapods") {
+    dependsOn("bomIosCocoapodsRaw")
+    mustRunAfter("bomIosKotlinDeps", "bomIosKotlinStdlib")
+    inputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
+    outputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods.xml")
+    transform = {
+        components =
+            components.filter { it.purl != "pkg:cocoapods/shared@1.0?file_name=..%2Fshared%2F" }
+        // cyclonedx-cocoapods doesn't embed licenses
+        for (component in components) {
+            // this is all very manual, so make sure it doesn't start silently failing
+            check(component.name.startsWith("Sentry"))
+            component.licenses.licenses
+                .single()
+                .setLicenseText(
+                    AttachmentText().apply {
+                        text =
+                            layout.projectDirectory
+                                .file("../iosApp/Pods/Sentry/LICENSE.md")
+                                .asFile
+                                .readText()
+                    }
+                )
+        }
+    }
+}
+
+task<Exec>("bomIosCocoapodsRaw") {
+    workingDir = layout.projectDirectory.dir("../iosApp").asFile
+    commandLine(
+        "bundle",
+        "exec",
+        "cyclonedx-cocoapods",
+        "-o",
+        layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml").get()
+    )
+}
+
+task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
+    dependsOn("bomIosSwiftPMRaw")
+    mustRunAfter("bomIosKotlinDeps", "bomIosKotlinStdlib")
+    inputPath = layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json")
+    outputPath = layout.buildDirectory.file("boms/bom-ios-swiftpm.json")
+    transform = {
+        // even with FETCH_LICENSES=true, the actual license text isn't embedded, so fetch it
+        // directly
+        for (component in components) {
+            component.licenses = LicenseChoice()
+            check(component.purl.startsWith("pkg:swift/github.com/")) {
+                "bad purl ${component.purl}"
+            }
+            val licenseApiPath =
+                component.purl
+                    .replace("pkg:swift/github.com/", "/repos/")
+                    .replace(
+                        "@",
+                        if (
+                            component.name == "gtm-session-fetcher" ||
+                                component.group == "github.com/mapbox"
+                        )
+                            "/license?ref=v"
+                        else "/license?ref="
+                    )
+            val apiRequest =
+                ProcessBuilder("gh", "api", licenseApiPath)
+                    .redirectError(ProcessBuilder.Redirect.INHERIT)
+                    .redirectOutput(ProcessBuilder.Redirect.PIPE)
+                    .start()
+            val apiResponse = apiRequest.inputReader().readText()
+            check(apiRequest.waitFor() == 0) { "bad api result from $licenseApiPath" }
+            val response = Json.parseToJsonElement(apiResponse)
+
+            component.licenses.addLicense(
+                License().apply {
+                    setLicenseText(
+                        AttachmentText().apply {
+                            encoding =
+                                checkNotNull(response.jsonObject["encoding"]).jsonPrimitive.content
+                            check(encoding == "base64") {
+                                "encoding $encoding not base64 as expected"
+                            }
+                            text =
+                                checkNotNull(response.jsonObject["content"])
+                                    .jsonPrimitive
+                                    .content
+                                    .replace(Regex("\\s+"), "")
+                            val knownLicense =
+                                response.jsonObject["license"]
+                                    ?.jsonObject
+                                    ?.get("spdx_id")
+                                    ?.jsonPrimitive
+                                    ?.content
+                            if (knownLicense != null && knownLicense != "NOASSERTION") {
+                                id = knownLicense
+                            }
+                        }
+                    )
+                }
+            )
+        }
+    }
+}
+
+task<Exec>("bomIosSwiftPMRaw") {
+    workingDir = layout.projectDirectory.dir("../iosApp").asFile
+    commandLine(
+        "npx",
+        "@cyclonedx/cdxgen",
+        "-t",
+        "swift",
+        "-o",
+        layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json").get(),
+        "iosApp.xcworkspace"
+    )
+}
+
+tasks.cyclonedxBom {
+    includeConfigs =
+        listOf(
+            "commonMainImplementationDependenciesMetadata",
+            "iosMainImplementationDependenciesMetadata"
+        )
+    outputName = "bom-ios"
 }
 
 mokkery {
