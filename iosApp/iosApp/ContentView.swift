@@ -52,7 +52,11 @@ struct ContentView: View {
     @ViewBuilder
     var contents: some View {
         if let onboardingScreensPending = contentVM.onboardingScreensPending, !onboardingScreensPending.isEmpty {
-            OnboardingPage(screens: onboardingScreensPending, onFinish: { contentVM.onboardingScreensPending = [] })
+            OnboardingPage(screens: onboardingScreensPending, onFinish: {
+                contentVM.onboardingScreensPending = []
+                // onboarding can write location deferred
+                Task { await locationDataManager.loadLocationDeferred() }
+            })
         } else if selectedTab == .more {
             TabView(selection: $selectedTab) {
                 nearbyTab
