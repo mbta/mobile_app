@@ -27,19 +27,25 @@ struct SearchField: View {
                     .padding(.all, 4)
                     .foregroundStyle(Color.deemphasized)
                     .accessibilityHidden(true)
-                TextField("Stops", text: $searchObserver.searchText)
-                    .accessibilityAddTraits(.isSearchField)
-                    .focused($isFocused)
-                    .submitLabel(.done)
-                    .padding(.horizontal, 2)
-                    .padding(.vertical, 8)
-                    .animation(.smooth, value: searchObserver.isSearching)
+                TextField(
+                    NSLocalizedString("Stops", comment: "Placeholder text in the empty search field"),
+                    text: $searchObserver.searchText
+                )
+                .accessibilityAddTraits(.isSearchField)
+                .focused($isFocused)
+                .submitLabel(.done)
+                .padding(.horizontal, 2)
+                .padding(.vertical, 8)
+                .animation(.smooth, value: searchObserver.isSearching)
                 if !searchObserver.searchText.isEmpty {
                     ActionButton(kind: .clear) {
                         searchObserver.isFocused = true
                         searchObserver.clear()
                     }
-                    .accessibilityLabel("clear search text")
+                    .accessibilityLabel(Text(
+                        "clear search text",
+                        comment: "VoiceOver label for clear search text button"
+                    ))
                     .padding(.all, 4)
                 }
             }
@@ -58,7 +64,9 @@ struct SearchField: View {
                 Button(action: {
                     searchObserver.isFocused = false
                     searchObserver.clear()
-                }, label: { Text("Cancel") }).accessibilityLabel("close search page")
+                }, label: {
+                    Text("Cancel", comment: "Cancel searching, clears the search term and closes the search page")
+                }).accessibilityLabel(Text("close search page", comment: "VoiceOver label for cancel search button"))
                     .dynamicTypeSize(...DynamicTypeSize.large)
             }
         }

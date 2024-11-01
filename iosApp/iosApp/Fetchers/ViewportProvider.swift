@@ -79,7 +79,7 @@ class ViewportProvider: ObservableObject {
     }
 
     func isDefault() -> Bool {
-        viewport.camera?.center == Defaults.center
+        viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
     }
 
     func animateTo(

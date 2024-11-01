@@ -74,7 +74,7 @@ class SearchViewModel: ObservableObject {
         do {
             let settings = try await settingsRepo.getSettings()
             await MainActor.run { [settings] in
-                routeResultsEnabled = settings.first(where: { $0.key == .searchRouteResults })?.isOn ?? false
+                routeResultsEnabled = settings[.searchRouteResults]?.boolValue ?? false
             }
         } catch {}
     }

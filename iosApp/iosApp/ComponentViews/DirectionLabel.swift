@@ -12,13 +12,17 @@ import SwiftUI
 struct DirectionLabel: View {
     let direction: Direction
 
-    private let reformatDirectionNames: Set<String> = ["North", "South", "East", "West"]
+    private let localizedDirectionNames: [String: String] = [
+        "North": NSLocalizedString("Northbound", comment: "A route direction label"),
+        "South": NSLocalizedString("Southbound", comment: "A route direction label"),
+        "East": NSLocalizedString("Eastbound", comment: "A route direction label"),
+        "West": NSLocalizedString("Westbound", comment: "A route direction label"),
+        "Inbound": NSLocalizedString("Inbound", comment: "A route direction label"),
+        "Outbound": NSLocalizedString("Outbound", comment: "A route direction label"),
+    ]
 
     private func directionNameFormatted(_ direction: Direction) -> String {
-        if reformatDirectionNames.contains(direction.name) {
-            return "\(direction.name)bound"
-        }
-        return direction.name
+        localizedDirectionNames[direction.name] ?? NSLocalizedString("Heading", comment: "A route direction label")
     }
 
     var body: some View {
@@ -26,7 +30,9 @@ struct DirectionLabel: View {
             if let destination = direction.destination {
                 Text("\(directionNameFormatted(direction)) to",
                      comment: """
-                     Label the direction a list of arrivals is for. Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound. For example, "[Northbound] to [Alewife]
+                     Label the direction a list of arrivals is for.
+                     Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
+                     For example, "[Northbound] to [Alewife]
                      """)
                      .font(Typography.footnote)
                      .textCase(.none)

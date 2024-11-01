@@ -23,7 +23,7 @@ struct AnnotatedMap: View {
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
 
-    var getSettingUsecase = UsecaseDI().getSettingUsecase
+    var settingsRepository: ISettingsRepository = RepositoryDI().settings
     @State var mapDebug = false
 
     @ObservedObject var viewportProvider: ViewportProvider
@@ -68,7 +68,7 @@ struct AnnotatedMap: View {
             .withScenePhaseHandlers(onActive: onActive)
             .task {
                 do {
-                    mapDebug = try await getSettingUsecase.execute(setting: .map).boolValue
+                    mapDebug = try await settingsRepository.getSettings()[.map]?.boolValue ?? false
                 } catch {
                     debugPrint("Failed to load map debug", error)
                 }

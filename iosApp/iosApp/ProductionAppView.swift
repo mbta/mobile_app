@@ -88,7 +88,11 @@ struct ProductionAppView: View {
     }
 
     private static func initKoin(appCheck: IAppCheckRepository, socket: PhoenixSocket) {
-        let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(appCheck: appCheck, socket: socket)
+        let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(
+            accessibilityStatus: AccessibilityStatusRepository(),
+            appCheck: appCheck,
+            socket: socket
+        )
         HelpersKt.doInitKoin(appVariant: appVariant, nativeModule: nativeModule)
     }
 

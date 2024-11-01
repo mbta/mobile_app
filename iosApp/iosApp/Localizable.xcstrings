@@ -1,49 +1,31 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "**%@** affected stops" : {
+    "**%ld** affected stops" : {
       "comment" : "The number of stops affected by an alert",
       "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%@** paradas afectadas"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%@** arè ki afekte yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%@** paradas afetadas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%@** điểm dừng bị ảnh hưởng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%@**个受影响站点"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%@**個受影響網站"
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "**%ld** affected stop"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "**%ld** affected stops"
+                }
+              }
+            }
           }
         }
       }
     },
     "%@ %@" : {
-      "comment" : "First value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
+      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels\nFirst value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -85,6 +67,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@" : {
+      "comment" : "VoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "%@ %@ to %@" : {
+      "comment" : "VoiceOver text for the trip details page header,\ndescribes the route and destination of the vehicle,\nex 'Red Line train to Alewife'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ to %3$@"
           }
         }
       }
@@ -137,6 +141,7 @@
       }
     },
     "%@ arriving at %@ cancelled" : {
+      "comment" : "Describe the time at which a cancelled vehicle was scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM cancelled'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -241,6 +246,7 @@
       }
     },
     "%@ arriving in %@ min scheduled" : {
+      "comment" : "Describe the number of minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives\nFor example, 'bus arriving in 5 minutes, scheduled'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -332,60 +338,19 @@
         }
       }
     },
-    "%@ Bus" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Autobús %@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ Bis"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ Ônibus"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ Xe buýt"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@巴士"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@巴士"
-          }
-        }
-      }
-    },
-    "%@ hr %@ min" : {
-      "extractionState" : "manual",
+    "%@ is %ld stops away from %@" : {
+      "comment" : "VoiceOver label for how many stops away a vehicle is from a stop,\nex 'bus is 4 stops away from Harvard'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ hr %2$@ min"
+            "state" : "new",
+            "value" : "%1$@ is %2$ld stops away from %3$@"
           }
         }
       }
     },
     "%@ to" : {
-      "comment" : "Label the direction a list of arrivals is for. Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound. For example, \"[Northbound] to [Alewife]",
+      "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -425,183 +390,19 @@
         }
       }
     },
-    "%ld min" : {
-      "extractionState" : "manual",
+    "%ld hr %ld min" : {
+      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
       "localizations" : {
-        "es" : {
+        "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld min."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld min"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%ld分鐘"
+            "state" : "new",
+            "value" : "%1$ld hr %2$ld min"
           }
         }
       }
     },
-    "%ld stops" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld stop"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%ld stops"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld parada"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld paradas"
-                }
-              }
-            }
-          }
-        },
-        "ht" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld arè"
-                }
-              },
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld arè"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld arè"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld arè"
-                }
-              },
-              "two" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld arè"
-                }
-              },
-              "zero" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld arè"
-                }
-              }
-            }
-          }
-        },
-        "pt-BR" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld parada"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld paradas"
-                }
-              }
-            }
-          }
-        },
-        "vi" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld điểm dừng"
-                }
-              }
-            }
-          }
-        },
-        "zh-Hans-CN" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld站"
-                }
-              }
-            }
-          }
-        },
-        "zh-Hant-TW" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%ld站"
-                }
-              }
-            }
-          }
-        }
-      }
+    "%ld min" : {
+      "comment" : "Shorthand displayed number of minutes until arrival, ex \"12 min\""
     },
     "%ld stops away" : {
       "comment" : "How many stops away the vehicle is from the target stop",
@@ -668,6 +469,7 @@
       }
     },
     "Alert Details" : {
+      "comment" : "Header on the alert details page",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -748,6 +550,7 @@
       }
     },
     "All" : {
+      "comment" : "Button label for clearing selected route to display all routes at a station",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -786,6 +589,16 @@
           }
         }
       }
+    },
+    "All aboard" : {
+      "comment" : "Status for a boarding commuter rail train",
+      "extractionState" : "manual"
+    },
+    "All routes" : {
+      "comment" : "VoiceOver label for the button to clear\nselected route to display all routes at a station\""
+    },
+    "Allow Location Services" : {
+
     },
     "Amtrak" : {
       "comment" : "Possible alert cause",
@@ -993,7 +806,7 @@
       }
     },
     "and at %@ cancelled" : {
-
+      "comment" : "The second or more cancelled arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM cancelled'"
     },
     "and at %@ scheduled" : {
       "comment" : "The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'",
@@ -1119,7 +932,7 @@
       }
     },
     "and in %@ min scheduled" : {
-
+      "comment" : "The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes, scheduled'"
     },
     "Approaching" : {
       "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife",
@@ -1243,6 +1056,9 @@
           }
         }
       }
+    },
+    "Back" : {
+      "comment" : "VoiceOver label for a generic back button"
     },
     "BRD" : {
       "comment" : "Shorthand for boarding",
@@ -1368,10 +1184,22 @@
       }
     },
     "Cancel" : {
-
+      "comment" : "Cancel searching, clears the search term and closes the search page"
     },
     "Cancelled" : {
-
+      "comment" : "The status label for a cancelled trip"
+    },
+    "Clear" : {
+      "comment" : "VoiceOver label for a generic clear button"
+    },
+    "clear search text" : {
+      "comment" : "VoiceOver label for clear search text button"
+    },
+    "Close" : {
+      "comment" : "VoiceOver label for a generic close button"
+    },
+    "close search page" : {
+      "comment" : "VoiceOver label for cancel search button"
     },
     "Coast Guard Restriction" : {
       "comment" : "Possible alert cause",
@@ -1458,6 +1286,20 @@
         }
       }
     },
+    "Connection to %@" : {
+      "comment" : "VoiceOver label for a single connecting route at a stop, ex 'Connection to 1 bus'"
+    },
+    "Connections to %@ and %@" : {
+      "comment" : "VoiceOver label for multiple connecting routes at a stop,\nex 'Connections to Red Line train, 71 bus, and 73 bus',\nthe first replaced value can be any number of comma separated route labels",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Connections to %1$@ and %2$@"
+          }
+        }
+      }
+    },
     "Construction" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1540,6 +1382,10 @@
         }
       }
     },
+    "Delayed" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
+    },
     "Demonstration" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1580,6 +1426,10 @@
           }
         }
       }
+    },
+    "Departed" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
     },
     "Detour" : {
       "comment" : "Possible alert effect",
@@ -1786,6 +1636,9 @@
         }
       }
     },
+    "Eastbound" : {
+      "comment" : "A route direction label"
+    },
     "Electrical Work" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1869,7 +1722,7 @@
       }
     },
     "Error loading data" : {
-
+      "comment" : "Displayed when loading necessary information fails"
     },
     "Fare Information" : {
       "comment" : "Label for a More page link to fare information on MBTA.com"
@@ -2132,6 +1985,9 @@
     "General MBTA Information & Support" : {
       "comment" : "More page section header, includes user support resources"
     },
+    "Get started" : {
+
+    },
     "Hazmat Condition" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2173,6 +2029,9 @@
         }
       }
     },
+    "Heading" : {
+      "comment" : "A route direction label"
+    },
     "Heavy Ridership" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -2213,6 +2072,12 @@
           }
         }
       }
+    },
+    "Help us improve" : {
+
+    },
+    "Hide maps" : {
+      "comment" : "Onboarding button text for setting maps to hidden"
     },
     "Hide Maps" : {
       "comment" : "A setting on the More page to remove the app component from the app"
@@ -2381,30 +2246,31 @@
         }
       }
     },
-    "in %@ hr %@ min\n" : {
-      "extractionState" : "manual",
+    "in %ld hr %ld min" : {
+      "comment" : "Shorthand displayed number of hours and minutes until arrival for VoiceOver,\nex 'in 1 hr 32 min'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "in %1$@ hr %2$@ min\n"
+            "state" : "new",
+            "value" : "in %1$ld hr %2$ld min"
           }
         }
       }
     },
-    "in %@ min" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "in %1$@ min"
-          }
-        }
-      }
+    "in %ld min" : {
+      "comment" : "Shorthand displayed number of minutes until arrival for VoiceOver, ex 'in 7 min'"
+    },
+    "Inbound" : {
+      "comment" : "A route direction label"
+    },
+    "Keep Location Services Off" : {
+      "comment" : "Prompt button to close the alert (and not change location service setting)"
+    },
+    "List remaining stops" : {
+      "comment" : "VoiceOver hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)"
     },
     "Live" : {
-      "comment" : "real-time",
+      "comment" : "Indicates that data is being updated in real-time",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2440,46 +2306,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即時"
-          }
-        }
-      }
-    },
-    "loading" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cargando"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "chajman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "carregando"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "đang tải"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在載入"
           }
         }
       }
@@ -2524,92 +2350,13 @@
         }
       }
     },
-    "Location access denied or restricted" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acceso a la ubicación denegado o restringido"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aksè ak anplasman an refize oswa gen restriksyon"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acesso ao local negado ou restrito"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quyền truy cập thông tin vị trí bị từ chối hoặc hạn chế"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "位置权限被拒绝或限制"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "位置許可權被拒絕或限制"
-          }
-        }
-      }
-    },
-    "Location access state unknown" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado de acceso a la ubicación desconocido"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eta aksè anplasman pa konnen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado do acesso ao local desconhecido"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trạng thái quyền truy cập thông tin vị trí không xác định"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "位置权限状态未知"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "位置許可權狀態不明"
-          }
-        }
-      }
-    },
     "Location Services is off" : {
-
+      "comment" : "Banner letting the user know they aren't sharing their location"
     },
     "Made with ♥ by the T" : {
+
+    },
+    "Made with love, by the T" : {
 
     },
     "Maintenance" : {
@@ -2658,6 +2405,15 @@
     },
     "MBTA Go" : {
 
+    },
+    "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features." : {
+
+    },
+    "MBTA Go works best with Location Services turned on" : {
+
+    },
+    "MBTA Logo" : {
+      "comment" : "Accessibility text for logo"
     },
     "Mechanical Problem" : {
       "comment" : "Possible alert cause",
@@ -2744,8 +2500,14 @@
     "Monday through Friday: 6:30 AM - 8 PM" : {
       "comment" : "Footnote under the More page support header, these are the hours for the support call center"
     },
+    "More" : {
+      "comment" : "The label for the More page in the navigation bar"
+    },
     "mTicket App" : {
       "comment" : "Footnote underneath the \"Commuter Rail and Ferry tickets\" label on the More page link to the MBTA mTicket app"
+    },
+    "Nearby" : {
+      "comment" : "The label for the Nearby Transit page in the navigation bar"
     },
     "Nearby Transit" : {
       "comment" : "Header for nearby transit sheet"
@@ -2795,6 +2557,7 @@
 
     },
     "No Service" : {
+      "comment" : "Possible alert effect",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2835,10 +2598,13 @@
       }
     },
     "No service today" : {
-
+      "comment" : "The status label for a route when no service is running for the entire service day"
+    },
+    "Northbound" : {
+      "comment" : "A route direction label"
     },
     "Now" : {
-
+      "comment" : "Label for a trip that's arriving right now"
     },
     "Now at" : {
       "comment" : "Label for a where a vehicle is currently stopped. For example: Now at Alewife",
@@ -2881,6 +2647,10 @@
         }
       }
     },
+    "Now boarding" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
+    },
     "Open for more arrivals" : {
       "localizations" : {
         "es" : {
@@ -2920,6 +2690,9 @@
           }
         }
       }
+    },
+    "Outbound" : {
+      "comment" : "A route direction label"
     },
     "Parade" : {
       "comment" : "Possible alert cause",
@@ -2961,6 +2734,9 @@
           }
         }
       }
+    },
+    "Pins route to the top of the list" : {
+      "comment" : "VoiceOver hint for favorite button when a route is not favorited"
     },
     "Plan a route with Trip Planner" : {
       "localizations" : {
@@ -3126,13 +2902,31 @@
       }
     },
     "Predictions unavailable" : {
-
+      "comment" : "The status label when no predictions exist for a route and direction"
     },
     "Privacy Policy" : {
       "comment" : "Label for a More page link to the MBTA.com privacy policy"
     },
+    "Real-time arrivals updating live" : {
+      "comment" : "VoiceOver label for real-time indicator icon"
+    },
     "Recently Viewed" : {
 
+    },
+    "Refresh" : {
+      "comment" : "Refresh button label"
+    },
+    "Refresh predictions" : {
+      "comment" : "Refresh button label for reloading predictions"
+    },
+    "Reload data" : {
+      "comment" : "Refresh button label"
+    },
+    "Removes route from the top of the list" : {
+      "comment" : "VoiceOver hint for favorite button when a route is already favorited"
+    },
+    "Removes selected filter so that arrivals from all routes are displayed" : {
+      "comment" : "VoiceOver hint for the button to\nclear selected route to display all routes at a station"
     },
     "Resources" : {
       "comment" : "More page section header, includes links to MBTA.com and mTicket app"
@@ -3180,53 +2974,23 @@
         }
       }
     },
-    "select location" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "seleccionar ubicación"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "chwazi anplasman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "selecionar local"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "chọn vị trí"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择位置"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇位置"
-          }
-        }
-      }
+    "See transit near you" : {
+
+    },
+    "Select location" : {
+      "comment" : "Visible when the user is panning the map to search for nearby transit"
+    },
+    "Select to call" : {
+
     },
     "Service Change" : {
       "comment" : "Possible alert effect"
     },
     "Service ended" : {
-
+      "comment" : "The status label for a route and direction when service was running earlier, but no more trips are running today"
     },
     "Service suspended" : {
+      "comment" : "Suspension alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3265,6 +3029,9 @@
           }
         }
       }
+    },
+    "Set map preference" : {
+      "comment" : "Onboarding screen header for asking VoiceOver users if they want to hide maps"
     },
     "Settings" : {
       "comment" : "More page section header, includes settings that the user can configure",
@@ -3348,6 +3115,9 @@
         }
       }
     },
+    "Show maps" : {
+      "comment" : "Onboarding button text for setting maps to shown"
+    },
     "Shuttle" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -3390,6 +3160,7 @@
       }
     },
     "Shuttle buses replace service" : {
+      "comment" : "Shuttle alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3469,6 +3240,9 @@
           }
         }
       }
+    },
+    "Skip for now" : {
+      "comment" : "Button text for deferring the request for location services"
     },
     "Slippery Rail" : {
       "comment" : "Possible alert cause",
@@ -3552,6 +3326,9 @@
         }
       }
     },
+    "Southbound" : {
+      "comment" : "A route direction label"
+    },
     "Special Event" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -3633,6 +3410,9 @@
           }
         }
       }
+    },
+    "Star route" : {
+      "comment" : "VoiceOver label for the button to favorite a route"
     },
     "Start" : {
       "comment" : "Label for the start date of a disruption",
@@ -3758,6 +3538,7 @@
       }
     },
     "Stop Closed" : {
+      "comment" : "Possible alert effect",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3837,6 +3618,17 @@
           }
         }
       }
+    },
+    "Stopped %ld stops away" : {
+      "comment" : "Trip status when a vehicle is standing by at a station",
+      "extractionState" : "manual"
+    },
+    "Stopped at station" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
+    },
+    "Stops" : {
+      "comment" : "Placeholder text in the empty search field"
     },
     "Strike" : {
       "comment" : "Possible alert cause",
@@ -4005,42 +3797,42 @@
     "Terms of Use" : {
       "comment" : "Label for a More page link to the MBTA.com terms of use"
     },
-    "This vehicle is completing another trip." : {
+    "This vehicle is completing another trip" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este vehículo está realizando otro viaje."
+            "value" : "Este vehículo está realizando otro viaje"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Machin nan ap fè yon lòt vwayaj."
+            "value" : "Machin nan ap fè yon lòt vwayaj"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este veículo está concluindo outra viagem."
+            "value" : "Este veículo está concluindo outra viagem"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Xe này đang hoàn thành một chuyến đi khác."
+            "value" : "Xe này đang hoàn thành một chuyến đi khác"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "该汽车正在执行其他路线任务。"
+            "value" : "该汽车正在执行其他路线任务"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "該汽車正在執行其他路線任務。"
+            "value" : "該汽車正在執行其他路線任務"
           }
         }
       }
@@ -4335,8 +4127,11 @@
     "Trip Planner" : {
       "comment" : "Label for a More page link to the MBTA.com trip planner"
     },
+    "Turn On in Settings" : {
+      "comment" : "Prompt button linking to app settings, for the user to enable location services"
+    },
     "Unable to connect" : {
-
+      "comment" : "Displayed when the phone is not connected to the network"
     },
     "Unruly Passenger" : {
       "comment" : "Possible alert cause",
@@ -4421,6 +4216,7 @@
       }
     },
     "Updated %ld minutes ago" : {
+      "comment" : "Displayed when prediction data has not been able to update for an unexpected amount of time",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -4597,8 +4393,14 @@
         }
       }
     },
+    "Use the \"More\" navigation tab to send app feedback" : {
+
+    },
     "version %@" : {
       "comment" : "Version number label on the More page"
+    },
+    "We use your location to show you nearby transit options." : {
+
     },
     "Weather" : {
       "comment" : "Possible alert cause",
@@ -4640,6 +4442,12 @@
           }
         }
       }
+    },
+    "Westbound" : {
+      "comment" : "A route direction label"
+    },
+    "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
+
     },
     "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go." : {
 

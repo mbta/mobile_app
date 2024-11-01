@@ -153,7 +153,7 @@ final class ContentViewTests: XCTestCase {
     @MainActor func testHidesMap() throws {
         let contentVM = FakeContentVM()
         contentVM.hideMaps = true
-        let sut = ContentView(contentVM: contentVM)
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
 
         XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
     }
@@ -197,6 +197,15 @@ final class ContentViewTests: XCTestCase {
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM()))
 
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
+    }
+
+    func testShowsOnboarding() throws {
+        let contentVM = ContentViewModel(onboardingScreensPending: [.feedback])
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
+
+        XCTAssertNotNil(try sut.inspect().find(OnboardingPage.self))
+        XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
+        XCTAssertThrowsError(try sut.inspect().find(NearbyTransitView.self))
     }
 
     class FakeContentVM: ContentViewModel {

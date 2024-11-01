@@ -64,6 +64,7 @@ final class HomeMapViewTests: XCTestCase {
     func testNoLocationDefaultCenter() throws {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -81,6 +82,7 @@ final class HomeMapViewTests: XCTestCase {
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -103,6 +105,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(onGet: { getRailRouteShapeExpectation.fulfill() })
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -124,6 +127,7 @@ final class HomeMapViewTests: XCTestCase {
         }
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             viewportProvider: ViewportProvider(),
@@ -147,6 +151,7 @@ final class HomeMapViewTests: XCTestCase {
         }
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -196,6 +201,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -247,6 +253,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -302,6 +309,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -376,6 +384,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: ViewportProvider(),
@@ -448,6 +457,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -546,6 +556,7 @@ final class HomeMapViewTests: XCTestCase {
         nearbyVM.navigationStack = [initialNav]
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: nearbyVM,
             viewportProvider: ViewportProvider(),
@@ -658,6 +669,7 @@ final class HomeMapViewTests: XCTestCase {
         let viewportProvider = ViewportProvider()
         var sut = HomeMapView(
             globalRepository: MockGlobalRepository(response: globalResponse),
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
@@ -746,6 +758,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             viewportProvider: ViewportProvider(),
@@ -787,6 +800,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider,
@@ -824,6 +838,7 @@ final class HomeMapViewTests: XCTestCase {
             }
         )
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -855,6 +870,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let routeData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -879,6 +895,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let stopData: StopSourceData = .init(selectedStopId: "stop1")
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -900,6 +917,7 @@ final class HomeMapViewTests: XCTestCase {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.tripDetails(tripId: "t",
                                                            vehicleId: "v",
@@ -927,6 +945,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
 
@@ -952,6 +971,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             viewportProvider: ViewportProvider(),
@@ -974,6 +994,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
 
@@ -1000,6 +1021,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
 
@@ -1021,6 +1043,42 @@ final class HomeMapViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
+    }
+
+    func testRequestsLocationAfterLoading() {
+        class FakeLocationFetcher: LocationFetcher {
+            var didRequestAuthorization = false
+
+            var locationFetcherDelegate: (any iosApp.LocationFetcherDelegate)?
+
+            var authorizationStatus: CLAuthorizationStatus = .notDetermined
+
+            var distanceFilter: CLLocationDistance = .zero
+
+            func startUpdatingLocation() {}
+
+            func requestWhenInUseAuthorization() {
+                didRequestAuthorization = true
+            }
+        }
+        let contentVM = ContentViewModel()
+        let locationFetcher = FakeLocationFetcher()
+        var sut = HomeMapView(
+            contentVM: contentVM,
+            mapVM: .init(),
+            nearbyVM: .init(),
+            viewportProvider: .init(),
+            locationDataManager: .init(locationFetcher: locationFetcher),
+            sheetHeight: .constant(0)
+        )
+        let exp = sut.on(\.didAppear) { view in
+            XCTAssertFalse(locationFetcher.didRequestAuthorization)
+            contentVM.onboardingScreensPending = []
+            try view.findAndCallOnChange(newValue: contentVM.onboardingScreensPending)
+            XCTAssertTrue(locationFetcher.didRequestAuthorization)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     class CallbackVehiclesRepo: IVehiclesRepository {
