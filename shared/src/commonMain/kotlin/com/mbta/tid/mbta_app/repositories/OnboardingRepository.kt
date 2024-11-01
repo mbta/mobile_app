@@ -33,8 +33,7 @@ class OnboardingRepository : IOnboardingRepository, KoinComponent {
                 .toSet()
         val onboardingPending =
             OnboardingScreen.entries.filter { it.applies(accessibilityStatus) } -
-                onboardingCompleted -
-                skippedOnboardingScreens
+                onboardingCompleted
         return onboardingPending
     }
 
@@ -42,10 +41,6 @@ class OnboardingRepository : IOnboardingRepository, KoinComponent {
         dataStore.edit {
             it[onboardingCompletedKey] = it[onboardingCompletedKey].orEmpty() + screen.name
         }
-    }
-
-    companion object {
-        val skippedOnboardingScreens = setOf(OnboardingScreen.HideMaps)
     }
 }
 
