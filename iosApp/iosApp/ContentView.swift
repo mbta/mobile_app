@@ -45,18 +45,39 @@ struct ContentView: View {
     @State private var selectedTab = SelectedTab.nearby
 
     var body: some View {
-        contents
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .onAppear {
-                Task { await contentVM.loadOnboardingScreens() }
+        VStack {
+            contents
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .onAppear {
+            Task { await contentVM.loadOnboardingScreens() }
+        }
+        .task {
+            // We can't set stale caches in ResponseCache on init because of our Koin setup,
+            // so this is here to get the cached data into the global flow and kick off an async request asap.
+            do {
+                _ = try await RepositoryDI().global.getGlobalData()
+            } catch {}
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                socketProvider.socket.attach()
+                nearbyVM.joinAlertsChannel()
+            } else if newPhase == .background {
+                nearbyVM.leaveAlertsChannel()
+                socketProvider.socket.detach()
             }
-            .task {
-                // We can't set stale caches in ResponseCache on init because of our Koin setup,
-                // so this is here to get the cached data into the global flow and kick off an async request asap.
-                do {
-                    _ = try await RepositoryDI().global.getGlobalData()
-                } catch {}
+        }
+        .onChange(of: contentVM.configResponse) { response in
+            switch onEnum(of: response) {
+            case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
+            default: debugPrint("Skipping mapbox token configuration")
             }
+        }
+        .onReceive(mapVM.lastMapboxErrorSubject
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
+                Task { await contentVM.loadConfig() }
+        }
     }
 
     @ViewBuilder
@@ -147,25 +168,6 @@ struct ContentView: View {
             Task { await errorBannerVM.activate() }
             Task { await contentVM.loadHideMaps() }
             Task { await settingsVM.getSections() }
-        }
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
-                socketProvider.socket.attach()
-                nearbyVM.joinAlertsChannel()
-            } else if newPhase == .background {
-                nearbyVM.leaveAlertsChannel()
-                socketProvider.socket.detach()
-            }
-        }
-        .onChange(of: contentVM.configResponse) { response in
-            switch onEnum(of: response) {
-            case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
-            default: debugPrint("Skipping mapbox token configuration")
-            }
-        }
-        .onReceive(mapVM.lastMapboxErrorSubject
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
-                Task { await contentVM.loadConfig() }
         }
     }
 
