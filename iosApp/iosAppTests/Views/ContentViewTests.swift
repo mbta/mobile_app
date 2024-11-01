@@ -158,6 +158,41 @@ final class ContentViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
     }
 
+    @MainActor func testHiddenMapUpdatesLocation() throws {
+        let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
+        let contentVM = FakeContentVM()
+        contentVM.hideMaps = true
+
+        let locationFetcher = MockLocationFetcher()
+        locationFetcher.authorizationStatus = .authorizedAlways
+
+        let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
+        let newLocation: CLLocation = .init(latitude: 1, longitude: 1)
+
+        let sutWithEnv = withDefaultEnvironmentObjects(
+            sut: ContentView(contentVM: contentVM),
+            locationDataManager: locationDataManager
+        )
+        let sut = try sutWithEnv.inspect().implicitAnyView().view(ContentView.self).actualView()
+
+        var cameraUpdate = 0
+        let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
+            if cameraUpdate == 0 {
+                XCTAssert(ViewportProvider.Defaults.center.isRoughlyEqualTo(updatedCamera.center))
+            } else if cameraUpdate == 1 {
+                XCTAssertEqual(newLocation.coordinate, updatedCamera.center)
+                cameraExp.fulfill()
+            }
+            cameraUpdate += 1
+        }
+
+        ViewHosting.host(view: sutWithEnv)
+        locationFetcher.updateLocations(locations: [newLocation])
+        XCTAssertEqual(locationDataManager.currentLocation, newLocation)
+        wait(for: [cameraExp], timeout: 5)
+        cancelSink.cancel()
+    }
+
     func testShowsMap() throws {
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM()))
 
@@ -223,11 +258,13 @@ final class ContentViewTests: XCTestCase {
 
     private func withDefaultEnvironmentObjects(
         sut: some View,
-        socketProvider: SocketProvider = SocketProvider(socket: FakeSocket())
+        locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher()),
+        socketProvider: SocketProvider = SocketProvider(socket: FakeSocket()),
+        viewportProvider: ViewportProvider = .init()
     ) -> some View {
         sut
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
+            .environmentObject(locationDataManager)
             .environmentObject(socketProvider)
-            .environmentObject(ViewportProvider())
+            .environmentObject(viewportProvider)
     }
 }

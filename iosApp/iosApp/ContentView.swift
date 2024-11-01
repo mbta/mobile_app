@@ -41,7 +41,7 @@ struct ContentView: View {
                 // We can't set stale caches in ResponseCache on init because of our Koin setup,
                 // so this is here to get the cached data into the global flow and kick off an async request asap.
                 do {
-                    let _ = try await RepositoryDI().global.getGlobalData()
+                    _ = try await RepositoryDI().global.getGlobalData()
                 } catch {}
             }
     }
