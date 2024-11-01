@@ -24,6 +24,20 @@
         }
       }
     },
+    "**%ld** hr **%ld** min" : {
+      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "**%1$ld** hr **%2$ld** min"
+          }
+        }
+      }
+    },
+    "**%ld** min" : {
+      "comment" : "Shorthand displayed number of minutes until arrival, ex \"12 min\""
+    },
     "%@ %@" : {
       "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels\nFirst value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
       "localizations" : {
@@ -389,20 +403,6 @@
           }
         }
       }
-    },
-    "%ld hr %ld min" : {
-      "comment" : "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\"",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$ld hr %2$ld min"
-          }
-        }
-      }
-    },
-    "%ld min" : {
-      "comment" : "Shorthand displayed number of minutes until arrival, ex \"12 min\""
     },
     "%ld stops away" : {
       "comment" : "How many stops away the vehicle is from the target stop",

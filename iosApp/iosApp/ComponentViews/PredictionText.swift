@@ -24,27 +24,23 @@ struct PredictionText: View {
     var predictionKey: String {
         if hours >= 1 {
             String(format: NSLocalizedString(
-                "%ld hr %ld min",
+                "**%ld** hr **%ld** min",
                 comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
             ), hours, remainingMinutes)
         } else {
             String(format: NSLocalizedString(
-                "%ld min",
+                "**%ld** min",
                 comment: "Shorthand displayed number of minutes until arrival, ex \"12 min\""
             ), minutes)
         }
     }
 
     var predictionString: AttributedString {
-        var prediction = AttributedString(predictionKey)
-        for run in prediction.runs {
-            if run.localizedNumericArgument != nil {
-                prediction[run.range].font = Typography.headlineBold
-            } else {
-                prediction[run.range].font = Typography.body
-            }
+        do {
+            return try AttributedString(markdown: predictionKey)
+        } catch {
+            return AttributedString(predictionKey.filter { $0 != "*" })
         }
-        return prediction
     }
 
     var accessibilityString: String {
