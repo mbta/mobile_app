@@ -3,6 +3,16 @@
     {
       "filename": "onboarding-transit-lines.svg",
       "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "onboarding-transit-lines-dark.svg",
+      "idiom": "universal"
     }
   ],
   "info": {

@@ -3,6 +3,16 @@
     {
       "filename": "onboarding-background-map.png",
       "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "onboarding-background-map-dark.png",
+      "idiom": "universal"
     }
   ],
   "info": {

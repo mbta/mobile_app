@@ -3,6 +3,16 @@
     {
       "filename": "onboarding-more-button.svg",
       "idiom": "universal"
+    },
+    {
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "filename": "onboarding-more-button-dark.svg",
+      "idiom": "universal"
     }
   ],
   "info": {
