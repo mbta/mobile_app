@@ -47,7 +47,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
-        try sut.inspect().find(button: "Not now").tap()
+        try sut.inspect().find(button: "Skip for now").tap()
         wait(for: [saveSettingExp, advanceExp], timeout: 1)
     }
 
