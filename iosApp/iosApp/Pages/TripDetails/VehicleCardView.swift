@@ -70,11 +70,16 @@ struct VehicleOnTripView: View {
             .accessibilityElement()
             .accessibilityAddTraits(.isHeader)
             .accessibilityHeading(.h2)
-            .accessibilityLabel(
-                "\(route.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)"
-            )
+            .accessibilityLabel(Text(
+                "\(route.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)",
+                comment: """
+                VoiceOver text for the vehicle status on the trip details page,
+                ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
+                Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
+                """
+            ))
         } else {
-            Text("This vehicle is completing another trip.")
+            Text("This vehicle is completing another trip")
                 .font(Typography.headlineBold)
                 .foregroundColor(textColor)
                 .accessibilityAddTraits(.isHeader)
@@ -93,12 +98,18 @@ struct VehicleOnTripView: View {
         _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
     ) -> String {
         switch vehicleStatus {
-        case .incomingAt: NSLocalizedString("Approaching",
-                                            comment: "Label for a vehicle's next stop. For example: Approaching Alewife")
-        case .inTransitTo: NSLocalizedString("Next stop",
-                                             comment: "Label for a vehicle's next stop. For example: Next stop Alewife")
-        case .stoppedAt: NSLocalizedString("Now at",
-                                           comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife")
+        case .incomingAt: NSLocalizedString(
+                "Approaching",
+                comment: "Label for a vehicle's next stop. For example: Approaching Alewife"
+            )
+        case .inTransitTo: NSLocalizedString(
+                "Next stop",
+                comment: "Label for a vehicle's next stop. For example: Next stop Alewife"
+            )
+        case .stoppedAt: NSLocalizedString(
+                "Now at",
+                comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
+            )
         }
     }
 

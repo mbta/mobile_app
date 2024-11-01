@@ -15,6 +15,7 @@ protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
     func addIcons(recreate: Bool)
     func addLayers(colorScheme: ColorScheme, recreate: Bool)
+    func resetPuckPosition()
     func updateSourceData(routeData: MapboxMaps.FeatureCollection)
     func updateSourceData(stopData: MapboxMaps.FeatureCollection)
 }
@@ -103,6 +104,10 @@ class MapLayerManager: IMapLayerManager {
                     }
                 }
             }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                resetPuckPosition()
+            }
         }
     }
 
@@ -111,6 +116,16 @@ class MapLayerManager: IMapLayerManager {
         case .light: ColorPalette.companion.light
         case .dark: ColorPalette.companion.dark
         @unknown default: ColorPalette.companion.light
+        }
+    }
+
+    func resetPuckPosition() {
+        do {
+            if map.layerExists(withId: "puck") {
+                try map.moveLayer(withId: "puck", to: .default)
+            }
+        } catch {
+            Logger().error("Failed to set puck as top layer")
         }
     }
 

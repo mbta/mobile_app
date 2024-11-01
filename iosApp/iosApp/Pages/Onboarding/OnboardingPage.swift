@@ -12,6 +12,7 @@ import SwiftUI
 struct OnboardingPage: View {
     let screens: [OnboardingScreen]
     @State var selectedIndex: Int = 0
+
     let onFinish: () -> Void
 
     let onboardingRepository: IOnboardingRepository
@@ -40,7 +41,6 @@ struct OnboardingPage: View {
                 }
             }
         })
-        .padding(16)
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 }

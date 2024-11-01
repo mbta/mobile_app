@@ -172,6 +172,7 @@ struct HomeMapView: View {
             guard status == .authorizedAlways || status == .authorizedWhenInUse,
                   viewportProvider.isDefault() else { return }
             viewportProvider.follow(animation: .easeInOut(duration: 0))
+            mapVM.layerManager?.resetPuckPosition()
         }
         .onChange(of: nearbyVM.navigationStack) { nextNavStack in
             handleNavStackChange(navigationStack: nextNavStack)

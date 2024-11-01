@@ -25,7 +25,7 @@ final class OnboardingPageTests: XCTestCase {
 
         let stepChannel = PassthroughSubject<Void, Never>()
         let locationExp = sut.inspection.inspect(onReceive: stepChannel, after: 0.1) { view in
-            try view.find(button: "Not now").tap()
+            try view.find(button: "Skip for now").tap()
             stepChannel.send()
         }
         let hideMapsExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(), after: 0.1) { view in

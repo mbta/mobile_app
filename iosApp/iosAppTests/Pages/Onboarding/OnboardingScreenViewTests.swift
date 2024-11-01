@@ -23,13 +23,13 @@ final class OnboardingScreenViewTests: XCTestCase {
             createLocationFetcher: { locationFetcher }
         )
         let exp = sut.inspection.inspect { view in
-            XCTAssertNotNil(try view.find(text: "We’ll use your location to show the lines and bus routes near you."))
-            XCTAssertNotNil(try view.find(button: "Not now"))
-            try view.find(button: "Share location").tap()
-            self.wait(for: [requestExp], timeout: 1)
+            XCTAssertNotNil(try view.find(text: "We use your location to show you nearby transit options."))
+            XCTAssertNotNil(try view.find(button: "Skip for now"))
+            try view.find(button: "Allow Location Services").tap()
+            await self.fulfillment(of: [requestExp], timeout: 1)
             locationFetcher.authorizationStatus = .authorizedWhenInUse
             locationFetcher.locationFetcherDelegate?.locationFetcherDidChangeAuthorization(locationFetcher)
-            self.wait(for: [advanceExp], timeout: 1)
+            await self.fulfillment(of: [advanceExp], timeout: 1)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 5)
@@ -47,7 +47,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
-        try sut.inspect().find(button: "Not now").tap()
+        try sut.inspect().find(button: "Skip for now").tap()
         wait(for: [saveSettingExp, advanceExp], timeout: 1)
     }
 
@@ -63,8 +63,9 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() },
             settingsRepository: settingsRepo
         )
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "For VoiceOver users, we’ll keep maps hidden by default unless you tell us otherwise."))
+        XCTAssertNotNil(try sut.inspect().find(
+            text: "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
+        ))
         XCTAssertNotNil(try sut.inspect().find(button: "Show maps"))
         try sut.inspect().find(button: "Hide maps").tap()
         wait(for: [saveSettingExp, advanceExp], timeout: 1)
@@ -76,10 +77,10 @@ final class OnboardingScreenViewTests: XCTestCase {
             screen: .feedback,
             advance: { advanceExp.fulfill() }
         )
-        XCTAssertNotNil(try sut.inspect()
-            .find(
-                text: "MBTA Go is just getting started! We’re actively making improvements based on feedback from riders like you."
-            ))
+        XCTAssertNotNil(try sut.inspect().find(
+            text: "MBTA Go is in the early stages! We want your feedback" +
+                " as we continue making improvements and adding new features."
+        ))
         try sut.inspect().find(button: "Get started").tap()
         wait(for: [advanceExp], timeout: 1)
     }

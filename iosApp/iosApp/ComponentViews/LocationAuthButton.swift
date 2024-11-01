@@ -45,9 +45,10 @@ struct LocationAuthButton: View {
                     showingAlert = true
                 }
             }, label: {
-                Label(title: {
-                    Text("Location Services is off")
-                }, icon: {
+                Label(title: { Text(
+                    "Location Services is off",
+                    comment: "Banner letting the user know they aren't sharing their location"
+                ) }, icon: {
                     Image(.faChevronRight)
                         .resizable()
                         .scaleEffect(0.6)
@@ -62,23 +63,29 @@ struct LocationAuthButton: View {
             .buttonStyle(LocationAuthButtonStyle())
             .accessibilityIdentifier("locationServicesButton")
             .alert(
-                "MBTA Go works best with Location Services turned on",
+                Text("MBTA Go works best with Location Services turned on"),
                 isPresented: $showingAlert,
                 actions: {
-                    Button("Turn On in Settings") {
+                    Button(NSLocalizedString(
+                        "Turn On in Settings",
+                        comment: "Prompt button linking to app settings, "
+                            + "for the user to enable location services"
+                    )) {
                         showingAlert = false
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url)
                         }
                     }
-                    Button("Keep Location Services Off") {
+                    Button(NSLocalizedString(
+                        "Keep Location Services Off",
+                        comment: "Prompt button to close the alert (and not change location service setting)"
+                    )) {
                         showingAlert = false
                     }
                 },
                 message: {
-                    Text(
-                        "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go."
-                    )
+                    Text("You’ll see nearby transit options and get better search results "
+                        + "when you turn on Location Services for MBTA Go.")
                 }
             )
         case .authorizedAlways, .authorizedWhenInUse, nil:

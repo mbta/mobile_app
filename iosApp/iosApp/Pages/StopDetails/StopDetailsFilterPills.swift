@@ -75,14 +75,26 @@ struct StopDetailsFilterPills: View {
             }
             if filter != nil {
                 Button(action: { setFilter(nil) }) {
-                    Text("All")
+                    Text("All", comment: "Button label for clearing selected route to display all routes at a station")
                         .foregroundStyle(Color.fill1)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 7)
                         .background(Color.contrast)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .accessibilityLabel("All routes")
-                        .accessibilityHint("Removes selected filter so that arrivals from all routes are displayed")
+                        .accessibilityLabel(Text(
+                            "All routes",
+                            comment: """
+                            VoiceOver label for the button to clear
+                            selected route to display all routes at a station"
+                            """
+                        ))
+                        .accessibilityHint(Text(
+                            "Removes selected filter so that arrivals from all routes are displayed",
+                            comment: """
+                            VoiceOver hint for the button to
+                            clear selected route to display all routes at a station
+                            """
+                        ))
                 }
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
                 .padding(.trailing, 16)
