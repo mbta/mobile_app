@@ -1016,6 +1016,10 @@
         }
       }
     },
+    "Arriving" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
+    },
     "Autos Impeding Service" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1141,6 +1145,10 @@
           }
         }
       }
+    },
+    "Bus substitution" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
     },
     "buses" : {
       "comment" : "buses",
@@ -2648,6 +2656,10 @@
       }
     },
     "Now boarding" : {
+      "comment" : "Status for a commuter rail train",
+      "extractionState" : "manual"
+    },
+    "On time" : {
       "comment" : "Status for a commuter rail train",
       "extractionState" : "manual"
     },
