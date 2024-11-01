@@ -72,7 +72,7 @@
       }
     },
     "%@ %@ %@" : {
-      "comment" : "VoiceOver text for the vehicle status on the trip details page,\nex 'train approaching Alewife' or 'bus now at Harvard'",
+      "comment" : "VoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -350,7 +350,7 @@
       }
     },
     "%@ to" : {
-      "comment" : "Label the direction a list of arrivals is for. \nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]",
+      "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]",
       "localizations" : {
         "es" : {
           "stringUnit" : {
