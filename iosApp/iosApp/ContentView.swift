@@ -54,7 +54,7 @@ struct ContentView: View {
                 // We can't set stale caches in ResponseCache on init because of our Koin setup,
                 // so this is here to get the cached data into the global flow and kick off an async request asap.
                 do {
-                    let _ = try await RepositoryDI().global.getGlobalData()
+                    _ = try await RepositoryDI().global.getGlobalData()
                 } catch {}
             }
     }
@@ -113,6 +113,10 @@ struct ContentView: View {
             if contentVM.hideMaps {
                 if nearbyVM.navigationStack.lastSafe() == .nearby {
                     SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                    if !searchObserver.isSearching {
+                        LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                            .padding(.bottom, 8)
+                    }
                 }
                 if !(nearbyVM.navigationStack.lastSafe() == .nearby && searchObserver.isSearching) {
                     mapWithSheets
@@ -138,6 +142,7 @@ struct ContentView: View {
                 }
             }
         }
+        .background(Color.fill1)
         .onAppear {
             Task { await errorBannerVM.activate() }
             Task { await contentVM.loadHideMaps() }
@@ -185,6 +190,8 @@ struct ContentView: View {
                     }
                 }, content: coverContents)
                 .onAppear {
+                    // The NearbyTransitPageView uses the viewport provider to determine what location to load,
+                    // since we have no map when it's hidden, we need to manually update the camera position.
                     viewportProvider.updateCameraState(locationDataManager.currentLocation)
                 }
                 .onChange(of: locationDataManager.currentLocation) { location in
