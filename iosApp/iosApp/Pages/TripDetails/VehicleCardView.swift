@@ -74,7 +74,8 @@ struct VehicleOnTripView: View {
                 "\(route.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)",
                 comment: """
                 VoiceOver text for the vehicle status on the trip details page,
-                ex 'train approaching Alewife' or 'bus now at Harvard'
+                ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
+                Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
                 """
             ))
         } else {

@@ -3798,7 +3798,44 @@
       "comment" : "Label for a More page link to the MBTA.com terms of use"
     },
     "This vehicle is completing another trip" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este vehículo está realizando otro viaje"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machin nan ap fè yon lòt vwayaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este veículo está concluindo outra viagem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xe này đang hoàn thành một chuyến đi khác"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该汽车正在执行其他路线任务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "該汽車正在執行其他路線任務"
+          }
+        }
+      }
     },
     "Tie Replacement" : {
       "comment" : "Possible alert cause",
