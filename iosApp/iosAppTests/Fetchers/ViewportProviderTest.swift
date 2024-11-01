@@ -86,6 +86,22 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertEqual(provider.viewport.camera?.zoom, newZoom)
     }
 
+    func testUpdateCameraLocationFromCoordinate() throws {
+        let updatedExp = expectation(description: "updated camera")
+        let startCenter: CLLocationCoordinate2D = .init(latitude: 0, longitude: 0)
+        let provider = ViewportProvider(viewport: .camera(center: startCenter, zoom: 16.0))
+
+        let newCenter: CLLocationCoordinate2D = .init(latitude: 1, longitude: 1)
+        provider.updateCameraState(CLLocation(latitude: 1, longitude: 1))
+        let cancelSink = provider.cameraStatePublisher.sink { cameraUpdate in
+            XCTAssertEqual(cameraUpdate.center, newCenter)
+            updatedExp.fulfill()
+        }
+
+        wait(for: [updatedExp], timeout: 1)
+        cancelSink.cancel()
+    }
+
     func testSavePanned() throws {
         let provider = ViewportProvider(viewport: .idle)
 

@@ -102,6 +102,13 @@ class ViewportProvider: ObservableObject {
         }
     }
 
+    func updateCameraState(_ location: CLLocation?) {
+        guard let coordinate = location?.coordinate else { return }
+        updateCameraState(
+            .init(center: coordinate, padding: .zero, zoom: 0, bearing: 0, pitch: 0)
+        )
+    }
+
     func updateCameraState(_ state: CameraState) {
         cameraStateSubject.send(state)
     }
