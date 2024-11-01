@@ -32,6 +32,16 @@ struct ContentView: View {
         case more
     }
 
+    private func tabText(_ tab: SelectedTab) -> String {
+        switch tab {
+        case .nearby: NSLocalizedString(
+                "Nearby",
+                comment: "The label for the Nearby Transit page in the navigation bar"
+            )
+        case .more: NSLocalizedString("More", comment: "The label for the More page in the navigation bar")
+        }
+    }
+
     @State private var selectedTab = SelectedTab.nearby
 
     var body: some View {
@@ -57,13 +67,11 @@ struct ContentView: View {
             TabView(selection: $selectedTab) {
                 nearbyTab
                     .tag(SelectedTab.nearby)
-                    .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
+                    .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
                 MorePage(viewModel: settingsVM)
                     .tag(SelectedTab.more)
-                    .tabItem { TabLabel("More", image: .tabIconMore) }
-                    .onAppear {
-                        screenTracker.track(screen: .settings)
-                    }
+                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+                    .onAppear { screenTracker.track(screen: .settings) }
             }
         } else {
             nearbyTab
@@ -85,12 +93,12 @@ struct ContentView: View {
                     viewportProvider: viewportProvider
                 )
                 .tag(SelectedTab.nearby)
-                .tabItem { TabLabel("Nearby", image: .tabIconNearby) }
+                .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
                 // we want to show nothing in the sheet when the settings tab is open,
                 // but an EmptyView here causes the tab to not be listed
                 VStack {}
                     .tag(SelectedTab.more)
-                    .tabItem { TabLabel("More", image: .tabIconMore) }
+                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
             }
         }
     }

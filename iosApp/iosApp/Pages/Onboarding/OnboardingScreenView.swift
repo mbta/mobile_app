@@ -119,11 +119,14 @@ struct OnboardingScreenView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Spacer()
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Set map preference")
-                            .font(Typography.title1Bold)
-                            .accessibilityHeading(.h1)
-                            .accessibilityAddTraits(.isHeader)
-                            .accessibilityFocused($focusHeader, equals: .hideMaps)
+                        Text(
+                            "Set map preference",
+                            comment: "Onboarding screen header for asking VoiceOver users if they want to hide maps"
+                        )
+                        .font(Typography.title1Bold)
+                        .accessibilityHeading(.h1)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityFocused($focusHeader, equals: .hideMaps)
                         Text(
                             "When using VoiceOver, we can skip reading out maps to keep you focused on transit information."
                         )
@@ -136,10 +139,12 @@ struct OnboardingScreenView: View {
                     .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                     Spacer()
                     Button(action: { hideMaps(true) }) {
-                        Text("Hide maps").onboardingKeyButton()
+                        Text("Hide maps", comment: "Onboarding button text for setting maps to hidden")
+                            .onboardingKeyButton()
                     }
                     Button(action: { hideMaps(false) }) {
-                        Text("Show maps").onboardingSecondaryButton()
+                        Text("Show maps", comment: "Onboarding button text for setting maps to shown")
+                            .onboardingSecondaryButton()
                     }
                 }
                 .padding(.horizontal, sidePadding)
@@ -174,7 +179,10 @@ struct OnboardingScreenView: View {
                         Text("Allow Location Services").onboardingKeyButton()
                     }
                     Button(action: advance) {
-                        Text("Skip for now").onboardingSecondaryButton()
+                        Text(
+                            "Skip for now",
+                            comment: "Button text for deferring the request for location services"
+                        ).onboardingSecondaryButton()
                     }
                 }
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)

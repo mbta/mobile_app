@@ -27,20 +27,32 @@ struct ErrorBanner: View {
         let state = errorBannerVM.errorState
         switch onEnum(of: state) {
         case let .dataError(state):
-            ErrorCard { Text("Error loading data") }
-                .refreshable(label: "Reload data") {
-                    errorBannerVM.clearState()
-                    state.action()
-                }
-                .frame(minHeight: minHeight)
+            ErrorCard {
+                Text("Error loading data", comment: "Displayed when loading necessary information fails")
+            }
+            .refreshable(
+                label: NSLocalizedString("Reload data", comment: "Refresh button label")
+            ) {
+                errorBannerVM.clearState()
+                state.action()
+            }
+            .frame(minHeight: minHeight)
         case let .stalePredictions(state):
             if errorBannerVM.loadingWhenPredictionsStale {
                 ProgressView().frame(minHeight: minHeight)
             } else {
                 ErrorCard {
-                    Text("Updated \(state.minutesAgo(), specifier: "%ld") minutes ago")
+                    Text(
+                        "Updated \(state.minutesAgo(), specifier: "%ld") minutes ago",
+                        comment: "Displayed when prediction data has not been able to update for an unexpected amount of time"
+                    )
                 }
-                .refreshable(label: "Refresh predictions") {
+                .refreshable(
+                    label: NSLocalizedString(
+                        "Refresh predictions",
+                        comment: "Refresh button label for reloading predictions"
+                    )
+                ) {
                     errorBannerVM.clearState()
                     state.action()
                 }
@@ -49,11 +61,10 @@ struct ErrorBanner: View {
         case .networkError:
             ErrorCard { HStack {
                 Image(systemName: "wifi.slash")
-                Text("Unable to connect")
+                Text("Unable to connect", comment: "Displayed when the phone is not connected to the network")
                 Spacer()
             }}
         case nil:
-            // for some reason, .collect on an EmptyView doesn't work
             EmptyView()
         }
     }

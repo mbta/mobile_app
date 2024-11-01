@@ -16,7 +16,7 @@ final class LoadingCardTests: XCTestCase {
     func testDefault() throws {
         let sut = LoadingCard()
         XCTAssertNotNil(try sut.inspect().find(ViewType.ProgressView.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "loading"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Loading..."))
     }
 
     func testCustomMessage() throws {

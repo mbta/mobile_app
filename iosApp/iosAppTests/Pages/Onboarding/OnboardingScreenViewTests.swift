@@ -62,7 +62,8 @@ final class OnboardingScreenViewTests: XCTestCase {
             advance: { advanceExp.fulfill() }
         )
         XCTAssertNotNil(try sut.inspect().find(
-            text: "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features."
+            text: "MBTA Go is in the early stages! We want your feedback" +
+                " as we continue making improvements and adding new features."
         ))
         try sut.inspect().find(button: "Get started").tap()
         wait(for: [advanceExp], timeout: 1)
