@@ -9,32 +9,58 @@
 import Combine
 import CoreLocation
 import Foundation
+import shared
 
 public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableObject {
     var locationFetcher: LocationFetcher
+    let settingsRepository: ISettingsRepository
+    let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus: CLAuthorizationStatus?
+    private(set) var locationDeferred: Bool = false
 
     public init(
         locationFetcher: LocationFetcher = CLLocationManager(),
+        settingsRepository: ISettingsRepository = RepositoryDI().settings,
+        subscribeToLocations: Bool = true,
         distanceFilter: Double = kCLDistanceFilterNone
     ) {
         self.locationFetcher = locationFetcher
         self.locationFetcher.distanceFilter = distanceFilter
+        self.settingsRepository = settingsRepository
+        self.subscribeToLocations = subscribeToLocations
         super.init()
         self.locationFetcher.locationFetcherDelegate = self
+        Task { await loadLocationDeferred() }
     }
 
     public func locationFetcherDidChangeAuthorization(_ fetcher: LocationFetcher) {
-        authorizationStatus = fetcher.authorizationStatus
-        // TODO: only if requested
-        if fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
+        authorizationStatus = if locationDeferred { .denied } else { fetcher.authorizationStatus }
+        if subscribeToLocations,
+           fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
             fetcher.startUpdatingLocation()
         }
     }
 
     public func locationFetcher(_: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
+    }
+
+    public func loadLocationDeferred() async {
+        locationDeferred = await (try? settingsRepository.getSettings()[.locationDeferred]?.boolValue) ?? false
+    }
+
+    public func setLocationDeferred(_ locationDeferred: Bool) {
+        self.locationDeferred = locationDeferred
+        Task {
+            try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: locationDeferred)])
+        }
+    }
+
+    public func requestWhenInUseAuthorization() {
+        if !locationDeferred {
+            locationFetcher.requestWhenInUseAuthorization()
+        }
     }
 }
 

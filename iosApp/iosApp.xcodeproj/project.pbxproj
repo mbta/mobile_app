@@ -214,7 +214,6 @@
 		EDE92FA62C3DD675007AD2F6 /* ScreenTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */; };
 		EDE92FA82C408A32007AD2F6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */; };
 		EDE92FAA2C408A50007AD2F6 /* MoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FA92C408A50007AD2F6 /* MoreSection.swift */; };
-		EDE92FAC2C408A6A007AD2F6 /* Setting+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -482,7 +481,6 @@
 		EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTracker.swift; sourceTree = "<group>"; };
 		EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		EDE92FA92C408A50007AD2F6 /* MoreSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSection.swift; sourceTree = "<group>"; };
-		EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Setting+Convenience.swift"; sourceTree = "<group>"; };
 		F35CF19A11F0511AA7B2E080 /* Pods-iosApp.stagingdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingdebug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingdebug.xcconfig"; sourceTree = "<group>"; };
 		F71252D2B68FF131F8E6BDE2 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		FC22C03A28BCE0F50A921CED /* Pods-iosAppTests.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.staging debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.staging debug.xcconfig"; sourceTree = "<group>"; };
@@ -742,7 +740,6 @@
 				9A7F12182CCFF2D20042B0F1 /* MorePhone.swift */,
 				EDE92FA92C408A50007AD2F6 /* MoreSection.swift */,
 				9A6ACA2A2CD0096A00299AF5 /* MoreSectionView.swift */,
-				EDE92FAB2C408A6A007AD2F6 /* Setting+Convenience.swift */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -1483,7 +1480,6 @@
 				8CA1FB732BF7E69000384658 /* TripDetailsStopView.swift in Sources */,
 				ED93D6062CB6C0DD003B1C12 /* RouteResultsView.swift in Sources */,
 				6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */,
-				EDE92FAC2C408A6A007AD2F6 /* Setting+Convenience.swift in Sources */,
 				9A4DB77F2CA4A32800E8755B /* SearchOverlay.swift in Sources */,
 				8CC1BB402B59D1F6005386FE /* LocationDataManager.swift in Sources */,
 				9A6ACA2B2CD0096A00299AF5 /* MoreSectionView.swift in Sources */,

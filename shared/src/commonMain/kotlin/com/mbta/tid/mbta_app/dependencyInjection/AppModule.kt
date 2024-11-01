@@ -25,7 +25,6 @@ import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
-import com.mbta.tid.mbta_app.usecases.SettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import okio.FileSystem
@@ -69,7 +68,6 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
         single { ConfigUseCase(get(), get(), get()) }
-        single { SettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
     }

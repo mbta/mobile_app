@@ -38,7 +38,12 @@ struct LocationAuthButton: View {
         switch locationDataManager.authorizationStatus {
         case .notDetermined, .denied, .restricted:
             Button(action: {
-                showingAlert = true
+                if locationDataManager.locationDeferred {
+                    locationDataManager.setLocationDeferred(false)
+                    locationDataManager.requestWhenInUseAuthorization()
+                } else {
+                    showingAlert = true
+                }
             }, label: {
                 Label(title: { Text(
                     "Location Services is off",

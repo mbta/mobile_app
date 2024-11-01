@@ -62,7 +62,11 @@ struct ContentView: View {
     @ViewBuilder
     var contents: some View {
         if let onboardingScreensPending = contentVM.onboardingScreensPending, !onboardingScreensPending.isEmpty {
-            OnboardingPage(screens: onboardingScreensPending, onFinish: { contentVM.onboardingScreensPending = [] })
+            OnboardingPage(screens: onboardingScreensPending, onFinish: {
+                contentVM.onboardingScreensPending = []
+                // onboarding can write location deferred
+                Task { await locationDataManager.loadLocationDeferred() }
+            })
         } else if selectedTab == .more {
             TabView(selection: $selectedTab) {
                 nearbyTab
@@ -180,6 +184,12 @@ struct ContentView: View {
                         nearbyVM.goBack()
                     }
                 }, content: coverContents)
+                .onAppear {
+                    viewportProvider.updateCameraState(locationDataManager.currentLocation)
+                }
+                .onChange(of: locationDataManager.currentLocation) { location in
+                    viewportProvider.updateCameraState(location)
+                }
         } else {
             mapSection
                 .sheet(

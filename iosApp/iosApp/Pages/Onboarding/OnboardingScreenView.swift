@@ -15,7 +15,7 @@ struct OnboardingScreenView: View {
     let advance: () -> Void
 
     let createLocationFetcher: () -> any LocationFetcher
-    let settingUseCase: SettingUsecase
+    let settingsRepository: ISettingsRepository
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
 
@@ -54,12 +54,12 @@ struct OnboardingScreenView: View {
         screen: OnboardingScreen,
         advance: @escaping () -> Void,
         createLocationFetcher: @escaping () -> any LocationFetcher = { CLLocationManager() },
-        settingUseCase: SettingUsecase = UsecaseDI().settingUsecase
+        settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
         self.screen = screen
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
-        self.settingUseCase = settingUseCase
+        self.settingsRepository = settingsRepository
         focusHeader = screen
     }
 
@@ -171,14 +171,10 @@ struct OnboardingScreenView: View {
                     if typeSize >= .xxxLarge, typeSize < .accessibility3 {
                         Spacer()
                     }
-                    Button(action: {
-                        guard let locationPermissionHandler else { return }
-                        locationFetcher = createLocationFetcher()
-                        locationFetcher?.locationFetcherDelegate = locationPermissionHandler
-                    }) {
+                    Button(action: { shareLocation(true) }) {
                         Text("Allow Location Services").onboardingKeyButton()
                     }
-                    Button(action: advance) {
+                    Button(action: { shareLocation(false) }) {
                         Text(
                             "Skip for now",
                             comment: "Button text for deferring the request for location services"
@@ -233,7 +229,20 @@ struct OnboardingScreenView: View {
 
     func hideMaps(_ hide: Bool) {
         Task {
-            try await settingUseCase.set(setting: .hideMaps, value: hide)
+            try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: hide)])
+            advance()
+        }
+    }
+
+    func shareLocation(_ share: Bool) {
+        Task {
+            try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: !share)])
+        }
+        if share {
+            guard let locationPermissionHandler else { return }
+            locationFetcher = createLocationFetcher()
+            locationFetcher?.locationFetcherDelegate = locationPermissionHandler
+        } else {
             advance()
         }
     }

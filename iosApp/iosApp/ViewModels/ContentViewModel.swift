@@ -46,7 +46,7 @@ class ContentViewModel: ObservableObject {
     }
 
     @MainActor func loadHideMaps() async {
-        hideMaps = await (try? settingsRepository.getSettings().first { $0.key == .hideMaps }?.isOn) ?? false
+        hideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
     }
 
     @MainActor func loadOnboardingScreens() async {
