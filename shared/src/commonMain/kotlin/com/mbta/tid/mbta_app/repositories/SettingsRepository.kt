@@ -4,32 +4,32 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISettingsRepository {
-    suspend fun getSettings(): Set<Setting>
+    suspend fun getSettings(): Map<Settings, Boolean>
 
-    suspend fun setSettings(settings: Set<Setting>)
+    suspend fun setSettings(settings: Map<Settings, Boolean>)
 }
 
 class SettingsRepository : ISettingsRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
-    override suspend fun getSettings(): Set<Setting> {
+    override suspend fun getSettings(): Map<Settings, Boolean> {
         return dataStore.data
             .map { dataStore ->
-                Settings.entries.map { Setting(it, dataStore[it.dataStoreKey] ?: false) }
+                Settings.entries.associateWith { dataStore[it.dataStoreKey] ?: false }
             }
             .first()
-            .toSet()
     }
 
-    override suspend fun setSettings(settings: Set<Setting>) {
+    override suspend fun setSettings(settings: Map<Settings, Boolean>) {
         dataStore.edit { dataStore ->
-            settings.forEach { dataStore[it.key.dataStoreKey] = it.isOn }
+            settings.forEach { dataStore[it.key.dataStoreKey] = it.value }
         }
     }
 }
@@ -38,14 +38,16 @@ enum class Settings(val dataStoreKey: Preferences.Key<Boolean>) {
     Map(booleanPreferencesKey("map_debug")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     HideMaps(booleanPreferencesKey("hide_maps")),
+    LocationDeferred(booleanPreferencesKey("location_deferred")),
 }
 
-data class Setting(val key: Settings, var isOn: Boolean)
+class MockSettingsRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    private var settings: Map<Settings, Boolean> = emptyMap(),
+    private var onSaveSettings: (Map<Settings, Boolean>) -> Unit = {}
+) : ISettingsRepository {
+    override suspend fun getSettings(): Map<Settings, Boolean> = settings
 
-class MockSettingsRepository(private var settings: Set<Setting> = setOf()) : ISettingsRepository {
-    override suspend fun getSettings(): Set<Setting> {
-        return settings
-    }
-
-    override suspend fun setSettings(settings: Set<Setting>) {}
+    override suspend fun setSettings(settings: Map<Settings, Boolean>) = onSaveSettings(settings)
 }

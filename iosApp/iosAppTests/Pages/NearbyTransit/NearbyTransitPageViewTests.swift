@@ -32,7 +32,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
             nearbyVM: .init(),
             viewportProvider: viewportProvider
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "select location"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Select location"))
     }
 
     func testClearsNearbyStateWhenManuallyCentering() throws {

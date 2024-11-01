@@ -15,34 +15,49 @@ struct TripDetailsStopListSplitView: View {
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
     let routeType: RouteType?
 
+    private var routeTypeText: String { routeType?.typeText(isOnly: true) ?? "" }
+    private var stopsAway: Int { splitStops.collapsedStops.count }
+    private var target: TripDetailsStopList.Entry { splitStops.targetStop }
+
     var body: some View {
         List {
             if !splitStops.collapsedStops.isEmpty {
-                DisclosureGroup(content: {
-                                    ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
-                                        TripDetailsStopView(
-                                            stop: stop,
-                                            now: now,
-                                            onTapLink: onTapLink,
-                                            routeType: routeType
-                                        )
-                                    }
-                                },
-                                label: { Text("\(splitStops.collapsedStops.count, specifier: "%ld") stops away",
-                                              comment: "How many stops away the vehicle is from the target stop")
-                                })
-                                .padding(.bottom, 16)
-                                .accessibilityElement()
-                                .accessibilityAddTraits(.isHeader)
-                                .accessibilityHeading(.h2)
-                                .accessibilityLabel(
-                                    LocalizedStringKey(
-                                        "\(routeType?.typeText(isOnly: true) ?? "") is \(splitStops.collapsedStops.count, specifier: "%ld") stops away from \(splitStops.targetStop.stop.name)"
-                                    )
-                                )
-                                .accessibilityHint("List remaining stops")
+                DisclosureGroup(
+                    content: {
+                        ForEach(splitStops.collapsedStops, id: \.stopSequence) { stop in
+                            TripDetailsStopView(
+                                stop: stop,
+                                now: now,
+                                onTapLink: onTapLink,
+                                routeType: routeType
+                            )
+                        }
+                    },
+                    label: { Text(
+                        "\(stopsAway, specifier: "%ld") stops away",
+                        comment: "How many stops away the vehicle is from the target stop"
+                    ) }
+                )
+                .padding(.bottom, 16)
+                .accessibilityElement()
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h2)
+                .accessibilityLabel(Text(
+                    "\(routeTypeText) is \(stopsAway, specifier: "%ld") stops away from \(target.stop.name)",
+                    comment: """
+                    VoiceOver label for how many stops away a vehicle is from a stop,
+                    ex 'bus is 4 stops away from Harvard'
+                    """
+                ))
+                .accessibilityHint(Text(
+                    "List remaining stops",
+                    comment: """
+                    VoiceOver hint explaining what happens when 'x stops away'
+                    is selected (open an accordion listing those stops)
+                    """
+                ))
             }
-            TripDetailsStopView(stop: splitStops.targetStop, now: now, onTapLink: onTapLink, routeType: routeType)
+            TripDetailsStopView(stop: target, now: now, onTapLink: onTapLink, routeType: routeType)
                 .listRowBackground(Color.keyInverse.opacity(0.15))
             ForEach(splitStops.followingStops, id: \.stopSequence) { stop in
                 TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)

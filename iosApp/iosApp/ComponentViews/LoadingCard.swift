@@ -12,7 +12,7 @@ import SwiftUI
 struct LoadingCard<Message: View>: View {
     var message: () -> Message?
 
-    init(message: @escaping () -> Message? = { Text("loading") }) {
+    init(message: @escaping () -> Message? = { Text("Loading...") }) {
         self.message = message
     }
 

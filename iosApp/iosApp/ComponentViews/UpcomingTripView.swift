@@ -55,7 +55,7 @@ struct UpcomingTripView: View {
                 // should have been filtered out already
                 Text(verbatim: "")
             case .now:
-                Text("Now")
+                Text("Now", comment: "Label for a trip that's arriving right now")
                     .font(Typography.headlineBold)
                     .realtime()
                     .accessibilityLabel(isFirst
@@ -121,7 +121,7 @@ struct UpcomingTripView: View {
                         : accessibilityFormatters.scheduleMinutesOther(minutes: format.minutes))
             case let .cancelled(format):
                 HStack(spacing: Self.subjectSpacing) {
-                    Text("Cancelled")
+                    Text("Cancelled", comment: "The status label for a cancelled trip")
                         .font(Typography.footnote)
                         .foregroundStyle(Color.deemphasized)
                     Text(format.scheduledTime.toNSDate(), style: .time)
@@ -140,125 +140,23 @@ struct UpcomingTripView: View {
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
-            Text("Predictions unavailable").font(Typography.footnote)
+            Text(
+                "Predictions unavailable",
+                comment: "The status label when no predictions exist for a route and direction"
+            ).font(Typography.footnote)
         case .serviceEndedToday:
-            Text("Service ended").font(Typography.footnote)
+            Text(
+                "Service ended",
+                comment: "The status label for a route and direction when service was running earlier, but no more trips are running today"
+            ).font(Typography.footnote)
         case .noSchedulesToday:
-            Text("No service today").font(Typography.footnote)
+            Text(
+                "No service today",
+                comment: "The status label for a route when no service is running for the entire service day"
+            ).font(Typography.footnote)
         case .loading:
             ProgressView()
         }
-    }
-}
-
-class UpcomingTripAccessibilityFormatters {
-    private let timeFormatter: DateFormatter = makeTimeFormatter()
-
-    public func boardingFirst(vehicleText: String) -> Text {
-        Text("\(vehicleText) boarding now",
-             comment: """
-             Describe that a vehicle is boarding now, as read aloud for VoiceOver users.
-             First value is the type of vehicle (bus, train, ferry). For example, 'bus boarding now'
-             """)
-    }
-
-    public func boardingOther() -> Text {
-        Text("and boarding now",
-             comment: """
-             The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-              For example, '[bus arriving in 1 minute], and boarding now'
-             """)
-    }
-
-    public func arrivingFirst(vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving now",
-             comment: """
-             Describe that a vehicle is arriving now, as read aloud for VoiceOver users.
-             First value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'
-             """)
-    }
-
-    public func arrivingOther() -> Text {
-        Text("and arriving now",
-             comment: """
-             The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-              For example, '[bus arriving in 1 minute], and arriving now'
-             """)
-    }
-
-    public func distantFutureFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))",
-             comment: """
-             Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.
-             First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
-             For example, 'bus arriving at 10:30AM'
-             """)
-    }
-
-    public func distantFutureOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date))",
-             comment: """
-             The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-             For example, '[bus arriving at 10:30AM], and at 10:45 AM'
-             """)
-    }
-
-    public func scheduleTimeFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) scheduled",
-             comment: """
-             Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
-             First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
-             For example, 'bus arriving at 10:30AM scheduled'
-             """)
-    }
-
-    public func scheduleTimeOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date)) scheduled",
-             comment: """
-             The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.
-             For example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'
-             """)
-    }
-
-    public func scheduleMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving in \(minutes) min scheduled")
-    }
-
-    public func scheduleMinutesOther(minutes: Int32) -> Text {
-        Text("and in \(minutes) min scheduled")
-    }
-
-    public func predictionMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving in \(minutes) min",
-             comment: """
-             Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.
-             First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
-             For example, 'bus arriving in 5 minutes'
-             """)
-    }
-
-    public func predictionMinutesOther(minutes: Int32) -> Text {
-        Text("and in \(minutes) min",
-             comment: """
-             The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-             For example, '[bus arriving in 5 minutes], and in 10 minutes'
-             """)
-    }
-
-    public func predictionTimeFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))")
-    }
-
-    public func predictionTimeOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date))")
-    }
-
-    public func cancelledFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) cancelled")
-    }
-
-    public func cancelledOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date)) cancelled")
     }
 }
 
@@ -313,13 +211,13 @@ struct NoServiceView: View {
 
     var rawText: Text {
         switch effect {
-        case .detour: Text("Detour")
-        case .shuttle: Text("Shuttle")
-            .accessibilityLabel(Text("Shuttle buses replace service"))
-        case .stopClosed: Text("Stop Closed")
-        case .suspension: Text("Suspension")
-            .accessibilityLabel(Text("Service suspended"))
-        case .unknown: Text("No Service")
+        case .detour: Text("Detour", comment: "Possible alert effect")
+        case .shuttle: Text("Shuttle", comment: "Possible alert effect")
+            .accessibilityLabel(Text("Shuttle buses replace service", comment: "Shuttle alert VoiceOver text"))
+        case .stopClosed: Text("Stop Closed", comment: "Possible alert effect")
+        case .suspension: Text("Suspension", comment: "Possible alert effect")
+            .accessibilityLabel(Text("Service suspended", comment: "Suspension alert VoiceOver text"))
+        case .unknown: Text("No Service", comment: "Possible alert effect")
         }
     }
 

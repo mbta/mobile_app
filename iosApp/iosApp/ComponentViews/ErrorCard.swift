@@ -38,7 +38,11 @@ struct ErrorCard<Content: View>: View {
 }
 
 extension ErrorCard {
-    func refreshable(_ loading: Bool = false, label: String = "Refresh", action: @escaping () -> Void) -> ErrorCard {
+    func refreshable(
+        _ loading: Bool = false,
+        label: String = NSLocalizedString("Refresh", comment: "Refresh button label"),
+        action: @escaping () -> Void
+    ) -> ErrorCard {
         var card = self
         card.button = {
             AnyView(Button(
