@@ -30,7 +30,7 @@ struct TripDetailsStopView: View {
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h2)
                 }
-            )
+            ).accessibilityInputLabels([stop.stop.name])
             if !stop.routes.isEmpty {
                 scrollRoutes
                     .accessibilityElement()

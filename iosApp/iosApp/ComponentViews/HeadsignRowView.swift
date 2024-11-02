@@ -31,7 +31,6 @@ struct HeadsignRowView: View {
                 .font(Typography.bodySemibold)
                 .multilineTextAlignment(.leading)
         }
-        .accessibilityInputLabels([headsign])
     }
 }
 
