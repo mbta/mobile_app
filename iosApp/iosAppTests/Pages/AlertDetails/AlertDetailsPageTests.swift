@@ -111,7 +111,7 @@ final class AlertDetailsPageTests: XCTestCase {
         let exp = sut.inspection.inspect(onReceive: globalDataLoaded, after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Orange Line Stop Closure"))
             XCTAssertNotNil(try view.find(text: "Fire"))
-            XCTAssertNotNil(try view.find(text: "**3** affected stops"))
+            XCTAssertNotNil(try view.find(text: "3 affected stops"))
             XCTAssertNotNil(try view.find(text: "Stop 1"))
             XCTAssertNotNil(try view.find(text: "Stop 2"))
             XCTAssertNotNil(try view.find(text: "Stop 3"))
