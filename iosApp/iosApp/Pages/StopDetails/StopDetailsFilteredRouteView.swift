@@ -199,6 +199,7 @@ struct StopDetailsFilteredRouteView: View {
                                                     .onRow(route: row.route) : .none
                                             )
                                         }
+                                        .accessibilityInputLabels([row.headsign])
                                         .padding(.vertical, 10)
                                         .padding(.horizontal, 16)
 

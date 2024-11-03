@@ -22,6 +22,12 @@ struct StopDeparturesSummaryList: View {
             Array(patternsByStop.patterns.enumerated()),
             id: \.element.id
         ) { index, patterns in
+
+            let inputLabel = switch onEnum(of: patterns) {
+            case let .byHeadsign(byHeadsign): byHeadsign.headsign
+            case let .byDirection(byDirection): byDirection.direction.destination ?? byDirection.direction.name
+            }
+
             VStack(spacing: 0) {
                 SheetNavigationLink(
                     value: .stopDetails(
@@ -36,6 +42,7 @@ struct StopDeparturesSummaryList: View {
                         condenseHeadsignPredictions: condenseHeadsignPredictions
                     )
                 }
+                .accessibilityInputLabels([inputLabel])
                 .padding(8)
                 .frame(minHeight: 44)
                 .padding(.leading, 8)
