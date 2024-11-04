@@ -98,6 +98,18 @@ struct AlertDetails: View {
         }
     }
 
+    private var affectedStopsLabel: AttributedString {
+        let text = String(format: NSLocalizedString(
+            "**%ld** affected stops",
+            comment: "The number of stops affected by an alert"
+        ), affectedStops.count)
+        do {
+            return try AttributedString(markdown: text)
+        } catch {
+            return AttributedString(text.filter { $0 != "*" })
+        }
+    }
+
     @ViewBuilder
     private var alertTitle: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -151,10 +163,7 @@ struct AlertDetails: View {
                     },
                     label: {
                         HStack(alignment: .center, spacing: 16) {
-                            Text(
-                                "**\(affectedStops.count, specifier: "%ld")** affected stops",
-                                comment: "The number of stops affected by an alert"
-                            ).multilineTextAlignment(.leading)
+                            Text(affectedStopsLabel).multilineTextAlignment(.leading)
                             Spacer()
                             Image(.faChevronRight)
                                 .resizable()
