@@ -61,7 +61,7 @@ final class ContentViewTests: XCTestCase {
             .vStack()
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().implicitAnyView().implicitAnyView()
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
             .vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
