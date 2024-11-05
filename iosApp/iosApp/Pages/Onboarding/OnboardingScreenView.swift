@@ -175,9 +175,7 @@ struct OnboardingScreenView: View {
                     if typeSize >= .xxxLarge, typeSize < .accessibility3 {
                         Spacer()
                     }
-                    Button(action: {
-                        shareLocation()
-                    }) {
+                    Button(action: shareLocation) {
                         Text("Continue").onboardingKeyButton()
                     }
                     Text("You can always change location settings later in the Settings app.")
