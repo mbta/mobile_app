@@ -16,21 +16,24 @@ final class OnboardingPageTests: XCTestCase {
     @MainActor func testFlow() throws {
         let onboardingRepository = MockOnboardingRepository()
         let finishExp = expectation(description: "calls onFinish")
+        let stepChannel = PassthroughSubject<Void, Never>()
+
         let sut = OnboardingPage(
             screens: OnboardingScreen.allCases,
             onFinish: { finishExp.fulfill() },
-            onboardingRepository: onboardingRepository
+            onAdvance: { stepChannel.send() },
+            onboardingRepository: onboardingRepository,
+            // Actual button location dialogue handling is unit tested in OnboardingScreenView.testLocationFlow
+            skipLocationDialogue: true
         )
+
         ViewHosting.host(view: sut)
 
-        let stepChannel = PassthroughSubject<Void, Never>()
         let locationExp = sut.inspection.inspect(onReceive: stepChannel, after: 0.1) { view in
-            try view.find(button: "Skip for now").tap()
-            stepChannel.send()
+            try view.find(button: "Continue").tap()
         }
         let hideMapsExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(), after: 0.1) { view in
             try view.find(button: "Show maps").tap()
-            stepChannel.send()
         }
         let feedbackExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(2), after: 0.1) { view in
             try view.find(button: "Get started").tap()

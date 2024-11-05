@@ -15,6 +15,7 @@ struct OnboardingScreenView: View {
     let advance: () -> Void
 
     let createLocationFetcher: () -> any LocationFetcher
+    let skipLocationDialogue: Bool
     let settingsRepository: ISettingsRepository
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
@@ -54,11 +55,13 @@ struct OnboardingScreenView: View {
         screen: OnboardingScreen,
         advance: @escaping () -> Void,
         createLocationFetcher: @escaping () -> any LocationFetcher = { CLLocationManager() },
+        skipLocationDialogue: Bool = false,
         settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
         self.screen = screen
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
+        self.skipLocationDialogue = skipLocationDialogue
         self.settingsRepository = settingsRepository
         focusHeader = screen
     }
@@ -170,7 +173,14 @@ struct OnboardingScreenView: View {
                     if typeSize >= .xxxLarge, typeSize < .accessibility3 {
                         Spacer()
                     }
-                    Button(action: { shareLocation() }) {
+                    Button(action: {
+                        // short circuit for OnboardingPageView integration testing
+                        if skipLocationDialogue {
+                            advance()
+                        } else {
+                            shareLocation()
+                        }
+                    }) {
                         Text("Continue").onboardingKeyButton()
                     }
                 }

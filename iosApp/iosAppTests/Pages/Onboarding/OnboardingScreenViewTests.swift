@@ -16,15 +16,16 @@ final class OnboardingScreenViewTests: XCTestCase {
     @MainActor func testLocationFlow() throws {
         let requestExp = expectation(description: "requests location permission")
         let advanceExp = expectation(description: "calls advance()")
-        let locationFetcher = MockLocationFetcher(requestExp: requestExp)
+        let locationFetcher = MockOnboardingLocationFetcher(requestExp: requestExp)
         let sut = OnboardingScreenView(
             screen: .location,
             advance: { advanceExp.fulfill() },
             createLocationFetcher: { locationFetcher }
         )
         let exp = sut.inspection.inspect { view in
-            XCTAssertNotNil(try view.find(text: "We use your location to show you nearby transit options."))
-            XCTAssertNotNil(try view.find(button: "Skip for now"))
+            XCTAssertNotNil(try view.find(where: { view in
+                try view.text().string().contains("We use your location to show you nearby transit options.")
+            }))
             try view.find(button: "Continue").tap()
             await self.fulfillment(of: [requestExp], timeout: 1)
             locationFetcher.authorizationStatus = .authorizedWhenInUse
@@ -67,28 +68,5 @@ final class OnboardingScreenViewTests: XCTestCase {
         ))
         try sut.inspect().find(button: "Get started").tap()
         wait(for: [advanceExp], timeout: 1)
-    }
-
-    private class MockLocationFetcher: LocationFetcher {
-        let requestExp: XCTestExpectation
-
-        init(requestExp: XCTestExpectation) {
-            self.requestExp = requestExp
-        }
-
-        var locationFetcherDelegate: LocationFetcherDelegate? {
-            didSet {
-                // the real CLLocationManager will also do this, although maybe not at the same moment
-                locationFetcherDelegate?.locationFetcherDidChangeAuthorization(self)
-            }
-        }
-
-        var authorizationStatus: CLAuthorizationStatus = .notDetermined
-        var distanceFilter: CLLocationDistance = 0
-        func startUpdatingLocation() {}
-
-        func requestWhenInUseAuthorization() {
-            requestExp.fulfill()
-        }
     }
 }
