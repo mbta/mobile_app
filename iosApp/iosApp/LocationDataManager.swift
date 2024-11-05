@@ -17,7 +17,6 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
     let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
     @Published public var authorizationStatus: CLAuthorizationStatus?
-    private(set) var locationDeferred: Bool = false
 
     public init(
         locationFetcher: LocationFetcher = CLLocationManager(),
@@ -31,11 +30,10 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
         self.subscribeToLocations = subscribeToLocations
         super.init()
         self.locationFetcher.locationFetcherDelegate = self
-        Task { await loadLocationDeferred() }
     }
 
     public func locationFetcherDidChangeAuthorization(_ fetcher: LocationFetcher) {
-        authorizationStatus = if locationDeferred { .denied } else { fetcher.authorizationStatus }
+        authorizationStatus = fetcher.authorizationStatus
         if subscribeToLocations,
            fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
             fetcher.startUpdatingLocation()
@@ -46,21 +44,8 @@ public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableO
         currentLocation = locations.last
     }
 
-    public func loadLocationDeferred() async {
-        locationDeferred = await (try? settingsRepository.getSettings()[.locationDeferred]?.boolValue) ?? false
-    }
-
-    public func setLocationDeferred(_ locationDeferred: Bool) {
-        self.locationDeferred = locationDeferred
-        Task {
-            try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: locationDeferred)])
-        }
-    }
-
     public func requestWhenInUseAuthorization() {
-        if !locationDeferred {
-            locationFetcher.requestWhenInUseAuthorization()
-        }
+        locationFetcher.requestWhenInUseAuthorization()
     }
 }
 

@@ -16,16 +16,17 @@ final class OnboardingScreenViewTests: XCTestCase {
     @MainActor func testLocationFlow() throws {
         let requestExp = expectation(description: "requests location permission")
         let advanceExp = expectation(description: "calls advance()")
-        let locationFetcher = MockLocationFetcher(requestExp: requestExp)
+        let locationFetcher = MockOnboardingLocationFetcher(requestExp: requestExp)
         let sut = OnboardingScreenView(
             screen: .location,
             advance: { advanceExp.fulfill() },
             createLocationFetcher: { locationFetcher }
         )
         let exp = sut.inspection.inspect { view in
-            XCTAssertNotNil(try view.find(text: "We use your location to show you nearby transit options."))
-            XCTAssertNotNil(try view.find(button: "Skip for now"))
-            try view.find(button: "Allow Location Services").tap()
+            XCTAssertNotNil(try view.find(where: { view in
+                try view.text().string().contains("We use your location to show you nearby transit options.")
+            }))
+            try view.find(button: "Continue").tap()
             await self.fulfillment(of: [requestExp], timeout: 1)
             locationFetcher.authorizationStatus = .authorizedWhenInUse
             locationFetcher.locationFetcherDelegate?.locationFetcherDidChangeAuthorization(locationFetcher)
@@ -33,22 +34,6 @@ final class OnboardingScreenViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 5)
-    }
-
-    func testLocationDeferred() throws {
-        let saveSettingExp = expectation(description: "saves location deferred setting")
-        let settingsRepo = MockSettingsRepository(settings: [:], onSaveSettings: {
-            XCTAssertEqual($0, [.locationDeferred: true])
-            saveSettingExp.fulfill()
-        })
-        let advanceExp = expectation(description: "calls advance()")
-        let sut = OnboardingScreenView(
-            screen: .location,
-            advance: { advanceExp.fulfill() },
-            settingsRepository: settingsRepo
-        )
-        try sut.inspect().find(button: "Skip for now").tap()
-        wait(for: [saveSettingExp, advanceExp], timeout: 1)
     }
 
     func testHideMapsFlow() throws {
@@ -83,28 +68,5 @@ final class OnboardingScreenViewTests: XCTestCase {
         ))
         try sut.inspect().find(button: "Get started").tap()
         wait(for: [advanceExp], timeout: 1)
-    }
-
-    private class MockLocationFetcher: LocationFetcher {
-        let requestExp: XCTestExpectation
-
-        init(requestExp: XCTestExpectation) {
-            self.requestExp = requestExp
-        }
-
-        var locationFetcherDelegate: LocationFetcherDelegate? {
-            didSet {
-                // the real CLLocationManager will also do this, although maybe not at the same moment
-                locationFetcherDelegate?.locationFetcherDidChangeAuthorization(self)
-            }
-        }
-
-        var authorizationStatus: CLAuthorizationStatus = .notDetermined
-        var distanceFilter: CLLocationDistance = 0
-        func startUpdatingLocation() {}
-
-        func requestWhenInUseAuthorization() {
-            requestExp.fulfill()
-        }
     }
 }

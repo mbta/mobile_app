@@ -31,3 +31,26 @@ class MockLocationFetcher: LocationFetcher {
         locationFetcherDelegate?.locationFetcher(self, didUpdateLocations: locations)
     }
 }
+
+class MockOnboardingLocationFetcher: LocationFetcher {
+    let requestExp: XCTestExpectation?
+
+    init(requestExp: XCTestExpectation? = nil) {
+        self.requestExp = requestExp
+    }
+
+    var locationFetcherDelegate: LocationFetcherDelegate? {
+        didSet {
+            // the real CLLocationManager will also do this, although maybe not at the same moment
+            locationFetcherDelegate?.locationFetcherDidChangeAuthorization(self)
+        }
+    }
+
+    var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    var distanceFilter: CLLocationDistance = 0
+    func startUpdatingLocation() {}
+
+    func requestWhenInUseAuthorization() {
+        requestExp?.fulfill()
+    }
+}

@@ -15,6 +15,7 @@ struct OnboardingScreenView: View {
     let advance: () -> Void
 
     let createLocationFetcher: () -> any LocationFetcher
+    let skipLocationDialogue: Bool
     let settingsRepository: ISettingsRepository
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
@@ -54,11 +55,13 @@ struct OnboardingScreenView: View {
         screen: OnboardingScreen,
         advance: @escaping () -> Void,
         createLocationFetcher: @escaping () -> any LocationFetcher = { CLLocationManager() },
+        skipLocationDialogue: Bool = false,
         settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
         self.screen = screen
         self.advance = advance
         self.createLocationFetcher = createLocationFetcher
+        self.skipLocationDialogue = skipLocationDialogue
         self.settingsRepository = settingsRepository
         focusHeader = screen
     }
@@ -165,21 +168,18 @@ struct OnboardingScreenView: View {
                         .accessibilityHeading(.h1)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityFocused($focusHeader, equals: .location)
+
                     Text("We use your location to show you nearby transit options.")
                         .font(Typography.title3)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 8)
                     if typeSize >= .xxxLarge, typeSize < .accessibility3 {
                         Spacer()
                     }
-                    Button(action: { shareLocation(true) }) {
-                        Text("Allow Location Services").onboardingKeyButton()
+                    Button(action: shareLocation) {
+                        Text("Continue").onboardingKeyButton()
                     }
-                    Button(action: { shareLocation(false) }) {
-                        Text(
-                            "Skip for now",
-                            comment: "Button text for deferring the request for location services"
-                        ).onboardingSecondaryButton()
-                    }
+                    Text("You can always change location settings later in the Settings app.")
+                        .padding(.bottom, 8)
                 }
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
                 .padding(.horizontal, sidePadding)
@@ -234,16 +234,14 @@ struct OnboardingScreenView: View {
         }
     }
 
-    func shareLocation(_ share: Bool) {
-        Task {
-            try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: !share)])
-        }
-        if share {
+    func shareLocation() {
+        // short circuit for OnboardingPageView integration testing
+        if skipLocationDialogue {
+            advance()
+        } else {
             guard let locationPermissionHandler else { return }
             locationFetcher = createLocationFetcher()
             locationFetcher?.locationFetcherDelegate = locationPermissionHandler
-        } else {
-            advance()
         }
     }
 
