@@ -165,20 +165,13 @@ struct OnboardingScreenView: View {
                         .accessibilityHeading(.h1)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityFocused($focusHeader, equals: .location)
-                    Text("We use your location to show you nearby transit options.")
-                        .font(Typography.title3)
-                        .padding(.bottom, 16)
+                    locationDescription
+
                     if typeSize >= .xxxLarge, typeSize < .accessibility3 {
                         Spacer()
                     }
-                    Button(action: { shareLocation(true) }) {
-                        Text("Allow Location Services").onboardingKeyButton()
-                    }
-                    Button(action: { shareLocation(false) }) {
-                        Text(
-                            "Skip for now",
-                            comment: "Button text for deferring the request for location services"
-                        ).onboardingSecondaryButton()
+                    Button(action: { shareLocation() }) {
+                        Text("Continue").onboardingKeyButton()
                     }
                 }
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
@@ -227,6 +220,16 @@ struct OnboardingScreenView: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
+    @ViewBuilder
+    var locationDescription: some View {
+        VStack {
+            Text("We use your location to show you nearby transit options.")
+                + Text("You can always change location settings later in the Settings app.")
+        }
+        .font(Typography.title3)
+        .padding(.bottom, 8)
+    }
+
     func hideMaps(_ hide: Bool) {
         Task {
             try await settingsRepository.setSettings(settings: [.hideMaps: KotlinBoolean(bool: hide)])
@@ -234,17 +237,10 @@ struct OnboardingScreenView: View {
         }
     }
 
-    func shareLocation(_ share: Bool) {
-        Task {
-            try? await settingsRepository.setSettings(settings: [.locationDeferred: .init(bool: !share)])
-        }
-        if share {
-            guard let locationPermissionHandler else { return }
-            locationFetcher = createLocationFetcher()
-            locationFetcher?.locationFetcherDelegate = locationPermissionHandler
-        } else {
-            advance()
-        }
+    func shareLocation() {
+        guard let locationPermissionHandler else { return }
+        locationFetcher = createLocationFetcher()
+        locationFetcher?.locationFetcherDelegate = locationPermissionHandler
     }
 
     private class LocationPermissionHandler: NSObject, LocationFetcherDelegate, CLLocationManagerDelegate {

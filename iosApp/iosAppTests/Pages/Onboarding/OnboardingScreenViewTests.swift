@@ -35,22 +35,6 @@ final class OnboardingScreenViewTests: XCTestCase {
         wait(for: [exp], timeout: 5)
     }
 
-    func testLocationDeferred() throws {
-        let saveSettingExp = expectation(description: "saves location deferred setting")
-        let settingsRepo = MockSettingsRepository(settings: [:], onSaveSettings: {
-            XCTAssertEqual($0, [.locationDeferred: true])
-            saveSettingExp.fulfill()
-        })
-        let advanceExp = expectation(description: "calls advance()")
-        let sut = OnboardingScreenView(
-            screen: .location,
-            advance: { advanceExp.fulfill() },
-            settingsRepository: settingsRepo
-        )
-        try sut.inspect().find(button: "Skip for now").tap()
-        wait(for: [saveSettingExp, advanceExp], timeout: 1)
-    }
-
     func testHideMapsFlow() throws {
         let saveSettingExp = expectation(description: "saves hide maps setting")
         let settingsRepo = MockSettingsRepository(settings: [.hideMaps: false], onSaveSettings: {
