@@ -191,7 +191,11 @@ abstract class CycloneDxBomTransformTask : DefaultTask() {
     }
 }
 
-tasks.getByName("preBuild").dependsOn("bomCodegenAndroid", "bomCodegenIos")
+tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
+
+if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+    tasks.getByName("preBuild").dependsOn("bomCodegenIos")
+}
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
     dependsOn("bomAndroid")
