@@ -168,8 +168,10 @@ struct OnboardingScreenView: View {
                         .accessibilityHeading(.h1)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityFocused($focusHeader, equals: .location)
-                    locationDescription
 
+                    Text("We use your location to show you nearby transit options.")
+                        .font(Typography.title3)
+                        .padding(.bottom, 8)
                     if typeSize >= .xxxLarge, typeSize < .accessibility3 {
                         Spacer()
                     }
@@ -183,6 +185,8 @@ struct OnboardingScreenView: View {
                     }) {
                         Text("Continue").onboardingKeyButton()
                     }
+                    Text("You can always change location settings later in the Settings app.")
+                        .padding(.bottom, 8)
                 }
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
                 .padding(.horizontal, sidePadding)
@@ -228,16 +232,6 @@ struct OnboardingScreenView: View {
             )
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-    }
-
-    @ViewBuilder
-    var locationDescription: some View {
-        VStack {
-            Text("We use your location to show you nearby transit options.")
-                + Text("You can always change location settings later in the Settings app.")
-        }
-        .font(Typography.title3)
-        .padding(.bottom, 8)
     }
 
     func hideMaps(_ hide: Bool) {

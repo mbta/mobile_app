@@ -1,7 +1,7 @@
 {
   "images": [
     {
-      "filename": "onboarding-transit-lines.svg",
+      "filename": "Onboarding-Light-Transit lines.svg",
       "idiom": "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value": "dark"
         }
       ],
-      "filename": "onboarding-transit-lines-dark.svg",
+      "filename": "Onboarding-Dark-Transit lines.svg",
       "idiom": "universal"
     }
   ],
