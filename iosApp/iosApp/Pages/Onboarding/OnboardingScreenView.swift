@@ -176,12 +176,7 @@ struct OnboardingScreenView: View {
                         Spacer()
                     }
                     Button(action: {
-                        // short circuit for OnboardingPageView integration testing
-                        if skipLocationDialogue {
-                            advance()
-                        } else {
-                            shareLocation()
-                        }
+                        shareLocation()
                     }) {
                         Text("Continue").onboardingKeyButton()
                     }
@@ -242,9 +237,14 @@ struct OnboardingScreenView: View {
     }
 
     func shareLocation() {
-        guard let locationPermissionHandler else { return }
-        locationFetcher = createLocationFetcher()
-        locationFetcher?.locationFetcherDelegate = locationPermissionHandler
+        // short circuit for OnboardingPageView integration testing
+        if skipLocationDialogue {
+            advance()
+        } else {
+            guard let locationPermissionHandler else { return }
+            locationFetcher = createLocationFetcher()
+            locationFetcher?.locationFetcherDelegate = locationPermissionHandler
+        }
     }
 
     private class LocationPermissionHandler: NSObject, LocationFetcherDelegate, CLLocationManagerDelegate {
