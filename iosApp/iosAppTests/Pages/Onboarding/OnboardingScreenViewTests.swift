@@ -25,7 +25,7 @@ final class OnboardingScreenViewTests: XCTestCase {
         let exp = sut.inspection.inspect { view in
             XCTAssertNotNil(try view.find(text: "We use your location to show you nearby transit options."))
             XCTAssertNotNil(try view.find(button: "Skip for now"))
-            try view.find(button: "Allow Location Services").tap()
+            try view.find(button: "Continue").tap()
             await self.fulfillment(of: [requestExp], timeout: 1)
             locationFetcher.authorizationStatus = .authorizedWhenInUse
             locationFetcher.locationFetcherDelegate?.locationFetcherDidChangeAuthorization(locationFetcher)
