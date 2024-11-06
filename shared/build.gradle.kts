@@ -199,12 +199,11 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
 } else {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
-
-    tasks.getByName("bomCodegenAndroid").mustRunAfter("spotlessKotlin")
 }
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
     dependsOn("bomAndroid")
+    mustRunAfter("spotlessKotlin")
     inputPath = layout.buildDirectory.file("boms/bom-android.json")
     outputPath =
         layout.projectDirectory.file(
