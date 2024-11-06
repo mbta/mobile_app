@@ -200,7 +200,7 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
 } else {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
 
-    tasks.getByName("spotlessKotlin").mustRunAfter("bomCodegenAndroid")
+    tasks.getByName("bomCodegenAndroid").mustRunAfter("spotlessKotlin")
 }
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
