@@ -191,14 +191,16 @@ abstract class CycloneDxBomTransformTask : DefaultTask() {
     }
 }
 
-tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
-
 if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosX64").dependsOn("bomCodegenIos")
 
     tasks.getByName("compileKotlinIosArm64").dependsOn("bomCodegenIos")
 
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
+} else {
+    tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
+
+    tasks.getByName("spotlessKotlin").mustRunAfter("bomCodegenAndroid")
 }
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
