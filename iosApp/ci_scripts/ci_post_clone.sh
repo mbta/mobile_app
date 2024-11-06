@@ -53,6 +53,7 @@ mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
 # Install ruby and bundler dependencies
 retry brew install ruby@3.2
+retry gem install bundler:2.5.3 # match Gemfile.lock
 retry bundle install
 
 # Run cocoapods
