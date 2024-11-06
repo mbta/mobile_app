@@ -312,8 +312,8 @@ task<CachedExecTask>("bomIosMerged") {
         layout.buildDirectory.files(
             "boms/bom-ios-kotlin-deps.xml",
             "boms/bom-ios-kotlin-stdlib.xml",
-            "bom-ios-cocoapods.xml",
-            "bom-ios-swiftpm.json"
+            "boms/bom-ios-cocoapods.xml",
+            "boms/bom-ios-swiftpm.json"
         )
     outputFile = layout.buildDirectory.file("boms/bom-ios-merged.xml")
     workingDir = layout.buildDirectory.dir("boms")
