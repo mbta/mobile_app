@@ -55,8 +55,6 @@ mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 retry brew install ruby@3.2
 export PATH="/usr/local/opt/ruby@3.2/bin:$PATH"
 retry gem install bundler:2.5.3 # match Gemfile.lock
-retry brew install libxml2 libxslt # Nokogiri just doesn't use its native gems for some reason
-retry bundle config build.nokogiri --use-system-libraries
 retry bundle install
 
 # Run cocoapods
