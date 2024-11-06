@@ -535,7 +535,7 @@ apply
          (C) Copyright 2005 Intel Corporation
          (C) Copyright 2005-2006 Intel Corporation
          (C) Copyright 2006 Intel Corporation
-                    """
+"""
         ),
         Dependency(
             "pkg:swift/github.com/apple/swift-collections@1.1.1",
@@ -3751,7 +3751,7 @@ apply
          (C) Copyright 2005 Intel Corporation
          (C) Copyright 2005-2006 Intel Corporation
          (C) Copyright 2006 Intel Corporation
-                    """
+"""
         ),
         Dependency(
             "pkg:generic/gwt",
@@ -3974,7 +3974,7 @@ apply
          (C) Copyright 2005 Intel Corporation
          (C) Copyright 2005-2006 Intel Corporation
          (C) Copyright 2006 Intel Corporation
-                    """
+"""
         ),
         Dependency(
             "pkg:maven/io.github.dellisd.spatialk/geojson@0.3.0?type=jar",
@@ -5235,7 +5235,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-                    """
+"""
         ),
         Dependency(
             "pkg:swift/github.com/mapbox/mapbox-common-ios@24.7.0",
@@ -9105,7 +9105,7 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABI
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 The views and conclusions contained in the software and documentation are those of the authors and should not be interpreted
 as representing official policies, either expressed or implied, of Dmitry Vyukov.
-                    """
+"""
         ),
         Dependency(
             "pkg:swift/github.com/nalexn/ViewInspector@0.10.0",
@@ -9812,6 +9812,6 @@ organizations (whether for profit or not) as long as this notice and the disclai
 notice are retained. Information can be extracted from these files and used
 in documentation or programs, as long as there is an accompanying notice
 indicating the source.
-                    """
+"""
         )
     )

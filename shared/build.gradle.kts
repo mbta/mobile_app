@@ -133,6 +133,8 @@ abstract class DependencyCodegenTask : DefaultTask() {
             else if (purl.startsWith("pkg:maven/")) "${group}:${name}"
             else "${group.removePrefix("github.com/")}/${name}"
 
+    private val trailingWhitespace = Regex("[ \t]+$", RegexOption.MULTILINE)
+
     @TaskAction
     fun run() {
         val inputPath = this.inputPath.get().asFile
@@ -148,23 +150,32 @@ abstract class DependencyCodegenTask : DefaultTask() {
                     val licenseText =
                         try {
                             component.licenses.licenses.joinToString("\n") {
-                                it.attachmentText.decoded()
+                                it.attachmentText.decoded().replace(trailingWhitespace, "")
                             }
                         } catch (e: Throwable) {
                             logger.error("bad license for $purl: $e")
                             return@mapNotNull null
                         }
-                    "Dependency(\"$purl\", \"$name\", \"\"\"$licenseText\"\"\")"
+                    val multiLineStringDelimiter = "\"\"\""
+                    """
+        Dependency(
+            "$purl",
+            "$name",
+            $multiLineStringDelimiter$licenseText$multiLineStringDelimiter
+        )
+                    """
+                        .trim()
                 }
         val outputText =
             """
-            package com.mbta.tid.mbta_app.model
+package com.mbta.tid.mbta_app.model
 
-            actual fun Dependency.Companion.getAllDependencies(): List<Dependency> = listOf(
-            ${dependencyLines.joinToString(",\n")}
-            )
-            """
-                .trimIndent()
+actual fun Dependency.Companion.getAllDependencies(): List<Dependency> =
+    listOf(
+        ${dependencyLines.joinToString(",\n        ")}
+    )
+"""
+                .trimStart()
         outputPath.writeText(outputText)
     }
 }
