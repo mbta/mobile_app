@@ -191,6 +191,26 @@ abstract class CycloneDxBomTransformTask : DefaultTask() {
     }
 }
 
+abstract class CachedExecTask @Inject constructor(private val exec: ExecOperations) :
+    DefaultTask() {
+    @get:InputFiles abstract var inputFiles: FileCollection
+    @get:OutputFile abstract var outputFile: Provider<RegularFile>
+    @get:Internal abstract var workingDir: Provider<Directory>
+    @get:Input abstract var commandLine: List<String>
+
+    fun commandLine(vararg arg: String) {
+        commandLine = arg.asList()
+    }
+
+    @TaskAction
+    fun run() {
+        exec.exec {
+            workingDir(this@CachedExecTask.workingDir)
+            commandLine(this@CachedExecTask.commandLine)
+        }
+    }
+}
+
 if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosX64").dependsOn("bomCodegenIos")
 
@@ -280,7 +300,7 @@ apply
     }
 }
 
-task<Exec>("bomIosMerged") {
+task<CachedExecTask>("bomIosMerged") {
     dependsOn(
         "bomIosKotlinDeps",
         "bomIosKotlinStdlib",
@@ -288,9 +308,17 @@ task<Exec>("bomIosMerged") {
         "bomIosSwiftPM",
         "bomCycloneDxCliDownload"
     )
-    workingDir = layout.buildDirectory.dir("boms").get().asFile
+    inputFiles =
+        layout.buildDirectory.files(
+            "boms/bom-ios-kotlin-deps.xml",
+            "boms/bom-ios-kotlin-stdlib.xml",
+            "bom-ios-cocoapods.xml",
+            "bom-ios-swiftpm.json"
+        )
+    outputFile = layout.buildDirectory.file("boms/bom-ios-merged.xml")
+    workingDir = layout.buildDirectory.dir("boms")
     commandLine(
-        layout.buildDirectory.file("bom/cyclonedx-cli").get(),
+        layout.buildDirectory.file("boms/cyclonedx-cli").get().toString(),
         "merge",
         "--input-files",
         "bom-ios-kotlin-deps.xml",
@@ -320,10 +348,10 @@ task<Download>("bomCycloneDxCliDownload") {
             }
         }
     src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.27.1/cyclonedx-$os-$arch")
-    dest(layout.buildDirectory.file("bom/cyclonedx-cli"))
+    dest(layout.buildDirectory.file("boms/cyclonedx-cli"))
     onlyIfModified(true)
     doLast {
-        exec { commandLine("chmod", "+x", layout.buildDirectory.file("bom/cyclonedx-cli").get()) }
+        exec { commandLine("chmod", "+x", layout.buildDirectory.file("boms/cyclonedx-cli").get()) }
     }
 }
 
@@ -331,7 +359,6 @@ task<Copy>("bomIosKotlinDeps") {
     dependsOn(tasks.cyclonedxBom)
     mustRunAfter("bomCodegenAndroid")
     from(layout.buildDirectory.file("reports/bom-ios.xml"))
-    rename { "bom-ios-kotlin-deps.xml" }
     into(layout.buildDirectory.dir("boms"))
 }
 
@@ -368,15 +395,11 @@ task<CycloneDxBomTransformTask>("bomIosCocoapods") {
     }
 }
 
-task<Exec>("bomIosCocoapodsRaw") {
-    workingDir = layout.projectDirectory.dir("../iosApp").asFile
-    commandLine(
-        "bundle",
-        "exec",
-        "cyclonedx-cocoapods",
-        "-o",
-        layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml").get()
-    )
+task<CachedExecTask>("bomIosCocoapodsRaw") {
+    inputFiles = layout.projectDirectory.files("../iosApp/Podfile.lock")
+    outputFile = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
+    workingDir = provider { layout.projectDirectory.dir("../iosApp") }
+    commandLine("bundle", "exec", "cyclonedx-cocoapods", "-o", outputFile.get().toString())
 }
 
 task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
@@ -444,15 +467,20 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
     }
 }
 
-task<Exec>("bomIosSwiftPMRaw") {
-    workingDir = layout.projectDirectory.dir("../iosApp").asFile
+task<CachedExecTask>("bomIosSwiftPMRaw") {
+    inputFiles =
+        layout.projectDirectory.files(
+            "../iosApp/iosApp.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+        )
+    outputFile = layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json")
+    workingDir = provider { layout.projectDirectory.dir("../iosApp") }
     commandLine(
         "npx",
         "@cyclonedx/cdxgen",
         "-t",
         "swift",
         "-o",
-        layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json").get(),
+        outputFile.get().toString(),
         "iosApp.xcworkspace"
     )
 }
@@ -463,7 +491,7 @@ tasks.cyclonedxBom {
             "commonMainImplementationDependenciesMetadata",
             "iosMainImplementationDependenciesMetadata"
         )
-    outputName = "bom-ios"
+    outputName = "bom-ios-kotlin-deps"
 }
 
 mokkery {
