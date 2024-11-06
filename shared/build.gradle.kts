@@ -380,6 +380,7 @@ tasks.cyclonedxBom {
             "iosMainImplementationDependenciesMetadata"
         )
     outputName = "bom-ios-kotlin-deps"
+    outputs.files(destination.map { "$it/bom-ios-kotlin-deps.xml" })
 }
 
 mokkery {
