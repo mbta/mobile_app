@@ -51,13 +51,19 @@ mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
-# Install cocoapods
-retry brew install cocoapods
+# Install ruby and bundler dependencies
+retry brew install ruby@3.2
+retry bundle install
+
+# Run cocoapods
 cd "${CI_PRIMARY_REPOSITORY_PATH}"
 retry ./gradlew :shared:generateDummyFramework
 cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-retry pod install
+retry bundle exec pod install
 cd ..
+
+# Install Node.js for codegen
+retry brew install node
 
 # Configure Mapbox token for installation
 cd $CI_PRIMARY_REPOSITORY_PATH
