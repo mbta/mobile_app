@@ -64,8 +64,8 @@ cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
 retry bundle exec pod install
 cd ..
 
-# Install Node.js for codegen
-retry brew install node
+# Install Node.js and GitHub CLI for codegen
+retry brew install node gh
 
 # Configure Mapbox token for installation
 cd $CI_PRIMARY_REPOSITORY_PATH
