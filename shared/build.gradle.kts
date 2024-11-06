@@ -1,5 +1,6 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
 import de.undercouch.gradle.tasks.download.Download
+import java.io.ByteArrayOutputStream
 import java.util.Base64
 import kotlin.io.path.writeText
 import kotlinx.serialization.json.Json
@@ -438,13 +439,13 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                             "/license?ref=v"
                         else "/license?ref="
                     )
-            val apiRequest =
-                ProcessBuilder("gh", "api", licenseApiPath)
-                    .redirectError(ProcessBuilder.Redirect.INHERIT)
-                    .redirectOutput(ProcessBuilder.Redirect.PIPE)
-                    .start()
-            val apiResponse = apiRequest.inputReader().readText()
-            check(apiRequest.waitFor() == 0) { "bad api result from $licenseApiPath" }
+            val ghOutput = ByteArrayOutputStream()
+            exec {
+                    commandLine("gh", "api", licenseApiPath)
+                    standardOutput = ghOutput
+                }
+                .assertNormalExitValue()
+            val apiResponse = ghOutput.toString()
             val response = Json.parseToJsonElement(apiResponse)
 
             component.licenses.addLicense(
