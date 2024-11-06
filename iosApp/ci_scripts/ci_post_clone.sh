@@ -79,7 +79,7 @@ echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   echo "Running shared tests"
   cd $CI_PRIMARY_REPOSITORY_PATH
-  RETRIES=2 retry ./gradlew shared:iosX64Test
+  RETRIES=2 retry bundle exec ./gradlew shared:iosX64Test
 fi
 
 echo "Adding build environment variables"
