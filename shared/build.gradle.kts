@@ -1,21 +1,13 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.gradle.CachedExecTask
+import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
+import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
+import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
 import java.io.ByteArrayOutputStream
-import java.util.Base64
-import kotlin.io.path.writeText
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import org.cyclonedx.Version
-import org.cyclonedx.generators.json.BomJsonGenerator
-import org.cyclonedx.generators.xml.BomXmlGenerator
 import org.cyclonedx.model.AttachmentText
-import org.cyclonedx.model.Bom
-import org.cyclonedx.model.Component
 import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
-import org.cyclonedx.parsers.JsonParser
-import org.cyclonedx.parsers.XmlParser
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -116,112 +108,6 @@ skie {
 }
 
 task("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }
-
-abstract class DependencyCodegenTask : DefaultTask() {
-    @get:InputFile abstract var inputPath: Provider<RegularFile>
-    @get:OutputFile abstract var outputPath: RegularFile
-
-    private fun AttachmentText.decoded(): String =
-        when (this.encoding) {
-            null -> this.text
-            "base64" -> String(Base64.getDecoder().decode(this.text))
-            else -> throw NotImplementedError("encoding $encoding not supported")
-        }
-
-    private val Component.displayName: String
-        get() =
-            if (group == null) name
-            else if (purl.startsWith("pkg:maven/")) "${group}:${name}"
-            else "${group.removePrefix("github.com/")}/${name}"
-
-    private val trailingWhitespace = Regex("[ \t]+$", RegexOption.MULTILINE)
-
-    @TaskAction
-    fun run() {
-        val inputPath = this.inputPath.get().asFile
-        val outputPath = this.outputPath.asFile
-        val bom =
-            (if (inputPath.extension == "json") JsonParser() else XmlParser()).parse(inputPath)
-        val dependencyLines =
-            bom.components
-                .sortedBy { it.displayName.lowercase() }
-                .mapNotNull { component ->
-                    val purl = component.purl
-                    val name = component.displayName
-                    val licenseText =
-                        try {
-                            component.licenses.licenses.joinToString("\n") {
-                                it.attachmentText.decoded().replace(trailingWhitespace, "")
-                            }
-                        } catch (e: Throwable) {
-                            logger.error("bad license for $purl: $e")
-                            return@mapNotNull null
-                        }
-                    val multiLineStringDelimiter = "\"\"\""
-                    """
-        Dependency(
-            "$purl",
-            "$name",
-            $multiLineStringDelimiter$licenseText$multiLineStringDelimiter
-        )
-                    """
-                        .trim()
-                }
-        val outputText =
-            """
-package com.mbta.tid.mbta_app.model
-
-actual fun Dependency.Companion.getAllDependencies(): List<Dependency> =
-    listOf(
-        ${dependencyLines.joinToString(",\n        ")}
-    )
-"""
-                .trimStart()
-        outputPath.writeText(outputText)
-    }
-}
-
-abstract class CycloneDxBomTransformTask : DefaultTask() {
-    @get:InputFile abstract var inputPath: Provider<RegularFile>
-    @get:OutputFile abstract var outputPath: Provider<RegularFile>
-    @get:Internal abstract var transform: Bom.() -> Unit
-
-    @TaskAction
-    fun run() {
-        val inputPath = this.inputPath.get().asFile
-        val outputPath = this.outputPath.get().asFile
-        val bom =
-            (if (inputPath.extension == "json") JsonParser() else XmlParser()).parse(inputPath)
-        bom.transform()
-        val outputText =
-            if (outputPath.extension == "json") {
-                BomJsonGenerator(bom, Version.VERSION_16).toJsonString()
-            } else {
-                BomXmlGenerator(bom, Version.VERSION_16).toXmlString()
-            }
-        outputPath.toPath().writeText(outputText)
-    }
-}
-
-abstract class CachedExecTask @Inject constructor(private val exec: ExecOperations) :
-    DefaultTask() {
-    @get:InputFiles abstract var inputFiles: FileCollection
-    @get:OutputFile abstract var outputFile: Provider<RegularFile>
-    @get:Internal abstract var workingDir: Provider<Directory>
-    @get:Input abstract var commandLine: List<String>
-
-    fun commandLine(vararg arg: String) {
-        commandLine = arg.asList()
-    }
-
-    @TaskAction
-    fun run() {
-        exec.exec {
-            workingDir(this@CachedExecTask.workingDir)
-            commandLine(this@CachedExecTask.commandLine)
-        }
-    }
-}
 
 if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosX64").dependsOn("bomCodegenIos")
@@ -446,29 +332,19 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                 }
                 .assertNormalExitValue()
             val apiResponse = ghOutput.toString()
-            val response = Json.parseToJsonElement(apiResponse)
+            val licenseResponse = GithubLicenseResponse.decode(apiResponse)
 
             component.licenses.addLicense(
                 License().apply {
                     setLicenseText(
                         AttachmentText().apply {
-                            encoding =
-                                checkNotNull(response.jsonObject["encoding"]).jsonPrimitive.content
+                            encoding = licenseResponse.encoding
                             check(encoding == "base64") {
                                 "encoding $encoding not base64 as expected"
                             }
-                            text =
-                                checkNotNull(response.jsonObject["content"])
-                                    .jsonPrimitive
-                                    .content
-                                    .replace(Regex("\\s+"), "")
-                            val knownLicense =
-                                response.jsonObject["license"]
-                                    ?.jsonObject
-                                    ?.get("spdx_id")
-                                    ?.jsonPrimitive
-                                    ?.content
-                            if (knownLicense != null && knownLicense != "NOASSERTION") {
+                            text = licenseResponse.content.replace(Regex("\\s+"), "")
+                            val knownLicense = licenseResponse.license.spdxId
+                            if (knownLicense != "NOASSERTION") {
                                 id = knownLicense
                             }
                         }
