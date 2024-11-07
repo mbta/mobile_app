@@ -172,7 +172,7 @@ final class TripDetailsPageTests: XCTestCase {
         let vehicleId = "999"
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
-        var sut = TripDetailsPage(
+        let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
             routeId: trip.routeId,
@@ -180,13 +180,13 @@ final class TripDetailsPageTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
             tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
             tripRepository: tripRepository,
             vehicleRepository: FakeVehicleRepository(response: .init(vehicle: vehicle))
         )
 
-        let splitViewExp = sut.on(\.didLoadData) { view in
+        let splitViewExp = sut.inspection.inspect(onReceive: tripSchedulesLoaded, after: 0.5) { view in
             XCTAssertNotNil(try view.find(TripDetailsStopListSplitView.self))
         }
 
@@ -307,15 +307,13 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [routeExp], timeout: 5)
     }
 
-    @MainActor func testTripRequestError() throws {
+    @MainActor func testMissingTrip() throws {
         let objects = ObjectCollectionBuilder()
 
-        let trip = objects.trip { trip in
-            trip.routeId = "Red"
-        }
+        let tripId = "ADDED-trip"
 
         let vehicle = objects.vehicle { vehicle in
-            vehicle.tripId = trip.id
+            vehicle.tripId = tripId
             vehicle.currentStatus = .inTransitTo
         }
 
@@ -336,15 +334,16 @@ final class TripDetailsPageTests: XCTestCase {
             onConnect: { _ in tripPredictionsLoaded.send() }
         )
 
-        let tripId = trip.id
         let vehicleId = vehicle.id
+        let nearbyVM = NearbyViewModel(alertsRepository: MockAlertsRepository())
+        nearbyVM.alerts = .init(alerts: [:])
         let sut = TripDetailsPage(
             tripId: tripId,
             vehicleId: vehicleId,
-            routeId: trip.routeId,
+            routeId: "Red",
             target: nil,
             errorBannerVM: .init(),
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             mapVM: .init(),
             globalRepository: MockGlobalRepository(response: globalData),
             tripPredictionsRepository: tripPredictionsRepository,
@@ -355,9 +354,8 @@ final class TripDetailsPageTests: XCTestCase {
         let everythingLoaded = tripSchedulesLoaded.zip(tripPredictionsLoaded)
 
         let routeExp = sut.inspection.inspect(onReceive: everythingLoaded, after: 0.1) { view in
-            XCTAssertNotNil(try view.find(where: { view in
-                (try? view.modifier(LoadingPlaceholderModifier.self)) != nil
-            }))
+            XCTAssertNotNil(try view.find(VehicleCardView.self))
+            XCTAssertThrowsError(try view.find(TripDetailsStopView.self))
         }
 
         ViewHosting.host(view: sut)
@@ -647,11 +645,11 @@ final class TripDetailsPageTests: XCTestCase {
     }
 
     class FakeTripPredictionsRepository: ITripPredictionsRepository {
-        let response: PredictionsStreamDataResponse
+        let response: PredictionsStreamDataResponse?
         let onConnect: ((_ tripId: String) -> Void)?
         let onDisconnect: (() -> Void)?
 
-        init(response: PredictionsStreamDataResponse,
+        init(response: PredictionsStreamDataResponse?,
              onConnect: ((_ tripId: String) -> Void)? = nil,
              onDisconnect: (() -> Void)? = nil) {
             self.response = response
@@ -664,7 +662,12 @@ final class TripDetailsPageTests: XCTestCase {
             onReceive: @escaping (ApiResult<PredictionsStreamDataResponse>) -> Void
         ) {
             onConnect?(tripId)
-            onReceive(ApiResultOk(data: response))
+            let result = if let response {
+                ApiResultOk(data: response)
+            } else {
+                ApiResultError<PredictionsStreamDataResponse>(code: 404, message: "Failed to load predictions")
+            }
+            onReceive(result)
         }
 
         var lastUpdated: Instant?
