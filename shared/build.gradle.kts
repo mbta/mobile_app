@@ -255,11 +255,9 @@ task<Download>("bomCycloneDxCliDownload") {
     }
 }
 
-task<Copy>("bomIosKotlinDeps") {
+task("bomIosKotlinDeps") {
     dependsOn(tasks.cyclonedxBom)
     mustRunAfter("bomCodegenAndroid")
-    from(layout.buildDirectory.file("reports/bom-ios.xml"))
-    into(layout.buildDirectory.dir("boms"))
 }
 
 task<Copy>("bomIosKotlinStdlib") {
@@ -381,8 +379,10 @@ tasks.cyclonedxBom {
             "commonMainImplementationDependenciesMetadata",
             "iosMainImplementationDependenciesMetadata"
         )
+    destination = layout.buildDirectory.dir("boms").get().asFile
     outputName = "bom-ios-kotlin-deps"
-    outputs.files(layout.buildDirectory.file("reports/bom-ios-kotlin-deps.xml"))
+    outputFormat = "xml"
+    outputs.files(layout.buildDirectory.file("boms/bom-ios-kotlin-deps.xml"))
 }
 
 mokkery {
