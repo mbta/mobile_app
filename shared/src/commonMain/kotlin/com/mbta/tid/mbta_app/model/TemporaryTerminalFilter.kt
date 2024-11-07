@@ -42,9 +42,9 @@ class TemporaryTerminalFilter(
     fun Prediction.routePatternId() = predictions.trips[tripId]?.routePatternId
 
     /**
-     * Rewriting realtime data for temporary terminals causes what the app displays to diverge from
+     * Filtering realtime data for temporary terminals causes what the app displays to diverge from
      * what the API says is real, and so must be done with caution. Specifically, we only want to
-     * rewrite
+     * process
      * 1. subway routes
      * 2. with alerts somewhere on the line
      * 3. where the schedule has non-typical patterns and is missing a typical pattern (requiring
@@ -114,7 +114,7 @@ class TemporaryTerminalFilter(
     }
 
     /**
-     * For each route which passes [appliesToRoute], rewrites the static data with
+     * For each route which passes [appliesToRoute], filters the static data with
      * [filterPatternsAtStop].
      */
     fun filtered(): NearbyStaticData {
