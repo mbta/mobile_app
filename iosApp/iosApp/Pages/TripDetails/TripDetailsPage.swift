@@ -24,6 +24,7 @@ struct TripDetailsPage: View {
     @State var globalResponse: GlobalResponse?
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
+    @State var tripPredictionsLoaded: Bool = false
     @State var tripRepository: ITripRepository
     @State var trip: Trip?
     @State var tripSchedulesResponse: TripSchedulesResponse?
@@ -71,7 +72,7 @@ struct TripDetailsPage: View {
     var body: some View {
         VStack(spacing: 16) {
             header
-            if let globalResponse, let vehicle = vehicleResponse?.vehicle,
+            if tripPredictionsLoaded, let globalResponse, let vehicle = vehicleResponse?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
                    tripId: tripId,
                    directionId: trip?.directionId ?? vehicle.directionId,
@@ -226,12 +227,14 @@ struct TripDetailsPage: View {
                 case let .ok(result): tripPredictions = result.data
                 case .error: break
                 }
+                tripPredictionsLoaded = true
                 checkPredictionsStale()
             }
         }
     }
 
     private func leavePredictions() {
+        tripPredictionsLoaded = false
         tripPredictionsRepository.disconnect()
     }
 

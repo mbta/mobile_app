@@ -320,7 +320,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 while (scheduleIndex in stopIds.indices && predictionIndex in predictions.indices) {
                     val stopId = stopIds[scheduleIndex]
                     val prediction = predictions[predictionIndex]
-                    if (Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
+                    if (!Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
                         scheduleIndex--
                         continue
                     }
