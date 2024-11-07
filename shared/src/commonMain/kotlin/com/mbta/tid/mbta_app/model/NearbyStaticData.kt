@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.NearbyStaticData.StopPatterns.ForLine.Companion.groupedDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -473,7 +472,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
  * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext]. Sorts routes by subway
  * first then nearest stop, stops by distance, and headsigns by route pattern sort order.
  *
- * Runs static data and predictions through [TemporaryTerminalRewriter].
+ * Runs static data and predictions through [TemporaryTerminalFilter].
  */
 fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
@@ -497,18 +496,11 @@ fun NearbyStaticData.withRealtimeInfo(
 
     val allDataLoaded = schedules != null
 
-    // this needs to change how the trip keys are constructed
-    val (rewrittenThis, rewrittenPredictions) =
-        if (globalData == null || schedules == null) Pair(this, predictions)
+    val rewrittenThis =
+        if (globalData == null || schedules == null) this
         else
-            TemporaryTerminalRewriter(
-                    this,
-                    predictions,
-                    globalData,
-                    activeRelevantAlerts,
-                    schedules
-                )
-                .rewritten()
+            TemporaryTerminalFilter(this, predictions, globalData, activeRelevantAlerts, schedules)
+                .filtered()
 
     val globalStops = globalData?.stops.orEmpty()
 
@@ -517,7 +509,7 @@ fun NearbyStaticData.withRealtimeInfo(
         UpcomingTrip.tripsMappedBy(
                 globalData?.stops.orEmpty(),
                 schedules,
-                rewrittenPredictions,
+                predictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
@@ -542,7 +534,7 @@ fun NearbyStaticData.withRealtimeInfo(
         UpcomingTrip.tripsMappedBy(
                 globalData?.stops.orEmpty(),
                 schedules,
-                rewrittenPredictions,
+                predictions,
                 scheduleKey = { schedule, scheduleData ->
                     val trip = scheduleData.trips.getValue(schedule.tripId)
                     RealtimePatterns.UpcomingTripKey.ByDirection(

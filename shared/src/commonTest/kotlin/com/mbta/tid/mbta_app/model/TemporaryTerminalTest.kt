@@ -12,7 +12,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-/** An integration test for all of the logic in [TemporaryTerminalRewriter]. */
+/** An integration test for all of the logic in [TemporaryTerminalFilter]. */
 class TemporaryTerminalTest {
     val now = Instant.parse("2024-08-19T16:44:08-04:00")
 
@@ -308,17 +308,16 @@ class TemporaryTerminalTest {
         )
 
     @Test
-    fun `shows only temporary terminals when outside shuttle`() {
+    fun `shows only regular terminals when outside shuttle`() {
         val expected =
             expected(
                 harvard.station,
                 RealtimePatterns.ByHeadsign(
                     red,
-                    "Kendall/MIT",
+                    "Braintree",
                     null,
-                    listOf(redAlewifeBraintree, redAlewifeAshmont, redAlewifeKendall),
+                    listOf(redAlewifeBraintree),
                     listOf(
-                        UpcomingTrip(tripAlewifeKendall, scheduleAlewifeKendall),
                         UpcomingTrip(tripAlewifeBraintree1, predictionAlewifeBraintree1),
                         UpcomingTrip(tripAlewifeBraintree2, predictionAlewifeBraintree2),
                         UpcomingTrip(tripAlewifeBraintree3, predictionAlewifeBraintree3)
@@ -334,6 +333,14 @@ class TemporaryTerminalTest {
                         UpcomingTrip(tripBraintreeAlewife1, predictionBraintreeAlewife1),
                         UpcomingTrip(tripKendallAlewife, scheduleKendallAlewife)
                     ),
+                    emptyList()
+                ),
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Ashmont",
+                    null,
+                    listOf(redAlewifeAshmont),
+                    emptyList(),
                     emptyList()
                 )
             )
@@ -428,7 +435,7 @@ class TemporaryTerminalTest {
     }
 
     @Test
-    fun `shows correct set of terminals when at boundary of shuttle`() {
+    fun `shows only regular terminals when at boundary of shuttle`() {
         val expected =
             expected(
                 jfkUmass.station,
@@ -448,15 +455,7 @@ class TemporaryTerminalTest {
                     listOf(UpcomingTrip(tripJfkAshmont, scheduleJfkAshmont)),
                     emptyList()
                 ),
-                RealtimePatterns.ByHeadsign(
-                    red,
-                    "Alewife",
-                    null,
-                    listOf(redBraintreeAlewife, redAshmontAlewife),
-                    emptyList(),
-                    listOf(alert)
-                ),
-                // JFK/UMass filtered out because arrival only
+                // Alewife filtered out because arrival only
             )
         assertEquals(
             expected.condensed(),
@@ -522,7 +521,7 @@ class TemporaryTerminalTest {
                     "        ${direction.name} to ${direction.destination}"
             } +
                 " (patterns=${patterns.joinToString { it.id }}) alerts=${alertsHere.orEmpty().joinToString(prefix = "[", postfix = "]") { it.id }}\n" +
-                upcomingTrips.orEmpty().joinToString(separator = "\n") { it.condensed() }
+                upcomingTrips.joinToString(separator = "\n") { it.condensed() }
 
         fun PatternsByStop.condensed() =
             "    stop=${stop.id}\n${patterns.joinToString(separator = "\n") { it.condensed() }}"
