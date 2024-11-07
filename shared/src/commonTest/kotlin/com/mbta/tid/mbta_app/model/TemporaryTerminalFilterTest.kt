@@ -183,33 +183,7 @@ class TemporaryTerminalFilterTest {
         assertFalse(filter.appliesToRoute(route))
     }
 
-    @Test
-    fun `appliesToRoute rejects no predictions`() = appliesToRouteTest {
-        createRoute()
-        createAlert()
-        createPatterns()
-        createSchedule()
-
-        val filter = filter()
-
-        assertFalse(filter.appliesToRoute(route))
-    }
-
-    @Test
-    fun `appliesToRoute rejects with diversion prediction`() = appliesToRouteTest {
-        createRoute()
-        createAlert()
-        createPatterns()
-        createSchedule()
-        createPrediction()
-        objects.prediction { trip = objects.trip(diversion) }
-
-        val filter = filter()
-
-        assertFalse(filter.appliesToRoute(route))
-    }
-
-    private class FilterPatternsAtStopTestHelper {
+    private class DiscardProbableTemporaryTerminalsTestHelper {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
 

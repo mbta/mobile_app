@@ -50,8 +50,6 @@ class TemporaryTerminalFilter(
      * 3. where the schedule has non-typical patterns and is missing a typical pattern (requiring
      *    only non-typical patterns misses single-branch RL disruptions, but allowing just any
      *    non-typical pattern hits GL early-morning cross-branch trips)
-     * 4. but the predictions all have typical patterns instead of non-typical patterns (meaning
-     *    there are no predictions that will be lost)
      */
     fun appliesToRoute(route: Route): Boolean {
         val routeId = route.id
@@ -76,15 +74,7 @@ class TemporaryTerminalFilter(
             }
         val scheduleReplacedTypical = scheduleMissingTypical && scheduleHasNontypical
 
-        val routePredictions = predictionsByRoute[routeId].orEmpty()
-        val predictionsAlwaysTypical =
-            routePredictions.isNotEmpty() &&
-                routePredictions.all {
-                    globalData.routePatterns[it.routePatternId()]?.typicality ==
-                        RoutePattern.Typicality.Typical
-                }
-
-        return isSubway && routeHasAlert && scheduleReplacedTypical && predictionsAlwaysTypical
+        return isSubway && routeHasAlert && scheduleReplacedTypical
     }
 
     /**
