@@ -82,8 +82,8 @@ class SettingsViewModel: ObservableObject {
                             "Map Debug",
                             comment: "A setting on the More page to display map debug information (only visible for developers)"
                         ),
-                        setting: .map,
-                        value: settings[.map] ?? false
+                        setting: .devDebugMode,
+                        value: settings[.devDebugMode] ?? false
                     ),
                     .toggle(
                         label: NSLocalizedString(

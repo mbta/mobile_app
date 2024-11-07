@@ -69,7 +69,7 @@ struct AnnotatedMap: View {
             .withScenePhaseHandlers(onActive: onActive)
             .task {
                 do {
-                    mapDebug = try await settingsRepository.getSettings()[.map]?.boolValue ?? false
+                    mapDebug = try await settingsRepository.getSettings()[.devDebugMode]?.boolValue ?? false
                 } catch {
                     debugPrint("Failed to load map debug", error)
                 }
