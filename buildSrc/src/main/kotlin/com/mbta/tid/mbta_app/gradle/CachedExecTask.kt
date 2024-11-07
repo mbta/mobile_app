@@ -29,6 +29,6 @@ abstract class CachedExecTask @Inject constructor(private val exec: ExecOperatio
         exec.exec {
             workingDir(this@CachedExecTask.workingDir)
             commandLine(this@CachedExecTask.commandLine)
-        }
+        }.assertNormalExitValue()
     }
 }
