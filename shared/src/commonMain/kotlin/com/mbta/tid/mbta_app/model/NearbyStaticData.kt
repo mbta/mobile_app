@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.NearbyStaticData.StopPatterns.ForLine.Compani
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.Position
@@ -479,7 +479,7 @@ fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
     sortByDistanceFrom: Position?,
     schedules: ScheduleResponse?,
-    predictions: PredictionsStreamDataResponse?,
+    predictions: PredictionsResponse?,
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
     showAllPatternsWhileLoading: Boolean,
@@ -639,7 +639,7 @@ fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
     sortByDistanceFrom: Position,
     schedules: ScheduleResponse?,
-    predictions: PredictionsStreamDataResponse?,
+    predictions: PredictionsResponse?,
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
     pinnedRoutes: Set<String>

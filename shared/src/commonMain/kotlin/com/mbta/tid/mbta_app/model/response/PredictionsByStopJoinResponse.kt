@@ -10,9 +10,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PredictionsByStopJoinResponse(
     @SerialName("predictions_by_stop") val predictionsByStop: Map<String, Map<String, Prediction>>,
-    val trips: Map<String, Trip>,
-    val vehicles: Map<String, Vehicle>
-) {
+    override val trips: Map<String, Trip>,
+    override val vehicles: Map<String, Vehicle>
+) : PredictionsResponse {
 
     constructor(
         objects: ObjectCollectionBuilder
@@ -24,11 +24,25 @@ data class PredictionsByStopJoinResponse(
         objects.vehicles
     )
 
+    override fun with(
+        predictions: Map<String, Prediction>,
+        trips: Map<String, Trip>,
+        vehicles: Map<String, Vehicle>
+    ): PredictionsResponse {
+        return copy(
+            predictionsByStop =
+                predictions.values
+                    .groupBy { it.stopId }
+                    .mapValues { it.value.associateBy { it.id } },
+            trips = trips,
+            vehicles = vehicles
+        )
+    }
     /**
      * Merge the latest predictions for a single stop into the predictions for all stops. Removes
      * vehicles & trips that are no longer referenced in any predictions
      */
-    fun mergePredictions(
+    override fun mergePredictions(
         updatedPredictions: PredictionsByStopMessageResponse
     ): PredictionsByStopJoinResponse {
 
@@ -57,11 +71,15 @@ data class PredictionsByStopJoinResponse(
         )
     }
 
+    override val predictions: Map<String, Prediction>
+        get() {
+            return predictionsByStop.flatMap { it.value.values }.associateBy { it.id }
+        }
+
     /** Flattens the `predictionsByStop` field into a single map of predictions by id */
     fun toPredictionsStreamDataResponse(): PredictionsStreamDataResponse {
-        val predictionsById = predictionsByStop.flatMap { it.value.values }.associateBy { it.id }
         return PredictionsStreamDataResponse(
-            predictions = predictionsById,
+            predictions = predictions,
             trips = trips,
             vehicles = vehicles
         )

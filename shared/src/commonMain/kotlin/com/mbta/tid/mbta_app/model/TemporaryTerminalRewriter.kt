@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 
 /**
@@ -16,7 +16,7 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
  */
 class TemporaryTerminalRewriter(
     val nearbyStaticData: NearbyStaticData,
-    val predictions: PredictionsStreamDataResponse,
+    val predictions: PredictionsResponse,
     val globalData: GlobalResponse,
     val alerts: List<Alert>,
     val schedules: ScheduleResponse
@@ -219,7 +219,7 @@ class TemporaryTerminalRewriter(
      * For each route which passes [appliesToRoute], rewrites the static data with
      * [truncatePatternsAtStop] and the predictions stream trips with [rewritePredictions].
      */
-    fun rewritten(): Pair<NearbyStaticData, PredictionsStreamDataResponse?> {
+    fun rewritten(): Pair<NearbyStaticData, PredictionsResponse?> {
         val rewrittenData =
             nearbyStaticData.data.map { transitWithStops ->
                 transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
@@ -236,7 +236,7 @@ class TemporaryTerminalRewriter(
 
         return Pair(
             nearbyStaticData.copy(data = rewrittenData),
-            predictions.copy(trips = rewrittenTrips)
+            predictions.with(trips = rewrittenTrips)
         )
     }
 }

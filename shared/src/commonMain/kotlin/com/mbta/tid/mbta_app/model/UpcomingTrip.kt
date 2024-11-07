@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
 import kotlinx.datetime.Instant
@@ -95,9 +95,9 @@ data class UpcomingTrip(
         fun <Key> tripsMappedBy(
             stops: Map<String, Stop>,
             schedules: ScheduleResponse?,
-            predictions: PredictionsStreamDataResponse?,
+            predictions: PredictionsResponse?,
             scheduleKey: (Schedule, ScheduleResponse) -> Key,
-            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key,
+            predictionKey: (Prediction, PredictionsResponse) -> Key,
             filterAtTime: Instant
         ): Map<Key, List<UpcomingTrip>>? {
 

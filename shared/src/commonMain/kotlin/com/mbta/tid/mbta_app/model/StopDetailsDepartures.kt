@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import kotlinx.datetime.Instant
@@ -38,7 +38,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             stop: Stop,
             global: GlobalResponse,
             schedules: ScheduleResponse?,
-            predictions: PredictionsStreamDataResponse?,
+            predictions: PredictionsResponse?,
             alerts: AlertsStreamDataResponse?,
             pinnedRoutes: Set<String>,
             filterAtTime: Instant
