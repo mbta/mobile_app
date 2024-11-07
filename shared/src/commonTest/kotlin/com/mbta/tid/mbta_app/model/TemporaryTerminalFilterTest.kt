@@ -261,126 +261,130 @@ class TemporaryTerminalFilterTest {
         }
     }
 
-    private fun filterPatternsAtStopTest(block: FilterPatternsAtStopTestHelper.() -> Unit) =
-        FilterPatternsAtStopTestHelper().block()
+    private fun discardProbableTemporaryTerminalsTest(
+        block: DiscardProbableTemporaryTerminalsTestHelper.() -> Unit
+    ) = DiscardProbableTemporaryTerminalsTestHelper().block()
 
     @Test
-    fun `filterPatternsAtStop handles easy case`() = filterPatternsAtStopTest {
-        val typical = typical(route, 0, "a", "b", "c", "d", "e")
-        val early = diversion(route, 0, "a", "b")
+    fun `discardProbableTemporaryTerminals handles easy case`() =
+        discardProbableTemporaryTerminalsTest {
+            val typical = typical(route, 0, "a", "b", "c", "d", "e")
+            val early = diversion(route, 0, "a", "b")
 
-        schedule(early)
-        prediction(typical)
+            schedule(early)
+            prediction(typical)
 
-        val original = stopPatterns {
-            route(route) {
-                stop(stop("a")) {
-                    headsign("e", listOf(typical))
-                    headsign("b", listOf(early))
+            val original = stopPatterns {
+                route(route) {
+                    stop(stop("a")) {
+                        headsign("e", listOf(typical))
+                        headsign("b", listOf(early))
+                    }
                 }
             }
-        }
 
-        val expected = stopPatterns {
-            route(route) { stop(stop("a")) { headsign("e", listOf(typical)) } }
-        }
+            val expected = stopPatterns {
+                route(route) { stop(stop("a")) { headsign("e", listOf(typical)) } }
+            }
 
-        assertEquals(expected, filter.filterPatternsAtStop(original))
-    }
+            assertEquals(expected, filter.discardProbableTemporaryTerminals(original))
+        }
 
     @Test
-    fun `filterPatternsAtStop does not hide predictions`() = filterPatternsAtStopTest {
-        val typical = typical(route, 0, "a", "b", "c", "d", "e")
-        val early = diversion(route, 0, "a", "b")
+    fun `discardProbableTemporaryTerminals does not hide predictions`() =
+        discardProbableTemporaryTerminalsTest {
+            val typical = typical(route, 0, "a", "b", "c", "d", "e")
+            val early = diversion(route, 0, "a", "b")
 
-        schedule(early)
-        prediction(early)
+            schedule(early)
+            prediction(early)
 
-        val original = stopPatterns {
-            route(route) {
-                stop(stop("a")) {
-                    headsign("e", listOf(typical))
-                    headsign("b", listOf(early))
+            val original = stopPatterns {
+                route(route) {
+                    stop(stop("a")) {
+                        headsign("e", listOf(typical))
+                        headsign("b", listOf(early))
+                    }
                 }
             }
-        }
 
-        assertEquals(original, filter.filterPatternsAtStop(original))
-    }
+            assertEquals(original, filter.discardProbableTemporaryTerminals(original))
+        }
 
     @Test
-    fun `filterPatternsAtStop handles Red Line`() = filterPatternsAtStopTest {
-        stop("Al", listOf("Al0", "Al1"))
-        val harvard = stop("Ha", listOf("Ha0", "Ha1"))
-        stop("Ke", listOf("Ke0", "Ke1"))
-        // 0_ southbound 1_ northbound _0 Ashmont _1 Braintree
-        val jfkUmass = stop("Jf", listOf("Jf00", "Jf01", "Jf10", "Jf11"))
-        stop("As", listOf("As0", "As1"))
-        stop("Br", listOf("Br0", "Br1"))
-        val typicalBSouth = typical(route, 0, "Al0", "Ha0", "Ke0", "Jf01", "Br0")
-        val typicalASouth = typical(route, 0, "Al0", "Ha0", "Ke0", "Jf00", "As0")
-        val divASouth = diversion(route, 0, "Jf00", "As0")
-        val divBSouth = diversion(route, 0, "Jf01", "Br0")
-        val divSSouth = diversion(route, 0, "Al0", "Ha0", "Ke0")
-        val typicalBNorth = typical(route, 1, "Br1", "Jf11", "Ke1", "Ha1", "Al1")
-        val typicalANorth = typical(route, 1, "As1", "Jf10", "Ke1", "Ha1", "Al1")
-        val divANorth = diversion(route, 1, "As1", "Jf10")
-        val divBNorth = diversion(route, 1, "Br1", "Jf11")
-        val divSNorth = diversion(route, 1, "Ke1", "Ha1", "Al1")
+    fun `discardProbableTemporaryTerminals handles Red Line`() =
+        discardProbableTemporaryTerminalsTest {
+            stop("Al", listOf("Al0", "Al1"))
+            val harvard = stop("Ha", listOf("Ha0", "Ha1"))
+            stop("Ke", listOf("Ke0", "Ke1"))
+            // 0_ southbound 1_ northbound _0 Ashmont _1 Braintree
+            val jfkUmass = stop("Jf", listOf("Jf00", "Jf01", "Jf10", "Jf11"))
+            stop("As", listOf("As0", "As1"))
+            stop("Br", listOf("Br0", "Br1"))
+            val typicalBSouth = typical(route, 0, "Al0", "Ha0", "Ke0", "Jf01", "Br0")
+            val typicalASouth = typical(route, 0, "Al0", "Ha0", "Ke0", "Jf00", "As0")
+            val divASouth = diversion(route, 0, "Jf00", "As0")
+            val divBSouth = diversion(route, 0, "Jf01", "Br0")
+            val divSSouth = diversion(route, 0, "Al0", "Ha0", "Ke0")
+            val typicalBNorth = typical(route, 1, "Br1", "Jf11", "Ke1", "Ha1", "Al1")
+            val typicalANorth = typical(route, 1, "As1", "Jf10", "Ke1", "Ha1", "Al1")
+            val divANorth = diversion(route, 1, "As1", "Jf10")
+            val divBNorth = diversion(route, 1, "Br1", "Jf11")
+            val divSNorth = diversion(route, 1, "Ke1", "Ha1", "Al1")
 
-        schedule(divASouth)
-        schedule(divBSouth)
-        schedule(divSSouth)
-        schedule(divANorth)
-        schedule(divBNorth)
-        schedule(divSNorth)
-        prediction(typicalBSouth)
-        prediction(typicalBNorth)
-        prediction(typicalANorth)
+            schedule(divASouth)
+            schedule(divBSouth)
+            schedule(divSSouth)
+            schedule(divANorth)
+            schedule(divBNorth)
+            schedule(divSNorth)
+            prediction(typicalBSouth)
+            prediction(typicalBNorth)
+            prediction(typicalANorth)
 
-        val originalHarvard = stopPatterns {
-            route(route) {
-                stop(harvard) {
-                    headsign("Braintree", listOf(typicalBSouth))
-                    headsign("Ashmont", listOf(typicalASouth))
-                    headsign("Kendall/MIT", listOf(divSSouth))
-                    headsign("Alewife", listOf(typicalBNorth, typicalANorth, divSNorth))
+            val originalHarvard = stopPatterns {
+                route(route) {
+                    stop(harvard) {
+                        headsign("Braintree", listOf(typicalBSouth))
+                        headsign("Ashmont", listOf(typicalASouth))
+                        headsign("Kendall/MIT", listOf(divSSouth))
+                        headsign("Alewife", listOf(typicalBNorth, typicalANorth, divSNorth))
+                    }
                 }
             }
-        }
 
-        val expectedHarvard = stopPatterns {
-            route(route) {
-                stop(harvard) {
-                    headsign("Braintree", listOf(typicalBSouth))
-                    headsign("Ashmont", listOf(typicalASouth))
-                    headsign("Alewife", listOf(typicalBNorth, typicalANorth, divSNorth))
+            val expectedHarvard = stopPatterns {
+                route(route) {
+                    stop(harvard) {
+                        headsign("Braintree", listOf(typicalBSouth))
+                        headsign("Ashmont", listOf(typicalASouth))
+                        headsign("Alewife", listOf(typicalBNorth, typicalANorth, divSNorth))
+                    }
                 }
             }
-        }
 
-        val originalJFK = stopPatterns {
-            route(route) {
-                stop(jfkUmass) {
-                    headsign("Braintree", listOf(typicalBSouth, divBSouth))
-                    headsign("Ashmont", listOf(typicalASouth, divASouth))
-                    headsign("Alewife", listOf(typicalBNorth, typicalANorth))
-                    headsign("JFK/UMass", listOf(divANorth, divBNorth))
+            val originalJFK = stopPatterns {
+                route(route) {
+                    stop(jfkUmass) {
+                        headsign("Braintree", listOf(typicalBSouth, divBSouth))
+                        headsign("Ashmont", listOf(typicalASouth, divASouth))
+                        headsign("Alewife", listOf(typicalBNorth, typicalANorth))
+                        headsign("JFK/UMass", listOf(divANorth, divBNorth))
+                    }
                 }
             }
-        }
 
-        val expectedJFK = stopPatterns {
-            route(route) {
-                stop(jfkUmass) {
-                    headsign("Braintree", listOf(typicalBSouth, divBSouth))
-                    headsign("Ashmont", listOf(typicalASouth, divASouth))
-                    headsign("Alewife", listOf(typicalBNorth, typicalANorth))
+            val expectedJFK = stopPatterns {
+                route(route) {
+                    stop(jfkUmass) {
+                        headsign("Braintree", listOf(typicalBSouth, divBSouth))
+                        headsign("Ashmont", listOf(typicalASouth, divASouth))
+                        headsign("Alewife", listOf(typicalBNorth, typicalANorth))
+                    }
                 }
             }
-        }
 
-        assertEquals(expectedHarvard, filter.filterPatternsAtStop(originalHarvard))
-        assertEquals(expectedJFK, filter.filterPatternsAtStop(originalJFK))
-    }
+            assertEquals(expectedHarvard, filter.discardProbableTemporaryTerminals(originalHarvard))
+            assertEquals(expectedJFK, filter.discardProbableTemporaryTerminals(originalJFK))
+        }
 }

@@ -81,7 +81,7 @@ class TemporaryTerminalFilter(
      * Discards scheduled, non-predicted, non-typical headsigns in this
      * [NearbyStaticData.StopPatterns].
      */
-    fun filterPatternsAtStop(
+    fun discardProbableTemporaryTerminals(
         stopPatterns: NearbyStaticData.StopPatterns
     ): NearbyStaticData.StopPatterns {
         return stopPatterns.copy(
@@ -105,7 +105,7 @@ class TemporaryTerminalFilter(
 
     /**
      * For each route which passes [appliesToRoute], filters the static data with
-     * [filterPatternsAtStop].
+     * [discardProbableTemporaryTerminals].
      */
     fun filtered(): NearbyStaticData {
         val filteredData =
@@ -113,7 +113,7 @@ class TemporaryTerminalFilter(
                 transitWithStops.allRoutes().fold(transitWithStops) { transit, route ->
                     if (appliesToRoute(route)) {
                         val patternsFiltered =
-                            transit.patternsByStop.map { filterPatternsAtStop(it) }
+                            transit.patternsByStop.map { discardProbableTemporaryTerminals(it) }
                         transit.copy(patternsByStop = patternsFiltered)
                     } else {
                         transit
