@@ -11,6 +11,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISettingsRepository {
+
     suspend fun getSettings(): Map<Settings, Boolean>
 
     suspend fun setSettings(settings: Map<Settings, Boolean>)

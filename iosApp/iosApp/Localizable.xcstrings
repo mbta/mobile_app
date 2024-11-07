@@ -1390,6 +1390,9 @@
         }
       }
     },
+    "Debug Mode" : {
+      "comment" : "A setting on the More page to display debug information (only visible for developers)"
+    },
     "Delayed" : {
       "comment" : "Status for a commuter rail train",
       "extractionState" : "manual"
@@ -2407,9 +2410,6 @@
           }
         }
       }
-    },
-    "Map Debug" : {
-      "comment" : "A setting on the More page to display map debug information (only visible for developers)"
     },
     "MBTA Go" : {
 
