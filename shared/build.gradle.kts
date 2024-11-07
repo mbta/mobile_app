@@ -115,7 +115,9 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosArm64").dependsOn("bomCodegenIos")
 
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
-} else {
+}
+
+if (System.getenv("CI_XCODE_CLOUD") != "TRUE") {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
 }
 
@@ -380,7 +382,7 @@ tasks.cyclonedxBom {
             "iosMainImplementationDependenciesMetadata"
         )
     outputName = "bom-ios-kotlin-deps"
-    outputs.files(destination.map { "$it/bom-ios-kotlin-deps.xml" })
+    outputs.files(layout.buildDirectory.file("reports/bom-ios-kotlin-deps.xml"))
 }
 
 mokkery {
