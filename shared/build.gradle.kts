@@ -9,6 +9,7 @@ import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.gradle.process.internal.ExecException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
@@ -298,6 +299,12 @@ task<CachedExecTask>("bomIosCocoapodsRaw") {
     outputFile = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
     workingDir = provider { layout.projectDirectory.dir("../iosApp") }
     commandLine("bundle", "exec", "cyclonedx-cocoapods", "-o", outputFile.get().toString())
+    onError = { error ->
+        throw IllegalStateException(
+            "\nerror: bundle exec cyclonedx-cocoapods failed, try ./gradlew --stop then ./gradlew bomIosCocoapodsRaw in a terminal with a good PATH",
+            error
+        )
+    }
 }
 
 task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
@@ -326,11 +333,20 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                         else "/license?ref="
                     )
             val ghOutput = ByteArrayOutputStream()
-            exec {
+            try {
+                exec {
                     commandLine("gh", "api", licenseApiPath)
                     standardOutput = ghOutput
                 }
-                .assertNormalExitValue()
+            } catch (e: ExecException) {
+                throw IllegalStateException(
+                    "\nerror: `gh api $licenseApiPath` failed, ${when {
+                        DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
+                        else -> "install it"
+                    }} and try `gh auth login`",
+                    e
+                )
+            }
             val apiResponse = ghOutput.toString()
             val licenseResponse = GithubLicenseResponse.decode(apiResponse)
 

@@ -12,6 +12,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import org.gradle.process.internal.ExecException
 
 abstract class CachedExecTask @Inject constructor(private val exec: ExecOperations) :
     DefaultTask() {
@@ -19,6 +20,7 @@ abstract class CachedExecTask @Inject constructor(private val exec: ExecOperatio
     @get:OutputFile abstract var outputFile: Provider<RegularFile>
     @get:Internal abstract var workingDir: Provider<Directory>
     @get:Input abstract var commandLine: List<String>
+    @get:Internal abstract var onError: ((ExecException) -> Unit)?
 
     fun commandLine(vararg arg: String) {
         commandLine = arg.asList()
@@ -26,9 +28,16 @@ abstract class CachedExecTask @Inject constructor(private val exec: ExecOperatio
 
     @TaskAction
     fun run() {
-        exec.exec {
-            workingDir(this@CachedExecTask.workingDir)
-            commandLine(this@CachedExecTask.commandLine)
-        }.assertNormalExitValue()
+        try {
+            exec.exec {
+                workingDir(this@CachedExecTask.workingDir)
+                commandLine(this@CachedExecTask.commandLine)
+            }
+        } catch (e: ExecException) {
+            when (val onError = this.onError) {
+                null -> throw e
+                else -> onError(e)
+            }
+        }
     }
 }
