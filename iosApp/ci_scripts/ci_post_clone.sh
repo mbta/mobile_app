@@ -63,6 +63,7 @@ retry ./gradlew :shared:generateDummyFramework
 cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
 retry bundle exec pod install
 cd ..
+retry ./gradlew :shared:podInstallSyntheticIos
 
 # Install Node.js and GitHub CLI for codegen
 retry brew install node gh
