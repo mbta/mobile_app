@@ -51,13 +51,21 @@ mv $DEFAULT_JAVA_PATH "${DEFAULT_JAVA_ROOT_DIR}/JDK"
 # Move into JDK_PATH so that it can be referenced by JAVA_HOME env var
 mv "${DEFAULT_JAVA_ROOT_DIR}/JDK" $CI_DERIVED_DATA_PATH
 
-# Install cocoapods
-retry brew install cocoapods
+# Install ruby and bundler dependencies
+retry brew install ruby@3.2
+export PATH="/usr/local/opt/ruby@3.2/bin:$PATH"
+retry gem install bundler:2.5.3 # match Gemfile.lock
+retry bundle install
+
+# Run cocoapods
 cd "${CI_PRIMARY_REPOSITORY_PATH}"
 retry ./gradlew :shared:generateDummyFramework
 cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-retry pod install
+retry bundle exec pod install
 cd ..
+
+# Install Node.js and GitHub CLI for codegen
+retry brew install node gh
 
 # Configure Mapbox token for installation
 cd $CI_PRIMARY_REPOSITORY_PATH
@@ -71,7 +79,7 @@ echo "password ${MAPBOX_SECRET_TOKEN}" >> ~/.netrc
 if [ $CI_XCODEBUILD_ACTION == "build-for-testing" ]; then
   echo "Running shared tests"
   cd $CI_PRIMARY_REPOSITORY_PATH
-  RETRIES=2 retry ./gradlew shared:iosX64Test
+  RETRIES=2 retry bundle exec ./gradlew shared:iosX64Test
 fi
 
 echo "Adding build environment variables"

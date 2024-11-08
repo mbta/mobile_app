@@ -44,6 +44,9 @@ jobs:
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check
+        env:
+          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
+          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
