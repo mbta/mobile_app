@@ -19,13 +19,13 @@ final class MorePageTests: XCTestCase {
         let onSet: (([Settings: Bool]) -> Void)?
 
         init(
-            mapDebug: Bool,
+            devDebugMode: Bool,
             searchRouteResults: Bool,
             onGet: (() -> Void)? = nil,
             onSet: (([Settings: Bool]) -> Void)? = nil
         ) {
             settings = [
-                .map: mapDebug,
+                .devDebugMode: devDebugMode,
                 .searchRouteResults: searchRouteResults,
             ]
             self.onGet = onGet
@@ -48,7 +48,7 @@ final class MorePageTests: XCTestCase {
         let loadedPublisher = PassthroughSubject<Void, Never>()
 
         let settingsRepository = FakeSettingsRepository(
-            mapDebug: true,
+            devDebugMode: true,
             searchRouteResults: false,
             onGet: { loadedPublisher.send(()) }
         )
@@ -56,7 +56,7 @@ final class MorePageTests: XCTestCase {
 
         let sut = MorePage(viewModel: viewModel)
         let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
-            XCTAssertTrue(try view.find(text: "Map Debug").parent().parent().find(ViewType.Toggle.self).isOn())
+            XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
         }
 
         ViewHosting.host(view: sut)
@@ -70,12 +70,12 @@ final class MorePageTests: XCTestCase {
         let savedExp = expectation(description: "saved state")
 
         let settingsRepository = FakeSettingsRepository(
-            mapDebug: false,
+            devDebugMode: false,
             searchRouteResults: false,
             onGet: { loadedPublisher.send(()) },
             onSet: {
-                let mapSetting = $0[.map] ?? false
-                XCTAssertTrue(mapSetting)
+                let devDebugModeSetting = $0[.devDebugMode] ?? false
+                XCTAssertTrue(devDebugModeSetting)
                 savedExp.fulfill()
             }
         )
@@ -83,7 +83,7 @@ final class MorePageTests: XCTestCase {
 
         let sut = MorePage(viewModel: viewModel)
         let tapExp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
-            try view.find(text: "Map Debug").parent().parent().find(ViewType.Toggle.self).tap()
+            try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
 
         ViewHosting.host(view: sut)
@@ -96,7 +96,7 @@ final class MorePageTests: XCTestCase {
         let loadedPublisher = PassthroughSubject<Void, Never>()
 
         let settingsRepository = FakeSettingsRepository(
-            mapDebug: false,
+            devDebugMode: false,
             searchRouteResults: false,
             onGet: { loadedPublisher.send(()) }
         )
