@@ -19,6 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
+    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
     override func setUp() {
@@ -35,7 +36,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
         let cards = try sut.inspect().findAll(NearbyRouteView.self)
         XCTAssertEqual(cards.count, 5)
@@ -57,7 +59,8 @@ final class NearbyTransitViewTests: XCTestCase {
             location: .constant(ViewportProvider.Defaults.center),
             isReturningFromBackground: .constant(false),
             globalRepository: MockGlobalRepository(),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
@@ -158,7 +161,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: nearbyVM
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
         let exp = sut.on(\.didLoadData) { view in
             let routes = view.findAll(NearbyRouteView.self)
@@ -244,7 +248,8 @@ final class NearbyTransitViewTests: XCTestCase {
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
             nearbyVM: nearbyVM,
-            scheduleResponse: .init(objects: objects)
+            scheduleResponse: .init(objects: objects),
+            noNearbyStops: noNearbyStops
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -291,7 +296,8 @@ final class NearbyTransitViewTests: XCTestCase {
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
-            scheduleResponse: .init(objects: objects)
+            scheduleResponse: .init(objects: objects),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -363,7 +369,8 @@ final class NearbyTransitViewTests: XCTestCase {
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
             nearbyVM: nearbyVM,
-            now: now
+            now: now,
+            noNearbyStops: noNearbyStops
         )
 
         let exp = sut.on(\.didAppear) { view in
@@ -492,7 +499,8 @@ final class NearbyTransitViewTests: XCTestCase {
                 globalLoadedPublisher.send()
             },
             globalData: globalResponse,
-            nearbyVM: nearbyVM
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
         let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 1) { view in
@@ -543,7 +551,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -587,7 +596,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: nearbyVM
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
         func prediction(minutesAway: Double) -> PredictionsByStopJoinResponse {
@@ -633,7 +643,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -661,7 +672,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -693,7 +705,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -720,7 +733,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: nearbyVM
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
         let exp = sut.on(\.didAppear) { view in
             let actualView = try view.actualView()
@@ -747,7 +761,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init()),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         sut.inspection.inspect(after: 0.5) { view in
@@ -782,7 +797,8 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
             isReturningFromBackground: .constant(false),
-            nearbyVM: nearbyVM
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -847,13 +863,14 @@ final class NearbyTransitViewTests: XCTestCase {
             state: .constant(.init(loadedLocation: .init(), nearbyByRouteAndStop: .init(data: []))),
             location: .constant(ViewportProvider.Defaults.center),
             isReturningFromBackground: .constant(false),
-            nearbyVM: nearbyVM
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
         let hasAppeared = sut.on(\.didLoadData) { view in
             XCTAssertNil(try? view.find(LoadingCard<Text>.self))
-            XCTAssertNotNil(try view.find(text: "No nearby MBTA stops"))
-            XCTAssertNotNil(try view.find(text: "Your current location is outside of our search area."))
+            XCTAssertNotNil(try view.find(text: "No nearby stops"))
+            XCTAssertNotNil(try view.find(text: "You’re outside the MBTA service area."))
         }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)

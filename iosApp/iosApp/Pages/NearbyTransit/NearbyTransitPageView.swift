@@ -18,6 +18,8 @@ struct NearbyTransitPageView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
+    let noNearbyStops: () -> NoNearbyStopsView
+
     @State var location: CLLocationCoordinate2D?
 
     let inspection = Inspection<Self>()
@@ -25,11 +27,13 @@ struct NearbyTransitPageView: View {
     init(
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        viewportProvider: ViewportProvider
+        viewportProvider: ViewportProvider,
+        noNearbyStops: @escaping () -> NoNearbyStopsView
     ) {
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
+        self.noNearbyStops = noNearbyStops
     }
 
     var body: some View {
@@ -53,7 +57,8 @@ struct NearbyTransitPageView: View {
                         state: $nearbyVM.nearbyState,
                         location: $location,
                         isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
-                        nearbyVM: nearbyVM
+                        nearbyVM: nearbyVM,
+                        noNearbyStops: noNearbyStops
                     )
 
                     .onReceive(

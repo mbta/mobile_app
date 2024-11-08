@@ -2561,7 +2561,7 @@
         }
       }
     },
-    "No nearby MBTA stops" : {
+    "No nearby stops" : {
 
     },
     "No Service" : {
@@ -2985,6 +2985,9 @@
           }
         }
       }
+    },
+    "Search by stop" : {
+
     },
     "See transit near you" : {
 
@@ -4414,6 +4417,9 @@
     "View source on GitHub" : {
       "comment" : "Label for a More page link to the MBTA Go source code"
     },
+    "View transit near Boston" : {
+
+    },
     "We use your location to show you nearby transit options." : {
 
     },
@@ -4470,7 +4476,7 @@
     "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go." : {
 
     },
-    "Your current location is outside of our search area." : {
+    "You’re outside the MBTA service area." : {
 
     }
   },

@@ -69,6 +69,8 @@
 		8C1587042C76524600AB5036 /* AppVariantExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1587032C76524600AB5036 /* AppVariantExtension.swift */; };
 		8C2106F52CA6159600228287 /* ErrorBannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2106F42CA6159600228287 /* ErrorBannerTests.swift */; };
 		8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */; };
+		8C2F26962CDD709700386D4F /* NoNearbyStopsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2F26952CDD709700386D4F /* NoNearbyStopsView.swift */; };
+		8C2F26982CDE7B3600386D4F /* NoNearbyStopsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2F26972CDE7B3600386D4F /* NoNearbyStopsViewTests.swift */; };
 		8C3D64102BE19DBA0026DD53 /* MorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3D640F2BE19DBA0026DD53 /* MorePage.swift */; };
 		8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* StopDetailsPage.swift */; };
 		8C5054A02CA47C3C00137CFE /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C50549F2CA47C3C00137CFE /* ErrorBanner.swift */; };
@@ -331,6 +333,8 @@
 		8C1587032C76524600AB5036 /* AppVariantExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVariantExtension.swift; sourceTree = "<group>"; };
 		8C2106F42CA6159600228287 /* ErrorBannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBannerTests.swift; sourceTree = "<group>"; };
 		8C2752EE2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsAnalytics.swift; sourceTree = "<group>"; };
+		8C2F26952CDD709700386D4F /* NoNearbyStopsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoNearbyStopsView.swift; sourceTree = "<group>"; };
+		8C2F26972CDE7B3600386D4F /* NoNearbyStopsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoNearbyStopsViewTests.swift; sourceTree = "<group>"; };
 		8C304C652B69C0C300263886 /* .swift-version */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-version"; sourceTree = "<group>"; };
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
 		8C3D640F2BE19DBA0026DD53 /* MorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePage.swift; sourceTree = "<group>"; };
@@ -624,6 +628,7 @@
 			isa = PBXGroup;
 			children = (
 				6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */,
+				8C2F26972CDE7B3600386D4F /* NoNearbyStopsViewTests.swift */,
 				6EF64C022C1B7C2E005F365D /* RouteCardTests.swift */,
 			);
 			path = NearbyTransit;
@@ -849,6 +854,7 @@
 				9A2005C62B97B63300F562E1 /* NearbyStopView.swift */,
 				9AC4FDF02BACE216004479BF /* NearbyTransitPageView.swift */,
 				8C84D33D2B5AEE0200192C0A /* NearbyTransitView.swift */,
+				8C2F26952CDD709700386D4F /* NoNearbyStopsView.swift */,
 				6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */,
 			);
 			path = NearbyTransit;
@@ -1351,6 +1357,7 @@
 				9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */,
 				6EE76D1D2BF535330051D608 /* VehicleCardViewTests.swift in Sources */,
 				9AAA26A72C2DC06700A7745A /* DirectionLabelTests.swift in Sources */,
+				8C2F26982CDE7B3600386D4F /* NoNearbyStopsViewTests.swift in Sources */,
 				6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */,
 				9A52B3362C6A93390028EEAB /* AlertDetailsTests.swift in Sources */,
 				8C2106F52CA6159600228287 /* ErrorBannerTests.swift in Sources */,
@@ -1514,6 +1521,7 @@
 				ED93D5FC2CB6C003003B1C12 /* SearchResultsView.swift in Sources */,
 				8CF5ABF72C70001200CF26B0 /* VehicleMarkerView.swift in Sources */,
 				9AB619AC2BF29FC6007E7191 /* PredictionText.swift in Sources */,
+				8C2F26962CDD709700386D4F /* NoNearbyStopsView.swift in Sources */,
 				8CE0140E2BBDB7C300918FAE /* RoutePillSection.swift in Sources */,
 				9A9E7DD72C220812000DA1FD /* LineCard.swift in Sources */,
 				9A2005C52B97B5EA00F562E1 /* NearbyRouteView.swift in Sources */,

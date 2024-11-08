@@ -19,6 +19,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
+    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
     override func setUp() {
         executionTimeAllowance = 60
@@ -30,7 +31,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
             nearbyVM: .init(),
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Select location"))
     }
@@ -45,7 +47,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
         try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: true)
 
@@ -92,7 +95,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
             nearbyVM: fakeVM,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
         let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded) { view in
             XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
@@ -132,7 +136,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
             nearbyVM: fakeVM,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
 
         let newCameraState = CameraState(
