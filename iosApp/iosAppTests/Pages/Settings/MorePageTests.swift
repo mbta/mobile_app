@@ -56,7 +56,7 @@ final class MorePageTests: XCTestCase {
 
         let sut = MorePage(viewModel: viewModel)
         let exp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
-            XCTAssertTrue(try view.find(text: "Map Debug").parent().parent().find(ViewType.Toggle.self).isOn())
+            XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
         }
 
         ViewHosting.host(view: sut)
@@ -83,7 +83,7 @@ final class MorePageTests: XCTestCase {
 
         let sut = MorePage(viewModel: viewModel)
         let tapExp = sut.inspection.inspect(onReceive: loadedPublisher, after: 1) { view in
-            try view.find(text: "Map Debug").parent().parent().find(ViewType.Toggle.self).tap()
+            try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
 
         ViewHosting.host(view: sut)
