@@ -597,9 +597,6 @@
     "All routes" : {
       "comment" : "VoiceOver label for the button to clear\nselected route to display all routes at a station\""
     },
-    "Allow Location Services" : {
-
-    },
     "Amtrak" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1349,6 +1346,9 @@
         }
       }
     },
+    "Continue" : {
+
+    },
     "Crossing Malfunction" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -1389,6 +1389,9 @@
           }
         }
       }
+    },
+    "Debug Mode" : {
+      "comment" : "A setting on the More page to display debug information (only visible for developers)"
     },
     "Delayed" : {
       "comment" : "Status for a commuter rail train",
@@ -2408,9 +2411,6 @@
         }
       }
     },
-    "Map Debug" : {
-      "comment" : "A setting on the More page to display map debug information (only visible for developers)"
-    },
     "MBTA Go" : {
 
     },
@@ -3255,9 +3255,6 @@
           }
         }
       }
-    },
-    "Skip for now" : {
-      "comment" : "Button text for deferring the request for location services"
     },
     "Slippery Rail" : {
       "comment" : "Possible alert cause",
@@ -4468,6 +4465,9 @@
       "comment" : "A route direction label"
     },
     "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
+
+    },
+    "You can always change location settings later in the Settings app." : {
 
     },
     "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go." : {

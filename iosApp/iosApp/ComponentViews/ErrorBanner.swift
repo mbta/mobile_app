@@ -28,7 +28,16 @@ struct ErrorBanner: View {
         switch onEnum(of: state) {
         case let .dataError(state):
             ErrorCard {
-                Text("Error loading data", comment: "Displayed when loading necessary information fails")
+                VStack {
+                    Text("Error loading data", comment: "Displayed when loading necessary information fails")
+                    if errorBannerVM.showDebugMessages {
+                        DebugView {
+                            ForEach(state.messages.sorted(), id: \.self) { errorName in
+                                Text(errorName)
+                            }.font(Typography.footnote)
+                        }
+                    }
+                }
             }
             .refreshable(
                 label: NSLocalizedString("Reload data", comment: "Refresh button label")
@@ -73,7 +82,7 @@ struct ErrorBanner: View {
 #Preview {
     VStack(spacing: 16) {
         ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
-            state: .DataError(action: {})
+            state: .DataError(messages: Set(), action: {})
         )))
         ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
             state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})

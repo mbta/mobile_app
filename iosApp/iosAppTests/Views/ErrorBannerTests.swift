@@ -74,4 +74,16 @@ final class ErrorBannerTests: XCTestCase {
 
         wait(for: [showedLoading], timeout: 1)
     }
+
+    @MainActor func testDebugModeNotShownByDefault() throws {
+        let sut = ErrorBanner(.init(
+            errorRepository: MockErrorBannerStateRepository(state: .DataError(messages: ["Fake message"], action: {})),
+            initialLoadingWhenPredictionsStale: true,
+            showDebugMessages: false
+        ))
+
+        ViewHosting.host(view: sut)
+
+        XCTAssertThrowsError(try sut.inspect().find(text: "Fake message"))
+    }
 }

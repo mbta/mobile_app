@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import CoreLocation
 import shared
 import SwiftUI
 
@@ -15,18 +16,26 @@ struct OnboardingPage: View {
 
     let onFinish: () -> Void
 
+    let onAdvance: () -> Void
+
     let onboardingRepository: IOnboardingRepository
 
+    let skipLocationDialogue: Bool
     let inspection = Inspection<Self>()
 
     init(
         screens: [OnboardingScreen],
         onFinish: @escaping () -> Void,
-        onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding
+        onAdvance: @escaping () -> Void = {},
+        onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding,
+        skipLocationDialogue: Bool = false
+
     ) {
         self.screens = screens
         self.onFinish = onFinish
+        self.onAdvance = onAdvance
         self.onboardingRepository = onboardingRepository
+        self.skipLocationDialogue = skipLocationDialogue
     }
 
     var body: some View {
@@ -36,12 +45,13 @@ struct OnboardingPage: View {
                 try? await onboardingRepository.markOnboardingCompleted(screen: screen)
                 if selectedIndex < screens.count - 1 {
                     selectedIndex += 1
+                    onAdvance()
                 } else {
                     onFinish()
                 }
             }
-        })
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        }, skipLocationDialogue: skipLocationDialogue)
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 }
 

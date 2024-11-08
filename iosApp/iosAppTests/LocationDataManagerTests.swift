@@ -60,22 +60,4 @@ final class LocationDataManagerTests: XCTestCase {
 
         XCTAssertEqual(locationFetcher.distanceFilter, 10)
     }
-
-    func testLocationDeferred() async throws {
-        class FakeLocationFetcher: MockLocationFetcher {
-            var requested = false
-            override func requestWhenInUseAuthorization() {
-                requested = true
-            }
-        }
-        let fetcher = FakeLocationFetcher()
-        let manager = LocationDataManager(
-            locationFetcher: fetcher,
-            settingsRepository: MockSettingsRepository(settings: [.locationDeferred: true])
-        )
-        await manager.loadLocationDeferred()
-        XCTAssertTrue(manager.locationDeferred)
-        manager.requestWhenInUseAuthorization()
-        XCTAssertFalse(fetcher.requested)
-    }
 }
