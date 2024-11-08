@@ -24,7 +24,7 @@ struct AnnotatedMap: View {
     var vehicles: [Vehicle]?
 
     var settingsRepository: ISettingsRepository = RepositoryDI().settings
-    @State var mapDebug = false
+    @State var devDebugMode = false
 
     @ObservedObject var viewportProvider: ViewportProvider
     @Environment(\.colorScheme) var colorScheme
@@ -45,7 +45,7 @@ struct AnnotatedMap: View {
                 panDecelerationFactor: 0.99
             ))
             .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
-            .debugOptions(mapDebug ? .camera : [])
+            .debugOptions(devDebugMode ? .camera : [])
             .cameraBounds(.init(maxZoom: 18, minZoom: 6))
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(scaleBar: .init(visibility: .hidden)))
@@ -69,7 +69,7 @@ struct AnnotatedMap: View {
             .withScenePhaseHandlers(onActive: onActive)
             .task {
                 do {
-                    mapDebug = try await settingsRepository.getSettings()[.map]?.boolValue ?? false
+                    devDebugMode = try await settingsRepository.getSettings()[.devDebugMode]?.boolValue ?? false
                 } catch {
                     debugPrint("Failed to load map debug", error)
                 }
