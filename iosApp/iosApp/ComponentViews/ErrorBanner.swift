@@ -34,7 +34,7 @@ struct ErrorBanner: View {
                         DebugView {
                             ForEach(state.messages.sorted(), id: \.self) { errorName in
                                 Text(errorName)
-                            }
+                            }.font(Typography.footnote)
                         }
                     }
                 }
