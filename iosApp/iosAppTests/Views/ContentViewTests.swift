@@ -196,9 +196,18 @@ final class ContentViewTests: XCTestCase {
     }
 
     func testShowsMap() throws {
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM()))
+        let fakeVM = FakeContentVM()
+        fakeVM.configResponse = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
 
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
+    }
+
+    func testShowsMapLoading() throws {
+        let fakeVM = FakeContentVM()
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
+
+        XCTAssertNotNil(try sut.inspect().find(viewWithTag: "empty-map-grid"))
     }
 
     func testShowsOnboarding() throws {

@@ -189,6 +189,7 @@ struct ContentView: View {
                     .frame(maxWidth: proxy.size.width, maxHeight: proxy.size.height)
                     .clipped()
             }
+            .tag("empty-map-grid")
         }
     }
 
