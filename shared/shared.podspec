@@ -4,7 +4,7 @@ Pod::Spec.new do |spec|
     spec.homepage                 = 'https://github.com/mbta/mobile_app'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
-    spec.license                  = ''
+    spec.license                  = 'MIT'
     spec.summary                  = 'Common library for the MBTA mobile app'
     spec.vendored_frameworks      = 'build/cocoapods/framework/shared.framework'
     spec.libraries                = 'c++'

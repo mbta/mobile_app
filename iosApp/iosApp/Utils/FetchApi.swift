@@ -32,7 +32,7 @@ func fetchApi<T>(
     case let .ok(result):
         errorBannerRepo.clearDataError(key: errorKey)
         await onSuccess(result.data)
-    case .error:
+    case let .error(error):
         errorBannerRepo.setDataError(key: errorKey, action: onRefreshAfterError)
     }
 }

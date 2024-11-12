@@ -12,6 +12,8 @@ Install the tools specified in `.tool-versions`. You can use [asdf](https://asdf
 
 Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
 
+Install and set up [the GitHub CLI](https://cli.github.com/manual/).
+
 For Android development, `brew install librsvg`.
 
 For iOS development, `brew install swiftlint`.

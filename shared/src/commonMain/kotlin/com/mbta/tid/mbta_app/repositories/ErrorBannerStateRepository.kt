@@ -44,7 +44,9 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
                 networkStatus == NetworkStatus.Disconnected -> ErrorBannerState.NetworkError(null)
                 dataErrors.isNotEmpty() ->
                     // encapsulate all the different error actions within one error
-                    ErrorBannerState.DataError { dataErrors.values.forEach { it.action() } }
+                    ErrorBannerState.DataError(dataErrors.keys) {
+                        dataErrors.values.forEach { it.action() }
+                    }
                 predictionsStale != null -> predictionsStale
                 else -> null
             }
@@ -70,7 +72,7 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
     }
 
     fun setDataError(key: String, action: () -> Unit) {
-        dataErrors[key] = ErrorBannerState.DataError(action)
+        dataErrors[key] = ErrorBannerState.DataError(setOf(key), action)
         updateState()
     }
 
@@ -90,7 +92,7 @@ class ErrorBannerStateRepository : IErrorBannerStateRepository(), KoinComponent
 
 class MockErrorBannerStateRepository(
     state: ErrorBannerState? = null,
-    onSubscribeToNetworkChanges: (() -> Unit)? = null
+    onSubscribeToNetworkChanges: (() -> Unit)? = null,
 ) : IErrorBannerStateRepository(state) {
     private val onSubscribeToNetworkChanges = onSubscribeToNetworkChanges
     val mutableFlow

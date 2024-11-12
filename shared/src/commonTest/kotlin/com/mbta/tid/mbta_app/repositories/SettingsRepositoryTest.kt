@@ -28,7 +28,7 @@ class SettingsRepositoryTest : KoinTest {
         val storage = MockDatastoreStorage()
         storage.preferences =
             preferencesOf(
-                Settings.Map.dataStoreKey to true,
+                Settings.DevDebugMode.dataStoreKey to true,
                 Settings.SearchRouteResults.dataStoreKey to false,
             )
         val dataStore = DataStoreFactory.create(storage)
@@ -37,10 +37,9 @@ class SettingsRepositoryTest : KoinTest {
 
         assertEquals(
             mapOf(
-                Settings.Map to true,
+                Settings.DevDebugMode to true,
                 Settings.SearchRouteResults to false,
                 Settings.HideMaps to false,
-                Settings.LocationDeferred to false,
             ),
             repo.getSettings()
         )

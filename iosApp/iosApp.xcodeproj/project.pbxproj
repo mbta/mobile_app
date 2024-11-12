@@ -13,6 +13,7 @@
 		6E04D4302C1A17340055FD99 /* StopDeparturesSummaryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */; };
 		6E04D4322C1B50230055FD99 /* RouteHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04D4312C1B50230055FD99 /* RouteHeader.swift */; };
 		6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */; };
+		6E13202D2CDD64CF00A850C8 /* DebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E13202C2CDD64CF00A850C8 /* DebugView.swift */; };
 		6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278D2BD989630037554F /* DummyTestAppView.swift */; };
 		6E2027902BD989AC0037554F /* ProductionAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E20278F2BD989AC0037554F /* ProductionAppView.swift */; };
 		6E2D6CA12CC2EDD700959605 /* ErrorBannerViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6CA02CC2EDD700959605 /* ErrorBannerViewModelTests.swift */; };
@@ -63,6 +64,9 @@
 		6EFEE42D2BED0FA800810319 /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEE42C2BED0FA800810319 /* ScenePhaseChangeModifier.swift */; };
 		6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFEE42E2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		8C05C57D2CD5659A000381E8 /* MoreNavTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C05C57C2CD5659A000381E8 /* MoreNavTarget.swift */; };
+		8C05C57F2CD56891000381E8 /* DependencyExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C05C57E2CD5688D000381E8 /* DependencyExtension.swift */; };
+		8C05C5812CD568DE000381E8 /* MoreNavLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C05C5802CD568DC000381E8 /* MoreNavLink.swift */; };
 		8C0923A52C21054100813454 /* Inter.ttc in Resources */ = {isa = PBXBuildFile; fileRef = 8C0923A42C21054100813454 /* Inter.ttc */; };
 		8C0923A72C210C8C00813454 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0923A62C210C8C00813454 /* Typography.swift */; };
 		8C10DE3C2C656DC20090EC23 /* EndToEndOpenStopDetailsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C10DE3B2C656DC20090EC23 /* EndToEndOpenStopDetailsTest.swift */; };
@@ -266,6 +270,7 @@
 		6E04D42F2C1A17340055FD99 /* StopDeparturesSummaryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDeparturesSummaryList.swift; sourceTree = "<group>"; };
 		6E04D4312C1B50230055FD99 /* RouteHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHeader.swift; sourceTree = "<group>"; };
 		6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyViewModel.swift; sourceTree = "<group>"; };
+		6E13202C2CDD64CF00A850C8 /* DebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugView.swift; sourceTree = "<group>"; };
 		6E20278D2BD989630037554F /* DummyTestAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyTestAppView.swift; sourceTree = "<group>"; };
 		6E20278F2BD989AC0037554F /* ProductionAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductionAppView.swift; sourceTree = "<group>"; };
 		6E2D6CA02CC2EDD700959605 /* ErrorBannerViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBannerViewModelTests.swift; sourceTree = "<group>"; };
@@ -327,6 +332,9 @@
 		7AEBEB5506194DEAD258EFCD /* Pods-iosAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7F6FAE3113D2D3B7BC40E9E4 /* Pods-iosApp.prod release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.prod release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.prod release.xcconfig"; sourceTree = "<group>"; };
 		84B5D164E49C6058407CC984 /* Pods-iosApp.stagingrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.stagingrelease.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.stagingrelease.xcconfig"; sourceTree = "<group>"; };
+		8C05C57C2CD5659A000381E8 /* MoreNavTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreNavTarget.swift; sourceTree = "<group>"; };
+		8C05C57E2CD5688D000381E8 /* DependencyExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyExtension.swift; sourceTree = "<group>"; };
+		8C05C5802CD568DC000381E8 /* MoreNavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreNavLink.swift; sourceTree = "<group>"; };
 		8C0923A42C21054100813454 /* Inter.ttc */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inter.ttc; sourceTree = "<group>"; };
 		8C0923A62C210C8C00813454 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		8C10DE3B2C656DC20090EC23 /* EndToEndOpenStopDetailsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndToEndOpenStopDetailsTest.swift; sourceTree = "<group>"; };
@@ -741,6 +749,8 @@
 			children = (
 				9A6ACA2C2CD00F8200299AF5 /* MoreItem.swift */,
 				9A7F12162CCFEFAA0042B0F1 /* MoreLink.swift */,
+				8C05C5802CD568DC000381E8 /* MoreNavLink.swift */,
+				8C05C57C2CD5659A000381E8 /* MoreNavTarget.swift */,
 				8C3D640F2BE19DBA0026DD53 /* MorePage.swift */,
 				9A7F12182CCFF2D20042B0F1 /* MorePhone.swift */,
 				EDE92FA92C408A50007AD2F6 /* MoreSection.swift */,
@@ -931,6 +941,7 @@
 				9A7F12122CCB185D0042B0F1 /* TabLabel.swift */,
 				9AD039352CCFC5E8008D9318 /* LocationAuthButton.swift */,
 				9A320F952CD3E4CF0096D7B1 /* UpcomingTripAccessibilityFormatters.swift */,
+				6E13202C2CDD64CF00A850C8 /* DebugView.swift */,
 			);
 			path = ComponentViews;
 			sourceTree = "<group>";
@@ -998,6 +1009,7 @@
 				9A37F3062BACCCA5001714FE /* CoordinateExtension.swift */,
 				9AB44A122B911E6400E8FFB3 /* DateExtension.swift */,
 				9A03F3652BA9E68500DA40DC /* Debouncer.swift */,
+				8C05C57E2CD5688D000381E8 /* DependencyExtension.swift */,
 				9A37F3042BACCC40001714FE /* DoubleRoundedExtension.swift */,
 				9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */,
 				8CE36C8E2CAB231500D77F22 /* FetchApi.swift */,
@@ -1441,6 +1453,7 @@
 				8CA485B82BDC679A00E84E1F /* VehicleExtension.swift in Sources */,
 				6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */,
 				9A9E3DC42C640071004AADC7 /* AlertDetails.swift in Sources */,
+				6E13202D2CDD64CF00A850C8 /* DebugView.swift in Sources */,
 				ED93D5FE2CB6C047003B1C12 /* EmptyStateView.swift in Sources */,
 				9A2005C92B97B65900F562E1 /* HeadsignRowView.swift in Sources */,
 				9A9E7DD52C2203E8000DA1FD /* PinButton.swift in Sources */,
@@ -1456,6 +1469,7 @@
 				9A74A2112BE2D71400E57102 /* AnnotationLabel.swift in Sources */,
 				6EEF219E2BF2927E0023A3E9 /* VehicleCardView.swift in Sources */,
 				9A9E7DCF2C2200C9000DA1FD /* LineHeader.swift in Sources */,
+				8C05C5812CD568DE000381E8 /* MoreNavLink.swift in Sources */,
 				9A7F12172CCFEFAA0042B0F1 /* MoreLink.swift in Sources */,
 				9A52B33A2C6E7C7D0028EEAB /* AlertDetailsAnalytics.swift in Sources */,
 				6E04E32F2BE95A8D006F8131 /* NearbyViewModel.swift in Sources */,
@@ -1465,6 +1479,7 @@
 				8CE0141B2BBF059B00918FAE /* SheetNavigationStackEntry.swift in Sources */,
 				9A7AC5C22BE139FB0036126F /* AnnotatedMap.swift in Sources */,
 				8C5054582BB5EB6C00C6A51C /* StopDetailsPage.swift in Sources */,
+				8C05C57D2CD5659A000381E8 /* MoreNavTarget.swift in Sources */,
 				ED24EAD82C1A941E00A7BE4D /* NearbyTransitAnalytics.swift in Sources */,
 				9AA379A32C2A314F00278541 /* DirectionLabel.swift in Sources */,
 				ED3581682BB470C4005DDC34 /* PresentationDetentExtension.swift in Sources */,
@@ -1506,6 +1521,7 @@
 				9AB44A112B8FC43E00E8FFB3 /* ErrorCard.swift in Sources */,
 				9A719E152CD12309007377F7 /* OnboardingButtonModifiers.swift in Sources */,
 				ED87C88D2C10E754009D398F /* PhoenixChannelError.swift in Sources */,
+				8C05C57F2CD56891000381E8 /* DependencyExtension.swift in Sources */,
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
 				9A7F12132CCB185D0042B0F1 /* TabLabel.swift in Sources */,
 				9A392C972CC0497C00DE1FBE /* ErrorBannerViewModel.swift in Sources */,

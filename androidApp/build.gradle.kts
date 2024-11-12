@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
+    alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
@@ -56,6 +57,11 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
     androidTestImplementation(libs.ktor.client.mock)
+}
+
+tasks.cyclonedxBom {
+    includeConfigs =
+        listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
 }
 
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle
