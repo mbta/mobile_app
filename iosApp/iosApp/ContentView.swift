@@ -48,6 +48,7 @@ struct ContentView: View {
         VStack {
             contents
         }
+        .task { await contentVM.loadConfig() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
             Task { await contentVM.loadOnboardingScreens() }
@@ -170,13 +171,25 @@ struct ContentView: View {
     }
 
     @ViewBuilder var mapSection: some View {
-        HomeMapView(
-            contentVM: contentVM,
-            mapVM: mapVM,
-            nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider,
-            sheetHeight: $sheetHeight
-        )
+        // If we don't have an access token, don't attempt to show the map
+        switch onEnum(of: contentVM.configResponse) {
+        case .ok:
+            HomeMapView(
+                contentVM: contentVM,
+                mapVM: mapVM,
+                nearbyVM: nearbyVM,
+                viewportProvider: viewportProvider,
+                sheetHeight: $sheetHeight
+            )
+        default:
+            GeometryReader { proxy in
+                Image(.emptyMapGrid)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: proxy.size.width, maxHeight: proxy.size.height)
+                    .clipped()
+            }
+        }
     }
 
     @ViewBuilder var mapWithSheets: some View {
