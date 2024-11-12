@@ -24,6 +24,7 @@ struct TripDetailsPage: View {
     @State var globalResponse: GlobalResponse?
     @State var tripPredictionsRepository: ITripPredictionsRepository
     @State var tripPredictions: PredictionsStreamDataResponse?
+    @State var tripPredictionsLoaded: Bool = false
     @State var tripRepository: ITripRepository
     @State var trip: Trip?
     @State var tripSchedulesResponse: TripSchedulesResponse?
@@ -71,9 +72,10 @@ struct TripDetailsPage: View {
     var body: some View {
         VStack(spacing: 16) {
             header
-            if let trip, let globalResponse, let vehicle = vehicleResponse?.vehicle,
+            if tripPredictionsLoaded, let globalResponse, let vehicle = vehicleResponse?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
-                   trip: trip,
+                   tripId: tripId,
+                   directionId: trip?.directionId ?? vehicle.directionId,
                    tripSchedules: tripSchedulesResponse,
                    tripPredictions: tripPredictions,
                    vehicle: vehicle,
@@ -120,6 +122,10 @@ struct TripDetailsPage: View {
         .onAppear { joinRealtime() }
         .onDisappear { leaveRealtime() }
         .onChange(of: tripId) {
+            errorBannerVM.errorRepository.clearDataError(key: "TripDetailsPage.loadTripSchedules")
+            errorBannerVM.errorRepository.clearDataError(key: "TripDetailsPage.loadTrip")
+            loadTripSchedules()
+            loadTrip()
             leavePredictions()
             joinPredictions(tripId: $0)
         }
@@ -221,12 +227,14 @@ struct TripDetailsPage: View {
                 case let .ok(result): tripPredictions = result.data
                 case .error: break
                 }
+                tripPredictionsLoaded = true
                 checkPredictionsStale()
             }
         }
     }
 
     private func leavePredictions() {
+        tripPredictionsLoaded = false
         tripPredictionsRepository.disconnect()
     }
 
@@ -276,7 +284,7 @@ struct TripDetailsPage: View {
         } else {
             nil
         }
-        let route: Route? = if let routeId = trip?.routeId {
+        let route: Route? = if let routeId = trip?.routeId ?? vehicle?.routeId {
             globalResponse?.routes[routeId]
         } else {
             nil
@@ -285,14 +293,15 @@ struct TripDetailsPage: View {
             vehicle: vehicle,
             route: route,
             stop: vehicleStop,
-            trip: trip
+            tripId: tripId
         )
     }
 
     @ViewBuilder
     var header: some View {
         let trip: Trip? = tripPredictions?.trips[tripId]
-        let route: Route? = if let routeId = trip?.routeId {
+        let vehicle: Vehicle? = vehicleResponse?.vehicle
+        let route: Route? = if let routeId = trip?.routeId ?? vehicle?.routeId {
             globalResponse?.routes[routeId]
         } else {
             nil

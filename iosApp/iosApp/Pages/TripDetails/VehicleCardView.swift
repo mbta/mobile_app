@@ -14,18 +14,18 @@ struct VehicleCardView: View {
     let vehicle: Vehicle?
     let route: Route?
     let stop: Stop?
-    let trip: Trip?
+    let tripId: String
 
     var body: some View {
-        if let vehicle, let route, let stop, let trip {
+        if let vehicle, let route, let stop {
             VehicleOnTripView(
                 vehicle: vehicle,
                 route: route,
                 stop: stop,
-                trip: trip
+                tripId: tripId
             )
         } else {
-            Text("Loading...")
+            EmptyView()
         }
     }
 }
@@ -34,7 +34,7 @@ struct VehicleOnTripView: View {
     let vehicle: Vehicle
     let route: Route
     let stop: Stop
-    let trip: Trip
+    let tripId: String
 
     var backgroundColor: Color {
         Color(hex: route.color)
@@ -58,7 +58,7 @@ struct VehicleOnTripView: View {
 
     @ViewBuilder
     private var description: some View {
-        if vehicle.tripId == trip.id {
+        if vehicle.tripId == tripId {
             VStack(alignment: .leading, spacing: 2) {
                 vehicleStatusDescription(vehicle.currentStatus)
                     .font(Typography.caption)
@@ -162,7 +162,7 @@ struct VehicleCardView_Previews: PreviewProvider {
         }
 
         List {
-            VehicleCardView(vehicle: vehicle, route: red, stop: stop, trip: trip)
+            VehicleCardView(vehicle: vehicle, route: red, stop: stop, tripId: trip.id)
         }
         .previewDisplayName("VehicleCard")
     }

@@ -111,7 +111,8 @@ class TripDetailsStopListTest {
             trip: Trip = Trip("trip", 0, "", "")
         ) =
             TripDetailsStopList.fromPieces(
-                trip,
+                trip.id,
+                trip.directionId,
                 tripSchedules,
                 tripPredictions,
                 vehicle,
@@ -138,24 +139,43 @@ class TripDetailsStopListTest {
         assertEquals("A", stop("A1").parentStationId)
     }
 
-    @Test fun `fromPieces returns null with no data`() = test { assertNull(fromPieces(null, null)) }
+    @Test
+    fun `fromPieces returns empty list with no data`() = test {
+        assertEquals(TripDetailsStopList(stops = emptyList()), fromPieces(null, null))
+    }
 
     @Test
-    fun `fromPieces returns null with real schedules and no predictions`() = test {
+    fun `fromPieces returns schedules when there are no predictions`() = test {
         val sched1 = schedule("A", 10)
         val sched2 = schedule("B", 20)
         val sched3 = schedule("C", 30)
-        assertEquals(null, fromPieces(schedulesResponseOf(sched1, sched2, sched3), null))
+        assertEquals(
+            stopListOf(
+                entry("A", 10, schedule = sched1),
+                entry("B", 20, schedule = sched2),
+                entry("C", 30, schedule = sched3)
+            ),
+            fromPieces(schedulesResponseOf(sched1, sched2, sched3), null)
+        )
     }
 
     @Test
     fun `fromPieces returns null with scheduled IDs and no predictions`() = test {
-        assertEquals(null, fromPieces(schedulesResponseOf("A", "B", "C"), null))
+        val sched1 = schedule("A", 10)
+        val sched2 = schedule("B", 20)
+        val sched3 = schedule("C", 30)
+        assertEquals(
+            stopListOf(entry("A", 997), entry("B", 998), entry("C", 999)),
+            fromPieces(schedulesResponseOf(sched1.stopId, sched2.stopId, sched3.stopId), null)
+        )
     }
 
     @Test
     fun `fromPieces returns null with unavailable schedules and no predictions`() = test {
-        assertNull(fromPieces(TripSchedulesResponse.Unknown, null))
+        assertEquals(
+            TripDetailsStopList(stops = emptyList()),
+            fromPieces(TripSchedulesResponse.Unknown, null)
+        )
     }
 
     @Test
@@ -357,7 +377,8 @@ class TripDetailsStopListTest {
 
         val list =
             TripDetailsStopList.fromPieces(
-                trip,
+                trip.id,
+                trip.directionId,
                 schedules,
                 predictions,
                 null,
@@ -424,7 +445,8 @@ class TripDetailsStopListTest {
 
         val list =
             TripDetailsStopList.fromPieces(
-                trip,
+                trip.id,
+                trip.directionId,
                 schedules,
                 predictions,
                 vehicle,
@@ -589,7 +611,9 @@ class TripDetailsStopListTest {
         val pred = prediction(stopB.id, 20, routeCurrent.id)
 
         assertEquals(
-            null,
+            stopListOf(
+                entry(stopA.id, stopSequence = 10, schedule = sched, routes = listOf(routeOther))
+            ),
             fromPieces(
                 schedulesResponseOf(sched),
                 null,
