@@ -140,4 +140,48 @@ final class StopDetailsViewTests: XCTestCase {
         ViewHosting.host(view: sut)
         XCTAssertNil(try? sut.inspect().find(viewWithAccessibilityLabel: "Back"))
     }
+
+    func testDebugModeNotShownByDefault() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.id = "FAKE_STOP_ID"
+        }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: false)
+        let sut = StopDetailsView(
+            stop: stop,
+            filter: nil,
+            setFilter: { _ in },
+            departures: nil,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            now: Date.now,
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
+        )
+
+        ViewHosting.host(view: sut)
+        XCTAssertThrowsError(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
+    }
+
+    func testDebugModeShown() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in
+            stop.id = "FAKE_STOP_ID"
+        }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: true)
+        let sut = StopDetailsView(
+            stop: stop,
+            filter: nil,
+            setFilter: { _ in },
+            departures: nil,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            now: Date.now,
+            pinnedRoutes: [], togglePinnedRoute: { _ in }
+        )
+
+        ViewHosting.host(view: sut)
+        XCTAssertNotNil(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
+    }
 }

@@ -17,7 +17,9 @@ struct DebugView<Content: View>: View {
                 .strokeBorder(Color(.text), style: .init(lineWidth: 2, dash: [10]))
             VStack(alignment: .leading) {
                 content()
+                    .font(Typography.footnote)
             }.padding(4)
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }

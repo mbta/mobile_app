@@ -603,6 +603,58 @@ final class TripDetailsPageTests: XCTestCase {
         wait(for: [vehicleLeaveExp, vehicleJoinExp], timeout: 2)
     }
 
+    func testDebugModeNotShownByDefault() throws {
+        let objects = ObjectCollectionBuilder()
+        objects.stop { _ in }
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "vehicleId",
+            routeId: "routeId",
+            target: nil,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: objects.trip { _ in }),
+                scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [])
+            ),
+            vehicleRepository: FakeVehicleRepository(
+                response: .init(vehicle: nil),
+                onConnect: {},
+                onDisconnect: {}
+            )
+        )
+        ViewHosting.host(view: sut)
+        XCTAssertThrowsError(try sut.inspect().find(text: "trip id: tripId"))
+    }
+
+    func testDebugModeShown() throws {
+        let objects = ObjectCollectionBuilder()
+        objects.stop { _ in }
+        let sut = TripDetailsPage(
+            tripId: "tripId",
+            vehicleId: "vehicleId",
+            routeId: "routeId",
+            target: nil,
+            errorBannerVM: .init(),
+            nearbyVM: .init(showDebugMessages: true),
+            mapVM: .init(),
+            tripPredictionsRepository: FakeTripPredictionsRepository(response: .init(objects: objects)),
+            tripRepository: FakeTripRepository(
+                tripResponse: .init(trip: objects.trip { _ in }),
+                scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [])
+            ),
+            vehicleRepository: FakeVehicleRepository(
+                response: .init(vehicle: nil),
+                onConnect: {},
+                onDisconnect: {}
+            )
+        )
+        ViewHosting.host(view: sut)
+        XCTAssertNotNil(try sut.inspect().find(text: "trip id: tripId"))
+    }
+
     class FakeTripRepository: IdleTripRepository {
         let tripResponse: ApiResult<TripResponse>
         let scheduleResponse: TripSchedulesResponse
