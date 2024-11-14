@@ -2484,7 +2484,8 @@ class NearbyResponseTest {
                                     null,
                                     listOf(routePattern),
                                     emptyList(),
-                                    alertsHere = listOf(alert)
+                                    alertsHere = listOf(alert),
+                                    alertsOnRoute = listOf(alert)
                                 )
                             )
                         )

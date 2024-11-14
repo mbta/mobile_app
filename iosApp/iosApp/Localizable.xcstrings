@@ -367,6 +367,9 @@
         }
       }
     },
+    "%@ ahead" : {
+
+    },
     "%@ arriving at %@" : {
       "comment" : "Describe the time at which a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM'",
       "localizations" : {
@@ -949,6 +952,9 @@
           }
         }
       }
+    },
+    "Alert" : {
+      "comment" : "Possible alert effect"
     },
     "Alert Details" : {
       "comment" : "Header on the alert details page",
@@ -6365,7 +6371,7 @@
       }
     },
     "Service suspended" : {
-      "comment" : "Suspension alert VoiceOver text",
+      "comment" : "Possible alert effect\n   Suspension alert VoiceOver text\nSuspension alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6610,6 +6616,9 @@
         }
       }
     },
+    "Shuttle buses" : {
+      "comment" : "Possible alert effect"
+    },
     "Shuttle buses replace service" : {
       "comment" : "Shuttle alert VoiceOver text",
       "localizations" : {
@@ -6773,6 +6782,9 @@
           }
         }
       }
+    },
+    "Snow route" : {
+      "comment" : "Possible alert effect"
     },
     "Software Licenses" : {
       "comment" : "Label for a More page link to view dependency licenses",
@@ -7101,6 +7113,9 @@
           }
         }
       }
+    },
+    "Stop closed" : {
+      "comment" : "Possible alert effect"
     },
     "Stop Closed" : {
       "comment" : "Possible alert effect",

@@ -100,6 +100,7 @@ class PatternSortingTest {
             listOf(pattern),
             upcomingTrips,
             alertsHere,
+            alertsHere,
             hasSchedulesToday
         )
     }
@@ -140,6 +141,7 @@ class PatternSortingTest {
             singleLineOrNull(),
             listOf(pattern),
             upcomingTrips,
+            alertsHere,
             alertsHere,
             hasSchedulesToday
         )

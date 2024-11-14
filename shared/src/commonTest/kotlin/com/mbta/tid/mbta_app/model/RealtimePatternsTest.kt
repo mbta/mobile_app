@@ -739,6 +739,7 @@ class RealtimePatternsTest {
                                     listOf(pattern2),
                                     emptyList(),
                                     listOf(alert),
+                                    listOf(alert),
                                     false
                                 ),
                                 RealtimePatterns.ByHeadsign(
@@ -747,7 +748,8 @@ class RealtimePatternsTest {
                                     null,
                                     listOf(pattern1),
                                     emptyList(),
-                                    emptyList(),
+                                    listOf(),
+                                    listOf(alert),
                                     false
                                 )
                             )

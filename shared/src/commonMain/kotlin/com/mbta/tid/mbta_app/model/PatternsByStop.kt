@@ -102,6 +102,42 @@ data class PatternsByStop(
             .distinct()
     }
 
+    fun downstreamAlertsFor(directionId: Int, global: GlobalResponse): List<Alert> {
+
+        val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
+        val stopIds = setOf(this.stop.id) + this.stop.childStopIds
+        val downstreamStops: Set<String> =
+            patternsInDirection
+                .flatMap { realtime ->
+                    realtime.patterns.flatMap { pattern ->
+                        val indexOfTargetStopInPattern =
+                            global.trips[pattern.representativeTripId]?.stopIds?.indexOfFirst {
+                                stopIds.contains(it)
+                            }
+                        // TODO: only the first alert that applies to the downstream stop for each
+                        // pattern
+                        val tripStops = global.trips[pattern.representativeTripId]?.stopIds
+                        if (
+                            indexOfTargetStopInPattern != null &&
+                                indexOfTargetStopInPattern != -1 &&
+                                tripStops != null &&
+                                indexOfTargetStopInPattern < tripStops.size - 1
+                        ) {
+                            tripStops.subList(indexOfTargetStopInPattern + 1, tripStops.size)
+                        } else {
+                            listOf()
+                        }
+                    }
+                }
+                .toSet()
+        return patternsInDirection
+            .flatMap { pattern ->
+                pattern.alertsFor(downstreamStops, directionId, pattern.alertsOnRoute ?: listOf())
+                    ?: emptyList()
+            }
+            .distinct()
+    }
+
     companion object {
         // Even if a direction can serve multiple routes according to the static data, it's possible
         // that only one of those routes is typical, in which case we don't want to display it as a
