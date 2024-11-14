@@ -38,7 +38,8 @@ data class Alert(
                 Effect.StationClosure,
                 Effect.StopClosure,
                 Effect.DockClosure,
-                Effect.Detour
+                Effect.Detour,
+                Effect.SnowRoute
             ) ->
                 if (informedEntity.all { it.stop != null }) AlertSignificance.Major
                 else AlertSignificance.Secondary

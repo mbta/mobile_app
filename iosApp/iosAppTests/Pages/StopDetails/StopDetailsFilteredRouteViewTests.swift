@@ -22,6 +22,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let vehicleNorthId: String
         let stopSequence: Int
         let now: Instant
+        let objects: ObjectCollectionBuilder
     }
 
     private func testData() -> TestData {
@@ -32,12 +33,16 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         let lineRoute2 = objects.route()
         let lineRoute3 = objects.route()
         let stop = objects.stop { _ in }
+        let downstreamStop = objects.stop { stop in
+            stop.id = "downstream_stop_id"
+        }
 
         let patternNorth = objects.routePattern(route: route) { pattern in
             pattern.directionId = 0
             pattern.representativeTrip {
                 $0.headsign = "North"
                 $0.routePatternId = "test-north"
+                $0.stopIds = [stop.id, downstreamStop.id]
             }
         }
         let patternSouth = objects.routePattern(route: route) { pattern in
@@ -82,6 +87,19 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             $0.departureTime = now.toKotlinInstant()
             $0.stopSequence = Int32(stopSequence)
         }
+        let alert = objects.alert { alert in
+            alert.activePeriod(
+                start: now.addingTimeInterval(-5).toKotlinInstant(),
+                end: now.addingTimeInterval(100).toKotlinInstant()
+            )
+            alert.effect = .shuttle
+            alert.informedEntity(
+                activities: [.board, .exit, .ride],
+                directionId: nil, facility: nil,
+                route: route.id, routeType: nil,
+                stop: downstreamStop.id, trip: nil
+            )
+        }
 
         let lineTripTrunk1 = objects.trip(routePattern: linePatternTrunk1)
         let linePredictionTrunk1 = objects.prediction {
@@ -108,14 +126,18 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 headsign: "North",
                 line: nil,
                 patterns: [patternNorth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)]
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
+                alertsHere: [],
+                alertsOnRoute: [alert]
             ),
             RealtimePatterns.ByHeadsign(
                 route: route,
                 headsign: "South",
                 line: nil,
                 patterns: [patternSouth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)]
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
+                alertsHere: [],
+                alertsOnRoute: [alert]
             ),
         ])
 
@@ -158,7 +180,8 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             stopId: stop.id,
             vehicleNorthId: vehicleNorth.id,
             stopSequence: stopSequence,
-            now: now.toKotlinInstant()
+            now: now.toKotlinInstant(),
+            objects: objects
         )
     }
 
@@ -382,5 +405,39 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(text: "Predictions unavailable"))
         XCTAssertThrowsError(try sut.inspect().find(text: "Service ended"))
         XCTAssertThrowsError(try sut.inspect().find(text: "No service today"))
+    }
+
+    func testDownstreamAlert() throws {
+        let data = testData()
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: data.departures,
+            global: .init(objects: data.objects),
+            now: data.now,
+            filter: .init(routeId: data.routeId, directionId: 0),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinned: false
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "North"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses ahead"))
+    }
+
+    func testNoDownstreamAlertInOtherDirection() throws {
+        let data = testData()
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: data.departures,
+            global: .init(objects: data.objects),
+            now: data.now,
+            filter: .init(routeId: data.routeId, directionId: 1),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinned: false
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "South"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Shuttle buses ahead"))
     }
 }

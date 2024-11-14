@@ -662,6 +662,39 @@ class RealtimePatternsTest {
     }
 
     @Test
+    fun `filters to route only when not given set of stops`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { sortOrder = 1 }
+        val otherRoute = objects.route { sortOrder = 1 }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    routeType = route.type,
+                    stop = "not matching"
+                )
+            }
+
+        val otherAlert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = otherRoute.id,
+                    routeType = otherRoute.type,
+                    stop = "not matching"
+                )
+            }
+        assertEquals(
+            listOf(alert),
+            RealtimePatterns.applicableAlerts(listOf(route), null, null, listOf(alert, otherAlert)),
+        )
+    }
+
+    @Test
     fun `properly applies platform alerts by pattern`() {
         val objects = ObjectCollectionBuilder()
         lateinit var platform1: Stop
