@@ -310,7 +310,9 @@ class PatternsByStopTest {
         val route = objects.route()
         val park = objects.stop()
         val alewife = objects.stop()
+        val shawmut = objects.stop()
         val ashmont = objects.stop()
+        val quincyAdams = objects.stop()
         val braintree = objects.stop()
         val routePatternAshmont =
             objects.routePattern(route) {
@@ -318,7 +320,7 @@ class PatternsByStopTest {
                 representativeTrip {
                     directionId = 0
                     headsign = "Ashmont"
-                    stopIds = listOf(alewife.id, park.id, ashmont.id)
+                    stopIds = listOf(alewife.id, park.id, shawmut.id, ashmont.id)
                 }
             }
         val routePatternBraintree =
@@ -327,7 +329,7 @@ class PatternsByStopTest {
                 representativeTrip {
                     directionId = 0
                     headsign = "Braintree"
-                    stopIds = listOf(alewife.id, park.id, braintree.id)
+                    stopIds = listOf(alewife.id, park.id, quincyAdams.id, braintree.id)
                 }
             }
 
@@ -337,7 +339,7 @@ class PatternsByStopTest {
                 representativeTrip {
                     directionId = 1
                     headsign = "Alewife"
-                    stopIds = listOf(braintree.id, park.id, alewife.id)
+                    stopIds = listOf(braintree.id, quincyAdams.id, park.id, alewife.id)
                 }
             }
 
@@ -366,6 +368,17 @@ class PatternsByStopTest {
                 departureTime = time + 10.minutes
             }
         val upcomingTripAlewife = objects.upcomingTrip(scheduleAlewife)
+
+        val shawmutShuttleAlert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = shawmut.id
+                )
+            }
 
         val ashmontShuttleAlert =
             objects.alert {
@@ -412,8 +425,13 @@ class PatternsByStopTest {
                         null,
                         listOf(routePatternAshmont),
                         listOf(upcomingTripAshmont),
-                        listOf(alewifeShuttleAlert, parkShuttleAlert, ashmontShuttleAlert),
-                        listOf(alewifeShuttleAlert, parkShuttleAlert, ashmontShuttleAlert)
+                        listOf(parkShuttleAlert),
+                        listOf(
+                            alewifeShuttleAlert,
+                            parkShuttleAlert,
+                            shawmutShuttleAlert,
+                            ashmontShuttleAlert
+                        )
                     ),
                     RealtimePatterns.ByHeadsign(
                         route,
@@ -421,8 +439,8 @@ class PatternsByStopTest {
                         null,
                         listOf(routePatternBraintree),
                         listOf(upcomingTripBraintree),
-                        listOf(alewifeShuttleAlert, parkShuttleAlert, ashmontShuttleAlert),
-                        listOf(alewifeShuttleAlert, ashmontShuttleAlert)
+                        listOf(parkShuttleAlert),
+                        listOf(alewifeShuttleAlert, shawmutShuttleAlert, ashmontShuttleAlert)
                     ),
                     RealtimePatterns.ByHeadsign(
                         route,
@@ -430,8 +448,13 @@ class PatternsByStopTest {
                         null,
                         listOf(routePatternAlewife),
                         listOf(upcomingTripAlewife),
-                        listOf(alewifeShuttleAlert, parkShuttleAlert, ashmontShuttleAlert),
-                        listOf(alewifeShuttleAlert, parkShuttleAlert, ashmontShuttleAlert)
+                        listOf(parkShuttleAlert),
+                        listOf(
+                            alewifeShuttleAlert,
+                            parkShuttleAlert,
+                            shawmutShuttleAlert,
+                            ashmontShuttleAlert
+                        )
                     )
                 )
             )
@@ -446,7 +469,8 @@ class PatternsByStopTest {
                 directionId = routePatternAshmont.directionId,
                 global = global
             )
-        assertEquals(listOf(ashmontShuttleAlert), southboundDownstreamAlerts)
+        // ashmont alert not included b/c only first downstream alert on pattern returned
+        assertEquals(listOf(shawmutShuttleAlert), southboundDownstreamAlerts)
 
         val northboundDownstreamAlerts =
             patternsByStop.downstreamAlertsFor(

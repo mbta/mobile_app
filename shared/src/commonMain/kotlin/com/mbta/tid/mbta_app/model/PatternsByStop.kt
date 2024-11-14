@@ -102,38 +102,48 @@ data class PatternsByStop(
             .distinct()
     }
 
+    /**
+     * Returns a unique list of alerts downstream on the routes served by the target stop. For each
+     * route pattern in the given direction, includes only the alerts at the first downstream stop
+     * that has any alerts.
+     */
     fun downstreamAlertsFor(directionId: Int, global: GlobalResponse): List<Alert> {
 
         val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
         val stopIds = setOf(this.stop.id) + this.stop.childStopIds
-        val downstreamStops: Set<String> =
-            patternsInDirection
-                .flatMap { realtime ->
-                    realtime.patterns.flatMap { pattern ->
-                        val indexOfTargetStopInPattern =
-                            global.trips[pattern.representativeTripId]?.stopIds?.indexOfFirst {
-                                stopIds.contains(it)
-                            }
-                        // TODO: only the first alert that applies to the downstream stop for each
-                        // pattern
-                        val tripStops = global.trips[pattern.representativeTripId]?.stopIds
-                        if (
-                            indexOfTargetStopInPattern != null &&
-                                indexOfTargetStopInPattern != -1 &&
-                                tripStops != null &&
-                                indexOfTargetStopInPattern < tripStops.size - 1
-                        ) {
-                            tripStops.subList(indexOfTargetStopInPattern + 1, tripStops.size)
-                        } else {
-                            listOf()
+
+        return patternsInDirection
+            .flatMap { realtime ->
+                realtime.patterns.flatMap { pattern ->
+                    val indexOfTargetStopInPattern =
+                        global.trips[pattern.representativeTripId]?.stopIds?.indexOfFirst {
+                            stopIds.contains(it)
                         }
+                    val tripStops = global.trips[pattern.representativeTripId]?.stopIds
+                    if (
+                        indexOfTargetStopInPattern != null &&
+                            indexOfTargetStopInPattern != -1 &&
+                            tripStops != null &&
+                            indexOfTargetStopInPattern < tripStops.size - 1
+                    ) {
+                        val downstreamStops =
+                            tripStops.subList(indexOfTargetStopInPattern + 1, tripStops.size)
+                        val firstStopAlerts =
+                            downstreamStops
+                                .map { stop ->
+                                    realtime.alertsFor(
+                                        setOf(stop),
+                                        directionId,
+                                        realtime.alertsOnRoute ?: listOf()
+                                    )
+                                }
+                                .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
+                                ?: listOf()
+                        firstStopAlerts
+                    } else {
+                        listOf()
                     }
                 }
-                .toSet()
-        return patternsInDirection
-            .flatMap { pattern ->
-                pattern.alertsFor(downstreamStops, directionId, pattern.alertsOnRoute ?: listOf())
-                    ?: emptyList()
             }
             .distinct()
     }
