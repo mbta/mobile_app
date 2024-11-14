@@ -203,6 +203,7 @@ class ObjectCollectionBuilder {
 
         fun representativeTrip(block: TripBuilder.() -> Unit = {}) =
             this@ObjectCollectionBuilder.trip {
+                    routeId = this@RoutePatternBuilder.routeId
                     routePatternId = this@RoutePatternBuilder.id
                     directionId = this@RoutePatternBuilder.directionId
                     block()

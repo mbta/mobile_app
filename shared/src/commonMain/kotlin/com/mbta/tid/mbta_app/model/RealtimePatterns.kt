@@ -44,7 +44,7 @@ sealed class RealtimePatterns {
     abstract val patterns: List<RoutePattern>
     abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
-    abstract val alertsOnRoute: List<Alert>?
+    abstract val alertsDownstream: List<Alert>?
     abstract val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
 
@@ -67,7 +67,7 @@ sealed class RealtimePatterns {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
-        override val alertsOnRoute: List<Alert> = emptyList(),
+        override val alertsDownstream: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -77,7 +77,8 @@ sealed class RealtimePatterns {
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
             upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -96,12 +97,8 @@ sealed class RealtimePatterns {
                 }
                 .flatten()
                 .sorted(),
-            applicableAlerts(
-                routes = listOf(staticData.route),
-                stopIds = staticData.stopIds,
-                alerts = alerts
-            ),
-            applicableAlerts(routes = listOf(staticData.route), stopIds = null, alerts = alerts),
+            alertsHere,
+            alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
@@ -121,7 +118,7 @@ sealed class RealtimePatterns {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
-        override val alertsOnRoute: List<Alert>? = emptyList(),
+        override val alertsDownstream: List<Alert>? = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -141,7 +138,8 @@ sealed class RealtimePatterns {
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -160,47 +158,23 @@ sealed class RealtimePatterns {
                 }
                 .flatten()
                 .sorted(),
-            applicableAlerts(
-                routes = staticData.routes,
-                stopIds = staticData.stopIds,
-                alerts = alerts
-            ),
-            applicableAlerts(routes = staticData.routes, stopIds = null, alerts = alerts),
+            alertsHere,
+            alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
     }
 
     fun alertsHereFor(stopIds: Set<String>, directionId: Int): List<Alert>? {
+        val routeIds =
+            when (this) {
+                is ByHeadsign -> listOf(this.route.id)
+                is ByDirection -> this.routes.map { it.id }
+            }
         return if (alertsHere != null) {
-            alertsFor(stopIds, directionId, alertsHere as List)
+            Alert.filter(alertsHere as List, directionId, routeIds, stopIds)
         } else {
             null
-        }
-    }
-
-    /**
-     * Filter the list of alerts to ones that apply only for the routes of this grouping and any of
-     * the given stops in the given direction
-     */
-    fun alertsFor(stopIds: Set<String>, directionId: Int, alerts: List<Alert>): List<Alert>? {
-        return alerts.let {
-            when (this) {
-                is ByHeadsign ->
-                    applicableAlerts(
-                        routes = listOf(route),
-                        stopIds = stopIds,
-                        directionId = directionId,
-                        alerts = it
-                    )
-                is ByDirection ->
-                    applicableAlerts(
-                        routes = routes,
-                        stopIds = stopIds,
-                        directionId = directionId,
-                        alerts = it
-                    )
-            }
         }
     }
 
@@ -382,7 +356,7 @@ sealed class RealtimePatterns {
          * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
          */
         fun applicableAlerts(
-            routes: List<Route>,
+            routes: List<String>,
             stopIds: Set<String>?,
             directionId: Int? = null,
             alerts: Collection<Alert>
@@ -390,15 +364,15 @@ sealed class RealtimePatterns {
             alerts
                 .filter { alert ->
                     alert.anyInformedEntity {
-                        routes.any { route ->
+                        routes.any { routeId ->
                             stopIds?.any { stopId ->
                                 it.appliesTo(
                                     directionId = directionId,
-                                    routeId = route.id,
+                                    routeId = routeId,
                                     stopId = stopId
                                 )
                             }
-                                ?: it.appliesTo(directionId = directionId, routeId = route.id)
+                                ?: it.appliesTo(directionId = directionId, routeId = routeId)
                         } && it.activities.contains(Alert.InformedEntity.Activity.Board)
                     }
                 }

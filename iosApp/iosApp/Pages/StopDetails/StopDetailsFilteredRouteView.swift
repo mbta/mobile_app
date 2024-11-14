@@ -95,7 +95,7 @@ struct StopDetailsFilteredRouteView: View {
         if let patternsByStop {
             if let expectedDirection, let global {
                 alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, global: global)
-                downstreamAlerts = patternsByStop.downstreamAlertsFor(directionId: expectedDirection, global: global)
+                downstreamAlerts = patternsByStop.alertsDownstream(directionId: expectedDirection)
             } else {
                 alerts = []
                 downstreamAlerts = []

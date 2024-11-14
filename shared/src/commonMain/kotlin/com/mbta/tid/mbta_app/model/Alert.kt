@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.applicableAlerts
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -204,4 +205,64 @@ data class Alert(
     fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
 
     fun matchingEntities(predicate: (InformedEntity) -> Boolean) = informedEntity.filter(predicate)
+
+    companion object {
+        /**
+         * Filter the list of alerts to only the ones that match the given filter parameters and
+         * affect boarding.
+         */
+        fun filter(
+            alerts: List<Alert>,
+            directionId: Int?,
+            routeIds: List<String>,
+            stopIds: Set<String>
+        ): List<Alert> {
+            return applicableAlerts(
+                routes = routeIds,
+                stopIds = stopIds,
+                directionId = directionId,
+                alerts = alerts
+            )
+        }
+
+        /**
+         * Gets the alerts of the first stop that is downstream of the target stop which has alerts.
+         *
+         * @param alerts: The full list of alerts
+         * @param trip: The trip used to calculate downstream stops
+         * @param targetStopWithChildren: The child and parent stop Ids of the target stop
+         */
+        fun downstreamAlerts(
+            alerts: Collection<Alert>,
+            trip: Trip,
+            targetStopWithChildren: Set<String>,
+        ): List<Alert> {
+            val indexOfTargetStopInPattern =
+                trip.stopIds?.indexOfFirst { targetStopWithChildren.contains(it) }
+            if (
+                indexOfTargetStopInPattern != null &&
+                    indexOfTargetStopInPattern != -1 &&
+                    trip.stopIds != null &&
+                    indexOfTargetStopInPattern < trip.stopIds.size - 1
+            ) {
+                val downstreamStops =
+                    trip.stopIds.subList(indexOfTargetStopInPattern + 1, trip.stopIds.size)
+                val firstStopAlerts =
+                    downstreamStops
+                        .map { stop ->
+                            filter(
+                                alerts.toList() ?: listOf(),
+                                trip.directionId,
+                                listOf(trip.routeId),
+                                setOf(stop)
+                            )
+                        }
+                        .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
+                        ?: listOf()
+                return firstStopAlerts
+            } else {
+                return listOf()
+            }
+        }
+    }
 }

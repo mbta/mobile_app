@@ -915,7 +915,7 @@ class StopDetailsDeparturesTest {
                                 listOf(routePattern1),
                                 emptyList(),
                                 listOf(alert),
-                                listOf(alert)
+                                emptyList()
                             ),
                             RealtimePatterns.ByHeadsign(
                                 route,
@@ -924,7 +924,7 @@ class StopDetailsDeparturesTest {
                                 listOf(routePattern2),
                                 emptyList(),
                                 emptyList(),
-                                listOf(alert)
+                                emptyList()
                             )
                         )
                     )
