@@ -4374,6 +4374,7 @@
     },
     "Map Debug" : {
       "comment" : "A setting on the More page to display map debug information (only visible for developers)",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6292,7 +6293,7 @@
       }
     },
     "Service suspended" : {
-      "comment" : "Possible alert effect\n   Suspension alert VoiceOver text\nSuspension alert VoiceOver text",
+      "comment" : "Possible alert effect\nSuspension alert VoiceOver text",
       "localizations" : {
         "es" : {
           "stringUnit" : {

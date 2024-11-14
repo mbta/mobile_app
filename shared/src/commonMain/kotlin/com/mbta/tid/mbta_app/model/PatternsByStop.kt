@@ -25,6 +25,7 @@ data class PatternsByStop(
         upcomingTripsMap: UpcomingTripsMap,
         patternsPredicate: (RealtimePatterns) -> Boolean,
         alerts: Collection<Alert>,
+        globalData: GlobalResponse,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
         allDataLoaded: Boolean,
     ) : this(
@@ -46,7 +47,19 @@ data class PatternsByStop(
                                 it,
                                 upcomingTripsMap,
                                 staticData.stop.id,
-                                alerts,
+                                Alert.alertsFor(
+                                    it.stopIds,
+                                    listOf(it.route.id),
+                                    null,
+                                    alerts.toList()
+                                ),
+                                Alert.downstreamAlerts(
+                                    it.patterns,
+                                    listOf(it.route.id),
+                                    it.stopIds,
+                                    globalData,
+                                    alerts.toList()
+                                ),
                                 hasSchedulesTodayByPattern,
                                 allDataLoaded
                             )
@@ -57,6 +70,7 @@ data class PatternsByStop(
                             upcomingTripsMap,
                             staticData.stop.id,
                             alerts,
+                            globalData,
                             hasSchedulesTodayByPattern,
                             allDataLoaded
                         )
@@ -102,50 +116,8 @@ data class PatternsByStop(
             .distinct()
     }
 
-    /**
-     * Returns a unique list of alerts downstream on the routes served by the target stop. For each
-     * route pattern in the given direction, includes only the alerts at the first downstream stop
-     * that has any alerts.
-     */
-    fun downstreamAlertsFor(directionId: Int, global: GlobalResponse): List<Alert> {
-
-        val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
-        val stopIds = setOf(this.stop.id) + this.stop.childStopIds
-
-        return patternsInDirection
-            .flatMap { realtime ->
-                realtime.patterns.flatMap { pattern ->
-                    val indexOfTargetStopInPattern =
-                        global.trips[pattern.representativeTripId]?.stopIds?.indexOfFirst {
-                            stopIds.contains(it)
-                        }
-                    val tripStops = global.trips[pattern.representativeTripId]?.stopIds
-                    if (
-                        indexOfTargetStopInPattern != null &&
-                            indexOfTargetStopInPattern != -1 &&
-                            tripStops != null &&
-                            indexOfTargetStopInPattern < tripStops.size - 1
-                    ) {
-                        val downstreamStops =
-                            tripStops.subList(indexOfTargetStopInPattern + 1, tripStops.size)
-                        val firstStopAlerts =
-                            downstreamStops
-                                .map { stop ->
-                                    realtime.alertsFor(
-                                        setOf(stop),
-                                        directionId,
-                                        realtime.alertsOnRoute ?: listOf()
-                                    )
-                                }
-                                .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
-                                ?: listOf()
-                        firstStopAlerts
-                    } else {
-                        listOf()
-                    }
-                }
-            }
-            .distinct()
+    fun alertsDownstream(): List<Alert> {
+        return this.patterns.flatMap { it.alertsDownstream ?: emptyList() }
     }
 
     companion object {
@@ -158,6 +130,7 @@ data class PatternsByStop(
             upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
             alerts: Collection<Alert>,
+            globalData: GlobalResponse,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ): List<RealtimePatterns> {
@@ -171,7 +144,19 @@ data class PatternsByStop(
                         staticData,
                         upcomingTripsMap,
                         parentStopId,
-                        alerts,
+                        Alert.alertsFor(
+                            staticData.stopIds,
+                            staticData.routes.map { it.id },
+                            null,
+                            alerts.toList()
+                        ),
+                        Alert.downstreamAlerts(
+                            staticData.patterns,
+                            staticData.routes.map { it.id },
+                            staticData.stopIds,
+                            globalData,
+                            alerts.toList()
+                        ),
                         hasSchedulesTodayByPattern,
                         allDataLoaded
                     )
@@ -209,7 +194,19 @@ data class PatternsByStop(
                         ),
                         upcomingTripsMap,
                         parentStopId,
-                        alerts,
+                        Alert.alertsFor(
+                            staticData.stopIds,
+                            staticData.routes.map { it.id },
+                            null,
+                            alerts.toList()
+                        ),
+                        Alert.downstreamAlerts(
+                            staticData.patterns,
+                            staticData.routes.map { it.id },
+                            staticData.stopIds,
+                            globalData,
+                            alerts.toList()
+                        ),
                         hasSchedulesTodayByPattern,
                         allDataLoaded
                     )
@@ -221,7 +218,19 @@ data class PatternsByStop(
                     staticData,
                     upcomingTripsMap,
                     parentStopId,
-                    alerts,
+                    Alert.alertsFor(
+                        staticData.stopIds,
+                        staticData.routes.map { it.id },
+                        null,
+                        alerts.toList()
+                    ),
+                    Alert.downstreamAlerts(
+                        staticData.patterns,
+                        staticData.routes.map { it.id },
+                        staticData.stopIds,
+                        globalData,
+                        alerts.toList()
+                    ),
                     hasSchedulesTodayByPattern,
                     allDataLoaded
                 )
