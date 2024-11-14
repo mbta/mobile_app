@@ -126,7 +126,7 @@ extension HomeMapView {
     }
 
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(_, filter) = entry, let filter {
+        if case let .legacyStopDetails(_, filter) = entry, let filter {
             joinVehiclesChannel(routeId: filter.routeId,
                                 directionId: filter.directionId)
         }
@@ -157,7 +157,7 @@ extension HomeMapView {
         if oldNavEntry == nil {
             viewportProvider.saveNearbyTransitViewport()
         }
-        if case let .stopDetails(stop, filter) = nextNavEntry {
+        if case let .legacyStopDetails(stop, filter) = nextNavEntry {
             if oldNavEntry?.stop()?.id == stop.id {
                 handleRouteFilterChange(filter)
             } else {
@@ -256,7 +256,7 @@ extension HomeMapView {
         }
         analytics.tappedOnStop(stopId: stop.id)
         nearbyVM.navigationStack.removeAll()
-        nearbyVM.navigationStack.append(.stopDetails(stop, nil))
+        nearbyVM.navigationStack.append(.legacyStopDetails(stop, nil))
         return true
     }
 

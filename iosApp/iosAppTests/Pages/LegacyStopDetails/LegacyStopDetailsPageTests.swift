@@ -1,5 +1,5 @@
 //
-//  StopDetailsPageTests.swift
+//  LegacyStopDetailsPageTests.swift
 //  iosAppTests
 //
 //  Created by Simon, Emma on 4/5/24.
@@ -15,7 +15,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsPageTests: XCTestCase {
+final class LegacyStopDetailsPageTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -58,7 +58,7 @@ final class StopDetailsPageTests: XCTestCase {
             }
         }
 
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             schedulesRepository: FakeSchedulesRepository(callback: callback),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
@@ -69,7 +69,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: nextStop)
+        try sut.inspect().find(LegacyStopDetailsView.self).callOnChange(newValue: nextStop)
 
         wait(for: [newStopSchedulesFetchedExpectation], timeout: 5)
     }
@@ -111,13 +111,14 @@ final class StopDetailsPageTests: XCTestCase {
             )]
         )
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop,
-                                                                             .init(
-                                                                                 routeId: route1.id,
-                                                                                 directionId: routePattern1.directionId
-                                                                             ))])
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop,
+                                                                                   .init(
+                                                                                       routeId: route1.id,
+                                                                                       directionId: routePattern1
+                                                                                           .directionId
+                                                                                   ))])
 
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: viewportProvider,
@@ -178,7 +179,7 @@ final class StopDetailsPageTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
 
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             schedulesRepository: FakeSchedulesRepository(
                 objects: objects,
@@ -217,9 +218,13 @@ final class StopDetailsPageTests: XCTestCase {
 
         let backExp = XCTestExpectation(description: "goBack called")
         let nearbyVM = FakeNearbyVM(backExp)
-        nearbyVM.navigationStack = [.stopDetails(stop, nil), .stopDetails(stop, nil), .stopDetails(stop, nil)]
+        nearbyVM.navigationStack = [
+            .legacyStopDetails(stop, nil),
+            .legacyStopDetails(stop, nil),
+            .legacyStopDetails(stop, nil),
+        ]
 
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: .init(),
@@ -239,10 +244,14 @@ final class StopDetailsPageTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let nearbyVM = NearbyViewModel(
-            navigationStack: [.stopDetails(stop, nil), .stopDetails(stop, nil), .stopDetails(stop, nil)]
+            navigationStack: [
+                .legacyStopDetails(stop, nil),
+                .legacyStopDetails(stop, nil),
+                .legacyStopDetails(stop, nil),
+            ]
         )
 
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: MockPredictionsRepository(),
             viewportProvider: .init(),
@@ -274,7 +283,7 @@ final class StopDetailsPageTests: XCTestCase {
                                                         onDisconnect: { leaveExpectation.fulfill() },
                                                         connectOutcome: nil,
                                                         connectV2Outcome: nil)
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,
@@ -286,11 +295,11 @@ final class StopDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().find(LegacyStopDetailsView.self).callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(LegacyStopDetailsView.self).callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
     }
@@ -314,7 +323,7 @@ final class StopDetailsPageTests: XCTestCase {
                                                         onDisconnect: { leaveExpectation.fulfill() },
                                                         connectOutcome: nil,
                                                         connectV2Outcome: nil)
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,
@@ -326,7 +335,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: stop)
+        try sut.inspect().find(LegacyStopDetailsView.self).callOnChange(newValue: stop)
 
         wait(for: [leaveExpectation], timeout: 1)
         wait(for: [joinExpectation], timeout: 1)
@@ -347,13 +356,13 @@ final class StopDetailsPageTests: XCTestCase {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)])
         nearbyVM.alerts = .init(alerts: [:])
 
         let globalDataLoaded = PassthroughSubject<Void, Never>()
 
         let predictionsRepo = MockPredictionsRepository()
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(objects: objects,
                                                                    patternIdsByStop: [stop.id: [pattern.id]]),
                                                    onGet: { globalDataLoaded.send() }),
@@ -368,7 +377,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         XCTAssertNil(nearbyVM.departures)
         let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded, after: 1) { view in
-            try view.find(StopDetailsView.self)
+            try view.find(LegacyStopDetailsView.self)
                 .callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
             XCTAssertNotNil(nearbyVM.departures)
             // Keeps internal departures in sync with VM departures
@@ -393,10 +402,10 @@ final class StopDetailsPageTests: XCTestCase {
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: StopDetailsFilter? = nil
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)])
         nearbyVM.alerts = .init(alerts: [:])
 
-        let sut = StopDetailsPage(
+        let sut = LegacyStopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(
                 objects: objects,
                 patternIdsByStop: [stop.id: [routePattern.id]]

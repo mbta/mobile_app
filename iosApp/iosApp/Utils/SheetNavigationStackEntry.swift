@@ -14,8 +14,15 @@ struct TripDetailsTarget: Hashable {
     let stopSequence: Int?
 }
 
+struct TripDetails: Hashable {
+    let tripId: String
+    let vehicleId: String?
+    let stopSequence: Int?
+}
+
 enum SheetNavigationStackEntry: Hashable, Identifiable {
-    case stopDetails(Stop, StopDetailsFilter?)
+    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, trip: TripDetails?)
+    case legacyStopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?, routeId: String, directionId: Int32)
     case nearby
     case alertDetails(alertId: String, line: Line?, routes: [Route]?)
@@ -26,7 +33,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
 
     func stop() -> Stop? {
         switch self {
-        case let .stopDetails(stop, _): stop
+        case let .legacyStopDetails(stop, _): stop
         case _: nil
         }
     }
@@ -52,7 +59,7 @@ struct NearbySheetItem: Identifiable {
 
     var id: String {
         switch stackEntry {
-        case let .stopDetails(stop, _): stop.id
+        case let .legacyStopDetails(stop, _): stop.id
         case let .tripDetails(tripId, _, _, _, _): tripId
         case .nearby: "nearby"
         default: ""
@@ -82,24 +89,24 @@ extension [SheetNavigationStackEntry] {
     var lastStopDetailsFilter: StopDetailsFilter? {
         get {
             switch self.last {
-            case let .stopDetails(_, filter): filter
+            case let .legacyStopDetails(_, filter): filter
             case _: nil
             }
         }
         set {
-            if case let .stopDetails(stop, _) = self.last {
+            if case let .legacyStopDetails(stop, _) = self.last {
                 _ = self.popLast()
-                self.append(.stopDetails(stop, newValue))
+                self.append(.legacyStopDetails(stop, newValue))
             }
         }
     }
 
     var lastStop: Stop? {
         let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
-            if case .stopDetails = entry { true } else { false }
+            if case .legacyStopDetails = entry { true } else { false }
         }
         guard let lastStopEntry else { return nil }
-        if case let .stopDetails(stop, _) = lastStopEntry {
+        if case let .legacyStopDetails(stop, _) = lastStopEntry {
             return stop
         }
         return nil

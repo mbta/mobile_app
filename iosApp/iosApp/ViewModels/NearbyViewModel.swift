@@ -26,7 +26,7 @@ class NearbyViewModel: ObservableObject {
             let navEntry = navigationStack.lastSafe()
             do {
                 switch navEntry {
-                case let .stopDetails(stop, _):
+                case let .legacyStopDetails(stop, _):
                     try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stop.id))
                 default: break
                 }
@@ -95,8 +95,8 @@ class NearbyViewModel: ObservableObject {
     }
 
     func pushNavEntry(_ entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(targetStop, _) = entry,
-           case let .stopDetails(currentStop, _) = navigationStack.last,
+        if case let .legacyStopDetails(targetStop, _) = entry,
+           case let .legacyStopDetails(currentStop, _) = navigationStack.last,
            targetStop == currentStop {
             _ = navigationStack.popLast()
             navigationStack.append(entry)
@@ -152,7 +152,7 @@ class NearbyViewModel: ObservableObject {
         switch navigationStack.last {
         case .nearby:
             nil
-        case let .stopDetails(stop, _):
+        case let .legacyStopDetails(stop, _):
             stop
         case let .tripDetails(tripId: _, vehicleId: _, target: target, routeId: _, directionId: _):
             target != nil ? global.stops[target!.stopId] : nil

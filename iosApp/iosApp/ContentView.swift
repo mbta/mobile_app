@@ -256,11 +256,14 @@ struct ContentView: View {
                 case .alertDetails:
                     EmptyView()
 
-                case let .stopDetails(stop, filter):
+                case .stopDetails(stopId: _, stopFilter: _, trip: _):
+                    EmptyView()
+
+                case let .legacyStopDetails(stop, filter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
-                        StopDetailsPage(
+                        LegacyStopDetailsPage(
                             viewportProvider: viewportProvider,
                             stop: stop, filter: filter,
                             errorBannerVM: errorBannerVM,

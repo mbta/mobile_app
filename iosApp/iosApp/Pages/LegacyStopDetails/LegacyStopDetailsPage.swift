@@ -1,5 +1,5 @@
 //
-//  StopDetailsPage.swift
+//  LegacyStopDetailsPage.swift
 //  iosApp
 //
 //  Created by Horn, Melody on 2024-03-28.
@@ -10,7 +10,7 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsPage: View {
+struct LegacyStopDetailsPage: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
@@ -24,8 +24,8 @@ struct StopDetailsPage: View {
     var stop: Stop
 
     var filter: StopDetailsFilter?
-    // StopDetailsPage maintains its own internal state of the departures presented.
-    // This way, when transitioning between one StopDetailsPage and another, each separate page shows
+    // LegacyStopDetailsPage maintains its own internal state of the departures presented.
+    // This way, when transitioning between one LegacyStopDetailsPage and another, each separate page shows
     // their respective  departures rather than both showing the departures for the newly presented stop.
     @State var internalDepartures: StopDetailsDepartures?
     @State var now = Date.now
@@ -142,7 +142,7 @@ struct StopDetailsPage: View {
         Task {
             await fetchApi(
                 errorBannerVM.errorRepository,
-                errorKey: "StopDetailsPage.loadGlobalData",
+                errorKey: "LegacyStopDetailsPage.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadEverything
             )
@@ -192,7 +192,7 @@ struct StopDetailsPage: View {
             schedulesResponse = nil
             await fetchApi(
                 errorBannerVM.errorRepository,
-                errorKey: "StopDetailsPage.getSchedule",
+                errorKey: "LegacyStopDetailsPage.getSchedule",
                 getData: { try await schedulesRepository.getSchedule(stopIds: [stop.id]) },
                 onSuccess: { schedulesResponse = $0 },
                 onRefreshAfterError: loadEverything
@@ -267,8 +267,7 @@ struct StopDetailsPage: View {
                 predictions: targetPredictions,
                 alerts: nearbyVM.alerts,
                 pinnedRoutes: pinnedRoutes,
-                filterAtTime: now.toKotlinInstant(),
-                useTripHeadsigns: nearbyVM.tripHeadsignsEnabled
+                filterAtTime: now.toKotlinInstant()
             )
         } else {
             nil

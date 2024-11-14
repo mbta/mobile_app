@@ -127,7 +127,7 @@ struct HomeMapView: View {
                 handleGlobalMapDataChange(now: now)
             }
             .onChange(of: nearbyVM.departures) { _ in
-                if case let .stopDetails(_, filter) = lastNavEntry, let stopMapData {
+                if case let .legacyStopDetails(_, filter) = lastNavEntry, let stopMapData {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
             }
