@@ -44,6 +44,7 @@ sealed class RealtimePatterns {
     abstract val patterns: List<RoutePattern>
     abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
+    abstract val alertsOnRoute: List<Alert>?
     abstract val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
 
@@ -66,6 +67,7 @@ sealed class RealtimePatterns {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
+        override val alertsOnRoute: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -99,6 +101,7 @@ sealed class RealtimePatterns {
                 stopIds = staticData.stopIds,
                 alerts = alerts
             ),
+            applicableAlerts(routes = listOf(staticData.route), stopIds = null, alerts = alerts),
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
@@ -118,6 +121,7 @@ sealed class RealtimePatterns {
         override val patterns: List<RoutePattern>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
+        override val alertsOnRoute: List<Alert>? = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -161,13 +165,26 @@ sealed class RealtimePatterns {
                 stopIds = staticData.stopIds,
                 alerts = alerts
             ),
+            applicableAlerts(routes = staticData.routes, stopIds = null, alerts = alerts),
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
     }
 
     fun alertsHereFor(stopIds: Set<String>, directionId: Int): List<Alert>? {
-        return alertsHere?.let {
+        return if (alertsHere != null) {
+            alertsFor(stopIds, directionId, alertsHere as List)
+        } else {
+            null
+        }
+    }
+
+    /**
+     * Filter the list of alerts to ones that apply only for the routes of this grouping and any of
+     * the given stops in the given direction
+     */
+    fun alertsFor(stopIds: Set<String>, directionId: Int, alerts: List<Alert>): List<Alert>? {
+        return alerts.let {
             when (this) {
                 is ByHeadsign ->
                     applicableAlerts(
@@ -366,22 +383,23 @@ sealed class RealtimePatterns {
          */
         fun applicableAlerts(
             routes: List<Route>,
-            stopIds: Set<String>,
+            stopIds: Set<String>?,
             directionId: Int? = null,
             alerts: Collection<Alert>
         ): List<Alert> =
-            stopIds
-                .flatMap { stopId ->
-                    alerts.filter { alert ->
-                        alert.anyInformedEntity {
-                            routes.any { route ->
+            alerts
+                .filter { alert ->
+                    alert.anyInformedEntity {
+                        routes.any { route ->
+                            stopIds?.any { stopId ->
                                 it.appliesTo(
                                     directionId = directionId,
                                     routeId = route.id,
                                     stopId = stopId
                                 )
-                            } && it.activities.contains(Alert.InformedEntity.Activity.Board)
-                        }
+                            }
+                                ?: it.appliesTo(directionId = directionId, routeId = route.id)
+                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
                     }
                 }
                 .distinct()
