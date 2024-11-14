@@ -14,14 +14,14 @@ struct TripDetailsTarget: Hashable {
     let stopSequence: Int?
 }
 
-struct TripDetails: Hashable {
+struct TripDetailsFilter: Hashable {
     let tripId: String
     let vehicleId: String?
     let stopSequence: Int?
 }
 
 enum SheetNavigationStackEntry: Hashable, Identifiable {
-    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, trip: TripDetails?)
+    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
     case legacyStopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?, routeId: String, directionId: Int32)
     case nearby
@@ -90,6 +90,7 @@ extension [SheetNavigationStackEntry] {
         get {
             switch self.last {
             case let .legacyStopDetails(_, filter): filter
+            case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _): filter
             case _: nil
             }
         }
@@ -97,17 +98,41 @@ extension [SheetNavigationStackEntry] {
             if case let .legacyStopDetails(stop, _) = self.last {
                 _ = self.popLast()
                 self.append(.legacyStopDetails(stop, newValue))
+            } else if case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _) = self.last {
+                _ = self.popLast()
+                self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
+            }
+        }
+    }
+
+    var lastTripDetailsFilter: TripDetailsFilter? {
+        get {
+            switch self.last {
+            case let .stopDetails(stopId: _, stopFilter: _, tripFilter: filter): filter
+            default: nil
+            }
+        }
+        set {
+            if case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: _) = self.last {
+                _ = self.popLast()
+                self.append(.stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: newValue))
             }
         }
     }
 
     var lastStop: Stop? {
-        let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
-            if case .legacyStopDetails = entry { true } else { false }
-        }
-        guard let lastStopEntry else { return nil }
-        if case let .legacyStopDetails(stop, _) = lastStopEntry {
+        if case let .legacyStopDetails(stop, _) = self.last {
             return stop
+        }
+        return nil
+    }
+
+    var lastStopId: String? {
+        if case let .stopDetails(stopId: id, stopFilter: _, tripFilter: _) = self.last {
+            return id
+        }
+        if case let .legacyStopDetails(stop, _) = self.last {
+            return stop.id
         }
         return nil
     }

@@ -126,6 +126,12 @@ extension HomeMapView {
     }
 
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
+        if case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = entry, let stopFilter {
+            joinVehiclesChannel(
+                routeId: stopFilter.routeId,
+                directionId: stopFilter.directionId
+            )
+        }
         if case let .legacyStopDetails(_, filter) = entry, let filter {
             joinVehiclesChannel(routeId: filter.routeId,
                                 directionId: filter.directionId)

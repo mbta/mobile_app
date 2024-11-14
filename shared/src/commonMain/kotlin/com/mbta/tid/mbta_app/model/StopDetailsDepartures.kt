@@ -35,6 +35,23 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
 
     companion object {
         fun fromData(
+            stopId: String,
+            global: GlobalResponse,
+            schedules: ScheduleResponse?,
+            predictions: PredictionsStreamDataResponse?,
+            alerts: AlertsStreamDataResponse?,
+            pinnedRoutes: Set<String>,
+            filterAtTime: Instant
+        ): StopDetailsDepartures? {
+            val stop = global.stops[stopId]
+            return if (stop == null) {
+                null
+            } else {
+                fromData(stop, global, schedules, predictions, alerts, pinnedRoutes, filterAtTime)
+            }
+        }
+
+        fun fromData(
             stop: Stop,
             global: GlobalResponse,
             schedules: ScheduleResponse?,

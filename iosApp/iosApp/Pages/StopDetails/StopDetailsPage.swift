@@ -21,9 +21,9 @@ struct StopDetailsPage: View {
     var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
 
     @State var predictionsRepository: IPredictionsRepository
-    var stop: Stop
+    var stopId: String
 
-    var filter: StopDetailsFilter?
+    var stopFilter: StopDetailsFilter?
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective  departures rather than both showing the departures for the newly presented stop.
@@ -43,8 +43,8 @@ struct StopDetailsPage: View {
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         viewportProvider: ViewportProvider,
-        stop: Stop,
-        filter: StopDetailsFilter?,
+        stopId: String,
+        stopFilter: StopDetailsFilter?,
         internalDepartures: StopDetailsDepartures? = nil,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel
@@ -53,8 +53,8 @@ struct StopDetailsPage: View {
         self.schedulesRepository = schedulesRepository
         self.predictionsRepository = predictionsRepository
         self.viewportProvider = viewportProvider
-        self.stop = stop
-        self.filter = filter
+        self.stopId = stopId
+        self.stopFilter = stopFilter
         self.internalDepartures = internalDepartures // only for testing
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -62,10 +62,10 @@ struct StopDetailsPage: View {
 
     var body: some View {
         VStack {
-            LegacyStopDetailsView(
-                stop: stop,
-                filter: filter,
-                setFilter: { filter in nearbyVM.pushNavEntry(.legacyStopDetails(stop, filter)) },
+            StopDetailsView(
+                stopId: stopId,
+                stopFilter: stopFilter,
+                setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
                 departures: internalDepartures,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
@@ -77,23 +77,23 @@ struct StopDetailsPage: View {
                 loadEverything()
                 didAppear?(self)
             }
-            .onChange(of: stop) { nextStop in
-                changeStop(nextStop)
+            .onChange(of: stopId) { nextStopId in
+                changeStop(nextStopId)
             }
             .onChange(of: globalResponse) { _ in
-                updateDepartures(stop)
+                updateDepartures(stopId)
             }
             .onChange(of: pinnedRoutes) { _ in
-                updateDepartures(stop)
+                updateDepartures(stopId)
             }
             .onChange(of: predictionsByStop) { newPredictionsByStop in
-                updateDepartures(stop, newPredictionsByStop)
+                updateDepartures(stopId, newPredictionsByStop)
             }
             .onChange(of: schedulesResponse) { _ in
-                updateDepartures(stop)
+                updateDepartures(stopId)
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .task(id: stop.id) {
+            .task(id: stopId) {
                 while !Task.isCancelled {
                     now = Date.now
                     updateDepartures()
@@ -111,7 +111,7 @@ struct StopDetailsPage: View {
                        .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
                         self.predictionsByStop = nil
                     }
-                    joinPredictions(stop)
+                    joinPredictions(stopId)
                 },
                 onInactive: leavePredictions,
                 onBackground: {
@@ -124,7 +124,7 @@ struct StopDetailsPage: View {
 
     func loadEverything() {
         loadGlobalData()
-        fetchStopData(stop)
+        fetchStopData(stopId)
         loadPinnedRoutes()
     }
 
@@ -176,33 +176,33 @@ struct StopDetailsPage: View {
         }
     }
 
-    func changeStop(_ stop: Stop) {
+    func changeStop(_ stopId: String) {
         leavePredictions()
-        fetchStopData(stop)
+        fetchStopData(stopId)
     }
 
-    func fetchStopData(_ stop: Stop) {
-        getSchedule(stop)
-        joinPredictions(stop)
-        updateDepartures(stop)
+    func fetchStopData(_ stopId: String) {
+        getSchedule(stopId)
+        joinPredictions(stopId)
+        updateDepartures(stopId)
     }
 
-    func getSchedule(_ stop: Stop) {
+    func getSchedule(_ stopId: String) {
         Task {
             schedulesResponse = nil
             await fetchApi(
                 errorBannerVM.errorRepository,
                 errorKey: "StopDetailsPage.getSchedule",
-                getData: { try await schedulesRepository.getSchedule(stopIds: [stop.id]) },
+                getData: { try await schedulesRepository.getSchedule(stopIds: [stopId]) },
                 onSuccess: { schedulesResponse = $0 },
                 onRefreshAfterError: loadEverything
             )
         }
     }
 
-    func joinPredictions(_ stop: Stop) {
+    func joinPredictions(_ stopId: String) {
         // no error handling since persistent errors cause stale predictions
-        predictionsRepository.connectV2(stopIds: [stop.id], onJoin: { outcome in
+        predictionsRepository.connectV2(stopIds: [stopId], onJoin: { outcome in
             DispatchQueue.main.async {
                 if case let .ok(result) = onEnum(of: outcome) {
                     predictionsByStop = result.data
@@ -244,24 +244,24 @@ struct StopDetailsPage: View {
                 ),
                 action: {
                     leavePredictions()
-                    joinPredictions(stop)
+                    joinPredictions(stopId)
                 }
             )
         }
     }
 
     func updateDepartures(
-        _ stop: Stop? = nil,
+        _ stopId: String? = nil,
         _ predictionsByStop: PredictionsByStopJoinResponse? = nil
     ) {
-        let stop = stop ?? self.stop
+        let stopId = stopId ?? self.stopId
         let predictionsByStop = predictionsByStop ?? self.predictionsByStop
 
         let targetPredictions = predictionsByStop?.toPredictionsStreamDataResponse()
 
         let newDepartures: StopDetailsDepartures? = if let globalResponse {
             StopDetailsDepartures.companion.fromData(
-                stop: stop,
+                stopId: stopId,
                 global: globalResponse,
                 schedules: schedulesResponse,
                 predictions: targetPredictions,
@@ -273,11 +273,11 @@ struct StopDetailsPage: View {
         } else {
             nil
         }
-        if filter == nil, let newFilter = newDepartures?.autoFilter() {
-            nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
+        if stopFilter == nil, let newFilter = newDepartures?.autoFilter() {
+            nearbyVM.setLastStopDetailsFilter(stopId, newFilter)
         }
 
         internalDepartures = newDepartures
-        nearbyVM.setDepartures(stop.id, newDepartures)
+        nearbyVM.setDepartures(stopId, newDepartures)
     }
 }

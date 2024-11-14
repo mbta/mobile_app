@@ -2223,6 +2223,9 @@
         }
       }
     },
+    "Combined Stop & Trip Details" : {
+      "comment" : "A setting on the More page to display a new stop details page layout (only visible for developers)"
+    },
     "Commuter Rail and Ferry tickets" : {
       "comment" : "Label for a More page link to the MBTA mTicket app",
       "localizations" : {
