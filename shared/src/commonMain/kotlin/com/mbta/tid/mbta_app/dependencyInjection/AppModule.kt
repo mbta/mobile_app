@@ -5,7 +5,6 @@ import RealRepositories
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
-import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -57,7 +56,6 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single<IStopRepository> { repositories.stop }
         single<ITripRepository> { repositories.trip }
         repositories.alerts?.let { alertsRepo -> factory<IAlertsRepository> { alertsRepo } }
-        repositories.appCheck?.let { appCheckRepo -> factory<IAppCheckRepository> { appCheckRepo } }
         repositories.predictions?.let { predictionsRepo ->
             factory<IPredictionsRepository> { predictionsRepo }
         }
@@ -67,7 +65,7 @@ fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicle?.let { vehicleRepo -> factory<IVehicleRepository> { vehicleRepo } }
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
-        single { ConfigUseCase(get(), get(), get()) }
+        single { ConfigUseCase(get(), get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
     }

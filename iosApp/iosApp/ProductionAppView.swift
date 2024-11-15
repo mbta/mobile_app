@@ -35,7 +35,7 @@ struct ProductionAppView: View {
             self.init(socket: MockSocket())
         } else {
             let socket = Self.initSocket()
-            Self.initKoin(appCheck: AppCheckRepository(), socket: socket)
+            Self.initKoin(socket: socket)
             self.init(socket: socket)
         }
     }
@@ -87,10 +87,9 @@ struct ProductionAppView: View {
         return socket
     }
 
-    private static func initKoin(appCheck: IAppCheckRepository, socket: PhoenixSocket) {
+    private static func initKoin(socket: PhoenixSocket) {
         let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(
             accessibilityStatus: AccessibilityStatusRepository(),
-            appCheck: appCheck,
             socket: socket
         )
         HelpersKt.doInitKoin(appVariant: appVariant, nativeModule: nativeModule)
