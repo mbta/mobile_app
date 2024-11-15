@@ -597,8 +597,7 @@ fun NearbyStaticData.withRealtimeInfo(
                                     ),
                                     { it.shouldShow() },
                                     activeRelevantAlerts,
-                                    // TODO - can we guarantee this by this point?
-                                    globalData!!,
+                                    globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
                                 )
@@ -618,8 +617,7 @@ fun NearbyStaticData.withRealtimeInfo(
                                     ),
                                     { it.shouldShow() },
                                     activeRelevantAlerts,
-                                    // TODO - can we guarantee this by this point?
-                                    globalData!!,
+                                    globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
                                 )

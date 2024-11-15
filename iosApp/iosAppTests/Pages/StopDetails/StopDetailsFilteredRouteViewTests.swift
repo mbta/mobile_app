@@ -95,7 +95,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
             alert.effect = .shuttle
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
-                directionId: nil, facility: nil,
+                directionId: 0, facility: nil,
                 route: route.id, routeType: nil,
                 stop: downstreamStop.id, trip: nil
             )
@@ -128,7 +128,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 patterns: [patternNorth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
                 alertsHere: [],
-                alertsOnRoute: [alert]
+                alertsDownstream: [alert]
             ),
             RealtimePatterns.ByHeadsign(
                 route: route,
@@ -137,7 +137,7 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 patterns: [patternSouth],
                 upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
                 alertsHere: [],
-                alertsOnRoute: [alert]
+                alertsDownstream: []
             ),
         ])
 
