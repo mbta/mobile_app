@@ -139,9 +139,14 @@ data class TripDetailsStopList(val stops: List<Entry>) {
 
             var predictions = emptyList<Prediction>()
             if (tripPredictions != null) {
+                val tripRoute = tripPredictions.trips.values.singleOrNull()?.routeId
+                val tripPredictionsWithCorrectRoute =
+                    tripPredictions.predictions.values.filter {
+                        tripRoute == null || it.routeId == tripRoute
+                    }
                 predictions =
                     deduplicatePredictionsByStopSequence(
-                        tripPredictions.predictions.values,
+                        tripPredictionsWithCorrectRoute,
                         tripSchedules,
                         globalData
                     )
