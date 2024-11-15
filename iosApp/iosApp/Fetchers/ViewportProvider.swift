@@ -14,7 +14,7 @@ import SwiftUI
 class ViewportProvider: ObservableObject {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
-        static let center: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
+        static let center: CLLocationCoordinate2D = .init(latitude: 42.3575, longitude: -71.0601)
         static let zoom: CGFloat = MapDefaults.shared.defaultZoomThreshold
     }
 

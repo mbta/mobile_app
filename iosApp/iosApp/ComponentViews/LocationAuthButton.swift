@@ -81,8 +81,9 @@ struct LocationAuthButton: View {
                     }
                 },
                 message: {
-                    Text("You’ll see nearby transit options and get better search results "
-                        + "when you turn on Location Services for MBTA Go.")
+                    Text(
+                        "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go."
+                    )
                 }
             )
         case .authorizedAlways, .authorizedWhenInUse, nil:

@@ -113,7 +113,15 @@ struct ContentView: View {
                 NearbyTransitPageView(
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider
+                    viewportProvider: viewportProvider,
+                    noNearbyStops: { NoNearbyStopsView(
+                        hideMaps: contentVM.hideMaps,
+                        onOpenSearch: { searchObserver.isFocused = true },
+                        onPanToDefaultCenter: { viewportProvider.animateTo(
+                            coordinates: ViewportProvider.Defaults.center,
+                            zoom: 13.75
+                        ) }
+                    ) }
                 )
                 .tag(SelectedTab.nearby)
                 .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
