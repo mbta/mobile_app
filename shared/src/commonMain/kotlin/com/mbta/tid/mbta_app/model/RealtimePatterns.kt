@@ -172,7 +172,7 @@ sealed class RealtimePatterns {
                 is ByDirection -> this.routes.map { it.id }
             }
         return if (alertsHere != null) {
-            Alert.alertsFor(stopIds, routeIds, directionId, alertsHere as List)
+            Alert.filter(alertsHere as List, directionId, routeIds, stopIds)
         } else {
             null
         }

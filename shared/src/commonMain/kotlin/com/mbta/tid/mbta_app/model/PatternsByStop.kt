@@ -47,18 +47,17 @@ data class PatternsByStop(
                                 it,
                                 upcomingTripsMap,
                                 staticData.stop.id,
-                                Alert.alertsFor(
-                                    it.stopIds,
-                                    listOf(it.route.id),
+                                Alert.filter(
+                                    alerts.toList(),
                                     null,
-                                    alerts.toList()
-                                ),
-                                Alert.downstreamAlerts(
-                                    it.patterns,
                                     listOf(it.route.id),
+                                    it.stopIds
+                                ),
+                                downstreamAlerts(
+                                    alerts.toList(),
+                                    it.patterns,
                                     it.stopIds,
-                                    globalData,
-                                    alerts.toList()
+                                    globalData
                                 ),
                                 hasSchedulesTodayByPattern,
                                 allDataLoaded
@@ -116,11 +115,35 @@ data class PatternsByStop(
             .distinct()
     }
 
-    fun alertsDownstream(): List<Alert> {
-        return this.patterns.flatMap { it.alertsDownstream ?: emptyList() }
+    fun alertsDownstream(directionId: Int): List<Alert> {
+        val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
+        return patternsInDirection.flatMap { it.alertsDownstream ?: emptyList() }
     }
 
     companion object {
+
+        /**
+         * A unique list of all the alerts that are downstream from the target stop for each route
+         * pattern
+         */
+        fun downstreamAlerts(
+            alerts: List<Alert>,
+            patterns: List<RoutePattern>,
+            targetStopWithChildren: Set<String>,
+            globalData: GlobalResponse
+        ): List<Alert> {
+            return patterns
+                .flatMap {
+                    val trip = globalData.trips[it.representativeTripId]
+                    if (trip != null) {
+                        Alert.downstreamAlerts(alerts, trip, targetStopWithChildren)
+                    } else {
+                        listOf()
+                    }
+                }
+                .distinct()
+        }
+
         // Even if a direction can serve multiple routes according to the static data, it's possible
         // that only one of those routes is typical, in which case we don't want to display it as a
         // grouped direction in the UI. If there are only predicted trips on a single route, this
@@ -144,18 +167,17 @@ data class PatternsByStop(
                         staticData,
                         upcomingTripsMap,
                         parentStopId,
-                        Alert.alertsFor(
-                            staticData.stopIds,
-                            staticData.routes.map { it.id },
+                        Alert.filter(
+                            alerts.toList(),
                             null,
-                            alerts.toList()
+                            staticData.routeIds,
+                            staticData.stopIds
                         ),
-                        Alert.downstreamAlerts(
+                        downstreamAlerts(
+                            alerts.toList(),
                             staticData.patterns,
-                            staticData.routes.map { it.id },
                             staticData.stopIds,
-                            globalData,
-                            alerts.toList()
+                            globalData
                         ),
                         hasSchedulesTodayByPattern,
                         allDataLoaded
@@ -194,18 +216,17 @@ data class PatternsByStop(
                         ),
                         upcomingTripsMap,
                         parentStopId,
-                        Alert.alertsFor(
-                            staticData.stopIds,
-                            staticData.routes.map { it.id },
+                        Alert.filter(
+                            alerts.toList(),
                             null,
-                            alerts.toList()
+                            staticData.routeIds,
+                            staticData.stopIds
                         ),
-                        Alert.downstreamAlerts(
+                        downstreamAlerts(
+                            alerts.toList(),
                             staticData.patterns,
-                            staticData.routes.map { it.id },
                             staticData.stopIds,
-                            globalData,
-                            alerts.toList()
+                            globalData
                         ),
                         hasSchedulesTodayByPattern,
                         allDataLoaded
@@ -218,18 +239,12 @@ data class PatternsByStop(
                     staticData,
                     upcomingTripsMap,
                     parentStopId,
-                    Alert.alertsFor(
-                        staticData.stopIds,
-                        staticData.routes.map { it.id },
-                        null,
-                        alerts.toList()
-                    ),
-                    Alert.downstreamAlerts(
+                    Alert.filter(alerts.toList(), null, staticData.routeIds, staticData.stopIds),
+                    downstreamAlerts(
+                        alerts.toList(),
                         staticData.patterns,
-                        staticData.routes.map { it.id },
                         staticData.stopIds,
-                        globalData,
-                        alerts.toList()
+                        globalData
                     ),
                     hasSchedulesTodayByPattern,
                     allDataLoaded

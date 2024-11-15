@@ -465,17 +465,33 @@ class PatternsByStopTest {
                 mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
             )
         val southboundDownstreamAlerts =
-            patternsByStop.downstreamAlertsFor(
-                directionId = routePatternAshmont.directionId,
-                global = global
+            PatternsByStop.downstreamAlerts(
+                alerts =
+                    listOf(
+                        ashmontShuttleAlert,
+                        shawmutShuttleAlert,
+                        parkShuttleAlert,
+                        alewifeShuttleAlert
+                    ),
+                patterns = listOf(routePatternAshmont, routePatternBraintree),
+                targetStopWithChildren = setOf(park.id),
+                globalData = global
             )
         // ashmont alert not included b/c only first downstream alert on pattern returned
         assertEquals(listOf(shawmutShuttleAlert), southboundDownstreamAlerts)
 
         val northboundDownstreamAlerts =
-            patternsByStop.downstreamAlertsFor(
-                directionId = routePatternAlewife.directionId,
-                global = global
+            PatternsByStop.downstreamAlerts(
+                alerts =
+                    listOf(
+                        ashmontShuttleAlert,
+                        shawmutShuttleAlert,
+                        parkShuttleAlert,
+                        alewifeShuttleAlert
+                    ),
+                patterns = listOf(routePatternAlewife),
+                targetStopWithChildren = setOf(park.id),
+                globalData = global
             )
         assertEquals(listOf(alewifeShuttleAlert), northboundDownstreamAlerts)
     }
@@ -660,6 +676,8 @@ class PatternsByStopTest {
                 upcomingTripsMap,
                 stop.id,
                 emptyList(),
+                // Global data only used to determine downstream alerts
+                GlobalResponse(ObjectCollectionBuilder(), mapOf()),
                 hasSchedules,
                 true
             )

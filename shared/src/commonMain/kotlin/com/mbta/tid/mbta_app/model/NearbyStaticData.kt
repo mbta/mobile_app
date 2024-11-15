@@ -49,6 +49,8 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
         ) : StaticPatterns() {
             override fun copy(patterns: List<RoutePattern>, stopIds: Set<String>) =
                 copy(line = line, patterns = patterns, stopIds = stopIds)
+
+            val routeIds = routes.map { it.id }
         }
     }
 

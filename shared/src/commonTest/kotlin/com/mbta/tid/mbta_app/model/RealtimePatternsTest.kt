@@ -586,7 +586,7 @@ class RealtimePatternsTest {
             }
         assertEquals(
             RealtimePatterns.applicableAlerts(
-                listOf(route),
+                listOf(route.id),
                 setOf(stop.id),
                 null,
                 listOf(validAlert, invalidAlert)
@@ -612,7 +612,12 @@ class RealtimePatternsTest {
                 )
             }
         assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
+            RealtimePatterns.applicableAlerts(
+                listOf(route.id),
+                setOf(stop.id),
+                null,
+                listOf(alert)
+            ),
             emptyList()
         )
     }
@@ -634,7 +639,12 @@ class RealtimePatternsTest {
                 )
             }
         assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
+            RealtimePatterns.applicableAlerts(
+                listOf(route.id),
+                setOf(stop.id),
+                null,
+                listOf(alert)
+            ),
             emptyList()
         )
     }
@@ -656,7 +666,12 @@ class RealtimePatternsTest {
                 )
             }
         assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
+            RealtimePatterns.applicableAlerts(
+                listOf(route.id),
+                setOf(stop.id),
+                null,
+                listOf(alert)
+            ),
             emptyList()
         )
     }
@@ -690,7 +705,12 @@ class RealtimePatternsTest {
             }
         assertEquals(
             listOf(alert),
-            RealtimePatterns.applicableAlerts(listOf(route), null, null, listOf(alert, otherAlert)),
+            RealtimePatterns.applicableAlerts(
+                listOf(route.id),
+                null,
+                null,
+                listOf(alert, otherAlert)
+            ),
         )
     }
 
@@ -772,7 +792,7 @@ class RealtimePatternsTest {
                                     listOf(pattern2),
                                     emptyList(),
                                     listOf(alert),
-                                    listOf(alert),
+                                    emptyList(),
                                     false
                                 ),
                                 RealtimePatterns.ByHeadsign(
@@ -781,8 +801,8 @@ class RealtimePatternsTest {
                                     null,
                                     listOf(pattern1),
                                     emptyList(),
-                                    listOf(),
-                                    listOf(alert),
+                                    emptyList(),
+                                    emptyList(),
                                     false
                                 )
                             )

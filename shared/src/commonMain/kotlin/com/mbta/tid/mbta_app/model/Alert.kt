@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.applicableAlerts
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -209,11 +208,11 @@ data class Alert(
 
     companion object {
         /** Filter the list of alerts to ones that apply only for the given routes and stops */
-        fun alertsFor(
-            stopIds: Set<String>,
-            routeIds: List<String>,
+        fun filter(
+            alerts: List<Alert>,
             directionId: Int?,
-            alerts: List<Alert>
+            routeIds: List<String>,
+            stopIds: Set<String>
         ): List<Alert> {
             return applicableAlerts(
                 routes = routeIds,
@@ -223,47 +222,47 @@ data class Alert(
             )
         }
 
-        // TODO: move this elsewhere - RotuePattern?
+        /**
+         * Gets the alerts of the first stop that is downstream of the target stop which has alerts.
+         *
+         * @param alerts: The full list of alerts
+         * @param trip: The trip used to calculate downstream stops
+         * @param targetStopWithChildren: The child and parent stop Ids of the target stop
+         */
         fun downstreamAlerts(
-            patterns: List<RoutePattern>,
-            routeIds: List<String>,
-            stopIds: Set<String>,
-            global: GlobalResponse,
-            alerts: Collection<Alert>
+            alerts: Collection<Alert>,
+            trip: Trip,
+            targetStopWithChildren: Set<String>,
         ): List<Alert> {
-            return patterns
-                .flatMap { pattern ->
-                    val indexOfTargetStopInPattern =
-                        global.trips[pattern.representativeTripId]?.stopIds?.indexOfFirst {
-                            stopIds.contains(it)
+            println("TRIP STOPS ${trip.stopIds}")
+            println("TRIP direction ${trip.directionId}")
+
+            val indexOfTargetStopInPattern =
+                trip.stopIds?.indexOfFirst { targetStopWithChildren.contains(it) }
+            if (
+                indexOfTargetStopInPattern != null &&
+                    indexOfTargetStopInPattern != -1 &&
+                    trip.stopIds != null &&
+                    indexOfTargetStopInPattern < trip.stopIds.size - 1
+            ) {
+                val downstreamStops =
+                    trip.stopIds.subList(indexOfTargetStopInPattern + 1, trip.stopIds.size)
+                val firstStopAlerts =
+                    downstreamStops
+                        .map { stop ->
+                            Alert.filter(
+                                alerts.toList() ?: listOf(),
+                                trip.directionId,
+                                listOf(trip.routeId),
+                                setOf(stop)
+                            )
                         }
-                    val tripStops = global.trips[pattern.representativeTripId]?.stopIds
-                    if (
-                        indexOfTargetStopInPattern != null &&
-                            indexOfTargetStopInPattern != -1 &&
-                            tripStops != null &&
-                            indexOfTargetStopInPattern < tripStops.size - 1
-                    ) {
-                        val downstreamStops =
-                            tripStops.subList(indexOfTargetStopInPattern + 1, tripStops.size)
-                        val firstStopAlerts =
-                            downstreamStops
-                                .map { stop ->
-                                    Alert.alertsFor(
-                                        setOf(stop),
-                                        routeIds,
-                                        pattern.directionId,
-                                        alerts.toList() ?: listOf()
-                                    )
-                                }
-                                .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
-                                ?: listOf()
-                        firstStopAlerts
-                    } else {
-                        listOf()
-                    }
-                }
-                .distinct()
+                        .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
+                        ?: listOf()
+                return firstStopAlerts
+            } else {
+                return listOf()
+            }
         }
     }
 }
