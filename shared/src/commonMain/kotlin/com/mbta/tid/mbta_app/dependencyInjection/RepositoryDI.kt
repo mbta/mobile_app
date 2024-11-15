@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
-import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -32,7 +31,6 @@ import com.mbta.tid.mbta_app.repositories.IdleStopRepository
 import com.mbta.tid.mbta_app.repositories.IdleTripRepository
 import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
-import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
@@ -59,7 +57,6 @@ import org.koin.core.component.inject
 interface IRepositories {
     val accessibilityStatus: IAccessibilityStatusRepository?
     val alerts: IAlertsRepository?
-    val appCheck: IAppCheckRepository?
     val config: IConfigRepository
     val errorBanner: IErrorBannerStateRepository
     val global: IGlobalRepository
@@ -83,7 +80,6 @@ interface IRepositories {
 class RepositoryDI : IRepositories, KoinComponent {
     override val accessibilityStatus: IAccessibilityStatusRepository by inject()
     override val alerts: IAlertsRepository by inject()
-    override val appCheck: IAppCheckRepository by inject()
     override val config: IConfigRepository by inject()
     override val errorBanner: IErrorBannerStateRepository by inject()
     override val global: IGlobalRepository by inject()
@@ -110,7 +106,6 @@ class RealRepositories : IRepositories {
 
     override val accessibilityStatus = null
     override val alerts = null
-    override val appCheck = null
     override val config = ConfigRepository()
     override val errorBanner = ErrorBannerStateRepository()
     override val global = GlobalRepository()
@@ -134,7 +129,6 @@ class RealRepositories : IRepositories {
 class MockRepositories(
     override val accessibilityStatus: IAccessibilityStatusRepository,
     override val alerts: IAlertsRepository,
-    override val appCheck: IAppCheckRepository,
     override val config: IConfigRepository,
     override val errorBanner: IErrorBannerStateRepository,
     override val global: IGlobalRepository,
@@ -167,7 +161,6 @@ class MockRepositories(
                 accessibilityStatus =
                     MockAccessibilityStatusRepository(isScreenReaderEnabled = false),
                 alerts = MockAlertsRepository(),
-                appCheck = MockAppCheckRepository(),
                 config = MockConfigRepository(),
                 errorBanner = errorBanner,
                 global = global,

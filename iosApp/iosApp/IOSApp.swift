@@ -1,5 +1,4 @@
 import FirebaseAnalytics
-import FirebaseAppCheck
 import FirebaseCore
 import os
 import shared
@@ -14,11 +13,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #if DEBUG
             // Don't configure GA/Firebase for debug builds to reduce pollution of events
             Analytics.setAnalyticsCollectionEnabled(false)
-            let providerFactory = AppCheckDebugProviderFactory()
-            AppCheck.setAppCheckProviderFactory(providerFactory)
-        #else
-            let providerFactory = CustomAppCheckProviderFactory()
-            AppCheck.setAppCheckProviderFactory(providerFactory)
         #endif
         FirebaseApp.configure()
         return true

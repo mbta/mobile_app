@@ -21,11 +21,8 @@
 		6E35D4D02B72C7B700A2BF95 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */; };
 		6E35D4D32B72CD3900A2BF95 /* HomeMapViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */; };
 		6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */; };
-		6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 6E45D8A82C4170890006934E /* FirebaseAppCheck */; };
-		6E45D8AB2C4170D80006934E /* AppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */; };
 		6E4C37582C4AEF3E00EA67CF /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */; };
 		6E4C375E2C4BDC9F00EA67CF /* ContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */; };
-		6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */; };
 		6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */; };
 		6E55C17F2C247D480086A424 /* StopDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C17E2C247D480086A424 /* StopDetailsView.swift */; };
 		6E55C1822C2489030086A424 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 6E55C1812C2489030086A424 /* Collections */; };
@@ -275,12 +272,9 @@
 		6E35D4CF2B72C7B700A2BF95 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		6E35D4D22B72CD3900A2BF95 /* HomeMapViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapViewTests.swift; sourceTree = "<group>"; };
 		6E3C8D7D2C11FDA80059C28C /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
-		6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckProviderFactory.swift; sourceTree = "<group>"; };
 		6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModelTests.swift; sourceTree = "<group>"; };
-		6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckRepository.swift; sourceTree = "<group>"; };
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
-		6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* StopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* StopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsViewTests.swift; sourceTree = "<group>"; };
 		6E6D45F62CC6E865002A3663 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -304,8 +298,6 @@
 		6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageViewTests.swift; sourceTree = "<group>"; };
 		6EA231742C21CF2100789173 /* LoadingCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCardTests.swift; sourceTree = "<group>"; };
-		6EB5861E2C4FC88500121728 /* AppCheckCI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppCheckCI.xcconfig; sourceTree = "<group>"; };
-		6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckRepository.swift; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		6EE745832B965B9C0052227E /* SocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTests.swift; sourceTree = "<group>"; };
 		6EE745872B965C2B0052227E /* MessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTests.swift; sourceTree = "<group>"; };
@@ -515,7 +507,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E45D8A92C4170890006934E /* FirebaseAppCheck in Frameworks */,
 				6E55C1822C2489030086A424 /* Collections in Frameworks */,
 				9AB3F50D2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */,
@@ -653,8 +644,6 @@
 				8C304C652B69C0C300263886 /* .swift-version */,
 				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
 				8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */,
-				6EB5861E2C4FC88500121728 /* AppCheckCI.xcconfig */,
-				6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */,
 				7555FFB0242A642200829871 /* Frameworks */,
 				7555FF7D242A565900829871 /* iosApp */,
 				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
@@ -1041,9 +1030,6 @@
 			children = (
 				9A52B3392C6E7C7D0028EEAB /* AlertDetailsAnalytics.swift */,
 				ED24EADD2C1A986900A7BE4D /* AnalyticsProvider.swift */,
-				6E45D8AA2C4170D80006934E /* AppCheckProviderFactory.swift */,
-				6E4C375F2C4E94D200EA67CF /* AppCheckRepository.swift */,
-				6ECE8CBF2C495EDD001DD9FB /* AppCheckRepository.swift */,
 				ED24EAD72C1A941E00A7BE4D /* NearbyTransitAnalytics.swift */,
 				EDE92FA52C3DD675007AD2F6 /* ScreenTracker.swift */,
 				ED24EADB2C1A95A900A7BE4D /* StopDetailsAnalytics.swift */,
@@ -1132,7 +1118,6 @@
 				6EE745802B965AEA0052227E /* SwiftPhoenixClient */,
 				9AB3F50C2BE44B49008D9E40 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				6E55C1812C2489030086A424 /* Collections */,
-				6E45D8A82C4170890006934E /* FirebaseAppCheck */,
 				8CCBF2CC2CC162E900B29806 /* Shimmer */,
 			);
 			productName = iosApp;
@@ -1411,7 +1396,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
-				6E4C37602C4E94D200EA67CF /* AppCheckRepository.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
 				8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */,
 				9A52A2B32CC3035F00CC01D6 /* WithRealtimeIndicator.swift in Sources */,
@@ -1501,7 +1485,6 @@
 				6E3C8D7E2C11FDA80059C28C /* ActionButton.swift in Sources */,
 				9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */,
 				6E20278E2BD989630037554F /* DummyTestAppView.swift in Sources */,
-				6E45D8AB2C4170D80006934E /* AppCheckProviderFactory.swift in Sources */,
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
 				9AAA26A12C2DB43600A7745A /* PredictionRowView.swift in Sources */,
 				9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */,
@@ -1695,7 +1678,6 @@
 		};
 		7555FFA3242A565B00829871 /* ProdDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1757,7 +1739,6 @@
 		};
 		7555FFA4242A565B00829871 /* ProdRelease */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1881,7 +1862,6 @@
 		};
 		8C8F515B2BD98C1C0037A2D8 /* StagingDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2036,7 +2016,6 @@
 		};
 		8C8F515F2BD98C220037A2D8 /* StagingRelease */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2286,10 +2265,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6E35D4CC2B72C74500A2BF95 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
 			productName = MapboxMaps;
-		};
-		6E45D8A82C4170890006934E /* FirebaseAppCheck */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = FirebaseAppCheck;
 		};
 		6E55C1812C2489030086A424 /* Collections */ = {
 			isa = XCSwiftPackageProductDependency;

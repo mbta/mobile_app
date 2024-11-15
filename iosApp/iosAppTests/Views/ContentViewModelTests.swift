@@ -18,7 +18,6 @@ final class ContentViewModelTests: XCTestCase {
     func testLoadConfigSetsConfig() async {
         let expectedResult = ApiResultOk<ConfigResponse>(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
         let contentVM = ContentViewModel(configUseCase: ConfigUseCase(
-            appCheckRepo: MockAppCheckRepository(),
             configRepo: MockConfigRepository(response: expectedResult),
             sentryRepo: MockSentryRepository()
         ))
