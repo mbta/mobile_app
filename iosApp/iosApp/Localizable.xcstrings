@@ -2516,7 +2516,45 @@
       }
     },
     "Debug Mode" : {
-      "comment" : "A setting on the More page to display debug information (only visible for developers)"
+      "comment" : "A setting on the More page to display debug information (only visible for developers)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Modo de Depuración"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mòd Debug"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Modo de depuração"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chế độ gỡ lỗi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "调试模式"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "調試模式"
+          }
+        }
+      }
     },
     "Delayed" : {
       "comment" : "Status for a commuter rail train",
@@ -4368,6 +4406,7 @@
     },
     "Map Debug" : {
       "comment" : "A setting on the More page to display map debug information (only visible for developers)",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4896,42 +4935,42 @@
         }
       }
     },
-    "No nearby MBTA stops" : {
+    "No nearby stops" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay paradas de MBTA cercanas"
+            "state" : "needs_review",
+            "value" : "No hay paradas cercanas"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pa gen arè MBTA toupre"
+            "state" : "needs_review",
+            "value" : "Pa gen arè ki tou pre"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma parada MBTA próxima"
+            "state" : "needs_review",
+            "value" : "Nenhuma parada próxima"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không có trạm dừng MBTA nào ở gần"
+            "state" : "needs_review",
+            "value" : "Không có điểm dừng gần đó"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "附近没有MBTA站点"
+            "state" : "needs_review",
+            "value" : "附近无站点"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "附近沒有MBTA網站"
+            "state" : "needs_review",
+            "value" : "附近沒有停靠站"
           }
         }
       }
@@ -6041,6 +6080,46 @@
         }
       }
     },
+    "Search by stop" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Buscar por parada"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chèche pa kanpe"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pesquisar por parada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tìm kiếm theo điểm dừng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "按站点搜索"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "按站點搜尋"
+          }
+        }
+      }
+    },
     "See transit near you" : {
       "localizations" : {
         "es" : {
@@ -6696,7 +6775,45 @@
       }
     },
     "Software Licenses" : {
-      "comment" : "Label for a More page link to view dependency licenses"
+      "comment" : "Label for a More page link to view dependency licenses",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Licencias de Software"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lisans lojisyèl"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Licenças de software"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Giấy phép phần mềm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "软件许可"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "軟體許可證"
+          }
+        }
+      }
     },
     "Southbound" : {
       "comment" : "A route direction label",
@@ -8229,6 +8346,46 @@
         }
       }
     },
+    "View transit near Boston" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ver el tránsito cerca de Boston"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gade transpò piblik toupre Boston"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ver trânsito perto de Boston"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xem phương tiện giao thông gần Boston"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "查看波士顿附近的交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "查看波士頓附近的交通"
+          }
+        }
+      }
+    },
     "We use your location to show you nearby transit options." : {
       "localizations" : {
         "es" : {
@@ -8471,42 +8628,42 @@
         }
       }
     },
-    "Your current location is outside of our search area." : {
+    "You’re outside the MBTA service area." : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Su ubicación actual está fuera del área de búsqueda."
+            "state" : "needs_review",
+            "value" : "Estás fuera del área de servicio de MBTA."
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pozisyon w nan moman an pa nan zòn rechèch nou an."
+            "state" : "needs_review",
+            "value" : "Ou andeyò zòn sèvis MBTA a."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua localização atual está fora da nossa área de pesquisa."
+            "state" : "needs_review",
+            "value" : "Você está fora da área de serviço da MBTA."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vị trí hiện tại của bạn nằm ngoài vùng tìm kiếm của chúng tôi."
+            "state" : "needs_review",
+            "value" : "Bạn đang ở ngoài khu vực dịch vụ của MBTA."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "您当前的位置不在我们的搜索区域内。"
+            "state" : "needs_review",
+            "value" : "您位于 MBTA 服务区之外。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "您目前的位置不在我們的搜尋區域內。"
+            "state" : "needs_review",
+            "value" : "您位於 MBTA 服務區域之外。"
           }
         }
       }

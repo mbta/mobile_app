@@ -33,6 +33,7 @@ struct NearbyTransitView: View {
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     var errorBannerRepository = RepositoryDI().errorBanner
+    let noNearbyStops: () -> NoNearbyStopsView
 
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
@@ -107,11 +108,9 @@ struct NearbyTransitView: View {
 
     @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
         if transit.isEmpty {
-            VStack(spacing: 8) {
-                Spacer()
-                Text("No nearby MBTA stops")
-                    .font(Typography.headlineBold)
-                Text("Your current location is outside of our search area.")
+            ScrollView {
+                noNearbyStops()
+                    .padding(.horizontal, 16)
                 Spacer()
             }
         } else {
