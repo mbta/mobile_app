@@ -42,8 +42,8 @@ struct ErrorBanner: View {
             .refreshable(
                 label: NSLocalizedString("Reload data", comment: "Refresh button label")
             ) {
-                errorBannerVM.clearState()
                 state.action()
+                errorBannerVM.clearState()
             }
             .frame(minHeight: minHeight)
         case let .stalePredictions(state):
@@ -62,8 +62,8 @@ struct ErrorBanner: View {
                         comment: "Refresh button label for reloading predictions"
                     )
                 ) {
-                    errorBannerVM.clearState()
                     state.action()
+                    errorBannerVM.clearState()
                 }
                 .frame(minHeight: minHeight)
             }
