@@ -207,7 +207,10 @@ data class Alert(
     fun matchingEntities(predicate: (InformedEntity) -> Boolean) = informedEntity.filter(predicate)
 
     companion object {
-        /** Filter the list of alerts to ones that apply only for the given routes and stops */
+        /**
+         * Filter the list of alerts to only the ones that match the given filter parameters and
+         * affect boarding.
+         */
         fun filter(
             alerts: List<Alert>,
             directionId: Int?,
@@ -234,9 +237,6 @@ data class Alert(
             trip: Trip,
             targetStopWithChildren: Set<String>,
         ): List<Alert> {
-            println("TRIP STOPS ${trip.stopIds}")
-            println("TRIP direction ${trip.directionId}")
-
             val indexOfTargetStopInPattern =
                 trip.stopIds?.indexOfFirst { targetStopWithChildren.contains(it) }
             if (
@@ -250,7 +250,7 @@ data class Alert(
                 val firstStopAlerts =
                     downstreamStops
                         .map { stop ->
-                            Alert.filter(
+                            filter(
                                 alerts.toList() ?: listOf(),
                                 trip.directionId,
                                 listOf(trip.routeId),

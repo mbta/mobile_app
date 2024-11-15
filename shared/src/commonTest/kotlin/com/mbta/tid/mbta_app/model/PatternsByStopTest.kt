@@ -304,16 +304,16 @@ class PatternsByStopTest {
     }
 
     @Test
-    fun `downstreamAlertsFor returns alert for downstream stop `() {
+    fun `downstreamAlerts returns alert for downstream stop `() {
         val objects = ObjectCollectionBuilder()
 
         val route = objects.route()
-        val park = objects.stop()
-        val alewife = objects.stop()
-        val shawmut = objects.stop()
-        val ashmont = objects.stop()
-        val quincyAdams = objects.stop()
-        val braintree = objects.stop()
+        val park = objects.stop { id = "park" }
+        val alewife = objects.stop { id = "alewife" }
+        val shawmut = objects.stop { id = "shawmut" }
+        val ashmont = objects.stop { id = "ashmont" }
+        val quincyAdams = objects.stop { id = "quincy_adams" }
+        val braintree = objects.stop { id = "braintree" }
         val routePatternAshmont =
             objects.routePattern(route) {
                 directionId = 0
@@ -413,51 +413,6 @@ class PatternsByStopTest {
                     stop = park.id
                 )
             }
-
-        val patternsByStop =
-            PatternsByStop(
-                route,
-                park,
-                listOf(
-                    RealtimePatterns.ByHeadsign(
-                        route,
-                        "Ashmont",
-                        null,
-                        listOf(routePatternAshmont),
-                        listOf(upcomingTripAshmont),
-                        listOf(parkShuttleAlert),
-                        listOf(
-                            alewifeShuttleAlert,
-                            parkShuttleAlert,
-                            shawmutShuttleAlert,
-                            ashmontShuttleAlert
-                        )
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        route,
-                        "Braintree",
-                        null,
-                        listOf(routePatternBraintree),
-                        listOf(upcomingTripBraintree),
-                        listOf(parkShuttleAlert),
-                        listOf(alewifeShuttleAlert, shawmutShuttleAlert, ashmontShuttleAlert)
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        route,
-                        "Alewife",
-                        null,
-                        listOf(routePatternAlewife),
-                        listOf(upcomingTripAlewife),
-                        listOf(parkShuttleAlert),
-                        listOf(
-                            alewifeShuttleAlert,
-                            parkShuttleAlert,
-                            shawmutShuttleAlert,
-                            ashmontShuttleAlert
-                        )
-                    )
-                )
-            )
 
         val global =
             GlobalResponse(
