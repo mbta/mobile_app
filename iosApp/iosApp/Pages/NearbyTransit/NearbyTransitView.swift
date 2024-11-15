@@ -108,7 +108,7 @@ struct NearbyTransitView: View {
 
     @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
         if transit.isEmpty {
-            VStack {
+            ScrollView {
                 noNearbyStops()
                     .padding(.horizontal, 16)
                 Spacer()
