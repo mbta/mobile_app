@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.resolveParentId
 
 /**
  * When part of a subway line is closed, should the headsign be the temporary terminal or the
@@ -96,8 +97,15 @@ class TemporaryTerminalFilter(
                             predictionsByRoute[pattern.routeId].orEmpty().any {
                                 it.routePatternId() == pattern.id
                             }
+                        val parallelPredictedHere =
+                            predictionsByRoute[pattern.routeId].orEmpty().any {
+                                it.routePatternId() != pattern.id &&
+                                    it.directionId == pattern.directionId &&
+                                    globalData.stops.resolveParentId(it.stopId) ==
+                                        stopPatterns.stop.id
+                            }
                         val typical = pattern.typicality == RoutePattern.Typicality.Typical
-                        scheduled && !predicted && !typical
+                        scheduled && !predicted && parallelPredictedHere && !typical
                     }
                 }
         )
