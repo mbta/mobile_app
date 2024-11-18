@@ -16,6 +16,7 @@ struct ContentView: View {
     @ObservedObject var contentVM: ContentViewModel
 
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
+    @State var isShowingTestFlightPromo = true
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
@@ -46,7 +47,11 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            contents
+            if isShowingTestFlightPromo {
+                TestFlightPromoPage(onDismiss: { isShowingTestFlightPromo = false })
+            } else {
+                contents
+            }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {

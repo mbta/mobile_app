@@ -2845,6 +2845,46 @@
         }
       }
     },
+    "Download from the App Store" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Descargar desde la App Store"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Telechaje nan App Store la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Baixe na App Store"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tải xuống từ App Store"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从 App Store 下载"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從應用程式商店下載"
+          }
+        }
+      }
+    },
     "Drawbridge Being Raised" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4486,6 +4526,46 @@
         }
       }
     },
+    "MBTA Go has officially launched!" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¡MBTA Go se lanzó oficialmente!"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "MBTA Go te lanse ofisyèlman!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "O MBTA Go foi lançado oficialmente!"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "MBTA Go đã chính thức ra mắt!"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "MBTA Go 已正式推出！"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "MBTA Go 正式上線！"
+          }
+        }
+      }
+    },
     "MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features." : {
       "localizations" : {
         "es" : {
@@ -5872,6 +5952,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重新載入資料"
+          }
+        }
+      }
+    },
+    "Remind me next time" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Recuérdamelo la próxima vez"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fè m sonje pwochen fwa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lembre-me da próxima vez"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhắc tôi lần sau nhé"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下次提醒我"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下次提醒我"
           }
         }
       }
@@ -7510,6 +7630,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用條款"
+          }
+        }
+      }
+    },
+    "Thank you for being a beta tester and giving us valuable feedback along the way." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gracias por ser un evaluador beta y brindarnos comentarios valiosos a lo largo del proceso."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mèsi paske ou te yon tèsteur beta epi ban nou bonjan fidbak sou wout la."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Obrigado por ser um testador beta e nos dar um feedback valioso ao longo do caminho."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cảm ơn bạn đã trở thành người thử nghiệm bản beta và cung cấp cho chúng tôi phản hồi có giá trị trong suốt quá trình."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "感谢您成为一名 Beta 测试员并在此过程中给予我们宝贵的反馈。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "感謝您成為 Beta 測試員並一路向我們提供了寶貴的回饋。"
+          }
+        }
+      }
+    },
+    "This TestFlight app will no longer be available after December 20." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta aplicación TestFlight ya no estará disponible después del 20 de diciembre."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aplikasyon TestFlight sa a p ap disponib ankò apre 20 desanm."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este aplicativo TestFlight não estará mais disponível após 20 de dezembro."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ứng dụng TestFlight này sẽ không còn khả dụng sau ngày 20 tháng 12."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "12 月 20 日之后，此 TestFlight 应用将不再可用。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此 TestFlight 應用程式將在 12 月 20 日之後不再可用。"
           }
         }
       }
