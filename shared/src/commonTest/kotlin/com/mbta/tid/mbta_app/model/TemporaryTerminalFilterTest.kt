@@ -210,7 +210,9 @@ class TemporaryTerminalFilterTest {
             return objects.stop {
                 id = stopId
                 this.parentStationId = parentStationId
-                this.childStopIds = childStopIds
+                for (childStopId in childStopIds) {
+                    this.childStop { id = childStopId }
+                }
                 this.connectingStopIds = connectingStopIds
             }
         }
@@ -233,15 +235,17 @@ class TemporaryTerminalFilterTest {
                 representativeTrip { this.stopIds = stopIds.asList() }
             }
 
-        fun schedule(routePattern: RoutePattern) =
+        fun schedule(routePattern: RoutePattern, stopId: String) =
             objects.schedule {
                 this.trip = objects.trip(routePattern)
+                this.stopId = stopId
                 this.departureTime = Clock.System.now() + 5.minutes
             }
 
-        fun prediction(routePattern: RoutePattern) =
+        fun prediction(routePattern: RoutePattern, stopId: String) =
             objects.prediction {
                 this.trip = objects.trip(routePattern)
+                this.stopId = stopId
                 this.departureTime = Clock.System.now() + 5.minutes
             }
 
@@ -271,8 +275,8 @@ class TemporaryTerminalFilterTest {
             val typical = typical(route, 0, "a", "b", "c", "d", "e")
             val early = diversion(route, 0, "a", "b")
 
-            schedule(early)
-            prediction(typical)
+            schedule(early, "a")
+            prediction(typical, "a")
 
             val original = stopPatterns {
                 route(route) {
@@ -296,8 +300,8 @@ class TemporaryTerminalFilterTest {
             val typical = typical(route, 0, "a", "b", "c", "d", "e")
             val early = diversion(route, 0, "a", "b")
 
-            schedule(early)
-            prediction(early)
+            schedule(early, "a")
+            prediction(early, "a")
 
             val original = stopPatterns {
                 route(route) {
@@ -332,15 +336,18 @@ class TemporaryTerminalFilterTest {
             val divBNorth = diversion(route, 1, "Br1", "Jf11")
             val divSNorth = diversion(route, 1, "Ke1", "Ha1", "Al1")
 
-            schedule(divASouth)
-            schedule(divBSouth)
-            schedule(divSSouth)
-            schedule(divANorth)
-            schedule(divBNorth)
-            schedule(divSNorth)
-            prediction(typicalBSouth)
-            prediction(typicalBNorth)
-            prediction(typicalANorth)
+            schedule(divASouth, "Jf00")
+            schedule(divBSouth, "Jf01")
+            schedule(divSSouth, "Ha0")
+            schedule(divANorth, "Jf10")
+            schedule(divBNorth, "Jf11")
+            schedule(divSNorth, "Ha1")
+            prediction(typicalBSouth, "Ha0")
+            prediction(typicalBSouth, "Jf01")
+            prediction(typicalBNorth, "Ha1")
+            prediction(typicalBNorth, "Jf11")
+            prediction(typicalANorth, "Jf10")
+            prediction(typicalANorth, "Ha1")
 
             val originalHarvard = stopPatterns {
                 route(route) {
@@ -386,5 +393,51 @@ class TemporaryTerminalFilterTest {
 
             assertEquals(expectedHarvard, filter.discardProbableTemporaryTerminals(originalHarvard))
             assertEquals(expectedJFK, filter.discardProbableTemporaryTerminals(originalJFK))
+        }
+
+    @Test
+    fun `discardProbableTemporaryTerminals handles suppressed predictions`() =
+        discardProbableTemporaryTerminalsTest {
+            val typical = typical(route, 0, "a", "b", "c", "d", "e")
+            val early = diversion(route, 0, "a", "b", "c")
+
+            schedule(early, "a")
+            // no prediction at a
+            schedule(early, "b")
+            prediction(typical, "b")
+
+            val originalA = stopPatterns {
+                route(route) {
+                    stop(stop("a")) {
+                        headsign("e", listOf(typical))
+                        headsign("c", listOf(early))
+                    }
+                }
+            }
+
+            val expectedA = stopPatterns {
+                route(route) {
+                    stop(stop("a")) {
+                        headsign("e", listOf(typical))
+                        headsign("c", listOf(early))
+                    }
+                }
+            }
+
+            val originalB = stopPatterns {
+                route(route) {
+                    stop(stop("b")) {
+                        headsign("e", listOf(typical))
+                        headsign("c", listOf(early))
+                    }
+                }
+            }
+
+            val expectedB = stopPatterns {
+                route(route) { stop(stop("b")) { headsign("e", listOf(typical)) } }
+            }
+
+            assertEquals(expectedA, filter.discardProbableTemporaryTerminals(originalA))
+            assertEquals(expectedB, filter.discardProbableTemporaryTerminals(originalB))
         }
 }
