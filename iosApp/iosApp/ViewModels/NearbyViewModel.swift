@@ -40,9 +40,11 @@ class NearbyViewModel: ObservableObject {
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
     @Published var selectingLocation = false
+    @Published var tripHeadsignsEnabled = false
     private let alertsRepository: IAlertsRepository
     private let errorBannerRepository: IErrorBannerStateRepository
     private let nearbyRepository: INearbyRepository
+    private let settingsRepository: ISettingsRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
     private var analytics: NearbyTransitAnalytics
@@ -53,6 +55,7 @@ class NearbyViewModel: ObservableObject {
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
+        settingsRepository: ISettingsRepository = RepositoryDI().settings,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
     ) {
@@ -61,6 +64,7 @@ class NearbyViewModel: ObservableObject {
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
+        self.settingsRepository = settingsRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
     }
@@ -157,6 +161,13 @@ class NearbyViewModel: ObservableObject {
 
     func leaveAlertsChannel() {
         alertsRepository.disconnect()
+    }
+
+    func loadTripHeadsigns() {
+        Task {
+            let result = try await settingsRepository.getSettings()[.tripHeadsigns]?.boolValue ?? false
+            DispatchQueue.main.async { self.tripHeadsignsEnabled = result }
+        }
     }
 }
 

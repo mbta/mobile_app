@@ -113,7 +113,8 @@ class StopDetailsFilteredRouteViewTest {
                             PredictionsStreamDataResponse(builder),
                             AlertsStreamDataResponse(emptyMap()),
                             emptySet(),
-                            now
+                            now,
+                            useTripHeadsigns = false,
                         )
                     ),
                 global = globalResponse,

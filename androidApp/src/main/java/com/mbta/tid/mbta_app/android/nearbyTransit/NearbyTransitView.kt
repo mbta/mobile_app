@@ -72,7 +72,8 @@ fun NearbyTransitView(
                 predictions,
                 alertData,
                 now,
-                pinnedRoutes.orEmpty()
+                pinnedRoutes.orEmpty(),
+                useTripHeadsigns = false,
             )
         }
 

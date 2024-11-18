@@ -94,6 +94,14 @@ class SettingsViewModel: ObservableObject {
                         setting: .searchRouteResults,
                         value: settings[.searchRouteResults] ?? false
                     ),
+                    .toggle(
+                        label: NSLocalizedString(
+                            "Trip Headsigns",
+                            comment: "A setting on the More page to use the destination/headsign on each individual trip in Nearby Transit (only visible for developers)"
+                        ),
+                        setting: .tripHeadsigns,
+                        value: settings[.tripHeadsigns] ?? false
+                    ),
                 ]),
                 MoreSection(id: .other, items: [
                     .link(

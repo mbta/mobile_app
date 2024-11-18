@@ -474,7 +474,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
  *
  * Runs static data and predictions through [TemporaryTerminalFilter].
  */
-fun NearbyStaticData.withRealtimeInfo(
+fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     globalData: GlobalResponse?,
     sortByDistanceFrom: Position?,
     schedules: ScheduleResponse?,
@@ -627,6 +627,126 @@ fun NearbyStaticData.withRealtimeInfo(
         .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
 }
 
+/**
+ * Groups [schedules] and [predictions] into [NearbyHierarchy]. Removes non-typical route patterns
+ * which are not happening either at all or between [filterAtTime] and
+ * [filterAtTime] + [hideNonTypicalPatternsBeyondNext]. Sorts routes by subway first then nearest
+ * stop, stops by distance, and headsigns by route pattern sort order.
+ */
+fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
+    globalData: GlobalResponse?,
+    sortByDistanceFrom: Position?,
+    schedules: ScheduleResponse?,
+    predictions: PredictionsStreamDataResponse?,
+    alerts: AlertsStreamDataResponse?,
+    filterAtTime: Instant,
+    showAllPatternsWhileLoading: Boolean,
+    hideNonTypicalPatternsBeyondNext: Duration?,
+    filterCancellations: Boolean,
+    pinnedRoutes: Set<String>
+): List<StopsAssociated>? {
+    // if predictions or alerts are still loading, this is the loading state
+    if (predictions == null || alerts == null) return null
+
+    // if global data was still loading, there'd be no nearby data, and null handling is annoying
+    if (globalData == null) return null
+
+    val activeRelevantAlerts =
+        alerts.alerts.values.filter {
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
+        }
+
+    val allDataLoaded = schedules != null
+
+    val rewrittenThis =
+        if (schedules == null) this
+        else
+            TemporaryTerminalFilter(this, predictions, globalData, activeRelevantAlerts, schedules)
+                .filtered()
+
+    // add predictions and apply filtering
+    val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
+    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
+
+    fun Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>
+        .maybeFilterCancellations(isSubway: Boolean) =
+        if (filterCancellations) this.mapValues { it.value.filterCancellations(isSubway) } else this
+
+    fun RealtimePatterns.shouldShow(): Boolean {
+        if (!allDataLoaded && showAllPatternsWhileLoading) return true
+        val isUpcoming =
+            when (cutoffTime) {
+                null -> this.isUpcoming()
+                else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
+            }
+        return (isTypical() || isUpcoming) && !isArrivalOnly()
+    }
+
+    fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
+        return this.filterNot { it.patterns.isEmpty() }
+            .sortedWith(PatternSorting.comparePatternsByStop(pinnedRoutes, sortByDistanceFrom))
+    }
+
+    val nearbyHierarchy =
+        NearbyHierarchy.fromStaticData(rewrittenThis)
+            .zip(NearbyHierarchy.fromRealtime(globalData, schedules, predictions, filterAtTime))
+            .withLabels(globalData)
+
+    return nearbyHierarchy
+        .mapEntries { (lineOrRoute, routeData) ->
+            when (lineOrRoute) {
+                is NearbyHierarchy.LineOrRoute.Route ->
+                    StopsAssociated.WithRoute(
+                        lineOrRoute.route,
+                        routeData
+                            .pickOnlyNearest(sortByDistanceFrom)
+                            .map { (stop, routeAtStop) ->
+                                val (directions, data) = routeAtStop
+                                PatternsByStop(
+                                    lineOrRoute,
+                                    stop,
+                                    directions,
+                                    data.maybeFilterCancellations(
+                                        lineOrRoute.route.type.isSubway()
+                                    ),
+                                    { it.shouldShow() },
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern,
+                                    allDataLoaded
+                                )
+                            }
+                            .filterEmptyAndSort()
+                    )
+                is NearbyHierarchy.LineOrRoute.Line ->
+                    StopsAssociated.WithLine(
+                        lineOrRoute.line,
+                        lineOrRoute.routes.sorted(),
+                        routeData
+                            .pickOnlyNearest(sortByDistanceFrom)
+                            .map { (stop, routeAtStop) ->
+                                val (directions, data) = routeAtStop
+                                PatternsByStop(
+                                    lineOrRoute,
+                                    stop,
+                                    directions,
+                                    data.maybeFilterCancellations(
+                                        lineOrRoute.routes.first().type.isSubway()
+                                    ),
+                                    { it.shouldShow() },
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern,
+                                    allDataLoaded
+                                )
+                            }
+                            .filterEmptyAndSort()
+                    )
+            }
+        }
+        .filterNot { it.isEmpty() }
+        .toList()
+        .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
+}
+
 fun NearbyStaticData.withRealtimeInfo(
     globalData: GlobalResponse?,
     sortByDistanceFrom: Position,
@@ -634,20 +754,36 @@ fun NearbyStaticData.withRealtimeInfo(
     predictions: PredictionsStreamDataResponse?,
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
-    pinnedRoutes: Set<String>
+    pinnedRoutes: Set<String>,
+    useTripHeadsigns: Boolean,
 ): List<StopsAssociated>? {
-    return this.withRealtimeInfo(
-        globalData,
-        sortByDistanceFrom,
-        schedules,
-        predictions,
-        alerts,
-        filterAtTime,
-        showAllPatternsWhileLoading = false,
-        hideNonTypicalPatternsBeyondNext = 90.minutes,
-        filterCancellations = true,
-        pinnedRoutes
-    )
+    if (useTripHeadsigns) {
+        return this.withRealtimeInfoViaTripHeadsigns(
+            globalData,
+            sortByDistanceFrom,
+            schedules,
+            predictions,
+            alerts,
+            filterAtTime,
+            showAllPatternsWhileLoading = false,
+            hideNonTypicalPatternsBeyondNext = 90.minutes,
+            filterCancellations = true,
+            pinnedRoutes
+        )
+    } else {
+        return this.withRealtimeInfoWithoutTripHeadsigns(
+            globalData,
+            sortByDistanceFrom,
+            schedules,
+            predictions,
+            alerts,
+            filterAtTime,
+            showAllPatternsWhileLoading = false,
+            hideNonTypicalPatternsBeyondNext = 90.minutes,
+            filterCancellations = true,
+            pinnedRoutes
+        )
+    }
 }
 
 class NearbyStaticDataBuilder {

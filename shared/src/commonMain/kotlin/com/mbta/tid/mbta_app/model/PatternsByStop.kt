@@ -68,6 +68,55 @@ data class PatternsByStop(
     )
 
     constructor(
+        lineOrRoute: NearbyHierarchy.LineOrRoute,
+        stop: Stop,
+        directions: List<Direction>,
+        stopData: Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>,
+        patternsPredicate: (RealtimePatterns) -> Boolean,
+        alerts: Collection<Alert>,
+        hasSchedulesTodayByPattern: Map<String, Boolean>?,
+        allDataLoaded: Boolean,
+    ) : this(
+        when (lineOrRoute) {
+            is NearbyHierarchy.LineOrRoute.Route -> listOf(lineOrRoute.route)
+            is NearbyHierarchy.LineOrRoute.Line -> lineOrRoute.routes.sorted()
+        },
+        when (lineOrRoute) {
+            is NearbyHierarchy.LineOrRoute.Route -> null
+            is NearbyHierarchy.LineOrRoute.Line -> lineOrRoute.line
+        },
+        stop,
+        stopData
+            .flatMap { (directionOrHeadsign, leaf) ->
+                when (directionOrHeadsign) {
+                    is NearbyHierarchy.DirectionOrHeadsign.Headsign ->
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                directionOrHeadsign,
+                                leaf,
+                                alerts,
+                                hasSchedulesTodayByPattern,
+                                allDataLoaded
+                            )
+                        )
+                    is NearbyHierarchy.DirectionOrHeadsign.Direction ->
+                        resolveRealtimePatternForDirection(
+                            // TODO route not yet possible
+                            checkNotNull(lineOrRoute as? NearbyHierarchy.LineOrRoute.Line),
+                            directionOrHeadsign,
+                            leaf,
+                            alerts,
+                            hasSchedulesTodayByPattern,
+                            allDataLoaded
+                        )
+                }
+            }
+            .filter(patternsPredicate)
+            .sortedWith(PatternSorting.compareRealtimePatterns()),
+        directions
+    )
+
+    constructor(
         route: Route,
         stop: Stop,
         patterns: List<RealtimePatterns>
@@ -76,8 +125,7 @@ data class PatternsByStop(
     @OptIn(ExperimentalTurfApi::class)
     fun distanceFrom(position: Position) = distance(position, this.position)
 
-    fun allUpcomingTrips(): List<UpcomingTrip> =
-        this.patterns.flatMap { it.upcomingTrips ?: emptyList() }.sorted()
+    fun allUpcomingTrips(): List<UpcomingTrip> = this.patterns.flatMap { it.upcomingTrips }.sorted()
 
     fun alertsHereFor(directionId: Int, global: GlobalResponse): List<Alert> {
         val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
@@ -87,7 +135,7 @@ data class PatternsByStop(
                 .flatMap { realtime ->
                     realtime.patterns.mapNotNull { pattern ->
                         stopIds.firstOrNull {
-                            global.trips[pattern.representativeTripId]?.stopIds?.contains(it)
+                            global.trips[pattern?.representativeTripId]?.stopIds?.contains(it)
                                 ?: false
                         }
                     }
@@ -182,6 +230,73 @@ data class PatternsByStop(
             )
         }
 
+        fun resolveRealtimePatternForDirection(
+            line: NearbyHierarchy.LineOrRoute.Line,
+            direction: NearbyHierarchy.DirectionOrHeadsign.Direction,
+            leaf: NearbyHierarchy.NearbyLeaf,
+            alerts: Collection<Alert>,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
+        ): List<RealtimePatterns> {
+            val typicalPatternsByRoute = getTypicalPatternsByRoute(leaf)
+
+            // If data hasn't loaded, or there are more than one typical routes in this direction,
+            // we never want to split into individual headsign rows.
+            if (!allDataLoaded || typicalPatternsByRoute.size > 1) {
+                return listOf(
+                    RealtimePatterns.ByDirection(
+                        line,
+                        direction,
+                        leaf,
+                        alerts,
+                        hasSchedulesTodayByPattern,
+                        allDataLoaded
+                    )
+                )
+            }
+
+            val patternsById = leaf.routePatterns.associateBy { it?.id }
+            val headsignsAndPatternsToDisplayByRoute =
+                getHeadsignsAndPatternsToDisplayByRoute(leaf, typicalPatternsByRoute)
+
+            // If there is only a single route with predicted or typical trips, we want to break up
+            // the grouped direction instead into individual headsign rows.
+            val firstDisplayedRoute =
+                line.routes.firstOrNull {
+                    it.id == headsignsAndPatternsToDisplayByRoute.keys.firstOrNull()
+                }
+            if (headsignsAndPatternsToDisplayByRoute.size == 1 && firstDisplayedRoute != null) {
+                val headsignsToDisplay =
+                    (headsignsAndPatternsToDisplayByRoute[firstDisplayedRoute.id] ?: emptyMap())
+                return headsignsToDisplay.map { (headsign, patternIds) ->
+                    val patternsForHeadsign = patternIds.mapNotNull { patternsById[it] }
+                    RealtimePatterns.ByHeadsign(
+                        NearbyHierarchy.DirectionOrHeadsign.Headsign(
+                            headsign,
+                            firstDisplayedRoute,
+                            line.line
+                        ),
+                        // TODO filter patterns
+                        leaf,
+                        alerts,
+                        hasSchedulesTodayByPattern,
+                        allDataLoaded
+                    )
+                }
+            }
+
+            return listOf(
+                RealtimePatterns.ByDirection(
+                    line,
+                    direction,
+                    leaf,
+                    alerts,
+                    hasSchedulesTodayByPattern,
+                    allDataLoaded
+                )
+            )
+        }
+
         private fun getHeadsignsAndPatternsToDisplayByRoute(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap?,
@@ -227,6 +342,48 @@ data class PatternsByStop(
                 .toMap()
         }
 
+        private fun getHeadsignsAndPatternsToDisplayByRoute(
+            leaf: NearbyHierarchy.NearbyLeaf,
+            typicalPatternsByRoute: Map<String, List<String>>,
+        ): Map<String, Map<String, Set<String?>>> {
+            val tripsByPattern = getTripsByPattern(leaf)
+            val predictedPatternsByRoute = getPredictedPatternsByRoute(leaf, tripsByPattern)
+            val upcomingPatternsByRouteAndHeadsign =
+                tripsByPattern.values
+                    .flatten()
+                    .groupBy({ it.trip.routeId }, { it.trip.headsign to it.trip.routePatternId })
+                    .mapValues { routeEntry ->
+                        routeEntry.value.groupBy({ it.first }, { it.second })
+                    }
+
+            // We don't have access to global data or representative trips here, so the only way
+            // that we can determine headsigns is by looking at the actual upcoming trips.
+            return upcomingPatternsByRouteAndHeadsign
+                .mapNotNull {
+                    val headsignsToDisplay =
+                        it.value
+                            .mapNotNull { headsignsToPatterns ->
+                                val patternsToDisplay =
+                                    (typicalPatternsByRoute[it.key].orEmpty() +
+                                            predictedPatternsByRoute[it.key].orEmpty())
+                                        .toSet()
+                                        .intersect(headsignsToPatterns.value.toSet())
+                                if (patternsToDisplay.isEmpty()) {
+                                    null
+                                } else {
+                                    headsignsToPatterns.key to patternsToDisplay
+                                }
+                            }
+                            .toMap()
+                    if (headsignsToDisplay.isEmpty()) {
+                        null
+                    } else {
+                        it.key to headsignsToDisplay
+                    }
+                }
+                .toMap()
+        }
+
         private fun getPredictedPatternsByRoute(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             tripsByPattern: Map<String, List<UpcomingTrip>>
@@ -234,6 +391,24 @@ data class PatternsByStop(
             return staticData.patterns
                 .filter { tripsByPattern[it.id]?.any { trip -> trip.prediction != null } == true }
                 .groupBy({ it.routeId }, { it.id })
+        }
+
+        private fun getPredictedPatternsByRoute(
+            leaf: NearbyHierarchy.NearbyLeaf,
+            tripsByPattern: Map<String?, List<UpcomingTrip>>
+        ): Map<String, List<String?>> {
+            return leaf.routePatterns
+                .filter { tripsByPattern[it?.id]?.any { trip -> trip.prediction != null } == true }
+                .groupBy(
+                    { pattern ->
+                        pattern?.routeId
+                            ?: leaf.upcomingTrips
+                                .first { it.trip.routePatternId == pattern?.id }
+                                .trip
+                                .routeId
+                    },
+                    { it?.id }
+                )
         }
 
         private fun getTripsByPattern(
@@ -261,10 +436,25 @@ data class PatternsByStop(
                 .toMap()
         }
 
+        private fun getTripsByPattern(
+            leaf: NearbyHierarchy.NearbyLeaf,
+        ): Map<String?, List<UpcomingTrip>> {
+            return leaf.upcomingTrips.groupBy { it.trip.routePatternId }
+        }
+
         private fun getTypicalPatternsByRoute(
             staticData: NearbyStaticData.StaticPatterns.ByDirection
         ): Map<String, List<String>> {
             return staticData.patterns
+                .filter { it.typicality == RoutePattern.Typicality.Typical }
+                .groupBy({ it.routeId }, { it.id })
+        }
+
+        private fun getTypicalPatternsByRoute(
+            leaf: NearbyHierarchy.NearbyLeaf
+        ): Map<String, List<String>> {
+            return leaf.routePatterns
+                .filterNotNull()
                 .filter { it.typicality == RoutePattern.Typicality.Typical }
                 .groupBy({ it.routeId }, { it.id })
         }

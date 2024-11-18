@@ -58,7 +58,8 @@ fun StopDetailsPage(
                     predictionsResponse,
                     alertData,
                     pinnedRoutes.orEmpty(),
-                    now
+                    now,
+                    useTripHeadsigns = false,
                 )
             } else null
         }

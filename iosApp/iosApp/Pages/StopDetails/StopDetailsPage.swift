@@ -268,7 +268,8 @@ struct StopDetailsPage: View {
                 predictions: targetPredictions,
                 alerts: nearbyVM.alerts,
                 pinnedRoutes: pinnedRoutes,
-                filterAtTime: now.toKotlinInstant()
+                filterAtTime: now.toKotlinInstant(),
+                useTripHeadsigns: nearbyVM.tripHeadsignsEnabled
             )
         } else {
             nil
