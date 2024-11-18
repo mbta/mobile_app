@@ -41,10 +41,17 @@ class TripDetailsStopListTest {
             }
         }
 
+        private lateinit var _trip: Trip
+
+        fun trip(block: ObjectCollectionBuilder.TripBuilder.() -> Unit): Trip {
+            return objects.trip(block).also { _trip = it }
+        }
+
         fun schedule(stopId: String, stopSequence: Int, routeId: String = "") =
             objects.schedule {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
+                if (this@TestBuilder::_trip.isInitialized) this.trip = _trip
                 this.routeId = routeId
             }
 
@@ -57,6 +64,7 @@ class TripDetailsStopListTest {
             objects.prediction {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
+                if (this@TestBuilder::_trip.isInitialized) this.trip = _trip
                 this.routeId = routeId
                 this.departureTime = time
             }
@@ -692,6 +700,18 @@ class TripDetailsStopListTest {
                 entry("B", 20, alert = alert, prediction = pred2),
                 entry("C", 30, prediction = pred3)
             ),
+            fromPieces(null, predictions())
+        )
+    }
+
+    @Test
+    fun `fromPieces does not crash on multi-route trips`() = test {
+        val now = Clock.System.now()
+        trip { routeId = "1" }
+        val pred1 = prediction("A", 10, routeId = "1", time = now + 1.minutes)
+        val pred2 = prediction("A", 10, routeId = "2", time = now + 1.minutes)
+        assertEquals(
+            stopListOf(entry("A", 10, prediction = pred1)),
             fromPieces(null, predictions())
         )
     }
