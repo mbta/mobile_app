@@ -75,7 +75,7 @@ struct TripDetailsPage: View {
             if nearbyVM.showDebugMessages {
                 DebugView {
                     VStack {
-                        Text(verbatim: "trip id \(tripId)")
+                        Text(verbatim: "trip id: \(tripId)")
                         Text(verbatim: "vehicle id: \(vehicleId)")
                     }
                 }
