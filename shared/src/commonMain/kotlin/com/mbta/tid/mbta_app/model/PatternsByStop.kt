@@ -101,7 +101,6 @@ data class PatternsByStop(
                         )
                     is NearbyHierarchy.DirectionOrHeadsign.Direction ->
                         resolveRealtimePatternForDirection(
-                            // TODO route not yet possible
                             checkNotNull(lineOrRoute as? NearbyHierarchy.LineOrRoute.Line),
                             directionOrHeadsign,
                             leaf,
