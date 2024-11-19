@@ -658,12 +658,6 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
 
     val allDataLoaded = schedules != null
 
-    val rewrittenThis =
-        if (schedules == null) this
-        else
-            TemporaryTerminalFilter(this, predictions, globalData, activeRelevantAlerts, schedules)
-                .filtered()
-
     // add predictions and apply filtering
     val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
     val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
@@ -688,7 +682,7 @@ fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
     }
 
     val nearbyHierarchy =
-        NearbyHierarchy.fromStaticData(rewrittenThis)
+        NearbyHierarchy.fromStaticData(this)
             .zip(NearbyHierarchy.fromRealtime(globalData, schedules, predictions, filterAtTime))
             .withLabels(globalData)
 
