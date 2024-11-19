@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.NearbyHierarchy.LineOrRoute
 import com.mbta.tid.mbta_app.model.NearbyHierarchy.NearbyLeaf
 import com.mbta.tid.mbta_app.model.NearbyHierarchy.RouteAtStop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
@@ -133,39 +132,6 @@ data class NearbyHierarchy(private val data: OuterLayer) {
     }
 
     companion object {
-        /**
-         * Groups route patterns at the nearby stops into a [PartialHierarchy], keeping child stop
-         * IDs listed separately under their parent stop.
-         *
-         * Keeps redundant stops on the same route pattern since we need to filter those later to
-         * account for unexpected realtime data.
-         */
-        fun fromStatic(
-            global: GlobalResponse,
-            nearby: NearbyResponse,
-        ): PartialHierarchy<List<Direction>, Map<String, Set<RoutePattern>>> {
-            val result =
-                mutablePartialHierarchy<List<Direction>, MutableMap<String, Set<RoutePattern>>>()
-            for (childStopId in nearby.stopIds) {
-                val parentStop = parentStop(global, childStopId) ?: continue
-                val allRoutePatterns =
-                    global.patternIdsByStop[childStopId].orEmpty().mapNotNull {
-                        global.routePatterns[it]
-                    }
-                for ((routeId, routePatterns) in allRoutePatterns.groupBy { it.routeId }) {
-                    val lineOrRoute = lineOrRoute(global, routeId) ?: continue
-                    result
-                        .getOrPut(lineOrRoute, ::mutableMapOf)
-                        .getOrPut(
-                            parentStop,
-                            { RouteAtStop(stopData = TODO(), data = mutableMapOf()) }
-                        )
-                        .data[childStopId] = routePatterns.toSet()
-                }
-            }
-            return PartialHierarchy(result).map { it }
-        }
-
         fun fromSchedules(
             global: GlobalResponse,
             schedules: ScheduleResponse,
