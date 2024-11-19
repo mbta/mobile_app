@@ -129,7 +129,7 @@ struct StopDetailsView: View {
             global: globalResponse,
             now: now.toKotlinInstant(),
             filter: stopFilter,
-            setStopFilter: { _ in },
+            setFilter: { _ in },
             pushNavEntry: { _ in },
             pinRoute: { _ in },
             pinnedRoutes: pinnedRoutes

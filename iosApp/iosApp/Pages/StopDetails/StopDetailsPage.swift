@@ -65,6 +65,7 @@ struct StopDetailsPage: View {
             StopDetailsView(
                 stopId: stopId,
                 stopFilter: stopFilter,
+                tripFilter: nil,
                 setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
                 departures: internalDepartures,
                 errorBannerVM: errorBannerVM,

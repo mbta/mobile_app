@@ -78,7 +78,7 @@ final class LegacyStopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)])
         let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
@@ -100,9 +100,9 @@ final class LegacyStopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let initialNavStack: [SheetNavigationStackEntry] = [
-            .stopDetails(stop, nil),
+            .legacyStopDetails(stop, nil),
             .tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0),
-            .stopDetails(stop, nil),
+            .legacyStopDetails(stop, nil),
         ]
         let nearbyVM: NearbyViewModel = .init(navigationStack: initialNavStack)
         let sut = LegacyStopDetailsView(
@@ -125,7 +125,7 @@ final class LegacyStopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)])
         let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
@@ -147,8 +147,11 @@ final class LegacyStopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: false)
-        let sut = StopDetailsView(
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.legacyStopDetails(stop, nil)],
+            showDebugMessages: false
+        )
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },
@@ -169,8 +172,8 @@ final class LegacyStopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: true)
-        let sut = StopDetailsView(
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)], showDebugMessages: true)
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },

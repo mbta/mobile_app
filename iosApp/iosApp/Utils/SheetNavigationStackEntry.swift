@@ -121,20 +121,28 @@ extension [SheetNavigationStackEntry] {
     }
 
     var lastStop: Stop? {
-        if case let .legacyStopDetails(stop, _) = self.last {
-            return stop
+        let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
+            if case .legacyStopDetails = entry { true } else { false }
         }
-        return nil
+        return switch lastStopEntry {
+        case let .legacyStopDetails(stop, _): stop
+        default: nil
+        }
     }
 
     var lastStopId: String? {
-        if case let .stopDetails(stopId: id, stopFilter: _, tripFilter: _) = self.last {
-            return id
+        let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
+            switch entry {
+            case .legacyStopDetails: true
+            case .stopDetails: true
+            default: false
+            }
         }
-        if case let .legacyStopDetails(stop, _) = self.last {
-            return stop.id
+        return switch lastStopEntry {
+        case let .stopDetails(stopId: id, stopFilter: _, tripFilter: _): id
+        case let .legacyStopDetails(stop, _): stop.id
+        default: nil
         }
-        return nil
     }
 
     func lastSafe() -> SheetNavigationStackEntry {

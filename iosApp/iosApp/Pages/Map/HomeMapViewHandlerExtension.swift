@@ -163,6 +163,15 @@ extension HomeMapView {
         if oldNavEntry == nil {
             viewportProvider.saveNearbyTransitViewport()
         }
+        if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
+            if oldNavEntry?.stop()?.id != stopId {
+                if let stop = globalData?.stops[stopId] {
+                    handleStopDetailsChange(stop, stopFilter)
+                }
+            }
+
+            handleRouteFilterChange(stopFilter)
+        }
         if case let .legacyStopDetails(stop, filter) = nextNavEntry {
             if oldNavEntry?.stop()?.id == stop.id {
                 handleRouteFilterChange(filter)

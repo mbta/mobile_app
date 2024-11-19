@@ -132,4 +132,38 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         stack.append(tripEntry)
         XCTAssertEqual(stop, stack.lastStop)
     }
+
+    func testNavStackLastStopId() throws {
+        let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
+        let legacyStopEntry: SheetNavigationStackEntry = .legacyStopDetails(stop, .init(routeId: "A", directionId: 1))
+        let stopEntry: SheetNavigationStackEntry = .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let tripEntry: SheetNavigationStackEntry = .tripDetails(
+            tripId: "tripId",
+            vehicleId: "vehicleId",
+            target: nil,
+            routeId: "routeId",
+            directionId: 0
+        )
+        let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil)
+
+        var stack: [SheetNavigationStackEntry] = []
+        XCTAssertNil(stack.lastStopId)
+        stack.append(.nearby)
+        XCTAssertNil(stack.lastStopId)
+        stack.append(legacyStopEntry)
+        XCTAssertEqual(stop.id, stack.lastStopId)
+        stack.append(alertEntry)
+        XCTAssertEqual(stop.id, stack.lastStopId)
+        stack.remove(at: stack.count - 1)
+        stack.append(tripEntry)
+        XCTAssertEqual(stop.id, stack.lastStopId)
+        stack.removeAll()
+        stack.append(stopEntry)
+        XCTAssertEqual(stop.id, stack.lastStopId)
+        stack.append(alertEntry)
+        XCTAssertEqual(stop.id, stack.lastStopId)
+        stack.remove(at: stack.count - 1)
+        stack.append(tripEntry)
+        XCTAssertEqual(stop.id, stack.lastStopId)
+    }
 }
