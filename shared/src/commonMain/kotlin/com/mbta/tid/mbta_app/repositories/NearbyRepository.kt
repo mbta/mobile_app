@@ -41,12 +41,12 @@ class NearbyRepository : KoinComponent, INearbyRepository {
 
             val nearbyStopsAndSiblings =
                 nearbyLeafStops.flatMapTo(mutableSetOf()) { (stopId, distance) ->
-                    val stop = global.stops.getValue(stopId)
+                    val stop = global.stops[stopId] ?: return@flatMapTo emptyList()
                     val stopSiblings =
                         if (stop.parentStationId != null)
-                            global.stops
-                                .getValue(stop.parentStationId)
-                                .childStopIds
+                            global.stops[stop.parentStationId]
+                                ?.childStopIds
+                                .orEmpty()
                                 .mapNotNull(global.stops::get)
                         else listOf(stop)
                     val selectedStops =

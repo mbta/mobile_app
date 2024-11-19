@@ -1,4 +1,5 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
+import com.diffplug.spotless.FormatterFunc
 import com.mbta.tid.mbta_app.gradle.CachedExecTask
 import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
@@ -105,6 +106,27 @@ skie {
     features {
         group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) }
         enableSwiftUIObservingPreview = true
+    }
+}
+
+spotless {
+    kotlin {
+        target("src/*Main/**/*.kt")
+        custom(
+            "ban getValue outside tests",
+            FormatterFunc.NeedsFile { text, file ->
+                val lines = text.lines()
+                for (line in lines.withIndex()) {
+                    val column = line.value.indexOf("getValue(")
+                    if (column != -1) {
+                        throw IllegalStateException(
+                            "${file.path}:${line.index + 1}:${column + 1} calls getValue"
+                        )
+                    }
+                }
+                text
+            }
+        )
     }
 }
 
