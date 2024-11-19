@@ -11,7 +11,7 @@ sealed class TripSchedulesResponse {
     @SerialName("schedules")
     data class Schedules(val schedules: List<Schedule>) : TripSchedulesResponse() {
         override fun stops(globalData: GlobalResponse): List<Stop> =
-            schedules.map { globalData.stops.getValue(it.stopId) }
+            schedules.mapNotNull { globalData.stops[it.stopId] }
     }
 
     @Serializable
@@ -19,7 +19,7 @@ sealed class TripSchedulesResponse {
     data class StopIds(@SerialName("stop_ids") val stopIds: List<String>) :
         TripSchedulesResponse() {
         override fun stops(globalData: GlobalResponse): List<Stop> =
-            stopIds.map { globalData.stops.getValue(it) }
+            stopIds.mapNotNull { globalData.stops[it] }
     }
 
     @Serializable
