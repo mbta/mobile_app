@@ -254,7 +254,6 @@ data class PatternsByStop(
                 )
             }
 
-            val patternsById = leaf.routePatterns.associateBy { it?.id }
             val headsignsAndPatternsToDisplayByRoute =
                 getHeadsignsAndPatternsToDisplayByRoute(leaf, typicalPatternsByRoute)
 
@@ -268,15 +267,13 @@ data class PatternsByStop(
                 val headsignsToDisplay =
                     (headsignsAndPatternsToDisplayByRoute[firstDisplayedRoute.id] ?: emptyMap())
                 return headsignsToDisplay.map { (headsign, patternIds) ->
-                    val patternsForHeadsign = patternIds.mapNotNull { patternsById[it] }
                     RealtimePatterns.ByHeadsign(
                         NearbyHierarchy.DirectionOrHeadsign.Headsign(
                             headsign,
                             firstDisplayedRoute,
                             line.line
                         ),
-                        // TODO filter patterns
-                        leaf,
+                        leaf.filterPatterns { it?.id in patternIds },
                         alerts,
                         hasSchedulesTodayByPattern,
                         allDataLoaded

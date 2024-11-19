@@ -119,6 +119,13 @@ data class NearbyHierarchy(private val data: OuterLayer) {
     ) {
         fun filterCancellations(isSubway: Boolean) =
             this.copy(upcomingTrips = upcomingTrips.filterCancellations(isSubway))
+
+        fun filterPatterns(predicate: (RoutePattern?) -> Boolean): NearbyLeaf {
+            val newPatterns = routePatterns.filter(predicate).toSet()
+            val newPatternIds = newPatterns.map { it?.id }
+            val newTrips = upcomingTrips.filter { it.trip.routePatternId in newPatternIds }
+            return this.copy(routePatterns = newPatterns, upcomingTrips = newTrips)
+        }
     }
 
     data class MutableNearbyLeaf(
