@@ -21,11 +21,13 @@ struct StopDetailsView: View {
     var stopFilter: StopDetailsFilter?
     var tripFilter: TripDetailsFilter?
     var setStopFilter: (StopDetailsFilter?) -> Void
+    var setTripFilter: (TripDetailsFilter?) -> Void
     var departures: StopDetailsDepartures?
     var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
+    @ObservedObject var mapVM: MapViewModel
     let pinnedRoutes: Set<String>
     @State var predictions: PredictionsStreamDataResponse?
 
@@ -38,11 +40,13 @@ struct StopDetailsView: View {
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stopId: String,
         stopFilter: StopDetailsFilter?,
-        tripFilter _: TripDetailsFilter?,
+        tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
+        mapVM: MapViewModel,
         now: Date,
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
@@ -50,10 +54,13 @@ struct StopDetailsView: View {
         self.globalRepository = globalRepository
         self.stopId = stopId
         self.stopFilter = stopFilter
+        self.tripFilter = tripFilter
         self.setStopFilter = setStopFilter
+        self.setTripFilter = setTripFilter
         self.departures = departures
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
+        self.mapVM = mapVM
         self.now = now
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
@@ -109,12 +116,26 @@ struct StopDetailsView: View {
                         now: now.toKotlinInstant(),
                         filter: stopFilter,
                         setFilter: setStopFilter,
-                        pushNavEntry: nearbyVM.pushNavEntry,
+                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                         pinRoute: togglePinnedRoute,
                         pinnedRoutes: pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
                     loadingBody()
+                }
+
+                if let stopFilter, let tripFilter {
+                    TripDetailsView(
+                        tripId: tripFilter.tripId,
+                        vehicleId: tripFilter.vehicleId,
+                        routeId: stopFilter.routeId,
+                        stopId: stopId,
+                        stopSequence: tripFilter.stopSequence?.intValue,
+                        global: globalResponse,
+                        errorBannerVM: errorBannerVM,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM
+                    )
                 }
             }
         }

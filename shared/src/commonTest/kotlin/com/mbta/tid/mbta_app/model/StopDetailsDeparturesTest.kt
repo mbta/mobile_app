@@ -967,9 +967,9 @@ class StopDetailsDeparturesTest {
 
             assertEquals(
                 StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId),
-                checkNotNull(departures).autoFilter()
+                checkNotNull(departures).autoStopFilter()
             )
-        }
+    }
 
     @Test
     fun `StopDetailsDepartures provides a null filter value given multiple routes and directions`() =
@@ -1005,6 +1005,6 @@ class StopDetailsDeparturesTest {
                     useTripHeadsigns = anyBoolean(),
                 )
 
-            assertEquals(null, checkNotNull(departures).autoFilter())
+            assertEquals(null, checkNotNull(departures).autoStopFilter())
         }
 }

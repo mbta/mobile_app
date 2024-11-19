@@ -24,6 +24,8 @@ struct StopDetailsPage: View {
     var stopId: String
 
     var stopFilter: StopDetailsFilter?
+    var tripFilter: TripDetailsFilter?
+
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective  departures rather than both showing the departures for the newly presented stop.
@@ -31,6 +33,7 @@ struct StopDetailsPage: View {
     @State var now = Date.now
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
+    @ObservedObject var mapVM: MapViewModel
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
 
@@ -45,9 +48,11 @@ struct StopDetailsPage: View {
         viewportProvider: ViewportProvider,
         stopId: String,
         stopFilter: StopDetailsFilter?,
+        tripFilter: TripDetailsFilter?,
         internalDepartures: StopDetailsDepartures? = nil,
         errorBannerVM: ErrorBannerViewModel,
-        nearbyVM: NearbyViewModel
+        nearbyVM: NearbyViewModel,
+        mapVM: MapViewModel
     ) {
         self.globalRepository = globalRepository
         self.schedulesRepository = schedulesRepository
@@ -55,9 +60,11 @@ struct StopDetailsPage: View {
         self.viewportProvider = viewportProvider
         self.stopId = stopId
         self.stopFilter = stopFilter
+        self.tripFilter = tripFilter
         self.internalDepartures = internalDepartures // only for testing
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
+        self.mapVM = mapVM
     }
 
     var body: some View {
@@ -65,11 +72,13 @@ struct StopDetailsPage: View {
             StopDetailsView(
                 stopId: stopId,
                 stopFilter: stopFilter,
-                tripFilter: nil,
+                tripFilter: tripFilter,
                 setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
+                setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
                 departures: internalDepartures,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
+                mapVM: mapVM,
                 now: now,
                 pinnedRoutes: pinnedRoutes,
                 togglePinnedRoute: togglePinnedRoute
@@ -92,6 +101,20 @@ struct StopDetailsPage: View {
             }
             .onChange(of: schedulesResponse) { _ in
                 updateDepartures(stopId)
+            }
+            .onChange(of: stopFilter) { nextStopFilter in
+                nearbyVM.setLastTripDetailsFilter(stopId, internalDepartures?.autoTripFilter(
+                    stopFilter: nextStopFilter,
+                    currentTripFilter: tripFilter,
+                    filterAtTime: now.toKotlinInstant()
+                ))
+            }
+            .onChange(of: internalDepartures) { nextDepartures in
+                nearbyVM.setLastTripDetailsFilter(stopId, nextDepartures?.autoTripFilter(
+                    stopFilter: stopFilter,
+                    currentTripFilter: tripFilter,
+                    filterAtTime: now.toKotlinInstant()
+                ))
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task(id: stopId) {
@@ -240,8 +263,7 @@ struct StopDetailsPage: View {
             errorBannerVM.errorRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
                 predictionQuantity: Int32(
-                    predictionsByStop?.predictionQuantity() ??
-                        0
+                    predictionsByStop?.predictionQuantity() ?? 0
                 ),
                 action: {
                     leavePredictions()
@@ -274,8 +296,9 @@ struct StopDetailsPage: View {
         } else {
             nil
         }
-        if stopFilter == nil, let newFilter = newDepartures?.autoFilter() {
-            nearbyVM.setLastStopDetailsFilter(stopId, newFilter)
+        let nextStopFilter = stopFilter ?? newDepartures?.autoStopFilter()
+        if stopFilter != nextStopFilter {
+            nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
         }
 
         internalDepartures = newDepartures

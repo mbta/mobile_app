@@ -60,6 +60,9 @@ struct ContentView: View {
                 _ = try await RepositoryDI().global.getGlobalData()
             } catch {}
         }
+        .onChange(of: selectedTab) { _ in
+            Task { await nearbyVM.loadDebugSetting() }
+        }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.attach()
@@ -256,7 +259,7 @@ struct ContentView: View {
                 case .alertDetails:
                     EmptyView()
 
-                case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: _):
+                case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
@@ -264,8 +267,10 @@ struct ContentView: View {
                             viewportProvider: viewportProvider,
                             stopId: stopId,
                             stopFilter: stopFilter,
+                            tripFilter: tripFilter,
                             errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM
+                            nearbyVM: nearbyVM,
+                            mapVM: mapVM
                         )
 
                         .toolbar(.hidden, for: .tabBar)
