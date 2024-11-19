@@ -354,6 +354,10 @@ fun NearbyHierarchy.PartialHierarchy<
                                             pattern.directionId == directionId
                                     }
                                 }
+                            // Directions in this fallback will not check overrides, but this only
+                            // happens if an entire route-at-stop is only present in the realtime
+                            // data, and StaticPatterns.ForLine.groupedDirection also doesn't check
+                            // overrides, so it's probably fine
                             if (typicalHere.isEmpty()) {
                                 Direction(directionId, lineOrRoute.routes.first())
                             } else if (typicalHere.size > 1) {
@@ -366,7 +370,6 @@ fun NearbyHierarchy.PartialHierarchy<
                                 val typicalEntry = typicalHere.entries.single()
                                 when (val key = typicalEntry.key) {
                                     is DirectionOrHeadsign.Direction -> key.direction
-                                    // TODO check this vs the ForLine.groupedDirection edge case
                                     is DirectionOrHeadsign.Headsign ->
                                         Direction(
                                             key.route.directionNames[directionId] ?: "",
