@@ -185,7 +185,7 @@ class NearbyTransitViewTest : KoinTest {
                             onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
                             onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                         ) {
-                            /* no-op */
+                            onJoin(ApiResult.Ok(PredictionsByStopJoinResponse(builder)))
                         }
 
                         override var lastUpdated: Instant? = null
