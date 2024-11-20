@@ -24,7 +24,7 @@ struct TestFlightPromoPage: View {
             Text("Thank you for being a beta tester and giving us valuable feedback along the way.")
                 .font(Typography.title3)
             Spacer()
-            Link(destination: .init(string: "https://example.com")!) {
+            Link(destination: .init(string: "https://apps.apple.com/us/app/mbta-go-official/id6472726821")!) {
                 Text("Download from the App Store")
                     .font(Typography.bodySemibold)
                     .frame(maxWidth: .infinity, minHeight: 52)
