@@ -198,20 +198,23 @@ sealed class RealtimePatterns {
     ): Format {
         val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
         if (majorAlert != null) return Format.NoService(majorAlert)
+        val secondaryAlertToDisplay =
+            alertsHere?.firstOrNull { it.significance >= AlertSignificance.Secondary }
+                ?: alertsDownstream?.firstOrNull()
+
         val secondaryAlert =
-            alertsHere
-                ?.firstOrNull { it.significance >= AlertSignificance.Secondary }
-                ?.let {
-                    Format.SecondaryAlert(
-                        it,
-                        MapStopRoute.matching(
-                            when (this) {
-                                is ByHeadsign -> route
-                                is ByDirection -> representativeRoute
-                            }
-                        )
+            secondaryAlertToDisplay?.let {
+                Format.SecondaryAlert(
+                    StopAlertState.Issue,
+                    MapStopRoute.matching(
+                        when (this) {
+                            is ByHeadsign -> route
+                            is ByDirection -> representativeRoute
+                        }
                     )
-                }
+                )
+            }
+
         val tripsToShow =
             upcomingTrips
                 .mapNotNull {
@@ -302,13 +305,17 @@ sealed class RealtimePatterns {
     sealed class Format {
         abstract val secondaryAlert: SecondaryAlert?
 
-        data class SecondaryAlert(val iconName: String, val alertEffect: Alert.Effect) {
+        data class SecondaryAlert(val iconName: String) {
             constructor(
                 alert: Alert,
                 mapStopRoute: MapStopRoute?
+            ) : this(alert.alertState, mapStopRoute)
+
+            constructor(
+                alertState: StopAlertState,
+                mapStopRoute: MapStopRoute?
             ) : this(
-                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}"} ?: "borderless"}-${alert.alertState.name.lowercase()}",
-                alert.effect
+                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}"} ?: "borderless"}-${alertState.name.lowercase()}",
             )
         }
 
