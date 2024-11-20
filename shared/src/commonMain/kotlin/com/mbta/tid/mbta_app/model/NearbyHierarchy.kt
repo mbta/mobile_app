@@ -12,15 +12,24 @@ import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
 import kotlinx.datetime.Instant
 
-private typealias InnerLayer = Map<DirectionOrHeadsign, NearbyLeaf>
+private typealias ByDirectionOrHeadsign = Map<DirectionOrHeadsign, NearbyLeaf>
 
-private typealias MiddleLayerData = RouteAtStop<List<Direction>, InnerLayer>
+private typealias ByStopData = RouteAtStop<List<Direction>, ByDirectionOrHeadsign>
 
-private typealias MiddleLayer = Map<Stop, MiddleLayerData>
+private typealias ByStop = Map<Stop, ByStopData>
 
-private typealias OuterLayer = Map<LineOrRoute, MiddleLayer>
+private typealias ByLineOrRoute = Map<LineOrRoute, ByStop>
 
-data class NearbyHierarchy(private val data: OuterLayer) {
+/**
+ * An intermediate data structure containing data to show in nearby transit grouped by line/route,
+ * parent stop, and headsign/direction.
+ *
+ * Built out of [Map]s to make it easier to merge different data sources together.
+ *
+ * Note that [NearbyLeaf]s do not contain the [LineOrRoute], [Stop], or [DirectionOrHeadsign] that
+ * are their context, so pieces of this cannot be displayed directly.
+ */
+data class NearbyHierarchy(private val data: ByLineOrRoute) {
     sealed interface LineOrRoute {
         data class Line(
             val line: com.mbta.tid.mbta_app.model.Line,
@@ -30,7 +39,18 @@ data class NearbyHierarchy(private val data: OuterLayer) {
         data class Route(val route: com.mbta.tid.mbta_app.model.Route) : LineOrRoute
     }
 
+    /**
+     * Attaches some arbitrary data to a [LineOrRoute] at a [Stop] across all [DirectionOrHeadsign]s
+     * that will be listed there.
+     *
+     * In a full [NearbyHierarchy], [StopData] will always be a [List] of [Direction]s and [T] will
+     * always be a [ByDirectionOrHeadsign], but different parameters may exist during
+     * [NearbyHierarchy] construction.
+     *
+     * Fundamentally, this is just a [Pair], but I think it's clearer with a more specific name.
+     */
     data class RouteAtStop<StopData, T>(val stopData: StopData, val data: T) {
+        /** Transform the [data] while leaving [stopData] unchanged. */
         fun <U> map(f: (T) -> U): RouteAtStop<StopData, U> = RouteAtStop(stopData, f(data))
     }
 
@@ -42,9 +62,17 @@ data class NearbyHierarchy(private val data: OuterLayer) {
             DirectionOrHeadsign
     }
 
+    /**
+     * Since we only know whether or not to group data by direction once all the data is available,
+     * we need to represent partially-constructed hierarchies that only group by route and stop.
+     */
     data class PartialHierarchy<StopData, T>(
         val data: Map<LineOrRoute, Map<Stop, RouteAtStop<StopData, T>>>
     ) {
+        /**
+         * Transforms each [RouteAtStop.data] while leaving the adjacent [RouteAtStop.stopData]
+         * unchanged.
+         */
         fun <U> map(f: (T) -> U): PartialHierarchy<StopData, U> =
             data
                 .mapValues { (_, routeData) ->
@@ -52,6 +80,10 @@ data class NearbyHierarchy(private val data: OuterLayer) {
                 }
                 .let(::PartialHierarchy)
 
+        /**
+         * Transforms each [RouteAtStop] entirely, changing both its [RouteAtStop.stopData] and its
+         * [RouteAtStop.data].
+         */
         fun <SD2, U> map(
             processStopData: (StopData) -> SD2,
             processData: (T) -> U
@@ -67,6 +99,10 @@ data class NearbyHierarchy(private val data: OuterLayer) {
                 }
                 .let(::PartialHierarchy)
 
+        /**
+         * Transforms each [RouteAtStop.data] with a function that receives the full context of that
+         * data.
+         */
         fun <U> mapInContext(
             f: (LineOrRoute, Stop, StopData, T) -> U
         ): PartialHierarchy<StopData, U> =
@@ -78,6 +114,10 @@ data class NearbyHierarchy(private val data: OuterLayer) {
                 }
                 .let(::PartialHierarchy)
 
+        /**
+         * Transforms each [RouteAtStop.stopData] with a function that receives the full context of
+         * that stop data.
+         */
         fun <SD2> mapStopDataInContext(
             f: (LineOrRoute, Stop, StopData, T) -> SD2
         ): PartialHierarchy<SD2, T> =
@@ -92,6 +132,11 @@ data class NearbyHierarchy(private val data: OuterLayer) {
                 }
                 .let(::PartialHierarchy)
 
+        /**
+         * Combines this [PartialHierarchy] with another [PartialHierarchy], creating [Pair]s for
+         * both the [RouteAtStop.stopData] and the [RouteAtStop.data]. Data that is absent in one
+         * [PartialHierarchy] will be represented by `null` in the [Pair].
+         */
         fun <SD2, U> zip(
             other: PartialHierarchy<SD2, U>
         ): PartialHierarchy<Pair<StopData?, SD2?>, Pair<T?, U?>> =
@@ -110,16 +155,26 @@ data class NearbyHierarchy(private val data: OuterLayer) {
                 .let(::PartialHierarchy)
     }
 
-    fun <U> mapEntries(f: (Map.Entry<LineOrRoute, MiddleLayer>) -> U): List<U> = data.map(f)
+    /** Turns each [Map.Entry] into a list item. */
+    fun <U> mapEntries(f: (Map.Entry<LineOrRoute, ByStop>) -> U): List<U> = data.map(f)
 
+    /** Represents the data on a [LineOrRoute] at a [Stop] for a [DirectionOrHeadsign]. */
     data class NearbyLeaf(
         val childStopIds: Set<String>,
         val routePatterns: Set<RoutePattern?>,
         val upcomingTrips: List<UpcomingTrip>,
     ) {
+        /**
+         * Return a copy of this [NearbyLeaf] with cancelled trips possibly removed depending on
+         * context and whether or not the route is a subway route.
+         */
         fun filterCancellations(isSubway: Boolean) =
             this.copy(upcomingTrips = upcomingTrips.filterCancellations(isSubway))
 
+        /**
+         * Return a copy of this [NearbyLeaf] with only patterns that pass the given [predicate] and
+         * only trips on those patterns.
+         */
         fun filterPatterns(predicate: (RoutePattern?) -> Boolean): NearbyLeaf {
             val newPatterns = routePatterns.filter(predicate).toSet()
             val newPatternIds = newPatterns.map { it?.id }
@@ -128,6 +183,7 @@ data class NearbyHierarchy(private val data: OuterLayer) {
         }
     }
 
+    /** A [NearbyLeaf] containing mutable collections, useful during construction. */
     data class MutableNearbyLeaf(
         val childStopIds: MutableSet<String>,
         val routePatterns: MutableSet<RoutePattern?>,
@@ -135,10 +191,12 @@ data class NearbyHierarchy(private val data: OuterLayer) {
     ) {
         constructor() : this(mutableSetOf(), mutableSetOf(), mutableListOf())
 
+        /** Convert this [MutableNearbyLeaf] into an immutable [NearbyLeaf]. */
         fun finished() = NearbyLeaf(childStopIds, routePatterns, upcomingTrips)
     }
 
     companion object {
+        /** Groups schedules from the given [ScheduleResponse] into a [PartialHierarchy]. */
         fun fromSchedules(
             global: GlobalResponse,
             schedules: ScheduleResponse,
@@ -158,6 +216,10 @@ data class NearbyHierarchy(private val data: OuterLayer) {
             return PartialHierarchy(result).map { it }
         }
 
+        /**
+         * Groups predictions from the given [PredictionsStreamDataResponse] into a
+         * [PartialHierarchy].
+         */
         fun fromPredictions(
             global: GlobalResponse,
             predictions: PredictionsStreamDataResponse,
@@ -177,6 +239,10 @@ data class NearbyHierarchy(private val data: OuterLayer) {
             return PartialHierarchy(result).map { it }
         }
 
+        /**
+         * Groups the given [schedules] and [predictions] into [PartialHierarchy]s and then combines
+         * those lists into [UpcomingTrip] lists.
+         */
         fun fromRealtime(
             global: GlobalResponse,
             schedules: ScheduleResponse?,
@@ -201,6 +267,13 @@ data class NearbyHierarchy(private val data: OuterLayer) {
                     }
                 )
 
+        /**
+         * Converts a [NearbyStaticData] grouping into a [PartialHierarchy].
+         *
+         * The resulting [RouteAtStop.stopData] is the list of directions on a route at a stop, and
+         * the [RouteAtStop.data] is a map from child stop IDs to the [RoutePattern]s at that child
+         * stop.
+         */
         fun fromStaticData(
             staticData: NearbyStaticData
         ): PartialHierarchy<List<Direction>, Map<String, Set<RoutePattern>>> {
@@ -265,6 +338,17 @@ data class NearbyHierarchy(private val data: OuterLayer) {
 fun <SD, T> NearbyHierarchy.PartialHierarchy<SD, T>?.orEmpty():
     NearbyHierarchy.PartialHierarchy<SD, T> = this ?: NearbyHierarchy.PartialHierarchy(emptyMap())
 
+/**
+ * Turns a [NearbyHierarchy.PartialHierarchy] created by [NearbyHierarchy.PartialHierarchy.zip]ping
+ * [NearbyHierarchy.fromStaticData] with [NearbyHierarchy.fromRealtime] into a full
+ * [NearbyHierarchy].
+ *
+ * Groups line patterns by [Direction] if there are multiple [RoutePattern]s headed in the same
+ * [Direction].
+ *
+ * Preserves the directions from the static data if they exist, and recomputes them if a
+ * [RouteAtStop] contains only realtime data, which should only happen in exceptional circumstances.
+ */
 fun NearbyHierarchy.PartialHierarchy<
     Pair<List<Direction>?, Unit?>, Pair<Map<String, Set<RoutePattern>>?, List<UpcomingTrip>?>
 >
@@ -394,8 +478,12 @@ fun NearbyHierarchy.PartialHierarchy<
         .let { NearbyHierarchy(it.data) }
 }
 
+/**
+ * Ensures that each route pattern is only represented at the single stop nearest to
+ * [sortByDistanceFrom].
+ */
 @OptIn(ExperimentalTurfApi::class)
-fun MiddleLayer.pickOnlyNearest(sortByDistanceFrom: Position?): MiddleLayer {
+fun ByStop.pickOnlyNearest(sortByDistanceFrom: Position?): ByStop {
     if (sortByDistanceFrom == null) {
         // in nearby transit, we always pass sortByDistanceFrom, so this means we're in unfiltered
         // stop details, where there's only one stop anyway
