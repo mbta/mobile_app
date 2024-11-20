@@ -72,6 +72,14 @@ struct TripDetailsPage: View {
     var body: some View {
         VStack(spacing: 16) {
             header
+            if nearbyVM.showDebugMessages {
+                DebugView {
+                    VStack {
+                        Text(verbatim: "trip id: \(tripId)")
+                        Text(verbatim: "vehicle id: \(vehicleId)")
+                    }
+                }
+            }
             if tripPredictionsLoaded, let globalResponse, let vehicle = vehicleResponse?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
                    tripId: tripId,
