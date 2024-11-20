@@ -67,7 +67,7 @@ class RealtimePatternsTest {
         for ((route, icon) in cases) {
             assertEquals(
                 RealtimePatterns.Format.ServiceEndedToday(
-                    RealtimePatterns.Format.SecondaryAlert(icon, Alert.Effect.ServiceChange)
+                    RealtimePatterns.Format.SecondaryAlert(icon)
                 ),
                 RealtimePatterns.ByHeadsign(
                         route,
@@ -140,10 +140,7 @@ class RealtimePatternsTest {
                         TripInstantDisplay.Minutes(1)
                     )
                 ),
-                RealtimePatterns.Format.SecondaryAlert(
-                    "alert-large-bus-issue",
-                    Alert.Effect.ServiceChange
-                )
+                RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
             ),
             RealtimePatterns.ByHeadsign(
                     route,
@@ -152,6 +149,47 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip),
                     listOf(alert)
+                )
+                .format(now, route.type, anyContext())
+        )
+    }
+
+    @Test
+    fun `includes downstream alert as secondary alert`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.BUS }
+
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 1.minutes
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+
+        assertEquals(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip.id,
+                        route.type,
+                        TripInstantDisplay.Minutes(1)
+                    )
+                ),
+                RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+            ),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip),
+                    alertsHere = emptyList(),
+                    alertsDownstream = listOf(alert)
                 )
                 .format(now, route.type, anyContext())
         )

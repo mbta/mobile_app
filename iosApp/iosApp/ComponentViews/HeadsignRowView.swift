@@ -50,12 +50,10 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 prediction.departureTime = now.addingTimeInterval(12 * 60).toKotlinInstant()
             }
             let secondaryAlert = RealtimePatterns.FormatSecondaryAlert(
-                iconName: "alert-large-bus-issue",
-                alertEffect: .detour
+                iconName: "alert-large-bus-issue"
             )
             let greenLineEAlert = RealtimePatterns.FormatSecondaryAlert(
-                iconName: "alert-large-green-issue",
-                alertEffect: .serviceChange
+                iconName: "alert-large-green-issue"
             )
             let greenLineERoute = objects.route { route in
                 route.id = "Green-E"

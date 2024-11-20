@@ -73,32 +73,21 @@ fun HeadsignRowViewPreview() {
                             TripInstantDisplay.Minutes(15)
                         )
                     ),
-                    secondaryAlert =
-                        RealtimePatterns.Format.SecondaryAlert(
-                            "alert-large-bus-issue",
-                            Alert.Effect.Detour
-                        )
+                    secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
                 )
             )
             HeadsignRowView("None", RealtimePatterns.Format.None(secondaryAlert = null))
             HeadsignRowView(
                 "None with Alert",
                 RealtimePatterns.Format.None(
-                    secondaryAlert =
-                        RealtimePatterns.Format.SecondaryAlert(
-                            "alert-large-bus-issue",
-                            Alert.Effect.Detour
-                        )
+                    secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
                 )
             )
             HeadsignRowView(
                 "Decorated None with Alert",
                 RealtimePatterns.Format.None(
                     secondaryAlert =
-                        RealtimePatterns.Format.SecondaryAlert(
-                            "alert-large-green-issue",
-                            Alert.Effect.ServiceChange
-                        )
+                        RealtimePatterns.Format.SecondaryAlert("alert-large-green-issue")
                 ),
                 pillDecoration =
                     PillDecoration.OnRow(

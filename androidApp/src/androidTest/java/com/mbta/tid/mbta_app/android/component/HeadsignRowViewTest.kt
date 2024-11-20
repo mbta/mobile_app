@@ -80,11 +80,7 @@ class HeadsignRowViewTest {
                         TripInstantDisplay.Boarding
                     )
                 ),
-                secondaryAlert =
-                    RealtimePatterns.Format.SecondaryAlert(
-                        "alert-large-green-issue",
-                        Alert.Effect.ServiceChange
-                    )
+                secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-green-issue")
             )
         )
 
@@ -106,11 +102,7 @@ class HeadsignRowViewTest {
         init(
             "Somewhere",
             RealtimePatterns.Format.None(
-                secondaryAlert =
-                    RealtimePatterns.Format.SecondaryAlert(
-                        "alert-large-bus-issue",
-                        Alert.Effect.Detour
-                    )
+                secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
             )
         )
 
