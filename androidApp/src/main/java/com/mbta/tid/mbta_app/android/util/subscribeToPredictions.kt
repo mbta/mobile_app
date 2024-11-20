@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -19,18 +20,44 @@ fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject()
 ): PredictionsStreamDataResponse? {
-    var predictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
+    var predictionsStopJoinResponse: PredictionsByStopJoinResponse? by remember {
+        mutableStateOf(null)
+    }
+
     DisposableEffect(stopIds) {
         val scope = CoroutineScope(Dispatchers.IO)
         val job =
             scope.launch {
                 if (stopIds != null) {
-                    predictionsRepository.connect(stopIds) {
-                        when (it) {
-                            is ApiResult.Ok -> predictions = it.data
-                            is ApiResult.Error -> TODO("handle errors")
+                    predictionsRepository.connectV2(
+                        stopIds,
+                        { joinResult ->
+                            when (joinResult) {
+                                is ApiResult.Ok -> {
+                                    predictionsStopJoinResponse = joinResult.data
+                                }
+                                is ApiResult.Error -> TODO("handle errors")
+                            }
+                        },
+                        { messageResult ->
+                            when (messageResult) {
+                                is ApiResult.Ok -> {
+                                    predictionsStopJoinResponse =
+                                        (predictionsStopJoinResponse
+                                                ?: PredictionsByStopJoinResponse(
+                                                    mapOf(
+                                                        messageResult.data.stopId to
+                                                            messageResult.data.predictions
+                                                    ),
+                                                    messageResult.data.trips,
+                                                    messageResult.data.vehicles
+                                                ))
+                                            .mergePredictions(messageResult.data)
+                                }
+                                is ApiResult.Error -> TODO("handle errors")
+                            }
                         }
-                    }
+                    )
                 }
             }
 
@@ -40,5 +67,5 @@ fun subscribeToPredictions(
         }
     }
 
-    return predictions
+    return predictionsStopJoinResponse?.toPredictionsStreamDataResponse()
 }
