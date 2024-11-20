@@ -86,7 +86,7 @@ class HeadsignRowViewTest {
 
         composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
         composeTestRule.onNodeWithText("BRD").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("ServiceChange").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
     }
 
     @Test
@@ -108,7 +108,7 @@ class HeadsignRowViewTest {
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
         composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Detour").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
     }
 
     @Test
