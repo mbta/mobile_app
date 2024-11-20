@@ -93,7 +93,7 @@ struct StopDetailsView: View {
                     )
                     if nearbyVM.showDebugMessages {
                         DebugView {
-                            Text(verbatim: "stop id: \(stop?.id ?? "nil stop")")
+                            Text(verbatim: "stop id: \(stopId)")
                         }
                     }
                     ErrorBanner(errorBannerVM).padding(.horizontal, 16)
