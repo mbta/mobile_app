@@ -209,7 +209,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             val fullStopIds = mutableMapOf<String, MutableSet<String>>()
 
             nearby.stopIds.forEach { stopId ->
-                val stop = stops.getValue(stopId)
+                val stop = stops[stopId] ?: return@forEach
                 val newPatternIds =
                     patternIdsByStop
                         .getOrElse(stop.id) { emptyList() }
@@ -218,7 +218,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
                 val newPatternsByRoute =
                     newPatternIds
-                        .map { patternId -> routePatterns.getValue(patternId) }
+                        .mapNotNull { patternId -> routePatterns[patternId] }
                         .groupBy { it.routeId }
 
                 val stopKey =
@@ -228,13 +228,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                             .add(stop.id)
                         // Parents should be disjoint, but if somehow a parent has its own patterns,
                         // find it in the regular stops list
-                        stops.getValue(parentStationId)
+                        stops[parentStationId]
                     }
                         ?: stop
 
-                newPatternsByRoute.forEach { (routeId, routePatterns) ->
-                    val routeStops =
-                        patternsByRouteAndStop.getOrPut(routes.getValue(routeId)) { mutableMapOf() }
+                for ((routeId, routePatterns) in newPatternsByRoute) {
+                    val route = routes[routeId] ?: continue
+                    val routeStops = patternsByRouteAndStop.getOrPut(route) { mutableMapOf() }
                     val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
                     patternsForStop += routePatterns
                 }
@@ -308,7 +308,9 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             global: GlobalResponse
         ): StopPatterns.ForRoute {
             val patternsByHeadsign =
-                patterns.groupBy { global.trips.getValue(it.representativeTripId).headsign }
+                patterns
+                    .groupBy { global.trips[it.representativeTripId]?.headsign }
+                    .filterKeys { it != null }
 
             return StopPatterns.ForRoute(
                 route = route,
@@ -318,7 +320,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         .map { (headsign, routePatterns) ->
                             StaticPatterns.ByHeadsign(
                                 route,
-                                headsign,
+                                checkNotNull(headsign),
                                 null,
                                 routePatterns.sorted(),
                                 filterStopsByPatterns(routePatterns, global, allStopIds)
@@ -362,13 +364,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     if (directionRoutes.filter { !it.id.startsWith("Shuttle-") }.size == 1) {
                         val route = directionRoutes.first()
                         val patternsByHeadsign =
-                            directionPatterns.groupBy {
-                                global.trips.getValue(it.representativeTripId).headsign
-                            }
+                            directionPatterns
+                                .groupBy { global.trips[it.representativeTripId]?.headsign }
+                                .filterKeys { it != null }
                         return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
                             StaticPatterns.ByHeadsign(
                                 route,
-                                headsign,
+                                checkNotNull(headsign),
                                 line,
                                 patterns.sorted(),
                                 filterStopsByPatterns(patterns, global, allStopIds),
@@ -511,18 +513,18 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                 schedules,
                 predictions,
                 scheduleKey = { schedule, scheduleData ->
-                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    val trip = scheduleData.trips[schedule.tripId]
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         schedule.routeId,
-                        trip.routePatternId,
+                        trip?.routePatternId,
                         globalStops.resolveParentId(schedule.stopId)
                     )
                 },
                 predictionKey = { prediction, streamData ->
-                    val trip = streamData.trips.getValue(prediction.tripId)
+                    val trip = streamData.trips[prediction.tripId]
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         prediction.routeId,
-                        trip.routePatternId,
+                        trip?.routePatternId,
                         globalStops.resolveParentId(prediction.stopId)
                     )
                 },
@@ -536,7 +538,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                 schedules,
                 predictions,
                 scheduleKey = { schedule, scheduleData ->
-                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    val trip = scheduleData.trips[schedule.tripId] ?: return@tripsMappedBy null
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         schedule.routeId,
                         trip.directionId,
@@ -544,7 +546,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                     )
                 },
                 predictionKey = { prediction, streamData ->
-                    val trip = streamData.trips.getValue(prediction.tripId)
+                    val trip = streamData.trips[prediction.tripId] ?: return@tripsMappedBy null
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         prediction.routeId,
                         trip.directionId,

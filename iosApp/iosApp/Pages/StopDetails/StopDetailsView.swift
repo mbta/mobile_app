@@ -78,6 +78,11 @@ struct StopDetailsView: View {
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
+                    if nearbyVM.showDebugMessages {
+                        DebugView {
+                            Text(verbatim: "stop id: \(stop.id)")
+                        }
+                    }
                     ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(

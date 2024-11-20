@@ -324,13 +324,13 @@ class StopFeaturesBuilderTest {
         val alewifeFeature = collection.features.find { it.id == "place-alfcl" }
         assertNotNull(alewifeFeature)
         val alewifeServiceStatus =
-            alewifeFeature.properties.get(StopFeaturesBuilder.propServiceStatusKey)
+            checkNotNull(alewifeFeature.properties[StopFeaturesBuilder.propServiceStatusKey])
         assertEquals(StopAlertState.Shuttle.name, alewifeServiceStatus[MapStopRoute.RED.name])
 
         val assemblyFeature = collection.features.find { it.id == "place-astao" }
         assertNotNull(assemblyFeature)
         val assemblyServiceStatus =
-            assemblyFeature.properties.get(StopFeaturesBuilder.propServiceStatusKey)
+            checkNotNull(assemblyFeature.properties[StopFeaturesBuilder.propServiceStatusKey])
         assertEquals(
             StopAlertState.Suspension.name,
             assemblyServiceStatus[MapStopRoute.ORANGE.name]

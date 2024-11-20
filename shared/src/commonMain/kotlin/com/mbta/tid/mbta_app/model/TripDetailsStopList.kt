@@ -184,9 +184,9 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                             it.value.stopSequence < vehicle.currentStopSequence
                         }
                     }
-                    .map {
+                    .mapNotNull {
                         Entry(
-                            globalData.stops.getValue(it.value.stopId),
+                            globalData.stops[it.value.stopId] ?: return@mapNotNull null,
                             it.value.stopSequence,
                             getAlert(it.value, alertsData, globalData, tripId, directionId),
                             it.value.schedule,
@@ -235,7 +235,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             entry: WorkingEntry,
             globalData: GlobalResponse
         ): List<Route> {
-            val stop = globalData.stops.getValue(entry.stopId)
+            val stop = globalData.stops[entry.stopId] ?: return emptyList()
             val selfOrParent =
                 if (stop.parentStationId == null) stop
                 else globalData.stops[stop.parentStationId] ?: return emptyList()

@@ -101,8 +101,8 @@ data class UpcomingTrip(
             stops: Map<String, Stop>,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
-            scheduleKey: (Schedule, ScheduleResponse) -> Key,
-            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key,
+            scheduleKey: (Schedule, ScheduleResponse) -> Key?,
+            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key?,
             filterAtTime: Instant
         ): Map<Key, List<UpcomingTrip>>? {
 
@@ -120,7 +120,9 @@ data class UpcomingTrip(
                 }
             return if (schedulesMap != null || predictionsMap != null) {
                 val trips = schedules?.trips.orEmpty() + predictions?.trips.orEmpty()
-                val upcomingTripKeys = schedulesMap?.keys.orEmpty() + predictionsMap?.keys.orEmpty()
+                val upcomingTripKeys =
+                    schedulesMap?.keys.orEmpty().filterNotNull() +
+                        predictionsMap?.keys.orEmpty().filterNotNull()
                 upcomingTripKeys.associateWith { upcomingTripKey ->
                     val schedulesHere = schedulesMap?.get(upcomingTripKey)
                     val predictionsHere = predictionsMap?.get(upcomingTripKey)
@@ -178,9 +180,9 @@ data class UpcomingTrip(
             val keys = schedulesMap.keys + predictionsMap.keys
 
             return keys
-                .map { key ->
+                .mapNotNull { key ->
                     UpcomingTrip(
-                        trips.getValue(key.tripId),
+                        trips[key.tripId] ?: return@mapNotNull null,
                         schedulesMap[key],
                         predictionsMap[key],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] }
