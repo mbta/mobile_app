@@ -48,7 +48,6 @@ class NearbyViewModel: ObservableObject {
     private let alertsRepository: IAlertsRepository
     private let errorBannerRepository: IErrorBannerStateRepository
     private let nearbyRepository: INearbyRepository
-    private let settingsRepository: ISettingsRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
     private var analytics: NearbyTransitAnalytics
@@ -61,7 +60,6 @@ class NearbyViewModel: ObservableObject {
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
-        settingsRepository: ISettingsRepository = RepositoryDI().settings,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: NearbyTransitAnalytics = AnalyticsProvider.shared,
         settingsRepository: ISettingsRepository = RepositoryDI().settings
@@ -73,7 +71,6 @@ class NearbyViewModel: ObservableObject {
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
-        self.settingsRepository = settingsRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
         self.settingsRepository = settingsRepository
