@@ -264,15 +264,14 @@ struct ContentView: View {
                     // Otherwise only the header animates
                     TabView {
                         StopDetailsPage(
-                            viewportProvider: viewportProvider,
                             stopId: stopId,
                             stopFilter: stopFilter,
                             tripFilter: tripFilter,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
-                            mapVM: mapVM
+                            mapVM: mapVM,
+                            viewportProvider: viewportProvider
                         )
-
                         .toolbar(.hidden, for: .tabBar)
                         .onAppear {
                             let filtered = stopFilter != nil

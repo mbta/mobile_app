@@ -14,56 +14,67 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
-    let globalRepository: IGlobalRepository
-    @State var globalResponse: GlobalResponse?
     var stopId: String
     var stopFilter: StopDetailsFilter?
     var tripFilter: TripDetailsFilter?
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
+
     var departures: StopDetailsDepartures?
-    var now = Date.now
+    var global: GlobalResponse?
+    var pinnedRoutes: Set<String>
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
+    let togglePinnedRoute: (String) -> Void
+
+    var now = Date.now
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
-    let pinnedRoutes: Set<String>
-    @State var predictions: PredictionsStreamDataResponse?
 
-    let togglePinnedRoute: (String) -> Void
+    let tripPredictionsRepository: ITripPredictionsRepository
+    let tripRepository: ITripRepository
+    let vehicleRepository: IVehicleRepository
 
+    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        globalRepository: IGlobalRepository = RepositoryDI().global,
         stopId: String,
         stopFilter: StopDetailsFilter?,
         tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
+        global: GlobalResponse?,
+        pinnedRoutes: Set<String>,
+        togglePinnedRoute: @escaping (String) -> Void,
+        now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
-        now: Date,
-        pinnedRoutes: Set<String>,
-        togglePinnedRoute: @escaping (String) -> Void
+
+        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
+        tripRepository: ITripRepository = RepositoryDI().trip,
+        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
     ) {
-        self.globalRepository = globalRepository
         self.stopId = stopId
         self.stopFilter = stopFilter
         self.tripFilter = tripFilter
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.departures = departures
+        self.global = global
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.now = now
         self.pinnedRoutes = pinnedRoutes
         self.togglePinnedRoute = togglePinnedRoute
+
+        self.tripPredictionsRepository = tripPredictionsRepository
+        self.tripRepository = tripRepository
+        self.vehicleRepository = vehicleRepository
 
         if let departures {
             servedRoutes = departures.routes.map { patterns in
@@ -78,7 +89,7 @@ struct StopDetailsView: View {
     }
 
     var stop: Stop? {
-        globalResponse?.stops[stopId]
+        global?.stops[stopId]
     }
 
     var body: some View {
@@ -112,7 +123,7 @@ struct StopDetailsView: View {
                 if let departures {
                     StopDetailsRoutesView(
                         departures: departures,
-                        global: globalResponse,
+                        global: global,
                         now: now.toKotlinInstant(),
                         filter: stopFilter,
                         setFilter: setStopFilter,
@@ -131,23 +142,23 @@ struct StopDetailsView: View {
                         routeId: stopFilter.routeId,
                         stopId: stopId,
                         stopSequence: tripFilter.stopSequence?.intValue,
-                        global: globalResponse,
+                        global: global,
                         errorBannerVM: errorBannerVM,
                         nearbyVM: nearbyVM,
-                        mapVM: mapVM
+                        mapVM: mapVM,
+                        tripPredictionsRepository: tripPredictionsRepository,
+                        tripRepository: tripRepository,
+                        vehicleRepository: vehicleRepository
                     )
                 }
             }
-        }
-        .task {
-            loadGlobal()
         }
     }
 
     @ViewBuilder private func loadingBody() -> some View {
         StopDetailsRoutesView(
             departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: stopFilter),
-            global: globalResponse,
+            global: global,
             now: now.toKotlinInstant(),
             filter: stopFilter,
             setFilter: { _ in },
@@ -156,18 +167,6 @@ struct StopDetailsView: View {
             pinnedRoutes: pinnedRoutes
         )
         .loadingPlaceholder()
-    }
-
-    private func loadGlobal() {
-        Task {
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "StopDetailsView.loadGlobal",
-                getData: globalRepository.getGlobalData,
-                onSuccess: { globalResponse = $0 },
-                onRefreshAfterError: loadGlobal
-            )
-        }
     }
 
     func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {

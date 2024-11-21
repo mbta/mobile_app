@@ -23,19 +23,20 @@ struct TripDetailsView: View {
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
+
     @State var tripPredictionsRepository: ITripPredictionsRepository
+    @State var tripRepository: ITripRepository
+    @State var vehicleRepository: IVehicleRepository
+
+    @State var trip: Trip?
     @State var tripPredictions: PredictionsStreamDataResponse?
     @State var tripPredictionsLoaded: Bool = false
-    @State var tripRepository: ITripRepository
-    @State var trip: Trip?
     @State var tripSchedulesResponse: TripSchedulesResponse?
-    @State var vehicleRepository: IVehicleRepository
     @State var vehicleResponse: VehicleStreamDataResponse?
-
-    let analytics: TripDetailsAnalytics
 
     @State var now = Date.now.toKotlinInstant()
 
+    let analytics: TripDetailsAnalytics
     let inspection = Inspection<Self>()
 
     private var routeType: RouteType? {
@@ -52,6 +53,7 @@ struct TripDetailsView: View {
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
+
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle,
@@ -66,9 +68,11 @@ struct TripDetailsView: View {
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
+
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
+
         self.analytics = analytics
     }
 
@@ -77,7 +81,7 @@ struct TripDetailsView: View {
             if nearbyVM.showDebugMessages {
                 DebugView {
                     VStack {
-                        Text(verbatim: "trip id \(tripId)")
+                        Text(verbatim: "trip id: \(tripId)")
                         Text(verbatim: "vehicle id: \(vehicleId)")
                     }
                 }
