@@ -61,6 +61,8 @@ fun drawableByName(name: String): Int =
         "alert-small-silver-issue" -> R.drawable.alert_small_silver_issue
         "alert-small-silver-shuttle" -> R.drawable.alert_small_silver_shuttle
         "alert-small-silver-suspension" -> R.drawable.alert_small_silver_suspension
+        "empty-map-grid" -> R.drawable.empty_map_grid
+        "empty-search" -> R.drawable.empty_search
         "fa-chevron-down" -> R.drawable.fa_chevron_down
         "fa-chevron-left" -> R.drawable.fa_chevron_left
         "fa-chevron-right" -> R.drawable.fa_chevron_right
@@ -69,6 +71,8 @@ fun drawableByName(name: String): Int =
         "fa-clock" -> R.drawable.fa_clock
         "fa-location-arrow-solid" -> R.drawable.fa_location_arrow_solid
         "fa-magnifying-glass-solid" -> R.drawable.fa_magnifying_glass_solid
+        "fa-map" -> R.drawable.fa_map
+        "fa-phone" -> R.drawable.fa_phone
         "fa-route" -> R.drawable.fa_route
         "fa-xmark" -> R.drawable.fa_xmark
         "live-data" -> R.drawable.live_data
@@ -129,13 +133,19 @@ fun drawableByName(name: String): Int =
         "map-stop-wide-SILVER-terminal-746" -> R.drawable.map_stop_wide_silver_terminal_746
         "map-stop-wide-SILVER-terminal-749" -> R.drawable.map_stop_wide_silver_terminal_749
         "map-stop-wide-SILVER-terminal-751" -> R.drawable.map_stop_wide_silver_terminal_751
+        "mbta-logo" -> R.drawable.mbta_logo
         "mode-bus" -> R.drawable.mode_bus
         "mode-cr" -> R.drawable.mode_cr
         "mode-ferry" -> R.drawable.mode_ferry
         "mode-subway" -> R.drawable.mode_subway
+        "onboarding-halo" -> R.drawable.onboarding_halo
+        "onboarding-more-button" -> R.drawable.onboarding_more_button
+        "onboarding-transit-lines" -> R.drawable.onboarding_transit_lines
         "pinned-route-active" -> R.drawable.pinned_route_active
         "pinned-route-inactive" -> R.drawable.pinned_route_inactive
         "t-logo" -> R.drawable.t_logo
+        "tab-icon-more" -> R.drawable.tab_icon_more
+        "tab-icon-nearby" -> R.drawable.tab_icon_nearby
         "vehicle-halo" -> R.drawable.vehicle_halo
         "vehicle-puck" -> R.drawable.vehicle_puck
         else -> throw IllegalArgumentException("Invalid drawable name $name")
