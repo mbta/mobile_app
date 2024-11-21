@@ -1,9 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.NearbyHierarchy.DirectionOrHeadsign
-import com.mbta.tid.mbta_app.model.NearbyHierarchy.LineOrRoute
-import com.mbta.tid.mbta_app.model.NearbyHierarchy.NearbyLeaf
-import com.mbta.tid.mbta_app.model.NearbyHierarchy.RouteAtStop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
@@ -12,13 +8,14 @@ import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.distance
 import kotlinx.datetime.Instant
 
-private typealias ByDirectionOrHeadsign = Map<DirectionOrHeadsign, NearbyLeaf>
+private typealias ByDirectionOrHeadsign =
+    Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>
 
-private typealias ByStopData = RouteAtStop<List<Direction>, ByDirectionOrHeadsign>
+private typealias ByStop = Map<Stop, NearbyHierarchy.ByStopData>
 
-private typealias ByStop = Map<Stop, ByStopData>
+private typealias ByLineOrRoute = Map<NearbyHierarchy.LineOrRoute, ByStop>
 
-private typealias ByLineOrRoute = Map<LineOrRoute, ByStop>
+private typealias StaticByStopData = Pair<List<Direction>, Map<String, Set<RoutePattern>>>
 
 /**
  * An intermediate data structure containing data to show in nearby transit grouped by line/route,
@@ -40,19 +37,10 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
     }
 
     /**
-     * Attaches some arbitrary data to a [LineOrRoute] at a [Stop] across all [DirectionOrHeadsign]s
-     * that will be listed there.
-     *
-     * In a full [NearbyHierarchy], [StopData] will always be a [List] of [Direction]s and [T] will
-     * always be a [ByDirectionOrHeadsign], but different parameters may exist during
-     * [NearbyHierarchy] construction.
-     *
-     * Fundamentally, this is just a [Pair], but I think it's clearer with a more specific name.
+     * Attaches the route directions to a [LineOrRoute] at a [Stop] across all
+     * [DirectionOrHeadsign]s that will be listed there.
      */
-    data class RouteAtStop<StopData, T>(val stopData: StopData, val data: T) {
-        /** Transform the [data] while leaving [stopData] unchanged. */
-        fun <U> map(f: (T) -> U): RouteAtStop<StopData, U> = RouteAtStop(stopData, f(data))
-    }
+    data class ByStopData(val directions: List<Direction>, val data: ByDirectionOrHeadsign)
 
     sealed interface DirectionOrHeadsign {
         data class Direction(val direction: com.mbta.tid.mbta_app.model.Direction) :
@@ -66,90 +54,35 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
      * Since we only know whether or not to group data by direction once all the data is available,
      * we need to represent partially-constructed hierarchies that only group by route and stop.
      */
-    data class PartialHierarchy<StopData, T>(
-        val data: Map<LineOrRoute, Map<Stop, RouteAtStop<StopData, T>>>
-    ) {
-        /**
-         * Transforms each [RouteAtStop.data] while leaving the adjacent [RouteAtStop.stopData]
-         * unchanged.
-         */
-        fun <U> map(f: (T) -> U): PartialHierarchy<StopData, U> =
+    data class PartialHierarchy<T>(val data: Map<LineOrRoute, Map<Stop, T>>) {
+        /** Transforms each [T]. */
+        fun <U> map(f: (T) -> U): PartialHierarchy<U> =
             data
                 .mapValues { (_, routeData) ->
-                    routeData.mapValues { (_, routeAtStop) -> routeAtStop.map(f) }
+                    routeData.mapValues { (_, routeAtStop) -> f(routeAtStop) }
                 }
                 .let(::PartialHierarchy)
 
-        /**
-         * Transforms each [RouteAtStop] entirely, changing both its [RouteAtStop.stopData] and its
-         * [RouteAtStop.data].
-         */
-        fun <SD2, U> map(
-            processStopData: (StopData) -> SD2,
-            processData: (T) -> U
-        ): PartialHierarchy<SD2, U> =
-            data
-                .mapValues { (_, routeData) ->
-                    routeData.mapValues { (_, routeAtStop) ->
-                        RouteAtStop(
-                            processStopData(routeAtStop.stopData),
-                            processData(routeAtStop.data)
-                        )
-                    }
-                }
-                .let(::PartialHierarchy)
-
-        /**
-         * Transforms each [RouteAtStop.data] with a function that receives the full context of that
-         * data.
-         */
-        fun <U> mapInContext(
-            f: (LineOrRoute, Stop, StopData, T) -> U
-        ): PartialHierarchy<StopData, U> =
+        /** Transforms each [T] with a function that receives the full context of that data. */
+        fun <U> mapInContext(f: (LineOrRoute, Stop, T) -> U): PartialHierarchy<U> =
             data
                 .mapValues { (lineOrRoute, routeData) ->
-                    routeData.mapValues { (stop, routeAtStop) ->
-                        routeAtStop.map { f(lineOrRoute, stop, routeAtStop.stopData, it) }
-                    }
+                    routeData.mapValues { (stop, routeAtStop) -> f(lineOrRoute, stop, routeAtStop) }
                 }
                 .let(::PartialHierarchy)
 
         /**
-         * Transforms each [RouteAtStop.stopData] with a function that receives the full context of
-         * that stop data.
+         * Combines this [PartialHierarchy] with another [PartialHierarchy], creating [Pair]s. Data
+         * that is absent in one [PartialHierarchy] will be represented by `null` in the [Pair].
          */
-        fun <SD2> mapStopDataInContext(
-            f: (LineOrRoute, Stop, StopData, T) -> SD2
-        ): PartialHierarchy<SD2, T> =
-            data
-                .mapValues { (lineOrRoute, routeData) ->
-                    routeData.mapValues { (stop, routeAtStop) ->
-                        RouteAtStop(
-                            f(lineOrRoute, stop, routeAtStop.stopData, routeAtStop.data),
-                            routeAtStop.data
-                        )
-                    }
-                }
-                .let(::PartialHierarchy)
-
-        /**
-         * Combines this [PartialHierarchy] with another [PartialHierarchy], creating [Pair]s for
-         * both the [RouteAtStop.stopData] and the [RouteAtStop.data]. Data that is absent in one
-         * [PartialHierarchy] will be represented by `null` in the [Pair].
-         */
-        fun <SD2, U> zip(
-            other: PartialHierarchy<SD2, U>
-        ): PartialHierarchy<Pair<StopData?, SD2?>, Pair<T?, U?>> =
+        fun <U> zip(other: PartialHierarchy<U>): PartialHierarchy<Pair<T?, U?>> =
             (data.keys + other.data.keys)
                 .associateWith { lineOrRoute ->
                     (data[lineOrRoute]?.keys.orEmpty() + other.data[lineOrRoute]?.keys.orEmpty())
                         .associateWith { stop ->
                             val ownData = data[lineOrRoute]?.get(stop)
                             val otherData = other.data[lineOrRoute]?.get(stop)
-                            RouteAtStop(
-                                Pair(ownData?.stopData, otherData?.stopData),
-                                Pair(ownData?.data, otherData?.data)
-                            )
+                            Pair(ownData, otherData)
                         }
                 }
                 .let(::PartialHierarchy)
@@ -200,16 +133,15 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
         fun fromSchedules(
             global: GlobalResponse,
             schedules: ScheduleResponse,
-        ): PartialHierarchy<Unit, List<Schedule>> {
-            val result = mutablePartialHierarchy<Unit, MutableList<Schedule>>()
+        ): PartialHierarchy<List<Schedule>> {
+            val result = mutablePartialHierarchy<MutableList<Schedule>>()
 
             for (schedule in schedules.schedules) {
                 val parentStop = parentStop(global, schedule.stopId) ?: continue
                 val lineOrRoute = lineOrRoute(global, schedule.routeId) ?: continue
                 result
                     .getOrPut(lineOrRoute, ::mutableMapOf)
-                    .getOrPut(parentStop) { RouteAtStop(Unit, mutableListOf()) }
-                    .data
+                    .getOrPut(parentStop) { mutableListOf() }
                     .add(schedule)
             }
 
@@ -223,16 +155,15 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
         fun fromPredictions(
             global: GlobalResponse,
             predictions: PredictionsStreamDataResponse,
-        ): PartialHierarchy<Unit, List<Prediction>> {
-            val result = mutablePartialHierarchy<Unit, MutableList<Prediction>>()
+        ): PartialHierarchy<List<Prediction>> {
+            val result = mutablePartialHierarchy<MutableList<Prediction>>()
 
             for (prediction in predictions.predictions.values) {
                 val parentStop = parentStop(global, prediction.stopId) ?: continue
                 val lineOrRoute = lineOrRoute(global, prediction.routeId) ?: continue
                 result
                     .getOrPut(lineOrRoute, ::mutableMapOf)
-                    .getOrPut(parentStop) { RouteAtStop(Unit, mutableListOf()) }
-                    .data
+                    .getOrPut(parentStop) { mutableListOf() }
                     .add(prediction)
             }
 
@@ -248,35 +179,29 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse,
             filterAtTime: Instant,
-        ): PartialHierarchy<Unit, List<UpcomingTrip>> =
+        ): PartialHierarchy<List<UpcomingTrip>> =
             schedules
                 ?.let { fromSchedules(global, it) }
                 .orEmpty()
                 .zip(fromPredictions(global, predictions))
-                .map(
-                    {},
-                    { (schedulesHere, predictionsHere) ->
-                        UpcomingTrip.tripsFromData(
-                            global.stops,
-                            schedulesHere.orEmpty(),
-                            predictionsHere.orEmpty(),
-                            schedules?.trips.orEmpty() + predictions.trips,
-                            predictions.vehicles,
-                            filterAtTime,
-                        )
-                    }
-                )
+                .map { (schedulesHere, predictionsHere) ->
+                    UpcomingTrip.tripsFromData(
+                        global.stops,
+                        schedulesHere.orEmpty(),
+                        predictionsHere.orEmpty(),
+                        schedules?.trips.orEmpty() + predictions.trips,
+                        predictions.vehicles,
+                        filterAtTime,
+                    )
+                }
 
         /**
          * Converts a [NearbyStaticData] grouping into a [PartialHierarchy].
          *
-         * The resulting [RouteAtStop.stopData] is the list of directions on a route at a stop, and
-         * the [RouteAtStop.data] is a map from child stop IDs to the [RoutePattern]s at that child
-         * stop.
+         * The resulting [Pair.first] is the list of directions on a route at a stop, and the
+         * [Pair.second] is a map from child stop IDs to the [RoutePattern]s at that child stop.
          */
-        fun fromStaticData(
-            staticData: NearbyStaticData
-        ): PartialHierarchy<List<Direction>, Map<String, Set<RoutePattern>>> {
+        fun fromStaticData(staticData: NearbyStaticData): PartialHierarchy<StaticByStopData> {
             val routePatternsInHierarchy =
                 staticData.data.associate { transitWithStops ->
                     val lineOrRoute =
@@ -302,7 +227,7 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
                                 }
                             }
                             val routeAtStop =
-                                RouteAtStop(
+                                Pair(
                                     stopPatterns.directions,
                                     patternsByChildStop.mapValues { it.value.toSet() }
                                 )
@@ -330,13 +255,13 @@ data class NearbyHierarchy(private val data: ByLineOrRoute) {
             return stop.resolveParent(global.stops)
         }
 
-        private fun <StopData, T> mutablePartialHierarchy():
-            MutableMap<LineOrRoute, MutableMap<Stop, RouteAtStop<StopData, T>>> = mutableMapOf()
+        private fun <T> mutablePartialHierarchy(): MutableMap<LineOrRoute, MutableMap<Stop, T>> =
+            mutableMapOf()
     }
 }
 
-fun <SD, T> NearbyHierarchy.PartialHierarchy<SD, T>?.orEmpty():
-    NearbyHierarchy.PartialHierarchy<SD, T> = this ?: NearbyHierarchy.PartialHierarchy(emptyMap())
+fun <T> NearbyHierarchy.PartialHierarchy<T>?.orEmpty(): NearbyHierarchy.PartialHierarchy<T> =
+    this ?: NearbyHierarchy.PartialHierarchy(emptyMap())
 
 /**
  * Turns a [NearbyHierarchy.PartialHierarchy] created by [NearbyHierarchy.PartialHierarchy.zip]ping
@@ -347,16 +272,17 @@ fun <SD, T> NearbyHierarchy.PartialHierarchy<SD, T>?.orEmpty():
  * [Direction].
  *
  * Preserves the directions from the static data if they exist, and recomputes them if a
- * [RouteAtStop] contains only realtime data, which should only happen in exceptional circumstances.
+ * [NearbyHierarchy.ByStopData] contains only realtime data, which should only happen in exceptional
+ * circumstances.
  */
-fun NearbyHierarchy.PartialHierarchy<
-    Pair<List<Direction>?, Unit?>, Pair<Map<String, Set<RoutePattern>>?, List<UpcomingTrip>?>
->
-    .withLabels(global: GlobalResponse): NearbyHierarchy {
-    return this.mapInContext { lineOrRoute, stop, _, (routePatternsByChildStop, upcomingTrips) ->
+fun NearbyHierarchy.PartialHierarchy<Pair<StaticByStopData?, List<UpcomingTrip>?>>.withLabels(
+    global: GlobalResponse
+): NearbyHierarchy {
+    return this.mapInContext { lineOrRoute, stop, (staticData, upcomingTrips) ->
+            val (stopDirections, routePatternsByChildStop) = staticData ?: Pair(null, null)
             val groupedDirectionForPattern: Map<String, Direction?> =
                 when (lineOrRoute) {
-                    is LineOrRoute.Line -> {
+                    is NearbyHierarchy.LineOrRoute.Line -> {
                         val allPatterns = routePatternsByChildStop.orEmpty().flatMap { it.value }
 
                         val patternsByDirection =
@@ -374,17 +300,22 @@ fun NearbyHierarchy.PartialHierarchy<
                             }
                             .toMap()
                     }
-                    is LineOrRoute.Route -> emptyMap()
+                    is NearbyHierarchy.LineOrRoute.Route -> emptyMap()
                 }
 
-            val result = mutableMapOf<DirectionOrHeadsign, NearbyHierarchy.MutableNearbyLeaf>()
+            val resultData =
+                mutableMapOf<
+                    NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.MutableNearbyLeaf
+                >()
 
             fun leaf(direction: Direction) =
-                result.getOrPut(DirectionOrHeadsign.Direction(direction)) {
+                resultData.getOrPut(NearbyHierarchy.DirectionOrHeadsign.Direction(direction)) {
                     NearbyHierarchy.MutableNearbyLeaf()
                 }
             fun leaf(headsign: String, route: Route, line: Line?) =
-                result.getOrPut(DirectionOrHeadsign.Headsign(headsign, route, line)) {
+                resultData.getOrPut(
+                    NearbyHierarchy.DirectionOrHeadsign.Headsign(headsign, route, line)
+                ) {
                     NearbyHierarchy.MutableNearbyLeaf()
                 }
 
@@ -402,7 +333,7 @@ fun NearbyHierarchy.PartialHierarchy<
                                     global.trips[routePattern.representativeTripId]?.headsign
                                         ?: continue
                                 val route = global.routes[routePattern.routeId] ?: continue
-                                val line = (lineOrRoute as? LineOrRoute.Line)?.line
+                                val line = (lineOrRoute as? NearbyHierarchy.LineOrRoute.Line)?.line
                                 val leaf = leaf(headsign, route, line)
                                 leaf.childStopIds.add(childStopId)
                                 leaf.routePatterns.add(routePattern)
@@ -418,7 +349,7 @@ fun NearbyHierarchy.PartialHierarchy<
                         leaf(direction)
                     } else {
                         val route = global.routes[upcomingTrip.trip.routeId] ?: continue
-                        val line = (lineOrRoute as? LineOrRoute.Line)?.line
+                        val line = (lineOrRoute as? NearbyHierarchy.LineOrRoute.Line)?.line
                         leaf(upcomingTrip.trip.headsign, route, line)
                     }
                 val stopId = upcomingTrip.stopId
@@ -431,50 +362,58 @@ fun NearbyHierarchy.PartialHierarchy<
                 leaf.upcomingTrips.add(upcomingTrip)
             }
 
-            result.mapValues { it.value.finished() }
-        }
-        .mapStopDataInContext({ lineOrRoute, stop, (stopDirections, _), dataWithinStop ->
-            stopDirections
-                ?: when (lineOrRoute) {
-                    is LineOrRoute.Line -> {
-                        listOf(0, 1).map { directionId ->
-                            val typicalHere =
-                                dataWithinStop.filterValues { leaf ->
-                                    leaf.routePatterns.any { pattern ->
-                                        pattern?.typicality == RoutePattern.Typicality.Typical &&
-                                            pattern.directionId == directionId
+            val resultDirections =
+                stopDirections
+                    ?: when (lineOrRoute) {
+                        is NearbyHierarchy.LineOrRoute.Line -> {
+                            listOf(0, 1).map { directionId ->
+                                val typicalHere =
+                                    resultData.filterValues { leaf ->
+                                        leaf.routePatterns.any { pattern ->
+                                            pattern?.typicality ==
+                                                RoutePattern.Typicality.Typical &&
+                                                pattern.directionId == directionId
+                                        }
                                     }
-                                }
-                            // Directions in this fallback will not check overrides, but this only
-                            // happens if an entire route-at-stop is only present in the realtime
-                            // data, and StaticPatterns.ForLine.groupedDirection also doesn't check
-                            // overrides, so it's probably fine
-                            if (typicalHere.isEmpty()) {
-                                Direction(directionId, lineOrRoute.routes.first())
-                            } else if (typicalHere.size > 1) {
-                                Direction(
-                                    lineOrRoute.routes.first().directionNames[directionId] ?: "",
-                                    null,
-                                    directionId
-                                )
-                            } else {
-                                val typicalEntry = typicalHere.entries.single()
-                                when (val key = typicalEntry.key) {
-                                    is DirectionOrHeadsign.Direction -> key.direction
-                                    is DirectionOrHeadsign.Headsign ->
-                                        Direction(
-                                            key.route.directionNames[directionId] ?: "",
-                                            key.headsign,
-                                            directionId
-                                        )
+                                // Directions in this fallback will not check overrides, but this
+                                // only
+                                // happens if an entire route-at-stop is only present in the
+                                // realtime
+                                // data, and StaticPatterns.ForLine.groupedDirection also doesn't
+                                // check
+                                // overrides, so it's probably fine
+                                if (typicalHere.isEmpty()) {
+                                    Direction(directionId, lineOrRoute.routes.first())
+                                } else if (typicalHere.size > 1) {
+                                    Direction(
+                                        lineOrRoute.routes.first().directionNames[directionId]
+                                            ?: "",
+                                        null,
+                                        directionId
+                                    )
+                                } else {
+                                    val typicalEntry = typicalHere.entries.single()
+                                    when (val key = typicalEntry.key) {
+                                        is NearbyHierarchy.DirectionOrHeadsign.Direction ->
+                                            key.direction
+                                        is NearbyHierarchy.DirectionOrHeadsign.Headsign ->
+                                            Direction(
+                                                key.route.directionNames[directionId] ?: "",
+                                                key.headsign,
+                                                directionId
+                                            )
+                                    }
                                 }
                             }
                         }
+                        is NearbyHierarchy.LineOrRoute.Route ->
+                            listOf(Direction(0, lineOrRoute.route), Direction(1, lineOrRoute.route))
                     }
-                    is LineOrRoute.Route ->
-                        listOf(Direction(0, lineOrRoute.route), Direction(1, lineOrRoute.route))
-                }
-        })
+            NearbyHierarchy.ByStopData(
+                resultDirections,
+                resultData.mapValues { it.value.finished() }
+            )
+        }
         .let { NearbyHierarchy(it.data) }
 }
 
@@ -491,7 +430,11 @@ fun ByStop.pickOnlyNearest(sortByDistanceFrom: Position?): ByStop {
     }
     val result =
         mutableMapOf<
-            Stop, RouteAtStop<List<Direction>, MutableMap<DirectionOrHeadsign, NearbyLeaf>>
+            Stop,
+            Pair<
+                List<Direction>,
+                MutableMap<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>
+            >
         >()
     val routePatternIdsShown = mutableSetOf<String?>()
 
@@ -507,8 +450,8 @@ fun ByStop.pickOnlyNearest(sortByDistanceFrom: Position?): ByStop {
             val newUpcomingTrips =
                 leaf.upcomingTrips.filter { newRoutePatternIds.contains(it.trip.routePatternId) }
             result
-                .getOrPut(stop) { RouteAtStop(routeAtStop.stopData, mutableMapOf()) }
-                .data[directionOrHeadsign] =
+                .getOrPut(stop) { Pair(routeAtStop.directions, mutableMapOf()) }
+                .second[directionOrHeadsign] =
                 leaf.copy(
                     routePatterns = newRoutePatterns.toSet(),
                     upcomingTrips = newUpcomingTrips
@@ -517,5 +460,5 @@ fun ByStop.pickOnlyNearest(sortByDistanceFrom: Position?): ByStop {
         }
     }
 
-    return result.mapValues { it.value.map { it } }
+    return result.mapValues { NearbyHierarchy.ByStopData(it.value.first, it.value.second) }
 }
