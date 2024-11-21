@@ -41,6 +41,7 @@ sealed class RealtimePatterns {
 
     abstract val id: String
 
+    // contains null if an added trip with no pattern is included in the upcoming trips
     abstract val patterns: List<RoutePattern?>
     abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
