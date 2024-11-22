@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.applicableAlerts
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -208,21 +207,35 @@ data class Alert(
 
     companion object {
         /**
-         * Filter the list of alerts to only the ones that match the given filter parameters and
-         * affect boarding.
+         * Returns alerts that are applicable to the passed in routes and stops
+         *
+         * Criteria:
+         * - Route ID matches an alert [Alert.InformedEntity]
+         * - Stop ID matches an alert [Alert.InformedEntity]
+         * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
          */
-        fun filter(
+        fun applicableAlerts(
             alerts: List<Alert>,
             directionId: Int?,
             routeIds: List<String>,
-            stopIds: Set<String>
+            stopIds: Set<String>?
         ): List<Alert> {
-            return applicableAlerts(
-                routes = routeIds,
-                stopIds = stopIds,
-                directionId = directionId,
-                alerts = alerts
-            )
+            return alerts
+                .filter { alert ->
+                    alert.anyInformedEntity {
+                        routeIds.any { routeId ->
+                            stopIds?.any { stopId ->
+                                it.appliesTo(
+                                    directionId = directionId,
+                                    routeId = routeId,
+                                    stopId = stopId
+                                )
+                            }
+                                ?: it.appliesTo(directionId = directionId, routeId = routeId)
+                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+                    }
+                }
+                .distinct()
         }
 
         /**
@@ -237,20 +250,16 @@ data class Alert(
             trip: Trip,
             targetStopWithChildren: Set<String>,
         ): List<Alert> {
+            val stopIds = trip.stopIds ?: emptyList()
+
             val indexOfTargetStopInPattern =
-                trip.stopIds?.indexOfFirst { targetStopWithChildren.contains(it) }
-            if (
-                indexOfTargetStopInPattern != null &&
-                    indexOfTargetStopInPattern != -1 &&
-                    trip.stopIds != null &&
-                    indexOfTargetStopInPattern < trip.stopIds.size - 1
-            ) {
-                val downstreamStops =
-                    trip.stopIds.subList(indexOfTargetStopInPattern + 1, trip.stopIds.size)
+                stopIds.indexOfFirst { targetStopWithChildren.contains(it) }
+            if (indexOfTargetStopInPattern != -1 && indexOfTargetStopInPattern < stopIds.size - 1) {
+                val downstreamStops = stopIds.subList(indexOfTargetStopInPattern + 1, stopIds.size)
                 val firstStopAlerts =
                     downstreamStops
                         .map { stop ->
-                            filter(
+                            applicableAlerts(
                                 alerts.toList() ?: listOf(),
                                 trip.directionId,
                                 listOf(trip.routeId),

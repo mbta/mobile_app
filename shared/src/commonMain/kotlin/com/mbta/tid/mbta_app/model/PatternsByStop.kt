@@ -47,7 +47,7 @@ data class PatternsByStop(
                                 it,
                                 upcomingTripsMap,
                                 staticData.stop.id,
-                                Alert.filter(
+                                Alert.applicableAlerts(
                                     alerts.toList(),
                                     null,
                                     listOf(it.route.id),
@@ -168,7 +168,7 @@ data class PatternsByStop(
                         staticData,
                         upcomingTripsMap,
                         parentStopId,
-                        Alert.filter(
+                        Alert.applicableAlerts(
                             alerts.toList(),
                             null,
                             staticData.routeIds,
@@ -217,7 +217,7 @@ data class PatternsByStop(
                         ),
                         upcomingTripsMap,
                         parentStopId,
-                        Alert.filter(
+                        Alert.applicableAlerts(
                             alerts.toList(),
                             null,
                             staticData.routeIds,
@@ -240,7 +240,12 @@ data class PatternsByStop(
                     staticData,
                     upcomingTripsMap,
                     parentStopId,
-                    Alert.filter(alerts.toList(), null, staticData.routeIds, staticData.stopIds),
+                    Alert.applicableAlerts(
+                        alerts.toList(),
+                        null,
+                        staticData.routeIds,
+                        staticData.stopIds
+                    ),
                     alertsDownstream(
                         alerts.toList(),
                         staticData.patterns,

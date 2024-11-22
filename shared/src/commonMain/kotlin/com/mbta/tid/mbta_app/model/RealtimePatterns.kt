@@ -172,7 +172,7 @@ sealed class RealtimePatterns {
                 is ByDirection -> this.routes.map { it.id }
             }
         return if (alertsHere != null) {
-            Alert.filter(alertsHere as List, directionId, routeIds, stopIds)
+            Alert.applicableAlerts(alertsHere as List, directionId, routeIds, stopIds)
         } else {
             null
         }
@@ -353,37 +353,6 @@ sealed class RealtimePatterns {
     }
 
     companion object {
-
-        /**
-         * Returns alerts that are applicable to the passed in routes and stops
-         *
-         * Criteria:
-         * - Route ID matches an alert [Alert.InformedEntity]
-         * - Stop ID matches an alert [Alert.InformedEntity]
-         * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
-         */
-        fun applicableAlerts(
-            routes: List<String>,
-            stopIds: Set<String>?,
-            directionId: Int? = null,
-            alerts: Collection<Alert>
-        ): List<Alert> =
-            alerts
-                .filter { alert ->
-                    alert.anyInformedEntity {
-                        routes.any { routeId ->
-                            stopIds?.any { stopId ->
-                                it.appliesTo(
-                                    directionId = directionId,
-                                    routeId = routeId,
-                                    stopId = stopId
-                                )
-                            }
-                                ?: it.appliesTo(directionId = directionId, routeId = routeId)
-                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
-                    }
-                }
-                .distinct()
 
         fun formatUpcomingTrip(
             now: Instant,
