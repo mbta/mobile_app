@@ -132,24 +132,9 @@ jobs:
         env:
           iOS: "17.5"
           iPhone: "15"
-      - name: Build for testing
-        run: |
-          xcrun xcodebuild build-for-testing \
-            -scheme Staging \
-            -workspace iosApp/iosApp.xcworkspace \
-            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
-            -testProductsPath ~/xctest/TestProducts.xctestproducts \
-            -testPlan iosAppRetries \
-            -resultBundleVersion 3 \
-            -resultBundlePath ~/xctest/resultbundle.xcresult \
-            -IDEPostProgressNotifications=YES \
-            CODE_SIGN_IDENTITY=- \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            -hideShellScriptEnvironment
       - name: Run emulator tests
         run: |
-          xcrun xcodebuild test-without-building \
+          xcrun xcodebuild test \
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             -resultBundleVersion 3 \
             -resultBundlePath ~/xctest/resultbundle.xcresult \
