@@ -41,7 +41,8 @@ sealed class RealtimePatterns {
 
     abstract val id: String
 
-    abstract val patterns: List<RoutePattern>
+    // contains null if an added trip with no pattern is included in the upcoming trips
+    abstract val patterns: List<RoutePattern?>
     abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
     abstract val alertsDownstream: List<Alert>?
@@ -64,7 +65,7 @@ sealed class RealtimePatterns {
         val route: Route,
         val headsign: String,
         val line: Line?,
-        override val patterns: List<RoutePattern>,
+        override val patterns: List<RoutePattern?>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
         override val alertsDownstream: List<Alert> = emptyList(),
@@ -102,6 +103,25 @@ sealed class RealtimePatterns {
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
+
+        constructor(
+            headsign: NearbyHierarchy.DirectionOrHeadsign.Headsign,
+            leaf: NearbyHierarchy.NearbyLeaf,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
+        ) : this(
+            headsign.route,
+            headsign.headsign,
+            headsign.line,
+            leaf.routePatterns.sortedWith(nullsLast()),
+            leaf.upcomingTrips.sorted(),
+            alertsHere,
+            alertsDownstream,
+            hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
+            allDataLoaded,
+        )
     }
 
     /**
@@ -115,7 +135,7 @@ sealed class RealtimePatterns {
         val line: Line,
         val routes: List<Route>,
         val direction: Direction,
-        override val patterns: List<RoutePattern>,
+        override val patterns: List<RoutePattern?>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
         override val alertsDownstream: List<Alert>? = emptyList(),
@@ -161,6 +181,31 @@ sealed class RealtimePatterns {
             alertsHere,
             alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
+            allDataLoaded,
+        )
+
+        constructor(
+            line: NearbyHierarchy.LineOrRoute.Line,
+            direction: NearbyHierarchy.DirectionOrHeadsign.Direction,
+            leaf: NearbyHierarchy.NearbyLeaf,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
+        ) : this(
+            line.line,
+            // only the routes that are actually represented here, unless there aren't any patterns
+            // left here
+            line.routes
+                .filter { route -> leaf.routePatterns.any { it?.routeId == route.id } }
+                .takeUnless { it.isEmpty() }
+                ?: line.routes.toList(),
+            direction.direction,
+            leaf.routePatterns.sortedWith(nullsLast()),
+            leaf.upcomingTrips.sorted(),
+            alertsHere,
+            alertsDownstream,
+            hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
             allDataLoaded,
         )
     }
@@ -248,7 +293,7 @@ sealed class RealtimePatterns {
      * If any typicality is unknown, the route should be shown, and so this will return true.
      */
     fun isTypical() =
-        patterns.any { it.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
+        patterns.any { it?.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
 
     /**
      * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
@@ -296,7 +341,7 @@ sealed class RealtimePatterns {
             return upcomingTrip.trip.directionId
         }
         for (pattern in patterns) {
-            return pattern.directionId
+            if (pattern != null) return pattern.directionId
         }
         // there shouldn't be a headsign with no trips and no patterns
         throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
@@ -353,7 +398,6 @@ sealed class RealtimePatterns {
     }
 
     companion object {
-
         fun formatUpcomingTrip(
             now: Instant,
             upcomingTrip: UpcomingTrip,
@@ -373,10 +417,10 @@ sealed class RealtimePatterns {
 
         fun hasSchedulesToday(
             optionalHasSchedulesTodayByPattern: Map<String, Boolean>?,
-            patterns: List<RoutePattern>
+            patterns: Collection<RoutePattern?>
         ): Boolean {
             val hasSchedulesTodayByPattern = optionalHasSchedulesTodayByPattern ?: return true
-            return patterns.any { pattern -> hasSchedulesTodayByPattern[pattern.id] == true }
+            return patterns.any { pattern -> hasSchedulesTodayByPattern[pattern?.id] == true }
         }
     }
 }

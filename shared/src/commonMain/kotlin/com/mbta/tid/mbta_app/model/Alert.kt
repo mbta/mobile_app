@@ -215,7 +215,7 @@ data class Alert(
          * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
          */
         fun applicableAlerts(
-            alerts: List<Alert>,
+            alerts: Collection<Alert>,
             directionId: Int?,
             routeIds: List<String>,
             stopIds: Set<String>?

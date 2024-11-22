@@ -37,32 +37,48 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
+    @Published
+    var showDebugMessages: Bool = false
+
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
     @Published var selectingLocation = false
+    @Published var tripHeadsignsEnabled = false
+
     private let alertsRepository: IAlertsRepository
     private let errorBannerRepository: IErrorBannerStateRepository
     private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
     private var analytics: NearbyTransitAnalytics
+    private let settingsRepository: ISettingsRepository
 
     init(
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
+        showDebugMessages: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
-        analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+        analytics: NearbyTransitAnalytics = AnalyticsProvider.shared,
+        settingsRepository: ISettingsRepository = RepositoryDI().settings
     ) {
         self.departures = departures
         self.navigationStack = navigationStack
+        self.showDebugMessages = showDebugMessages
+
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
+        self.settingsRepository = settingsRepository
+    }
+
+    @MainActor
+    func loadDebugSetting() async {
+        showDebugMessages = await (try? settingsRepository.getSettings()[.devDebugMode]?.boolValue) ?? false
     }
 
     /**
@@ -157,6 +173,13 @@ class NearbyViewModel: ObservableObject {
 
     func leaveAlertsChannel() {
         alertsRepository.disconnect()
+    }
+
+    func loadTripHeadsigns() {
+        Task {
+            let result = try await settingsRepository.getSettings()[.tripHeadsigns]?.boolValue ?? false
+            DispatchQueue.main.async { self.tripHeadsignsEnabled = result }
+        }
     }
 }
 

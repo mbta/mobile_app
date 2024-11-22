@@ -650,7 +650,8 @@ class RealtimePatternsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 Clock.System.now(),
-                emptySet()
+                emptySet(),
+                useTripHeadsigns = false,
             )
 
         assertEquals(
@@ -747,7 +748,8 @@ class RealtimePatternsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 now,
-                emptySet()
+                emptySet(),
+                useTripHeadsigns = false,
             )
 
         assertEquals(

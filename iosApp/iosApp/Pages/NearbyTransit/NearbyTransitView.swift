@@ -169,6 +169,7 @@ struct NearbyTransitView: View {
     var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
+        nearbyVM.loadTripHeadsigns()
         getGlobal()
         getNearby(location: location, globalData: globalData)
         joinPredictions(state.nearbyByRouteAndStop?.stopIds())
@@ -350,7 +351,8 @@ struct NearbyTransitView: View {
             predictions: predictions,
             alerts: alerts,
             filterAtTime: filterAtTime,
-            pinnedRoutes: pinnedRoutes
+            pinnedRoutes: pinnedRoutes,
+            useTripHeadsigns: nearbyVM.tripHeadsignsEnabled
         )
     }
 }

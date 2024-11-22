@@ -39,6 +39,7 @@ class SettingsRepositoryTest : KoinTest {
             mapOf(
                 Settings.DevDebugMode to true,
                 Settings.SearchRouteResults to false,
+                Settings.TripHeadsigns to false,
                 Settings.HideMaps to false,
             ),
             repo.getSettings()
