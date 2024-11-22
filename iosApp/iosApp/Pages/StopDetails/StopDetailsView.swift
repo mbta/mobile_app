@@ -156,7 +156,8 @@ struct StopDetailsView: View {
         else { return }
         analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
-            headsign.patterns.map { pattern in pattern.directionId }
+            // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
+            headsign.patterns.compactMap { pattern in (pattern as? RoutePattern)?.directionId }
         }.min() ?? 0
         setFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }

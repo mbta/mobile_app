@@ -414,7 +414,8 @@ class UpcomingTripTest {
                 objects.schedules.values.toList(),
                 objects.predictions.values.toList(),
                 objects.trips,
-                objects.vehicles
+                objects.vehicles,
+                Clock.System.now()
             )
 
         assertEquals(

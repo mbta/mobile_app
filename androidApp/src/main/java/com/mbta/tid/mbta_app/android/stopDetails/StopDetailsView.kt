@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.util.getGlobalData
 import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -62,7 +61,7 @@ fun StopDetailsView(
             if (patterns != null) {
                 val defaultDirectionId =
                     patterns.patterns
-                        .flatMap { it.patterns.map(RoutePattern::directionId) }
+                        .flatMap { it.patterns.mapNotNull { it?.directionId } }
                         .minOrNull()
                         ?: 0
                 updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
