@@ -140,7 +140,10 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
 }
 
-if (System.getenv("CI_XCODE_CLOUD") != "TRUE") {
+// don't run Android BOM codegen for iOS-only CI
+if (
+    !(System.getenv("CI") == "TRUE" && DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
+) {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
 }
 
