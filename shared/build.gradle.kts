@@ -146,7 +146,7 @@ if (System.getenv("CI_XCODE_CLOUD") != "TRUE") {
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
     dependsOn("bomAndroid")
-    mustRunAfter("spotlessKotlin")
+    mustRunAfter("spotlessKotlin", "cyclonedxBom")
     inputPath = layout.buildDirectory.file("boms/bom-android.json")
     outputPath =
         layout.projectDirectory.file(
