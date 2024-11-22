@@ -120,6 +120,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
     }
 
     func testCloseButtonCloses() throws {

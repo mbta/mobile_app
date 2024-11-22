@@ -396,33 +396,28 @@ final class StopDetailsPageTests: XCTestCase {
     }
 
     @MainActor
-    func testAppliesFilterAutomatically() throws {
+    func testAppliesStopFilterAutomatically() throws {
         let objects = ObjectCollectionBuilder()
 
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let trip = objects.trip { trip in
+
+        let tripId = "trip"
+        let routePattern = objects.routePattern(route: route) { pattern in
+            pattern.representativeTripId = tripId
+        }
+        let trip = objects.trip(routePattern: routePattern) { trip in
+            trip.id = tripId
             trip.directionId = 0
             trip.stopIds = [stop.id]
+            trip.routePatternId = routePattern.id
         }
-        let routePattern = objects.routePattern(route: route) { pattern in
-            pattern.representativeTripId = trip.id
-        }
-
-        let schedule = objects.schedule { schedule in
+        objects.schedule { schedule in
             schedule.trip = trip
             schedule.routeId = route.id
             schedule.stopId = stop.id
             schedule.stopSequence = 0
             schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
-        }
-        objects.prediction(schedule: schedule) { prediction in
-            prediction.arrivalTime = (Date.now + 10 * 60).toKotlinInstant()
-        }
-        let vehicle = objects.vehicle { vehicle in
-            vehicle.currentStopSequence = 0
-            vehicle.currentStatus = .inTransitTo
-            vehicle.tripId = trip.id
         }
 
         let schedulesLoadedPublisher = PassthroughSubject<Void, Never>()
@@ -450,21 +445,83 @@ final class StopDetailsPageTests: XCTestCase {
             )
         )
 
-        let stopChangedPublisher = PassthroughSubject<Void, Never>()
-        let stopFilterExp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher) { view in
-            let stopFilter = nearbyVM.navigationStack.lastStopDetailsFilter
-            XCTAssertEqual(stopFilter, StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId))
-            try view.find(StopDetailsView.self).callOnChange(newValue: stopFilter)
-            stopChangedPublisher.send()
+        let stopFilterExp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher) { _ in
+            XCTAssertEqual(
+                nearbyVM.navigationStack.lastStopDetailsFilter,
+                StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId)
+            )
         }
 
-        let vehicleFilterExp = sut.inspection.inspect(onReceive: stopChangedPublisher, after: 2) { _ in
-//            XCTAssertEqual(
-//                nearbyVM.navigationStack.lastTripDetailsFilter,
-//                TripDetailsFilter(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 0, selectionLock: false)
-//            )
+        ViewHosting.host(view: sut)
+        wait(for: [stopFilterExp], timeout: 2)
+    }
+
+    @MainActor
+    func testAppliesTripFilterAutomatically() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let tripId = "trip"
+        let routePattern = objects.routePattern(route: route) { pattern in
+            pattern.representativeTripId = tripId
+        }
+        let trip = objects.trip(routePattern: routePattern) { trip in
+            trip.id = tripId
+            trip.directionId = 0
+            trip.stopIds = [stop.id]
+            trip.routePatternId = routePattern.id
+        }
+        let schedule = objects.schedule { schedule in
+            schedule.trip = trip
+            schedule.routeId = route.id
+            schedule.stopId = stop.id
+            schedule.stopSequence = 0
+            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+        }
+        objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+        }
+//        objects.vehicle { vehicle in
+//            vehicle.currentStopSequence = 0
+//            vehicle.currentStatus = .inTransitTo
+//            vehicle.tripId = trip.id
+//        }
+
+        let schedulesLoadedPublisher = PassthroughSubject<Void, Never>()
+
+        let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: stopFilter, tripFilter: nil)],
+            combinedStopAndTrip: true
+        )
+        nearbyVM.alerts = .init(alerts: [:])
+
+        let sut = StopDetailsPage(
+            stopId: stop.id,
+            stopFilter: stopFilter,
+            tripFilter: nil,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            viewportProvider: viewportProvider,
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .init(objects: objects)),
+            schedulesRepository: MockScheduleRepository(
+                scheduleResponse: .init(objects: objects),
+                callback: { _ in schedulesLoadedPublisher.send() }
+            )
+        )
+
+        let vehicleFilterExp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher) { _ in
+            XCTAssertEqual(
+                nearbyVM.navigationStack.lastTripDetailsFilter,
+                TripDetailsFilter(tripId: trip.id, vehicleId: nil, stopSequence: 0, selectionLock: false)
+            )
         }
         ViewHosting.host(view: sut)
-        wait(for: [stopFilterExp, vehicleFilterExp], timeout: 30)
+        wait(for: [vehicleFilterExp], timeout: 2)
     }
 }

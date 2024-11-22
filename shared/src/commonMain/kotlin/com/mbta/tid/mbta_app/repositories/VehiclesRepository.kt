@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.greenRoutes
@@ -85,13 +86,21 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
     }
 }
 
-class MockVehiclesRepository(val vehicles: List<Vehicle> = emptyList()) : IVehiclesRepository {
+class MockVehiclesRepository(val response: VehiclesStreamDataResponse) : IVehiclesRepository {
+    constructor(
+        vehicles: List<Vehicle> = emptyList()
+    ) : this(response = VehiclesStreamDataResponse(vehicles.associateBy { it.id }))
+
+    constructor(
+        objects: ObjectCollectionBuilder
+    ) : this(response = VehiclesStreamDataResponse(objects.vehicles))
+
     override fun connect(
         routeId: String,
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
     ) {
-        onReceive(ApiResult.Ok(VehiclesStreamDataResponse(vehicles.associateBy { it.id })))
+        onReceive(ApiResult.Ok(response))
     }
 
     override fun disconnect() {
