@@ -21,38 +21,45 @@ struct PredictionText: View {
         minutes - (hours * 60)
     }
 
-    var predictionKey: String.LocalizationValue {
-        let prediction: String.LocalizationValue = if hours >= 1 {
-            "\(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
+    var predictionKey: String {
+        if hours >= 1 {
+            String(format: NSLocalizedString(
+                "**%ld** hr **%ld** min",
+                comment: "Shorthand displayed number of hours and minutes until arrival, ex \"1 hr 32 min\""
+            ), hours, remainingMinutes)
         } else {
-            "\(minutes, specifier: "%ld") min"
+            String(format: NSLocalizedString(
+                "**%ld** min",
+                comment: "Shorthand displayed number of minutes until arrival, ex \"12 min\""
+            ), minutes)
         }
-        return prediction
     }
 
     var predictionString: AttributedString {
-        var prediction = AttributedString(localized: predictionKey)
-        for run in prediction.runs {
-            if run.localizedNumericArgument != nil {
-                prediction[run.range].font = Typography.headlineBold
-            } else {
-                prediction[run.range].font = Typography.body
-            }
+        do {
+            return try AttributedString(markdown: predictionKey)
+        } catch {
+            return AttributedString(predictionKey.filter { $0 != "*" })
         }
-        return prediction
-    }
-
-    var accessibilityKey: String.LocalizationValue {
-        let prediction: String.LocalizationValue = if hours >= 1 {
-            "in \(hours, specifier: "%ld") hr \(remainingMinutes, specifier: "%ld") min"
-        } else {
-            "in \(minutes, specifier: "%ld") min"
-        }
-        return prediction
     }
 
     var accessibilityString: String {
-        String(localized: accessibilityKey)
+        if hours >= 1 {
+            String(format: NSLocalizedString(
+                "in %ld hr %ld min",
+                comment: """
+                Shorthand displayed number of hours and minutes until arrival for VoiceOver,
+                ex 'in 1 hr 32 min'
+                """
+            ),
+            hours,
+            remainingMinutes)
+        } else {
+            String(format: NSLocalizedString(
+                "in %ld min",
+                comment: "Shorthand displayed number of minutes until arrival for VoiceOver, ex 'in 7 min'"
+            ), minutes)
+        }
     }
 
     var body: some View {

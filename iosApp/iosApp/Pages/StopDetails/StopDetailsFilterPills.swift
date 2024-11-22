@@ -13,12 +13,12 @@ struct StopDetailsFilterPills: View {
     enum FilterBy {
         var id: String {
             switch self {
-            case let .route(route, _): route.id
+            case let .route(route): route.id
             case let .line(line): line.id
             }
         }
 
-        case route(Route, Line?)
+        case route(Route)
         case line(Line)
     }
 
@@ -28,19 +28,21 @@ struct StopDetailsFilterPills: View {
     var setFilter: (StopDetailsFilter?) -> Void
 
     var body: some View {
+        let routePillHint = "Applies a filter so that only arrivals from this route are displayed"
         HStack(spacing: 0) {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(servedRoutes, id: \.id) { filterBy in
                             switch filterBy {
-                            case let .route(route, line):
+                            case let .route(route):
                                 RoutePill(
                                     route: route,
-                                    line: line,
+                                    line: nil,
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == route.id
                                 )
+                                .accessibilityHint(routePillHint)
                                 .frame(minWidth: 44, minHeight: 44, alignment: .center)
                                 .onTapGesture { tapRoutePill(filterBy) }
                             case let .line(line):
@@ -50,6 +52,7 @@ struct StopDetailsFilterPills: View {
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == line.id
                                 )
+                                .accessibilityHint(routePillHint)
                                 .frame(minWidth: 44, minHeight: 44, alignment: .center)
                                 .onTapGesture { tapRoutePill(filterBy) }
                             }
@@ -72,12 +75,26 @@ struct StopDetailsFilterPills: View {
             }
             if filter != nil {
                 Button(action: { setFilter(nil) }) {
-                    Text("All")
+                    Text("All", comment: "Button label for clearing selected route to display all routes at a station")
                         .foregroundStyle(Color.fill1)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 7)
                         .background(Color.contrast)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .accessibilityLabel(Text(
+                            "All routes",
+                            comment: """
+                            VoiceOver label for the button to clear
+                            selected route to display all routes at a station"
+                            """
+                        ))
+                        .accessibilityHint(Text(
+                            "Removes selected filter so that arrivals from all routes are displayed",
+                            comment: """
+                            VoiceOver hint for the button to
+                            clear selected route to display all routes at a station
+                            """
+                        ))
                 }
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
                 .padding(.trailing, 16)

@@ -21,22 +21,8 @@ class RealtimePatternsTest {
     private fun ParametricTest.anyContext() =
         anyEnumValueExcept(TripInstantDisplay.Context.TripDetails)
 
-    private fun ParametricTest.anyNonCommuterRailRouteType() =
-        anyEnumValueExcept(RouteType.COMMUTER_RAIL)
-
-    @Test
-    fun `formats as loading when null trips`() = parametricTest {
-        val now = Clock.System.now()
-
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route()
-
-        assertEquals(
-            RealtimePatterns.Format.Loading,
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), null, null)
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
-        )
-    }
+    private fun ParametricTest.anyNonScheduleBasedRouteType() =
+        anyEnumValueExcept(RouteType.COMMUTER_RAIL, RouteType.FERRY)
 
     @Test
     fun `formats as alert with no trips and major alert`() = parametricTest {
@@ -50,7 +36,7 @@ class RealtimePatternsTest {
         assertEquals(
             RealtimePatterns.Format.NoService(alert),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
+                .format(now, anyNonScheduleBasedRouteType(), anyContext())
         )
     }
 
@@ -124,7 +110,7 @@ class RealtimePatternsTest {
                     listOf(upcomingTrip),
                     listOf(alert)
                 )
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
+                .format(now, anyNonScheduleBasedRouteType(), anyContext())
         )
     }
 
@@ -189,7 +175,7 @@ class RealtimePatternsTest {
                     emptyList(),
                     hasSchedulesToday = true
                 )
-                .format(now, anyNonCommuterRailRouteType(), anyContext())
+                .format(now, anyNonScheduleBasedRouteType(), anyContext())
         )
     }
 
@@ -264,7 +250,7 @@ class RealtimePatternsTest {
 
         val upcomingTrip1 = objects.upcomingTrip(prediction1)
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
-        val routeType = anyNonCommuterRailRouteType()
+        val routeType = anyNonScheduleBasedRouteType()
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
@@ -338,7 +324,7 @@ class RealtimePatternsTest {
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip1.id,
                         RouteType.BUS,
-                        TripInstantDisplay.Schedule(now + 5.minutes)
+                        TripInstantDisplay.ScheduleMinutes(5)
                     ),
                     RealtimePatterns.Format.Some.FormatWithId(
                         trip2.id,
@@ -368,7 +354,14 @@ class RealtimePatternsTest {
 
         assertEquals(
             RealtimePatterns.Format.NoSchedulesToday(null),
-            RealtimePatterns.ByHeadsign(route, "", null, emptyList(), listOf(), null, false)
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(),
+                    hasSchedulesToday = false
+                )
                 .format(now, RouteType.BUS, anyContext())
         )
     }
@@ -459,11 +452,13 @@ class RealtimePatternsTest {
         val routePattern1 = objects.routePattern(route) { directionId = 1 }
         assertEquals(
             0,
-            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern0), emptyList())
+                .directionId()
         )
         assertEquals(
             1,
-            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1)).directionId()
+            RealtimePatterns.ByHeadsign(route, "", null, listOf(routePattern1), emptyList())
+                .directionId()
         )
     }
 
@@ -474,6 +469,7 @@ class RealtimePatternsTest {
                     ObjectCollectionBuilder.Single.route(),
                     "",
                     null,
+                    emptyList(),
                     emptyList()
                 )
                 .directionId()
@@ -530,7 +526,7 @@ class RealtimePatternsTest {
                 listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3, upcomingTrip4)
             )
 
-        val routeType = anyNonCommuterRailRouteType()
+        val routeType = anyNonScheduleBasedRouteType()
         assertEquals(
             RealtimePatterns.Format.Some(
                 listOf(
@@ -723,7 +719,8 @@ class RealtimePatternsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 Clock.System.now(),
-                emptySet()
+                emptySet(),
+                useTripHeadsigns = false,
             )
 
         assertEquals(
@@ -818,7 +815,8 @@ class RealtimePatternsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 now,
-                emptySet()
+                emptySet(),
+                useTripHeadsigns = false,
             )
 
         assertEquals(

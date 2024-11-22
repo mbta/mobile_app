@@ -23,7 +23,6 @@ struct TransitHeader<Content: View>: View {
         Label {
             Text(name)
                 .font(Typography.bodySemibold)
-                .accessibilityHeading(.h2)
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(textColor)
                 .textCase(.none)

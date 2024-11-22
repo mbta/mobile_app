@@ -1,6 +1,12 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.model.ErrorBannerState
+import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
+import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -13,8 +19,13 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 
 class ErrorBannerStateRepositoryTest {
+    @AfterTest fun `stop koin`() = run { stopKoin() }
+
     @Test
     fun `initial state is null`() = runBlocking {
         val repo = ErrorBannerStateRepository()
@@ -25,7 +36,7 @@ class ErrorBannerStateRepositoryTest {
     fun `updates if predictions are stale`() = runBlocking {
         val repo = ErrorBannerStateRepository()
 
-        val lastUpdated = Clock.System.now() - 2.minutes
+        val lastUpdated = Clock.System.now() - 3.minutes
         val action = {}
 
         repo.checkPredictionsStale(lastUpdated, 1, action)
@@ -37,7 +48,7 @@ class ErrorBannerStateRepositoryTest {
     fun `data errors override stale predictions`() {
         val repo = ErrorBannerStateRepository()
 
-        repo.checkPredictionsStale(Clock.System.now() - 2.minutes, 1) {}
+        repo.checkPredictionsStale(Clock.System.now() - 3.minutes, 1) {}
 
         repo.setDataError("global") {}
 
@@ -67,7 +78,7 @@ class ErrorBannerStateRepositoryTest {
     fun `clears if predictions stop being stale`() = runBlocking {
         val repo = ErrorBannerStateRepository()
 
-        repo.checkPredictionsStale(Clock.System.now() - 2.minutes, 1) {}
+        repo.checkPredictionsStale(Clock.System.now() - 3.minutes, 1) {}
 
         assertNotNull(repo.state.value)
 
@@ -102,7 +113,7 @@ class ErrorBannerStateRepositoryTest {
 
         assertEquals(null, channel.receive())
 
-        val lastUpdated = Clock.System.now() - 2.minutes
+        val lastUpdated = Clock.System.now() - 3.minutes
         val action = {}
         repo.checkPredictionsStale(lastUpdated, 1, action)
 
@@ -111,5 +122,19 @@ class ErrorBannerStateRepositoryTest {
         repo.checkPredictionsStale(Clock.System.now(), 1) {}
 
         assertNull(channel.receive())
+    }
+
+    @Test
+    fun `subscribe to connectivity changes`() {
+
+        val mockNetworkMonitor = mock<INetworkConnectivityMonitor>(MockMode.autofill)
+
+        startKoin { modules(module { single<INetworkConnectivityMonitor> { mockNetworkMonitor } }) }
+
+        val repo = ErrorBannerStateRepository()
+
+        repo.subscribeToNetworkStatusChanges()
+
+        verify { mockNetworkMonitor.registerListener(any(), any()) }
     }
 }

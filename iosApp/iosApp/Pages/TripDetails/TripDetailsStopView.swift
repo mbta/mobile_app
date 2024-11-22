@@ -26,9 +26,52 @@ struct TripDetailsStopView: View {
                         Spacer()
                         UpcomingTripView(prediction: upcomingTripViewState, routeType: routeType)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h2)
                 }
+            ).accessibilityInputLabels([stop.stop.name])
+            if !stop.routes.isEmpty {
+                scrollRoutes
+                    .accessibilityElement()
+                    .accessibilityLabel(scrollRoutesAccessibilityLabel)
+            }
+        }
+    }
+
+    func connectionLabel(route: Route) -> String {
+        String(format: NSLocalizedString(
+            "%@ %@",
+            comment: """
+            A route label and route type pair,
+            ex 'Red Line train' or '73 bus', used in connecting stop labels
+            """
+        ), route.label, route.type.typeText(isOnly: true))
+    }
+
+    var scrollRoutesAccessibilityLabel: String {
+        if stop.routes.isEmpty {
+            return ""
+        } else if stop.routes.count == 1 {
+            return String(format: NSLocalizedString(
+                "Connection to %@",
+                comment: "VoiceOver label for a single connecting route at a stop, ex 'Connection to 1 bus'"
+            ), connectionLabel(route: stop.routes.first!))
+        } else {
+            let firstConnections = stop.routes.prefix(stop.routes.count - 1)
+            let lastConnection = stop.routes.last!
+            return String(
+                format: NSLocalizedString(
+                    "Connections to %@ and %@",
+                    comment: """
+                    VoiceOver label for multiple connecting routes at a stop,
+                    ex 'Connections to Red Line train, 71 bus, and 73 bus',
+                    the first replaced value can be any number of comma separated route labels
+                    """
+                ),
+                firstConnections.map(connectionLabel).joined(separator: ", "),
+                connectionLabel(route: lastConnection)
             )
-            scrollRoutes
         }
     }
 
@@ -45,9 +88,6 @@ struct TripDetailsStopView: View {
             HStack {
                 ForEach(stop.routes, id: \.id) { route in
                     RoutePill(route: route, line: nil, type: .flex)
-                        .onTapGesture {
-                            onTapLink(.stopDetails(stop.stop, nil), stop, route.id)
-                        }
                 }
             }.padding(.horizontal, 20)
         }.padding(.horizontal, -20).onTapGesture {

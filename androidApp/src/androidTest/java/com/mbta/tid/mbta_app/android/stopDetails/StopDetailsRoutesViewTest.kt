@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import kotlin.time.Duration.Companion.minutes
@@ -100,14 +101,17 @@ class StopDetailsRoutesViewTest {
 
             StopDetailsRoutesView(
                 departures =
-                    StopDetailsDepartures(
-                        stop,
-                        globalResponse,
-                        null,
-                        PredictionsStreamDataResponse(builder),
-                        null,
-                        emptySet(),
-                        now
+                    checkNotNull(
+                        StopDetailsDepartures.fromData(
+                            stop,
+                            globalResponse,
+                            null,
+                            PredictionsStreamDataResponse(builder),
+                            AlertsStreamDataResponse(emptyMap()),
+                            emptySet(),
+                            now,
+                            useTripHeadsigns = false,
+                        )
                     ),
                 global = globalResponse,
                 now = now,

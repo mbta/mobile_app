@@ -25,4 +25,6 @@ data class Route(
             RouteType.COMMUTER_RAIL -> longName.replace("/", " / ")
             else -> longName
         }
+
+    val isShuttle: Boolean = id.startsWith("Shuttle")
 }

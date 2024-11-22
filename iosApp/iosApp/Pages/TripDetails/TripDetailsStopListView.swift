@@ -18,7 +18,7 @@ struct TripDetailsStopListView: View {
     var body: some View {
         List(stops.stops, id: \.stopSequence) { stop in
             TripDetailsStopView(stop: stop, now: now, onTapLink: onTapLink, routeType: routeType)
-        }
+        }.listStyle(.plain)
     }
 }
 

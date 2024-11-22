@@ -7,12 +7,12 @@
 //
 
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 final class HomeMapViewTest: XCTestCase {
     override func setUp() {
@@ -24,6 +24,7 @@ final class HomeMapViewTest: XCTestCase {
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider,

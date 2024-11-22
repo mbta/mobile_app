@@ -7,19 +7,19 @@
 //
 
 import Combine
-import shared
-import SwiftUI
 @_spi(Experimental) import MapboxMaps
 import shared
+import SwiftUI
 
 class ViewportProvider: ObservableObject {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
-        static let center: CLLocationCoordinate2D = .init(latitude: 42.356395, longitude: -71.062424)
+        static let center: CLLocationCoordinate2D = .init(latitude: 42.3575, longitude: -71.0601)
         static let zoom: CGFloat = MapDefaults.shared.defaultZoomThreshold
     }
 
     @Published private(set) var isManuallyCentering: Bool
+    @Published private(set) var isFollowingPuck: Bool = false
     @Published private(set) var isFollowingVehicle: Bool = false
     @Published private(set) var followedVehicle: Vehicle?
 
@@ -36,6 +36,7 @@ class ViewportProvider: ObservableObject {
 
     init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
         self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
+        isFollowingPuck = viewport?.isFollowing ?? false
         let viewportCamera = viewport?.camera
         let initialCameraState = CameraState(
             center: viewportCamera?.center ?? Defaults.center,
@@ -49,6 +50,7 @@ class ViewportProvider: ObservableObject {
     }
 
     func follow(animation: ViewportAnimation = Defaults.animation) {
+        isFollowingPuck = true
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
@@ -77,7 +79,7 @@ class ViewportProvider: ObservableObject {
     }
 
     func isDefault() -> Bool {
-        viewport.camera?.center == Defaults.center
+        viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
     }
 
     func animateTo(
@@ -98,6 +100,13 @@ class ViewportProvider: ObservableObject {
         withViewportAnimation(animation) {
             self.viewport = viewport
         }
+    }
+
+    func updateCameraState(_ location: CLLocation?) {
+        guard let coordinate = location?.coordinate else { return }
+        updateCameraState(
+            .init(center: coordinate, padding: .zero, zoom: 0, bearing: 0, pitch: 0)
+        )
     }
 
     func updateCameraState(_ state: CameraState) {
@@ -142,6 +151,7 @@ class ViewportProvider: ObservableObject {
     func setIsManuallyCentering(_ isManuallyCentering: Bool) {
         self.isManuallyCentering = isManuallyCentering
         if isManuallyCentering {
+            isFollowingPuck = false
             isFollowingVehicle = false
         }
     }

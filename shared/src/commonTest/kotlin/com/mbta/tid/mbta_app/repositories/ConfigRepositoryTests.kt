@@ -48,7 +48,7 @@ class ConfigRepositoryTests {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
         runBlocking {
-            val response = ConfigRepository().getConfig("token")
+            val response = ConfigRepository().getConfig()
 
             assertEquals(ApiResult.Ok(ConfigResponse("fake_token")), response)
         }
@@ -74,7 +74,7 @@ class ConfigRepositoryTests {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
         runBlocking {
-            val response = ConfigRepository().getConfig("token")
+            val response = ConfigRepository().getConfig()
 
             assertIs<ApiResult.Error<*>>(response)
             assertEquals(401, response.code)

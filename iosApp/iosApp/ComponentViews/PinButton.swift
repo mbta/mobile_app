@@ -21,7 +21,17 @@ struct PinButton: View {
                 Image(pinned ? .pinnedRouteActive : .pinnedRouteInactive)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .accessibilityLabel("pin route")
+                    .accessibilityLabel(Text(
+                        "Star route",
+                        comment: "VoiceOver label for the button to favorite a route"
+                    ))
+                    .accessibilityHint(pinned ? NSLocalizedString(
+                        "Removes route from the top of the list",
+                        comment: "VoiceOver hint for favorite button when a route is already favorited"
+                    ) : NSLocalizedString(
+                        "Pins route to the top of the list",
+                        comment: "VoiceOver hint for favorite button when a route is not favorited"
+                    ))
             }
         )
         .accessibilityIdentifier("pinButton")

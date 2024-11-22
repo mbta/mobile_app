@@ -55,25 +55,24 @@ typealias JSONArray = List<JSONValue>
 typealias JSONObject = Map<String, JSONValue>
 
 data class FeatureProperties(val data: JSONObject) {
-    operator fun get(property: FeatureProperty<Boolean>): Boolean =
-        data.getValue(property.key).boolean
+    operator fun get(property: FeatureProperty<Boolean>): Boolean? = data[property.key]?.boolean
 
-    operator fun get(property: FeatureProperty<Number>): Number = data.getValue(property.key).number
+    operator fun get(property: FeatureProperty<Number>): Number? = data[property.key]?.number
 
-    operator fun get(property: FeatureProperty<String>): String = data.getValue(property.key).string
+    operator fun get(property: FeatureProperty<String>): String? = data[property.key]?.string
 
-    operator fun get(property: FeatureProperty<List<String>>): List<String> =
-        data.getValue(property.key).array.map { it.string }
+    operator fun get(property: FeatureProperty<List<String>>): List<String>? =
+        data[property.key]?.array?.map { it.string }
 
     @JvmName("getMapStringString")
-    operator fun get(property: FeatureProperty<Map<String, String>>): Map<String, String> =
-        data.getValue(property.key).`object`.mapValues { it.value.string }
+    operator fun get(property: FeatureProperty<Map<String, String>>): Map<String, String>? =
+        data[property.key]?.`object`?.mapValues { it.value.string }
 
     @JvmName("getMapStringListString")
     operator fun get(
         property: FeatureProperty<Map<String, List<String>>>
-    ): Map<String, List<String>> =
-        data.getValue(property.key).`object`.mapValues { it.value.array.map { it.string } }
+    ): Map<String, List<String>>? =
+        data[property.key]?.`object`?.mapValues { it.value.array.map { it.string } }
 }
 
 class FeaturePropertiesBuilder(private val data: MutableMap<String, JSONValue> = mutableMapOf()) {

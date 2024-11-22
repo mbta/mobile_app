@@ -8,12 +8,12 @@
 
 import Combine
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 final class StopDetailsPageTests: XCTestCase {
     override func setUp() {
@@ -64,6 +64,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -95,10 +96,7 @@ final class StopDetailsPageTests: XCTestCase {
                 headsign: "",
                 line: nil,
                 patterns: [routePattern1],
-                upcomingTrips: nil,
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: []
             )]
         )
         let route2Departures = PatternsByStop(
@@ -109,10 +107,7 @@ final class StopDetailsPageTests: XCTestCase {
                 headsign: "",
                 line: nil,
                 patterns: [routePattern2],
-                upcomingTrips: nil,
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: []
             )]
         )
 
@@ -129,6 +124,7 @@ final class StopDetailsPageTests: XCTestCase {
             stop: stop,
             filter: filter,
             internalDepartures: .init(routes: [route1Departures, route2Departures]),
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -179,17 +175,21 @@ final class StopDetailsPageTests: XCTestCase {
             directionId: routePattern.directionId
         )
 
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
+
         let sut = StopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
             schedulesRepository: FakeSchedulesRepository(
                 objects: objects,
                 callback: { schedulesLoadedPublisher.send(true) }
             ),
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
-            nearbyVM: .init()
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM
         )
 
         let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { view in
@@ -225,6 +225,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: .init(),
             stop: stop,
             filter: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -247,6 +248,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: .init(),
             stop: stop,
             filter: nil,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -278,6 +280,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -317,6 +320,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: .init()
         )
 
@@ -328,13 +332,14 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
+    @MainActor
     func testUpdatesDeparturesOnPredictionsChange() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
         let prediction = objects.prediction { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
-        let trip = objects.trip { trip in
+        objects.trip { trip in
             trip.id = prediction.tripId
             trip.stopIds = [stop.id]
         }
@@ -343,11 +348,12 @@ final class StopDetailsPageTests: XCTestCase {
         let filter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
 
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        nearbyVM.alerts = .init(alerts: [:])
 
         let globalDataLoaded = PassthroughSubject<Void, Never>()
 
         let predictionsRepo = MockPredictionsRepository()
-        var sut = StopDetailsPage(
+        let sut = StopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(objects: objects,
                                                                    patternIdsByStop: [stop.id: [pattern.id]]),
                                                    onGet: { globalDataLoaded.send() }),
@@ -356,6 +362,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 
@@ -387,6 +394,7 @@ final class StopDetailsPageTests: XCTestCase {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let filter: StopDetailsFilter? = nil
         let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        nearbyVM.alerts = .init(alerts: [:])
 
         let sut = StopDetailsPage(
             globalRepository: MockGlobalRepository(response: .init(
@@ -397,10 +405,11 @@ final class StopDetailsPageTests: XCTestCase {
                 scheduleResponse: .init(objects: objects),
                 callback: { _ in schedulesLoadedPublisher.send(true) }
             ),
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM
         )
 

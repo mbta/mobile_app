@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 
@@ -32,7 +33,8 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             val headsign: String,
             val line: Line?,
             override val patterns: List<RoutePattern>,
-            override val stopIds: Set<String>
+            override val stopIds: Set<String>,
+            val direction: Direction? = null,
         ) : StaticPatterns() {
             override fun copy(patterns: List<RoutePattern>, stopIds: Set<String>) =
                 copy(route = route, patterns = patterns, stopIds = stopIds)
@@ -112,20 +114,36 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     routes: List<Route>,
                     directionId: Int
                 ): Direction {
-                    return patterns
-                        .firstOrNull {
-                            when (it) {
-                                is StaticPatterns.ByDirection -> it.direction.id == directionId
-                                else -> false
+                    val typicalHere =
+                        patterns.filter {
+                            it.patterns.any { pattern ->
+                                pattern.typicality == RoutePattern.Typicality.Typical &&
+                                    pattern.directionId == directionId
                             }
                         }
-                        ?.let {
-                            when (it) {
-                                is StaticPatterns.ByDirection -> it.direction
-                                else -> null
-                            }
+                    return if (typicalHere.isEmpty()) {
+                        Direction(directionId, routes.first())
+                    } else if (typicalHere.size > 1) {
+                        Direction(
+                            routes.first().directionNames[directionId] ?: "",
+                            null,
+                            directionId
+                        )
+                    } else {
+                        when (val it = typicalHere.first()) {
+                            is StaticPatterns.ByDirection -> it.direction
+                            // When buildStopPatternsForLine creates a StaticPatterns.ByHeadsign,
+                            // it should always set it.direction to a non-null value, this fallback
+                            // is only here to make the compiler happy and do something sensible if
+                            // there are possible edge cases where one is set to null.
+                            is StaticPatterns.ByHeadsign -> it.direction
+                                    ?: Direction(
+                                        it.route.directionNames[directionId] ?: "",
+                                        it.headsign,
+                                        directionId
+                                    )
                         }
-                        ?: Direction(directionId, routes.first())
+                    }
                 }
             }
         }
@@ -191,7 +209,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             val fullStopIds = mutableMapOf<String, MutableSet<String>>()
 
             nearby.stopIds.forEach { stopId ->
-                val stop = stops.getValue(stopId)
+                val stop = stops[stopId] ?: return@forEach
                 val newPatternIds =
                     patternIdsByStop
                         .getOrElse(stop.id) { emptyList() }
@@ -200,7 +218,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
                 val newPatternsByRoute =
                     newPatternIds
-                        .map { patternId -> routePatterns.getValue(patternId) }
+                        .mapNotNull { patternId -> routePatterns[patternId] }
                         .groupBy { it.routeId }
 
                 val stopKey =
@@ -210,13 +228,13 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                             .add(stop.id)
                         // Parents should be disjoint, but if somehow a parent has its own patterns,
                         // find it in the regular stops list
-                        stops.getValue(parentStationId)
+                        stops[parentStationId]
                     }
                         ?: stop
 
-                newPatternsByRoute.forEach { (routeId, routePatterns) ->
-                    val routeStops =
-                        patternsByRouteAndStop.getOrPut(routes.getValue(routeId)) { mutableMapOf() }
+                for ((routeId, routePatterns) in newPatternsByRoute) {
+                    val route = routes[routeId] ?: continue
+                    val routeStops = patternsByRouteAndStop.getOrPut(route) { mutableMapOf() }
                     val patternsForStop = routeStops.getOrPut(stopKey) { mutableListOf() }
                     patternsForStop += routePatterns
                 }
@@ -290,7 +308,9 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             global: GlobalResponse
         ): StopPatterns.ForRoute {
             val patternsByHeadsign =
-                patterns.groupBy { global.trips.getValue(it.representativeTripId).headsign }
+                patterns
+                    .groupBy { global.trips[it.representativeTripId]?.headsign }
+                    .filterKeys { it != null }
 
             return StopPatterns.ForRoute(
                 route = route,
@@ -300,7 +320,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                         .map { (headsign, routePatterns) ->
                             StaticPatterns.ByHeadsign(
                                 route,
-                                headsign,
+                                checkNotNull(headsign),
                                 null,
                                 routePatterns.sorted(),
                                 filterStopsByPatterns(routePatterns, global, allStopIds)
@@ -311,7 +331,7 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
             )
         }
 
-        fun buildStopPatternsForLine(
+        private fun buildStopPatternsForLine(
             stop: Stop,
             patterns: Map<Route, List<RoutePattern>>,
             line: Line,
@@ -344,16 +364,17 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
                     if (directionRoutes.filter { !it.id.startsWith("Shuttle-") }.size == 1) {
                         val route = directionRoutes.first()
                         val patternsByHeadsign =
-                            directionPatterns.groupBy {
-                                global.trips.getValue(it.representativeTripId).headsign
-                            }
+                            directionPatterns
+                                .groupBy { global.trips[it.representativeTripId]?.headsign }
+                                .filterKeys { it != null }
                         return@flatMap patternsByHeadsign.map { (headsign, patterns) ->
                             StaticPatterns.ByHeadsign(
                                 route,
-                                headsign,
+                                checkNotNull(headsign),
                                 line,
                                 patterns.sorted(),
-                                filterStopsByPatterns(patterns, global, allStopIds)
+                                filterStopsByPatterns(patterns, global, allStopIds),
+                                direction
                             )
                         }
                     }
@@ -449,46 +470,39 @@ data class NearbyStaticData(val data: List<TransitWithStops>) {
 
 /**
  * Attaches [schedules] and [predictions] to the route, stop, and routePattern to which they apply.
- * Removes non-typical route patterns which are not predicted within 90 minutes of [filterAtTime].
- * Sorts routes by subway first then nearest stop, stops by distance, and headsigns by route pattern
- * sort order.
+ * Removes non-typical route patterns which are not happening either at all or between
+ * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext]. Sorts routes by subway
+ * first then nearest stop, stops by distance, and headsigns by route pattern sort order.
  *
- * Runs static data and predictions through [TemporaryTerminalRewriter].
+ * Runs static data and predictions through [TemporaryTerminalFilter].
  */
-fun NearbyStaticData.withRealtimeInfo(
+fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     globalData: GlobalResponse?,
-    sortByDistanceFrom: Position,
+    sortByDistanceFrom: Position?,
     schedules: ScheduleResponse?,
     predictions: PredictionsStreamDataResponse?,
     alerts: AlertsStreamDataResponse?,
     filterAtTime: Instant,
+    showAllPatternsWhileLoading: Boolean,
+    hideNonTypicalPatternsBeyondNext: Duration?,
+    filterCancellations: Boolean,
     pinnedRoutes: Set<String>
-): List<StopsAssociated> {
+): List<StopsAssociated>? {
+    // if predictions or alerts are still loading, this is the loading state
+    if (predictions == null || alerts == null) return null
+
     val activeRelevantAlerts =
-        alerts?.alerts?.values?.filter {
+        alerts.alerts.values.filter {
             it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
         }
 
-    val allDataLoaded = schedules != null && predictions != null
+    val allDataLoaded = schedules != null
 
-    // this needs to change how the trip keys are constructed
-    val (rewrittenThis, rewrittenPredictions) =
-        if (
-            predictions == null ||
-                globalData == null ||
-                activeRelevantAlerts == null ||
-                schedules == null
-        )
-            Pair(this, predictions)
+    val rewrittenThis =
+        if (globalData == null || schedules == null) this
         else
-            TemporaryTerminalRewriter(
-                    this,
-                    predictions,
-                    globalData,
-                    activeRelevantAlerts,
-                    schedules
-                )
-                .rewritten()
+            TemporaryTerminalFilter(this, predictions, globalData, activeRelevantAlerts, schedules)
+                .filtered()
 
     val globalStops = globalData?.stops.orEmpty()
 
@@ -497,20 +511,20 @@ fun NearbyStaticData.withRealtimeInfo(
         UpcomingTrip.tripsMappedBy(
                 globalData?.stops.orEmpty(),
                 schedules,
-                rewrittenPredictions,
+                predictions,
                 scheduleKey = { schedule, scheduleData ->
-                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    val trip = scheduleData.trips[schedule.tripId]
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         schedule.routeId,
-                        trip.routePatternId,
+                        trip?.routePatternId,
                         globalStops.resolveParentId(schedule.stopId)
                     )
                 },
                 predictionKey = { prediction, streamData ->
-                    val trip = streamData.trips.getValue(prediction.tripId)
+                    val trip = streamData.trips[prediction.tripId]
                     RealtimePatterns.UpcomingTripKey.ByRoutePattern(
                         prediction.routeId,
-                        trip.routePatternId,
+                        trip?.routePatternId,
                         globalStops.resolveParentId(prediction.stopId)
                     )
                 },
@@ -522,9 +536,9 @@ fun NearbyStaticData.withRealtimeInfo(
         UpcomingTrip.tripsMappedBy(
                 globalData?.stops.orEmpty(),
                 schedules,
-                rewrittenPredictions,
+                predictions,
                 scheduleKey = { schedule, scheduleData ->
-                    val trip = scheduleData.trips.getValue(schedule.tripId)
+                    val trip = scheduleData.trips[schedule.tripId] ?: return@tripsMappedBy null
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         schedule.routeId,
                         trip.directionId,
@@ -532,7 +546,7 @@ fun NearbyStaticData.withRealtimeInfo(
                     )
                 },
                 predictionKey = { prediction, streamData ->
-                    val trip = streamData.trips.getValue(prediction.tripId)
+                    val trip = streamData.trips[prediction.tripId] ?: return@tripsMappedBy null
                     RealtimePatterns.UpcomingTripKey.ByDirection(
                         prediction.routeId,
                         trip.directionId,
@@ -543,11 +557,24 @@ fun NearbyStaticData.withRealtimeInfo(
             )
             .orEmpty()
 
-    val cutoffTime = filterAtTime.plus(90.minutes)
+    val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
     val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
 
     val upcomingTripsMap: UpcomingTripsMap =
-        (upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop)
+        upcomingTripsByRoutePatternAndStop + upcomingTripsByDirectionAndStop
+
+    fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
+        if (filterCancellations) this.filterCancellations(isSubway) else this
+
+    fun RealtimePatterns.shouldShow(): Boolean {
+        if (!allDataLoaded && showAllPatternsWhileLoading) return true
+        val isUpcoming =
+            when (cutoffTime) {
+                null -> this.isUpcoming()
+                else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
+            }
+        return (isTypical() || isUpcoming) && !isArrivalOnly()
+    }
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
         return this.filterNot { it.patterns.isEmpty() }
@@ -562,14 +589,13 @@ fun NearbyStaticData.withRealtimeInfo(
                     StopsAssociated.WithRoute(
                         transit.route,
                         transit.patternsByStop
-                            .map {
+                            .map { stopPatterns ->
                                 PatternsByStop(
-                                    it,
-                                    upcomingTripsMap.filterCancellations(
+                                    stopPatterns,
+                                    upcomingTripsMap.maybeFilterCancellations(
                                         transit.route.type.isSubway()
                                     ),
-                                    filterAtTime,
-                                    cutoffTime,
+                                    { it.shouldShow() },
                                     activeRelevantAlerts,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -582,14 +608,13 @@ fun NearbyStaticData.withRealtimeInfo(
                         transit.line,
                         transit.routes,
                         transit.patternsByStop
-                            .map {
+                            .map { stopPatterns ->
                                 PatternsByStop(
-                                    it,
-                                    upcomingTripsMap.filterCancellations(
+                                    stopPatterns,
+                                    upcomingTripsMap.maybeFilterCancellations(
                                         transit.routes.min().type.isSubway()
                                     ),
-                                    filterAtTime,
-                                    cutoffTime,
+                                    { it.shouldShow() },
                                     activeRelevantAlerts,
                                     hasSchedulesTodayByPattern,
                                     allDataLoaded
@@ -602,6 +627,159 @@ fun NearbyStaticData.withRealtimeInfo(
         .filterNot { it.isEmpty() }
         .toList()
         .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
+}
+
+/**
+ * Groups [schedules] and [predictions] into [NearbyHierarchy]. Removes non-typical route patterns
+ * which are not happening either at all or between [filterAtTime] and
+ * [filterAtTime] + [hideNonTypicalPatternsBeyondNext]. Sorts routes by subway first then nearest
+ * stop, stops by distance, and headsigns by route pattern sort order.
+ */
+fun NearbyStaticData.withRealtimeInfoViaTripHeadsigns(
+    globalData: GlobalResponse?,
+    sortByDistanceFrom: Position?,
+    schedules: ScheduleResponse?,
+    predictions: PredictionsStreamDataResponse?,
+    alerts: AlertsStreamDataResponse?,
+    filterAtTime: Instant,
+    showAllPatternsWhileLoading: Boolean,
+    hideNonTypicalPatternsBeyondNext: Duration?,
+    filterCancellations: Boolean,
+    pinnedRoutes: Set<String>
+): List<StopsAssociated>? {
+    // if predictions or alerts are still loading, this is the loading state
+    if (predictions == null || alerts == null) return null
+
+    // if global data was still loading, there'd be no nearby data, and null handling is annoying
+    if (globalData == null) return null
+
+    val activeRelevantAlerts =
+        alerts.alerts.values.filter {
+            it.isActive(filterAtTime) && it.significance >= AlertSignificance.Secondary
+        }
+
+    val allDataLoaded = schedules != null
+
+    // add predictions and apply filtering
+    val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { filterAtTime + it }
+    val hasSchedulesTodayByPattern = NearbyStaticData.getSchedulesTodayByPattern(schedules)
+
+    fun Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>
+        .maybeFilterCancellations(isSubway: Boolean) =
+        if (filterCancellations) this.mapValues { it.value.filterCancellations(isSubway) } else this
+
+    fun RealtimePatterns.shouldShow(): Boolean {
+        if (!allDataLoaded && showAllPatternsWhileLoading) return true
+        val isUpcoming =
+            when (cutoffTime) {
+                null -> this.isUpcoming()
+                else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
+            }
+        return (isTypical() || isUpcoming) && !isArrivalOnly()
+    }
+
+    fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
+        return this.filterNot { it.patterns.isEmpty() }
+            .sortedWith(PatternSorting.comparePatternsByStop(pinnedRoutes, sortByDistanceFrom))
+    }
+
+    val nearbyHierarchy =
+        NearbyHierarchy.fromStaticData(this)
+            .zip(NearbyHierarchy.fromRealtime(globalData, schedules, predictions, filterAtTime))
+            .withLabels(globalData)
+
+    return nearbyHierarchy
+        .mapEntries { (lineOrRoute, routeData) ->
+            when (lineOrRoute) {
+                is NearbyHierarchy.LineOrRoute.Route ->
+                    StopsAssociated.WithRoute(
+                        lineOrRoute.route,
+                        routeData
+                            .pickOnlyNearest(sortByDistanceFrom)
+                            .map { (stop, routeAtStop) ->
+                                val (directions, data) = routeAtStop
+                                PatternsByStop(
+                                    lineOrRoute,
+                                    stop,
+                                    directions,
+                                    data.maybeFilterCancellations(
+                                        lineOrRoute.route.type.isSubway()
+                                    ),
+                                    { it.shouldShow() },
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern,
+                                    allDataLoaded
+                                )
+                            }
+                            .filterEmptyAndSort()
+                    )
+                is NearbyHierarchy.LineOrRoute.Line ->
+                    StopsAssociated.WithLine(
+                        lineOrRoute.line,
+                        lineOrRoute.routes.sorted(),
+                        routeData
+                            .pickOnlyNearest(sortByDistanceFrom)
+                            .map { (stop, routeAtStop) ->
+                                val (directions, data) = routeAtStop
+                                PatternsByStop(
+                                    lineOrRoute,
+                                    stop,
+                                    directions,
+                                    data.maybeFilterCancellations(
+                                        lineOrRoute.routes.first().type.isSubway()
+                                    ),
+                                    { it.shouldShow() },
+                                    activeRelevantAlerts,
+                                    hasSchedulesTodayByPattern,
+                                    allDataLoaded
+                                )
+                            }
+                            .filterEmptyAndSort()
+                    )
+            }
+        }
+        .filterNot { it.isEmpty() }
+        .toList()
+        .sortedWith(PatternSorting.compareStopsAssociated(pinnedRoutes, sortByDistanceFrom))
+}
+
+fun NearbyStaticData.withRealtimeInfo(
+    globalData: GlobalResponse?,
+    sortByDistanceFrom: Position,
+    schedules: ScheduleResponse?,
+    predictions: PredictionsStreamDataResponse?,
+    alerts: AlertsStreamDataResponse?,
+    filterAtTime: Instant,
+    pinnedRoutes: Set<String>,
+    useTripHeadsigns: Boolean,
+): List<StopsAssociated>? {
+    if (useTripHeadsigns) {
+        return this.withRealtimeInfoViaTripHeadsigns(
+            globalData,
+            sortByDistanceFrom,
+            schedules,
+            predictions,
+            alerts,
+            filterAtTime,
+            showAllPatternsWhileLoading = false,
+            hideNonTypicalPatternsBeyondNext = 90.minutes,
+            filterCancellations = true,
+            pinnedRoutes
+        )
+    } else {
+        return this.withRealtimeInfoWithoutTripHeadsigns(
+            globalData,
+            sortByDistanceFrom,
+            schedules,
+            predictions,
+            alerts,
+            filterAtTime,
+            showAllPatternsWhileLoading = false,
+            hideNonTypicalPatternsBeyondNext = 90.minutes,
+            filterCancellations = true,
+            pinnedRoutes
+        )
+    }
 }
 
 class NearbyStaticDataBuilder {
@@ -628,10 +806,18 @@ class NearbyStaticDataBuilder {
             route: Route,
             headsign: String,
             patterns: List<RoutePattern>,
-            stopIds: Set<String> = allStopIds
+            stopIds: Set<String> = allStopIds,
+            direction: Direction? = null
         ) {
             data.add(
-                NearbyStaticData.StaticPatterns.ByHeadsign(route, headsign, line, patterns, stopIds)
+                NearbyStaticData.StaticPatterns.ByHeadsign(
+                    route,
+                    headsign,
+                    line,
+                    patterns,
+                    stopIds,
+                    direction
+                )
             )
         }
 

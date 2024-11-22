@@ -32,6 +32,7 @@ struct AlertDetails: View {
         switch alert.effect {
         case .detour: NSLocalizedString("Detour", comment: "Possible alert effect")
         case .dockClosure: NSLocalizedString("Dock Closure", comment: "Possible alert effect")
+        case .serviceChange: NSLocalizedString("Service Change", comment: "Possible alert effect")
         case .shuttle: NSLocalizedString("Shuttle", comment: "Possible alert effect")
         case .stationClosure: NSLocalizedString("Station Closure", comment: "Possible alert effect")
         case .stopClosure: NSLocalizedString("Stop Closure", comment: "Possible alert effect")
@@ -97,6 +98,18 @@ struct AlertDetails: View {
         }
     }
 
+    private var affectedStopsLabel: AttributedString {
+        let text = String(format: NSLocalizedString(
+            "**%ld** affected stops",
+            comment: "The number of stops affected by an alert"
+        ), affectedStops.count)
+        do {
+            return try AttributedString(markdown: text)
+        } catch {
+            return AttributedString(text.filter { $0 != "*" })
+        }
+    }
+
     @ViewBuilder
     private var alertTitle: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -137,36 +150,41 @@ struct AlertDetails: View {
     @ViewBuilder
     private var affectedStopCollapsible: some View {
         if !affectedStops.isEmpty {
-            asTile(DisclosureGroup(
-                isExpanded: $areStopsExpanded,
-                content: {
-                    VStack(alignment: .leading, spacing: 0) {
-                        ForEach(affectedStops, id: \.id) { stop in
-                            Divider().background(Color.halo)
-                            Text(stop.name).bold().padding(16)
+            asTile(
+                DisclosureGroup(
+                    isExpanded: $areStopsExpanded,
+                    content: {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(affectedStops, id: \.id) { stop in
+                                Divider().background(Color.halo)
+                                Text(stop.name).bold().padding(16)
+                            }
                         }
+                    },
+                    label: {
+                        HStack(alignment: .center, spacing: 16) {
+                            Text(affectedStopsLabel).multilineTextAlignment(.leading)
+                            Spacer()
+                            Image(.faChevronRight)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: iconSize)
+                                .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
+                        }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
                     }
-                },
-                label: {
-                    HStack(alignment: .center, spacing: 16) {
-                        Text("**\(affectedStops.count)** affected stops").multilineTextAlignment(.leading)
-                        Spacer()
-                        Image(.faChevronRight)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: iconSize)
-                            .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
-                    }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
+                )
+                .tint(.clear) // Hide default chevron
+                .foregroundStyle(Color.text, .clear)
+                .onChange(of: areStopsExpanded) { expanded in
+                    if expanded {
+                        analytics.tappedAffectedStops(
+                            routeId: line?.id ?? routes?.first?.id ?? "",
+                            stopId: stopId ?? "",
+                            alertId: alert.id
+                        )
+                    }
                 }
-            ).foregroundStyle(Color.text, .clear).onChange(of: areStopsExpanded) { expanded in
-                if expanded {
-                    analytics.tappedAffectedStops(
-                        routeId: line?.id ?? routes?.first?.id ?? "",
-                        stopId: stopId ?? "",
-                        alertId: alert.id
-                    )
-                }
-            })
+            )
         }
     }
 

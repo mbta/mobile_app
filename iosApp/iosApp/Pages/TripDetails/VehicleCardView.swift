@@ -13,21 +13,19 @@ import SwiftUI
 struct VehicleCardView: View {
     let vehicle: Vehicle?
     let route: Route?
-    let line: Line?
     let stop: Stop?
-    let trip: Trip?
+    let tripId: String
 
     var body: some View {
-        if let vehicle, let route, let stop, let trip {
+        if let vehicle, let route, let stop {
             VehicleOnTripView(
                 vehicle: vehicle,
                 route: route,
-                line: line,
                 stop: stop,
-                trip: trip
+                tripId: tripId
             )
         } else {
-            Text("Loading...")
+            EmptyView()
         }
     }
 }
@@ -35,24 +33,15 @@ struct VehicleCardView: View {
 struct VehicleOnTripView: View {
     let vehicle: Vehicle
     let route: Route
-    let line: Line?
     let stop: Stop
-    let trip: Trip
+    let tripId: String
 
     var backgroundColor: Color {
-        if route.id.starts(with: "Shuttle"), let line {
-            Color(hex: line.color)
-        } else {
-            Color(hex: route.color)
-        }
+        Color(hex: route.color)
     }
 
     var textColor: Color {
-        if route.id.starts(with: "Shuttle"), let line {
-            Color(hex: line.textColor)
-        } else {
-            Color(hex: route.textColor)
-        }
+        Color(hex: route.textColor)
     }
 
     var body: some View {
@@ -69,7 +58,7 @@ struct VehicleOnTripView: View {
 
     @ViewBuilder
     private var description: some View {
-        if vehicle.tripId == trip.id {
+        if vehicle.tripId == tripId {
             VStack(alignment: .leading, spacing: 2) {
                 vehicleStatusDescription(vehicle.currentStatus)
                     .font(Typography.caption)
@@ -78,10 +67,23 @@ struct VehicleOnTripView: View {
                     .font(Typography.headlineBold)
                     .foregroundColor(textColor)
             }
+            .accessibilityElement()
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityHeading(.h2)
+            .accessibilityLabel(Text(
+                "\(route.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)",
+                comment: """
+                VoiceOver text for the vehicle status on the trip details page,
+                ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
+                Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
+                """
+            ))
         } else {
-            Text("This vehicle is completing another trip.")
+            Text("This vehicle is completing another trip")
                 .font(Typography.headlineBold)
                 .foregroundColor(textColor)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h2)
         }
     }
 
@@ -89,10 +91,25 @@ struct VehicleOnTripView: View {
     private func vehicleStatusDescription(
         _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
     ) -> some View {
+        Text(vehicleStatusText(vehicleStatus))
+    }
+
+    private func vehicleStatusText(
+        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
+    ) -> String {
         switch vehicleStatus {
-        case .incomingAt: Text("Approaching")
-        case .inTransitTo: Text("Next stop")
-        case .stoppedAt: Text("Now at")
+        case .incomingAt: NSLocalizedString(
+                "Approaching",
+                comment: "Label for a vehicle's next stop. For example: Approaching Alewife"
+            )
+        case .inTransitTo: NSLocalizedString(
+                "Next stop",
+                comment: "Label for a vehicle's next stop. For example: Next stop Alewife"
+            )
+        case .stoppedAt: NSLocalizedString(
+                "Now at",
+                comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
+            )
         }
     }
 
@@ -109,6 +126,7 @@ struct VehicleOnTripView: View {
                 .frame(width: 24, height: 24)
                 .foregroundColor(textColor)
         }
+        .accessibilityHidden(true)
         .padding([.bottom], 4)
         .frame(width: 56, height: 56)
     }
@@ -144,7 +162,7 @@ struct VehicleCardView_Previews: PreviewProvider {
         }
 
         List {
-            VehicleCardView(vehicle: vehicle, route: red, line: nil, stop: stop, trip: trip)
+            VehicleCardView(vehicle: vehicle, route: red, stop: stop, tripId: trip.id)
         }
         .previewDisplayName("VehicleCard")
     }

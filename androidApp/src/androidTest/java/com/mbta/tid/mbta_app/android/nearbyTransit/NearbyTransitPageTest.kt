@@ -190,10 +190,12 @@ class NearbyTransitPageTest : KoinTest {
                             onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
                             onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                         ) {
-                            /* no-op */
+                            onJoin(ApiResult.Ok(PredictionsByStopJoinResponse(builder)))
                         }
 
                         override var lastUpdated: Instant? = null
+
+                        override fun shouldForgetPredictions(predictionCount: Int) = false
 
                         override fun disconnect() {
                             /* no-op */

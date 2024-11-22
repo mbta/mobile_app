@@ -10,13 +10,13 @@ import shared
 import SwiftUI
 
 struct StopResultsView: View {
-    let stops: [StopResult]
+    let stops: [SearchViewModel.Result]
     let handleStopTap: (String) -> Void
 
     var body: some View {
         ResultContainer {
             VStack(spacing: .zero) {
-                ForEach(stops, id: \.id) { stop in
+                ForEach(stops) { stop in
                     Button {
                         handleStopTap(stop.id)
                     } label: {
@@ -30,7 +30,7 @@ struct StopResultsView: View {
         }
     }
 
-    private func result(_ stop: StopResult) -> some View {
+    private func result(_ stop: SearchViewModel.Result) -> some View {
         HStack(spacing: 12) {
             Image(stop.isStation ? .tLogo : .mapStopCloseBUS)
                 .frame(width: 32, height: 32)
@@ -40,11 +40,14 @@ struct StopResultsView: View {
                     .foregroundStyle(Color.text)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                HStack(spacing: 4) {
-                    ForEach(stop.routes, id: \.self) { route in
-                        RoutePill(stopResultRoute: route, type: .flex)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 4) {
+                        ForEach(stop.routePills, id: \.self) { routePill in
+                            RoutePill(spec: routePill)
+                        }
                     }
                 }
+                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             Spacer()

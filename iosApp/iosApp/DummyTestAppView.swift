@@ -16,6 +16,6 @@ struct DummyTestAppView: View {
     }
 
     var body: some View {
-        Text("Dummy app for launching unit tests")
+        Text(verbatim: "Dummy app for launching unit tests")
     }
 }

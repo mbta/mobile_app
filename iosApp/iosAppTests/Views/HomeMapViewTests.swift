@@ -8,10 +8,10 @@
 
 import Combine
 @testable import iosApp
-import ViewInspector
 @_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
+import ViewInspector
 import XCTest
 
 // swiftlint:disable:next type_body_length
@@ -64,6 +64,7 @@ final class HomeMapViewTests: XCTestCase {
     func testNoLocationDefaultCenter() throws {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -81,6 +82,7 @@ final class HomeMapViewTests: XCTestCase {
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -103,6 +105,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(onGet: { getRailRouteShapeExpectation.fulfill() })
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -124,6 +127,7 @@ final class HomeMapViewTests: XCTestCase {
         }
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             viewportProvider: ViewportProvider(),
@@ -131,10 +135,11 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { _ in }
+        let hasAppeared = sut.on(\.didAppear) { view in
+            XCTAssertEqual(stop.coordinate, try view.actualView().viewportProvider.viewport.camera!.center)
+        }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 1)
-        XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
     }
 
     func testCentersOnStopWhenNewSelectedStop() throws {
@@ -146,6 +151,7 @@ final class HomeMapViewTests: XCTestCase {
         }
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -153,12 +159,16 @@ final class HomeMapViewTests: XCTestCase {
             sheetHeight: .constant(0)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { _ in }
+        let hasAppeared = sut.on(\.didAppear) { view in
+            XCTAssertEqual(
+                ViewportProvider.Defaults.center,
+                try view.actualView().viewportProvider.viewport.camera!.center
+            )
+            XCTAssertEqual(ViewportProvider.Defaults.zoom, try view.actualView().viewportProvider.viewport.camera!.zoom)
+        }
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 1)
-        XCTAssertEqual(ViewportProvider.Defaults.center, sut.viewportProvider.viewport.camera!.center)
-        XCTAssertEqual(ViewportProvider.Defaults.zoom, sut.viewportProvider.viewport.camera!.zoom)
 
         let newZoom = 10.0
         sut.viewportProvider.updateCameraState(
@@ -167,7 +177,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let newEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
 
-        try sut.inspect().find(ProxyModifiedMap.self).callOnChange(newValue: newEntry)
+        try sut.inspect().find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newEntry)
         XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
         XCTAssertEqual(newZoom, sut.viewportProvider.viewport.camera!.zoom)
     }
@@ -191,6 +201,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -202,7 +213,7 @@ final class HomeMapViewTests: XCTestCase {
         let hasAppeared = sut.on(\.didAppear) { sut in
             XCTAssertEqual(mapVM.stopSourceData, .init())
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
             XCTAssertEqual(mapVM.stopSourceData, .init(selectedStopId: stop.id))
         }
 
@@ -242,6 +253,7 @@ final class HomeMapViewTests: XCTestCase {
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -252,7 +264,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
             let newNavStackEntry: SheetNavigationStackEntry = .stopDetails(stop, nil)
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
         }
 
         ViewHosting.host(view: sut)
@@ -297,6 +309,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -309,7 +322,7 @@ final class HomeMapViewTests: XCTestCase {
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.shared.routeOrange.id,
                                          directionId: MapTestDataHelper.shared.patternOrange30.directionId))
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
         }
 
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
@@ -364,18 +377,16 @@ final class HomeMapViewTests: XCTestCase {
                     headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
                 )]
             )]
         ))
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             viewportProvider: ViewportProvider(),
             railRouteShapeRepository: railRouteShapeRepository,
             locationDataManager: locationDataManager,
@@ -386,7 +397,7 @@ final class HomeMapViewTests: XCTestCase {
             let newNavStackEntry: SheetNavigationStackEntry =
                 .stopDetails(stop, .init(routeId: MapTestDataHelper.shared.routeOrange.id,
                                          directionId: MapTestDataHelper.shared.patternOrange30.directionId))
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
         }
 
         let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
@@ -446,6 +457,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -463,7 +475,7 @@ final class HomeMapViewTests: XCTestCase {
                     routeId: MapTestDataHelper.shared.routeOrange.id,
                     directionId: MapTestDataHelper.shared.patternOrange30.directionId
                 )
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: newNavStackEntry)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
         }
 
         let routeDataSet = sut.inspection.inspect(onReceive: tripShapeLoadSubject, after: 1) { _ in
@@ -532,10 +544,7 @@ final class HomeMapViewTests: XCTestCase {
                     headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
                 )]
             )]
         ))
@@ -547,6 +556,7 @@ final class HomeMapViewTests: XCTestCase {
         nearbyVM.navigationStack = [initialNav]
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: nearbyVM,
             viewportProvider: ViewportProvider(),
@@ -639,10 +649,7 @@ final class HomeMapViewTests: XCTestCase {
                     headsign: MapTestDataHelper.shared.tripOrangeC1.headsign,
                     line: nil,
                     patterns: [MapTestDataHelper.shared.patternOrange30],
-                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)]
                 )]
             )]
         ))
@@ -657,19 +664,23 @@ final class HomeMapViewTests: XCTestCase {
         )
         nearbyVM.navigationStack = [initialNav]
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        let globalResponse = GlobalResponse(objects: objectCollection, patternIdsByStop: [:])
 
         let viewportProvider = ViewportProvider()
         var sut = HomeMapView(
+            globalRepository: MockGlobalRepository(response: globalResponse),
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle1]),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            globalMapData: .init(globalData: globalResponse, alertsByStop: [:])
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.actualView().globalData = GlobalResponse(objects: objectCollection, patternIdsByStop: [:])
+            try sut.actualView().globalData = globalResponse
             XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
             XCTAssertFalse(viewportProvider.isFollowingVehicle)
             nearbyVM.navigationStack.append(.tripDetails(
@@ -679,38 +690,38 @@ final class HomeMapViewTests: XCTestCase {
                 routeId: "",
                 directionId: 0
             ))
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: vehicle1)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: vehicle1)
         }
 
         let following1 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle, after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(), after: 5
         ) { sut in
             XCTAssertTrue(viewportProvider.isFollowingVehicle)
             XCTAssertEqual(viewportProvider.followedVehicle, vehicle1)
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: vehicle2)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: vehicle2)
         }
 
         let following2 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle.dropFirst(), after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(2), after: 1.1
         ) { sut in
             // Viewport setting happens after the followed vehicle is set,
             // so this is actually the viewport for vehicle 1
             XCTAssertNotNil(viewportProvider.viewport.overview)
             XCTAssertTrue(viewportProvider.isFollowingVehicle)
             XCTAssertEqual(viewportProvider.followedVehicle, vehicle2)
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: vehicle3)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: vehicle3)
         }
 
         let following3 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle.dropFirst(2), after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(3), after: 1.1
         ) { sut in
             XCTAssertTrue(viewportProvider.isFollowingVehicle)
             XCTAssertEqual(viewportProvider.followedVehicle, vehicle3)
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as Vehicle?)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: nil as Vehicle?)
         }
 
         let following4 = sut.inspection.inspect(
-            onReceive: viewportProvider.$followedVehicle.dropFirst(3), after: 1.1
+            onReceive: viewportProvider.$followedVehicle.dropFirst(4), after: 1.1
         ) { _ in
             // And this is checking the viewport for vehicle 3
             XCTAssertNotNil(viewportProvider.viewport.overview)
@@ -747,6 +758,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: mapVM,
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             viewportProvider: ViewportProvider(),
@@ -755,7 +767,10 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: nil as SheetNavigationStackEntry?)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(
+                relation: .parent,
+                newValue: nil as SheetNavigationStackEntry?
+            )
             XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes)
             XCTAssertEqual(mapVM.stopSourceData, .init())
         }
@@ -785,6 +800,7 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
         let sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(),
             viewportProvider: viewportProvider,
@@ -812,23 +828,30 @@ final class HomeMapViewTests: XCTestCase {
         let updateRouteSourcesExpectation = XCTestExpectation(description: "Update route source called")
         let updateStopSourceExpectation = XCTestExpectation(description: "Update stop source called")
 
-        let layerManager = MockLayerManager(addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
-                                            updateRouteDataCallback: { _ in
-                                                updateRouteSourcesExpectation.fulfill()
-                                            },
-                                            updateStopDataCallback: { _ in
-                                                updateStopSourceExpectation.fulfill()
-                                            })
+        let layerManager = MockLayerManager(
+            addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
+            updateRouteDataCallback: { _ in
+                updateRouteSourcesExpectation.fulfill()
+            },
+            updateStopDataCallback: { _ in
+                updateStopSourceExpectation.fulfill()
+            }
+        )
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            globalMapData: GlobalMapData(mapStops: [:], alertsByStop: [:])
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: GlobalMapData(mapStops: [:], alertsByStop: [:]))
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(
+                relation: .parent,
+                newValue: GlobalMapData(mapStops: [:], alertsByStop: [:])
+            )
         }
 
         ViewHosting.host(view: sut)
@@ -847,6 +870,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let routeData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
@@ -855,7 +879,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: routeData)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: routeData)
         }
 
         ViewHosting.host(view: sut)
@@ -871,18 +895,21 @@ final class HomeMapViewTests: XCTestCase {
 
         let stopData: StopSourceData = .init(selectedStopId: "stop1")
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(layerManager: layerManager),
             nearbyVM: .init(),
             viewportProvider: ViewportProvider(),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            globalMapData: .init(mapStops: [:], alertsByStop: [:])
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: stopData)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: stopData)
         }
 
         ViewHosting.host(view: sut)
+
         wait(for: [hasAppeared, updateStopSourcesCalledExpectation], timeout: 5)
     }
 
@@ -890,6 +917,7 @@ final class HomeMapViewTests: XCTestCase {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.tripDetails(tripId: "t",
                                                            vehicleId: "v",
@@ -904,7 +932,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
         ViewHosting.host(view: sut)
@@ -917,6 +945,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
 
@@ -927,7 +956,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
         ViewHosting.host(view: sut)
@@ -942,6 +971,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, nil)]),
             viewportProvider: ViewportProvider(),
@@ -951,7 +981,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.active)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
         ViewHosting.host(view: sut)
@@ -964,6 +994,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
 
@@ -974,7 +1005,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).callOnChange(newValue: ScenePhase.background)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.background)
         }
 
         ViewHosting.host(view: sut)
@@ -990,6 +1021,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         var sut = HomeMapView(
+            contentVM: .init(),
             mapVM: .init(),
             nearbyVM: .init(navigationStack: [.stopDetails(stop, .init(routeId: "routeId", directionId: 0))]),
 
@@ -1002,12 +1034,51 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            try view.find(ProxyModifiedMap.self).callOnChange(newValue: nil as SheetNavigationStackEntry?)
+            try view.find(ProxyModifiedMap.self).findAndCallOnChange(
+                relation: .parent,
+                newValue: nil as SheetNavigationStackEntry?
+            )
             XCTAssertEqual(try view.actualView().vehiclesData, [vehicle])
         }
 
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
+    }
+
+    func testRequestsLocationAfterLoading() {
+        class FakeLocationFetcher: LocationFetcher {
+            var didRequestAuthorization = false
+
+            var locationFetcherDelegate: (any iosApp.LocationFetcherDelegate)?
+
+            var authorizationStatus: CLAuthorizationStatus = .notDetermined
+
+            var distanceFilter: CLLocationDistance = .zero
+
+            func startUpdatingLocation() {}
+
+            func requestWhenInUseAuthorization() {
+                didRequestAuthorization = true
+            }
+        }
+        let contentVM = ContentViewModel()
+        let locationFetcher = FakeLocationFetcher()
+        var sut = HomeMapView(
+            contentVM: contentVM,
+            mapVM: .init(),
+            nearbyVM: .init(),
+            viewportProvider: .init(),
+            locationDataManager: .init(locationFetcher: locationFetcher),
+            sheetHeight: .constant(0)
+        )
+        let exp = sut.on(\.didAppear) { view in
+            XCTAssertFalse(locationFetcher.didRequestAuthorization)
+            contentVM.onboardingScreensPending = []
+            try view.findAndCallOnChange(newValue: contentVM.onboardingScreensPending)
+            XCTAssertTrue(locationFetcher.didRequestAuthorization)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 1)
     }
 
     class CallbackVehiclesRepo: IVehiclesRepository {

@@ -34,6 +34,11 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
 
         val imagesets = iconsXcassets.listDirectoryEntries("*.imageset")
         for (imageset in imagesets) {
+            val metadata = metadataFrom(imageset)
+            val svgs = metadata.images.filter { it.filename.endsWith(".svg") }
+            if (metadata.images.size != svgs.size) {
+                continue
+            }
             val imagesetName = imageset.fileName.nameWithoutExtension
             val drawableName = imagesetName.lowercase().replace("-", "_")
             resourceNameMap[imagesetName] = drawableName
@@ -135,17 +140,16 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
         resourceSets: Map<ColorSchemeFilter?, Map<String, ResourceSet>>,
         drawableName: String,
     ) {
-        @OptIn(ExperimentalSerializationApi::class)
-        val metadata: ImagesetMetadata =
-            json.decodeFromStream(imageset.resolve("Contents.json").inputStream())
+        val metadata = metadataFrom(imageset)
+        val images = metadata.images.filter { it.filename.endsWith(".svg") }
 
-        if (metadata.images.size == 2 &&
-            metadata.images.count { it.appearances.contains(darkModeFilter) } == 1
+        if (images.size == 2 &&
+            images.count { it.appearances.contains(darkModeFilter) } == 1
         ) {
             val lightModeImage =
-                checkNotNull(metadata.images.find { !it.appearances.contains(darkModeFilter) })
+                checkNotNull(images.find { !it.appearances.contains(darkModeFilter) })
             val darkModeImage =
-                checkNotNull(metadata.images.find { it.appearances.contains(darkModeFilter) })
+                checkNotNull(images.find { it.appearances.contains(darkModeFilter) })
 
             for ((dpiQualifier, dpiValue) in dpi) {
                 convert(
@@ -161,8 +165,8 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
                     dpiValue,
                 )
             }
-        } else if (metadata.images.size == 1) {
-            val image = metadata.images.single()
+        } else if (images.size == 1) {
+            val image = images.single()
 
             for ((dpiQualifier, dpiValue) in dpi) {
                 convert(
@@ -173,7 +177,9 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
                 )
             }
         } else {
-            throw IllegalStateException("Imageset $imageset is neither light/dark nor unsplit")
+            if (metadata.images.size == images.size) {
+                throw IllegalStateException("Imageset $imageset is neither light/dark nor unsplit")
+            }
         }
     }
 
@@ -198,6 +204,11 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
         }
 
         targetPath.writeText(drawableByName)
+    }
+
+    private fun metadataFrom(imageset: Path): ImagesetMetadata {
+        @OptIn(ExperimentalSerializationApi::class)
+        return json.decodeFromStream(imageset.resolve("Contents.json").inputStream())
     }
 }
 

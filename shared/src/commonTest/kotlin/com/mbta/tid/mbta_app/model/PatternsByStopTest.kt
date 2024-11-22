@@ -277,6 +277,7 @@ class PatternsByStopTest {
                         "Out",
                         null,
                         listOf(pattern1, pattern4),
+                        upcomingTrips = emptyList(),
                         alertsHere = listOf(alert)
                     ),
                     RealtimePatterns.ByHeadsign(
@@ -284,6 +285,7 @@ class PatternsByStopTest {
                         "In",
                         null,
                         listOf(pattern2, pattern3),
+                        upcomingTrips = emptyList(),
                         alertsHere = listOf(alert)
                     )
                 )
@@ -299,5 +301,293 @@ class PatternsByStopTest {
             )
         assertEquals(listOf(alert), patternsByStop.alertsHereFor(0, global))
         assertEquals(listOf(alert), patternsByStop.alertsHereFor(1, global))
+    }
+
+    object GroupedGLTestPatterns {
+        val objects = ObjectCollectionBuilder()
+
+        val line = objects.line()
+        val routeC = objects.route()
+        val routeE = objects.route()
+        val stop = objects.stop { id = "place-gilmn" }
+        val routePatternCCleveland =
+            objects.routePattern(routeC) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Cleveland Circle" }
+            }
+        val routePatternCGovCtr =
+            objects.routePattern(routeC) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Government Center" }
+            }
+        val routePatternCMedford =
+            objects.routePattern(routeC) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "Medford/Tufts" }
+            }
+        val routePatternEHeath =
+            objects.routePattern(routeE) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Heath Street" }
+            }
+        val routePatternEMedford =
+            objects.routePattern(routeE) {
+                directionId = 1
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "Medford/Tufts" }
+            }
+
+        val time = Clock.System.now()
+
+        val tripEHeath1 = objects.trip(routePatternEHeath)
+        val predictionEHeath1 =
+            objects.prediction {
+                trip = tripEHeath1
+                departureTime = time + 1.minutes
+            }
+        val upcomingTripEHeath1 = objects.upcomingTrip(predictionEHeath1)
+
+        val tripCCleveland1 = objects.trip(routePatternCCleveland)
+        val scheduleCCleveland1 =
+            objects.schedule {
+                trip = tripCCleveland1
+                departureTime = time + 2.minutes
+            }
+        val predictionCCleveland1 =
+            objects.prediction(scheduleCCleveland1) { departureTime = time + 1.9.minutes }
+        val vehicleCCleveland1 =
+            objects.vehicle {
+                tripId = tripCCleveland1.id
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+            }
+        val upcomingTripCCleveland1 =
+            objects.upcomingTrip(scheduleCCleveland1, predictionCCleveland1, vehicleCCleveland1)
+        val upcomingTripScheduledCCleveland1 = objects.upcomingTrip(scheduleCCleveland1)
+
+        val tripEMedford1 = objects.trip(routePatternEMedford)
+        val predictionEMedford1 =
+            objects.prediction {
+                trip = tripEMedford1
+                departureTime = time + 1.minutes
+            }
+        val upcomingTripEMedford1 = objects.upcomingTrip(predictionEMedford1)
+
+        val tripCMedford1 = objects.trip(routePatternCMedford)
+        val scheduleCMedford1 =
+            objects.schedule {
+                trip = tripCMedford1
+                departureTime = time + 2.minutes
+            }
+        val predictionCMedford1 =
+            objects.prediction(scheduleCMedford1) { departureTime = time + 1.9.minutes }
+        val vehicleCMedford1 =
+            objects.vehicle {
+                tripId = tripCMedford1.id
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+            }
+        val upcomingTripCMedford1 =
+            objects.upcomingTrip(scheduleCMedford1, predictionCMedford1, vehicleCMedford1)
+        val upcomingTripScheduledCMedford1 = objects.upcomingTrip(scheduleCMedford1)
+
+        val staticPatternsWest =
+            NearbyStaticData.StaticPatterns.ByDirection(
+                line,
+                listOf(routeC, routeE),
+                Direction("West", "Copley & West", 0),
+                listOf(routePatternCCleveland, routePatternEHeath),
+                setOf(stop.id)
+            )
+
+        val staticPatternsEast =
+            NearbyStaticData.StaticPatterns.ByDirection(
+                line,
+                listOf(routeC, routeE),
+                Direction("East", "Medford/Tufts", 1),
+                listOf(routePatternCMedford, routePatternEMedford),
+                setOf(stop.id)
+            )
+
+        val typicalUpcomingTrips: UpcomingTripsMap =
+            mapOf(
+                RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                    routeE.id,
+                    routePatternEHeath.id,
+                    stop.id
+                ) to listOf(upcomingTripEHeath1),
+                RealtimePatterns.UpcomingTripKey.ByDirection(routeE.id, 0, stop.id) to
+                    listOf(upcomingTripEHeath1),
+                RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                    routeE.id,
+                    routePatternEMedford.id,
+                    stop.id
+                ) to listOf(upcomingTripEMedford1),
+                RealtimePatterns.UpcomingTripKey.ByDirection(routeE.id, 1, stop.id) to
+                    listOf(upcomingTripEMedford1),
+            )
+        val atypicalScheduledTripsMap: UpcomingTripsMap =
+            typicalUpcomingTrips +
+                mapOf(
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                        routeC.id,
+                        routePatternCMedford.id,
+                        stop.id
+                    ) to listOf(upcomingTripScheduledCCleveland1),
+                    RealtimePatterns.UpcomingTripKey.ByDirection(routeC.id, 1, stop.id) to
+                        listOf(upcomingTripScheduledCCleveland1),
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                        routeC.id,
+                        routePatternCMedford.id,
+                        stop.id
+                    ) to listOf(upcomingTripScheduledCMedford1),
+                    RealtimePatterns.UpcomingTripKey.ByDirection(routeC.id, 1, stop.id) to
+                        listOf(upcomingTripScheduledCMedford1),
+                )
+        val atypicalUpcomingTripsMap: UpcomingTripsMap =
+            typicalUpcomingTrips +
+                mapOf(
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                        routeC.id,
+                        routePatternCCleveland.id,
+                        stop.id
+                    ) to listOf(upcomingTripCCleveland1),
+                    RealtimePatterns.UpcomingTripKey.ByDirection(routeC.id, 0, stop.id) to
+                        listOf(upcomingTripCCleveland1),
+                    RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                        routeC.id,
+                        routePatternCMedford.id,
+                        stop.id
+                    ) to listOf(upcomingTripCMedford1),
+                    RealtimePatterns.UpcomingTripKey.ByDirection(routeC.id, 1, stop.id) to
+                        listOf(upcomingTripCMedford1),
+                )
+
+        val hasSchedules =
+            mapOf(
+                routePatternCCleveland.id to true,
+                routePatternCGovCtr.id to true,
+                routePatternCMedford.id to true,
+                routePatternEHeath.id to true,
+                routePatternEMedford.id to true,
+            )
+
+        fun resolveWith(
+            staticData: NearbyStaticData.StaticPatterns.ByDirection,
+            upcomingTripsMap: UpcomingTripsMap
+        ): List<RealtimePatterns> {
+            return PatternsByStop.resolveRealtimePatternForDirection(
+                staticData,
+                upcomingTripsMap,
+                stop.id,
+                emptyList(),
+                hasSchedules,
+                true
+            )
+        }
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when only typical trips are predicted with distinct atypical static headsigns in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByHeadsign(
+                    data.routeE,
+                    "Heath Street",
+                    data.line,
+                    listOf(data.routePatternEHeath),
+                    upcomingTrips = listOf(data.upcomingTripEHeath1),
+                )
+            ),
+            data.resolveWith(data.staticPatternsWest, data.typicalUpcomingTrips)
+        )
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when atypical trips are scheduled but not predicted with distinct atypical static headsigns in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByHeadsign(
+                    data.routeE,
+                    "Heath Street",
+                    data.line,
+                    listOf(data.routePatternEHeath),
+                    upcomingTrips = listOf(data.upcomingTripEHeath1),
+                )
+            ),
+            data.resolveWith(data.staticPatternsWest, data.atypicalScheduledTripsMap)
+        )
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByDirection when atypical trips are predicted with distinct headsigns in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByDirection(
+                    data.line,
+                    listOf(data.routeC, data.routeE),
+                    Direction("West", "Copley & West", 0),
+                    listOf(data.routePatternCCleveland, data.routePatternEHeath),
+                    upcomingTrips = listOf(data.upcomingTripEHeath1, data.upcomingTripCCleveland1),
+                )
+            ),
+            data.resolveWith(data.staticPatternsWest, data.atypicalUpcomingTripsMap)
+        )
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when only typical trips are predicted with the same static headsign in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByHeadsign(
+                    data.routeE,
+                    "Medford/Tufts",
+                    data.line,
+                    listOf(data.routePatternEMedford),
+                    upcomingTrips = listOf(data.upcomingTripEMedford1),
+                )
+            ),
+            data.resolveWith(data.staticPatternsEast, data.typicalUpcomingTrips)
+        )
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByHeadsign when atypical trips are scheduled but not predicted with the same static headsign in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByHeadsign(
+                    data.routeE,
+                    "Medford/Tufts",
+                    data.line,
+                    listOf(data.routePatternEMedford),
+                    upcomingTrips = listOf(data.upcomingTripEMedford1),
+                )
+            ),
+            data.resolveWith(data.staticPatternsEast, data.atypicalScheduledTripsMap)
+        )
+    }
+
+    @Test
+    fun `resolveRealtimePatternForDirection returns a realtime ByDirection when atypical trips are predicted with the same headsign in a direction`() {
+        val data = GroupedGLTestPatterns
+        assertEquals(
+            listOf(
+                RealtimePatterns.ByDirection(
+                    data.line,
+                    listOf(data.routeC, data.routeE),
+                    Direction("East", "Medford/Tufts", 1),
+                    listOf(data.routePatternCMedford, data.routePatternEMedford),
+                    upcomingTrips = listOf(data.upcomingTripEMedford1, data.upcomingTripCMedford1),
+                )
+            ),
+            data.resolveWith(data.staticPatternsEast, data.atypicalUpcomingTripsMap)
+        )
     }
 }

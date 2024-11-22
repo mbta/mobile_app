@@ -6,9 +6,9 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for manipulating the layers displayed on the map.
@@ -36,20 +36,27 @@ extension HomeMapView {
         mapVM.layerManager = layerManager
     }
 
-    func initializeLayers(_ layerManager: IMapLayerManager) {
-        let routeSourceData = railRouteShapes?.routesWithSegmentedShapes ?? []
+    func handleSetRailSources(railRouteShapes: MapFriendlyRouteResponse?) {
+        guard let railRouteShapes else { return }
+        let routeSourceData = railRouteShapes.routesWithSegmentedShapes
         mapVM.allRailSourceData = routeSourceData
         mapVM.routeSourceData = routeSourceData
+    }
 
+    func handleSetStopSources() {
         let snappedStopRouteLines = RouteFeaturesBuilder.shared.generateRouteLines(
-            routeData: routeSourceData,
+            routeData: mapVM.allRailSourceData,
             routesById: globalData?.routes,
             stopsById: globalData?.stops,
             alertsByStop: globalMapData?.alertsByStop
         )
         mapVM.snappedStopRouteLines = snappedStopRouteLines
-
         mapVM.stopSourceData = .init(selectedStopId: lastNavEntry?.stop()?.id)
+    }
+
+    func initializeLayers(_ layerManager: IMapLayerManager) {
+        handleSetRailSources(railRouteShapes: railRouteShapes)
+        handleSetStopSources()
 
         addLayers(layerManager)
     }
@@ -60,13 +67,13 @@ extension HomeMapView {
 
     func refreshMap() {
         if let layerManager = mapVM.layerManager {
+            updateGlobalMapDataSources()
             if layerManager.currentScheme != colorScheme {
                 layerManager.addIcons(recreate: true)
                 addLayers(layerManager, recreate: true)
             } else {
                 addLayers(layerManager)
             }
-            updateGlobalMapDataSources()
         }
     }
 
@@ -80,41 +87,32 @@ extension HomeMapView {
         _ filter: StopDetailsFilter?,
         _ departures: StopDetailsDepartures?
     ) {
-        if let filter {
-            mapVM.routeSourceData = RouteFeaturesBuilder.shared.filteredRouteShapesForStop(
-                stopMapData: stopMapData,
-                filter: filter,
-                departures: departures
-            )
-        } else {
-            mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(
-                stopShapes: stopMapData.routeShapes,
-                railShapes: mapVM.allRailSourceData,
-                routesById: globalData?.routes
-            )
+        Task {
+            if let filter {
+                mapVM.routeSourceData = RouteFeaturesBuilder.shared.filteredRouteShapesForStop(
+                    stopMapData: stopMapData,
+                    filter: filter,
+                    departures: departures
+                )
+            } else {
+                mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(
+                    stopShapes: stopMapData.routeShapes,
+                    railShapes: mapVM.allRailSourceData,
+                    routesById: globalData?.routes
+                )
+            }
         }
     }
 
     func updateGlobalMapDataSources() {
-        updateStopSource(stopData: mapVM.stopSourceData)
-        updateRouteSources(routeData: mapVM.routeSourceData)
+        mapVM.updateSources(globalData: globalData, globalMapData: globalMapData)
     }
 
-    func updateRouteSources(routeData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes]) {
-        mapVM.updateRouteSource(routeLines: RouteFeaturesBuilder.shared.generateRouteLines(
-            routeData: routeData,
-            routesById: globalData?.routes,
-            stopsById: globalData?.stops,
-            alertsByStop: globalMapData?.alertsByStop
-        ))
+    func updateRouteSource() {
+        mapVM.updateRouteSource(globalData: globalData, globalMapData: globalMapData)
     }
 
-    func updateStopSource(stopData: StopSourceData) {
-        mapVM.updateStopSource(StopFeaturesBuilder.shared.buildCollection(
-            stopData: stopData,
-            stops: globalMapData?.mapStops ?? [:],
-            linesToSnap: mapVM.snappedStopRouteLines
-        )
-        .toMapbox())
+    func updateStopSource() {
+        mapVM.updateStopSource(globalMapData: globalMapData)
     }
 }

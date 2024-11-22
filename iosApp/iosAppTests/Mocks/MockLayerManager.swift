@@ -40,6 +40,8 @@ class MockLayerManager: IMapLayerManager {
         addLayersCallback()
     }
 
+    func resetPuckPosition() {}
+
     func updateSourceData(routeData: FeatureCollection) {
         updateRouteDataCallback(routeData)
     }

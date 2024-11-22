@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -184,10 +185,12 @@ class NearbyTransitViewTest : KoinTest {
                             onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
                             onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                         ) {
-                            /* no-op */
+                            onJoin(ApiResult.Ok(PredictionsByStopJoinResponse(builder)))
                         }
 
                         override var lastUpdated: Instant? = null
+
+                        override fun shouldForgetPredictions(predictionCount: Int) = false
 
                         override fun disconnect() {
                             /* no-op */
@@ -231,7 +234,7 @@ class NearbyTransitViewTest : KoinTest {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 NearbyTransitView(
-                    alertData = null,
+                    alertData = AlertsStreamDataResponse(emptyMap()),
                     globalResponse = globalResponse,
                     targetLocation = Position(0.0, 0.0),
                     setLastLocation = {},

@@ -44,175 +44,119 @@ struct UpcomingTripView: View {
             .padding(.trailing, 4)
     }
 
-    var vehicleTypeText: String {
-        // hardcoding plurals because pluralized strings that don't include the number are not supported
-        // https://developer.apple.com/forums/thread/737329#737329021
-        switch routeType {
-        case .bus:
-            isOnly ? NSLocalizedString("bus", comment: "bus") : NSLocalizedString("buses", comment: "buses")
-
-        case .commuterRail, .heavyRail, .lightRail:
-            isOnly ? NSLocalizedString("train", comment: "train") : NSLocalizedString("trains", comment: "trains")
-
-        case .ferry: isOnly ? NSLocalizedString("ferry", comment: "ferry")
-            : NSLocalizedString("ferries", comment: "ferries")
-
-        case nil: ""
-        }
-    }
-
     @ViewBuilder
     var predictionView: some View {
         switch prediction {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
-                Text(overridden.textWithLocale())
+                Text(overridden.textWithLocale()).realtime()
             case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")
             case .now:
-                Text("Now").font(Typography.headlineBold)
+                Text("Now", comment: "Label for a trip that's arriving right now")
+                    .font(Typography.headlineBold)
+                    .realtime()
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters
+                        .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .boarding:
-                Text("BRD").font(Typography.headlineBold)
+                Text("BRD", comment: "Shorthand for boarding")
+                    .font(Typography.headlineBold)
+                    .realtime()
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.boardingFirst(vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters
+                        .boardingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.boardingOther())
             case .arriving:
-                Text("ARR").font(Typography.headlineBold)
+                Text("ARR", comment: "Shorthand for arriving")
+                    .font(Typography.headlineBold)
+                    .realtime()
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.arrivingFirst(vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters
+                        .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
-                PredictionText(minutes: 1)
-            case let .asTime(format):
+                PredictionText(minutes: 1).realtime()
+            case let .time(format):
                 Text(Date(instant: format.predictionTime), style: .time)
+                    .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .realtime()
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
                             date: format.predictionTime.toNSDate(),
-                            vehicleText: vehicleTypeText
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
                         )
                         : accessibilityFormatters
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
-                    .font(Typography.footnoteSemibold)
-            case let .schedule(schedule):
-                HStack(spacing: Self.subjectSpacing) {
-                    Text(schedule.scheduleTime.toNSDate(), style: .time)
-                        .accessibilityLabel(isFirst
-                            ? accessibilityFormatters.scheduledFirst(
-                                date: schedule.scheduleTime.toNSDate(),
-                                vehicleText: vehicleTypeText
-                            )
-                            : accessibilityFormatters
-                            .scheduledOther(date: schedule.scheduleTime.toNSDate()))
-                        .font(Typography.footnoteSemibold)
-                    Image(.faClock)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: iconSize, height: iconSize)
-                        .padding(4)
-                        .foregroundStyle(Color.deemphasized)
-                }
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
+                    .realtime()
                     .accessibilityLabel(isFirst
-                        ? accessibilityFormatters.predictionMinutesFirst(minutes: format.minutes,
-                                                                         vehicleText: vehicleTypeText)
+                        ? accessibilityFormatters.predictionMinutesFirst(
+                            minutes: format.minutes,
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
                         : accessibilityFormatters.predictionMinutesOther(minutes: format.minutes))
-            case let .cancelled(schedule):
+            case let .scheduleTime(format):
+                Text(format.scheduledTime.toNSDate(), style: .time)
+                    .opacity(0.6)
+                    .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.scheduleTimeFirst(
+                            date: format.scheduledTime.toNSDate(),
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
+                        : accessibilityFormatters.scheduleTimeOther(date: format.scheduledTime.toNSDate()))
+            case let .scheduleMinutes(format):
+                PredictionText(minutes: format.minutes)
+                    .opacity(0.6)
+                    .accessibilityLabel(isFirst
+                        ? accessibilityFormatters.scheduleMinutesFirst(
+                            minutes: format.minutes,
+                            vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                        )
+                        : accessibilityFormatters.scheduleMinutesOther(minutes: format.minutes))
+            case let .cancelled(format):
                 HStack(spacing: Self.subjectSpacing) {
-                    Text("Cancelled")
+                    Text("Cancelled", comment: "The status label for a cancelled trip")
                         .font(Typography.footnote)
                         .foregroundStyle(Color.deemphasized)
-                    Text(schedule.scheduledTime.toNSDate(), style: .time)
+                    Text(format.scheduledTime.toNSDate(), style: .time)
                         .font(Typography.footnoteSemibold)
                         .strikethrough()
                         .foregroundStyle(Color.deemphasized)
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(
-                    isFirst
-                        ? accessibilityFormatters.scheduledFirst(
-                            date: schedule.scheduledTime.toNSDate(),
-                            vehicleText: vehicleTypeText
-                        )
-                        : accessibilityFormatters.scheduledOther(date: schedule.scheduledTime.toNSDate())
-                )
+                .accessibilityLabel(isFirst
+                    ? accessibilityFormatters.scheduleTimeFirst(
+                        date: format.scheduledTime.toNSDate(),
+                        vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
+                    )
+                    : accessibilityFormatters.scheduleTimeOther(date: format.scheduledTime.toNSDate()))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))
         case .none:
-            Text("Predictions unavailable").font(Typography.footnote)
+            Text(
+                "Predictions unavailable",
+                comment: "The status label when no predictions exist for a route and direction"
+            ).font(Typography.footnote)
         case .serviceEndedToday:
-            Text("Service ended").font(Typography.footnote)
+            Text(
+                "Service ended",
+                comment: "The status label for a route and direction when service was running earlier, but no more trips are running today"
+            ).font(Typography.footnote)
         case .noSchedulesToday:
-            Text("No service today").font(Typography.footnote)
+            Text(
+                "No service today",
+                comment: "The status label for a route when no service is running for the entire service day"
+            ).font(Typography.footnote)
         case .loading:
             ProgressView()
         }
-    }
-}
-
-class UpcomingTripAccessibilityFormatters {
-    private let timeFormatter: DateFormatter = makeTimeFormatter()
-
-    public func boardingFirst(vehicleText: String) -> Text {
-        Text("\(vehicleText) boarding now")
-    }
-
-    public func boardingOther() -> Text {
-        Text("and boarding now")
-    }
-
-    public func arrivingFirst(vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving now")
-    }
-
-    public func arrivingOther() -> Text {
-        Text("and arriving now")
-    }
-
-    public func distantFutureFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))")
-    }
-
-    public func distantFutureOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date))")
-    }
-
-    public func scheduledFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) scheduled")
-    }
-
-    public func scheduledOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date)) scheduled")
-    }
-
-    public func predictionMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving in \(minutes) min")
-    }
-
-    public func predictionMinutesOther(minutes: Int32) -> Text {
-        Text("and in \(minutes) min")
-    }
-
-    public func predictionTimeFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date))")
-    }
-
-    public func predictionTimeOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date))")
-    }
-
-    public func cancelledFirst(date: Date, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving at \(timeFormatter.string(from: date)) cancelled")
-    }
-
-    public func cancelledOther(date: Date) -> Text {
-        Text("and at \(timeFormatter.string(from: date)) cancelled")
     }
 }
 
@@ -267,13 +211,13 @@ struct NoServiceView: View {
 
     var rawText: Text {
         switch effect {
-        case .detour: Text("Detour")
-        case .shuttle: Text("Shuttle")
-            .accessibilityLabel(Text("Shuttle buses replace service"))
-        case .stopClosed: Text("Stop Closed")
-        case .suspension: Text("Suspension")
-            .accessibilityLabel(Text("Service suspended"))
-        case .unknown: Text("No Service")
+        case .detour: Text("Detour", comment: "Possible alert effect")
+        case .shuttle: Text("Shuttle", comment: "Possible alert effect")
+            .accessibilityLabel(Text("Shuttle buses replace service", comment: "Shuttle alert VoiceOver text"))
+        case .stopClosed: Text("Stop Closed", comment: "Possible alert effect")
+        case .suspension: Text("Suspension", comment: "Possible alert effect")
+            .accessibilityLabel(Text("Service suspended", comment: "Suspension alert VoiceOver text"))
+        case .unknown: Text("No Service", comment: "Possible alert effect")
         }
     }
 

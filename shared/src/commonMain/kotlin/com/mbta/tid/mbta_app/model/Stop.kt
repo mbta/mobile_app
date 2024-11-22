@@ -33,8 +33,8 @@ data class Stop(
          */
         fun equalOrFamily(stopId1: String, stopId2: String, stops: Map<String, Stop>): Boolean {
             if (stopId1 == stopId2) return true
-            val stop1 = stops.getValue(stopId1)
-            val stop2 = stops.getValue(stopId2)
+            val stop1 = stops[stopId1] ?: return false
+            val stop2 = stops[stopId2] ?: return false
             val parent1 = stop1.resolveParent(stops)
             val parent2 = stop2.resolveParent(stops)
             return parent1.id == parent2.id

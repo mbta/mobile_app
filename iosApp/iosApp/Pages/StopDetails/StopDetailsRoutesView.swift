@@ -35,7 +35,7 @@ struct StopDetailsRoutesView: View {
             ZStack {
                 Color.fill1.ignoresSafeArea(.all)
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 0) {
                         ForEach(departures.routes, id: \.routeIdentifier) { patternsByStop in
                             StopDetailsRouteView(
                                 patternsByStop: patternsByStop,
@@ -45,8 +45,8 @@ struct StopDetailsRoutesView: View {
                                 onPin: pinRoute
                             )
                         }
-                    }
-                }.padding([.top], 16)
+                    }.padding(.top, 16)
+                }
             }
         }
     }
@@ -101,10 +101,7 @@ struct StopDetailsRoutesView: View {
                 headsign: "A",
                 line: nil,
                 patterns: [],
-                upcomingTrips: [.init(trip: trip1, prediction: prediction1)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [.init(trip: trip1, prediction: prediction1)]
             ),
         ]),
         .init(route: route2, stop: stop, patterns: [
@@ -113,20 +110,14 @@ struct StopDetailsRoutesView: View {
                 headsign: "B",
                 line: nil,
                 patterns: [],
-                upcomingTrips: [.init(trip: trip3, prediction: prediction2)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [.init(trip: trip3, prediction: prediction2)]
             ),
             .ByHeadsign(
                 route: route2,
                 headsign: "C",
                 line: nil,
                 patterns: [],
-                upcomingTrips: [.init(trip: trip2, schedule: schedule2)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [.init(trip: trip2, schedule: schedule2)]
             ),
             .ByHeadsign(
                 route: route2,
@@ -135,10 +126,7 @@ struct StopDetailsRoutesView: View {
                 patterns: [],
                 upcomingTrips: [
                     .init(trip: trip4, schedule: schedule3, prediction: prediction3),
-                ],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                ]
             ),
         ]),
     ]), global: nil, now: Date.now.toKotlinInstant(), filter: nil, setFilter: { _ in }, pushNavEntry: { _ in },

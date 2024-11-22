@@ -24,17 +24,17 @@ class SubscribeToPredictionsTest {
 
     @Test
     fun testPredictions() = runTest {
-        fun buildSomePredictions(): PredictionsStreamDataResponse {
+        fun buildSomePredictions(): PredictionsByStopJoinResponse {
             val objects = ObjectCollectionBuilder()
             objects.prediction()
             objects.prediction()
-            return PredictionsStreamDataResponse(objects)
+            return PredictionsByStopJoinResponse(objects)
         }
 
         val predictionsRepo =
             object : IPredictionsRepository {
                 val stopIdsChannel = Channel<List<String>>()
-                lateinit var onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
+                lateinit var onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit
                 val disconnectChannel = Channel<Unit>()
 
                 var isConnected = false
@@ -43,10 +43,7 @@ class SubscribeToPredictionsTest {
                     stopIds: List<String>,
                     onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
                 ) {
-                    check(!isConnected) { "called connect when already connected" }
-                    isConnected = true
-                    launch { stopIdsChannel.send(stopIds) }
-                    this.onReceive = onReceive
+                    /* null-op */
                 }
 
                 override fun connectV2(
@@ -54,10 +51,15 @@ class SubscribeToPredictionsTest {
                     onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
                     onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                 ) {
-                    /* no-op */
+                    check(!isConnected) { "called connect when already connected" }
+                    isConnected = true
+                    launch { stopIdsChannel.send(stopIds) }
+                    this.onJoin = onJoin
                 }
 
                 override var lastUpdated: Instant? = null
+
+                override fun shouldForgetPredictions(predictionCount: Int) = false
 
                 override fun disconnect() {
                     check(isConnected) { "called disconnect when not connected" }
@@ -79,20 +81,20 @@ class SubscribeToPredictionsTest {
         assertNull(predictions)
 
         val expectedPredictions1 = buildSomePredictions()
-        predictionsRepo.onReceive(ApiResult.Ok(expectedPredictions1))
+        predictionsRepo.onJoin(ApiResult.Ok(expectedPredictions1))
         composeTestRule.awaitIdle()
-        assertEquals(expectedPredictions1, predictions)
+        assertEquals(expectedPredictions1.toPredictionsStreamDataResponse(), predictions)
 
         stopIds = listOf("place-b")
         composeTestRule.awaitIdle()
         predictionsRepo.disconnectChannel.receive()
         assertEquals(listOf("place-b"), predictionsRepo.stopIdsChannel.receive())
-        assertEquals(expectedPredictions1, predictions)
+        assertEquals(expectedPredictions1.toPredictionsStreamDataResponse(), predictions)
 
         val expectedPredictions2 = buildSomePredictions()
-        predictionsRepo.onReceive(ApiResult.Ok(expectedPredictions2))
+        predictionsRepo.onJoin(ApiResult.Ok(expectedPredictions2))
         composeTestRule.awaitIdle()
-        assertEquals(expectedPredictions2, predictions)
+        assertEquals(expectedPredictions2.toPredictionsStreamDataResponse(), predictions)
 
         unmounted = true
         composeTestRule.awaitIdle()

@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripShape
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -17,17 +18,19 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
-import com.mbta.tid.mbta_app.repositories.IAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
@@ -36,19 +39,21 @@ import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.IdleRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
-import com.mbta.tid.mbta_app.repositories.MockAppCheckRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
-import com.mbta.tid.mbta_app.usecases.GetSettingUsecase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.module.Module
@@ -89,19 +94,24 @@ fun endToEndModule(): Module {
             departureTime = now + 10.minutes
         }
     return module {
-        single<IAlertsRepository> { MockAlertsRepository() }
-        single<IAppCheckRepository> { MockAppCheckRepository() }
+        single<IAccessibilityStatusRepository> {
+            MockAccessibilityStatusRepository(isScreenReaderEnabled = true)
+        }
+        single<IAlertsRepository> { MockAlertsRepository(AlertsStreamDataResponse(objects)) }
         single<IConfigRepository> { MockConfigRepository() }
         single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
         single<IGlobalRepository> {
             object : IGlobalRepository {
-                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
-                    ApiResult.Ok(
+                override val state =
+                    MutableStateFlow(
                         GlobalResponse(
                             objects,
                             mapOf(stopParkStreet.id to listOf(patternAlewife.id, patternAshmont.id))
                         )
                     )
+
+                override suspend fun getGlobalData(): ApiResult<GlobalResponse> =
+                    ApiResult.Ok(state.value)
             }
         }
         single<INearbyRepository> {
@@ -115,6 +125,7 @@ fun endToEndModule(): Module {
                     )
             }
         }
+        single<IOnboardingRepository> { MockOnboardingRepository() }
         single<IPinnedRoutesRepository> {
             object : IPinnedRoutesRepository {
                 override suspend fun getPinnedRoutes() = emptySet<String>()
@@ -132,6 +143,8 @@ fun endToEndModule(): Module {
                 }
 
                 override var lastUpdated: Instant? = null
+
+                override fun shouldForgetPredictions(predictionCount: Int) = false
 
                 override fun connectV2(
                     stopIds: List<String>,
@@ -164,6 +177,7 @@ fun endToEndModule(): Module {
             }
         }
         single<ISearchResultRepository> { MockSearchResultRepository() }
+        single<ISentryRepository> { MockSentryRepository() }
         single<ISettingsRepository> { MockSettingsRepository() }
         single<IStopRepository> {
             object : IStopRepository {
@@ -199,6 +213,8 @@ fun endToEndModule(): Module {
 
                 override var lastUpdated: Instant? = null
 
+                override fun shouldForgetPredictions(predictionCount: Int) = false
+
                 override fun disconnect() {
                     TODO("Not yet implemented")
                 }
@@ -221,7 +237,6 @@ fun endToEndModule(): Module {
         single<IVehiclesRepository> { MockVehiclesRepository() }
         single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
         single { ConfigUseCase(get(), get()) }
-        single { GetSettingUsecase(get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
     }

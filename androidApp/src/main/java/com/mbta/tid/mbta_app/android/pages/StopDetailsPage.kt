@@ -51,14 +51,15 @@ fun StopDetailsPage(
             now
         ) {
             if (globalResponse != null) {
-                StopDetailsDepartures(
+                StopDetailsDepartures.fromData(
                     stop,
                     globalResponse,
                     schedulesResponse,
                     predictionsResponse,
                     alertData,
                     pinnedRoutes.orEmpty(),
-                    now
+                    now,
+                    useTripHeadsigns = false,
                 )
             } else null
         }

@@ -6,9 +6,10 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 /*
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
@@ -16,15 +17,7 @@ import SwiftUI
 extension HomeMapView {
     func handleAppear(location: LocationManager?, map: MapboxMap?) {
         lastNavEntry = nearbyVM.navigationStack.last
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "HomeMapView.handleAppear",
-                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
-                onSuccess: { railRouteShapes = $0 },
-                onRefreshAfterError: { handleAppear(location: location, map: map) }
-            )
-        }
+        handleTryLayerInit(map: map)
 
         // Set MapBox to use the current location to display puck
         location?.override(locationProvider: locationDataManager.$currentLocation.map {
@@ -44,14 +37,17 @@ extension HomeMapView {
     func handleGlobalMapDataChange(now: Date) {
         guard let globalData else { return }
 
-        globalMapData = GlobalMapData(
-            globalData: globalData,
-            alertsByStop: GlobalMapData.companion.getAlertsByStop(
+        Task(priority: .high) {
+            let newMapData = GlobalMapData(
                 globalData: globalData,
-                alerts: nearbyVM.alerts,
-                filterAtTime: now.toKotlinInstant()
+                alertsByStop: GlobalMapData.companion.getAlertsByStop(
+                    globalData: globalData,
+                    alerts: nearbyVM.alerts,
+                    filterAtTime: now.toKotlinInstant()
+                )
             )
-        )
+            DispatchQueue.main.async { globalMapData = newMapData }
+        }
     }
 
     func handleCameraChange(_ change: CameraChanged) {
@@ -61,11 +57,11 @@ extension HomeMapView {
     func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
         if let filter = navigationStack.lastStopDetailsFilter {
             joinVehiclesChannel(routeId: filter.routeId, directionId: filter.directionId)
-
-        } else if case let .tripDetails(tripId: _, vehicleId: _, target: _, routeId: routeId,
-                                        directionId: directionId) = navigationStack.last {
+        } else if case let .tripDetails(
+            tripId: _, vehicleId: _, target: _,
+            routeId: routeId, directionId: directionId
+        ) = navigationStack.last {
             joinVehiclesChannel(routeId: routeId, directionId: directionId)
-
         } else {
             leaveVehiclesChannel()
         }
@@ -73,20 +69,64 @@ extension HomeMapView {
         lastNavEntry = navigationStack.last
     }
 
-    func loadGlobalData() {
+    func checkOnboardingLoaded() {
+        if contentVM.onboardingScreensPending == [] {
+            locationDataManager.requestWhenInUseAuthorization()
+        }
+    }
+
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            self.globalData = globalData
+        }
+    }
+
+    func fetchGlobalData() {
         Task {
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "HomeMapView.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: { globalData = $0 },
-                onRefreshAfterError: loadGlobalData
+                onRefreshAfterError: fetchGlobalData
             )
         }
     }
 
+    func loadGlobalData() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
+        fetchGlobalData()
+    }
+
+    @MainActor
+    func activateRouteShapeListener() async {
+        for await railRouteShapes in railRouteShapeRepository.state {
+            self.railRouteShapes = railRouteShapes
+        }
+    }
+
+    func fetchRouteShapes() {
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "HomeMapView.handleAppear",
+                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
+                onRefreshAfterError: fetchRouteShapes
+            )
+        }
+    }
+
+    func loadRouteShapes() {
+        Task(priority: .high) {
+            await activateRouteShapeListener()
+        }
+        fetchRouteShapes()
+    }
+
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(stop, filter) = entry, let filter {
+        if case let .stopDetails(_, filter) = entry, let filter {
             joinVehiclesChannel(routeId: filter.routeId,
                                 directionId: filter.directionId)
         }
@@ -101,7 +141,9 @@ extension HomeMapView {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                vehiclesData = Array(result.data.vehicles.values)
+                if let departures = nearbyVM.departures {
+                    vehiclesData = Array(departures.filterVehiclesByUpcoming(vehicles: result.data).values)
+                }
             }
         }
     }

@@ -9,16 +9,17 @@
 import Combine
 import CoreLocation
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
+    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
     override func setUp() {
         executionTimeAllowance = 60
@@ -28,10 +29,12 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let viewportProvider = ViewportProvider(viewport: nil,
                                                 isManuallyCentering: true)
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: .init(),
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "select location"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Select location"))
     }
 
     func testClearsNearbyStateWhenManuallyCentering() throws {
@@ -42,8 +45,10 @@ final class NearbyTransitPageViewTests: XCTestCase {
                                      nearbyByRouteAndStop: .init(data: []))
 
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
         try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: true)
 
@@ -52,20 +57,6 @@ final class NearbyTransitPageViewTests: XCTestCase {
     }
 
     @MainActor func testReloadsWhenLocationChanges() throws {
-        class FakeGlobalRepository: IGlobalRepository {
-            let notifier: any Subject<Void, Never>
-
-            init(notifier: any Subject<Void, Never>) {
-                self.notifier = notifier
-            }
-
-            func __getGlobalData() async throws -> ApiResult<GlobalResponse> {
-                debugPrint("FakeGlobalRepo getting global")
-                notifier.send()
-                return ApiResultOk(data: GlobalResponse(objects: .init(), patternIdsByStop: [:]))
-            }
-        }
-
         class FakeNearbyVM: NearbyViewModel {
             let expectation: XCTestExpectation
             let closure: (CLLocationCoordinate2D) -> Void
@@ -86,7 +77,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let globalDataLoaded = PassthroughSubject<Void, Never>()
 
         loadKoinMocks(repositories: MockRepositories.companion
-            .buildWithDefaults(global: FakeGlobalRepository(notifier: globalDataLoaded)))
+            .buildWithDefaults(global: MockGlobalRepository(onGet: { globalDataLoaded.send() })))
 
         let getNearbyExpectation = expectation(description: "getNearby")
         getNearbyExpectation.assertForOverFulfill = false
@@ -102,8 +93,10 @@ final class NearbyTransitPageViewTests: XCTestCase {
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: fakeVM,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
         let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded) { view in
             XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
@@ -111,7 +104,8 @@ final class NearbyTransitPageViewTests: XCTestCase {
                 objects: .init(),
                 patternIdsByStop: [:]
             )
-            try view.find(NearbyTransitView.self).vStack().callOnChange(newValue: newCameraState.center)
+            try view.find(NearbyTransitView.self).implicitAnyView().vStack()
+                .callOnChange(newValue: newCameraState.center)
         }
 
         ViewHosting.host(view: sut)
@@ -140,8 +134,10 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
+            errorBannerVM: .init(),
             nearbyVM: fakeVM,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
         )
 
         let newCameraState = CameraState(

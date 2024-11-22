@@ -4,12 +4,12 @@ Pod::Spec.new do |spec|
     spec.homepage                 = 'https://github.com/mbta/mobile_app'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
-    spec.license                  = ''
+    spec.license                  = 'MIT'
     spec.summary                  = 'Common library for the MBTA mobile app'
     spec.vendored_frameworks      = 'build/cocoapods/framework/shared.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '15.0'
-    spec.dependency 'Sentry', '~> 8.26.0'
+    spec.dependency 'Sentry', '~> 8.36.0'
 
     if !Dir.exist?('build/cocoapods/framework/shared.framework') || Dir.empty?('build/cocoapods/framework/shared.framework')
         raise "

@@ -108,20 +108,14 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                 headsign: "North",
                 line: nil,
                 patterns: [patternNorth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionNorth)]
             ),
             RealtimePatterns.ByHeadsign(
                 route: route,
                 headsign: "South",
                 line: nil,
                 patterns: [patternSouth],
-                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)],
-                alertsHere: nil,
-                hasSchedulesToday: true,
-                allDataLoaded: true
+                upcomingTrips: [objects.upcomingTrip(prediction: predictionSouth)]
             ),
         ])
 
@@ -138,20 +132,14 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
                     upcomingTrips: [
                         objects.upcomingTrip(prediction: linePredictionTrunk1),
                         objects.upcomingTrip(prediction: linePredictionTrunk2),
-                    ],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    ]
                 ),
                 RealtimePatterns.ByHeadsign(
                     route: lineRoute3,
                     headsign: "Branch",
                     line: line,
                     patterns: [linePatternBranch],
-                    upcomingTrips: [objects.upcomingTrip(prediction: linePredictionBranch)],
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: [objects.upcomingTrip(prediction: linePredictionBranch)]
                 ),
             ],
             directions: [
@@ -241,5 +229,158 @@ final class StopDetailsFilteredRouteViewTests: XCTestCase {
         try sut.inspect().find(button: "North").tap()
 
         wait(for: [pushExp], timeout: 1)
+    }
+
+    func testNoService() {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let patternNorth = objects.routePattern(route: route) { pattern in
+            pattern.directionId = 0
+            pattern.representativeTrip {
+                $0.headsign = "North"
+                $0.routePatternId = "test-north"
+            }
+        }
+
+        let now = Date.now
+
+        let noServicePatterns = PatternsByStop(route: route, stop: stop, patterns: [
+            RealtimePatterns.ByHeadsign(
+                route: route,
+                headsign: "North",
+                line: nil,
+                patterns: [patternNorth],
+                upcomingTrips: [],
+                hasSchedulesToday: false
+            ),
+        ])
+
+        let departures = StopDetailsDepartures(routes: [noServicePatterns])
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: departures,
+            global: nil,
+            now: now.toKotlinInstant(),
+            filter: .init(routeId: route.id, directionId: 0),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinned: false
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "North"))
+        XCTAssertNotNil(try sut.inspect().find(text: "No service today"))
+    }
+
+    func testServiceEnded() {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let patternNorth = objects.routePattern(route: route) { pattern in
+            pattern.directionId = 0
+            pattern.representativeTrip {
+                $0.headsign = "North"
+                $0.routePatternId = "test-north"
+            }
+        }
+
+        let now = Date.now
+
+        let serviceEndedPatterns = PatternsByStop(route: route, stop: stop, patterns: [
+            RealtimePatterns.ByHeadsign(
+                route: route,
+                headsign: "North",
+                line: nil,
+                patterns: [patternNorth],
+                upcomingTrips: [],
+                hasSchedulesToday: true
+            ),
+        ])
+
+        let departures = StopDetailsDepartures(routes: [serviceEndedPatterns])
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: departures,
+            global: nil,
+            now: now.toKotlinInstant(),
+            filter: .init(routeId: route.id, directionId: 0),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinned: false
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "North"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Service ended"))
+    }
+
+    func testNoPredictions() {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let patternNorth = objects.routePattern(route: route) { pattern in
+            pattern.directionId = 0
+            pattern.representativeTrip {
+                $0.headsign = "North"
+                $0.routePatternId = "test-north"
+            }
+        }
+
+        let now = Date.now
+        let stopSequence = 92
+
+        let tripNorth = objects.trip(routePattern: patternNorth)
+        let scheduleNorth = objects.schedule {
+            $0.trip = tripNorth
+            $0.departureTime = (now + 5).toKotlinInstant()
+            $0.stopSequence = Int32(stopSequence)
+        }
+
+        let noPredictionsPatterns = PatternsByStop(route: route, stop: stop, patterns: [
+            RealtimePatterns.ByHeadsign(
+                route: route,
+                headsign: "North",
+                line: nil,
+                patterns: [patternNorth],
+                upcomingTrips: [objects.upcomingTrip(schedule: scheduleNorth)],
+                hasSchedulesToday: true
+            ),
+        ])
+
+        let departures = StopDetailsDepartures(routes: [noPredictionsPatterns])
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: departures,
+            global: nil,
+            now: now.toKotlinInstant(),
+            filter: .init(routeId: route.id, directionId: 0),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinned: false
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "North"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Predictions unavailable"))
+    }
+
+    func testNoStatus() throws {
+        let data = testData()
+
+        let sut = StopDetailsFilteredRouteView(
+            departures: data.departures,
+            global: nil,
+            now: data.now,
+            filter: .init(routeId: data.routeId, directionId: 0),
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinned: false
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "North"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Predictions unavailable"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Service ended"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "No service today"))
     }
 }

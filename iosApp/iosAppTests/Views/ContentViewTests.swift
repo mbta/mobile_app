@@ -8,12 +8,12 @@
 import Combine
 import Foundation
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 final class ContentViewTests: XCTestCase {
     override func setUp() {
@@ -37,7 +37,9 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
+            .vStack()
+            .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
 
@@ -55,9 +57,12 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
+            .vStack()
+            .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
 
@@ -74,7 +79,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
+            .vStack().callOnChange(newValue: ScenePhase.active)
         wait(for: [joinAlertsExp], timeout: 5)
     }
 
@@ -89,7 +95,8 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView().vStack()
+            .callOnChange(newValue: ScenePhase.background)
         wait(for: [leavesAlertsExp], timeout: 5)
     }
 
@@ -112,13 +119,14 @@ final class ContentViewTests: XCTestCase {
         let fakeVM = FakeContentVM(
             configMapboxCallback: { tokenConfigExpectation.fulfill() }
         )
-        let sut = ContentView(contentVM: fakeVM)
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
 
-        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        ViewHosting.host(view: sut)
 
         let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
 
-        try sut.inspect().vStack()
+        try sut.inspect().implicitAnyView().view(ContentView.self).implicitAnyView()
+            .vStack()
             .callOnChange(newValue: newConfig)
         wait(for: [tokenConfigExpectation], timeout: 5)
     }
@@ -144,10 +152,62 @@ final class ContentViewTests: XCTestCase {
         wait(for: [hasAppeared, loadConfigCallback], timeout: 5)
     }
 
+    @MainActor func testHidesMap() throws {
+        let contentVM = FakeContentVM()
+        contentVM.hideMaps = true
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
+
+        XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
+    }
+
+    @MainActor func testHiddenMapUpdatesLocation() throws {
+        let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
+        let contentVM = FakeContentVM()
+        contentVM.hideMaps = true
+
+        let locationFetcher = MockLocationFetcher()
+        locationFetcher.authorizationStatus = .authorizedAlways
+
+        let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
+        let newLocation: CLLocation = .init(latitude: 1, longitude: 1)
+
+        let sutWithEnv = withDefaultEnvironmentObjects(
+            sut: ContentView(contentVM: contentVM),
+            locationDataManager: locationDataManager
+        )
+        let sut = try sutWithEnv.inspect().implicitAnyView().view(ContentView.self).actualView()
+
+        var cameraUpdate = 0
+        let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
+            if cameraUpdate == 0 {
+                XCTAssert(ViewportProvider.Defaults.center.isRoughlyEqualTo(updatedCamera.center))
+            } else if cameraUpdate == 1 {
+                XCTAssertEqual(newLocation.coordinate, updatedCamera.center)
+                cameraExp.fulfill()
+            }
+            cameraUpdate += 1
+        }
+
+        ViewHosting.host(view: sutWithEnv)
+        locationFetcher.updateLocations(locations: [newLocation])
+        XCTAssertEqual(locationDataManager.currentLocation, newLocation)
+        wait(for: [cameraExp], timeout: 5)
+        cancelSink.cancel()
+    }
+
     func testShowsMap() throws {
         let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: FakeContentVM()))
 
         XCTAssertNotNil(try sut.inspect().find(HomeMapView.self))
+    }
+
+    func testShowsOnboarding() throws {
+        let contentVM = ContentViewModel(onboardingScreensPending: [.feedback])
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
+
+        XCTAssertNotNil(try sut.inspect().find(OnboardingPage.self))
+        XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
+        XCTAssertThrowsError(try sut.inspect().find(NearbyTransitView.self))
     }
 
     class FakeContentVM: ContentViewModel {
@@ -209,11 +269,13 @@ final class ContentViewTests: XCTestCase {
 
     private func withDefaultEnvironmentObjects(
         sut: some View,
-        socketProvider: SocketProvider = SocketProvider(socket: FakeSocket())
+        locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher()),
+        socketProvider: SocketProvider = SocketProvider(socket: FakeSocket()),
+        viewportProvider: ViewportProvider = .init()
     ) -> some View {
         sut
-            .environmentObject(LocationDataManager(locationFetcher: MockLocationFetcher()))
+            .environmentObject(locationDataManager)
             .environmentObject(socketProvider)
-            .environmentObject(ViewportProvider())
+            .environmentObject(viewportProvider)
     }
 }

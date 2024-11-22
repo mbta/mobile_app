@@ -74,7 +74,7 @@ struct AlertDetailsPage: View {
                     .scaledToFit()
                     .frame(maxHeight: modeIconHeight, alignment: .topLeading)
             }
-            Text("Alert Details").font(.headline)
+            Text("Alert Details", comment: "Header on the alert details page").font(.headline)
             Spacer()
             ActionButton(kind: .close) {
                 nearbyVM.goBack()
@@ -111,13 +111,22 @@ struct AlertDetailsPage: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            globalResponse = globalData
+        }
+    }
+
     private func loadGlobal() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
         Task {
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "AlertDetailsPage.loadGlobal",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: { globalResponse = $0 },
                 onRefreshAfterError: loadGlobal
             )
         }

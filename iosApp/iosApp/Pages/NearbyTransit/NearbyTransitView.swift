@@ -9,10 +9,10 @@
 import Combine
 import CoreLocation
 import FirebaseAnalytics
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct NearbyTransitView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
@@ -23,6 +23,7 @@ struct NearbyTransitView: View {
     var getNearby: (GlobalResponse, CLLocationCoordinate2D) -> Void
     @Binding var state: NearbyViewModel.NearbyTransitState
     @Binding var location: CLLocationCoordinate2D?
+    @Binding var isReturningFromBackground: Bool
     var globalRepository = RepositoryDI().global
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -32,16 +33,18 @@ struct NearbyTransitView: View {
     @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     var errorBannerRepository = RepositoryDI().errorBanner
+    let noNearbyStops: () -> NoNearbyStopsView
 
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if let nearbyWithRealtimeInfo {
                 nearbyList(nearbyWithRealtimeInfo)
+                    .onAppear { didLoadData?(self) }
             } else {
-                LoadingCard()
+                loadingBody()
             }
         }
         .onAppear {
@@ -82,30 +85,38 @@ struct NearbyTransitView: View {
             while !Task.isCancelled {
                 now = Date.now
                 updateNearbyRoutes()
-                await checkPredictionsStale()
+                checkPredictionsStale()
                 try? await Task.sleep(for: .seconds(5))
             }
         }
         .withScenePhaseHandlers(
-            onActive: { joinPredictions(state.nearbyByRouteAndStop?.stopIds()) },
+            onActive: {
+                if let predictionsByStop,
+                   predictionsRepository
+                   .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
+                    self.predictionsByStop = nil
+                }
+                joinPredictions(state.nearbyByRouteAndStop?.stopIds())
+            },
             onInactive: leavePredictions,
-            onBackground: leavePredictions
+            onBackground: {
+                leavePredictions()
+                isReturningFromBackground = true
+            }
         )
     }
 
     @ViewBuilder private func nearbyList(_ transit: [StopsAssociated]) -> some View {
         if transit.isEmpty {
-            VStack(spacing: 8) {
-                Spacer()
-                Text("No nearby MBTA stops")
-                    .font(Typography.headlineBold)
-                Text("Your current location is outside of our search area.")
+            ScrollView {
+                noNearbyStops()
+                    .padding(.horizontal, 16)
                 Spacer()
             }
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 0) {
                         ForEach(transit, id: \.id) { nearbyTransit in
                             switch onEnum(of: nearbyTransit) {
                             case let .withRoute(nearbyRoute):
@@ -137,9 +148,28 @@ struct NearbyTransitView: View {
         }
     }
 
+    @ViewBuilder private func loadingBody() -> some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(1 ... 5, id: \.self) { _ in
+                    NearbyRouteView(
+                        nearbyRoute: LoadingPlaceholders.shared.nearbyRoute(),
+                        pinned: false,
+                        onPin: { _ in },
+                        pushNavEntry: { _ in },
+                        now: now.toKotlinInstant()
+                    )
+                    .loadingPlaceholder()
+                }
+            }
+        }
+    }
+
     var didAppear: ((Self) -> Void)?
+    var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
+        nearbyVM.loadTripHeadsigns()
         getGlobal()
         getNearby(location: location, globalData: globalData)
         joinPredictions(state.nearbyByRouteAndStop?.stopIds())
@@ -148,17 +178,26 @@ struct NearbyTransitView: View {
         getSchedule()
     }
 
+    @MainActor
+    func activateGlobalListener() async {
+        for await globalData in globalRepository.state {
+            self.globalData = globalData
+            Task {
+                // this should be handled by the onChange but in tests it just isn't
+                getNearby(location: location, globalData: globalData)
+            }
+        }
+    }
+
     func getGlobal() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
         Task {
             await fetchApi(
                 errorBannerRepository,
                 errorKey: "NearbyTransitView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
-                onSuccess: {
-                    globalData = $0
-                    // this should be handled by the onChange but in tests it just isn't
-                    getNearby(location: location, globalData: globalData)
-                },
                 onRefreshAfterError: loadEverything
             )
         }
@@ -167,7 +206,13 @@ struct NearbyTransitView: View {
     func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
         self.location = location
         self.globalData = globalData
-        guard let location, let globalData else { return }
+        guard let globalData else { return }
+        guard let location else {
+            // if location was set to nil, forget previously loaded data
+            predictionsByStop = nil
+            scheduleResponse = nil
+            return
+        }
         getNearby(globalData, location)
     }
 
@@ -191,9 +236,12 @@ struct NearbyTransitView: View {
         predictionsRepository.connectV2(stopIds: Array(stopIds), onJoin: { outcome in
             DispatchQueue.main.async {
                 switch onEnum(of: outcome) {
-                case let .ok(result): predictionsByStop = result.data
+                case let .ok(result):
+                    predictionsByStop = result.data
+                    checkPredictionsStale()
                 case .error: break
                 }
+                isReturningFromBackground = false
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
@@ -208,8 +256,10 @@ struct NearbyTransitView: View {
                             vehicles: result.data.vehicles
                         )
                     }
+                    checkPredictionsStale()
                 case .error: break
                 }
+                isReturningFromBackground = false
             }
 
         })
@@ -248,7 +298,7 @@ struct NearbyTransitView: View {
         }
     }
 
-    private func checkPredictionsStale() async {
+    private func checkPredictionsStale() {
         if let lastPredictions = predictionsRepository.lastUpdated {
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated: lastPredictions,
@@ -301,7 +351,8 @@ struct NearbyTransitView: View {
             predictions: predictions,
             alerts: alerts,
             filterAtTime: filterAtTime,
-            pinnedRoutes: pinnedRoutes
+            pinnedRoutes: pinnedRoutes,
+            useTripHeadsigns: nearbyVM.tripHeadsignsEnabled
         )
     }
 }
@@ -469,10 +520,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction1),
                                         UpcomingTrip(trip: busTrip, prediction: busPrediction2),
-                                    ],
-                                    alertsHere: nil,
-                                    hasSchedulesToday: true,
-                                    allDataLoaded: true
+                                    ]
                                 ),
                             ]
                         ),
@@ -499,10 +547,7 @@ struct NearbyTransitView_Previews: PreviewProvider {
                                     upcomingTrips: [
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction1),
                                         UpcomingTrip(trip: crTrip, prediction: crPrediction2),
-                                    ],
-                                    alertsHere: nil,
-                                    hasSchedulesToday: true,
-                                    allDataLoaded: true
+                                    ]
                                 ),
                             ]
                         ),

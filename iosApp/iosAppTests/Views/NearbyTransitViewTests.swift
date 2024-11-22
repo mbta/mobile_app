@@ -9,16 +9,17 @@
 import Combine
 import CoreLocation
 @testable import iosApp
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
 import ViewInspector
 import XCTest
-@_spi(Experimental) import MapboxMaps
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
     private let pinnedRoutesRepository = MockPinnedRoutesRepository()
+    private let noNearbyStops = { NoNearbyStopsView(hideMaps: false, onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
     override func setUp() {
@@ -34,9 +35,15 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
-        XCTAssertNotNil(try sut.inspect().find(LoadingCard<Text>.self))
+        let cards = try sut.inspect().findAll(NearbyRouteView.self)
+        XCTAssertEqual(cards.count, 5)
+        for card in cards {
+            XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
+        }
     }
 
     func testLoading() throws {
@@ -50,12 +57,18 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in getNearbyExpectation.fulfill() },
             state: .constant(.init()),
             location: .constant(ViewportProvider.Defaults.center),
+            isReturningFromBackground: .constant(false),
             globalRepository: MockGlobalRepository(),
-            nearbyVM: .init()
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            XCTAssertNotNil(try view.find(LoadingCard<Text>.self))
+            let cards = view.findAll(NearbyRouteView.self)
+            XCTAssertEqual(cards.count, 5)
+            for card in cards {
+                XCTAssertNotNil(try card.modifier(LoadingPlaceholderModifier.self))
+            }
         }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)
@@ -137,17 +150,21 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testRoutePatternsGroupedByRouteAndStop() throws {
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
-        let exp = sut.on(\.didAppear) { view in
+        let exp = sut.on(\.didLoadData) { view in
             let routes = view.findAll(NearbyRouteView.self)
             XCTAssert(!routes.isEmpty)
             guard let route = routes.first else { return }
@@ -219,6 +236,8 @@ final class NearbyTransitViewTests: XCTestCase {
             prediction.scheduleRelationship = .cancelled
         }
 
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -227,27 +246,30 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init(),
-            scheduleResponse: .init(objects: objects)
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            noNearbyStops: noNearbyStops
         )
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
+            try view.implicitAnyView().vStack().callOnChange(newValue: PredictionsByStopJoinResponse(objects: objects))
             let patterns = view.findAll(HeadsignRowView.self)
 
             XCTAssertEqual(try patterns[0].actualView().headsign, "Dedham Mall")
             let upcomingSchedule = try patterns[0].find(UpcomingTripView.self)
             XCTAssertEqual(
                 try upcomingSchedule.actualView().prediction,
-                .some(.Schedule(scheduleTime: time1))
+                .some(.ScheduleMinutes(minutes: 45))
             )
-            XCTAssertEqual(try upcomingSchedule.find(ViewType.Image.self).actualImage().name(), "fa-clock")
 
             XCTAssertEqual(try patterns[1].actualView().headsign, "Charles River Loop")
+            let upcomingPrediction = try patterns[1].find(UpcomingTripView.self)
             XCTAssertEqual(
-                try patterns[1].find(UpcomingTripView.self).actualView().prediction,
+                try upcomingPrediction.actualView().prediction,
                 .some(.Minutes(minutes: 10))
             )
+            XCTAssertEqual(try upcomingPrediction.find(ViewType.Image.self).actualImage().name(), "live-data")
 
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
             XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .serviceEndedToday)
@@ -272,8 +294,10 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
-            scheduleResponse: .init(objects: objects)
+            scheduleResponse: .init(objects: objects),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -333,6 +357,8 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let predictionsByStop: PredictionsByStopJoinResponse = .init(objects: objects)
 
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -341,12 +367,14 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init(),
-            now: now
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            now: now,
+            noNearbyStops: noNearbyStops
         )
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: predictionsByStop)
+            try view.implicitAnyView().vStack().callOnChange(newValue: predictionsByStop)
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertNotNil(try stops[0].find(text: "Charles River Loop")
                 .parent().parent().find(ViewType.ProgressView.self))
@@ -372,15 +400,29 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testLineGrouping() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
 
+        typealias Green = GreenLineTestHelper.Companion
         let greenLineState = NearbyViewModel.NearbyTransitState(
             loadedLocation: CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78),
-            nearbyByRouteAndStop: GreenLineTestHelper.companion.nearbyData
+            nearbyByRouteAndStop: Green.shared.nearbyData
         )
 
         let distantInstant = Date.now.addingTimeInterval(10 * 60)
             .toKotlinInstant()
-        typealias Green = GreenLineTestHelper.Companion
+
         let objects = Green.shared.objects
+
+        objects.schedule { schedule in
+            schedule.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
+            schedule.departureTime = Date.now.addingTimeInterval(2 * 60).toKotlinInstant()
+            schedule.stopId = Green.shared.stopWestbound.id
+            schedule.trip = objects.trip(routePattern: Green.shared.rpB0)
+        }
+        objects.schedule { schedule in
+            schedule.arrivalTime = Date.now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
+            schedule.departureTime = Date.now.addingTimeInterval(3 * 60).toKotlinInstant()
+            schedule.stopId = Green.shared.stopEastbound.id
+            schedule.trip = objects.trip(routePattern: Green.shared.rpB1)
+        }
 
         objects.prediction { prediction in
             prediction.arrivalTime = Date.now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
@@ -441,27 +483,33 @@ final class NearbyTransitViewTests: XCTestCase {
         let predictions: PredictionsByStopJoinResponse = .init(objects: Green.shared.objects)
 
         let globalLoadedPublisher = PassthroughSubject<Void, Never>()
-
+        let globalResponse = GlobalResponse(objects: objects)
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(connectV2Outcome: predictions),
-            schedulesRepository: MockScheduleRepository(),
+            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects), callback: { _ in }),
             getNearby: { _, _ in },
             state: .constant(greenLineState),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])) {
+            isReturningFromBackground: .constant(false),
+            globalRepository: MockGlobalRepository(response: globalResponse) {
                 globalLoadedPublisher.send()
             },
-            nearbyVM: .init()
+            globalData: globalResponse,
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
-        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 0.2) { view in
+        let exp = sut.inspection.inspect(onReceive: globalLoadedPublisher, after: 1) { view in
             let stops = view.findAll(NearbyStopView.self)
             XCTAssertEqual(stops[0].findAll(DestinationRowView.self).count, 3)
 
             let kenmoreDirection = try stops[0].find(text: "Kenmore & West")
-                .parent().parent().parent().parent()
+                .find(DirectionRowView.self, relation: .parent)
+            try debugPrint(kenmoreDirection.actualView().predictions)
             XCTAssertNotNil(try kenmoreDirection.find(text: "1 min"))
             XCTAssertNotNil(try kenmoreDirection.find(text: "3 min"))
             XCTAssertNotNil(try kenmoreDirection.find(text: "Overridden"))
@@ -470,13 +518,14 @@ final class NearbyTransitViewTests: XCTestCase {
                 .parent().parent().find(text: "5 min"))
 
             let parkDirection = try stops[0].find(text: "Park St & North")
-                .parent().parent().parent().parent()
+                .find(DirectionRowView.self, relation: .parent)
+            try debugPrint(parkDirection.actualView().predictions)
             XCTAssertNotNil(try parkDirection.find(text: "2 min"))
             XCTAssertNotNil(try parkDirection.find(text: "4 min"))
             XCTAssertNotNil(try parkDirection.find(text: "6 min"))
         }
         ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
@@ -501,7 +550,9 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
@@ -527,13 +578,15 @@ final class NearbyTransitViewTests: XCTestCase {
                 }
             }
         }
-        try sut.inspect().vStack().callOnChange(newValue: newState as NearbyStaticData?)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: newState as NearbyStaticData?)
 
         wait(for: [lechmereExpectation], timeout: 1)
     }
 
     func testRendersUpdatedPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -542,7 +595,9 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
         func prediction(minutesAway: Double) -> PredictionsByStopJoinResponse {
@@ -561,10 +616,10 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: prediction(minutesAway: 2))
-            XCTAssertNotNil(try view.vStack().find(text: "2 min"))
-            try view.vStack().callOnChange(newValue: prediction(minutesAway: 3))
-            XCTAssertNotNil(try view.vStack().find(text: "3 min"))
+            try view.implicitAnyView().vStack().callOnChange(newValue: prediction(minutesAway: 2))
+            XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "2 min"))
+            try view.implicitAnyView().vStack().callOnChange(newValue: prediction(minutesAway: 3))
+            XCTAssertNotNil(try view.implicitAnyView().vStack().find(text: "3 min"))
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)
@@ -587,13 +642,15 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
 
         wait(for: [joinExpectation], timeout: 1)
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
     }
@@ -614,13 +671,15 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
 
         wait(for: [joinExpectation], timeout: 1)
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
     }
@@ -645,46 +704,57 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
     }
 
     func testScrollToTopWhenNearbyChanges() throws {
         let scrollPositionSetExpectation = XCTestExpectation()
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
         let exp = sut.on(\.didAppear) { view in
             let actualView = try view.actualView()
             actualView.scrollSubject.sink { _ in
                 scrollPositionSetExpectation.fulfill()
             }.store(in: &self.cancellables)
-            try actualView.inspect().vStack().callOnChange(newValue: self.route52State.nearbyByRouteAndStop)
+            try actualView.inspect().implicitAnyView().vStack()
+                .callOnChange(newValue: self.route52State.nearbyByRouteAndStop)
         }
         ViewHosting.host(view: sut)
         wait(for: [exp, scrollPositionSetExpectation], timeout: 1)
     }
 
+    @MainActor
     func testNearbyErrorMessage() throws {
         loadKoinMocks(repositories: MockRepositories.companion
-            .buildWithDefaults(errorBanner: MockErrorBannerStateRepository(state: .DataError(action: {}))))
+            .buildWithDefaults(errorBanner: MockErrorBannerStateRepository(state: .DataError(
+                messages: [],
+                action: {}
+            ))))
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
@@ -693,10 +763,12 @@ final class NearbyTransitViewTests: XCTestCase {
             getNearby: { _, _ in },
             state: .constant(.init()),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: .init(),
+            noNearbyStops: noNearbyStops
         )
 
-        sut.inspection.inspect(after: 0.2) { view in
+        sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.view(NearbyTransitView.self)
                 .find(text: "Error loading data"))
         }
@@ -717,19 +789,22 @@ final class NearbyTransitViewTests: XCTestCase {
                 trip: nil
             )
         }
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(objects: objects)
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
-        let exp = sut.on(\.didAppear) { view in
-            try view.vStack().callOnChange(newValue: AlertsStreamDataResponse(objects: objects))
+        let exp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(text: "Suspension"))
         }
         ViewHosting.host(view: sut)
@@ -763,10 +838,8 @@ final class NearbyTransitViewTests: XCTestCase {
                     headsign: "Place",
                     line: nil,
                     patterns: [pattern],
-                    upcomingTrips: nil,
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: []
+
                 )]
 
             ),
@@ -781,21 +854,26 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     func testEmptyFallback() throws {
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
+
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(),
+            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(.init(loadedLocation: .init(), nearbyByRouteAndStop: .init(data: []))),
             location: .constant(ViewportProvider.Defaults.center),
-            nearbyVM: .init()
+            isReturningFromBackground: .constant(false),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
         )
 
-        let hasAppeared = sut.on(\.didAppear) { view in
+        let hasAppeared = sut.on(\.didLoadData) { view in
             XCTAssertNil(try? view.find(LoadingCard<Text>.self))
-            XCTAssertNotNil(try view.find(text: "No nearby MBTA stops"))
-            XCTAssertNotNil(try view.find(text: "Your current location is outside of our search area."))
+            XCTAssertNotNil(try view.find(text: "No nearby stops"))
+            XCTAssertNotNil(try view.find(text: "You’re outside the MBTA service area."))
         }
         ViewHosting.host(view: sut)
         wait(for: [hasAppeared], timeout: 5)

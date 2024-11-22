@@ -6,13 +6,15 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
+@_spi(Experimental) import MapboxMaps
 import os
 import shared
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct HomeMapView: View {
     var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
@@ -34,8 +36,6 @@ struct HomeMapView: View {
     @State var vehiclesRepository: IVehiclesRepository
     @State var vehiclesData: [Vehicle]?
 
-    @State var upcomingRoutePatterns: Set<String> = .init()
-
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
@@ -54,6 +54,7 @@ struct HomeMapView: View {
 
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
+        contentVM: ContentViewModel,
         mapVM: MapViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
@@ -67,6 +68,7 @@ struct HomeMapView: View {
         globalMapData: GlobalMapData? = nil
     ) {
         self.globalRepository = globalRepository
+        self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
@@ -87,17 +89,16 @@ struct HomeMapView: View {
                     crosshairs
                 }
             }
-            .task {
-                loadGlobalData()
-            }
+            .task { loadGlobalData() }
+            .task { loadRouteShapes() }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
             }
-            .onChange(of: mapVM.routeSourceData) { routeData in
-                updateRouteSources(routeData: routeData)
+            .onChange(of: mapVM.routeSourceData) { _ in
+                updateRouteSource()
             }
-            .onChange(of: mapVM.stopSourceData) { stopData in
-                updateStopSource(stopData: stopData)
+            .onChange(of: mapVM.stopSourceData) { _ in
+                updateStopSource()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
@@ -107,6 +108,12 @@ struct HomeMapView: View {
                  dissapearing and re-appearing
                  */
                 nearbyVM.selectingLocation = true
+            }
+            .onChange(of: contentVM.onboardingScreensPending) { _ in
+                checkOnboardingLoaded()
+            }
+            .onAppear {
+                checkOnboardingLoaded()
             }
             .onDisappear {
                 mapVM.layerManager = nil
@@ -134,13 +141,15 @@ struct HomeMapView: View {
                 leaveVehiclesChannel()
                 viewportProvider.saveCurrentViewport()
             }
-            .withScenePhaseHandlers(onActive: {
-                                        if let lastNavEntry {
-                                            joinVehiclesChannel(navStackEntry: lastNavEntry)
-                                        }
-                                    },
-                                    onInactive: leaveVehiclesChannel,
-                                    onBackground: leaveVehiclesChannel)
+            .withScenePhaseHandlers(
+                onActive: {
+                    if let lastNavEntry {
+                        joinVehiclesChannel(navStackEntry: lastNavEntry)
+                    }
+                },
+                onInactive: leaveVehiclesChannel,
+                onBackground: leaveVehiclesChannel
+            )
             .onReceive(timer) { input in
                 now = input
                 handleGlobalMapDataChange(now: now)
@@ -163,6 +172,7 @@ struct HomeMapView: View {
             guard status == .authorizedAlways || status == .authorizedWhenInUse,
                   viewportProvider.isDefault() else { return }
             viewportProvider.follow(animation: .easeInOut(duration: 0))
+            mapVM.layerManager?.resetPuckPosition()
         }
         .onChange(of: nearbyVM.navigationStack) { nextNavStack in
             handleNavStackChange(navigationStack: nextNavStack)

@@ -69,12 +69,13 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
     }
 }
 
-class MockVehicleRepository : IVehicleRepository {
+class MockVehicleRepository(private val outcome: ApiResult<VehicleStreamDataResponse>? = null) :
+    IVehicleRepository {
     override fun connect(
         vehicleId: String,
         onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
     ) {
-        /* no-op */
+        outcome?.let { onReceive(it) }
     }
 
     override fun disconnect() {

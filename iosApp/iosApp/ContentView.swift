@@ -1,8 +1,8 @@
 import CoreLocation
+@_spi(Experimental) import MapboxMaps
 import shared
 import SwiftPhoenixClient
 import SwiftUI
-@_spi(Experimental) import MapboxMaps
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
@@ -16,9 +16,11 @@ struct ContentView: View {
     @ObservedObject var contentVM: ContentViewModel
 
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height / 2
+    @StateObject var errorBannerVM = ErrorBannerViewModel()
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
+    @StateObject var settingsVM = SettingsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
@@ -27,99 +29,36 @@ struct ContentView: View {
 
     private enum SelectedTab: Hashable {
         case nearby
-        case settings
+        case more
+    }
+
+    private func tabText(_ tab: SelectedTab) -> String {
+        switch tab {
+        case .nearby: NSLocalizedString(
+                "Nearby",
+                comment: "The label for the Nearby Transit page in the navigation bar"
+            )
+        case .more: NSLocalizedString("More", comment: "The label for the More page in the navigation bar")
+        }
     }
 
     @State private var selectedTab = SelectedTab.nearby
 
     var body: some View {
-        contents
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
-    }
-
-    @ViewBuilder
-    var contents: some View {
-        if selectedTab == .settings {
-            TabView(selection: $selectedTab) {
-                nearbyTab
-                    .tag(SelectedTab.nearby)
-                    .tabItem { Label("Nearby", systemImage: "mappin") }
-                SettingsPage()
-                    .tag(SelectedTab.settings)
-                    .tabItem { Label("Settings", systemImage: "gear") }
-                    .onAppear {
-                        screenTracker.track(screen: .settings)
-                    }
-            }
-
-        } else {
-            nearbyTab
-        }
-    }
-
-    @State var selectedDetent: PresentationDetent = .halfScreen
-    @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
-
-    @ViewBuilder var nearbySheetContents: some View {
-        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
-        // when re-opening nearby transit
         VStack {
-            TabView(selection: $selectedTab) {
-                NearbyTransitPageView(
-                    nearbyVM: nearbyVM,
-                    viewportProvider: viewportProvider
-                )
-                .tag(SelectedTab.nearby)
-                .tabItem { Label("Nearby", systemImage: "mappin") }
-                // we want to show nothing in the sheet when the settings tab is open,
-                // but an EmptyView here causes the tab to not be listed
-                VStack {}
-                    .tag(SelectedTab.settings)
-                    .tabItem { Label("Settings", systemImage: "gear") }
-            }
+            contents
         }
-    }
-
-    @ViewBuilder
-    var locationAuthHeader: some View {
-        switch locationDataManager.authorizationStatus {
-        case .notDetermined:
-            Button("Allow Location", action: {
-                locationDataManager.locationFetcher.requestWhenInUseAuthorization()
-            })
-        case .authorizedAlways, .authorizedWhenInUse:
-            EmptyView()
-        case .denied, .restricted:
-            Text("Location access denied or restricted")
-        @unknown default:
-            Text("Location access state unknown")
-        }
-    }
-
-    @ViewBuilder
-    var nearbyTab: some View {
-        VStack {
-            locationAuthHeader
-            ZStack(alignment: .top) {
-                mapWithSheets
-                VStack(alignment: .trailing, spacing: 0) {
-                    if contentVM.searchEnabled, nearbyVM.navigationStack.lastSafe() == .nearby {
-                        SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
-                    }
-                    if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
-                       locationDataManager.currentLocation != nil {
-                        RecenterButton { Task { viewportProvider.follow() } }
-                    }
-                }.frame(maxWidth: .infinity, alignment: .trailing)
-            }
-        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
-            Task {
-                await contentVM.loadSettings()
-            }
-            Task {
-                await contentVM.loadConfig()
-            }
+            Task { await contentVM.loadOnboardingScreens() }
+            Task { await nearbyVM.loadDebugSetting() }
+        }
+        .task {
+            // We can't set stale caches in ResponseCache on init because of our Koin setup,
+            // so this is here to get the cached data into the global flow and kick off an async request asap.
+            do {
+                _ = try await RepositoryDI().global.getGlobalData()
+            } catch {}
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -138,14 +77,110 @@ struct ContentView: View {
         }
         .onReceive(mapVM.lastMapboxErrorSubject
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
-                Task {
-                    await contentVM.loadConfig()
+                Task { await contentVM.loadConfig() }
+        }
+    }
+
+    @ViewBuilder
+    var contents: some View {
+        if let onboardingScreensPending = contentVM.onboardingScreensPending, !onboardingScreensPending.isEmpty {
+            OnboardingPage(screens: onboardingScreensPending, onFinish: {
+                contentVM.onboardingScreensPending = []
+            })
+        } else if selectedTab == .more {
+            TabView(selection: $selectedTab) {
+                nearbyTab
+                    .tag(SelectedTab.nearby)
+                    .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
+                MorePage(viewModel: settingsVM)
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+                    .onAppear { screenTracker.track(screen: .settings) }
+            }
+        } else {
+            nearbyTab
+        }
+    }
+
+    @State var selectedDetent: PresentationDetent = .halfScreen
+    @State var visibleNearbySheet: SheetNavigationStackEntry = .nearby
+    @State private var showingLocationPermissionAlert = false
+
+    @ViewBuilder var nearbySheetContents: some View {
+        // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
+        // when re-opening nearby transit
+        VStack {
+            TabView(selection: $selectedTab) {
+                NearbyTransitPageView(
+                    errorBannerVM: errorBannerVM,
+                    nearbyVM: nearbyVM,
+                    viewportProvider: viewportProvider,
+                    noNearbyStops: { NoNearbyStopsView(
+                        hideMaps: contentVM.hideMaps,
+                        onOpenSearch: { searchObserver.isFocused = true },
+                        onPanToDefaultCenter: { viewportProvider.animateTo(
+                            coordinates: ViewportProvider.Defaults.center,
+                            zoom: 13.75
+                        ) }
+                    ) }
+                )
+                .tag(SelectedTab.nearby)
+                .tabItem { TabLabel(tabText(.nearby), image: .tabIconNearby) }
+                // we want to show nothing in the sheet when the settings tab is open,
+                // but an EmptyView here causes the tab to not be listed
+                VStack {}
+                    .tag(SelectedTab.more)
+                    .tabItem { TabLabel(tabText(.more), image: .tabIconMore) }
+            }
+        }
+    }
+
+    @ViewBuilder
+    var nearbyTab: some View {
+        VStack {
+            if contentVM.hideMaps {
+                if nearbyVM.navigationStack.lastSafe() == .nearby {
+                    SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+                    if !searchObserver.isSearching {
+                        LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                            .padding(.bottom, 8)
+                    }
                 }
+                if !(nearbyVM.navigationStack.lastSafe() == .nearby && searchObserver.isSearching) {
+                    mapWithSheets
+                }
+            } else {
+                ZStack(alignment: .top) {
+                    mapWithSheets
+                    VStack(alignment: .center, spacing: 0) {
+                        if nearbyVM.navigationStack.lastSafe() == .nearby {
+                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM, searchVM: searchVM)
+
+                            if !searchObserver.isSearching {
+                                LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
+                            }
+                        }
+                        if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
+                           locationDataManager.currentLocation != nil {
+                            VStack(alignment: .trailing) {
+                                RecenterButton { Task { viewportProvider.follow() } }
+                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .trailing)
+                }
+            }
+        }
+        .background(Color.fill1)
+        .onAppear {
+            Task { await errorBannerVM.activate() }
+            Task { await contentVM.loadHideMaps() }
+            Task { await settingsVM.getSections() }
         }
     }
 
     @ViewBuilder var mapSection: some View {
         HomeMapView(
+            contentVM: contentVM,
             mapVM: mapVM,
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
@@ -154,42 +189,63 @@ struct ContentView: View {
     }
 
     @ViewBuilder var mapWithSheets: some View {
-        let nav = $nearbyVM.navigationStack.wrappedValue.lastSafe()
-        let sheetItem: Binding<NearbySheetItem?> = .constant(
-            searchObserver.isSearching && nav == .nearby ? .none : nav.sheetItemIdentifiable()
-        )
-        let sheetItemId: String? = nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id
-        mapSection
-            .sheet(isPresented: .constant(true), content: {
-                GeometryReader { proxy in
-                    VStack {
-                        navSheetContents
-                            .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
-                            .interactiveDismissDisabled()
-                            .modifier(AllowsBackgroundInteraction())
+        let nav = nearbyVM.navigationStack.lastSafe()
+        let sheetItemId: String? = nav.sheetItemIdentifiable()?.id
+        if contentVM.hideMaps {
+            navSheetContents
+                .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
+                    if case .alertDetails = nearbyVM.navigationStack.last {
+                        nearbyVM.goBack()
                     }
-                    // within the sheet to prevent issues on iOS 16 with two modal views open at once
-                    .fullScreenCover(
-                        item: .constant($nearbyVM.navigationStack.wrappedValue.lastSafe()
-                            .coverItemIdentifiable()),
-                        onDismiss: {
-                            if case .alertDetails = nearbyVM.navigationStack.last {
-                                nearbyVM.goBack()
-                            }
-                        },
-                        content: coverContents
-                    )
-                    .onChange(of: sheetItemId) { _ in
-                        selectedDetent = .halfScreen
-                    }
-                    .onAppear {
-                        recordSheetHeight(proxy.size.height)
-                    }
-                    .onChange(of: proxy.size.height) { newValue in
-                        recordSheetHeight(newValue)
-                    }
+                }, content: coverContents)
+                .onAppear {
+                    // The NearbyTransitPageView uses the viewport provider to determine what location to load,
+                    // since we have no map when it's hidden, we need to manually update the camera position.
+                    viewportProvider.updateCameraState(locationDataManager.currentLocation)
                 }
-            })
+                .onChange(of: locationDataManager.currentLocation) { location in
+                    viewportProvider.updateCameraState(location)
+                }
+        } else {
+            mapSection
+                .sheet(
+                    isPresented: .constant(
+                        !(searchObserver.isSearching && nav == .nearby)
+                            && selectedTab == .nearby
+                            && !showingLocationPermissionAlert
+                            && contentVM.onboardingScreensPending != nil
+                    ),
+                    content: {
+                        GeometryReader { proxy in
+                            VStack {
+                                navSheetContents
+                                    .presentationDetents([.small, .halfScreen, .almostFull], selection: $selectedDetent)
+                                    .interactiveDismissDisabled()
+                                    .modifier(AllowsBackgroundInteraction())
+                            }
+                            // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                            .fullScreenCover(
+                                item: .constant(nav.coverItemIdentifiable()),
+                                onDismiss: {
+                                    if case .alertDetails = nearbyVM.navigationStack.last {
+                                        nearbyVM.goBack()
+                                    }
+                                },
+                                content: coverContents
+                            )
+                            .onChange(of: sheetItemId) { _ in
+                                selectedDetent = .halfScreen
+                            }
+                            .onAppear {
+                                recordSheetHeight(proxy.size.height)
+                            }
+                            .onChange(of: proxy.size.height) { newValue in
+                                recordSheetHeight(newValue)
+                            }
+                        }
+                    }
+                )
+        }
     }
 
     @ViewBuilder
@@ -207,6 +263,7 @@ struct ContentView: View {
                         StopDetailsPage(
                             viewportProvider: viewportProvider,
                             stop: stop, filter: filter,
+                            errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM
                         )
 
@@ -236,6 +293,7 @@ struct ContentView: View {
                             vehicleId: vehicleId,
                             routeId: routeId,
                             target: target,
+                            errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM
                         ).toolbar(.hidden, for: .tabBar)

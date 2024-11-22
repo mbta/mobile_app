@@ -9,32 +9,43 @@
 import Combine
 import CoreLocation
 import Foundation
+import shared
 
 public class LocationDataManager: NSObject, LocationFetcherDelegate, ObservableObject {
     var locationFetcher: LocationFetcher
+    let settingsRepository: ISettingsRepository
+    let subscribeToLocations: Bool
     @Published public var currentLocation: CLLocation?
-    @Published public var authorizationStatus = CLAuthorizationStatus.notDetermined
+    @Published public var authorizationStatus: CLAuthorizationStatus?
 
     public init(
         locationFetcher: LocationFetcher = CLLocationManager(),
+        settingsRepository: ISettingsRepository = RepositoryDI().settings,
+        subscribeToLocations: Bool = true,
         distanceFilter: Double = kCLDistanceFilterNone
     ) {
         self.locationFetcher = locationFetcher
         self.locationFetcher.distanceFilter = distanceFilter
+        self.settingsRepository = settingsRepository
+        self.subscribeToLocations = subscribeToLocations
         super.init()
         self.locationFetcher.locationFetcherDelegate = self
     }
 
     public func locationFetcherDidChangeAuthorization(_ fetcher: LocationFetcher) {
         authorizationStatus = fetcher.authorizationStatus
-        // TODO: only if requested
-        if fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
+        if subscribeToLocations,
+           fetcher.authorizationStatus == .authorizedWhenInUse || fetcher.authorizationStatus == .authorizedAlways {
             fetcher.startUpdatingLocation()
         }
     }
 
     public func locationFetcher(_: LocationFetcher, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
+    }
+
+    public func requestWhenInUseAuthorization() {
+        locationFetcher.requestWhenInUseAuthorization()
     }
 }
 

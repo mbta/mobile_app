@@ -12,7 +12,7 @@ import SwiftUI
 struct LoadingCard<Message: View>: View {
     var message: () -> Message?
 
-    init(message: @escaping () -> Message? = { Text("loading") }) {
+    init(message: @escaping () -> Message? = { Text("Loading...") }) {
         self.message = message
     }
 
@@ -26,13 +26,12 @@ struct LoadingCard<Message: View>: View {
             }
         }
         .withRoundedBorder()
-        .padding(32)
     }
 }
 
 #Preview {
     List {
         LoadingCard()
-        LoadingCard { Text("Custom message") }
+        LoadingCard { Text(verbatim: "Custom message") }
     }
 }

@@ -15,7 +15,6 @@ import SwiftUI
 
 struct StopDetailsView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
-    let errorBannerRepository: IErrorBannerStateRepository
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
     var stop: Stop
@@ -24,6 +23,7 @@ struct StopDetailsView: View {
     var departures: StopDetailsDepartures?
     var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
+    @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     let pinnedRoutes: Set<String>
     @State var predictions: PredictionsStreamDataResponse?
@@ -34,23 +34,23 @@ struct StopDetailsView: View {
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         stop: Stop,
         filter: StopDetailsFilter?,
         setFilter: @escaping (StopDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
+        errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         now: Date,
         pinnedRoutes: Set<String>,
         togglePinnedRoute: @escaping (String) -> Void
     ) {
-        self.errorBannerRepository = errorBannerRepository
         self.globalRepository = globalRepository
         self.stop = stop
         self.filter = filter
         self.setFilter = setFilter
         self.departures = departures
+        self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.now = now
         self.pinnedRoutes = pinnedRoutes
@@ -62,8 +62,7 @@ struct StopDetailsView: View {
                     return .line(line)
                 }
                 return .route(
-                    patterns.representativeRoute,
-                    globalResponse?.getLine(lineId: patterns.representativeRoute.lineId)
+                    patterns.representativeRoute
                 )
             }
         }
@@ -73,13 +72,18 @@ struct StopDetailsView: View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
-                VStack {
+                VStack(spacing: 16) {
                     SheetHeader(
                         title: stop.name,
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
-                    ErrorBanner()
+                    if nearbyVM.showDebugMessages {
+                        DebugView {
+                            Text(verbatim: "stop id: \(stop.id)")
+                        }
+                    }
+                    ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
@@ -87,9 +91,9 @@ struct StopDetailsView: View {
                             filter: filter,
                             setFilter: setFilter
                         )
-                        .padding([.bottom], 8)
                     }
                 }
+                .padding(.bottom, 16)
                 .border(Color.halo.opacity(0.15), width: 2)
 
                 if let departures {
@@ -104,7 +108,7 @@ struct StopDetailsView: View {
                         pinnedRoutes: pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
-                    LoadingCard()
+                    loadingBody()
                 }
             }
         }
@@ -113,10 +117,24 @@ struct StopDetailsView: View {
         }
     }
 
+    @ViewBuilder private func loadingBody() -> some View {
+        StopDetailsRoutesView(
+            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: filter),
+            global: globalResponse,
+            now: now.toKotlinInstant(),
+            filter: filter,
+            setFilter: { _ in },
+            pushNavEntry: { _ in },
+            pinRoute: { _ in },
+            pinnedRoutes: pinnedRoutes
+        )
+        .loadingPlaceholder()
+    }
+
     private func loadGlobal() {
         Task {
             await fetchApi(
-                errorBannerRepository,
+                errorBannerVM.errorRepository,
                 errorKey: "StopDetailsView.loadGlobal",
                 getData: globalRepository.getGlobalData,
                 onSuccess: { globalResponse = $0 },
@@ -129,7 +147,7 @@ struct StopDetailsView: View {
         let filterId = switch filterBy {
         case let .line(line):
             line.id
-        case let .route(route, _):
+        case let .route(route):
             route.id
         }
         if filter?.routeId == filterId { setFilter(nil); return }
@@ -138,7 +156,8 @@ struct StopDetailsView: View {
         else { return }
         analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
-            headsign.patterns.map { pattern in pattern.directionId }
+            // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
+            headsign.patterns.compactMap { pattern in (pattern as? RoutePattern)?.directionId }
         }.min() ?? 0
         setFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }

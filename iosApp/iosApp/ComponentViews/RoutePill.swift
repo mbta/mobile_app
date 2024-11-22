@@ -12,8 +12,6 @@ import SwiftUI
 struct RoutePill: View {
     let route: Route?
     let line: Line?
-    let stopResultRoute: StopResultRoute?
-    let type: RoutePillSpec.Type_
     let isActive: Bool
     let textColor: Color
     let routeColor: Color
@@ -36,21 +34,17 @@ struct RoutePill: View {
     init(route: Route?, line: Line? = nil, type: RoutePillSpec.Type_, isActive: Bool = true) {
         self.route = route
         self.line = line
-        stopResultRoute = nil
-        self.type = type
         self.isActive = isActive
         spec = .init(route: route, line: line, type: type)
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
     }
 
-    init(stopResultRoute: StopResultRoute, type: RoutePillSpec.Type_, isActive: Bool = true) {
+    init(spec: RoutePillSpec, isActive: Bool = true) {
         route = nil
         line = nil
-        self.stopResultRoute = stopResultRoute
-        self.type = type
         self.isActive = isActive
-        spec = .init(stopResultRoute: stopResultRoute)
+        self.spec = spec
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
     }
@@ -112,18 +106,19 @@ struct RoutePill: View {
     }
 
     var body: some View {
-        if route == nil, line == nil, stopResultRoute == nil {
-            EmptyView()
-        } else {
-            getPillBase()
-                .textCase(.uppercase)
-                .font(.custom("Helvetica Neue", size: fontSize).bold())
-                .tracking(0.5)
-                .modifier(FramePaddingModifier(spec: spec))
-                .lineLimit(1)
-                .modifier(ColorModifier(pill: self))
-                .modifier(ClipShapeModifier(spec: spec))
-        }
+        getPillBase()
+            .textCase(.uppercase)
+            .font(.custom("Helvetica Neue", size: fontSize).bold())
+            .tracking(0.5)
+            .modifier(FramePaddingModifier(spec: spec))
+            .lineLimit(1)
+            .modifier(ColorModifier(pill: self))
+            .modifier(ClipShapeModifier(spec: spec))
+            .accessibilityElement()
+            .accessibilityAddTraits(isActive ? [.isSelected] : [])
+            .accessibilityLabel(
+                "\(route?.label ?? line?.longName ?? "") \(route?.type.typeText(isOnly: true) ?? "")"
+            )
     }
 }
 

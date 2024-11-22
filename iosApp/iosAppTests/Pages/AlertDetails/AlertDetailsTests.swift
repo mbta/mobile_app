@@ -45,7 +45,7 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Red Line Stop Closure"))
         XCTAssertNotNil(try sut.inspect().find(text: "Unruly Passenger"))
         XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[0].formatStart().characters)))
-        XCTAssertNotNil(try sut.inspect().find(text: "**3** affected stops"))
+        XCTAssertNotNil(try sut.inspect().find(text: "3 affected stops"))
         XCTAssertNotNil(try sut.inspect().find(ViewType.DisclosureGroup.self))
         XCTAssertNotNil(try sut.inspect().find(text: stop1.name))
         XCTAssertNotNil(try sut.inspect().find(text: stop2.name))
@@ -159,7 +159,7 @@ final class AlertDetailsTests: XCTestCase {
         )
 
         try print(sutWithoutStops.inspect().findAll(ViewType.Text.self).map { text in try text.string() })
-        XCTAssertNil(try? sutWithoutStops.inspect().find(text: "**3** affected stops"))
+        XCTAssertNil(try? sutWithoutStops.inspect().find(text: "3 affected stops"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Alert description"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "More details"))
@@ -170,7 +170,7 @@ final class AlertDetailsTests: XCTestCase {
         )
 
         XCTAssertNotNil(try? sutWithStops.inspect().find(text: "Alert description"))
-        XCTAssertNotNil(try? sutWithStops.inspect().find(text: "**3** affected stops"))
+        XCTAssertNotNil(try? sutWithStops.inspect().find(text: "3 affected stops"))
         XCTAssertNil(try? sutWithStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))
         XCTAssertNotNil(try? sutWithStops.inspect().find(text: "More details"))
     }

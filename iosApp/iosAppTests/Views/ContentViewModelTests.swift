@@ -18,17 +18,18 @@ final class ContentViewModelTests: XCTestCase {
     func testLoadConfigSetsConfig() async {
         let expectedResult = ApiResultOk<ConfigResponse>(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
         let contentVM = ContentViewModel(configUseCase: ConfigUseCase(
-            appCheckRepo: MockAppCheckRepository(),
-            configRepo: MockConfigRepository(response: expectedResult)
+            configRepo: MockConfigRepository(response: expectedResult),
+            sentryRepo: MockSentryRepository()
         ))
         await contentVM.loadConfig()
         XCTAssertEqual(contentVM.configResponse, expectedResult)
     }
 
-    func testLoadSettingsSetsSettings() async {
-        let expectedResult: Set<Setting> = [.init(key: .search, isOn: true)]
-        let contentVM = ContentViewModel(settingsRepo: MockSettingsRepository(settings: expectedResult))
-        await contentVM.loadSettings()
-        XCTAssertTrue(contentVM.searchEnabled)
+    func testLoadOnboardingSetsOnboarding() async {
+        let contentVM = ContentViewModel(
+            onboardingRepository: MockOnboardingRepository(pendingOnboarding: [.location, .feedback])
+        )
+        await contentVM.loadOnboardingScreens()
+        XCTAssertEqual(contentVM.onboardingScreensPending, [.location, .feedback])
     }
 }

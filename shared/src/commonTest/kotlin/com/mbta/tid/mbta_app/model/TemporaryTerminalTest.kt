@@ -6,13 +6,15 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.properties.PropertyDelegateProvider
+import kotlin.properties.ReadOnlyProperty
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-/** An integration test for all of the logic in [TemporaryTerminalRewriter]. */
+/** An integration test for all of the logic in [TemporaryTerminalFilter]. */
 class TemporaryTerminalTest {
     val now = Instant.parse("2024-08-19T16:44:08-04:00")
 
@@ -27,39 +29,42 @@ class TemporaryTerminalTest {
         val childIds: List<String> = listOf(northbound.id, southbound.id)
     }
 
-    fun stop(): StopWithPlatforms {
-        var northbound: Stop? = null
-        var southbound: Stop? = null
-        val station =
-            objects.stop {
-                northbound = childStop()
-                southbound = childStop()
-            }
-        return StopWithPlatforms(checkNotNull(northbound), checkNotNull(southbound), station)
-    }
+    fun stop() =
+        PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, StopWithPlatforms>> { _, property ->
+            lateinit var northbound: Stop
+            lateinit var southbound: Stop
+            val station =
+                objects.stop {
+                    id = "place-${property.name}"
+                    northbound = childStop { id = "${property.name}-northbound" }
+                    southbound = childStop { id = "${property.name}-southbound" }
+                }
+            val stopWithPlatforms = StopWithPlatforms(northbound, southbound, station)
+            ReadOnlyProperty { _, _ -> stopWithPlatforms }
+        }
 
-    val alewife = stop()
-    val davis = stop()
-    val porter = stop()
-    val harvard = stop()
-    val central = stop()
-    val kendallMit = stop()
-    val charlesMgh = stop()
-    val parkStreet = stop()
-    val downtownCrossing = stop()
-    val southStation = stop()
-    val broadway = stop()
-    val andrew = stop()
-    val jfkUmass = stop()
-    val savinHill = stop()
-    val fieldsCorner = stop()
-    val shawmut = stop()
-    val ashmont = stop()
-    val northQuincy = stop()
-    val wollaston = stop()
-    val quincyCenter = stop()
-    val quincyAdams = stop()
-    val braintree = stop()
+    val alewife by stop()
+    val davis by stop()
+    val porter by stop()
+    val harvard by stop()
+    val central by stop()
+    val kendallMit by stop()
+    val charlesMgh by stop()
+    val parkStreet by stop()
+    val downtownCrossing by stop()
+    val southStation by stop()
+    val broadway by stop()
+    val andrew by stop()
+    val jfkUmass by stop()
+    val savinHill by stop()
+    val fieldsCorner by stop()
+    val shawmut by stop()
+    val ashmont by stop()
+    val northQuincy by stop()
+    val wollaston by stop()
+    val quincyCenter by stop()
+    val quincyAdams by stop()
+    val braintree by stop()
 
     val stopsNorthOfShuttle = listOf(alewife, davis, porter, harvard, central, kendallMit)
     val stopsInShuttle =
@@ -295,8 +300,20 @@ class TemporaryTerminalTest {
     val nearbyOutsideShuttle = NearbyResponse(harvard.childIds)
     val nearbyInsideShuttle = NearbyResponse(parkStreet.childIds)
     val nearbyAtShuttleEdge = NearbyResponse(jfkUmass.childIds)
-    val schedules = ScheduleResponse(objects)
-    val predictions = PredictionsStreamDataResponse(objects)
+
+    fun schedulesAt(stopWithPlatforms: StopWithPlatforms) =
+        ScheduleResponse(
+            objects.schedules.values.filter { it.stopId in stopWithPlatforms.childIds },
+            objects.trips
+        )
+
+    fun predictionsAt(stopWithPlatforms: StopWithPlatforms) =
+        PredictionsStreamDataResponse(
+            objects.predictions.filterValues { it.stopId in stopWithPlatforms.childIds },
+            objects.trips,
+            objects.vehicles
+        )
+
     val alerts = AlertsStreamDataResponse(objects)
 
     fun expected(stop: Stop, vararg realtimePatterns: RealtimePatterns) =
@@ -308,140 +325,194 @@ class TemporaryTerminalTest {
         )
 
     @Test
-    fun `shows only temporary terminals when outside shuttle`() {
-        assertEquals(
+    fun `shows only regular terminals when outside shuttle`() {
+        val expected =
             expected(
-                    harvard.station,
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Kendall/MIT",
-                        null,
-                        listOf(redAlewifeBraintree, redAlewifeAshmont, redAlewifeKendall),
-                        listOf(
-                            UpcomingTrip(tripAlewifeKendall, scheduleAlewifeKendall),
-                            UpcomingTrip(tripAlewifeBraintree1, predictionAlewifeBraintree1),
-                            UpcomingTrip(tripAlewifeBraintree2, predictionAlewifeBraintree2),
-                            UpcomingTrip(tripAlewifeBraintree3, predictionAlewifeBraintree3)
-                        ),
-                        emptyList()
+                harvard.station,
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Braintree",
+                    null,
+                    listOf(redAlewifeBraintree),
+                    listOf(
+                        UpcomingTrip(tripAlewifeBraintree1, predictionAlewifeBraintree1),
+                        UpcomingTrip(tripAlewifeBraintree2, predictionAlewifeBraintree2),
+                        UpcomingTrip(tripAlewifeBraintree3, predictionAlewifeBraintree3)
                     ),
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Alewife",
-                        null,
-                        listOf(redBraintreeAlewife, redAshmontAlewife, redKendallAlewife),
-                        listOf(
-                            UpcomingTrip(tripBraintreeAlewife1, predictionBraintreeAlewife1),
-                            UpcomingTrip(tripKendallAlewife, scheduleKendallAlewife)
-                        ),
-                        emptyList()
-                    )
+                    emptyList()
+                ),
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Alewife",
+                    null,
+                    listOf(redBraintreeAlewife, redAshmontAlewife, redKendallAlewife),
+                    listOf(
+                        UpcomingTrip(tripBraintreeAlewife1, predictionBraintreeAlewife1),
+                        UpcomingTrip(tripKendallAlewife, scheduleKendallAlewife)
+                    ),
+                    emptyList()
+                ),
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Ashmont",
+                    null,
+                    listOf(redAlewifeAshmont),
+                    emptyList(),
+                    emptyList()
                 )
-                .condensed(),
+            )
+        assertEquals(
+            expected.condensed(),
             NearbyStaticData(globalData, nearbyOutsideShuttle)
                 .withRealtimeInfo(
                     globalData,
                     position,
-                    schedules,
-                    predictions,
+                    schedulesAt(harvard),
+                    predictionsAt(harvard),
                     alerts,
                     now,
-                    emptySet()
-                )
+                    emptySet(),
+                    useTripHeadsigns = false,
+                )!!
+                .condensed()
+        )
+        assertEquals(
+            expected.condensed(),
+            StopDetailsDepartures.fromData(
+                    harvard.station,
+                    globalData,
+                    schedulesAt(harvard),
+                    predictionsAt(harvard),
+                    alerts,
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )!!
+                .asNearby()
                 .condensed()
         )
     }
 
     @Test
     fun `shows only regular terminals when inside shuttle`() {
-        assertEquals(
+        val expected =
             expected(
-                    parkStreet.station,
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Braintree",
-                        null,
-                        listOf(redAlewifeBraintree),
-                        emptyList(),
-                        listOf(alert)
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Ashmont",
-                        null,
-                        listOf(redAlewifeAshmont),
-                        emptyList(),
-                        listOf(alert)
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Alewife",
-                        null,
-                        listOf(redBraintreeAlewife, redAshmontAlewife),
-                        emptyList(),
-                        listOf(alert)
-                    )
+                parkStreet.station,
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Braintree",
+                    null,
+                    listOf(redAlewifeBraintree),
+                    emptyList(),
+                    listOf(alert)
+                ),
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Ashmont",
+                    null,
+                    listOf(redAlewifeAshmont),
+                    emptyList(),
+                    listOf(alert)
+                ),
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Alewife",
+                    null,
+                    listOf(redBraintreeAlewife, redAshmontAlewife),
+                    emptyList(),
+                    listOf(alert)
                 )
-                .condensed(),
+            )
+        assertEquals(
+            expected.condensed(),
             NearbyStaticData(globalData, nearbyInsideShuttle)
                 .withRealtimeInfo(
                     globalData,
                     position,
-                    schedules,
-                    predictions,
+                    schedulesAt(parkStreet),
+                    predictionsAt(parkStreet),
                     alerts,
                     now,
-                    emptySet()
-                )
+                    emptySet(),
+                    useTripHeadsigns = false,
+                )!!
+                .condensed()
+        )
+        assertEquals(
+            expected.condensed(),
+            StopDetailsDepartures.fromData(
+                    parkStreet.station,
+                    globalData,
+                    schedulesAt(parkStreet),
+                    predictionsAt(parkStreet),
+                    alerts,
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )!!
+                .asNearby()
                 .condensed()
         )
     }
 
     @Test
-    fun `shows correct set of terminals when at boundary of shuttle`() {
-        assertEquals(
+    fun `shows only regular terminals when at boundary of shuttle`() {
+        val expected =
             expected(
-                    jfkUmass.station,
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Braintree",
-                        null,
-                        listOf(redAlewifeBraintree, redJfkBraintree),
-                        listOf(UpcomingTrip(tripJfkBraintree, scheduleJfkBraintree)),
-                        emptyList()
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Ashmont",
-                        null,
-                        listOf(redAlewifeAshmont, redJfkAshmont),
-                        listOf(UpcomingTrip(tripJfkAshmont, scheduleJfkAshmont)),
-                        emptyList()
-                    ),
-                    RealtimePatterns.ByHeadsign(
-                        red,
-                        "Alewife",
-                        null,
-                        listOf(redBraintreeAlewife, redAshmontAlewife),
-                        emptyList(),
-                        listOf(alert)
-                    ),
-                    // JFK/UMass filtered out because arrival only
-                )
-                .condensed(),
+                jfkUmass.station,
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Braintree",
+                    null,
+                    listOf(redAlewifeBraintree, redJfkBraintree),
+                    listOf(UpcomingTrip(tripJfkBraintree, scheduleJfkBraintree)),
+                    emptyList()
+                ),
+                RealtimePatterns.ByHeadsign(
+                    red,
+                    "Ashmont",
+                    null,
+                    listOf(redAlewifeAshmont, redJfkAshmont),
+                    listOf(UpcomingTrip(tripJfkAshmont, scheduleJfkAshmont)),
+                    emptyList()
+                ),
+                // Alewife filtered out because arrival only
+            )
+        assertEquals(
+            expected.condensed(),
             NearbyStaticData(globalData, nearbyAtShuttleEdge)
                 .withRealtimeInfo(
                     globalData,
                     position,
-                    schedules,
-                    predictions,
+                    schedulesAt(jfkUmass),
+                    predictionsAt(jfkUmass),
                     alerts,
                     now,
-                    emptySet()
-                )
+                    emptySet(),
+                    useTripHeadsigns = false,
+                )!!
+                .condensed()
+        )
+        assertEquals(
+            expected.condensed(),
+            StopDetailsDepartures.fromData(
+                    jfkUmass.station,
+                    globalData,
+                    schedulesAt(jfkUmass),
+                    predictionsAt(jfkUmass),
+                    alerts,
+                    emptySet(),
+                    now,
+                    useTripHeadsigns = false,
+                )!!
+                .asNearby()
                 .condensed()
         )
     }
+
+    // for easier assertions about stop details
+    fun StopDetailsDepartures.asNearby(): List<StopsAssociated> =
+        listOf(StopsAssociated.WithRoute(red, this.routes))
 
     // for more legible diffs
     fun List<StopsAssociated>.condensed(): String {
@@ -472,8 +543,8 @@ class TemporaryTerminalTest {
                 is RealtimePatterns.ByDirection ->
                     "        ${direction.name} to ${direction.destination}"
             } +
-                " (patterns=${patterns.joinToString { it.id }}) alerts=${alertsHere.orEmpty().joinToString(prefix = "[", postfix = "]") { it.id }}\n" +
-                upcomingTrips.orEmpty().joinToString(separator = "\n") { it.condensed() }
+                " (patterns=${patterns.joinToString { it?.id ?: "<null>" }}) alerts=${alertsHere.orEmpty().joinToString(prefix = "[", postfix = "]") { it.id }}\n" +
+                upcomingTrips.joinToString(separator = "\n") { it.condensed() }
 
         fun PatternsByStop.condensed() =
             "    stop=${stop.id}\n${patterns.joinToString(separator = "\n") { it.condensed() }}"

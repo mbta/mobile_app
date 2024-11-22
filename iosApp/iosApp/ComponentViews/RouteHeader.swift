@@ -28,5 +28,8 @@ struct RouteHeader<Content: View>: View {
             modeIcon: routeIcon(route),
             rightContent: rightContent
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityHeading(.h2)
     }
 }

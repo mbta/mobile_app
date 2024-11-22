@@ -25,12 +25,24 @@ struct TripDetailsHeader: View {
                     RoutePill(route: route, line: line, type: .fixed)
                     toHeadsign(trip.headsign)
                 }
+                .accessibilityElement()
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h1)
+                .accessibilityLabel(Text(
+                    "\(route.label) \(route.type.typeText(isOnly: true)) to \(trip.headsign)",
+                    comment: """
+                    VoiceOver text for the trip details page header,
+                    describes the route and destination of the vehicle,
+                    ex 'Red Line train to Alewife'
+                    """
+                ))
             }
             Spacer()
             ActionButton(kind: .close, action: onClose)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
+        .padding(.horizontal, 16)
+        .padding(.top, 16)
     }
 
     var liveIndicator: some View {
@@ -38,15 +50,23 @@ struct TripDetailsHeader: View {
             Image(.liveData)
                 .resizable()
                 .frame(width: 16, height: 16)
-            Text("Live")
+            Text("Live", comment: "Indicates that data is being updated in real-time")
                 .font(Typography.footnote)
         }
+        .accessibilityElement()
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel(Text(
+            "Real-time arrivals updating live",
+            comment: "VoiceOver label for real-time indicator icon"
+        ))
     }
 
     func toHeadsign(_ headsign: String) -> some View {
-        Text("to \(headsign)")
-            .font(Typography.headlineBold)
-            .accessibilityHeading(.h1)
+        Text("to \(headsign)", comment: """
+        Label for the destination of a vehicle.
+        For example "[Red Line] to Alewife"
+        """)
+        .font(Typography.headlineBold)
     }
 }
 

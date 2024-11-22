@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.datetime.Instant
 
 typealias UpcomingTripsMap = Map<RealtimePatterns.UpcomingTripKey, List<UpcomingTrip>>
@@ -40,8 +41,9 @@ sealed class RealtimePatterns {
 
     abstract val id: String
 
-    abstract val patterns: List<RoutePattern>
-    abstract val upcomingTrips: List<UpcomingTrip>?
+    // contains null if an added trip with no pattern is included in the upcoming trips
+    abstract val patterns: List<RoutePattern?>
+    abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
     abstract val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
@@ -56,13 +58,15 @@ sealed class RealtimePatterns {
      * @property upcomingTrips Every [UpcomingTrip] for the [Stop] in the containing
      *   [PatternsByStop] for any of these [patterns]
      */
-    data class ByHeadsign(
+    data class ByHeadsign
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val route: Route,
         val headsign: String,
         val line: Line?,
-        override val patterns: List<RoutePattern>,
-        override val upcomingTrips: List<UpcomingTrip>? = null,
-        override val alertsHere: List<Alert>? = null,
+        override val patterns: List<RoutePattern?>,
+        override val upcomingTrips: List<UpcomingTrip>,
+        override val alertsHere: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -70,9 +74,9 @@ sealed class RealtimePatterns {
 
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
-            upcomingTripsMap: UpcomingTripsMap?,
+            upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>?,
+            alerts: Collection<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -80,29 +84,44 @@ sealed class RealtimePatterns {
             staticData.headsign,
             staticData.line,
             staticData.patterns,
-            if (upcomingTripsMap != null) {
-                staticData.patterns
-                    .mapNotNull { pattern ->
-                        upcomingTripsMap[
-                            UpcomingTripKey.ByRoutePattern(
-                                staticData.route.id,
-                                pattern.id,
-                                parentStopId
-                            )]
-                    }
-                    .flatten()
-                    .sorted()
-            } else {
-                null
-            },
-            alerts?.let {
-                applicableAlerts(
-                    routes = listOf(staticData.route),
-                    stopIds = staticData.stopIds,
-                    alerts = alerts
-                )
-            },
+            staticData.patterns
+                .mapNotNull { pattern ->
+                    upcomingTripsMap[
+                        UpcomingTripKey.ByRoutePattern(
+                            staticData.route.id,
+                            pattern.id,
+                            parentStopId
+                        )]
+                }
+                .flatten()
+                .sorted(),
+            applicableAlerts(
+                routes = listOf(staticData.route),
+                stopIds = staticData.stopIds,
+                alerts = alerts
+            ),
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
+            allDataLoaded,
+        )
+
+        constructor(
+            headsign: NearbyHierarchy.DirectionOrHeadsign.Headsign,
+            leaf: NearbyHierarchy.NearbyLeaf,
+            alerts: Collection<Alert>,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
+        ) : this(
+            headsign.route,
+            headsign.headsign,
+            headsign.line,
+            leaf.routePatterns.sortedWith(nullsLast()),
+            leaf.upcomingTrips.sorted(),
+            applicableAlerts(
+                routes = listOf(headsign.route),
+                stopIds = leaf.childStopIds,
+                alerts = alerts
+            ),
+            hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
             allDataLoaded,
         )
     }
@@ -112,13 +131,15 @@ sealed class RealtimePatterns {
      * @property upcomingTrips Every [UpcomingTrip] for the [Stop] in the containing
      *   [PatternsByStop] for any of these [patterns]
      */
-    data class ByDirection(
+    data class ByDirection
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val line: Line,
         val routes: List<Route>,
         val direction: Direction,
-        override val patterns: List<RoutePattern>,
-        override val upcomingTrips: List<UpcomingTrip>? = null,
-        override val alertsHere: List<Alert>? = null,
+        override val patterns: List<RoutePattern?>,
+        override val upcomingTrips: List<UpcomingTrip>,
+        override val alertsHere: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -126,20 +147,19 @@ sealed class RealtimePatterns {
         val representativeRoute = routes.min()
         val routesByTrip =
             upcomingTrips
-                ?.mapNotNull {
+                .mapNotNull {
                     val route =
                         routes.firstOrNull { route -> route.id == it.trip.routeId }
                             ?: return@mapNotNull null
                     Pair(it.trip.id, route)
                 }
-                ?.toMap()
-                ?: emptyMap()
+                .toMap()
 
         constructor(
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
-            upcomingTripsMap: UpcomingTripsMap?,
+            upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>?,
+            alerts: Collection<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -147,29 +167,46 @@ sealed class RealtimePatterns {
             staticData.routes,
             staticData.direction,
             staticData.patterns,
-            if (upcomingTripsMap != null) {
-                staticData.routes
-                    .mapNotNull { route ->
-                        upcomingTripsMap[
-                            UpcomingTripKey.ByDirection(
-                                route.id,
-                                staticData.direction.id,
-                                parentStopId
-                            )]
-                    }
-                    .flatten()
-                    .sorted()
-            } else {
-                null
-            },
-            alerts?.let {
-                applicableAlerts(
-                    routes = staticData.routes,
-                    stopIds = staticData.stopIds,
-                    alerts = alerts
-                )
-            },
+            staticData.routes
+                .mapNotNull { route ->
+                    upcomingTripsMap[
+                        UpcomingTripKey.ByDirection(
+                            route.id,
+                            staticData.direction.id,
+                            parentStopId
+                        )]
+                }
+                .flatten()
+                .sorted(),
+            applicableAlerts(
+                routes = staticData.routes,
+                stopIds = staticData.stopIds,
+                alerts = alerts
+            ),
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
+            allDataLoaded,
+        )
+
+        constructor(
+            line: NearbyHierarchy.LineOrRoute.Line,
+            direction: NearbyHierarchy.DirectionOrHeadsign.Direction,
+            leaf: NearbyHierarchy.NearbyLeaf,
+            alerts: Collection<Alert>,
+            hasSchedulesTodayByPattern: Map<String, Boolean>?,
+            allDataLoaded: Boolean,
+        ) : this(
+            line.line,
+            // only the routes that are actually represented here, unless there aren't any patterns
+            // left here
+            line.routes
+                .filter { route -> leaf.routePatterns.any { it?.routeId == route.id } }
+                .takeUnless { it.isEmpty() }
+                ?: line.routes.toList(),
+            direction.direction,
+            leaf.routePatterns.sortedWith(nullsLast()),
+            leaf.upcomingTrips.sorted(),
+            applicableAlerts(routes = line.routes, stopIds = leaf.childStopIds, alerts = alerts),
+            hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
             allDataLoaded,
         )
     }
@@ -229,10 +266,8 @@ sealed class RealtimePatterns {
                         )
                     )
                 }
-        if (this.upcomingTrips == null) return Format.Loading
-        val allTrips = upcomingTrips ?: emptyList()
         val tripsToShow =
-            allTrips
+            upcomingTrips
                 .mapNotNull {
                     val isSubway =
                         when (this) {
@@ -248,7 +283,7 @@ sealed class RealtimePatterns {
             tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
             !allDataLoaded -> Format.Loading
             !hasSchedulesToday -> Format.NoSchedulesToday(secondaryAlert)
-            allTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
+            upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
                 // there are trips in the future but we're not showing them (maybe because we're on
                 // the subway and we have schedules but can't get predictions)
                 Format.None(secondaryAlert)
@@ -264,7 +299,7 @@ sealed class RealtimePatterns {
      * If any typicality is unknown, the route should be shown, and so this will return true.
      */
     fun isTypical() =
-        patterns.any { it.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
+        patterns.any { it?.typicality == null || it.typicality == RoutePattern.Typicality.Typical }
 
     /**
      * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
@@ -274,57 +309,45 @@ sealed class RealtimePatterns {
      * should be hidden until data is available.
      */
     fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant) =
-        upcomingTrips?.any {
+        upcomingTrips.any {
             val tripTime = it.time
             tripTime != null &&
                 tripTime < cutoffTime &&
                 (tripTime >= currentTime ||
                     (it.prediction != null && it.prediction.stopId == it.vehicle?.stopId))
         }
-            ?: false
 
-    /**
-     * Checks if a trip exists.
-     *
-     * If [upcomingTrips] are unavailable (i.e. null), returns false, since non-typical patterns
-     * should be hidden until data is available.
-     */
+    /** Checks if a trip exists. */
     fun isUpcoming() =
-        upcomingTrips?.any {
+        upcomingTrips.any {
             val tripTime = it.time
             tripTime != null
         }
-            ?: false
 
     /**
      * Checks if this headsign ends at this stop, i.e. all trips are arrival-only.
      *
      * Criteria:
-     * - Trips are loaded
      * - At least one trip is scheduled as arrival-only
      * - No trips are scheduled or predicted with a departure
      */
     fun isArrivalOnly(): Boolean {
         // Intermediate variable set because kotlin can't smart cast properties with open getters
         val upcoming = upcomingTrips
-        return upcoming != null &&
-            upcoming
-                .mapTo(mutableSetOf()) { it.isArrivalOnly() }
-                .let { upcomingTripsArrivalOnly ->
-                    upcomingTripsArrivalOnly.contains(true) &&
-                        !upcomingTripsArrivalOnly.contains(false)
-                }
+        return upcoming
+            .mapTo(mutableSetOf()) { it.isArrivalOnly() }
+            .let { upcomingTripsArrivalOnly ->
+                upcomingTripsArrivalOnly.contains(true) && !upcomingTripsArrivalOnly.contains(false)
+            }
     }
 
     fun directionId(): Int {
         val upcoming = upcomingTrips
-        if (upcoming != null) {
-            for (upcomingTrip in upcoming) {
-                return upcomingTrip.trip.directionId
-            }
+        for (upcomingTrip in upcoming) {
+            return upcomingTrip.trip.directionId
         }
         for (pattern in patterns) {
-            return pattern.directionId
+            if (pattern != null) return pattern.directionId
         }
         // there shouldn't be a headsign with no trips and no patterns
         throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
@@ -387,7 +410,7 @@ sealed class RealtimePatterns {
          * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
          */
         fun applicableAlerts(
-            routes: List<Route>,
+            routes: Collection<Route>,
             stopIds: Set<String>,
             directionId: Int? = null,
             alerts: Collection<Alert>
@@ -419,16 +442,18 @@ sealed class RealtimePatterns {
                 it.format is TripInstantDisplay.Hidden ||
                     it.format is TripInstantDisplay.Skipped ||
                     // API best practices call for hiding scheduled times on subway
-                    (isSubway && it.format is TripInstantDisplay.Schedule)
+                    (isSubway &&
+                        (it.format is TripInstantDisplay.ScheduleTime ||
+                            it.format is TripInstantDisplay.ScheduleMinutes))
             }
         }
 
         fun hasSchedulesToday(
             optionalHasSchedulesTodayByPattern: Map<String, Boolean>?,
-            patterns: List<RoutePattern>
+            patterns: Collection<RoutePattern?>
         ): Boolean {
             val hasSchedulesTodayByPattern = optionalHasSchedulesTodayByPattern ?: return true
-            return patterns.any { pattern -> hasSchedulesTodayByPattern[pattern.id] == true }
+            return patterns.any { pattern -> hasSchedulesTodayByPattern[pattern?.id] == true }
         }
     }
 }

@@ -42,6 +42,7 @@ struct DirectionPicker: View {
                             .padding(8)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
+                    .accessibilityAddTraits(isSelected ? [.isSelected] : [])
                     .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
                     .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 6))
@@ -86,20 +87,14 @@ struct DirectionPicker: View {
                     headsign: "Out",
                     line: nil,
                     patterns: [patternOutbound],
-                    upcomingTrips: nil,
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: []
                 ),
                 .ByHeadsign(
                     route: route,
                     headsign: "In",
                     line: nil,
                     patterns: [patternInbound],
-                    upcomingTrips: nil,
-                    alertsHere: nil,
-                    hasSchedulesToday: true,
-                    allDataLoaded: true
+                    upcomingTrips: []
                 ),
             ],
             directions: [

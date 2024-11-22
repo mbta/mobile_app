@@ -47,6 +47,11 @@ data class UpcomingTrip(
             schedule?.scheduleTime
         }
 
+    val stopId: String? = run {
+        // don't check that they match since prediction may be physical stop ID and schedule logical
+        prediction?.stopId ?: schedule?.stopId
+    }
+
     val stopSequence: Int? = run {
         if (schedule != null && prediction?.stopSequence != null) {
             check(schedule.stopSequence == prediction.stopSequence)
@@ -96,8 +101,8 @@ data class UpcomingTrip(
             stops: Map<String, Stop>,
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
-            scheduleKey: (Schedule, ScheduleResponse) -> Key,
-            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key,
+            scheduleKey: (Schedule, ScheduleResponse) -> Key?,
+            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key?,
             filterAtTime: Instant
         ): Map<Key, List<UpcomingTrip>>? {
 
@@ -115,23 +120,20 @@ data class UpcomingTrip(
                 }
             return if (schedulesMap != null || predictionsMap != null) {
                 val trips = schedules?.trips.orEmpty() + predictions?.trips.orEmpty()
-                val upcomingTripKeys = schedulesMap?.keys.orEmpty() + predictionsMap?.keys.orEmpty()
+                val upcomingTripKeys =
+                    schedulesMap?.keys.orEmpty().filterNotNull() +
+                        predictionsMap?.keys.orEmpty().filterNotNull()
                 upcomingTripKeys.associateWith { upcomingTripKey ->
                     val schedulesHere = schedulesMap?.get(upcomingTripKey)
                     val predictionsHere = predictionsMap?.get(upcomingTripKey)
                     tripsFromData(
-                            stops,
-                            schedulesHere.orEmpty(),
-                            predictionsHere.orEmpty(),
-                            trips,
-                            predictions?.vehicles.orEmpty()
-                        )
-                        .filter { upcomingTrip ->
-                            if (upcomingTrip.prediction != null) return@filter true
-                            val scheduleTime =
-                                upcomingTrip.schedule?.scheduleTime ?: return@filter true
-                            scheduleTime >= filterAtTime
-                        }
+                        stops,
+                        schedulesHere.orEmpty(),
+                        predictionsHere.orEmpty(),
+                        trips,
+                        predictions?.vehicles.orEmpty(),
+                        filterAtTime
+                    )
                 }
             } else {
                 null
@@ -147,7 +149,8 @@ data class UpcomingTrip(
             schedules: List<Schedule>,
             predictions: List<Prediction>,
             trips: Map<String, Trip>,
-            vehicles: Map<String, Vehicle>
+            vehicles: Map<String, Vehicle>,
+            filterAtTime: Instant
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
                 val tripId: String,
@@ -177,15 +180,20 @@ data class UpcomingTrip(
             val keys = schedulesMap.keys + predictionsMap.keys
 
             return keys
-                .map { key ->
+                .mapNotNull { key ->
                     UpcomingTrip(
-                        trips.getValue(key.tripId),
+                        trips[key.tripId] ?: return@mapNotNull null,
                         schedulesMap[key],
                         predictionsMap[key],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] }
                     )
                 }
                 .sorted()
+                .filter { upcomingTrip ->
+                    if (upcomingTrip.prediction != null) return@filter true
+                    val scheduleTime = upcomingTrip.schedule?.scheduleTime ?: return@filter true
+                    scheduleTime >= filterAtTime
+                }
         }
     }
 }

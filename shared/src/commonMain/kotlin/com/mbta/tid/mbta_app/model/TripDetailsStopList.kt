@@ -126,23 +126,33 @@ data class TripDetailsStopList(val stops: List<Entry>) {
         }
 
         fun fromPieces(
-            trip: Trip,
+            tripId: String,
+            directionId: Int,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
             alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
         ): TripDetailsStopList? {
+            if (alertsData == null) return null
             val entries = mutableMapOf<Int, WorkingEntry>()
 
-            val predictions =
-                deduplicatePredictionsByStopSequence(
-                    tripPredictions?.predictions?.values.orEmpty(),
-                    tripSchedules,
-                    globalData
-                )
+            var predictions = emptyList<Prediction>()
+            if (tripPredictions != null) {
+                val tripRoute = tripPredictions.trips.values.singleOrNull()?.routeId
+                val tripPredictionsWithCorrectRoute =
+                    tripPredictions.predictions.values.filter {
+                        tripRoute == null || it.routeId == tripRoute
+                    }
+                predictions =
+                    deduplicatePredictionsByStopSequence(
+                        tripPredictionsWithCorrectRoute,
+                        tripSchedules,
+                        globalData
+                    )
 
-            predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
+                predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
+            }
 
             if (tripSchedules is TripSchedulesResponse.Schedules) {
                 tripSchedules.schedules.forEach { entries.putSchedule(it) }
@@ -158,7 +168,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             }
 
             if (entries.isEmpty()) {
-                return null
+                return TripDetailsStopList(emptyList())
             }
             return TripDetailsStopList(
                 entries.entries
@@ -166,7 +176,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                     .dropWhile {
                         if (
                             vehicle == null ||
-                                vehicle.tripId != trip.id ||
+                                vehicle.tripId != tripId ||
                                 vehicle.currentStopSequence == null
                         ) {
                             false
@@ -174,11 +184,11 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                             it.value.stopSequence < vehicle.currentStopSequence
                         }
                     }
-                    .map {
+                    .mapNotNull {
                         Entry(
-                            globalData.stops.getValue(it.value.stopId),
+                            globalData.stops[it.value.stopId] ?: return@mapNotNull null,
                             it.value.stopSequence,
-                            getAlert(it.value, alertsData, globalData, trip),
+                            getAlert(it.value, alertsData, globalData, tripId, directionId),
                             it.value.schedule,
                             it.value.prediction,
                             it.value.vehicle,
@@ -225,7 +235,7 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             entry: WorkingEntry,
             globalData: GlobalResponse
         ): List<Route> {
-            val stop = globalData.stops.getValue(entry.stopId)
+            val stop = globalData.stops[entry.stopId] ?: return emptyList()
             val selfOrParent =
                 if (stop.parentStationId == null) stop
                 else globalData.stops[stop.parentStationId] ?: return emptyList()
@@ -315,8 +325,9 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 while (scheduleIndex in stopIds.indices && predictionIndex in predictions.indices) {
                     val stopId = stopIds[scheduleIndex]
                     val prediction = predictions[predictionIndex]
-                    check(Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
-                        "predictions=$predictions stopIds=$stopIds predictionIndex=$predictionIndex scheduleIndex=$scheduleIndex"
+                    if (!Stop.equalOrFamily(stopId, prediction.stopId, globalData.stops)) {
+                        scheduleIndex--
+                        continue
                     }
                     lastDelta = lastStopSequence?.minus(prediction.stopSequence)
                     lastStopSequence = prediction.stopSequence
@@ -358,7 +369,8 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             entry: WorkingEntry,
             alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
-            trip: Trip
+            tripId: String,
+            directionId: Int
         ): Alert? {
             val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
             val entryRoute = entry.prediction?.routeId ?: entry.schedule?.routeId
@@ -370,11 +382,11 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                 alert.isActive(entryTime) &&
                     alert.anyInformedEntity {
                         it.appliesTo(
-                            directionId = trip.directionId,
+                            directionId = directionId,
                             routeId = entryRoute,
                             routeType = entryRouteType,
                             stopId = entry.stopId,
-                            tripId = trip.id
+                            tripId = tripId
                         )
                     } &&
                     // there's no UI yet for secondary alerts in trip details
