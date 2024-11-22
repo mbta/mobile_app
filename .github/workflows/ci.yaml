@@ -80,6 +80,9 @@ jobs:
       - name: Install CocoaPods dependencies
         run: |
           ./gradlew :shared:generateDummyFramework
+          pushd iosApp
+          bundle exec pod install
+          popd
           bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         run: ./gradlew shared:check
