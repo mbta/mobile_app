@@ -61,20 +61,6 @@ fun drawableByName(name: String): Int =
         "alert-small-silver-issue" -> R.drawable.alert_small_silver_issue
         "alert-small-silver-shuttle" -> R.drawable.alert_small_silver_shuttle
         "alert-small-silver-suspension" -> R.drawable.alert_small_silver_suspension
-        "fa-chevron-down" -> R.drawable.fa_chevron_down
-        "fa-chevron-left" -> R.drawable.fa_chevron_left
-        "fa-chevron-right" -> R.drawable.fa_chevron_right
-        "fa-chevron-up" -> R.drawable.fa_chevron_up
-        "fa-circle-info" -> R.drawable.fa_circle_info
-        "fa-clock" -> R.drawable.fa_clock
-        "fa-location-arrow-solid" -> R.drawable.fa_location_arrow_solid
-        "fa-magnifying-glass-solid" -> R.drawable.fa_magnifying_glass_solid
-        "fa-route" -> R.drawable.fa_route
-        "fa-xmark" -> R.drawable.fa_xmark
-        "live-data" -> R.drawable.live_data
-        "location-dot" -> R.drawable.location_dot
-        "location-halo" -> R.drawable.location_halo
-        "map-nearby-location-cursor" -> R.drawable.map_nearby_location_cursor
         "map-stop-close-BLUE" -> R.drawable.map_stop_close_blue
         "map-stop-close-BUS" -> R.drawable.map_stop_close_bus
         "map-stop-close-BUS-transfer" -> R.drawable.map_stop_close_bus_transfer
@@ -129,14 +115,5 @@ fun drawableByName(name: String): Int =
         "map-stop-wide-SILVER-terminal-746" -> R.drawable.map_stop_wide_silver_terminal_746
         "map-stop-wide-SILVER-terminal-749" -> R.drawable.map_stop_wide_silver_terminal_749
         "map-stop-wide-SILVER-terminal-751" -> R.drawable.map_stop_wide_silver_terminal_751
-        "mode-bus" -> R.drawable.mode_bus
-        "mode-cr" -> R.drawable.mode_cr
-        "mode-ferry" -> R.drawable.mode_ferry
-        "mode-subway" -> R.drawable.mode_subway
-        "pinned-route-active" -> R.drawable.pinned_route_active
-        "pinned-route-inactive" -> R.drawable.pinned_route_inactive
-        "t-logo" -> R.drawable.t_logo
-        "vehicle-halo" -> R.drawable.vehicle_halo
-        "vehicle-puck" -> R.drawable.vehicle_puck
         else -> throw IllegalArgumentException("Invalid drawable name $name")
     }

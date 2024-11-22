@@ -12,10 +12,8 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 abstract class DependencyCodegenTask : DefaultTask() {
-    @get:InputFile
-    abstract var inputPath: Provider<RegularFile>
-    @get:OutputFile
-    abstract var outputPath: RegularFile
+    @get:InputFile abstract var inputPath: Provider<RegularFile>
+    @get:OutputFile abstract var outputPath: RegularFile
 
     private fun AttachmentText.decoded(): String =
         when (this.encoding) {
