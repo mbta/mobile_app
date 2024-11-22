@@ -74,6 +74,13 @@ jobs:
           java: true
           kotlin-cache: true
           ruby: true
+      - name: Configure Xcode version
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+      - name: Install CocoaPods dependencies
+        run: |
+          ./gradlew :shared:generateDummyFramework
+          bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         run: ./gradlew shared:check
         env:
@@ -86,13 +93,6 @@ jobs:
           path: shared/build/reports
       - name: Install SwiftLint
         run: brew install swiftlint
-      - name: Configure Xcode version
-        run: |
-          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
-      - name: Install CocoaPods dependencies
-        run: |
-          ./gradlew :shared:generateDummyFramework
-          bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: Configure Mapbox token
         run: |
           {
