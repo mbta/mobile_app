@@ -6,6 +6,8 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.properties.PropertyDelegateProvider
+import kotlin.properties.ReadOnlyProperty
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.Instant
@@ -27,39 +29,42 @@ class TemporaryTerminalTest {
         val childIds: List<String> = listOf(northbound.id, southbound.id)
     }
 
-    fun stop(): StopWithPlatforms {
-        var northbound: Stop? = null
-        var southbound: Stop? = null
-        val station =
-            objects.stop {
-                northbound = childStop()
-                southbound = childStop()
-            }
-        return StopWithPlatforms(checkNotNull(northbound), checkNotNull(southbound), station)
-    }
+    fun stop() =
+        PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, StopWithPlatforms>> { _, property ->
+            lateinit var northbound: Stop
+            lateinit var southbound: Stop
+            val station =
+                objects.stop {
+                    id = "place-${property.name}"
+                    northbound = childStop { id = "${property.name}-northbound" }
+                    southbound = childStop { id = "${property.name}-southbound" }
+                }
+            val stopWithPlatforms = StopWithPlatforms(northbound, southbound, station)
+            ReadOnlyProperty { _, _ -> stopWithPlatforms }
+        }
 
-    val alewife = stop()
-    val davis = stop()
-    val porter = stop()
-    val harvard = stop()
-    val central = stop()
-    val kendallMit = stop()
-    val charlesMgh = stop()
-    val parkStreet = stop()
-    val downtownCrossing = stop()
-    val southStation = stop()
-    val broadway = stop()
-    val andrew = stop()
-    val jfkUmass = stop()
-    val savinHill = stop()
-    val fieldsCorner = stop()
-    val shawmut = stop()
-    val ashmont = stop()
-    val northQuincy = stop()
-    val wollaston = stop()
-    val quincyCenter = stop()
-    val quincyAdams = stop()
-    val braintree = stop()
+    val alewife by stop()
+    val davis by stop()
+    val porter by stop()
+    val harvard by stop()
+    val central by stop()
+    val kendallMit by stop()
+    val charlesMgh by stop()
+    val parkStreet by stop()
+    val downtownCrossing by stop()
+    val southStation by stop()
+    val broadway by stop()
+    val andrew by stop()
+    val jfkUmass by stop()
+    val savinHill by stop()
+    val fieldsCorner by stop()
+    val shawmut by stop()
+    val ashmont by stop()
+    val northQuincy by stop()
+    val wollaston by stop()
+    val quincyCenter by stop()
+    val quincyAdams by stop()
+    val braintree by stop()
 
     val stopsNorthOfShuttle = listOf(alewife, davis, porter, harvard, central, kendallMit)
     val stopsInShuttle =
@@ -295,8 +300,20 @@ class TemporaryTerminalTest {
     val nearbyOutsideShuttle = NearbyResponse(harvard.childIds)
     val nearbyInsideShuttle = NearbyResponse(parkStreet.childIds)
     val nearbyAtShuttleEdge = NearbyResponse(jfkUmass.childIds)
-    val schedules = ScheduleResponse(objects)
-    val predictions = PredictionsStreamDataResponse(objects)
+
+    fun schedulesAt(stopWithPlatforms: StopWithPlatforms) =
+        ScheduleResponse(
+            objects.schedules.values.filter { it.stopId in stopWithPlatforms.childIds },
+            objects.trips
+        )
+
+    fun predictionsAt(stopWithPlatforms: StopWithPlatforms) =
+        PredictionsStreamDataResponse(
+            objects.predictions.filterValues { it.stopId in stopWithPlatforms.childIds },
+            objects.trips,
+            objects.vehicles
+        )
+
     val alerts = AlertsStreamDataResponse(objects)
 
     fun expected(stop: Stop, vararg realtimePatterns: RealtimePatterns) =
@@ -350,11 +367,12 @@ class TemporaryTerminalTest {
                 .withRealtimeInfo(
                     globalData,
                     position,
-                    schedules,
-                    predictions,
+                    schedulesAt(harvard),
+                    predictionsAt(harvard),
                     alerts,
                     now,
-                    emptySet()
+                    emptySet(),
+                    useTripHeadsigns = false,
                 )!!
                 .condensed()
         )
@@ -363,11 +381,12 @@ class TemporaryTerminalTest {
             StopDetailsDepartures.fromData(
                     harvard.station,
                     globalData,
-                    schedules,
-                    predictions,
+                    schedulesAt(harvard),
+                    predictionsAt(harvard),
                     alerts,
                     emptySet(),
-                    now
+                    now,
+                    useTripHeadsigns = false,
                 )!!
                 .asNearby()
                 .condensed()
@@ -410,11 +429,12 @@ class TemporaryTerminalTest {
                 .withRealtimeInfo(
                     globalData,
                     position,
-                    schedules,
-                    predictions,
+                    schedulesAt(parkStreet),
+                    predictionsAt(parkStreet),
                     alerts,
                     now,
-                    emptySet()
+                    emptySet(),
+                    useTripHeadsigns = false,
                 )!!
                 .condensed()
         )
@@ -423,11 +443,12 @@ class TemporaryTerminalTest {
             StopDetailsDepartures.fromData(
                     parkStreet.station,
                     globalData,
-                    schedules,
-                    predictions,
+                    schedulesAt(parkStreet),
+                    predictionsAt(parkStreet),
                     alerts,
                     emptySet(),
-                    now
+                    now,
+                    useTripHeadsigns = false,
                 )!!
                 .asNearby()
                 .condensed()
@@ -463,11 +484,12 @@ class TemporaryTerminalTest {
                 .withRealtimeInfo(
                     globalData,
                     position,
-                    schedules,
-                    predictions,
+                    schedulesAt(jfkUmass),
+                    predictionsAt(jfkUmass),
                     alerts,
                     now,
-                    emptySet()
+                    emptySet(),
+                    useTripHeadsigns = false,
                 )!!
                 .condensed()
         )
@@ -476,11 +498,12 @@ class TemporaryTerminalTest {
             StopDetailsDepartures.fromData(
                     jfkUmass.station,
                     globalData,
-                    schedules,
-                    predictions,
+                    schedulesAt(jfkUmass),
+                    predictionsAt(jfkUmass),
                     alerts,
                     emptySet(),
-                    now
+                    now,
+                    useTripHeadsigns = false,
                 )!!
                 .asNearby()
                 .condensed()
@@ -520,7 +543,7 @@ class TemporaryTerminalTest {
                 is RealtimePatterns.ByDirection ->
                     "        ${direction.name} to ${direction.destination}"
             } +
-                " (patterns=${patterns.joinToString { it.id }}) alerts=${alertsHere.orEmpty().joinToString(prefix = "[", postfix = "]") { it.id }}\n" +
+                " (patterns=${patterns.joinToString { it?.id ?: "<null>" }}) alerts=${alertsHere.orEmpty().joinToString(prefix = "[", postfix = "]") { it.id }}\n" +
                 upcomingTrips.joinToString(separator = "\n") { it.condensed() }
 
         fun PatternsByStop.condensed() =
