@@ -127,7 +127,7 @@ jobs:
           # pick a valid iOS/device from Installed Simulators under relevant Readme in
           # https://github.com/actions/runner-images/tree/main/images/macos
           RUNTIME=$(xcrun simctl list -j runtimes | jq --arg iOS "iOS $iOS" -r '.runtimes[] | select(.name == $iOS) | .identifier')
-          DEVICE=$(xcrun simctl list -j devices | jq --arg RUNTIME "$RUNTIME" --arg iPhone "iPhone $iPhone" -r '.devices[$RUNTIME][] | .select(.name == $iPhone) | .udid')
+          DEVICE=$(xcrun simctl list -j devices | jq --arg RUNTIME "$RUNTIME" --arg iPhone "iPhone $iPhone" -r '.devices[$RUNTIME][] | select(.name == $iPhone) | .udid')
           echo SIMULATOR_UDID=$DEVICE >> "$GITHUB_ENV"
         env:
           iOS: "17.5"
