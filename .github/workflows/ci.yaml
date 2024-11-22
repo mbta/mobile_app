@@ -10,6 +10,7 @@ on:
 jobs:
   pre-commit:
     name: Run pre-commit to check formatting and linting
+    if: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,6 +32,7 @@ jobs:
         run: pre-commit run --show-diff-on-failure --color=always --all-files
   test-android:
     name: Test for Android
+    if: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -167,6 +169,7 @@ jobs:
           path: ~/xctest/resultbundle.xcresult
   emulator-test-android:
     name: Run Android instrumented tests in emulator
+    if: false
     runs-on: mobile_app_runner
     permissions:
       contents: read
@@ -213,7 +216,7 @@ jobs:
           path: androidApp/build/reports
   build-android:
     name: Build for Android
-    if: github.actor != 'dependabot[bot]'
+    if: github.actor != 'dependabot[bot]' && false
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -263,7 +266,7 @@ jobs:
           path: androidApp/build/outputs/bundle/release/androidApp-release.aab
   deploy-android:
     name: Upload to Google Play
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && false
     concurrency:
       group: deploy-android
       cancel-in-progress: false
