@@ -51,6 +51,55 @@ jobs:
         with:
           name: android-android-reports
           path: androidApp/build/reports
+  test-ios:
+    name: Test for iOS
+    runs-on: macos-14-xlarge
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          for: ios-test
+      - name: Install CocoaPods dependencies
+        run: |
+          ./gradlew :shared:generateDummyFramework
+          pushd iosApp
+          bundle exec pod install
+          popd
+          bundle exec ./gradlew :shared:podInstallSyntheticIos
+      - name: shared checks & unit tests
+        run: ./gradlew shared:iosSimulatorArm64Test shared:iosX64Test
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ios-shared-reports
+          path: shared/build/reports
+      - name: Add build environment variables
+        run: |
+          {
+            echo "export SENTRY_DSN=${SENTRY_DSN}"
+            echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"
+            echo "export FIREBASE_KEY=${FIREBASE_KEY}"
+            echo "export GOOGLE_APP_ID=${GOOGLE_APP_ID}"
+          } >> .envrc
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: staging
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          GOOGLE_APP_ID: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
+      - name: Run emulator tests
+        run: |
+          bundle exec fastlane ios test \
+            output_directory:~/xctest \
+            xcodebuild_formatter:"xcbeautify --renderer github-actions"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ios-ios-results
+          path: ~/xctest/resultbundle-*.xcresult
   emulator-test-android:
     name: Run Android instrumented tests in emulator
     runs-on: mobile_app_runner

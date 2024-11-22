@@ -140,13 +140,17 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
 }
 
-if (System.getenv("CI_XCODE_CLOUD") != "TRUE") {
+// don't run Android BOM codegen for iOS-only CI
+if (
+    !(System.getenv("CI")?.lowercase() == "true" &&
+        DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
+) {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
 }
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
     dependsOn("bomAndroid")
-    mustRunAfter("spotlessKotlin")
+    mustRunAfter("spotlessKotlin", "cyclonedxBom")
     inputPath = layout.buildDirectory.file("boms/bom-android.json")
     outputPath =
         layout.projectDirectory.file(
