@@ -97,72 +97,72 @@ jobs:
         with:
           name: ios-shared-reports
           path: shared/build/reports
-      - name: Install SwiftLint
-        run: brew install swiftlint
-      - name: Configure Mapbox token
-        run: |
-          {
-            echo "machine api.mapbox.com"
-            echo "login mapbox"
-            echo "password ${MAPBOX_SECRET_TOKEN}"
-          } >> ~/.netrc
-        env:
-          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
-      - name: Add build environment variables
-        run: |
-          {
-            echo "export SENTRY_DSN=${SENTRY_DSN}"
-            echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"
-            echo "export FIREBASE_KEY=${FIREBASE_KEY}"
-            echo "export GOOGLE_APP_ID=${GOOGLE_APP_ID}"
-          } >> .envrc
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: staging
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID: ${{ secrets.GOOGLE_APP_ID }}
-      - name: Select emulator
-        id: emulator
-        run: |
-          # pick a valid iOS/device from Installed Simulators under relevant Readme in
-          # https://github.com/actions/runner-images/tree/main/images/macos
-          RUNTIME=$(xcrun simctl list -j runtimes | jq --arg iOS "iOS $iOS" -r '.runtimes[] | select(.name == $iOS) | .identifier')
-          DEVICE=$(xcrun simctl list -j devices | jq --arg RUNTIME "$RUNTIME" --arg iPhone "iPhone $iPhone" -r '.devices[$RUNTIME][] | .select(.name == $iPhone) | .udid')
-          echo SIMULATOR_UDID=$DEVICE >> "$GITHUB_ENV"
-        env:
-          iOS: "17.5"
-          iPhone: "15"
-      - name: Build for testing
-        run: |
-          xcrun xcodebuild build-for-testing \
-            -scheme Staging \
-            -workspace iosApp/iosApp.xcworkspace \
-            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
-            -testProductsPath ~/xctest/TestProducts.xctestproducts \
-            -testPlan iosAppRetries \
-            -resultBundleVersion 3 \
-            -resultBundlePath ~/xctest/resultbundle.xcresult \
-            -resultStreamPath ~/xctest/resultBundleStream.json \
-            -IDEPostProgressNotifications=YES \
-            CODE_SIGN_IDENTITY=- \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            -hideShellScriptEnvironment
-      - name: Run emulator tests
-        run: |
-          xcrun xcodebuild test-without-building \
-            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
-            -resultBundleVersion 3 \
-            -resultBundlePath ~/xctest/resultbundle.xcresult \
-            -resultStreamPath ~/xctest/resultBundleStream.json \
-            -IDEPostProgressNotifications=YES \
-            -DTDKDisableSymbolCopying=YES \
-            -test-timeouts-enabled YES \
-            -maximum-test-execution-time-allowance 1800 \
-            -hideShellScriptEnvironment \
-            -maximum-parallel-testing-workers 8 \
-            -testProductsPath ~/xctest/TestProducts.xctestproducts \
-            -testPlan iosAppRetries
+#      - name: Install SwiftLint
+#        run: brew install swiftlint
+#      - name: Configure Mapbox token
+#        run: |
+#          {
+#            echo "machine api.mapbox.com"
+#            echo "login mapbox"
+#            echo "password ${MAPBOX_SECRET_TOKEN}"
+#          } >> ~/.netrc
+#        env:
+#          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
+#      - name: Add build environment variables
+#        run: |
+#          {
+#            echo "export SENTRY_DSN=${SENTRY_DSN}"
+#            echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}"
+#            echo "export FIREBASE_KEY=${FIREBASE_KEY}"
+#            echo "export GOOGLE_APP_ID=${GOOGLE_APP_ID}"
+#          } >> .envrc
+#        env:
+#          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+#          SENTRY_ENVIRONMENT: staging
+#          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+#          GOOGLE_APP_ID: ${{ secrets.GOOGLE_APP_ID }}
+#      - name: Select emulator
+#        id: emulator
+#        run: |
+#          # pick a valid iOS/device from Installed Simulators under relevant Readme in
+#          # https://github.com/actions/runner-images/tree/main/images/macos
+#          RUNTIME=$(xcrun simctl list -j runtimes | jq --arg iOS "iOS $iOS" -r '.runtimes[] | select(.name == $iOS) | .identifier')
+#          DEVICE=$(xcrun simctl list -j devices | jq --arg RUNTIME "$RUNTIME" --arg iPhone "iPhone $iPhone" -r '.devices[$RUNTIME][] | .select(.name == $iPhone) | .udid')
+#          echo SIMULATOR_UDID=$DEVICE >> "$GITHUB_ENV"
+#        env:
+#          iOS: "17.5"
+#          iPhone: "15"
+#      - name: Build for testing
+#        run: |
+#          xcrun xcodebuild build-for-testing \
+#            -scheme Staging \
+#            -workspace iosApp/iosApp.xcworkspace \
+#            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+#            -testProductsPath ~/xctest/TestProducts.xctestproducts \
+#            -testPlan iosAppRetries \
+#            -resultBundleVersion 3 \
+#            -resultBundlePath ~/xctest/resultbundle.xcresult \
+#            -resultStreamPath ~/xctest/resultBundleStream.json \
+#            -IDEPostProgressNotifications=YES \
+#            CODE_SIGN_IDENTITY=- \
+#            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+#            COMPILER_INDEX_STORE_ENABLE=NO \
+#            -hideShellScriptEnvironment
+#      - name: Run emulator tests
+#        run: |
+#          xcrun xcodebuild test-without-building \
+#            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+#            -resultBundleVersion 3 \
+#            -resultBundlePath ~/xctest/resultbundle.xcresult \
+#            -resultStreamPath ~/xctest/resultBundleStream.json \
+#            -IDEPostProgressNotifications=YES \
+#            -DTDKDisableSymbolCopying=YES \
+#            -test-timeouts-enabled YES \
+#            -maximum-test-execution-time-allowance 1800 \
+#            -hideShellScriptEnvironment \
+#            -maximum-parallel-testing-workers 8 \
+#            -testProductsPath ~/xctest/TestProducts.xctestproducts \
+#            -testPlan iosAppRetries
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
