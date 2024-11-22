@@ -142,7 +142,8 @@ if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
 
 // don't run Android BOM codegen for iOS-only CI
 if (
-    !(System.getenv("CI") == "TRUE" && DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
+    !(System.getenv("CI")?.lowercase() == "true" &&
+        DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
 ) {
     tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
 }
