@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
@@ -14,7 +15,7 @@ import kotlinx.datetime.Instant
 
 class StopDetailsDeparturesTest {
     @Test
-    fun `fromData finds trips`() {
+    fun `fromData finds trips`() = parametricTest {
         val objects = ObjectCollectionBuilder()
 
         val route = objects.route()
@@ -94,12 +95,13 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time1,
+                useTripHeadsigns = anyBoolean(),
             )
         )
     }
 
     @Test
-    fun `fromData finds trips for line`() {
+    fun `fromData finds trips for line`() = parametricTest {
         val objects = ObjectCollectionBuilder()
 
         val stop = objects.stop()
@@ -251,6 +253,7 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
+                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(
@@ -311,7 +314,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `fromData filters vehicles by relevant routes`() {
+    fun `fromData filters vehicles by relevant routes`() = parametricTest {
         val objects = ObjectCollectionBuilder()
 
         val stop = objects.stop()
@@ -421,6 +424,7 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(),
                 filterAtTime = time,
+                useTripHeadsigns = anyBoolean(),
             )
         val vehicleB =
             objects.vehicle {
@@ -462,7 +466,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `fromData shows partial data and filters after loading`() {
+    fun `fromData shows partial data and filters after loading`() = parametricTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val stop = objects.stop()
@@ -557,7 +561,8 @@ class StopDetailsDeparturesTest {
                 PredictionsStreamDataResponse(objects).takeIf { includePredictions },
                 AlertsStreamDataResponse(objects),
                 setOf(),
-                filterAtTime = time
+                filterAtTime = time,
+                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(null, actual(includeSchedules = false, includePredictions = false))
@@ -598,7 +603,7 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `fromData keeps late patterns but drops early patterns after loading`() {
+    fun `fromData keeps late patterns but drops early patterns after loading`() = parametricTest {
         val now = Instant.parse("2024-08-16T10:32:38-04:00")
         val late = Instant.parse("2024-08-16T20:00:00-04:00")
 
@@ -685,7 +690,8 @@ class StopDetailsDeparturesTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 emptySet(),
-                now
+                now,
+                useTripHeadsigns = anyBoolean(),
             )
         assertEquals(expectedBeforeLoaded, actualBeforeLoaded)
 
@@ -709,13 +715,14 @@ class StopDetailsDeparturesTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 setOf(),
-                now
+                now,
+                useTripHeadsigns = anyBoolean(),
             )
         assertEquals(expectedAfterLoaded, actualAfterLoaded)
     }
 
     @Test
-    fun `fromData sorts by route preference order`() {
+    fun `fromData sorts by route preference order`() = parametricTest {
         val objects = ObjectCollectionBuilder()
 
         val time = Instant.parse("2024-04-02T16:29:22Z")
@@ -815,12 +822,13 @@ class StopDetailsDeparturesTest {
                 AlertsStreamDataResponse(objects),
                 setOf(routePinned.id),
                 filterAtTime = time,
+                useTripHeadsigns = anyBoolean(),
             )
         )
     }
 
     @Test
-    fun `fromData picks out alerts by platform`() {
+    fun `fromData picks out alerts by platform`() = parametricTest {
         val objects = ObjectCollectionBuilder()
         lateinit var platform1: Stop
         lateinit var platform2: Stop
@@ -897,7 +905,8 @@ class StopDetailsDeparturesTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 emptySet(),
-                time
+                time,
+                useTripHeadsigns = anyBoolean(),
             )
 
         assertEquals(
@@ -932,66 +941,70 @@ class StopDetailsDeparturesTest {
     }
 
     @Test
-    fun `StopDetailsDepartures provides a default StopDetailsFilter given a single route and direction`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route()
-        val routePattern =
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "A" }
-            }
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+    fun `StopDetailsDepartures provides a default StopDetailsFilter given a single route and direction`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route = objects.route()
+            val routePattern =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "A" }
+                }
+            val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
-        val departures =
-            StopDetailsDepartures.fromData(
-                stop,
-                GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
-                ScheduleResponse(objects),
-                PredictionsStreamDataResponse(objects),
-                AlertsStreamDataResponse(objects),
-                emptySet(),
-                time
+            val departures =
+                StopDetailsDepartures.fromData(
+                    stop,
+                    GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    emptySet(),
+                    time,
+                    useTripHeadsigns = anyBoolean(),
+                )
+
+            assertEquals(
+                StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId),
+                checkNotNull(departures).autoFilter()
             )
-
-        assertEquals(
-            StopDetailsFilter(routeId = route.id, directionId = routePattern.directionId),
-            checkNotNull(departures).autoFilter()
-        )
-    }
+        }
 
     @Test
-    fun `StopDetailsDepartures provides a null filter value given multiple routes and directions`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route1 = objects.route()
-        val routePattern1 =
-            objects.routePattern(route1) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "A" }
-            }
-        val route2 = objects.route()
-        val routePattern2 =
-            objects.routePattern(route2) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "B" }
-            }
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+    fun `StopDetailsDepartures provides a null filter value given multiple routes and directions`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route1 = objects.route()
+            val routePattern1 =
+                objects.routePattern(route1) {
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "A" }
+                }
+            val route2 = objects.route()
+            val routePattern2 =
+                objects.routePattern(route2) {
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "B" }
+                }
+            val time = Instant.parse("2024-03-19T14:16:17-04:00")
 
-        val departures =
-            StopDetailsDepartures.fromData(
-                stop,
-                GlobalResponse(
-                    objects,
-                    mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
-                ),
-                ScheduleResponse(objects),
-                PredictionsStreamDataResponse(objects),
-                AlertsStreamDataResponse(objects),
-                emptySet(),
-                time
-            )
+            val departures =
+                StopDetailsDepartures.fromData(
+                    stop,
+                    GlobalResponse(
+                        objects,
+                        mapOf(stop.id to listOf(routePattern1.id, routePattern2.id))
+                    ),
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    emptySet(),
+                    time,
+                    useTripHeadsigns = anyBoolean(),
+                )
 
-        assertEquals(null, checkNotNull(departures).autoFilter())
-    }
+            assertEquals(null, checkNotNull(departures).autoFilter())
+        }
 }

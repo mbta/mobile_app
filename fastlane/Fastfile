@@ -15,7 +15,17 @@ setup_ci if ENV['CI']
 platform :android do
   desc "Build an .apk and an .aab with an upcoming version code"
   lane :build do |options|
+    package_name =
+      case options[:flavor]
+      when "Prod"
+        "com.mbta.tid.mbta_app"
+      when "Staging"
+        "com.mbta.tid.mbta_app.staging"
+      else
+        raise "Unknown flavor #{options[:flavor]}"
+      end
     version_codes = google_play_track_version_codes(
+      package_name: package_name,
       track: "internal",
     )
     last_version_code = version_codes.max
@@ -31,11 +41,13 @@ platform :android do
     }
     gradle(
       task: 'assemble',
+      flavor: options[:flavor],
       build_type: 'Release',
       properties: properties
     )
     gradle(
       task: 'bundle',
+      flavor: options[:flavor],
       build_type: 'Release',
       properties: properties
     )
@@ -43,9 +55,20 @@ platform :android do
 
   desc "Deploy a new version to Google Play for internal testing"
   lane :internal do |options|
+    package_name =
+      case options[:flavor]
+      when "Prod"
+        "com.mbta.tid.mbta_app"
+      when "Staging"
+        "com.mbta.tid.mbta_app.staging"
+      else
+        raise "Unknown flavor #{options[:flavor]}"
+      end
+    flavor = options[:flavor].downcase
     upload_to_play_store(
+      package_name: package_name,
       track: "internal",
-      aab: "androidApp/build/outputs/bundle/release/androidApp-release.aab",
+      aab: "androidApp/build/outputs/bundle/#{flavor}Release/androidApp-#{flavor}-release.aab",
     )
   end
 end
