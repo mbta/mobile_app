@@ -142,7 +142,6 @@ jobs:
             -testPlan iosAppRetries \
             -resultBundleVersion 3 \
             -resultBundlePath ~/xctest/resultbundle.xcresult \
-            -resultStreamPath ~/xctest/resultBundleStream.json \
             -IDEPostProgressNotifications=YES \
             CODE_SIGN_IDENTITY=- \
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
@@ -154,7 +153,6 @@ jobs:
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             -resultBundleVersion 3 \
             -resultBundlePath ~/xctest/resultbundle.xcresult \
-            -resultStreamPath ~/xctest/resultBundleStream.json \
             -IDEPostProgressNotifications=YES \
             -DTDKDisableSymbolCopying=YES \
             -test-timeouts-enabled YES \
