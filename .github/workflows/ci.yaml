@@ -135,6 +135,8 @@ jobs:
       - name: Run emulator tests
         run: |
           xcrun xcodebuild test \
+            -scheme Staging \
+            -workspace iosApp/iosApp.xcworkspace \
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             -resultBundleVersion 3 \
             -resultBundlePath ~/xctest/resultbundle.xcresult \
@@ -144,7 +146,6 @@ jobs:
             -maximum-test-execution-time-allowance 1800 \
             -hideShellScriptEnvironment \
             -maximum-parallel-testing-workers 8 \
-            -testProductsPath ~/xctest/TestProducts.xctestproducts \
             -testPlan iosAppRetries
       - uses: actions/upload-artifact@v4
         if: failure()
