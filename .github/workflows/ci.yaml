@@ -134,7 +134,7 @@ jobs:
           # https://github.com/actions/runner-images/tree/main/images/macos
           RUNTIME=$(xcrun simctl list -j runtimes | jq --arg iOS "iOS $iOS" -r '.runtimes[] | select(.name == $iOS) | .identifier')
           DEVICE=$(xcrun simctl list -j devices | jq --arg RUNTIME "$RUNTIME" --arg iPhone "iPhone $iPhone" -r '.devices[$RUNTIME][] | select(.name == $iPhone) | .udid')
-          echo SIMULATOR_UDID=$DEVICE >> "$GITHUB_ENV"
+          echo SIMULATOR_UDID=$DEVICE | tee -a "$GITHUB_ENV"
         env:
           iOS: "17.5"
           iPhone: "15"
