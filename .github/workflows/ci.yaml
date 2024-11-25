@@ -138,20 +138,36 @@ jobs:
         env:
           iOS: "17.5"
           iPhone: "15"
+      - name: Build for testing
+        run: |
+          xcrun xcodebuild build-for-testing \
+            -scheme Staging \
+            -workspace iosApp/iosApp.xcworkspace \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+            -testProductsPath ~/xctest/TestProducts.xctestproducts \
+            -testPlan iosAppRetries \
+            -resultBundleVersion 3 \
+            -resultBundlePath ~/xctest/resultbundle-build.xcresult \
+            -IDEPostProgressNotifications=YES \
+            CODE_SIGN_IDENTITY=- \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            -hideShellScriptEnvironment
       - name: Run emulator tests
         run: |
-          xcrun xcodebuild test \
+          xcrun xcodebuild test-without-building \
             -scheme Staging \
             -workspace iosApp/iosApp.xcworkspace \
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             -resultBundleVersion 3 \
-            -resultBundlePath ~/xctest/resultbundle.xcresult \
+            -resultBundlePath ~/xctest/resultbundle-test.xcresult \
             -IDEPostProgressNotifications=YES \
             -DTDKDisableSymbolCopying=YES \
             -test-timeouts-enabled YES \
             -maximum-test-execution-time-allowance 1800 \
             -hideShellScriptEnvironment \
             -maximum-parallel-testing-workers 8 \
+            -testProductsPath ~/xctest/TestProducts.xctestproducts \
             -testPlan iosAppRetries
       - uses: actions/upload-artifact@v4
         if: failure()
