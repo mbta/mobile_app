@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
+          for: pre-commit
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -40,9 +40,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          rsvg: true
+          for: android-test
       - run: ./gradlew spotlessCheck
       - name: shared checks & unit tests
         run: ./gradlew shared:check
@@ -73,10 +71,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          ruby: true
-          xcode: true
+          for: ios-test
       - name: Install CocoaPods dependencies
         run: |
           ./gradlew :shared:generateDummyFramework
@@ -183,9 +178,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          rsvg: true
+          for: android-test
       # full setup including AVD snapshot caching from https://github.com/ReactiveCircus/android-emulator-runner/blob/a3dcdb348bb02349cd939d168a74e31a9094b7f0/README.md
       - name: Enable KVM
         run: |
@@ -222,10 +215,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          java: true
-          kotlin-cache: true
-          rsvg: true
-          ruby: true
+          for: android-build
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Configure AWS Credentials
@@ -282,9 +272,9 @@ jobs:
           path: androidApp/build/outputs/bundle/release
       - uses: ./.github/actions/setup
         with:
+          for: android-deploy
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          ruby: true
       - name: Upload to Google Play
         run: |
           bundle exec fastlane android internal
