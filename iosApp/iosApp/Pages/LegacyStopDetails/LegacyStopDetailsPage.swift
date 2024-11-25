@@ -273,7 +273,7 @@ struct LegacyStopDetailsPage: View {
         } else {
             nil
         }
-        if filter == nil, let newFilter = newDepartures?.autoFilter() {
+        if filter == nil, let newFilter = newDepartures?.autoStopFilter() {
             nearbyVM.setLastStopDetailsFilter(stop.id, newFilter)
         }
 

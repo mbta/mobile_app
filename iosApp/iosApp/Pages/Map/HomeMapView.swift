@@ -127,10 +127,10 @@ struct HomeMapView: View {
                 handleGlobalMapDataChange(now: now)
             }
             .onChange(of: nearbyVM.departures) { _ in
-                if case let .legacyStopDetails(_, filter) = lastNavEntry, let stopMapData {
+                if case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _) = lastNavEntry, let stopMapData {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
-                if case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _) = lastNavEntry, let stopMapData {
+                if case let .legacyStopDetails(_, filter) = lastNavEntry, let stopMapData {
                     updateStopDetailsLayers(stopMapData, filter, nearbyVM.departures)
                 }
             }
@@ -184,7 +184,10 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var annotatedMap: some View {
-        let selectedVehicle: Vehicle? = if case .tripDetails = nearbyVM.navigationStack.last {
+        let nav = nearbyVM.navigationStack.last
+        let selectedVehicle: Vehicle? = if case .tripDetails = nav {
+            mapVM.selectedVehicle
+        } else if case .stopDetails = nav {
             mapVM.selectedVehicle
         } else { nil }
         let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }

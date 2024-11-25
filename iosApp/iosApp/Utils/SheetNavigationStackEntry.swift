@@ -14,12 +14,6 @@ struct TripDetailsTarget: Hashable {
     let stopSequence: Int?
 }
 
-struct TripDetailsFilter: Hashable {
-    let tripId: String
-    let vehicleId: String?
-    let stopSequence: Int?
-}
-
 enum SheetNavigationStackEntry: Hashable, Identifiable {
     case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
     case legacyStopDetails(Stop, StopDetailsFilter?)
@@ -34,6 +28,14 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     func stop() -> Stop? {
         switch self {
         case let .legacyStopDetails(stop, _): stop
+        case _: nil
+        }
+    }
+
+    func stopId() -> String? {
+        switch self {
+        case let .legacyStopDetails(stop, _): stop.id
+        case let .stopDetails(stopId, _, _): stopId
         case _: nil
         }
     }
@@ -59,6 +61,7 @@ struct NearbySheetItem: Identifiable {
 
     var id: String {
         switch stackEntry {
+        case let .stopDetails(stopId, _, _): stopId
         case let .legacyStopDetails(stop, _): stop.id
         case let .tripDetails(tripId, _, _, _, _): tripId
         case .nearby: "nearby"

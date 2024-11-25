@@ -88,7 +88,7 @@ class NearbyViewModel: ObservableObject {
      Set the departures from the given stop if it is the last stop in the stack.
      */
     func setDepartures(_ stopId: String, _ newDepartures: StopDetailsDepartures?) {
-        if stopId == navigationStack.lastStop?.id {
+        if stopId == navigationStack.lastStopId {
             departures = newDepartures
         }
     }
@@ -97,9 +97,24 @@ class NearbyViewModel: ObservableObject {
         navigationStack.lastSafe() == .nearby
     }
 
-    func pushNavEntry(_ entry: SheetNavigationStackEntry) {
+    // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
+    // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
+    func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection: Bool = false) {
         if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
             pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
+        } else if case let .tripDetails(tripId, vehicleId, target, _, _) = entry,
+                  combinedStopAndTrip,
+                  let stopId = navigationStack.lastStopId,
+                  let stopFilter = navigationStack.lastStopDetailsFilter {
+            let stopSequence: KotlinInt? = if let sequence = target?.stopSequence { KotlinInt(int: Int32(sequence)) }
+            else { nil }
+            let tripFilter: TripDetailsFilter = .init(
+                tripId: tripId,
+                vehicleId: vehicleId,
+                stopSequence: stopSequence,
+                selectionLock: mapSelection
+            )
+            pushNavEntry(.stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter))
         } else if case let .legacyStopDetails(targetStop, _) = entry,
                   case let .legacyStopDetails(currentStop, _) = navigationStack.last,
                   targetStop == currentStop {
@@ -119,8 +134,17 @@ class NearbyViewModel: ObservableObject {
      set the filter for the given stop if it is the last stop in the stack
      */
     func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
-        if stopId == navigationStack.lastStopId {
+        if stopId == navigationStack.lastStopId, navigationStack.lastStopDetailsFilter != filter {
             navigationStack.lastStopDetailsFilter = filter
+        }
+    }
+
+    /**
+     set the filter for the given stop if it is the last stop in the stack
+     */
+    func setLastTripDetailsFilter(_ stopId: String, _ filter: TripDetailsFilter?) {
+        if stopId == navigationStack.lastStopId, navigationStack.lastTripDetailsFilter != filter {
+            navigationStack.lastTripDetailsFilter = filter
         }
     }
 
@@ -162,6 +186,8 @@ class NearbyViewModel: ObservableObject {
         switch navigationStack.last {
         case .nearby:
             nil
+        case let .stopDetails(stopId: stopId, _, _):
+            global.stops[stopId]
         case let .legacyStopDetails(stop, _):
             stop
         case let .tripDetails(tripId: _, vehicleId: _, target: target, routeId: _, directionId: _):

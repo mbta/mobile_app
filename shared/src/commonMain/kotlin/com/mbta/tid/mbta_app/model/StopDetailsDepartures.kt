@@ -10,6 +10,11 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import kotlinx.datetime.Instant
 
+data class TripAndFormat(
+    val upcoming: UpcomingTrip,
+    val formatted: RealtimePatterns.Format.Some.FormatWithId
+)
+
 data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
     val allUpcomingTrips = routes.flatMap { it.allUpcomingTrips() }
 
@@ -17,10 +22,39 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
 
     fun filterVehiclesByUpcoming(vehicles: VehiclesStreamDataResponse): Map<String, Vehicle> {
         val routeIds = allUpcomingTrips.map { it.trip.routeId }.toSet()
-        return vehicles.vehicles.filter { routeIds.contains(it.value.routeId) }
+        val filtered = vehicles.vehicles.filter { routeIds.contains(it.value.routeId) }
+        return filtered
     }
 
-    fun autoFilter(): StopDetailsFilter? {
+    fun stopDetailsFormattedTrips(
+        routeId: String,
+        directionId: Int,
+        filterAtTime: Instant
+    ): List<TripAndFormat> {
+        val patternsByStop =
+            routes.firstOrNull { it.routeIdentifier == routeId } ?: return emptyList()
+        val trips =
+            patternsByStop
+                .allUpcomingTrips()
+                .filter { it.trip.directionId == directionId }
+                .mapNotNull {
+                    val route =
+                        patternsByStop.routes.firstOrNull { route -> it.trip.routeId == route.id }
+                            ?: return@mapNotNull null
+                    val format =
+                        formatUpcomingTrip(
+                            filterAtTime,
+                            it,
+                            route.type,
+                            TripInstantDisplay.Context.StopDetailsFiltered
+                        )
+                            ?: return@mapNotNull null
+                    TripAndFormat(it, format)
+                }
+        return trips
+    }
+
+    fun autoStopFilter(): StopDetailsFilter? {
         if (routes.size != 1) {
             return null
         }
@@ -31,6 +65,40 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         }
         val direction = directions.first()
         return StopDetailsFilter(route.routeIdentifier, direction)
+    }
+
+    fun autoTripFilter(
+        stopFilter: StopDetailsFilter?,
+        currentTripFilter: TripDetailsFilter?,
+        filterAtTime: Instant
+    ): TripDetailsFilter? {
+        if (stopFilter == null) {
+            return null
+        }
+        val relevantTrips =
+            stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, filterAtTime)
+                .filter {
+                    when (it.formatted.format) {
+                        is TripInstantDisplay.Cancelled -> false
+                        else -> true
+                    }
+                }
+                .map { it.upcoming }
+
+        if (
+            currentTripFilter != null &&
+                (relevantTrips.any { it.trip.id == currentTripFilter.tripId } ||
+                    currentTripFilter.selectionLock)
+        ) {
+            return currentTripFilter
+        }
+
+        val firstTrip: UpcomingTrip = relevantTrips.firstOrNull() ?: return null
+        return TripDetailsFilter(
+            tripId = firstTrip.trip.id,
+            vehicleId = firstTrip.vehicle?.id,
+            stopSequence = firstTrip.stopSequence
+        )
     }
 
     companion object {
@@ -112,7 +180,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             return routes?.let { StopDetailsDepartures(it) }
         }
 
-        fun getStatusDepartues(
+        fun getStatusDepartures(
             realtimePatterns: List<RealtimePatterns>,
             now: Instant
         ): List<StopDetailsStatusRowData> {

@@ -80,7 +80,7 @@ struct LegacyStopDetailsView: View {
                     )
                     if nearbyVM.showDebugMessages {
                         DebugView {
-                            Text(verbatim: "stop id: \(stop.id ?? "nil stop")")
+                            Text(verbatim: "stop id: \(stop.id)")
                         }
                     }
                     ErrorBanner(errorBannerVM).padding(.horizontal, 16)
@@ -103,7 +103,7 @@ struct LegacyStopDetailsView: View {
                         now: now.toKotlinInstant(),
                         filter: filter,
                         setFilter: setFilter,
-                        pushNavEntry: nearbyVM.pushNavEntry,
+                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                         pinRoute: togglePinnedRoute,
                         pinnedRoutes: pinnedRoutes
                     ).frame(maxHeight: .infinity)
