@@ -79,11 +79,17 @@ jobs:
       - name: Configure Xcode version
         run: |
           sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+      - name: Cache CocoaPods dependencies
+        uses: actions/cache@v4
+        with:
+          path: iosApp/Pods
+          key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}
+          restore-keys: cocoapods-
       - name: Install CocoaPods dependencies
         run: |
           ./gradlew :shared:generateDummyFramework
           pushd iosApp
-          bundle exec pod install
+          bundle exec pod check || bundle exec pod install
           popd
           bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
