@@ -42,13 +42,13 @@ final class StopDetailsViewTests: XCTestCase {
                 .init(route: routeDefaultSort1, stop: stop, patterns: []),
                 .init(route: routeDefaultSort0, stop: stop, patterns: []),
             ]),
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init(
+                globalRepository: MockGlobalRepository(response: .init(objects: objects))
+            )
         )
 
         ViewHosting.host(view: sut)
@@ -74,13 +74,11 @@ final class StopDetailsViewTests: XCTestCase {
             departures: .init(routes: [
                 .init(route: route, stop: stop, patterns: []),
             ]),
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(combinedStopAndTrip: true),
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -110,13 +108,11 @@ final class StopDetailsViewTests: XCTestCase {
             departures: .init(routes: [
                 .init(route: route, stop: stop, patterns: []),
             ]),
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: .init(combinedStopAndTrip: true),
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -138,13 +134,11 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -169,13 +163,11 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -197,13 +189,11 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -227,13 +217,11 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -257,13 +245,11 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             departures: nil,
-            global: .init(objects: objects),
-            pinnedRoutes: [],
-            togglePinnedRoute: { _ in },
             now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            mapVM: .init()
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
