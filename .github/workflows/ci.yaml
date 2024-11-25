@@ -157,8 +157,6 @@ jobs:
       - name: Run emulator tests
         run: |
           xcrun xcodebuild test-without-building \
-            -scheme Staging \
-            -workspace iosApp/iosApp.xcworkspace \
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             -resultBundleVersion 3 \
             -resultBundlePath ~/xctest/resultbundle-test.xcresult \
