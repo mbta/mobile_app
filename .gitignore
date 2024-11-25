@@ -12,6 +12,7 @@ xcuserdata
 .kotlin
 
 fastlane/report.xml
+fastlane/test_output
 
 /iosApp/secrets/*
 /iosApp/Pods/*

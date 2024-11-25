@@ -49,3 +49,18 @@ platform :android do
     )
   end
 end
+
+platform :ios do
+  desc "Run tests"
+  lane :test do |options|
+    run_tests(
+      workspace: "iosApp/iosApp.xcworkspace",
+      scheme: "Staging",
+      device: "iPhone 15 (17.5)",
+      testplan: "iosAppRetries",
+      output_directory: options[:output_directory],
+      xcodebuild_formatter: options[:xcodebuild_formatter],
+      number_of_retries: 3
+    )
+  end
+end
