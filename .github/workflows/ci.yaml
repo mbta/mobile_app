@@ -89,6 +89,7 @@ jobs:
         run: |
           ./gradlew :shared:generateDummyFramework
           pushd iosApp
+          diff -y Podfile.lock Pods/Manifest.lock && echo "No diff" || true
           bundle exec pod check || bundle exec pod install
           popd
           bundle exec ./gradlew :shared:podInstallSyntheticIos
