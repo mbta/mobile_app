@@ -19,6 +19,9 @@ inputs:
   gcp-service-account:
     description: Google Cloud Platform service account
     required: false
+  xcode:
+    default: false
+    description: Configure Xcode
 runs:
   using: composite
   steps:
@@ -68,3 +71,19 @@ runs:
       if: inputs.ruby == 'true'
       run: bin/patch-fastlane.sh
       shell: bash
+    - name: Configure Xcode version
+      if: inputs.xcode == 'true'
+      shell: bash
+      run: |
+        sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+    - name: Cache CocoaPods dependencies
+      if: inputs.xcode == 'true'
+      uses: actions/cache@v4
+      with:
+        path: iosApp/Pods
+        key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}
+        restore-keys: cocoapods-
+    - name: Install SwiftLint
+      if: inputs.xcode == 'true'
+      shell: bash
+      run: brew install swiftlint

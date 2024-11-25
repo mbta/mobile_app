@@ -76,15 +76,7 @@ jobs:
           java: true
           kotlin-cache: true
           ruby: true
-      - name: Configure Xcode version
-        run: |
-          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
-      - name: Cache CocoaPods dependencies
-        uses: actions/cache@v4
-        with:
-          path: iosApp/Pods
-          key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}
-          restore-keys: cocoapods-
+          xcode: true
       - name: Install CocoaPods dependencies
         run: |
           ./gradlew :shared:generateDummyFramework
@@ -104,8 +96,6 @@ jobs:
         with:
           name: ios-shared-reports
           path: shared/build/reports
-      - name: Install SwiftLint
-        run: brew install swiftlint
       - name: Configure Mapbox token
         run: |
           {
