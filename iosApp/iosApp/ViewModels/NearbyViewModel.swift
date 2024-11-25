@@ -26,7 +26,7 @@ class NearbyViewModel: ObservableObject {
             let navEntry = navigationStack.lastSafe()
             do {
                 switch navEntry {
-                case let .stopDetails(stop, _):
+                case let .legacyStopDetails(stop, _):
                     try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stop.id))
                 default: break
                 }
@@ -37,8 +37,8 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    @Published
-    var showDebugMessages: Bool = false
+    @Published var showDebugMessages: Bool = false
+    @Published var combinedStopAndTrip: Bool = false
 
     @Published var alerts: AlertsStreamDataResponse?
     @Published var nearbyState = NearbyTransitState()
@@ -57,6 +57,7 @@ class NearbyViewModel: ObservableObject {
         departures: StopDetailsDepartures? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
         showDebugMessages: Bool = false,
+        combinedStopAndTrip: Bool = false,
         alertsRepository: IAlertsRepository = RepositoryDI().alerts,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
@@ -67,6 +68,7 @@ class NearbyViewModel: ObservableObject {
         self.departures = departures
         self.navigationStack = navigationStack
         self.showDebugMessages = showDebugMessages
+        self.combinedStopAndTrip = combinedStopAndTrip
 
         self.alertsRepository = alertsRepository
         self.errorBannerRepository = errorBannerRepository
@@ -79,6 +81,7 @@ class NearbyViewModel: ObservableObject {
     @MainActor
     func loadDebugSetting() async {
         showDebugMessages = await (try? settingsRepository.getSettings()[.devDebugMode]?.boolValue) ?? false
+        combinedStopAndTrip = await (try? settingsRepository.getSettings()[.combinedStopAndTrip]?.boolValue) ?? false
     }
 
     /**
@@ -95,9 +98,16 @@ class NearbyViewModel: ObservableObject {
     }
 
     func pushNavEntry(_ entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(targetStop, _) = entry,
-           case let .stopDetails(currentStop, _) = navigationStack.last,
-           targetStop == currentStop {
+        if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
+            pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
+        } else if case let .legacyStopDetails(targetStop, _) = entry,
+                  case let .legacyStopDetails(currentStop, _) = navigationStack.last,
+                  targetStop == currentStop {
+            _ = navigationStack.popLast()
+            navigationStack.append(entry)
+        } else if case let .stopDetails(stopId: targetStop, stopFilter: _, tripFilter: _) = entry,
+                  case let .stopDetails(stopId: currentStop, stopFilter: _, tripFilter: _) = navigationStack.last,
+                  targetStop == currentStop {
             _ = navigationStack.popLast()
             navigationStack.append(entry)
         } else {
@@ -109,7 +119,7 @@ class NearbyViewModel: ObservableObject {
      set the filter for the given stop if it is the last stop in the stack
      */
     func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
-        if stopId == navigationStack.lastStop?.id {
+        if stopId == navigationStack.lastStopId {
             navigationStack.lastStopDetailsFilter = filter
         }
     }
@@ -152,7 +162,7 @@ class NearbyViewModel: ObservableObject {
         switch navigationStack.last {
         case .nearby:
             nil
-        case let .stopDetails(stop, _):
+        case let .legacyStopDetails(stop, _):
             stop
         case let .tripDetails(tripId: _, vehicleId: _, target: target, routeId: _, directionId: _):
             target != nil ? global.stops[target!.stopId] : nil

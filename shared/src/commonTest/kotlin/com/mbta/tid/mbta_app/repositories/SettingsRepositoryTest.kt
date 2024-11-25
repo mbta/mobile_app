@@ -37,6 +37,7 @@ class SettingsRepositoryTest : KoinTest {
 
         assertEquals(
             mapOf(
+                Settings.CombinedStopAndTrip to false,
                 Settings.DevDebugMode to true,
                 Settings.SearchRouteResults to false,
                 Settings.TripHeadsigns to false,

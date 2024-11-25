@@ -1,5 +1,5 @@
 //
-//  StopDetailsView.swift
+//  LegacyStopDetailsView.swift
 //  iosApp
 //
 //  Created by Brady, Kayla on 6/20/24.
@@ -13,14 +13,13 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsView: View {
+struct LegacyStopDetailsView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let globalRepository: IGlobalRepository
     @State var globalResponse: GlobalResponse?
-    var stopId: String
-    var stopFilter: StopDetailsFilter?
-    var tripFilter: TripDetailsFilter?
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var stop: Stop
+    var filter: StopDetailsFilter?
+    var setFilter: (StopDetailsFilter?) -> Void
     var departures: StopDetailsDepartures?
     var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
@@ -36,10 +35,9 @@ struct StopDetailsView: View {
 
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
-        stopId: String,
-        stopFilter: StopDetailsFilter?,
-        tripFilter _: TripDetailsFilter?,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        stop: Stop,
+        filter: StopDetailsFilter?,
+        setFilter: @escaping (StopDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -48,9 +46,9 @@ struct StopDetailsView: View {
         togglePinnedRoute: @escaping (String) -> Void
     ) {
         self.globalRepository = globalRepository
-        self.stopId = stopId
-        self.stopFilter = stopFilter
-        self.setStopFilter = setStopFilter
+        self.stop = stop
+        self.filter = filter
+        self.setFilter = setFilter
         self.departures = departures
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -70,23 +68,19 @@ struct StopDetailsView: View {
         }
     }
 
-    var stop: Stop? {
-        globalResponse?.stops[stopId]
-    }
-
     var body: some View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
                 VStack(spacing: 16) {
                     SheetHeader(
-                        title: stop?.name ?? "Invalid Stop",
+                        title: stop.name,
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
                     if nearbyVM.showDebugMessages {
                         DebugView {
-                            Text(verbatim: "stop id: \(stop?.id ?? "nil stop")")
+                            Text(verbatim: "stop id: \(stop.id ?? "nil stop")")
                         }
                     }
                     ErrorBanner(errorBannerVM).padding(.horizontal, 16)
@@ -94,8 +88,8 @@ struct StopDetailsView: View {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
-                            filter: stopFilter,
-                            setFilter: setStopFilter
+                            filter: filter,
+                            setFilter: setFilter
                         )
                     }
                 }
@@ -107,8 +101,8 @@ struct StopDetailsView: View {
                         departures: departures,
                         global: globalResponse,
                         now: now.toKotlinInstant(),
-                        filter: stopFilter,
-                        setFilter: setStopFilter,
+                        filter: filter,
+                        setFilter: setFilter,
                         pushNavEntry: nearbyVM.pushNavEntry,
                         pinRoute: togglePinnedRoute,
                         pinnedRoutes: pinnedRoutes
@@ -125,10 +119,10 @@ struct StopDetailsView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         StopDetailsRoutesView(
-            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: stopFilter),
+            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: filter),
             global: globalResponse,
             now: now.toKotlinInstant(),
-            filter: stopFilter,
+            filter: filter,
             setFilter: { _ in },
             pushNavEntry: { _ in },
             pinRoute: { _ in },
@@ -141,7 +135,7 @@ struct StopDetailsView: View {
         Task {
             await fetchApi(
                 errorBannerVM.errorRepository,
-                errorKey: "StopDetailsView.loadGlobal",
+                errorKey: "LegacyStopDetailsView.loadGlobal",
                 getData: globalRepository.getGlobalData,
                 onSuccess: { globalResponse = $0 },
                 onRefreshAfterError: loadGlobal
@@ -156,15 +150,15 @@ struct StopDetailsView: View {
         case let .route(route):
             route.id
         }
-        if stopFilter?.routeId == filterId { setStopFilter(nil); return }
+        if filter?.routeId == filterId { setFilter(nil); return }
         guard let departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
-        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stopId)
+        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
             // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
             headsign.patterns.compactMap { pattern in (pattern as? RoutePattern)?.directionId }
         }.min() ?? 0
-        setStopFilter(.init(routeId: filterId, directionId: defaultDirectionId))
+        setFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }
 }

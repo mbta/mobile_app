@@ -256,11 +256,36 @@ struct ContentView: View {
                 case .alertDetails:
                     EmptyView()
 
-                case let .stopDetails(stop, filter):
+                case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: _):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
                         StopDetailsPage(
+                            viewportProvider: viewportProvider,
+                            stopId: stopId,
+                            stopFilter: stopFilter,
+                            errorBannerVM: errorBannerVM,
+                            nearbyVM: nearbyVM
+                        )
+
+                        .toolbar(.hidden, for: .tabBar)
+                        .onAppear {
+                            let filtered = stopFilter != nil
+                            screenTracker.track(
+                                screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                            )
+                        }
+                    }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
+                    .id(stopId)
+                    .transition(transition)
+
+                case let .legacyStopDetails(stop, filter):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        LegacyStopDetailsPage(
                             viewportProvider: viewportProvider,
                             stop: stop, filter: filter,
                             errorBannerVM: errorBannerVM,

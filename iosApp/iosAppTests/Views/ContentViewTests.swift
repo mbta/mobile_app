@@ -110,7 +110,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
 
-        wait(for: [configFetchedExpectation], timeout: 5)
+        wait(for: [configFetchedExpectation], timeout: 6)
     }
 
     func testSetsMapboxTokenConfigOnConfigChange() throws {

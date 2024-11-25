@@ -1,5 +1,5 @@
 //
-//  StopDetailsViewTests.swift
+//  LegacyStopDetailsViewTests.swift
 //  iosAppTests
 //
 //  Created by Brady, Kayla on 6/20/24.
@@ -13,7 +13,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsViewTests: XCTestCase {
+final class LegacyStopDetailsViewTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -32,17 +32,17 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = StopDetailsView(stop: stop,
-                                  filter: nil,
-                                  setFilter: { _ in },
-                                  departures: .init(routes: [
-                                      .init(route: routeDefaultSort1, stop: stop, patterns: []),
-                                      .init(route: routeDefaultSort0, stop: stop, patterns: []),
-                                  ]),
-                                  errorBannerVM: .init(),
-                                  nearbyVM: .init(),
-                                  now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+        let sut = LegacyStopDetailsView(stop: stop,
+                                        filter: nil,
+                                        setFilter: { _ in },
+                                        departures: .init(routes: [
+                                            .init(route: routeDefaultSort1, stop: stop, patterns: []),
+                                            .init(route: routeDefaultSort0, stop: stop, patterns: []),
+                                        ]),
+                                        errorBannerVM: .init(),
+                                        nearbyVM: .init(),
+                                        now: Date.now,
+                                        pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
         let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
@@ -58,16 +58,16 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = StopDetailsView(stop: stop,
-                                  filter: nil,
-                                  setFilter: { _ in },
-                                  departures: .init(routes: [
-                                      .init(route: route, stop: stop, patterns: []),
-                                  ]),
-                                  errorBannerVM: .init(),
-                                  nearbyVM: .init(),
-                                  now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+        let sut = LegacyStopDetailsView(stop: stop,
+                                        filter: nil,
+                                        setFilter: { _ in },
+                                        departures: .init(routes: [
+                                            .init(route: route, stop: stop, patterns: []),
+                                        ]),
+                                        errorBannerVM: .init(),
+                                        nearbyVM: .init(),
+                                        now: Date.now,
+                                        pinnedRoutes: [], togglePinnedRoute: { _ in })
 
         ViewHosting.host(view: sut)
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
@@ -78,8 +78,8 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
-        let sut = StopDetailsView(
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)])
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },
@@ -100,12 +100,12 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let initialNavStack: [SheetNavigationStackEntry] = [
-            .stopDetails(stop, nil),
+            .legacyStopDetails(stop, nil),
             .tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0),
-            .stopDetails(stop, nil),
+            .legacyStopDetails(stop, nil),
         ]
         let nearbyVM: NearbyViewModel = .init(navigationStack: initialNavStack)
-        let sut = StopDetailsView(
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },
@@ -125,8 +125,8 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
-        let sut = StopDetailsView(
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)])
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },
@@ -147,8 +147,11 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: false)
-        let sut = StopDetailsView(
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.legacyStopDetails(stop, nil)],
+            showDebugMessages: false
+        )
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },
@@ -169,8 +172,8 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: true)
-        let sut = StopDetailsView(
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [.legacyStopDetails(stop, nil)], showDebugMessages: true)
+        let sut = LegacyStopDetailsView(
             stop: stop,
             filter: nil,
             setFilter: { _ in },
