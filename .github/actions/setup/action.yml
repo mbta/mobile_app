@@ -67,8 +67,8 @@ runs:
       if: steps.settings.outputs.kotlin-cache == 'true'
       with:
         path: ~/.konan
-        key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
-        restore-keys: konan-${{ runner.os }}
+        key: konan-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('build.gradle.kts') }}
+        restore-keys: konan-${{ runner.os }}-${{ runner.arch }}
     - run: sudo apt-get install librsvg2-bin
       if: steps.settings.outputs.rsvg == 'true'
       shell: bash
