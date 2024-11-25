@@ -64,7 +64,7 @@ jobs:
           path: androidApp/build/reports
   test-ios:
     name: Test for iOS
-    runs-on: macos-14-large
+    runs-on: macos-14-xlarge
     permissions:
       contents: read
     steps:
