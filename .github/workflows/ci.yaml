@@ -162,7 +162,7 @@ jobs:
         if: failure()
         with:
           name: ios-ios-results
-          path: ~/xctest/resultbundle.xcresult
+          path: ~/xctest/resultbundle-*.xcresult
   emulator-test-android:
     name: Run Android instrumented tests in emulator
     if: false
