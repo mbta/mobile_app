@@ -21,6 +21,7 @@ struct ContentView: View {
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
     @StateObject var settingsVM = SettingsViewModel()
+    @StateObject var stopDetailsVM = StopDetailsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
@@ -270,6 +271,7 @@ struct ContentView: View {
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
+                            stopDetailsVM: stopDetailsVM,
                             viewportProvider: viewportProvider
                         )
                         .toolbar(.hidden, for: .tabBar)

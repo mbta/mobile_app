@@ -21,19 +21,13 @@ struct StopDetailsView: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var departures: StopDetailsDepartures?
-    var global: GlobalResponse?
-    var pinnedRoutes: Set<String>
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
-    let togglePinnedRoute: (String) -> Void
 
     var now = Date.now
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
-
-    let tripPredictionsRepository: ITripPredictionsRepository
-    let tripRepository: ITripRepository
-    let vehicleRepository: IVehicleRepository
+    @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
@@ -46,17 +40,11 @@ struct StopDetailsView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
-        global: GlobalResponse?,
-        pinnedRoutes: Set<String>,
-        togglePinnedRoute: @escaping (String) -> Void,
         now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
-
-        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
-        tripRepository: ITripRepository = RepositoryDI().trip,
-        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
+        stopDetailsVM: StopDetailsViewModel
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -64,17 +52,11 @@ struct StopDetailsView: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.departures = departures
-        self.global = global
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
+        self.stopDetailsVM = stopDetailsVM
         self.now = now
-        self.pinnedRoutes = pinnedRoutes
-        self.togglePinnedRoute = togglePinnedRoute
-
-        self.tripPredictionsRepository = tripPredictionsRepository
-        self.tripRepository = tripRepository
-        self.vehicleRepository = vehicleRepository
 
         if let departures {
             servedRoutes = departures.routes.map { patterns in
@@ -89,7 +71,7 @@ struct StopDetailsView: View {
     }
 
     var stop: Stop? {
-        global?.stops[stopId]
+        stopDetailsVM.global?.stops[stopId]
     }
 
     var body: some View {
@@ -123,13 +105,13 @@ struct StopDetailsView: View {
                 if let departures {
                     StopDetailsRoutesView(
                         departures: departures,
-                        global: global,
+                        global: stopDetailsVM.global,
                         now: now.toKotlinInstant(),
                         filter: stopFilter,
                         setFilter: setStopFilter,
                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
-                        pinRoute: togglePinnedRoute,
-                        pinnedRoutes: pinnedRoutes
+                        pinRoute: stopDetailsVM.togglePinnedRoute,
+                        pinnedRoutes: stopDetailsVM.pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
                     loadingBody()
@@ -142,13 +124,10 @@ struct StopDetailsView: View {
                         routeId: stopFilter.routeId,
                         stopId: stopId,
                         stopSequence: tripFilter.stopSequence?.intValue,
-                        global: global,
+                        global: stopDetailsVM.global,
                         errorBannerVM: errorBannerVM,
                         nearbyVM: nearbyVM,
-                        mapVM: mapVM,
-                        tripPredictionsRepository: tripPredictionsRepository,
-                        tripRepository: tripRepository,
-                        vehicleRepository: vehicleRepository
+                        mapVM: mapVM
                     )
                 }
             }
@@ -158,13 +137,13 @@ struct StopDetailsView: View {
     @ViewBuilder private func loadingBody() -> some View {
         StopDetailsRoutesView(
             departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: stopFilter),
-            global: global,
+            global: stopDetailsVM.global,
             now: now.toKotlinInstant(),
             filter: stopFilter,
             setFilter: { _ in },
             pushNavEntry: { _ in },
             pinRoute: { _ in },
-            pinnedRoutes: pinnedRoutes
+            pinnedRoutes: stopDetailsVM.pinnedRoutes
         )
         .loadingPlaceholder()
     }

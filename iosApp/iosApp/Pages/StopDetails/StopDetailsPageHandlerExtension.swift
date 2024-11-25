@@ -11,173 +11,100 @@ import SwiftPhoenixClient
 import SwiftUI
 
 extension StopDetailsPage {
+    func changeStop(_ stopId: String) {
+        stopDetailsVM.leavePredictions()
+        fetchStopData(stopId)
+    }
+
+    func checkPredictionsStale() {
+        Task {
+            if let lastPredictions = stopDetailsVM.predictionsRepository.lastUpdated {
+                errorBannerVM.errorRepository.checkPredictionsStale(
+                    predictionsLastUpdated: lastPredictions,
+                    predictionQuantity: Int32(
+                        stopDetailsVM.predictionsByStop?.predictionQuantity() ?? 0
+                    ),
+                    action: {
+                        stopDetailsVM.leavePredictions()
+                        joinPredictions()
+                    }
+                )
+            }
+        }
+    }
+
+    func fetchStopData(_ stopId: String) {
+        getSchedule(stopId)
+        joinPredictions()
+        updateDepartures()
+    }
+
+    func getSchedule(_ stopId: String) {
+        Task {
+            stopDetailsVM.schedulesResponse = nil
+            await fetchApi(
+                errorBannerVM.errorRepository,
+                errorKey: "StopDetailsPage.getSchedule",
+                getData: { try await stopDetailsVM.schedulesRepository.getSchedule(stopIds: [stopId]) },
+                onSuccess: { @MainActor in stopDetailsVM.schedulesResponse = $0 },
+                onRefreshAfterError: loadEverything
+            )
+        }
+    }
+
+    func joinPredictions() {
+        stopDetailsVM.joinPredictions(
+            stopId,
+            onSuccess: { checkPredictionsStale() },
+            onComplete: { @MainActor in errorBannerVM.loadingWhenPredictionsStale = false }
+        )
+    }
+
     func loadEverything() {
         loadGlobalData()
         fetchStopData(stopId)
-        loadPinnedRoutes()
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            globalResponse = globalData
-        }
+        stopDetailsVM.loadPinnedRoutes()
     }
 
     func loadGlobalData() {
         Task(priority: .high) {
-            await activateGlobalListener()
+            await stopDetailsVM.activateGlobalListener()
         }
         Task {
             await fetchApi(
                 errorBannerVM.errorRepository,
                 errorKey: "StopDetailsPage.loadGlobalData",
-                getData: { try await globalRepository.getGlobalData() },
+                getData: { try await stopDetailsVM.globalRepository.getGlobalData() },
                 onRefreshAfterError: loadEverything
             )
         }
     }
 
-    func loadPinnedRoutes() {
-        Task {
-            do {
-                pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getPinnedRoutes shouldn't actually fail
-                debugPrint(error)
-            }
+    func setStopFilter() -> StopDetailsFilter? {
+        let nextStopFilter = stopFilter ?? internalDepartures?.autoStopFilter()
+        if stopFilter != nextStopFilter {
+            nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
         }
+        return nextStopFilter
     }
 
-    func togglePinnedRoute(_ routeId: String) {
-        Task {
-            do {
-                _ = try await togglePinnedUsecase.execute(route: routeId)
-                loadPinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // execute shouldn't actually fail
-                debugPrint(error)
-            }
-        }
-    }
-
-    func changeStop(_ stopId: String) {
-        leavePredictions()
-        fetchStopData(stopId)
-    }
-
-    func fetchStopData(_ stopId: String) {
-        getSchedule(stopId)
-        joinPredictions(stopId)
-        updateDepartures(stopId: stopId)
-    }
-
-    func getSchedule(_ stopId: String) {
-        Task {
-            schedulesResponse = nil
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "StopDetailsPage.getSchedule",
-                getData: { try await schedulesRepository.getSchedule(stopIds: [stopId]) },
-                onSuccess: { schedulesResponse = $0 },
-                onRefreshAfterError: loadEverything
-            )
-        }
-    }
-
-    func joinPredictions(_ stopId: String) {
-        // no error handling since persistent errors cause stale predictions
-        predictionsRepository.connectV2(stopIds: [stopId], onJoin: { outcome in
-            DispatchQueue.main.async {
-                if case let .ok(result) = onEnum(of: outcome) {
-                    predictionsByStop = result.data
-                    checkPredictionsStale()
-                }
-                errorBannerVM.loadingWhenPredictionsStale = false
-            }
-        }, onMessage: { outcome in
-            DispatchQueue.main.async {
-                if case let .ok(result) = onEnum(of: outcome) {
-                    if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
-                    } else {
-                        predictionsByStop = PredictionsByStopJoinResponse(
-                            predictionsByStop: [result.data.stopId: result.data.predictions],
-                            trips: result.data.trips,
-                            vehicles: result.data.vehicles
-                        )
-                    }
-                    checkPredictionsStale()
-                }
-                errorBannerVM.loadingWhenPredictionsStale = false
-            }
-
-        })
-    }
-
-    func leavePredictions() {
-        predictionsRepository.disconnect()
-    }
-
-    func checkPredictionsStale() {
-        if let lastPredictions = predictionsRepository.lastUpdated {
-            errorBannerVM.errorRepository.checkPredictionsStale(
-                predictionsLastUpdated: lastPredictions,
-                predictionQuantity: Int32(
-                    predictionsByStop?.predictionQuantity() ?? 0
-                ),
-                action: {
-                    leavePredictions()
-                    joinPredictions(stopId)
-                }
-            )
-        }
-    }
-
-    func setTripFilter(departures: StopDetailsDepartures? = nil, stopFilter: StopDetailsFilter? = nil) {
-        let tripFilter = (departures ?? internalDepartures)?.autoTripFilter(
-            stopFilter: stopFilter ?? self.stopFilter,
+    func setTripFilter(stopFilter: StopDetailsFilter?) {
+        let tripFilter = internalDepartures?.autoTripFilter(
+            stopFilter: stopFilter,
             currentTripFilter: tripFilter,
             filterAtTime: now.toKotlinInstant()
         )
         nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)
     }
 
-    func updateDepartures(
-        stopId: String? = nil,
-        globalResponse: GlobalResponse? = nil,
-        pinnedRoutes: Set<String>? = nil,
-        predictionsByStop: PredictionsByStopJoinResponse? = nil,
-        schedulesResponse: ScheduleResponse? = nil
-    ) {
-        let stopId = stopId ?? self.stopId
-        let globalResponse = globalResponse ?? self.globalResponse
-
-        let newDepartures: StopDetailsDepartures? = if let globalResponse {
-            StopDetailsDepartures.companion.fromData(
-                stopId: stopId,
-                global: globalResponse,
-                schedules: schedulesResponse ?? self.schedulesResponse,
-                predictions: (predictionsByStop ?? self.predictionsByStop)?.toPredictionsStreamDataResponse(),
-                alerts: nearbyVM.alerts,
-                pinnedRoutes: pinnedRoutes ?? self.pinnedRoutes,
-                filterAtTime: now.toKotlinInstant(),
-                useTripHeadsigns: nearbyVM.tripHeadsignsEnabled
-            )
-        } else {
-            nil
-        }
-
-        let nextStopFilter = stopFilter ?? newDepartures?.autoStopFilter()
-        if stopFilter != nextStopFilter {
-            nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
-        }
-
-        internalDepartures = newDepartures
-        nearbyVM.setDepartures(stopId, newDepartures)
+    func updateDepartures() {
+        let nextDepartures = stopDetailsVM.getDepartures(
+            stopId: stopId,
+            alerts: nearbyVM.alerts,
+            useTripHeadsigns: nearbyVM.tripHeadsignsEnabled,
+            now: now
+        )
+        nearbyVM.setDepartures(stopId, nextDepartures)
+        internalDepartures = nextDepartures
     }
 }

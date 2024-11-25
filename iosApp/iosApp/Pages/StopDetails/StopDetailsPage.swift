@@ -20,24 +20,12 @@ struct StopDetailsPage: View {
     // their respective  departures rather than both showing the departures for the newly presented stop.
     @State var internalDepartures: StopDetailsDepartures?
     @State var now = Date.now
+
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
+    @ObservedObject var stopDetailsVM: StopDetailsViewModel
     @ObservedObject var viewportProvider: ViewportProvider
-
-    let pinnedRouteRepository = RepositoryDI().pinnedRoutes
-    let globalRepository: IGlobalRepository
-    let predictionsRepository: IPredictionsRepository
-    let schedulesRepository: ISchedulesRepository
-    let togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
-    let tripPredictionsRepository: ITripPredictionsRepository
-    let tripRepository: ITripRepository
-    let vehicleRepository: IVehicleRepository
-
-    @State var globalResponse: GlobalResponse?
-    @State var pinnedRoutes: Set<String> = []
-    @State var predictionsByStop: PredictionsByStopJoinResponse?
-    @State var schedulesResponse: ScheduleResponse?
 
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
@@ -51,14 +39,8 @@ struct StopDetailsPage: View {
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
-        viewportProvider: ViewportProvider,
-
-        globalRepository: IGlobalRepository = RepositoryDI().global,
-        predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
-        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
-        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
-        tripRepository: ITripRepository = RepositoryDI().trip,
-        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
+        stopDetailsVM: StopDetailsViewModel,
+        viewportProvider: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -67,14 +49,8 @@ struct StopDetailsPage: View {
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
+        self.stopDetailsVM = stopDetailsVM
         self.viewportProvider = viewportProvider
-
-        self.globalRepository = globalRepository
-        self.schedulesRepository = schedulesRepository
-        self.predictionsRepository = predictionsRepository
-        self.tripPredictionsRepository = tripPredictionsRepository
-        self.tripRepository = tripRepository
-        self.vehicleRepository = vehicleRepository
     }
 
     @ViewBuilder
@@ -86,28 +62,26 @@ struct StopDetailsPage: View {
             setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
             departures: internalDepartures,
-            global: globalResponse,
-            pinnedRoutes: pinnedRoutes,
-            togglePinnedRoute: togglePinnedRoute,
             now: now,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
-            tripPredictionsRepository: tripPredictionsRepository,
-            tripRepository: tripRepository,
-            vehicleRepository: vehicleRepository
+            stopDetailsVM: stopDetailsVM
         )
     }
 
     var body: some View {
         stopDetails
             .onChange(of: stopId) { nextStopId in changeStop(nextStopId) }
-            .onChange(of: globalResponse) { nextGlobal in updateDepartures(globalResponse: nextGlobal) }
-            .onChange(of: pinnedRoutes) { nextPinned in updateDepartures(pinnedRoutes: nextPinned) }
-            .onChange(of: predictionsByStop) { nextPredictions in updateDepartures(predictionsByStop: nextPredictions) }
-            .onChange(of: schedulesResponse) { nextSchedules in updateDepartures(schedulesResponse: nextSchedules) }
+            .onChange(of: stopDetailsVM.global) { _ in updateDepartures() }
+            .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures() }
+            .onChange(of: stopDetailsVM.predictionsByStop) { _ in updateDepartures() }
+            .onChange(of: stopDetailsVM.schedulesResponse) { _ in updateDepartures() }
             .onChange(of: stopFilter) { nextStopFilter in setTripFilter(stopFilter: nextStopFilter) }
-            .onChange(of: internalDepartures) { nextDepartures in setTripFilter(departures: nextDepartures) }
+            .onChange(of: internalDepartures) { _ in
+                let nextStopFilter = setStopFilter()
+                setTripFilter(stopFilter: nextStopFilter)
+            }
             .onAppear { loadEverything() }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task(id: stopId) {
@@ -118,19 +92,15 @@ struct StopDetailsPage: View {
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
-            .onDisappear { leavePredictions() }
+            .onDisappear { stopDetailsVM.leavePredictions() }
             .withScenePhaseHandlers(
                 onActive: {
-                    if let predictionsByStop,
-                       predictionsRepository
-                       .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
-                        self.predictionsByStop = nil
-                    }
-                    joinPredictions(stopId)
+                    stopDetailsVM.returnFromBackground()
+                    joinPredictions()
                 },
-                onInactive: leavePredictions,
-                onBackground: {
-                    leavePredictions()
+                onInactive: stopDetailsVM.leavePredictions,
+                onBackground: { @MainActor in
+                    stopDetailsVM.leavePredictions()
                     errorBannerVM.loadingWhenPredictionsStale = true
                 }
             )

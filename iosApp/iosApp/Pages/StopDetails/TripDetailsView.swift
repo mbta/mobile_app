@@ -227,7 +227,7 @@ struct TripDetailsView: View {
     private func joinVehicle(vehicleId: String?) {
         guard let vehicleId else { return }
         vehicleRepository.connect(vehicleId: vehicleId) { outcome in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 let errorKey = "TripDetailsPage.joinVehicle"
                 switch onEnum(of: outcome) {
                 case let .ok(result):

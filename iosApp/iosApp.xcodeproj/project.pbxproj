@@ -197,6 +197,7 @@
 		9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849C2BAD05BC006581CE /* Inspection.swift */; };
 		9ADB84A02BAD1B84006581CE /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */; };
 		9ADB84A22BAE37C0006581CE /* StopExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB84A12BAE37C0006581CE /* StopExtension.swift */; };
+		9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE98DAA2CF4CCAD00EE80AA /* StopDetailsViewModel.swift */; };
 		9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093772BD943A4001DF39F /* DirectionPicker.swift */; };
 		9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
@@ -283,7 +284,6 @@
 		6E4C37572C4AEF3E00EA67CF /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		6E4C375D2C4BDC9F00EA67CF /* ContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModelTests.swift; sourceTree = "<group>"; };
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
-		6E50E54D2C4FEFCC004566C5 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* LegacyStopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* LegacyStopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsViewTests.swift; sourceTree = "<group>"; };
 		6E6D45F62CC6E865002A3663 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -469,6 +469,7 @@
 		9ADB849C2BAD05BC006581CE /* Inspection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspection.swift; sourceTree = "<group>"; };
 		9ADB849F2BAD1B84006581CE /* DebouncerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncerTests.swift; sourceTree = "<group>"; };
 		9ADB84A12BAE37C0006581CE /* StopExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopExtension.swift; sourceTree = "<group>"; };
+		9AE98DAA2CF4CCAD00EE80AA /* StopDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsViewModel.swift; sourceTree = "<group>"; };
 		9AF093772BD943A4001DF39F /* DirectionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPicker.swift; sourceTree = "<group>"; };
 		9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPickerTests.swift; sourceTree = "<group>"; };
 		9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -917,6 +918,7 @@
 				6E04E32E2BE95A8D006F8131 /* NearbyViewModel.swift */,
 				9A4DB7772C937EE300E8755B /* SearchViewModel.swift */,
 				EDE92FA72C408A32007AD2F6 /* SettingsViewModel.swift */,
+				9AE98DAA2CF4CCAD00EE80AA /* StopDetailsViewModel.swift */,
 				9A392C962CC0497C00DE1FBE /* ErrorBannerViewModel.swift */,
 			);
 			path = ViewModels;
@@ -1441,6 +1443,7 @@
 			files = (
 				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
+				9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */,
 				8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */,
 				9A52A2B32CC3035F00CC01D6 /* WithRealtimeIndicator.swift in Sources */,
 				9A5B275C2BB237DE009A6FC6 /* RecenterButton.swift in Sources */,
