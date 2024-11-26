@@ -402,6 +402,13 @@ sealed class RealtimePatterns {
             now: Instant,
             upcomingTrip: UpcomingTrip,
             routeType: RouteType,
+            context: TripInstantDisplay.Context
+        ) = formatUpcomingTrip(now, upcomingTrip, routeType, context, routeType.isSubway())
+
+        fun formatUpcomingTrip(
+            now: Instant,
+            upcomingTrip: UpcomingTrip,
+            routeType: RouteType,
             context: TripInstantDisplay.Context,
             isSubway: Boolean
         ): Format.Some.FormatWithId? {

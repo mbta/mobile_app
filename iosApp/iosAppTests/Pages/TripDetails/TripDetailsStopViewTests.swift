@@ -66,7 +66,7 @@ final class TripDetailsStopViewTests: XCTestCase {
             stop: stopListEntry,
             now: now.toKotlinInstant(),
             onTapLink: { navStackEntry, actualStopListEntry, connectingRoute in
-                XCTAssertEqual(navStackEntry, .stopDetails(stop, nil))
+                XCTAssertEqual(navStackEntry, .legacyStopDetails(stop, nil))
                 XCTAssertEqual(stopListEntry, actualStopListEntry)
                 XCTAssertNil(connectingRoute)
                 exp.fulfill()

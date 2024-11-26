@@ -14,47 +14,49 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsView: View {
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
-    let globalRepository: IGlobalRepository
-    @State var globalResponse: GlobalResponse?
-    var stop: Stop
-    var filter: StopDetailsFilter?
-    var setFilter: (StopDetailsFilter?) -> Void
+    var stopId: String
+    var stopFilter: StopDetailsFilter?
+    var tripFilter: TripDetailsFilter?
+    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setTripFilter: (TripDetailsFilter?) -> Void
+
     var departures: StopDetailsDepartures?
-    var now = Date.now
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
+
+    var now = Date.now
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    let pinnedRoutes: Set<String>
-    @State var predictions: PredictionsStreamDataResponse?
+    @ObservedObject var mapVM: MapViewModel
+    @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    let togglePinnedRoute: (String) -> Void
-
+    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     init(
-        globalRepository: IGlobalRepository = RepositoryDI().global,
-        stop: Stop,
-        filter: StopDetailsFilter?,
-        setFilter: @escaping (StopDetailsFilter?) -> Void,
+        stopId: String,
+        stopFilter: StopDetailsFilter?,
+        tripFilter: TripDetailsFilter?,
+        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         departures: StopDetailsDepartures?,
+        now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        now: Date,
-        pinnedRoutes: Set<String>,
-        togglePinnedRoute: @escaping (String) -> Void
+        mapVM: MapViewModel,
+        stopDetailsVM: StopDetailsViewModel
     ) {
-        self.globalRepository = globalRepository
-        self.stop = stop
-        self.filter = filter
-        self.setFilter = setFilter
+        self.stopId = stopId
+        self.stopFilter = stopFilter
+        self.tripFilter = tripFilter
+        self.setStopFilter = setStopFilter
+        self.setTripFilter = setTripFilter
         self.departures = departures
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
+        self.mapVM = mapVM
+        self.stopDetailsVM = stopDetailsVM
         self.now = now
-        self.pinnedRoutes = pinnedRoutes
-        self.togglePinnedRoute = togglePinnedRoute
 
         if let departures {
             servedRoutes = departures.routes.map { patterns in
@@ -68,19 +70,23 @@ struct StopDetailsView: View {
         }
     }
 
+    var stop: Stop? {
+        stopDetailsVM.global?.stops[stopId]
+    }
+
     var body: some View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
                 VStack(spacing: 16) {
                     SheetHeader(
-                        title: stop.name,
+                        title: stop?.name ?? "Invalid Stop",
                         onBack: nearbyVM.navigationStack.count > 1 ? { nearbyVM.goBack() } : nil,
                         onClose: { nearbyVM.navigationStack.removeAll() }
                     )
                     if nearbyVM.showDebugMessages {
                         DebugView {
-                            Text(verbatim: "stop id: \(stop.id)")
+                            Text(verbatim: "stop id: \(stopId)")
                         }
                     }
                     ErrorBanner(errorBannerVM).padding(.horizontal, 16)
@@ -88,8 +94,8 @@ struct StopDetailsView: View {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
-                            filter: filter,
-                            setFilter: setFilter
+                            filter: stopFilter,
+                            setFilter: setStopFilter
                         )
                     }
                 }
@@ -99,48 +105,47 @@ struct StopDetailsView: View {
                 if let departures {
                     StopDetailsRoutesView(
                         departures: departures,
-                        global: globalResponse,
+                        global: stopDetailsVM.global,
                         now: now.toKotlinInstant(),
-                        filter: filter,
-                        setFilter: setFilter,
-                        pushNavEntry: nearbyVM.pushNavEntry,
-                        pinRoute: togglePinnedRoute,
-                        pinnedRoutes: pinnedRoutes
+                        filter: stopFilter,
+                        setFilter: setStopFilter,
+                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
+                        pinRoute: stopDetailsVM.togglePinnedRoute,
+                        pinnedRoutes: stopDetailsVM.pinnedRoutes
                     ).frame(maxHeight: .infinity)
                 } else {
                     loadingBody()
                 }
+
+                if let stopFilter, let tripFilter {
+                    TripDetailsView(
+                        tripId: tripFilter.tripId,
+                        vehicleId: tripFilter.vehicleId,
+                        routeId: stopFilter.routeId,
+                        stopId: stopId,
+                        stopSequence: tripFilter.stopSequence?.intValue,
+                        global: stopDetailsVM.global,
+                        errorBannerVM: errorBannerVM,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM
+                    )
+                }
             }
-        }
-        .task {
-            loadGlobal()
         }
     }
 
     @ViewBuilder private func loadingBody() -> some View {
         StopDetailsRoutesView(
-            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: filter),
-            global: globalResponse,
+            departures: LoadingPlaceholders.shared.stopDetailsDepartures(filter: stopFilter),
+            global: stopDetailsVM.global,
             now: now.toKotlinInstant(),
-            filter: filter,
+            filter: stopFilter,
             setFilter: { _ in },
             pushNavEntry: { _ in },
             pinRoute: { _ in },
-            pinnedRoutes: pinnedRoutes
+            pinnedRoutes: stopDetailsVM.pinnedRoutes
         )
         .loadingPlaceholder()
-    }
-
-    private func loadGlobal() {
-        Task {
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "StopDetailsView.loadGlobal",
-                getData: globalRepository.getGlobalData,
-                onSuccess: { globalResponse = $0 },
-                onRefreshAfterError: loadGlobal
-            )
-        }
     }
 
     func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {
@@ -150,15 +155,15 @@ struct StopDetailsView: View {
         case let .route(route):
             route.id
         }
-        if filter?.routeId == filterId { setFilter(nil); return }
+        if stopFilter?.routeId == filterId { setStopFilter(nil); return }
         guard let departures else { return }
         guard let patterns = departures.routes.first(where: { patterns in patterns.routeIdentifier == filterId })
         else { return }
-        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stop.id)
+        analytics.tappedRouteFilter(routeId: patterns.routeIdentifier, stopId: stopId)
         let defaultDirectionId = patterns.patterns.flatMap { headsign in
             // RealtimePatterns.patterns is a List<RoutePattern?> but that gets bridged as [Any] for some reason
             headsign.patterns.compactMap { pattern in (pattern as? RoutePattern)?.directionId }
         }.min() ?? 0
-        setFilter(.init(routeId: filterId, directionId: defaultDirectionId))
+        setStopFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }
 }

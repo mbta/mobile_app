@@ -21,6 +21,7 @@ struct ContentView: View {
     @StateObject var mapVM = MapViewModel()
     @StateObject var searchVM = SearchViewModel()
     @StateObject var settingsVM = SettingsViewModel()
+    @StateObject var stopDetailsVM = StopDetailsViewModel()
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
@@ -59,6 +60,9 @@ struct ContentView: View {
             do {
                 _ = try await RepositoryDI().global.getGlobalData()
             } catch {}
+        }
+        .onChange(of: selectedTab) { _ in
+            Task { await nearbyVM.loadDebugSetting() }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
@@ -256,11 +260,38 @@ struct ContentView: View {
                 case .alertDetails:
                     EmptyView()
 
-                case let .stopDetails(stop, filter):
+                case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
                         StopDetailsPage(
+                            stopId: stopId,
+                            stopFilter: stopFilter,
+                            tripFilter: tripFilter,
+                            errorBannerVM: errorBannerVM,
+                            nearbyVM: nearbyVM,
+                            mapVM: mapVM,
+                            stopDetailsVM: stopDetailsVM,
+                            viewportProvider: viewportProvider
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                        .onAppear {
+                            let filtered = stopFilter != nil
+                            screenTracker.track(
+                                screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                            )
+                        }
+                    }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
+                    .id(stopId)
+                    .transition(transition)
+
+                case let .legacyStopDetails(stop, filter):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        LegacyStopDetailsPage(
                             viewportProvider: viewportProvider,
                             stop: stop, filter: filter,
                             errorBannerVM: errorBannerVM,

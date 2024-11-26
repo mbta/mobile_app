@@ -132,7 +132,7 @@ final class NearbyTransitPageViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.stopDetails(stop, nil)])
+        let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [.legacyStopDetails(stop, nil)])
         let sut = NearbyTransitPageView(
             errorBannerVM: .init(),
             nearbyVM: fakeVM,

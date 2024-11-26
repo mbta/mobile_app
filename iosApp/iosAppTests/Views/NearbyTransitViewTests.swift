@@ -822,7 +822,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let stopEntryPushedExp = XCTestExpectation(description: "pushNavEntry called with stop details")
 
         func pushNavEntry(navEntry: SheetNavigationStackEntry) {
-            if case let .stopDetails(matchedStop, matchedFilter) = navEntry {
+            if case let .legacyStopDetails(matchedStop, matchedFilter) = navEntry {
                 if stop.id == matchedStop.id, matchedFilter?.routeId == route.id,
                    matchedFilter?.directionId == pattern.directionId {
                     stopEntryPushedExp.fulfill()
