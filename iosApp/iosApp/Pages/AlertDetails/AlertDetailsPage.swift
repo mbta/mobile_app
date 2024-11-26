@@ -94,7 +94,7 @@ struct AlertDetailsPage: View {
                     line: line,
                     routes: routes,
                     affectedStops: affectedStops,
-                    stopId: nearbyVM.navigationStack.lastStop?.id,
+                    stopId: nearbyVM.navigationStack.lastStopId,
                     now: now
                 )
             } else {

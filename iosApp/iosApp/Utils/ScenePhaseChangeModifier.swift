@@ -16,7 +16,7 @@ struct ScenePhaseChangeModifier: ViewModifier {
     let onBackground: () -> Void
 
     func body(content: Content) -> some View {
-        content.onChange(of: scenePhase) { newPhase in
+        content.onChange(of: scenePhase) { @MainActor newPhase in
             if newPhase == .active {
                 onActive()
             } else if newPhase == .inactive {

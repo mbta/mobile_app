@@ -30,7 +30,7 @@ struct StopDeparturesSummaryList: View {
 
             VStack(spacing: 0) {
                 SheetNavigationLink(
-                    value: .stopDetails(
+                    value: .legacyStopDetails(
                         patternsByStop.stop,
                         filterFor(patterns: patterns)
                     ),

@@ -407,7 +407,11 @@ final class TripDetailsPageTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let nearbyVM = NearbyViewModel(
-            navigationStack: [.stopDetails(stop, nil), .stopDetails(stop, nil), .stopDetails(stop, nil)]
+            navigationStack: [
+                .legacyStopDetails(stop, nil),
+                .legacyStopDetails(stop, nil),
+                .legacyStopDetails(stop, nil),
+            ]
         )
 
         let sut = TripDetailsPage(
@@ -522,7 +526,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         sut.inspection.inspect(onReceive: tripLoaded, after: 1) { view in
             try view.actualView().onTapStop(
-                entry: .stopDetails(childStop, nil),
+                entry: .legacyStopDetails(childStop, nil),
                 stop: .init(
                     stop: childStop,
                     stopSequence: 1,
@@ -534,7 +538,7 @@ final class TripDetailsPageTests: XCTestCase {
                 ),
                 connectingRouteId: "connectingRoute"
             )
-            XCTAssertEqual(nearbyVM.navigationStack, [.stopDetails(parentStop, nil)])
+            XCTAssertEqual(nearbyVM.navigationStack, [.legacyStopDetails(parentStop, nil)])
         }
 
         wait(for: [analyticsExp], timeout: 5)
