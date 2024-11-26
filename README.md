@@ -63,6 +63,10 @@ ios app:
 - Populate any configuration needed in your the .envrc file. These will be read by a build phase
   script and set as info.plist values so that they can be read by the application.
 
+### Android
+
+To switch between the staging and prod app flavors, go to Build > Select Build Variant and then set the `:androidApp` Active Build Variant.
+
 ## Running Tests
 
 ### Unit Tests
