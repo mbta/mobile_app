@@ -4,10 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -17,7 +18,7 @@ class GlobalDataViewModel(private val globalRepository: IGlobalRepository) : Vie
     var globalResponse: MutableStateFlow<GlobalResponse?> = _globalResponse
 
     init {
-        viewModelScope.launch { globalResponse.collect { getGlobalData() } }
+        CoroutineScope(Dispatchers.IO).launch { globalResponse.collect { getGlobalData() } }
     }
 
     suspend fun getGlobalData() {

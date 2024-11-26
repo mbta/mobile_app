@@ -6,10 +6,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class ScheduleViewModel(
     val schedule = _schedule
 
     init {
-        viewModelScope.launch { schedule.collect { getSchedule(stopIds) } }
+        CoroutineScope(Dispatchers.IO).launch { schedule.collect { getSchedule(stopIds) } }
     }
 
     private suspend fun getSchedule(stopIds: List<String>) {

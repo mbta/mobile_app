@@ -7,10 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -20,7 +21,7 @@ class StopMapViewModel(private val stopRepository: IStopRepository, stopId: Stri
     val stopMapResponse = _stopMapResponse
 
     init {
-        viewModelScope.launch { stopMapResponse.collect { getStopMapData(stopId) } }
+        CoroutineScope(Dispatchers.IO).launch { stopMapResponse.collect { getStopMapData(stopId) } }
     }
 
     suspend fun getStopMapData(stopId: String) {

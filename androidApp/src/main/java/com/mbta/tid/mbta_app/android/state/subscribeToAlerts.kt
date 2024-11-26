@@ -7,12 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import com.mbta.tid.mbta_app.android.util.TimerViewModel
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.internal.notifyAll
@@ -22,11 +23,11 @@ class AlertsViewModel(
     private val alertsRepository: IAlertsRepository,
     private val timerViewModel: TimerViewModel
 ) : ViewModel() {
-    private val _alerts = MutableLiveData<AlertsStreamDataResponse?>()
+    private val _alerts = MutableLiveData(AlertsStreamDataResponse(emptyMap()))
     val alerts: LiveData<AlertsStreamDataResponse?> = _alerts
 
     init {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             alertsRepository.connect {
                 when (it) {
                     is ApiResult.Ok -> {
@@ -40,6 +41,11 @@ class AlertsViewModel(
             timerViewModel.timerFlow.collect { synchronized(alerts) { alerts.notifyAll() } }
         }
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        alertsRepository.disconnect()
+    }
 }
 
 @Composable
@@ -47,6 +53,6 @@ fun subscribeToAlerts(
     alertsRepository: IAlertsRepository = koinInject()
 ): AlertsStreamDataResponse? {
     val timerViewModel = remember { TimerViewModel(1.seconds) }
-    val viewModel = AlertsViewModel(alertsRepository, timerViewModel)
+    val viewModel = remember { AlertsViewModel(alertsRepository, timerViewModel) }
     return viewModel.alerts.asFlow().collectAsState(initial = null).value
 }

@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.util.TimerViewModel
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -17,6 +16,8 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class PredictionsViewModel(
     val predictions: LiveData<PredictionsByStopJoinResponse> = _predictions
 
     init {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             if (stopIds.size > 0) {
                 connectToPredictions()
             }
@@ -40,6 +41,11 @@ class PredictionsViewModel(
                 synchronized(predictions) { predictions.notifyAll() }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        predictionsRepository.disconnect()
     }
 
     private fun connectToPredictions() {
