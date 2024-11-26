@@ -38,7 +38,8 @@ data class Alert(
                 Effect.StationClosure,
                 Effect.StopClosure,
                 Effect.DockClosure,
-                Effect.Detour
+                Effect.Detour,
+                Effect.SnowRoute
             ) ->
                 if (informedEntity.all { it.stop != null }) AlertSignificance.Major
                 else AlertSignificance.Secondary
@@ -203,4 +204,74 @@ data class Alert(
     fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
 
     fun matchingEntities(predicate: (InformedEntity) -> Boolean) = informedEntity.filter(predicate)
+
+    companion object {
+        /**
+         * Returns alerts that are applicable to the passed in routes and stops
+         *
+         * Criteria:
+         * - Route ID matches an alert [Alert.InformedEntity]
+         * - Stop ID matches an alert [Alert.InformedEntity]
+         * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
+         */
+        fun applicableAlerts(
+            alerts: Collection<Alert>,
+            directionId: Int?,
+            routeIds: List<String>,
+            stopIds: Set<String>?
+        ): List<Alert> {
+            return alerts
+                .filter { alert ->
+                    alert.anyInformedEntity {
+                        routeIds.any { routeId ->
+                            stopIds?.any { stopId ->
+                                it.appliesTo(
+                                    directionId = directionId,
+                                    routeId = routeId,
+                                    stopId = stopId
+                                )
+                            }
+                                ?: it.appliesTo(directionId = directionId, routeId = routeId)
+                        } && it.activities.contains(Alert.InformedEntity.Activity.Board)
+                    }
+                }
+                .distinct()
+        }
+
+        /**
+         * Gets the alerts of the first stop that is downstream of the target stop which has alerts.
+         *
+         * @param alerts: The full list of alerts
+         * @param trip: The trip used to calculate downstream stops
+         * @param targetStopWithChildren: The child and parent stop Ids of the target stop
+         */
+        fun downstreamAlerts(
+            alerts: Collection<Alert>,
+            trip: Trip,
+            targetStopWithChildren: Set<String>,
+        ): List<Alert> {
+            val stopIds = trip.stopIds ?: emptyList()
+
+            val indexOfTargetStopInPattern =
+                stopIds.indexOfFirst { targetStopWithChildren.contains(it) }
+            if (indexOfTargetStopInPattern != -1 && indexOfTargetStopInPattern < stopIds.size - 1) {
+                val downstreamStops = stopIds.subList(indexOfTargetStopInPattern + 1, stopIds.size)
+                val firstStopAlerts =
+                    downstreamStops
+                        .map { stop ->
+                            applicableAlerts(
+                                alerts.toList() ?: listOf(),
+                                trip.directionId,
+                                listOf(trip.routeId),
+                                setOf(stop)
+                            )
+                        }
+                        .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
+                        ?: listOf()
+                return firstStopAlerts
+            } else {
+                return listOf()
+            }
+        }
+    }
 }

@@ -43,6 +43,8 @@
 		6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */; };
 		6EA231732C21C58A00789173 /* NearbyTransitPageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */; };
 		6EA231752C21CF2100789173 /* LoadingCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA231742C21CF2100789173 /* LoadingCardTests.swift */; };
+		6EC6F18D2CE661680022799F /* AlertExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6F18C2CE661680022799F /* AlertExtension.swift */; };
+		6EC6F18F2CE665DB0022799F /* StopDetailsDownstreamAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6F18E2CE665DB0022799F /* StopDetailsDownstreamAlert.swift */; };
 		6EE7457E2B965ADE0052227E /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7457D2B965ADE0052227E /* Socket.swift */; };
 		6EE745812B965AEA0052227E /* SwiftPhoenixClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6EE745802B965AEA0052227E /* SwiftPhoenixClient */; };
 		6EE745842B965B9C0052227E /* SocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE745832B965B9C0052227E /* SocketTests.swift */; };
@@ -286,6 +288,7 @@
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* LegacyStopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* LegacyStopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsViewTests.swift; sourceTree = "<group>"; };
+		6E5DB0A52CF65675001402CE /* StopDetailsDownstreamAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsDownstreamAlert.swift; sourceTree = "<group>"; };
 		6E6D45F62CC6E865002A3663 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6E6D45F82CC6E873002A3663 /* zh-Hans-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans-CN"; path = "zh-Hans-CN.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6E6D45F92CC6E8B0002A3663 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -307,6 +310,8 @@
 		6EA231702C21BF8900789173 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6EA231722C21C58A00789173 /* NearbyTransitPageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTransitPageViewTests.swift; sourceTree = "<group>"; };
 		6EA231742C21CF2100789173 /* LoadingCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCardTests.swift; sourceTree = "<group>"; };
+		6EC6F18C2CE661680022799F /* AlertExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertExtension.swift; sourceTree = "<group>"; };
+		6EC6F18E2CE665DB0022799F /* StopDetailsDownstreamAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsDownstreamAlert.swift; sourceTree = "<group>"; };
 		6EE7457D2B965ADE0052227E /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		6EE745832B965B9C0052227E /* SocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketTests.swift; sourceTree = "<group>"; };
 		6EE745872B965C2B0052227E /* MessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTests.swift; sourceTree = "<group>"; };
@@ -767,12 +772,14 @@
 			children = (
 				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
 				9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */,
+				6EC6F18E2CE665DB0022799F /* StopDetailsDownstreamAlert.swift */,
 				8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */,
 				9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */,
 				8C5054572BB5EB6C00C6A51C /* LegacyStopDetailsPage.swift */,
 				8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */,
 				8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */,
 				6E55C17E2C247D480086A424 /* LegacyStopDetailsView.swift */,
+				6E5DB0A52CF65675001402CE /* StopDetailsDownstreamAlert.swift */,
 			);
 			path = LegacyStopDetails;
 			sourceTree = "<group>";
@@ -1042,6 +1049,7 @@
 				8CA485B72BDC679A00E84E1F /* VehicleExtension.swift */,
 				9A5830552BA3A2CE0039876E /* ViewportExtension.swift */,
 				9A719E162CD1725E007377F7 /* UIWindowExtension.swift */,
+				6EC6F18C2CE661680022799F /* AlertExtension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1441,6 +1449,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EC6F18F2CE665DB0022799F /* StopDetailsDownstreamAlert.swift in Sources */,
 				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
 				9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */,
@@ -1551,6 +1560,7 @@
 				9A37F3072BACCCA5001714FE /* CoordinateExtension.swift in Sources */,
 				9A7F12132CCB185D0042B0F1 /* TabLabel.swift in Sources */,
 				9A392C972CC0497C00DE1FBE /* ErrorBannerViewModel.swift in Sources */,
+				6EC6F18D2CE661680022799F /* AlertExtension.swift in Sources */,
 				6EA2316F2C21BEB100789173 /* LoadingCard.swift in Sources */,
 				8C84D33E2B5AEE0200192C0A /* NearbyTransitView.swift in Sources */,
 				9A7F12192CCFF2D20042B0F1 /* MorePhone.swift in Sources */,

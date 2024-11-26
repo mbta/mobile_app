@@ -491,6 +491,7 @@ class StopDetailsDeparturesTest {
                     listOf(routePattern),
                     trips,
                     alertsHere = emptyList(),
+                    emptyList(),
                     hasSchedulesToday,
                     allDataLoaded
                 )
@@ -922,13 +923,15 @@ class StopDetailsDeparturesTest {
                                 null,
                                 listOf(routePattern1),
                                 emptyList(),
-                                listOf(alert)
+                                listOf(alert),
+                                emptyList()
                             ),
                             RealtimePatterns.ByHeadsign(
                                 route,
                                 "B",
                                 null,
                                 listOf(routePattern2),
+                                emptyList(),
                                 emptyList(),
                                 emptyList()
                             )
