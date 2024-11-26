@@ -99,7 +99,7 @@ struct StopDetailsPage: View {
                     joinPredictions()
                 },
                 onInactive: stopDetailsVM.leavePredictions,
-                onBackground: { @MainActor in
+                onBackground: {
                     stopDetailsVM.leavePredictions()
                     errorBannerVM.loadingWhenPredictionsStale = true
                 }
