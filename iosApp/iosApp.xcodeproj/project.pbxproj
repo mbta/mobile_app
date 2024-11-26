@@ -27,6 +27,7 @@
 		6E55C17F2C247D480086A424 /* LegacyStopDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C17E2C247D480086A424 /* LegacyStopDetailsView.swift */; };
 		6E55C1822C2489030086A424 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 6E55C1812C2489030086A424 /* Collections */; };
 		6E55C1862C249EF20086A424 /* LegacyStopDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E55C1852C249EF20086A424 /* LegacyStopDetailsViewTests.swift */; };
+		6E5DB0A62CF65675001402CE /* StopDetailsDownstreamAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5DB0A52CF65675001402CE /* StopDetailsDownstreamAlert.swift */; };
 		6E6D45F72CC6E865002A3663 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6E6D45F52CC6E865002A3663 /* InfoPlist.strings */; };
 		6E973DA52C17384C00CBF341 /* SheetHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA42C17384C00CBF341 /* SheetHeader.swift */; };
 		6E973DA72C1770B300CBF341 /* SheetNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E973DA62C1770B300CBF341 /* SheetNavigationLink.swift */; };
@@ -288,6 +289,7 @@
 		6E4EACFB2B7A82AC0011AB8B /* MockLocationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocationFetcher.swift; sourceTree = "<group>"; };
 		6E55C17E2C247D480086A424 /* LegacyStopDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsView.swift; sourceTree = "<group>"; };
 		6E55C1852C249EF20086A424 /* LegacyStopDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsViewTests.swift; sourceTree = "<group>"; };
+		6E5DB0A52CF65675001402CE /* StopDetailsDownstreamAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsDownstreamAlert.swift; sourceTree = "<group>"; };
 		6E6D45F62CC6E865002A3663 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6E6D45F82CC6E873002A3663 /* zh-Hans-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans-CN"; path = "zh-Hans-CN.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		6E6D45F92CC6E8B0002A3663 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -778,6 +780,7 @@
 				8CE0140F2BBDB8DC00918FAE /* StopDetailsRoutesView.swift */,
 				8CE014112BBDB96900918FAE /* StopDetailsRouteView.swift */,
 				6E55C17E2C247D480086A424 /* LegacyStopDetailsView.swift */,
+				6E5DB0A52CF65675001402CE /* StopDetailsDownstreamAlert.swift */,
 			);
 			path = LegacyStopDetails;
 			sourceTree = "<group>";
@@ -1585,6 +1588,7 @@
 				9A9E7DD32C2203BE000DA1FD /* TransitCard.swift in Sources */,
 				8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */,
 				9A6ACA2D2CD00F8200299AF5 /* MoreItem.swift in Sources */,
+				6E5DB0A62CF65675001402CE /* StopDetailsDownstreamAlert.swift in Sources */,
 				8C97F7CA2CCBF4E100A06B34 /* OnboardingPage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
