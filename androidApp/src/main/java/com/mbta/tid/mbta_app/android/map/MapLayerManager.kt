@@ -50,6 +50,7 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
     }
 
     private fun updateSourceData(sourceId: String, data: FeatureCollection) {
+        println("updating source data for $sourceId")
         if (map.styleSourceExists(sourceId)) {
             map.setStyleGeoJSONSourceData(
                 sourceId,

@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.mapbox.compose)
     implementation(libs.mapbox.turf)
     implementation(libs.okhttp)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
     debugImplementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.test.manifest)
     debugImplementation(libs.compose.ui.tooling)
