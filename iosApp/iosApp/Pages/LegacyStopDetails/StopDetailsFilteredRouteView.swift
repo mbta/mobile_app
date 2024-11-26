@@ -14,6 +14,7 @@ struct StopDetailsFilteredRouteView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop?
     let alerts: [shared.Alert]
+    let downstreamAlerts: [shared.Alert]
     let now: Instant
     var filter: StopDetailsFilter?
     var setFilter: (StopDetailsFilter?) -> Void
@@ -95,8 +96,10 @@ struct StopDetailsFilteredRouteView: View {
         if let patternsByStop, let expectedDirection {
             if let global {
                 alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, global: global)
+                downstreamAlerts = patternsByStop.alertsDownstream(directionId: expectedDirection)
             } else {
                 alerts = []
+                downstreamAlerts = []
             }
 
             var rows: [RowData] = departures.stopDetailsFormattedTrips(
@@ -125,6 +128,7 @@ struct StopDetailsFilteredRouteView: View {
             self.rows = rows
         } else {
             alerts = []
+            downstreamAlerts = []
             rows = []
         }
     }
@@ -167,6 +171,26 @@ struct StopDetailsFilteredRouteView: View {
                                 ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
                                     VStack(spacing: 0) {
                                         StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
+                                            .onTapGesture {
+                                                pushNavEntry(.alertDetails(
+                                                    alertId: alert.id,
+                                                    line: patternsByStop.line,
+                                                    routes: patternsByStop.routes
+                                                ))
+                                                analytics.tappedAlertDetails(
+                                                    routeId: patternsByStop.routeIdentifier,
+                                                    stopId: patternsByStop.stop.id,
+                                                    alertId: alert.id
+                                                )
+                                            }
+                                        if index < alerts.count - 1 || !rows.isEmpty {
+                                            Divider().background(Color.halo)
+                                        }
+                                    }
+                                }
+                                ForEach(Array(downstreamAlerts.enumerated()), id: \.offset) { index, alert in
+                                    VStack(spacing: 0) {
+                                        StopDetailsDownstreamAlert(alert: alert, routeColor: routeColor)
                                             .onTapGesture {
                                                 pushNavEntry(.alertDetails(
                                                     alertId: alert.id,

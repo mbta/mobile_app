@@ -45,10 +45,7 @@ fun PredictionRowView(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         predictions.secondaryAlert?.let { secondaryAlert ->
-            Image(
-                painterResource(drawableByName(secondaryAlert.iconName)),
-                secondaryAlert.alertEffect.name
-            )
+            Image(painterResource(drawableByName(secondaryAlert.iconName)), "Alert")
         }
         if (pillDecoration is PillDecoration.OnRow) {
             RoutePill(pillDecoration.route, line = null, RoutePillType.Flex)

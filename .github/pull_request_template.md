@@ -5,6 +5,7 @@ _Ticket:_ [Name](URL)
 What is this PR for?
 
 - [ ] If you added any user facing strings on iOS, are they included in Localizable.xcstrings?
+  - [ ] Add temporary machine translations, marked "Needs Review"
 
 ### Testing
 
