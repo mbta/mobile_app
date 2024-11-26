@@ -30,7 +30,13 @@ runs:
           android-build)
             tools="java kotlin-cache rsvg ruby"
             ;;
+          ios-build)
+            tools="java kotlin-cache ruby xcode"
+            ;;
           android-deploy)
+            tools="ruby"
+            ;;
+          ios-deploy)
             tools="ruby"
             ;;
           *)
@@ -79,6 +85,12 @@ runs:
         create_credentials_file: true
         workload_identity_provider: ${{ inputs.gcp-provider }}
         service_account: ${{ inputs.gcp-service-account }}
+    - name: Configure AWS Credentials
+      if: inputs.aws-role != ''
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-role }}
+        aws-region: us-east-1
     - name: Set up Ruby
       if: steps.settings.outputs.ruby == 'true'
       uses: ruby/setup-ruby@v1

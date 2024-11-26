@@ -36,6 +36,22 @@ Deploy a new version to Google Play for internal testing
 
 ## iOS
 
+### ios app_store_connect
+
+```sh
+[bundle exec] fastlane ios app_store_connect
+```
+
+Configure App Store Connect
+
+### ios certs
+
+```sh
+[bundle exec] fastlane ios certs
+```
+
+Set up code signing
+
 ### ios test
 
 ```sh
@@ -43,6 +59,22 @@ Deploy a new version to Google Play for internal testing
 ```
 
 Run tests
+
+### ios build
+
+```sh
+[bundle exec] fastlane ios build
+```
+
+Build the app
+
+### ios testflight
+
+```sh
+[bundle exec] fastlane ios testflight
+```
+
+Upload the app to TestFlight
 
 ----
 

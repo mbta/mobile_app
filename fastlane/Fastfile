@@ -51,6 +51,22 @@ platform :android do
 end
 
 platform :ios do
+  desc "Configure App Store Connect"
+  lane :app_store_connect do
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_P8"],
+    )
+  end
+
+  desc "Set up code signing"
+  lane :certs do |options|
+    app_store_connect
+    get_certificates(output_path: "iosApp/secrets", force: options[:force])
+    get_provisioning_profile()
+  end
+
   desc "Run tests"
   lane :test do |options|
     run_tests(
@@ -61,6 +77,34 @@ platform :ios do
       output_directory: options[:output_directory],
       xcodebuild_formatter: options[:xcodebuild_formatter],
       number_of_retries: 3
+    )
+  end
+
+  desc "Build the app"
+  lane :build do |options|
+    app_store_connect
+    certs
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: "iosApp/iosApp.xcodeproj"
+    )
+    build_app(
+      workspace: "iosApp/iosApp.xcworkspace",
+      scheme: "Staging",
+      output_directory: options[:output_directory],
+      export_method: "app-store-connect",
+      xcodebuild_formatter: options[:xcodebuild_formatter]
+    )
+  end
+
+  desc "Upload the app to TestFlight"
+  lane :testflight do |options|
+    app_store_connect
+    upload_to_testflight(
+      ipa: options[:ipa],
+      pkg: options[:pkg],
+      distribute_external: true,
+      groups: ["Staging App Users", "TID Beta Testers"]
     )
   end
 end

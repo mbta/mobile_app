@@ -116,7 +116,35 @@ If new files or directories need to be added to the list of triggers, be sure to
 
 Merging to main will automatically kick off deploys that are visible for internal testing (TestFlight for ios, internal track for android).
 
-To upload the code signing key if it needs to be updated (which is unlikely):
+To download the iOS App Store Connect key info if you need it locally (which may happen):
+
+```
+aws secretsmanager get-secret-value --secret-id mobile-app-ios-app-store-connect-api-key-id --output json | jq -r '"APP_STORE_CONNECT_API_KEY_ID=\(.SecretString)"' >> .envrc
+aws secretsmanager get-secret-value --secret-id mobile-app-ios-app-store-connect-api-key-issuer --output json | jq -r '"APP_STORE_CONNECT_API_KEY_ISSUER=\(.SecretString)"' >> .envrc
+aws secretsmanager get-secret-value --secret-id mobile-app-ios-app-store-connect-api-key-p8 --output json | jq -r '"APP_STORE_CONNECT_API_KEY_P8=\(.SecretString)"' >> .envrc
+```
+
+To upload the iOS code signing key if it needs to be updated (which is unlikely):
+
+```
+bundle exec fastlane ios certs force:true
+CERTID=$(basename iosApp/secrets/*.cer .cer)
+echo CERTID > iosApp/secrets/certid.txt
+aws secretsmanager put-secret-value --secret-id mobile-app-ios-codesign-id --secret-string file://iosApp/secrets/certid.txt
+shred --remove iosApp/secrets/certid.txt
+aws secretsmanager put-secret-value --secret-id mobile-app-ios-codesign-crt --secret-binary fileb://iosApp/secrets/${CERTID}.cer
+aws secretsmanager put-secret-value --secret-id mobile-app-ios-codesign-p12 --secret-binary fileb://iosApp/secrets/${CERTID}.p12
+```
+
+To download the iOS code signing key if you need it locally (which may happen):
+
+```
+CERTID=$(aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesign-id --output json | jq -r '.SecretString')
+aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-cer --output json | jq -r '.SecretBinary' | base64 --decode > iosApp/secrets/${CERTID}.cer
+aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-p12 --output json | jq -r '.SecretBinary' | base64 --decode > iosApp/secrets/${CERTID}.p12
+```
+
+To upload the Android code signing key if it needs to be updated (which is unlikely):
 
 ```
 aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key --secret-binary fileb://upload-keystore.jks
@@ -125,7 +153,7 @@ aws secretsmanager put-secret-value --secret-id mobile-app-android-upload-key-pa
 shred --remove passphrase.txt
 ```
 
-To download the code signing key if you need it locally (which is unlikely):
+To download the Android code signing key if you need it locally (which is unlikely):
 
 ```
 aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > /path/to/upload-keystore.jks
