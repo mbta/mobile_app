@@ -175,7 +175,6 @@ data class PatternsByStop(
             .distinct()
     }
 
-    // TODO: add test
     /** get the alerts downstream of the patterns in the given direction */
     fun alertsDownstream(directionId: Int): List<Alert> {
         val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
