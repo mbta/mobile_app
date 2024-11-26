@@ -1,0 +1,45 @@
+name: Deploy on iOS
+
+on:
+  workflow_call:
+    inputs:
+      scheme:
+        description: "iOS build scheme, 'Staging' or 'Prod'"
+        required: true
+        type: string
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+
+jobs:
+  deploy-ios:
+    name: Upload to App Store
+    if: github.event_name != 'pull_request'
+    concurrency:
+      group: deploy-ios
+      cancel-in-progress: false
+    runs-on: macos-14-xlarge
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-ipa
+          path: iosApp/build
+      - uses: ./.github/actions/setup
+        with:
+          for: ios-deploy
+          aws-role: ${{ secrets.AWS_ROLE_ARN }}
+      - name: Fetch AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
+            APP_STORE_CONNECT_API_KEY_ISSUER, mobile-app-ios-app-store-connect-api-key-issuer
+            APP_STORE_CONNECT_API_KEY_P8, mobile-app-ios-app-store-connect-api-key-p8
+      - name: Upload to App Store
+        run: |
+          bundle exec fastlane ios internal scheme:Staging
