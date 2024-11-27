@@ -39,3 +39,46 @@ interface PhoenixSocket {
 
     fun detach()
 }
+
+class MockPhoenixSocket : PhoenixSocket {
+    override fun onAttach(callback: () -> Unit): String {
+        return "attached"
+    }
+
+    override fun onDetach(callback: () -> Unit): String {
+        return "detached"
+    }
+
+    override fun attach() {}
+
+    override fun getChannel(topic: String, params: Map<String, Any>): PhoenixChannel {
+        return MockPhoenixChannel()
+    }
+
+    override fun detach() {}
+}
+
+class MockPhoenixChannel : PhoenixChannel {
+    override fun onEvent(event: String, callback: (PhoenixMessage) -> Unit) {}
+
+    override fun onFailure(callback: (message: PhoenixMessage) -> Unit) {}
+
+    override fun onDetach(callback: (PhoenixMessage) -> Unit) {}
+
+    override fun attach(): PhoenixPush {
+        return MockPush()
+    }
+
+    override fun detach(): PhoenixPush {
+        return MockPush()
+    }
+}
+
+class MockPush : PhoenixPush {
+    override fun receive(
+        status: PhoenixPushStatus,
+        callback: (PhoenixMessage) -> Unit
+    ): PhoenixPush {
+        return MockPush()
+    }
+}
