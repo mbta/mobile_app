@@ -134,10 +134,6 @@ fun NearbyTransitPage(
                                 .background(MaterialTheme.colorScheme.surface)
                     ) {
                         composable<SheetRoutes.StopDetails> { backStackEntry ->
-                            if (navBarVisible) {
-                                hideNavBar()
-                            }
-
                             val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                             val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
@@ -153,6 +149,10 @@ fun NearbyTransitPage(
                             }
 
                             LaunchedEffect(navRoute) {
+                                if (navBarVisible) {
+                                    hideNavBar()
+                                }
+
                                 updateStopFilter(
                                     if (
                                         navRoute.filterRouteId != null &&
@@ -185,11 +185,13 @@ fun NearbyTransitPage(
                             }
                         }
                         composable<SheetRoutes.NearbyTransit> {
-                            if (!navBarVisible) {
-                                showNavBar()
-                            }
+                            LaunchedEffect(true) {
+                                if (!navBarVisible) {
+                                    showNavBar()
+                                }
 
-                            LaunchedEffect(true) { stopDetailsFilter = null }
+                                stopDetailsFilter = null
+                            }
 
                             NearbyTransitView(
                                 alertData = nearbyTransit.alertData,
