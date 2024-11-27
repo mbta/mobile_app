@@ -62,7 +62,7 @@ class GetScheduleTest {
         var now by mutableStateOf(time1)
         var actualSchedules: ScheduleResponse? = expectedSchedules1
         composeTestRule.setContent {
-            actualSchedules = getSchedule(stopIds = stopIds, now = now, schedulesRepo)
+            actualSchedules = getSchedule(stopIds = stopIds, schedulesRepo)
         }
 
         composeTestRule.awaitIdle()
