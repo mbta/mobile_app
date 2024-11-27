@@ -23,7 +23,7 @@ class AlertsViewModel(
     private val alertsRepository: IAlertsRepository,
     private val timerViewModel: TimerViewModel
 ) : ViewModel() {
-    private val _alerts = MutableLiveData(AlertsStreamDataResponse(emptyMap()))
+    private val _alerts = MutableLiveData<AlertsStreamDataResponse?>(null)
     val alerts: LiveData<AlertsStreamDataResponse?> = _alerts
     val alertFlow = alerts.asFlow()
 
@@ -33,6 +33,7 @@ class AlertsViewModel(
                 when (it) {
                     is ApiResult.Ok -> {
                         _alerts.postValue(it.data)
+                        if (alerts.value == null) synchronized(alerts) { alerts.notifyAll() }
                     }
                     is ApiResult.Error -> {
                         /* TODO("handle errors") */

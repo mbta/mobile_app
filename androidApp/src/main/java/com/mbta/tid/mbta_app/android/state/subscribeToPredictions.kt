@@ -56,6 +56,7 @@ class PredictionsViewModel(
                 when (it) {
                     is ApiResult.Ok -> {
                         _predictions.postValue(it.data)
+                        synchronized(predictions) { predictions.notifyAll() }
                     }
                     is ApiResult.Error -> {
                         /* TODO("handle errors") */
