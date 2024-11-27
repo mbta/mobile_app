@@ -25,6 +25,7 @@ class AlertsViewModel(
 ) : ViewModel() {
     private val _alerts = MutableLiveData(AlertsStreamDataResponse(emptyMap()))
     val alerts: LiveData<AlertsStreamDataResponse?> = _alerts
+    val alertFlow = alerts.asFlow()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -54,5 +55,5 @@ fun subscribeToAlerts(
 ): AlertsStreamDataResponse? {
     val timerViewModel = remember { TimerViewModel(1.seconds) }
     val viewModel = remember { AlertsViewModel(alertsRepository, timerViewModel) }
-    return viewModel.alerts.asFlow().collectAsState(initial = null).value
+    return viewModel.alertFlow.collectAsState(initial = null).value
 }

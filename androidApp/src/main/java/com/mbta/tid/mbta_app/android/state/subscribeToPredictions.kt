@@ -31,6 +31,7 @@ class PredictionsViewModel(
 ) : ViewModel() {
     private val _predictions: MutableLiveData<PredictionsByStopJoinResponse> = MutableLiveData()
     val predictions: LiveData<PredictionsByStopJoinResponse> = _predictions
+    val predictionsFlow = predictions.asFlow().map { it.toPredictionsStreamDataResponse() }
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -93,9 +94,5 @@ fun subscribeToPredictions(
         remember(stopIds) {
             PredictionsViewModel(stopIds ?: emptyList(), predictionsRepository, timerViewModel)
         }
-    return viewModel.predictions
-        .asFlow()
-        .map { it.toPredictionsStreamDataResponse() }
-        .collectAsState(initial = null)
-        .value
+    return viewModel.predictionsFlow.collectAsState(initial = null).value
 }
