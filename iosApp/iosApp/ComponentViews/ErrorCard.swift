@@ -30,7 +30,7 @@ struct ErrorCard<Content: View>: View {
                 button()
             }
         }
-        .padding()
+        .padding(16)
         .background(.gray.opacity(0.1))
         .clipShape(.rect(cornerRadius: 15.0))
         .frame(maxWidth: .infinity)

@@ -21,6 +21,7 @@ struct PinButton: View {
                 Image(pinned ? .pinnedRouteActive : .pinnedRouteInactive)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .frame(maxHeight: pinIconHeight)
                     .accessibilityLabel(Text(
                         "Star route",
                         comment: "VoiceOver label for the button to favorite a route"
@@ -36,6 +37,5 @@ struct PinButton: View {
         )
         .accessibilityIdentifier("pinButton")
         .accessibilityAddTraits(pinned ? [.isSelected] : [])
-        .frame(maxHeight: pinIconHeight)
     }
 }

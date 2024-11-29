@@ -51,6 +51,10 @@ struct DirectionPicker: View {
             .padding(2)
             .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 8))
+        } else if availableDirections.count == 1, let direction = availableDirections.first {
+            DirectionLabel(direction: directions[Int(direction)])
+                .padding(8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
     }
 

@@ -39,7 +39,6 @@ struct UpcomingTripView: View {
 
     var body: some View {
         predictionView
-            .foregroundStyle(Color.text)
             .frame(minWidth: 48, alignment: .trailing)
             .padding(.trailing, 4)
     }
@@ -123,11 +122,11 @@ struct UpcomingTripView: View {
                 HStack(spacing: Self.subjectSpacing) {
                     Text("Cancelled", comment: "The status label for a cancelled trip")
                         .font(Typography.footnote)
-                        .foregroundStyle(Color.deemphasized)
+                        .opacity(0.6)
                     Text(format.scheduledTime.toNSDate(), style: .time)
                         .font(Typography.footnoteSemibold)
                         .strikethrough()
-                        .foregroundStyle(Color.deemphasized)
+                        .opacity(0.6)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(isFirst

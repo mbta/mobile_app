@@ -13,6 +13,7 @@ protocol StopDetailsAnalytics {
     func tappedAlertDetails(routeId: String, stopId: String, alertId: String)
     func tappedDepartureRow(routeId: String, stopId: String, pinned: Bool, alert: Bool)
     func tappedRouteFilter(routeId: String, stopId: String)
+    func toggledPinnedRouteAtStop(pinned: Bool, routeId: String)
 }
 
 extension AnalyticsProvider: StopDetailsAnalytics {
@@ -45,6 +46,15 @@ extension AnalyticsProvider: StopDetailsAnalytics {
             parameters: [
                 "route_id": routeId,
                 "stop_id": stopId,
+            ]
+        )
+    }
+
+    func toggledPinnedRouteAtStop(pinned: Bool, routeId: String) {
+        logEvent(
+            pinned ? "pin_route" : "unpin_route",
+            parameters: [
+                "route_id": routeId,
             ]
         )
     }
