@@ -1,5 +1,5 @@
 //
-//  FilteredDepartureDetails.swift
+//  StopDetailsFilteredDepartureDetails.swift
 //  iosApp
 //
 //  Created by esimon on 12/2/24.
@@ -9,7 +9,7 @@
 import shared
 import SwiftUI
 
-struct FilteredDepartureDetails: View {
+struct StopDetailsFilteredDepartureDetails: View {
     var stopId: String
     var stopFilter: StopDetailsFilter
     var tripFilter: TripDetailsFilter?
@@ -21,7 +21,6 @@ struct FilteredDepartureDetails: View {
     var alerts: [shared.Alert]
     var patternsByStop: PatternsByStop
     var pinned: Bool
-    var showTileHeadsigns: Bool
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -29,6 +28,12 @@ struct FilteredDepartureDetails: View {
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+
+    var showTileHeadsigns: Bool {
+        patternsByStop.line != nil || !tiles.allSatisfy { tile in
+            tile.headsign == tiles.first?.headsign
+        }
+    }
 
     var body: some View {
         let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color

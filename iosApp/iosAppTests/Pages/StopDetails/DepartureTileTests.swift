@@ -6,4 +6,76 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import Foundation
+@testable import iosApp
+import shared
+import SwiftUI
+import ViewInspector
+import XCTest
+
+final class DepartureTileTests: XCTestCase {
+    override func setUp() {
+        executionTimeAllowance = 60
+    }
+
+    func testBasic() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let sut = DepartureTile(
+            data: .init(
+                route: route,
+                headsign: "headsign",
+                formatted: RealtimePatterns.FormatSome(
+                    trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                    secondaryAlert: nil
+                )
+            ),
+            onTap: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "headsign"))
+        XCTAssertNotNil(try sut.inspect().find(text: "5 min"))
+        XCTAssertNotNil(try sut.inspect().find(TripStatus.self))
+    }
+
+    func testPillDecorator() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let sut = DepartureTile(
+            data: .init(
+                route: route,
+                headsign: "headsign",
+                formatted: RealtimePatterns.FormatSome(
+                    trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                    secondaryAlert: nil
+                )
+            ),
+            onTap: {},
+            pillDecoration: .onPrediction(route: route)
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
+    }
+
+    func testTap() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let tapExpectation = XCTestExpectation(description: "Departure tile tap callback")
+
+        let route = objects.route()
+        let sut = DepartureTile(
+            data: .init(
+                route: route,
+                headsign: "headsign",
+                formatted: RealtimePatterns.FormatSome(
+                    trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                    secondaryAlert: nil
+                )
+            ),
+            onTap: { tapExpectation.fulfill() },
+            pillDecoration: .onPrediction(route: route)
+        )
+
+        XCTAssertNoThrow(try sut.inspect().find(ViewType.Button.self).tap())
+        wait(for: [tapExpectation], timeout: 1)
+    }
+}

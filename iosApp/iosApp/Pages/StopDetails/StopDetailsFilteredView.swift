@@ -23,7 +23,6 @@ struct StopDetailsFilteredView: View {
     var alerts: [shared.Alert]
     var patternsByStop: PatternsByStop?
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
-    var showTileHeadsigns: Bool = true
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -100,14 +99,11 @@ struct StopDetailsFilteredView: View {
             }
             let realtimePatterns = patternsByStop.patterns.filter { $0.directionId() == stopFilter.directionId }
             statuses = Self.getStatusDepartures(realtimePatterns: realtimePatterns, now: nowInstant)
-            showTileHeadsigns = patternsByStop.line != nil || !tiles.allSatisfy { tile in
-                tile.headsign == tiles.first?.headsign
-            }
+
         } else {
             alerts = []
             statuses = []
             tiles = []
-            showTileHeadsigns = true
         }
     }
 
@@ -126,6 +122,23 @@ struct StopDetailsFilteredView: View {
             }
     }
 
+    func toggledPinnedRoute() {
+        Task {
+            if let routeId = patternsByStop?.routeIdentifier {
+                do {
+                    let pinned = try await stopDetailsVM.togglePinnedUsecase.execute(route: routeId).boolValue
+                    analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
+                    stopDetailsVM.loadPinnedRoutes()
+                } catch is CancellationError {
+                    // do nothing on cancellation
+                } catch {
+                    // execute shouldn't actually fail
+                    debugPrint(error)
+                }
+            }
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -136,7 +149,7 @@ struct StopDetailsFilteredView: View {
             .ignoresSafeArea(.all)
 
             if let patternsByStop {
-                FilteredDepartureDetails(
+                StopDetailsFilteredDepartureDetails(
                     stopId: stopId,
                     stopFilter: stopFilter,
                     tripFilter: tripFilter,
@@ -147,7 +160,6 @@ struct StopDetailsFilteredView: View {
                     alerts: alerts,
                     patternsByStop: patternsByStop,
                     pinned: pinned,
-                    showTileHeadsigns: showTileHeadsigns,
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
@@ -195,7 +207,7 @@ struct StopDetailsFilteredView: View {
                 secondaryAlert: nil
             )
         )
-        FilteredDepartureDetails(
+        StopDetailsFilteredDepartureDetails(
             stopId: stopId,
             stopFilter: stopFilter,
             tripFilter: tripFilter,
@@ -206,28 +218,10 @@ struct StopDetailsFilteredView: View {
             alerts: alerts,
             patternsByStop: loadingPatterns,
             pinned: pinned,
-            showTileHeadsigns: showTileHeadsigns,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
             stopDetailsVM: stopDetailsVM
         ).loadingPlaceholder()
-    }
-
-    func toggledPinnedRoute() {
-        Task {
-            if let routeId = patternsByStop?.routeIdentifier {
-                do {
-                    let pinned = try await stopDetailsVM.togglePinnedUsecase.execute(route: routeId).boolValue
-                    analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
-                    stopDetailsVM.loadPinnedRoutes()
-                } catch is CancellationError {
-                    // do nothing on cancellation
-                } catch {
-                    // execute shouldn't actually fail
-                    debugPrint(error)
-                }
-            }
-        }
     }
 }
