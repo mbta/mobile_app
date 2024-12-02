@@ -1,10 +1,9 @@
-package com.mbta.tid.mbta_app.android.util
+package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse

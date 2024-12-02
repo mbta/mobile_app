@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -20,7 +21,7 @@ class RailRouteShapesViewModel(private val railRouteShapeRepository: IRailRouteS
     ViewModel() {
     private val _railRouteShapes: MutableStateFlow<MapFriendlyRouteResponse?> =
         MutableStateFlow(null)
-    val railRouteShapes = _railRouteShapes
+    val railRouteShapes: StateFlow<MapFriendlyRouteResponse?> = _railRouteShapes
 
     init {
         CoroutineScope(Dispatchers.IO).launch { railRouteShapes.collect { getRailRouteShapes() } }

@@ -10,12 +10,13 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class GlobalDataViewModel(private val globalRepository: IGlobalRepository) : ViewModel() {
     private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
-    var globalResponse: MutableStateFlow<GlobalResponse?> = _globalResponse
+    var globalResponse: StateFlow<GlobalResponse?> = _globalResponse
 
     init {
         CoroutineScope(Dispatchers.IO).launch { globalResponse.collect { getGlobalData() } }
@@ -23,7 +24,7 @@ class GlobalDataViewModel(private val globalRepository: IGlobalRepository) : Vie
 
     suspend fun getGlobalData() {
         when (val data = globalRepository.getGlobalData()) {
-            is ApiResult.Ok -> globalResponse.emit(data.data)
+            is ApiResult.Ok -> _globalResponse.emit(data.data)
             is ApiResult.Error -> TODO("handle errors")
         }
     }

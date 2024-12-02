@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -22,7 +23,7 @@ class ScheduleViewModel(
     private val schedulesRepository: ISchedulesRepository
 ) : ViewModel() {
     private val _schedule = MutableStateFlow<ScheduleResponse?>(null)
-    val schedule = _schedule
+    val schedule: StateFlow<ScheduleResponse?> = _schedule
 
     init {
         CoroutineScope(Dispatchers.IO).launch { schedule.collect { getSchedule(stopIds) } }

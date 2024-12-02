@@ -1,7 +1,6 @@
-package com.mbta.tid.mbta_app.android.util
+package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
