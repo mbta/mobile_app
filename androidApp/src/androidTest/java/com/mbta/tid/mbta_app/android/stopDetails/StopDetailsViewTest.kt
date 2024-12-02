@@ -214,7 +214,8 @@ class StopDetailsViewTest {
                                                             listOf(UpcomingTrip(trip, prediction))
                                                     ),
                                                 parentStopId = stop.id,
-                                                alerts = emptyList(),
+                                                alertsHere = emptyList(),
+                                                alertsDownstream = emptyList(),
                                                 hasSchedulesTodayByPattern = null,
                                                 allDataLoaded = false
                                             )

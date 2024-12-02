@@ -28,5 +28,6 @@ struct AlertIcon: View {
         Image(AlertIcon.iconNames[alertState] ?? "")
             .resizable()
             .foregroundStyle(color)
+            .accessibilityLabel(Text("Alert"))
     }
 }

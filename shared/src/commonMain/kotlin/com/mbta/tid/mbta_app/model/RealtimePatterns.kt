@@ -45,6 +45,7 @@ sealed class RealtimePatterns {
     abstract val patterns: List<RoutePattern?>
     abstract val upcomingTrips: List<UpcomingTrip>
     abstract val alertsHere: List<Alert>?
+    abstract val alertsDownstream: List<Alert>?
     abstract val hasSchedulesToday: Boolean
     abstract val allDataLoaded: Boolean
 
@@ -67,6 +68,7 @@ sealed class RealtimePatterns {
         override val patterns: List<RoutePattern?>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
+        override val alertsDownstream: List<Alert> = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -76,7 +78,8 @@ sealed class RealtimePatterns {
             staticData: NearbyStaticData.StaticPatterns.ByHeadsign,
             upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -95,11 +98,8 @@ sealed class RealtimePatterns {
                 }
                 .flatten()
                 .sorted(),
-            applicableAlerts(
-                routes = listOf(staticData.route),
-                stopIds = staticData.stopIds,
-                alerts = alerts
-            ),
+            alertsHere,
+            alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
@@ -107,7 +107,8 @@ sealed class RealtimePatterns {
         constructor(
             headsign: NearbyHierarchy.DirectionOrHeadsign.Headsign,
             leaf: NearbyHierarchy.NearbyLeaf,
-            alerts: Collection<Alert>,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -116,11 +117,8 @@ sealed class RealtimePatterns {
             headsign.line,
             leaf.routePatterns.sortedWith(nullsLast()),
             leaf.upcomingTrips.sorted(),
-            applicableAlerts(
-                routes = listOf(headsign.route),
-                stopIds = leaf.childStopIds,
-                alerts = alerts
-            ),
+            alertsHere,
+            alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
             allDataLoaded,
         )
@@ -140,6 +138,7 @@ sealed class RealtimePatterns {
         override val patterns: List<RoutePattern?>,
         override val upcomingTrips: List<UpcomingTrip>,
         override val alertsHere: List<Alert> = emptyList(),
+        override val alertsDownstream: List<Alert>? = emptyList(),
         override val hasSchedulesToday: Boolean = true,
         override val allDataLoaded: Boolean = true,
     ) : RealtimePatterns() {
@@ -159,7 +158,8 @@ sealed class RealtimePatterns {
             staticData: NearbyStaticData.StaticPatterns.ByDirection,
             upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
-            alerts: Collection<Alert>,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -178,11 +178,8 @@ sealed class RealtimePatterns {
                 }
                 .flatten()
                 .sorted(),
-            applicableAlerts(
-                routes = staticData.routes,
-                stopIds = staticData.stopIds,
-                alerts = alerts
-            ),
+            alertsHere,
+            alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, staticData.patterns),
             allDataLoaded,
         )
@@ -191,7 +188,8 @@ sealed class RealtimePatterns {
             line: NearbyHierarchy.LineOrRoute.Line,
             direction: NearbyHierarchy.DirectionOrHeadsign.Direction,
             leaf: NearbyHierarchy.NearbyLeaf,
-            alerts: Collection<Alert>,
+            alertsHere: List<Alert>,
+            alertsDownstream: List<Alert>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ) : this(
@@ -205,30 +203,23 @@ sealed class RealtimePatterns {
             direction.direction,
             leaf.routePatterns.sortedWith(nullsLast()),
             leaf.upcomingTrips.sorted(),
-            applicableAlerts(routes = line.routes, stopIds = leaf.childStopIds, alerts = alerts),
+            alertsHere,
+            alertsDownstream,
             hasSchedulesToday(hasSchedulesTodayByPattern, leaf.routePatterns),
             allDataLoaded,
         )
     }
 
     fun alertsHereFor(stopIds: Set<String>, directionId: Int): List<Alert>? {
-        return alertsHere?.let {
+        val routeIds =
             when (this) {
-                is ByHeadsign ->
-                    applicableAlerts(
-                        routes = listOf(route),
-                        stopIds = stopIds,
-                        directionId = directionId,
-                        alerts = it
-                    )
-                is ByDirection ->
-                    applicableAlerts(
-                        routes = routes,
-                        stopIds = stopIds,
-                        directionId = directionId,
-                        alerts = it
-                    )
+                is ByHeadsign -> listOf(this.route.id)
+                is ByDirection -> this.routes.map { it.id }
             }
+        return if (alertsHere != null) {
+            Alert.applicableAlerts(alertsHere as List, directionId, routeIds, stopIds)
+        } else {
+            null
         }
     }
 
@@ -252,20 +243,23 @@ sealed class RealtimePatterns {
     ): Format {
         val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
         if (majorAlert != null) return Format.NoService(majorAlert)
+        val secondaryAlertToDisplay =
+            alertsHere?.firstOrNull { it.significance >= AlertSignificance.Secondary }
+                ?: alertsDownstream?.firstOrNull()
+
         val secondaryAlert =
-            alertsHere
-                ?.firstOrNull { it.significance >= AlertSignificance.Secondary }
-                ?.let {
-                    Format.SecondaryAlert(
-                        it,
-                        MapStopRoute.matching(
-                            when (this) {
-                                is ByHeadsign -> route
-                                is ByDirection -> representativeRoute
-                            }
-                        )
+            secondaryAlertToDisplay?.let {
+                Format.SecondaryAlert(
+                    StopAlertState.Issue,
+                    MapStopRoute.matching(
+                        when (this) {
+                            is ByHeadsign -> route
+                            is ByDirection -> representativeRoute
+                        }
                     )
-                }
+                )
+            }
+
         val tripsToShow =
             upcomingTrips
                 .mapNotNull {
@@ -356,13 +350,17 @@ sealed class RealtimePatterns {
     sealed class Format {
         abstract val secondaryAlert: SecondaryAlert?
 
-        data class SecondaryAlert(val iconName: String, val alertEffect: Alert.Effect) {
+        data class SecondaryAlert(val iconName: String) {
             constructor(
                 alert: Alert,
                 mapStopRoute: MapStopRoute?
+            ) : this(alert.alertState, mapStopRoute)
+
+            constructor(
+                alertState: StopAlertState,
+                mapStopRoute: MapStopRoute?
             ) : this(
-                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}"} ?: "borderless"}-${alert.alertState.name.lowercase()}",
-                alert.effect
+                "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}"} ?: "borderless"}-${alertState.name.lowercase()}",
             )
         }
 
@@ -400,37 +398,6 @@ sealed class RealtimePatterns {
     }
 
     companion object {
-
-        /**
-         * Returns alerts that are applicable to the passed in routes and stops
-         *
-         * Criteria:
-         * - Route ID matches an alert [Alert.InformedEntity]
-         * - Stop ID matches an alert [Alert.InformedEntity]
-         * - Alert's informed entity activities contains [Alert.InformedEntity.Activity.Board]
-         */
-        fun applicableAlerts(
-            routes: Collection<Route>,
-            stopIds: Set<String>,
-            directionId: Int? = null,
-            alerts: Collection<Alert>
-        ): List<Alert> =
-            stopIds
-                .flatMap { stopId ->
-                    alerts.filter { alert ->
-                        alert.anyInformedEntity {
-                            routes.any { route ->
-                                it.appliesTo(
-                                    directionId = directionId,
-                                    routeId = route.id,
-                                    stopId = stopId
-                                )
-                            } && it.activities.contains(Alert.InformedEntity.Activity.Board)
-                        }
-                    }
-                }
-                .distinct()
-
         fun formatUpcomingTrip(
             now: Instant,
             upcomingTrip: UpcomingTrip,

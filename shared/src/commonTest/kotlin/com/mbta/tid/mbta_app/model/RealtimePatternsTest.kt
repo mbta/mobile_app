@@ -67,7 +67,7 @@ class RealtimePatternsTest {
         for ((route, icon) in cases) {
             assertEquals(
                 RealtimePatterns.Format.ServiceEndedToday(
-                    RealtimePatterns.Format.SecondaryAlert(icon, Alert.Effect.ServiceChange)
+                    RealtimePatterns.Format.SecondaryAlert(icon)
                 ),
                 RealtimePatterns.ByHeadsign(
                         route,
@@ -140,10 +140,7 @@ class RealtimePatternsTest {
                         TripInstantDisplay.Minutes(1)
                     )
                 ),
-                RealtimePatterns.Format.SecondaryAlert(
-                    "alert-large-bus-issue",
-                    Alert.Effect.ServiceChange
-                )
+                RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
             ),
             RealtimePatterns.ByHeadsign(
                     route,
@@ -152,6 +149,47 @@ class RealtimePatternsTest {
                     emptyList(),
                     listOf(upcomingTrip),
                     listOf(alert)
+                )
+                .format(now, route.type, anyContext())
+        )
+    }
+
+    @Test
+    fun `includes downstream alert as secondary alert`() = parametricTest {
+        val now = Clock.System.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.BUS }
+
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 1.minutes
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+
+        assertEquals(
+            RealtimePatterns.Format.Some(
+                listOf(
+                    RealtimePatterns.Format.Some.FormatWithId(
+                        trip.id,
+                        route.type,
+                        TripInstantDisplay.Minutes(1)
+                    )
+                ),
+                RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
+            ),
+            RealtimePatterns.ByHeadsign(
+                    route,
+                    "",
+                    null,
+                    emptyList(),
+                    listOf(upcomingTrip),
+                    alertsHere = emptyList(),
+                    alertsDownstream = listOf(alert)
                 )
                 .format(now, route.type, anyContext())
         )
@@ -555,113 +593,6 @@ class RealtimePatternsTest {
     }
 
     @Test
-    fun `filters applicable alerts`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route { sortOrder = 1 }
-
-        val validAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride
-                    ),
-                    route = route.id,
-                    routeType = route.type,
-                    stop = stop.id
-                )
-            }
-        val invalidAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = "wrong",
-                    routeType = route.type,
-                    stop = "wrong"
-                )
-            }
-        assertEquals(
-            RealtimePatterns.applicableAlerts(
-                listOf(route),
-                setOf(stop.id),
-                null,
-                listOf(validAlert, invalidAlert)
-            ),
-            listOf(validAlert)
-        )
-    }
-
-    @Test
-    fun `filters out alerts without Board activity`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route { sortOrder = 1 }
-
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
-                    routeType = route.type,
-                    stop = stop.id
-                )
-            }
-        assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
-            emptyList()
-        )
-    }
-
-    @Test
-    fun `filters out alerts with non-matching route ID`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route { sortOrder = 1 }
-
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = "not matching",
-                    routeType = route.type,
-                    stop = stop.id
-                )
-            }
-        assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
-            emptyList()
-        )
-    }
-
-    @Test
-    fun `filters out alerts with non-matching stop ID`() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = objects.route { sortOrder = 1 }
-
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
-                    routeType = route.type,
-                    stop = "not matching"
-                )
-            }
-        assertEquals(
-            RealtimePatterns.applicableAlerts(listOf(route), setOf(stop.id), null, listOf(alert)),
-            emptyList()
-        )
-    }
-
-    @Test
     fun `properly applies platform alerts by pattern`() {
         val objects = ObjectCollectionBuilder()
         lateinit var platform1: Stop
@@ -740,6 +671,7 @@ class RealtimePatternsTest {
                                     listOf(pattern2),
                                     emptyList(),
                                     listOf(alert),
+                                    emptyList(),
                                     false
                                 ),
                                 RealtimePatterns.ByHeadsign(
@@ -747,6 +679,7 @@ class RealtimePatternsTest {
                                     "A",
                                     null,
                                     listOf(pattern1),
+                                    emptyList(),
                                     emptyList(),
                                     emptyList(),
                                     false
