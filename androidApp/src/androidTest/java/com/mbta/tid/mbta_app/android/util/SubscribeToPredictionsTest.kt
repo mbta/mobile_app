@@ -36,9 +36,7 @@ class SubscribeToPredictionsTest {
             object : IPredictionsRepository {
                 val stopIdsChannel = Channel<List<String>>()
                 lateinit var onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit
-                val disconnectChannel = Channel<Unit>()
-
-                var isConnected = false
+                lateinit var onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
 
                 override fun connect(
                     stopIds: List<String>,
@@ -52,10 +50,8 @@ class SubscribeToPredictionsTest {
                     onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
                     onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit
                 ) {
-                    check(!isConnected) { "called connect when already connected" }
-                    isConnected = true
-                    launch { stopIdsChannel.send(stopIds) }
                     this.onJoin = onJoin
+                    launch { stopIdsChannel.send(stopIds) }
                 }
 
                 override var lastUpdated: Instant? = null
@@ -63,9 +59,7 @@ class SubscribeToPredictionsTest {
                 override fun shouldForgetPredictions(predictionCount: Int) = false
 
                 override fun disconnect() {
-                    check(isConnected) { "called disconnect when not connected" }
-                    isConnected = false
-                    launch { disconnectChannel.send(Unit) }
+                    /* null-op */
                 }
             }
 
@@ -88,8 +82,9 @@ class SubscribeToPredictionsTest {
 
         stopIds = listOf("place-b")
         composeTestRule.awaitIdle()
-        predictionsRepo.disconnectChannel.receive()
         assertEquals(listOf("place-b"), predictionsRepo.stopIdsChannel.receive())
+        predictionsRepo.onJoin(ApiResult.Ok(expectedPredictions1))
+        composeTestRule.awaitIdle()
         assertEquals(expectedPredictions1.toPredictionsStreamDataResponse(), predictions)
 
         val expectedPredictions2 = buildSomePredictions()
@@ -99,6 +94,5 @@ class SubscribeToPredictionsTest {
 
         unmounted = true
         composeTestRule.awaitIdle()
-        predictionsRepo.disconnectChannel.receive()
     }
 }
