@@ -32,17 +32,24 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = StopDetailsView(stop: stop,
-                                  filter: nil,
-                                  setFilter: { _ in },
-                                  departures: .init(routes: [
-                                      .init(route: routeDefaultSort1, stop: stop, patterns: []),
-                                      .init(route: routeDefaultSort0, stop: stop, patterns: []),
-                                  ]),
-                                  errorBannerVM: .init(),
-                                  nearbyVM: .init(),
-                                  now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+        let sut = StopDetailsView(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            departures: .init(routes: [
+                .init(route: routeDefaultSort1, stop: stop, patterns: []),
+                .init(route: routeDefaultSort0, stop: stop, patterns: []),
+            ]),
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: .init(
+                globalRepository: MockGlobalRepository(response: .init(objects: objects))
+            )
+        )
 
         ViewHosting.host(view: sut)
         let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
@@ -58,36 +65,80 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let sut = StopDetailsView(stop: stop,
-                                  filter: nil,
-                                  setFilter: { _ in },
-                                  departures: .init(routes: [
-                                      .init(route: route, stop: stop, patterns: []),
-                                  ]),
-                                  errorBannerVM: .init(),
-                                  nearbyVM: .init(),
-                                  now: Date.now,
-                                  pinnedRoutes: [], togglePinnedRoute: { _ in })
+        let sut = StopDetailsView(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            departures: .init(routes: [
+                .init(route: route, stop: stop, patterns: []),
+            ]),
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(combinedStopAndTrip: true),
+            mapVM: .init(),
+            stopDetailsVM: .init()
+        )
 
         ViewHosting.host(view: sut)
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
         XCTAssertNil(try? sut.inspect().find(button: "All"))
     }
 
+    func testDisplaysVehicleData() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.shortName = "57"
+        }
+        let stop = objects.stop { _ in }
+        let routePattern = objects.routePattern(route: route) { _ in }
+        let trip = objects.trip(routePattern: routePattern) { _ in }
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.currentStatus = .inTransitTo
+        }
+
+        let sut = StopDetailsView(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 1, selectionLock: false),
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            departures: .init(routes: [
+                .init(route: route, stop: stop, patterns: []),
+            ]),
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(combinedStopAndTrip: true),
+            mapVM: .init(),
+            stopDetailsVM: .init()
+        )
+
+        ViewHosting.host(view: sut)
+        XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
+    }
+
     func testCloseButtonCloses() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
+            combinedStopAndTrip: true
+        )
         let sut = StopDetailsView(
-            stop: stop,
-            filter: nil,
-            setFilter: { _ in },
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
             departures: nil,
+            now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -100,20 +151,23 @@ final class StopDetailsViewTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let initialNavStack: [SheetNavigationStackEntry] = [
-            .stopDetails(stop, nil),
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
             .tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0),
-            .stopDetails(stop, nil),
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ]
         let nearbyVM: NearbyViewModel = .init(navigationStack: initialNavStack)
         let sut = StopDetailsView(
-            stop: stop,
-            filter: nil,
-            setFilter: { _ in },
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
             departures: nil,
+            now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -125,16 +179,21 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)])
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ])
         let sut = StopDetailsView(
-            stop: stop,
-            filter: nil,
-            setFilter: { _ in },
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
             departures: nil,
+            now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -147,16 +206,22 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: false)
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
+            showDebugMessages: false
+        )
         let sut = StopDetailsView(
-            stop: stop,
-            filter: nil,
-            setFilter: { _ in },
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
             departures: nil,
+            now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
@@ -169,19 +234,26 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [.stopDetails(stop, nil)], showDebugMessages: true)
+        let nearbyVM: NearbyViewModel = .init(
+            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
+            showDebugMessages: true
+        )
         let sut = StopDetailsView(
-            stop: stop,
-            filter: nil,
-            setFilter: { _ in },
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
             departures: nil,
+            now: Date.now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
-            now: Date.now,
-            pinnedRoutes: [], togglePinnedRoute: { _ in }
+            mapVM: .init(),
+            stopDetailsVM: .init()
         )
 
         ViewHosting.host(view: sut)
+        try sut.inspect().findAll(ViewType.Text.self).forEach { view in try print(view.string()) }
         XCTAssertNotNil(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
     }
 }

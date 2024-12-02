@@ -16,6 +16,7 @@ class ViewportProvider: ObservableObject {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
         static let center: CLLocationCoordinate2D = .init(latitude: 42.3575, longitude: -71.0601)
         static let zoom: CGFloat = MapDefaults.shared.defaultZoomThreshold
+        static let overviewPadding: EdgeInsets = .init(top: 75, leading: 50, bottom: 75, trailing: 50)
     }
 
     @Published private(set) var isManuallyCentering: Bool
@@ -54,6 +55,14 @@ class ViewportProvider: ObservableObject {
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
+    }
+
+    func vehicleOverview(vehicle: Vehicle, stop: Stop) {
+        animateTo(viewport: .overview(
+            geometry: MultiPoint([vehicle.coordinate, stop.coordinate]),
+            geometryPadding: Defaults.overviewPadding,
+            maxZoom: 16
+        ))
     }
 
     func followVehicle(vehicle: Vehicle, target: Stop?) {
@@ -160,7 +169,7 @@ class ViewportProvider: ObservableObject {
         center: CLLocationCoordinate2D,
         inView: [CLLocationCoordinate2D],
         // Insets with different horizontal/vertical values will result in the center point being off center
-        padding: EdgeInsets = .init(top: 75, leading: 50, bottom: 75, trailing: 50)
+        padding: EdgeInsets = Defaults.overviewPadding
     ) -> Viewport {
         let reflectedPoints = inView.map { point in
             CLLocationCoordinate2D(

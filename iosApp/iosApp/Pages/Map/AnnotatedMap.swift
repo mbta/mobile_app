@@ -121,7 +121,7 @@ struct AnnotatedMap: View {
                         .selected(isSelected)
                         .allowOverlap(true)
                         .allowOverlapWithPuck(true)
-                        .visible(zoomLevel >= StopLayerGenerator.shared.stopZoomThreshold)
+                        .visible(zoomLevel >= StopLayerGenerator.shared.stopZoomThreshold || isSelected)
                     }
                 }
             }

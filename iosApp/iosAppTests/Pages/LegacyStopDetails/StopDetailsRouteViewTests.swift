@@ -49,11 +49,11 @@ final class StopDetailsRouteViewTests: XCTestCase {
         let pushExpSouth = XCTestExpectation(description: "Push Nav Entry called for south")
 
         func pushExpFullfill(entry: SheetNavigationStackEntry) {
-            if entry == .stopDetails(stop, .init(routeId: route.id, directionId: 0)) {
+            if entry == .legacyStopDetails(stop, .init(routeId: route.id, directionId: 0)) {
                 pushExpNorth.fulfill()
             }
 
-            if entry == .stopDetails(stop, .init(routeId: route.id, directionId: 1)) {
+            if entry == .legacyStopDetails(stop, .init(routeId: route.id, directionId: 1)) {
                 pushExpSouth.fulfill()
             }
         }

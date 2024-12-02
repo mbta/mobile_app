@@ -14,6 +14,7 @@ struct StopDetailsFilteredRouteView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let patternsByStop: PatternsByStop?
     let alerts: [shared.Alert]
+    let downstreamAlerts: [shared.Alert]
     let now: Instant
     var filter: StopDetailsFilter?
     var setFilter: (StopDetailsFilter?) -> Void
@@ -38,20 +39,25 @@ struct StopDetailsFilteredRouteView: View {
             self.navigationTarget = navigationTarget
         }
 
-        init?(upcoming: UpcomingTrip, route: Route, stopId: String, expectedDirection _: Int32?, now: Instant) {
-            self.route = route
-            headsign = upcoming.trip.headsign
-            formatted = if let formattedUpcomingTrip = RealtimePatterns.companion.formatUpcomingTrip(
+        init?(upcoming: UpcomingTrip, route: Route, stopId: String, now: Instant) {
+            let formatted = if let formattedUpcomingTrip = RealtimePatterns.companion.formatUpcomingTrip(
                 now: now,
                 upcomingTrip: upcoming,
                 routeType: route.type,
-                context: .stopDetailsFiltered,
-                isSubway: route.type.isSubway()
+                context: .stopDetailsFiltered
             ) {
                 RealtimePatterns.FormatSome(trips: [formattedUpcomingTrip], secondaryAlert: nil)
             } else {
                 RealtimePatterns.FormatNone(secondaryAlert: nil)
             }
+
+            if !(formatted is RealtimePatterns.FormatSome) {
+                return nil
+            }
+
+            self.route = route
+            headsign = upcoming.trip.headsign
+            self.formatted = formatted
 
             if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
                 navigationTarget = .tripDetails(
@@ -63,10 +69,6 @@ struct StopDetailsFilteredRouteView: View {
                 )
             } else {
                 navigationTarget = nil
-            }
-
-            if !(formatted is RealtimePatterns.FormatSome) {
-                return nil
             }
         }
     }
@@ -91,15 +93,21 @@ struct StopDetailsFilteredRouteView: View {
         self.pinned = pinned
         let expectedDirection: Int32? = filter?.directionId
 
-        if let patternsByStop {
-            if let expectedDirection, let global {
+        if let patternsByStop, let expectedDirection {
+            if let global {
                 alerts = patternsByStop.alertsHereFor(directionId: expectedDirection, global: global)
+                downstreamAlerts = patternsByStop.alertsDownstream(directionId: expectedDirection)
             } else {
                 alerts = []
+                downstreamAlerts = []
             }
 
-            var rows: [RowData] = patternsByStop.allUpcomingTrips().compactMap { upcoming in
-                guard upcoming.trip.directionId == expectedDirection else { return nil }
+            var rows: [RowData] = departures.stopDetailsFormattedTrips(
+                routeId: patternsByStop.routeIdentifier,
+                directionId: expectedDirection,
+                filterAtTime: now
+            ).compactMap { tripAndFormat in
+                let upcoming = tripAndFormat.upcoming
                 guard let route = (patternsByStop.routes.first { $0.id == upcoming.trip.routeId }) else {
                     Logger().error("""
                     Failed to find route ID \(upcoming.trip.routeId) from upcoming \
@@ -111,23 +119,22 @@ struct StopDetailsFilteredRouteView: View {
                     upcoming: upcoming,
                     route: route,
                     stopId: patternsByStop.stop.id,
-                    expectedDirection: expectedDirection,
                     now: now
                 )
             }
-            let realtimePatterns = patternsByStop.patterns
-                .filter { $0.directionId() == expectedDirection }
+            let realtimePatterns = patternsByStop.patterns.filter { $0.directionId() == expectedDirection }
             let statusRows = Self.getStatusDepartures(realtimePatterns: realtimePatterns, now: now)
             rows.append(contentsOf: statusRows)
             self.rows = rows
         } else {
             alerts = []
+            downstreamAlerts = []
             rows = []
         }
     }
 
     static func getStatusDepartures(realtimePatterns: [RealtimePatterns], now: Instant) -> [RowData] {
-        StopDetailsDepartures.companion.getStatusDepartues(realtimePatterns: realtimePatterns, now: now)
+        StopDetailsDepartures.companion.getStatusDepartures(realtimePatterns: realtimePatterns, now: now)
             .map {
                 RowData(
                     route: $0.route,
@@ -164,6 +171,26 @@ struct StopDetailsFilteredRouteView: View {
                                 ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
                                     VStack(spacing: 0) {
                                         StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
+                                            .onTapGesture {
+                                                pushNavEntry(.alertDetails(
+                                                    alertId: alert.id,
+                                                    line: patternsByStop.line,
+                                                    routes: patternsByStop.routes
+                                                ))
+                                                analytics.tappedAlertDetails(
+                                                    routeId: patternsByStop.routeIdentifier,
+                                                    stopId: patternsByStop.stop.id,
+                                                    alertId: alert.id
+                                                )
+                                            }
+                                        if index < alerts.count - 1 || !rows.isEmpty {
+                                            Divider().background(Color.halo)
+                                        }
+                                    }
+                                }
+                                ForEach(Array(downstreamAlerts.enumerated()), id: \.offset) { index, alert in
+                                    VStack(spacing: 0) {
+                                        StopDetailsDownstreamAlert(alert: alert, routeColor: routeColor)
                                             .onTapGesture {
                                                 pushNavEntry(.alertDetails(
                                                     alertId: alert.id,

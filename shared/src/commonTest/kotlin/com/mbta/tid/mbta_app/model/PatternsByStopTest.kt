@@ -303,6 +303,254 @@ class PatternsByStopTest {
         assertEquals(listOf(alert), patternsByStop.alertsHereFor(1, global))
     }
 
+    @Test
+    fun `downstreamAlerts returns alert for downstream stop `() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val park = objects.stop { id = "park" }
+        val alewife = objects.stop { id = "alewife" }
+        val shawmut = objects.stop { id = "shawmut" }
+        val ashmont = objects.stop { id = "ashmont" }
+        val quincyAdams = objects.stop { id = "quincy_adams" }
+        val braintree = objects.stop { id = "braintree" }
+        val routePatternAshmont =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    directionId = 0
+                    headsign = "Ashmont"
+                    stopIds = listOf(alewife.id, park.id, shawmut.id, ashmont.id)
+                }
+            }
+        val routePatternBraintree =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    directionId = 0
+                    headsign = "Braintree"
+                    stopIds = listOf(alewife.id, park.id, quincyAdams.id, braintree.id)
+                }
+            }
+
+        val routePatternAlewife =
+            objects.routePattern(route) {
+                directionId = 1
+                representativeTrip {
+                    directionId = 1
+                    headsign = "Alewife"
+                    stopIds = listOf(braintree.id, quincyAdams.id, park.id, alewife.id)
+                }
+            }
+
+        val time = Clock.System.now()
+
+        val tripBraintree = objects.trip(routePatternBraintree)
+        val scheduleBraintree =
+            objects.schedule {
+                trip = tripBraintree
+                departureTime = time + 2.minutes
+            }
+        val upcomingTripBraintree = objects.upcomingTrip(scheduleBraintree)
+
+        val tripAshmont = objects.trip(routePatternAshmont)
+        val scheduleAshmont =
+            objects.schedule {
+                trip = tripAshmont
+                departureTime = time + 10.minutes
+            }
+        val upcomingTripAshmont = objects.upcomingTrip(scheduleAshmont)
+
+        val tripAlewife = objects.trip(routePatternAlewife)
+        val scheduleAlewife =
+            objects.schedule {
+                trip = tripAlewife
+                departureTime = time + 10.minutes
+            }
+        val upcomingTripAlewife = objects.upcomingTrip(scheduleAlewife)
+
+        val shawmutShuttleAlert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = shawmut.id
+                )
+            }
+
+        val ashmontShuttleAlert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = ashmont.id
+                )
+            }
+        val alewifeShuttleAlert =
+            objects.alert {
+                id = "alewife_alert_id"
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = alewife.id
+                )
+            }
+
+        val parkShuttleAlert =
+            objects.alert {
+                id = "park_alert_id"
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = park.id
+                )
+            }
+
+        val global =
+            GlobalResponse(
+                objects,
+                mapOf(Pair(park.id, listOf(routePatternAshmont.id, routePatternBraintree.id)))
+            )
+        val southboundDownstreamAlerts =
+            PatternsByStop.alertsDownstream(
+                alerts =
+                    listOf(
+                        ashmontShuttleAlert,
+                        shawmutShuttleAlert,
+                        parkShuttleAlert,
+                        alewifeShuttleAlert
+                    ),
+                patterns = listOf(routePatternAshmont, routePatternBraintree),
+                targetStopWithChildren = setOf(park.id),
+                tripsById = global.trips
+            )
+        // ashmont alert not included b/c only first downstream alert on pattern returned
+        assertEquals(listOf(shawmutShuttleAlert), southboundDownstreamAlerts)
+
+        val northboundDownstreamAlerts =
+            PatternsByStop.alertsDownstream(
+                alerts =
+                    listOf(
+                        ashmontShuttleAlert,
+                        shawmutShuttleAlert,
+                        parkShuttleAlert,
+                        alewifeShuttleAlert
+                    ),
+                patterns = listOf(routePatternAlewife),
+                targetStopWithChildren = setOf(park.id),
+                tripsById = global.trips
+            )
+        assertEquals(listOf(alewifeShuttleAlert), northboundDownstreamAlerts)
+    }
+
+    @Test
+    fun `downstreamAlerts for direction returns deduped alerts for downstream stop `() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val park = objects.stop { id = "park" }
+        val jfk = objects.stop { id = "jfk" }
+        val alewife = objects.stop { id = "alewife" }
+        val ashmont = objects.stop { id = "ashmont" }
+        val braintree = objects.stop { id = "braintree" }
+        val routePatternAshmont =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    directionId = 0
+                    headsign = "Ashmont"
+                    stopIds = listOf(alewife.id, park.id, jfk.id, ashmont.id)
+                }
+            }
+        val routePatternBraintree =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    directionId = 0
+                    headsign = "Braintree"
+                    stopIds = listOf(alewife.id, park.id, jfk.id, braintree.id)
+                }
+            }
+
+        val routePatternAlewife =
+            objects.routePattern(route) {
+                directionId = 1
+                representativeTrip {
+                    directionId = 1
+                    headsign = "Alewife"
+                    stopIds = listOf(braintree.id, jfk.id, park.id, alewife.id)
+                }
+            }
+
+        val time = Clock.System.now()
+        val jfkShuttleAlert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = ashmont.id
+                )
+            }
+        val alewifeShuttleAlert =
+            objects.alert {
+                id = "alewife_alert_id"
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = alewife.id
+                )
+            }
+
+        val patternsByStop =
+            PatternsByStop(
+                route,
+                park,
+                listOf(
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Ashmont",
+                        null,
+                        listOf(routePatternAshmont),
+                        upcomingTrips = emptyList(),
+                        alertsHere = emptyList(),
+                        alertsDownstream = listOf(jfkShuttleAlert)
+                    ),
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Braintree",
+                        null,
+                        listOf(routePatternAshmont),
+                        upcomingTrips = emptyList(),
+                        alertsHere = emptyList(),
+                        alertsDownstream = listOf(jfkShuttleAlert)
+                    ),
+                    RealtimePatterns.ByHeadsign(
+                        route,
+                        "Alewife",
+                        null,
+                        listOf(routePatternAlewife),
+                        upcomingTrips = emptyList(),
+                        alertsHere = emptyList(),
+                        alertsDownstream = listOf()
+                    )
+                )
+            )
+        val southboundDownstreamAlerts = patternsByStop.alertsDownstream(0)
+        assertEquals(listOf(jfkShuttleAlert), southboundDownstreamAlerts)
+    }
+
     object GroupedGLTestPatterns {
         val objects = ObjectCollectionBuilder()
 
@@ -483,6 +731,7 @@ class PatternsByStopTest {
                 upcomingTripsMap,
                 stop.id,
                 emptyList(),
+                mapOf(),
                 hasSchedules,
                 true
             )

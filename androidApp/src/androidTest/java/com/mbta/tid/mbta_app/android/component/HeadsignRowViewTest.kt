@@ -80,17 +80,13 @@ class HeadsignRowViewTest {
                         TripInstantDisplay.Boarding
                     )
                 ),
-                secondaryAlert =
-                    RealtimePatterns.Format.SecondaryAlert(
-                        "alert-large-green-issue",
-                        Alert.Effect.ServiceChange
-                    )
+                secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-green-issue")
             )
         )
 
         composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
         composeTestRule.onNodeWithText("BRD").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("ServiceChange").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
     }
 
     @Test
@@ -106,17 +102,13 @@ class HeadsignRowViewTest {
         init(
             "Somewhere",
             RealtimePatterns.Format.None(
-                secondaryAlert =
-                    RealtimePatterns.Format.SecondaryAlert(
-                        "alert-large-bus-issue",
-                        Alert.Effect.Detour
-                    )
+                secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
             )
         )
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
         composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Detour").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
     }
 
     @Test
