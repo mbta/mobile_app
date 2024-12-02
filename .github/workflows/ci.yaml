@@ -220,15 +220,15 @@ jobs:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
         run: |
-          bundle exec fastlane android build flavor:Prod
+          bundle exec fastlane android build flavor:Staging
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: androidApp/build/outputs/apk/prod/release/androidApp-prod-release.apk
+          path: androidApp/build/outputs/apk/staging/release/androidApp-staging-release.apk
       - uses: actions/upload-artifact@v4
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/prodRelease/androidApp-prod-release.aab
+          path: androidApp/build/outputs/bundle/stagingRelease/androidApp-staging-release.aab
   build-ios:
     name: Build for iOS
     if: github.actor != 'dependabot[bot]'
@@ -312,7 +312,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/prodRelease
+          path: androidApp/build/outputs/bundle/stagingRelease
       - uses: ./.github/actions/setup
         with:
           for: android-deploy
@@ -320,7 +320,7 @@ jobs:
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Upload to Google Play
         run: |
-          bundle exec fastlane android internal flavor:Prod
+          bundle exec fastlane android internal flavor:Staging
   deploy-ios:
     name: Upload to App Store
     if: github.event_name != 'pull_request'

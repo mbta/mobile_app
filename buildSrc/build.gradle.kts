@@ -10,8 +10,12 @@ dependencies {
 }
 
 spotless {
+    kotlin {
+        target("**/*.kt")
+        ktfmt().kotlinlangStyle()
+    }
     kotlinGradle {
         target("**/*.gradle.kts")
-        ktlint()
+        ktfmt().kotlinlangStyle()
     }
 }

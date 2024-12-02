@@ -29,6 +29,8 @@ data class Alert(
             else -> StopAlertState.Issue
         }
 
+    val hasStopsSpecified = informedEntity.all { it.stop != null }
+
     val significance =
         when (effect) {
             // suspensions or shuttles can reasonably apply to an entire route
@@ -40,9 +42,7 @@ data class Alert(
                 Effect.DockClosure,
                 Effect.Detour,
                 Effect.SnowRoute
-            ) ->
-                if (informedEntity.all { it.stop != null }) AlertSignificance.Major
-                else AlertSignificance.Secondary
+            ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
             // service changes are always secondary
             Effect.ServiceChange -> AlertSignificance.Secondary
             else -> AlertSignificance.None
@@ -240,6 +240,7 @@ data class Alert(
 
         /**
          * Gets the alerts of the first stop that is downstream of the target stop which has alerts.
+         * Considers only alerts that have specified stops.
          *
          * @param alerts: The full list of alerts
          * @param trip: The trip used to calculate downstream stops
@@ -251,6 +252,8 @@ data class Alert(
             targetStopWithChildren: Set<String>,
         ): List<Alert> {
             val stopIds = trip.stopIds ?: emptyList()
+
+            val alerts = alerts.filter { it.hasStopsSpecified }
 
             val indexOfTargetStopInPattern =
                 stopIds.indexOfFirst { targetStopWithChildren.contains(it) }
