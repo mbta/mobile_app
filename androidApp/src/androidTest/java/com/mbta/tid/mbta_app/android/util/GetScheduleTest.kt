@@ -28,13 +28,9 @@ class GetScheduleTest {
         }
         val expectedSchedules1 = buildSomeSchedules()
         val expectedSchedules2 = buildSomeSchedules()
-        val expectedSchedules3 = buildSomeSchedules()
 
         val stops1 = listOf("stop-a")
         val stops2 = listOf("stop-b")
-
-        val time1 = Instant.parse("2024-08-12T10:15:14-06:00")
-        val time2 = Instant.parse("2024-08-12T10:17:43-06:00")
 
         val schedulesRepo =
             object : ISchedulesRepository {
@@ -42,9 +38,8 @@ class GetScheduleTest {
                     stopIds: List<String>,
                     now: Instant
                 ): ApiResult<ScheduleResponse> {
-                    return if (stopIds == stops1 && now == time1) ApiResult.Ok(expectedSchedules1)
-                    else if (stopIds == stops1) ApiResult.Ok(expectedSchedules2)
-                    else ApiResult.Ok(expectedSchedules3)
+                    return if (stopIds == stops1) ApiResult.Ok(expectedSchedules1)
+                    else ApiResult.Ok(expectedSchedules2)
                 }
 
                 override suspend fun getSchedule(
@@ -55,7 +50,6 @@ class GetScheduleTest {
             }
 
         var stopIds by mutableStateOf(stops1)
-        var now by mutableStateOf(time1)
         var actualSchedules: ScheduleResponse? = expectedSchedules1
         composeTestRule.setContent {
             actualSchedules = getSchedule(stopIds = stopIds, schedulesRepo)
@@ -66,6 +60,6 @@ class GetScheduleTest {
 
         stopIds = stops2
         composeTestRule.awaitIdle()
-        assertEquals(expectedSchedules3, actualSchedules)
+        assertEquals(expectedSchedules2, actualSchedules)
     }
 }
