@@ -18,6 +18,7 @@ extension shared.Alert {
         case .snowRoute: Text("Snow route", comment: "Possible alert effect")
         case .stopClosure: Text("Stop closed", comment: "Possible alert effect")
         case .suspension: Text("Service suspended", comment: "Possible alert effect")
+        case .serviceChange: Text("Service change", comment: "Possible alert effect")
         default: Text("Alert", comment: "Possible alert effect")
         }
     }

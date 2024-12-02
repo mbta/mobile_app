@@ -1,3 +1,5 @@
+import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
@@ -5,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
-    id("ios-assets")
 }
 
 android {
@@ -71,6 +72,11 @@ dependencies {
 tasks.cyclonedxBom {
     includeConfigs =
         listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
+}
+
+task<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
+    assetsToRender = listOf("alert-large-*", "alert-small-*", "map-stop-*")
+    assetsToReturnByName = listOf("alert-borderless-*")
 }
 
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle

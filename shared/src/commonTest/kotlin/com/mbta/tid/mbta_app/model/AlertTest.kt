@@ -316,4 +316,42 @@ class AlertTest {
 
         assertEquals(listOf(firstBoardAlert), downstreamAlerts)
     }
+
+
+    @Test
+    fun `downstreamAlerts ignores alert without stops specified`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val targetStop = objects.stop()
+        val nextStop = objects.stop()
+
+        val alert =
+            objects.alert {
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    directionId = null
+                )
+            }
+
+        val trip =
+            objects.trip {
+                routeId = route.id
+                directionId = 0
+                stopIds =
+                    listOf(
+                        targetStop.id,
+                        nextStop.id,
+                    )
+            }
+
+        val downstreamAlerts =
+            Alert.downstreamAlerts(
+                listOf(alert),
+                trip,
+                setOf(targetStop.id)
+            )
+
+        assertEquals(listOf(), downstreamAlerts)
+    }
 }
