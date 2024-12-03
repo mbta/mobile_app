@@ -133,6 +133,8 @@
 		9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */; };
 		9A4850572CB56A1600F50EE7 /* RouteTypeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */; };
 		9A4D0AD52CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4D0AD42CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift */; };
+		9A4D0AD72CFF5DA6009C1054 /* TripVehicleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4D0AD62CFF5DA6009C1054 /* TripVehicleCard.swift */; };
+		9A4D0AD92CFF98C9009C1054 /* TripStops.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4D0AD82CFF98C9009C1054 /* TripStops.swift */; };
 		9A4DB7782C937EE300E8755B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7772C937EE300E8755B /* SearchViewModel.swift */; };
 		9A4DB77A2CA47E6D00E8755B /* SearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7792CA47E6D00E8755B /* SearchField.swift */; };
 		9A4DB77F2CA4A32800E8755B /* SearchOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */; };
@@ -419,6 +421,8 @@
 		9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssetExtension.swift; sourceTree = "<group>"; };
 		9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTypeExtension.swift; sourceTree = "<group>"; };
 		9A4D0AD42CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredDepartureDetailsTests.swift; sourceTree = "<group>"; };
+		9A4D0AD62CFF5DA6009C1054 /* TripVehicleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripVehicleCard.swift; sourceTree = "<group>"; };
+		9A4D0AD82CFF98C9009C1054 /* TripStops.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripStops.swift; sourceTree = "<group>"; };
 		9A4DB7772C937EE300E8755B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		9A4DB7792CA47E6D00E8755B /* SearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchField.swift; sourceTree = "<group>"; };
 		9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchOverlay.swift; sourceTree = "<group>"; };
@@ -1102,6 +1106,8 @@
 				9AF29E012CF79554005AA4A3 /* TileData.swift */,
 				9ACE4FD32CE6D17D00FEB006 /* TripDetailsView.swift */,
 				9AF29DFD2CF61EED005AA4A3 /* TripStatus.swift */,
+				9A4D0AD82CFF98C9009C1054 /* TripStops.swift */,
+				9A4D0AD62CFF5DA6009C1054 /* TripVehicleCard.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -1496,6 +1502,7 @@
 				8CE36C8F2CAB231500D77F22 /* FetchApi.swift in Sources */,
 				9A4DB77A2CA47E6D00E8755B /* SearchField.swift in Sources */,
 				EDDE72EF2CBF19EF0000180D /* ArrayExtension.swift in Sources */,
+				9A4D0AD92CFF98C9009C1054 /* TripStops.swift in Sources */,
 				9AF29DFE2CF61EED005AA4A3 /* TripStatus.swift in Sources */,
 				9AF29E002CF63330005AA4A3 /* StopDetailsFilteredHeader.swift in Sources */,
 				9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */,
@@ -1506,6 +1513,7 @@
 				9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */,
 				9AF29E022CF79554005AA4A3 /* TileData.swift in Sources */,
 				9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */,
+				9A4D0AD72CFF5DA6009C1054 /* TripVehicleCard.swift in Sources */,
 				6EE76D1B2BF532010051D608 /* RouteIcon.swift in Sources */,
 				ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */,
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,

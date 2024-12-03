@@ -18,6 +18,7 @@ struct TripDetailsView: View {
     let stopId: String
     let stopSequence: Int?
 
+    var now: Date
     var global: GlobalResponse?
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
@@ -34,8 +35,6 @@ struct TripDetailsView: View {
     @State var tripSchedulesResponse: TripSchedulesResponse?
     @State var vehicleResponse: VehicleStreamDataResponse?
 
-    @State var now = Date.now.toKotlinInstant()
-
     let analytics: TripDetailsAnalytics
     let inspection = Inspection<Self>()
 
@@ -49,6 +48,7 @@ struct TripDetailsView: View {
         routeId: String,
         stopId: String,
         stopSequence: Int?,
+        now: Date,
         global: GlobalResponse?,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -64,6 +64,7 @@ struct TripDetailsView: View {
         self.routeId = routeId
         self.stopId = stopId
         self.stopSequence = stopSequence
+        self.now = now
         self.global = global
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -96,29 +97,28 @@ struct TripDetailsView: View {
                    alertsData: nearbyVM.alerts,
                    globalData: global
                ) {
-                vehicleCardView
-                if let stopSequence, let splitStops = stops.splitForTarget(
-                    targetStopId: stopId,
-                    targetStopSequence: Int32(stopSequence),
-                    globalData: global
-                ) {
-                    TripDetailsStopListSplitView(
-                        splitStops: splitStops,
-                        now: now,
-                        onTapLink: onTapStop,
-                        routeType: routeType
-                    )
-                    .onAppear { didLoadData?(self) }
-                } else {
-                    TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop, routeType: routeType)
-                        .onAppear { didLoadData?(self) }
+                ZStack(alignment: .top) {
+                    VStack(spacing: 0) {
+                        // Dummy vehicle card to space the stop list down exactly the height of the card
+                        vehicleCardView
+                        TripStops(
+                            targetId: stopId,
+                            stops: stops,
+                            stopSequence: stopSequence,
+                            now: now,
+                            onTapLink: onTapStop,
+                            routeType: routeType,
+                            global: global
+                        ).padding(.top, -10)
+                    }
+                    vehicleCardView
                 }
             } else {
                 loadingBody()
             }
         }
+        .padding(.horizontal, 6)
         .task { loadEverything(tripId: tripId) }
-        .task { now = Date.now.toKotlinInstant() }
         .onAppear { joinRealtime() }
         .onDisappear { leaveRealtime() }
         .onChange(of: tripId) { nextTripId in
@@ -157,7 +157,7 @@ struct TripDetailsView: View {
     @ViewBuilder private func loadingBody() -> some View {
         TripDetailsStopListView(
             stops: LoadingPlaceholders.shared.tripDetailsStops(),
-            now: now,
+            now: now.toKotlinInstant(),
             onTapLink: { _, _, _ in },
             routeType: nil
         )
@@ -266,30 +266,14 @@ struct TripDetailsView: View {
         } else {
             nil
         }
-        VehicleCardView(
-            vehicle: vehicle,
-            route: route,
-            stop: vehicleStop,
-            tripId: tripId
-        )
-    }
-
-    @ViewBuilder
-    var header: some View {
-        let trip: Trip? = tripPredictions?.trips[tripId]
-        let vehicle: Vehicle? = vehicleResponse?.vehicle
-        let route: Route? = if let routeId = trip?.routeId ?? vehicle?.routeId {
-            global?.routes[routeId]
-        } else {
-            nil
+        if let vehicle, let route, let vehicleStop {
+            TripVehicleCard(
+                vehicle: vehicle,
+                route: route,
+                stop: vehicleStop,
+                tripId: tripId
+            )
         }
-        TripDetailsHeader(
-            route: route,
-            line: global?.getLine(lineId: route?.lineId),
-            trip: trip,
-            onBack: nearbyVM.goBack,
-            onClose: { nearbyVM.navigationStack.removeAll() }
-        )
     }
 
     func onTapStop(

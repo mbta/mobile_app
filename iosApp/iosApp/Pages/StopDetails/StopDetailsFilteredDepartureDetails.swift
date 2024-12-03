@@ -22,6 +22,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var patternsByStop: PatternsByStop
     var pinned: Bool
 
+    var now: Date
+
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
@@ -49,7 +51,7 @@ struct StopDetailsFilteredDepartureDetails: View {
             // This unscrollable scroll view is necessary to prevent the sheet from messing up the layout
             // of the contents and cutting off the header when not in large detent.
             ScrollView([], showsIndicators: false) {
-                VStack(spacing: 14) {
+                VStack(spacing: 16) {
                     ScrollViewReader { view in
                         DirectionPicker(
                             patternsByStop: patternsByStop,
@@ -60,10 +62,12 @@ struct StopDetailsFilteredDepartureDetails: View {
                             }
                         )
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
+                        .padding([.horizontal, .top], 16)
+                        .padding(.bottom, 6)
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
                         departureTiles(patternsByStop, view)
+                            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                     }
                     alertCards(patternsByStop, routeColor)
                     statusRows(patternsByStop)
@@ -75,13 +79,12 @@ struct StopDetailsFilteredDepartureDetails: View {
                             routeId: stopFilter.routeId,
                             stopId: stopId,
                             stopSequence: tripFilter.stopSequence?.intValue,
+                            now: now,
                             global: stopDetailsVM.global,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM
                         )
-                        .padding(.horizontal, 8)
-                        .padding(.bottom, 48)
                     }
                 }
             }
@@ -120,6 +123,7 @@ struct StopDetailsFilteredDepartureDetails: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 1)
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 
