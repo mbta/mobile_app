@@ -6,6 +6,7 @@
     <string name="cancelled">Cancelled</string>
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
+    <string name="feedback_link_form">Send app feedback</string>
     <string name="filterShowAll">All</string>
     <string name="hello_platform">Hello, %1$s!</string>
     <string name="minutes_abbr">%1$s min</string>
@@ -18,9 +19,27 @@
     <string name="no_stops_nearby">Your current location is outside of our search area.</string>
     <string name="no_stops_nearby_title">No nearby MBTA stops</string>
     <string name="now">Now</string>
+    <string name="resources_link_fare_info">Fare Information</string>
+    <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
+    <string name="resources_link_mticket_note">mTicket App</string>
+    <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="setting_toggle_hide_maps">Hide Maps</string>
     <string name="settings_link">Settings</string>
     <string name="shuttle">Shuttle</string>
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
+    <string name="more_section_resources">Resources</string>
+    <string name="more_section_support">General MBTA Information &amp; Support</string>
+    <string name="more_section_support_note">Monday through Friday: 6:30 AM - 8 PM</string>
+
+    <string name="icon_description_external_link">External Link</string>
+    <string name="other_link_tos">Terms of Use</string>
+    <string name="other_link_privacy_policy">Privacy Policy</string>
+    <string name="other_link_source_code">View source on GitHub</string>
+    <string name="more_page_footer">Made with ♥ by the T</string>
+
+
+
+
+
 </resources>
