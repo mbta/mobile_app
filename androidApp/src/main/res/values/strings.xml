@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="hello_platform">Hello, %1$s!</string>
-    <string name="boarding_abbr">BRD</string>
-    <string name="arriving_abbr">ARR</string>
-    <string name="now">Now</string>
-    <string name="minutes_abbr">%1$s min</string>
     <string name="approaching_abbr">1 min</string>
+    <string name="arriving_abbr">ARR</string>
+    <string name="boarding_abbr">BRD</string>
+    <string name="cancelled">Cancelled</string>
     <string name="detour">Detour</string>
+    <string name="directionTo">%1$s to</string>
+    <string name="filterShowAll">All</string>
+    <string name="hello_platform">Hello, %1$s!</string>
+    <string name="minutes_abbr">%1$s min</string>
+    <string name="more_link">More</string>
+    <string name="more_title">MBTA Go</string>
+    <string name="nearby_transit_link">Nearby</string>
+    <string name="no_service">No Service</string>
+    <string name="no_stops_nearby">Your current location is outside of our search area.</string>
+    <string name="no_stops_nearby_title">No nearby MBTA stops</string>
+    <string name="now">Now</string>
     <string name="shuttle">Shuttle</string>
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
-    <string name="no_service">No Service</string>
-    <string name="cancelled">Cancelled</string>
-    <string name="nearby_transit_link">Nearby</string>
-    <string name="settings_link">Settings</string>
-    <string name="filterShowAll">All</string>
-    <string name="directionTo">%1$s to</string>
-    <string name="no_stops_nearby_title">No nearby MBTA stops</string>
-    <string name="no_stops_nearby">Your current location is outside of our search area.</string>
 </resources>

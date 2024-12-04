@@ -4,4 +4,6 @@ import kotlinx.serialization.Serializable
 
 object Routes {
     @Serializable object NearbyTransit
+
+    @Serializable object More
 }
