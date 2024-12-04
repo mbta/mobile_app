@@ -50,7 +50,7 @@ fun MorePage(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    "version ${BuildConfig.VERSION_NAME}",
+                    stringResource(R.string.app_version_number, BuildConfig.VERSION_NAME),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

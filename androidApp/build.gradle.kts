@@ -26,12 +26,7 @@ android {
         compose = true
     }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
+    buildTypes { getByName("release") { isMinifyEnabled = false } }
     flavorDimensions += "environment"
     productFlavors {
         create("staging") {
