@@ -41,7 +41,7 @@ fun NearbyTransitView(
     modifier: Modifier = Modifier,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
-    targetLocation: Position,
+    targetLocation: Position?,
     setLastLocation: (Position) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     nearbyRepository: INearbyRepository = koinInject(),
@@ -65,20 +65,24 @@ fun NearbyTransitView(
             now,
             pinnedRoutes
         ) {
-            nearby?.withRealtimeInfo(
-                globalData = globalResponse,
-                sortByDistanceFrom = targetLocation,
-                schedules,
-                predictions,
-                alertData,
-                now,
-                pinnedRoutes.orEmpty(),
-                useTripHeadsigns = false,
-            )
+            if (targetLocation != null) {
+                nearby?.withRealtimeInfo(
+                    globalData = globalResponse,
+                    sortByDistanceFrom = targetLocation,
+                    schedules,
+                    predictions,
+                    alertData,
+                    now,
+                    pinnedRoutes.orEmpty(),
+                    useTripHeadsigns = false,
+                )
+            } else {
+                null
+            }
         }
 
     LaunchedEffect(targetLocation, globalResponse) {
-        if (globalResponse != null) {
+        if (targetLocation != null && globalResponse != null) {
             withContext(Dispatchers.IO) {
                 val response =
                     nearbyRepository.getNearby(

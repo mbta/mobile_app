@@ -31,11 +31,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
+import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -45,22 +47,22 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
-data class NearbyTransit
-@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
-constructor(
+data class NearbyTransit(
     val alertData: AlertsStreamDataResponse?,
     val globalResponse: GlobalResponse?,
-    val targetLocation: Position,
-    val mapCenter: Position,
     var lastNearbyTransitLocation: Position?,
     val scaffoldState: BottomSheetScaffoldState,
-    val mapViewportState: MapViewportState,
+    val locationDataManager: LocationDataManager,
+    val viewportProvider: ViewportProvider,
 )
 
-@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
+@OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, FlowPreview::class)
 @Composable
 fun NearbyTransitPage(
     modifier: Modifier = Modifier,
@@ -193,10 +195,32 @@ fun NearbyTransitPage(
                                 stopDetailsFilter = null
                             }
 
+                            var targetLocation by remember { mutableStateOf<Position?>(null) }
+                            LaunchedEffect(nearbyTransit.viewportProvider) {
+                                nearbyTransit.viewportProvider.cameraStateFlow
+                                    .debounce(0.5.seconds)
+                                    .collect {
+                                        // TODO only if isNearbyVisible
+                                        targetLocation = it.center.toPosition()
+                                    }
+                            }
+                            LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
+                                if (nearbyTransit.viewportProvider.isManuallyCentering) {
+                                    // TODO reset view model
+                                    targetLocation = null
+                                }
+                            }
+                            LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {
+                                if (nearbyTransit.viewportProvider.isFollowingPuck) {
+                                    // TODO reset view model
+                                    targetLocation = null
+                                }
+                            }
+
                             NearbyTransitView(
                                 alertData = nearbyTransit.alertData,
                                 globalResponse = nearbyTransit.globalResponse,
-                                targetLocation = nearbyTransit.mapCenter,
+                                targetLocation = targetLocation,
                                 setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
                                 onOpenStopDetails = { stopId, filter ->
                                     navController.navigate(
@@ -218,10 +242,11 @@ fun NearbyTransitPage(
         ) { sheetPadding ->
             HomeMapView(
                 Modifier.padding(sheetPadding),
-                nearbyTransit.mapViewportState,
                 globalResponse = nearbyTransit.globalResponse,
                 alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
+                locationDataManager = nearbyTransit.locationDataManager,
+                viewportProvider = nearbyTransit.viewportProvider,
                 currentNavEntry = currentNavEntry,
                 handleStopNavigation = ::handleStopNavigation,
                 vehiclesData = vehiclesData,

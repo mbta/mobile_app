@@ -1,16 +1,16 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraState
-import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapboxExperimental
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.model.Coordinate
@@ -244,20 +244,10 @@ class NearbyTransitPageTest : KoinTest {
                     NearbyTransit(
                         alertData = AlertsStreamDataResponse(builder.alerts),
                         globalResponse = globalResponse,
-                        targetLocation = Position(0.0, 0.0),
                         lastNearbyTransitLocation = Position(0.0, 0.0),
-                        mapCenter = Position(0.0, 0.0),
-                        mapViewportState =
-                            MapViewportState(
-                                CameraState(
-                                    Point.fromLngLat(0.0, 0.0),
-                                    EdgeInsets(0.0, 0.0, 0.0, 0.0),
-                                    1.0,
-                                    0.0,
-                                    0.0
-                                )
-                            ),
                         scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(Location("mock")),
+                        viewportProvider = ViewportProvider(rememberMapViewportState()),
                     ),
                     false,
                     {},
