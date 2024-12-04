@@ -77,8 +77,8 @@ class MorePageTests : KoinTest {
         composeTestRule.onNodeWithText("Commuter Rail and Ferry tickets").assertIsDisplayed()
         composeTestRule.onNodeWithText("Terms of Use").assertIsDisplayed()
         composeTestRule.onNodeWithText("Privacy Policy").assertIsDisplayed()
+        composeTestRule.onNode(hasText("View source on GitHub")).performScrollTo()
         composeTestRule.onNodeWithText("View source on GitHub").assertIsDisplayed()
-        composeTestRule.onNodeWithText("View source on GitHub")
         composeTestRule.onNode(hasText("617-222-3200")).performScrollTo()
         composeTestRule.onNodeWithText("617-222-3200").assertIsDisplayed()
     }
