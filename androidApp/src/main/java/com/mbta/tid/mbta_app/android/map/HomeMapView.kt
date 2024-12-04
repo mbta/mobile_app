@@ -238,10 +238,12 @@ fun HomeMapView(
 
     val locationPermissions = locationDataManager.rememberPermissions()
 
+    val cameraZoomFlow =
+        remember(viewportProvider.cameraStateFlow) {
+            viewportProvider.cameraStateFlow.map { it.zoom }
+        }
     val zoomLevel by
-        viewportProvider.cameraStateFlow
-            .map { it.zoom }
-            .collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
+        cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
 
     Box(modifier) {
         MapboxMap(
