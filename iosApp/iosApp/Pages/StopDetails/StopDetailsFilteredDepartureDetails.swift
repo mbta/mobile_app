@@ -83,7 +83,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                             global: stopDetailsVM.global,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
-                            mapVM: mapVM
+                            mapVM: mapVM,
+                            stopDetailsVM: stopDetailsVM
                         )
                     }
                 }
