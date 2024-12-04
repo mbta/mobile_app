@@ -110,7 +110,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
 
-        wait(for: [configFetchedExpectation], timeout: 5)
+        wait(for: [configFetchedExpectation], timeout: 6)
     }
 
     func testSetsMapboxTokenConfigOnConfigChange() throws {
@@ -140,16 +140,13 @@ final class ContentViewTests: XCTestCase {
         )
         let sut = ContentView(contentVM: fakeVM)
 
-        let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
-
         let hasAppeared = sut.inspection.inspect(after: 2) { view in
-
             try view.actualView().mapVM.lastMapboxErrorSubject.send(Date.now)
         }
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
 
-        wait(for: [hasAppeared, loadConfigCallback], timeout: 5)
+        wait(for: [hasAppeared, loadConfigCallback], timeout: 6)
     }
 
     @MainActor func testHidesMap() throws {

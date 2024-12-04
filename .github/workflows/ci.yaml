@@ -149,15 +149,15 @@ jobs:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
           MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
         run: |
-          bundle exec fastlane android build
+          bundle exec fastlane android build flavor:Staging
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: androidApp/build/outputs/apk/release/androidApp-release.apk
+          path: androidApp/build/outputs/apk/staging/release/androidApp-staging-release.apk
       - uses: actions/upload-artifact@v4
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/release/androidApp-release.aab
+          path: androidApp/build/outputs/bundle/stagingRelease/androidApp-staging-release.aab
   deploy-android:
     name: Upload to Google Play
     if: github.event_name != 'pull_request'
@@ -177,7 +177,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: android-aab
-          path: androidApp/build/outputs/bundle/release
+          path: androidApp/build/outputs/bundle/stagingRelease
       - uses: ./.github/actions/setup
         with:
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
@@ -185,4 +185,4 @@ jobs:
           ruby: true
       - name: Upload to Google Play
         run: |
-          bundle exec fastlane android internal
+          bundle exec fastlane android internal flavor:Staging

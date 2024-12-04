@@ -64,6 +64,7 @@ extension HomeMapView {
             joinVehiclesChannel(routeId: routeId, directionId: directionId)
         } else {
             leaveVehiclesChannel()
+            vehiclesData = []
         }
 
         lastNavEntry = navigationStack.last
@@ -126,7 +127,13 @@ extension HomeMapView {
     }
 
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(_, filter) = entry, let filter {
+        if case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = entry, let stopFilter {
+            joinVehiclesChannel(
+                routeId: stopFilter.routeId,
+                directionId: stopFilter.directionId
+            )
+        }
+        if case let .legacyStopDetails(_, filter) = entry, let filter {
             joinVehiclesChannel(routeId: filter.routeId,
                                 directionId: filter.directionId)
         }
@@ -150,14 +157,22 @@ extension HomeMapView {
 
     func leaveVehiclesChannel() {
         vehiclesRepository.disconnect()
-        vehiclesData = []
     }
 
     func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
         if oldNavEntry == nil {
             viewportProvider.saveNearbyTransitViewport()
         }
-        if case let .stopDetails(stop, filter) = nextNavEntry {
+        if case let .stopDetails(stopId, stopFilter, tripFilter) = nextNavEntry {
+            if oldNavEntry?.stopId() != stopId {
+                if let stop = globalData?.stops[stopId] {
+                    handleStopDetailsChange(stop, stopFilter)
+                }
+            }
+
+            handleRouteFilterChange(stopFilter)
+        }
+        if case let .legacyStopDetails(stop, filter) = nextNavEntry {
             if oldNavEntry?.stop()?.id == stop.id {
                 handleRouteFilterChange(filter)
             } else {
@@ -256,7 +271,7 @@ extension HomeMapView {
         }
         analytics.tappedOnStop(stopId: stop.id)
         nearbyVM.navigationStack.removeAll()
-        nearbyVM.navigationStack.append(.stopDetails(stop, nil))
+        nearbyVM.pushNavEntry(.legacyStopDetails(stop, nil))
         return true
     }
 
@@ -284,7 +299,7 @@ extension HomeMapView {
 
         // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
         // page, but we won't be able to tell what the target stop was.
-        nearbyVM.navigationStack.append(.tripDetails(
+        nearbyVM.pushNavEntry(.tripDetails(
             tripId: tripId,
             vehicleId: vehicle.id,
             target: patterns != nil ? .init(
@@ -293,7 +308,7 @@ extension HomeMapView {
             ) : nil,
             routeId: routeId,
             directionId: vehicle.directionId
-        ))
+        ), mapSelection: true)
     }
 
     func handleSelectedVehicleChange(_ previousVehicle: Vehicle?, _ nextVehicle: Vehicle?) {
@@ -304,8 +319,12 @@ extension HomeMapView {
         }
 
         if previousVehicle == nil || previousVehicle?.id != nextVehicle.id {
-            viewportProvider.followVehicle(vehicle: nextVehicle, target: nearbyVM.getTargetStop(global: globalData))
-        } else {
+            if nearbyVM.combinedStopAndTrip, let stop = nearbyVM.getTargetStop(global: globalData) {
+                viewportProvider.vehicleOverview(vehicle: nextVehicle, stop: stop)
+            } else {
+                viewportProvider.followVehicle(vehicle: nextVehicle, target: nearbyVM.getTargetStop(global: globalData))
+            }
+        } else if !nearbyVM.combinedStopAndTrip {
             viewportProvider.updateFollowedVehicle(vehicle: nextVehicle)
         }
     }

@@ -18,7 +18,7 @@ struct TripDetailsStopView: View {
     var body: some View {
         VStack(alignment: .leading) {
             SheetNavigationLink(
-                value: .stopDetails(stop.stop, nil),
+                value: .legacyStopDetails(stop.stop, nil),
                 action: { entry in onTapLink(entry, stop, nil) },
                 label: {
                     HStack {
@@ -91,7 +91,7 @@ struct TripDetailsStopView: View {
                 }
             }.padding(.horizontal, 20)
         }.padding(.horizontal, -20).onTapGesture {
-            onTapLink(.stopDetails(stop.stop, nil), stop, nil)
+            onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
         }
         return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
     }

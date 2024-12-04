@@ -25,6 +25,7 @@ data class PatternsByStop(
         upcomingTripsMap: UpcomingTripsMap,
         patternsPredicate: (RealtimePatterns) -> Boolean,
         alerts: Collection<Alert>,
+        tripsById: Map<String, Trip>,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
         allDataLoaded: Boolean,
     ) : this(
@@ -46,7 +47,18 @@ data class PatternsByStop(
                                 it,
                                 upcomingTripsMap,
                                 staticData.stop.id,
-                                alerts,
+                                Alert.applicableAlerts(
+                                    alerts.toList(),
+                                    null,
+                                    listOf(it.route.id),
+                                    it.stopIds
+                                ),
+                                alertsDownstream(
+                                    alerts.toList(),
+                                    it.patterns,
+                                    it.stopIds,
+                                    tripsById
+                                ),
                                 hasSchedulesTodayByPattern,
                                 allDataLoaded
                             )
@@ -57,6 +69,7 @@ data class PatternsByStop(
                             upcomingTripsMap,
                             staticData.stop.id,
                             alerts,
+                            tripsById,
                             hasSchedulesTodayByPattern,
                             allDataLoaded
                         )
@@ -74,6 +87,7 @@ data class PatternsByStop(
         stopData: Map<NearbyHierarchy.DirectionOrHeadsign, NearbyHierarchy.NearbyLeaf>,
         patternsPredicate: (RealtimePatterns) -> Boolean,
         alerts: Collection<Alert>,
+        tripsById: Map<String, Trip>,
         hasSchedulesTodayByPattern: Map<String, Boolean>?,
         allDataLoaded: Boolean,
     ) : this(
@@ -94,7 +108,18 @@ data class PatternsByStop(
                             RealtimePatterns.ByHeadsign(
                                 directionOrHeadsign,
                                 leaf,
-                                alerts,
+                                Alert.applicableAlerts(
+                                    alerts.toList(),
+                                    null,
+                                    listOf(directionOrHeadsign.route.id),
+                                    leaf.childStopIds
+                                ),
+                                alertsDownstream(
+                                    alerts.toList(),
+                                    leaf.routePatterns.filterNotNull(),
+                                    leaf.childStopIds,
+                                    tripsById
+                                ),
                                 hasSchedulesTodayByPattern,
                                 allDataLoaded
                             )
@@ -105,6 +130,7 @@ data class PatternsByStop(
                             directionOrHeadsign,
                             leaf,
                             alerts,
+                            tripsById,
                             hasSchedulesTodayByPattern,
                             allDataLoaded
                         )
@@ -149,7 +175,35 @@ data class PatternsByStop(
             .distinct()
     }
 
+    /** get the alerts downstream of the patterns in the given direction */
+    fun alertsDownstream(directionId: Int): List<Alert> {
+        val patternsInDirection = this.patterns.filter { it.directionId() == directionId }
+        return patternsInDirection.flatMap { it.alertsDownstream ?: emptyList() }.distinct()
+    }
+
     companion object {
+        /**
+         * A unique list of all the alerts that are downstream from the target stop for each route
+         * pattern
+         */
+        fun alertsDownstream(
+            alerts: Collection<Alert>,
+            patterns: List<RoutePattern>,
+            targetStopWithChildren: Set<String>,
+            tripsById: Map<String, Trip>
+        ): List<Alert> {
+            return patterns
+                .flatMap {
+                    val trip = tripsById[it.representativeTripId]
+                    if (trip != null) {
+                        Alert.downstreamAlerts(alerts, trip, targetStopWithChildren)
+                    } else {
+                        listOf()
+                    }
+                }
+                .distinct()
+        }
+
         // Even if a direction can serve multiple routes according to the static data, it's possible
         // that only one of those routes is typical, in which case we don't want to display it as a
         // grouped direction in the UI. If there are only predicted trips on a single route, this
@@ -159,6 +213,7 @@ data class PatternsByStop(
             upcomingTripsMap: UpcomingTripsMap,
             parentStopId: String,
             alerts: Collection<Alert>,
+            tripsById: Map<String, Trip>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ): List<RealtimePatterns> {
@@ -172,7 +227,18 @@ data class PatternsByStop(
                         staticData,
                         upcomingTripsMap,
                         parentStopId,
-                        alerts,
+                        Alert.applicableAlerts(
+                            alerts.toList(),
+                            null,
+                            staticData.routeIds,
+                            staticData.stopIds
+                        ),
+                        alertsDownstream(
+                            alerts.toList(),
+                            staticData.patterns,
+                            staticData.stopIds,
+                            tripsById
+                        ),
                         hasSchedulesTodayByPattern,
                         allDataLoaded
                     )
@@ -210,7 +276,18 @@ data class PatternsByStop(
                         ),
                         upcomingTripsMap,
                         parentStopId,
-                        alerts,
+                        Alert.applicableAlerts(
+                            alerts.toList(),
+                            null,
+                            staticData.routeIds,
+                            staticData.stopIds
+                        ),
+                        alertsDownstream(
+                            alerts.toList(),
+                            staticData.patterns,
+                            staticData.stopIds,
+                            tripsById
+                        ),
                         hasSchedulesTodayByPattern,
                         allDataLoaded
                     )
@@ -222,7 +299,18 @@ data class PatternsByStop(
                     staticData,
                     upcomingTripsMap,
                     parentStopId,
-                    alerts,
+                    Alert.applicableAlerts(
+                        alerts.toList(),
+                        null,
+                        staticData.routeIds,
+                        staticData.stopIds
+                    ),
+                    alertsDownstream(
+                        alerts.toList(),
+                        staticData.patterns,
+                        staticData.stopIds,
+                        tripsById
+                    ),
                     hasSchedulesTodayByPattern,
                     allDataLoaded
                 )
@@ -234,10 +322,21 @@ data class PatternsByStop(
             direction: NearbyHierarchy.DirectionOrHeadsign.Direction,
             leaf: NearbyHierarchy.NearbyLeaf,
             alerts: Collection<Alert>,
+            tripsById: Map<String, Trip>,
             hasSchedulesTodayByPattern: Map<String, Boolean>?,
             allDataLoaded: Boolean,
         ): List<RealtimePatterns> {
             val typicalPatternsByRoute = getTypicalPatternsByRoute(leaf)
+
+            val alertsHere =
+                Alert.applicableAlerts(alerts, null, line.routes.map { it.id }, leaf.childStopIds)
+            val alertsDownstream =
+                alertsDownstream(
+                    alerts.toList(),
+                    leaf.routePatterns.filterNotNull(),
+                    leaf.childStopIds,
+                    tripsById
+                )
 
             // If data hasn't loaded, or there are more than one typical routes in this direction,
             // we never want to split into individual headsign rows.
@@ -247,7 +346,8 @@ data class PatternsByStop(
                         line,
                         direction,
                         leaf,
-                        alerts,
+                        alertsHere,
+                        alertsDownstream,
                         hasSchedulesTodayByPattern,
                         allDataLoaded
                     )
@@ -274,7 +374,8 @@ data class PatternsByStop(
                             line.line
                         ),
                         leaf.filterPatterns { it?.id in patternIds },
-                        alerts,
+                        alertsHere,
+                        alertsDownstream,
                         hasSchedulesTodayByPattern,
                         allDataLoaded
                     )
@@ -286,7 +387,8 @@ data class PatternsByStop(
                     line,
                     direction,
                     leaf,
-                    alerts,
+                    alertsHere,
+                    alertsDownstream,
                     hasSchedulesTodayByPattern,
                     allDataLoaded
                 )

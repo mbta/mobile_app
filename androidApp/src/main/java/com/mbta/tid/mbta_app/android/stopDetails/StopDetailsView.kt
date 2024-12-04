@@ -92,7 +92,7 @@ fun StopDetailsView(
                 departures,
                 globalResponse,
                 now,
-                filter ?: departures.autoFilter(),
+                filter ?: departures.autoStopFilter(),
                 togglePinnedRoute,
                 pinnedRoutes,
                 updateStopFilter

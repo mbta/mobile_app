@@ -15,7 +15,8 @@ struct TripDetailsTarget: Hashable {
 }
 
 enum SheetNavigationStackEntry: Hashable, Identifiable {
-    case stopDetails(Stop, StopDetailsFilter?)
+    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
+    case legacyStopDetails(Stop, StopDetailsFilter?)
     case tripDetails(tripId: String, vehicleId: String, target: TripDetailsTarget?, routeId: String, directionId: Int32)
     case nearby
     case alertDetails(alertId: String, line: Line?, routes: [Route]?)
@@ -26,7 +27,15 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
 
     func stop() -> Stop? {
         switch self {
-        case let .stopDetails(stop, _): stop
+        case let .legacyStopDetails(stop, _): stop
+        case _: nil
+        }
+    }
+
+    func stopId() -> String? {
+        switch self {
+        case let .legacyStopDetails(stop, _): stop.id
+        case let .stopDetails(stopId, _, _): stopId
         case _: nil
         }
     }
@@ -52,7 +61,8 @@ struct NearbySheetItem: Identifiable {
 
     var id: String {
         switch stackEntry {
-        case let .stopDetails(stop, _): stop.id
+        case let .stopDetails(stopId, _, _): stopId
+        case let .legacyStopDetails(stop, _): stop.id
         case let .tripDetails(tripId, _, _, _, _): tripId
         case .nearby: "nearby"
         default: ""
@@ -82,27 +92,60 @@ extension [SheetNavigationStackEntry] {
     var lastStopDetailsFilter: StopDetailsFilter? {
         get {
             switch self.last {
-            case let .stopDetails(_, filter): filter
+            case let .legacyStopDetails(_, filter): filter
+            case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _): filter
             case _: nil
             }
         }
         set {
-            if case let .stopDetails(stop, _) = self.last {
+            if case let .legacyStopDetails(stop, _) = self.last {
                 _ = self.popLast()
-                self.append(.stopDetails(stop, newValue))
+                self.append(.legacyStopDetails(stop, newValue))
+            } else if case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _) = self.last {
+                _ = self.popLast()
+                self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
+            }
+        }
+    }
+
+    var lastTripDetailsFilter: TripDetailsFilter? {
+        get {
+            switch self.last {
+            case let .stopDetails(stopId: _, stopFilter: _, tripFilter: filter): filter
+            default: nil
+            }
+        }
+        set {
+            if case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: _) = self.last {
+                _ = self.popLast()
+                self.append(.stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: newValue))
             }
         }
     }
 
     var lastStop: Stop? {
         let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
-            if case .stopDetails = entry { true } else { false }
+            if case .legacyStopDetails = entry { true } else { false }
         }
-        guard let lastStopEntry else { return nil }
-        if case let .stopDetails(stop, _) = lastStopEntry {
-            return stop
+        return switch lastStopEntry {
+        case let .legacyStopDetails(stop, _): stop
+        default: nil
         }
-        return nil
+    }
+
+    var lastStopId: String? {
+        let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
+            switch entry {
+            case .legacyStopDetails: true
+            case .stopDetails: true
+            default: false
+            }
+        }
+        return switch lastStopEntry {
+        case let .stopDetails(stopId: id, stopFilter: _, tripFilter: _): id
+        case let .legacyStopDetails(stop, _): stop.id
+        default: nil
+        }
     }
 
     func lastSafe() -> SheetNavigationStackEntry {

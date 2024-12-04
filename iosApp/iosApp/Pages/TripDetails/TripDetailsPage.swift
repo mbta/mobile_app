@@ -330,7 +330,7 @@ struct TripDetailsPage: View {
     ) {
         // resolve parent stop before following link
         let realEntry = switch entry {
-        case let .stopDetails(stop, filter): SheetNavigationStackEntry.stopDetails(
+        case let .legacyStopDetails(stop, filter): SheetNavigationStackEntry.legacyStopDetails(
                 stop.resolveParent(stops: globalResponse?.stops ?? [:]),
                 filter
             )
