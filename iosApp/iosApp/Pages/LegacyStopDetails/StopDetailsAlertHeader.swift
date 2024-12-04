@@ -31,6 +31,9 @@ struct StopDetailsAlertHeader: View {
                 .padding(4)
                 .frame(maxHeight: .infinity, alignment: .center)
                 .foregroundStyle(Color.deemphasized)
-        }.padding(.horizontal, 8).padding(.vertical, 12)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 12)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }

@@ -43,39 +43,44 @@ struct PredictionRowView: View {
             }
             AnyView(destination())
             Spacer(minLength: 8)
-            switch onEnum(of: predictions) {
-            case let .some(trips):
-                VStack(alignment: .trailing, spacing: 10) {
-                    ForEach(Array(trips.trips.enumerated()), id: \.1.id) { index, trip in
-                        HStack(spacing: 0) {
-                            UpcomingTripView(
-                                prediction: .some(trip.format),
-                                isFirst: index == 0,
-                                isOnly: index == 0 && trips.trips.count == 1
-                            )
-                            TripPill(tripId: trip.id, pillDecoration: pillDecoration)
-                        }
-                    }
-                }
-                .padding(.vertical, 4)
-            case let .noService(alert):
-                UpcomingTripView(
-                    prediction: .noService(alert.alert.effect),
-                    isFirst: true,
-                    isOnly: true
-                )
-            case .none:
-                UpcomingTripView(prediction: .none, isFirst: true, isOnly: true)
-            case .noSchedulesToday:
-                UpcomingTripView(prediction: .noSchedulesToday, isFirst: true, isOnly: true)
-            case .serviceEndedToday:
-                UpcomingTripView(prediction: .serviceEndedToday, isFirst: true, isOnly: true)
-            case .loading:
-                UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
-            }
+            statuses.foregroundStyle(Color.text)
         }
         .background(Color.fill3)
         .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder
+    var statuses: some View {
+        switch onEnum(of: predictions) {
+        case let .some(trips):
+            VStack(alignment: .trailing, spacing: 10) {
+                ForEach(Array(trips.trips.enumerated()), id: \.1.id) { index, trip in
+                    HStack(spacing: 0) {
+                        UpcomingTripView(
+                            prediction: .some(trip.format),
+                            isFirst: index == 0,
+                            isOnly: index == 0 && trips.trips.count == 1
+                        )
+                        TripPill(tripId: trip.id, pillDecoration: pillDecoration)
+                    }
+                }
+            }
+            .padding(.vertical, 4)
+        case let .noService(alert):
+            UpcomingTripView(
+                prediction: .noService(alert.alert.effect),
+                isFirst: true,
+                isOnly: true
+            )
+        case .none:
+            UpcomingTripView(prediction: .none, isFirst: true, isOnly: true)
+        case .noSchedulesToday:
+            UpcomingTripView(prediction: .noSchedulesToday, isFirst: true, isOnly: true)
+        case .serviceEndedToday:
+            UpcomingTripView(prediction: .serviceEndedToday, isFirst: true, isOnly: true)
+        case .loading:
+            UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
+        }
     }
 
     struct TripPill: View {

@@ -132,6 +132,7 @@
 		9A3BAB722BEAB8E200DAFDE2 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */; };
 		9A3BAB742BEABADF00DAFDE2 /* ColorAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */; };
 		9A4850572CB56A1600F50EE7 /* RouteTypeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */; };
+		9A4D0AD52CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4D0AD42CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift */; };
 		9A4DB7782C937EE300E8755B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7772C937EE300E8755B /* SearchViewModel.swift */; };
 		9A4DB77A2CA47E6D00E8755B /* SearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB7792CA47E6D00E8755B /* SearchField.swift */; };
 		9A4DB77F2CA4A32800E8755B /* SearchOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */; };
@@ -170,6 +171,7 @@
 		9A887D592B698EF1006F5B80 /* SearchResultViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */; };
 		9A88AAC12BD0680C00A5BF88 /* StopDetailsFilterPills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */; };
 		9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A88AAC22BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift */; };
+		9A8E55AE2CFE6E55004ED059 /* StopDetailsFilteredHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8E55AD2CFE6E55004ED059 /* StopDetailsFilteredHeaderTests.swift */; };
 		9A9E3DC22C62AE12004AADC7 /* AlertDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E3DC12C62AE11004AADC7 /* AlertDetailsPage.swift */; };
 		9A9E3DC42C640071004AADC7 /* AlertDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E3DC32C640071004AADC7 /* AlertDetails.swift */; };
 		9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */; };
@@ -202,6 +204,14 @@
 		9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE98DAA2CF4CCAD00EE80AA /* StopDetailsViewModel.swift */; };
 		9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093772BD943A4001DF39F /* DirectionPicker.swift */; };
 		9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */; };
+		9AF29DF62CF5431A005AA4A3 /* DepartureTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */; };
+		9AF29DF82CF5454E005AA4A3 /* StopDetailsFilteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DF72CF5454E005AA4A3 /* StopDetailsFilteredView.swift */; };
+		9AF29DFA2CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DF92CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift */; };
+		9AF29DFE2CF61EED005AA4A3 /* TripStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DFD2CF61EED005AA4A3 /* TripStatus.swift */; };
+		9AF29E002CF63330005AA4A3 /* StopDetailsFilteredHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DFF2CF63330005AA4A3 /* StopDetailsFilteredHeader.swift */; };
+		9AF29E022CF79554005AA4A3 /* TileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29E012CF79554005AA4A3 /* TileData.swift */; };
+		9AF29E042CFA3F77005AA4A3 /* DepartureTileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29E032CFA3F77005AA4A3 /* DepartureTileTests.swift */; };
+		9AF29E062CFE2C4C005AA4A3 /* StopDetailsFilteredDepartureDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29E052CFE2C4C005AA4A3 /* StopDetailsFilteredDepartureDetails.swift */; };
 		9AF88E052B48913C00E08C7C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AF88E042B48913C00E08C7C /* Localizable.xcstrings */; };
 		A430D45FE0676C73075AB85B /* Pods_iosAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1649D982654BA7A4D2F2DC /* Pods_iosAppTests.framework */; };
 		A55C5596CDC797ED68F79279 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C6BD892027AC258EE8F408D /* Pods_iosApp.framework */; };
@@ -408,6 +418,7 @@
 		9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		9A3BAB732BEABADF00DAFDE2 /* ColorAssetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssetExtension.swift; sourceTree = "<group>"; };
 		9A4850562CB56A1500F50EE7 /* RouteTypeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTypeExtension.swift; sourceTree = "<group>"; };
+		9A4D0AD42CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredDepartureDetailsTests.swift; sourceTree = "<group>"; };
 		9A4DB7772C937EE300E8755B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		9A4DB7792CA47E6D00E8755B /* SearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchField.swift; sourceTree = "<group>"; };
 		9A4DB77E2CA4A32800E8755B /* SearchOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchOverlay.swift; sourceTree = "<group>"; };
@@ -446,6 +457,7 @@
 		9A887D582B698EF1006F5B80 /* SearchResultViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewTests.swift; sourceTree = "<group>"; };
 		9A88AAC02BD0680C00A5BF88 /* StopDetailsFilterPills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilterPills.swift; sourceTree = "<group>"; };
 		9A88AAC22BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilterPillsTests.swift; sourceTree = "<group>"; };
+		9A8E55AD2CFE6E55004ED059 /* StopDetailsFilteredHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredHeaderTests.swift; sourceTree = "<group>"; };
 		9A9E3DC12C62AE11004AADC7 /* AlertDetailsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDetailsPage.swift; sourceTree = "<group>"; };
 		9A9E3DC32C640071004AADC7 /* AlertDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDetails.swift; sourceTree = "<group>"; };
 		9A9E7DCC2C21FA70000DA1FD /* NearbyLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NearbyLineView.swift; path = iosAppUITests/NearbyLineView.swift; sourceTree = SOURCE_ROOT; };
@@ -478,6 +490,14 @@
 		9AF093772BD943A4001DF39F /* DirectionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPicker.swift; sourceTree = "<group>"; };
 		9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPickerTests.swift; sourceTree = "<group>"; };
 		9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureTile.swift; sourceTree = "<group>"; };
+		9AF29DF72CF5454E005AA4A3 /* StopDetailsFilteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredView.swift; sourceTree = "<group>"; };
+		9AF29DF92CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsUnfilteredView.swift; sourceTree = "<group>"; };
+		9AF29DFD2CF61EED005AA4A3 /* TripStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripStatus.swift; sourceTree = "<group>"; };
+		9AF29DFF2CF63330005AA4A3 /* StopDetailsFilteredHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredHeader.swift; sourceTree = "<group>"; };
+		9AF29E012CF79554005AA4A3 /* TileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileData.swift; sourceTree = "<group>"; };
+		9AF29E032CFA3F77005AA4A3 /* DepartureTileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureTileTests.swift; sourceTree = "<group>"; };
+		9AF29E052CFE2C4C005AA4A3 /* StopDetailsFilteredDepartureDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredDepartureDetails.swift; sourceTree = "<group>"; };
 		9AF88E042B48913C00E08C7C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		A1E463DA8AB364FD2E4D8123 /* Pods-iosApp.staging debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.staging debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.staging debug.xcconfig"; sourceTree = "<group>"; };
 		D1B30C8C9F419DC14D8EFE9E /* Pods-iosAppTests.prod debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.prod debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.prod debug.xcconfig"; sourceTree = "<group>"; };
@@ -770,7 +790,6 @@
 		8C5054562BB5EB5000C6A51C /* LegacyStopDetails */ = {
 			isa = PBXGroup;
 			children = (
-				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
 				9A76022E2C546CE300B69A35 /* StopDetailsAlertHeader.swift */,
 				6EC6F18E2CE665DB0022799F /* StopDetailsDownstreamAlert.swift */,
 				8C6A483F2BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift */,
@@ -810,7 +829,6 @@
 		8CB823D72BC5EDBF002C87E0 /* LegacyStopDetails */ = {
 			isa = PBXGroup;
 			children = (
-				9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */,
 				9A4F3B9E2C580C820040D6C9 /* StopDetailsAlertHeaderTests.swift */,
 				8CB823DC2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift */,
 				9A88AAC22BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift */,
@@ -911,6 +929,10 @@
 		9A2BCBDC2CED35FF00FB2913 /* StopDetails */ = {
 			isa = PBXGroup;
 			children = (
+				9AF29E032CFA3F77005AA4A3 /* DepartureTileTests.swift */,
+				9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */,
+				9A4D0AD42CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift */,
+				9A8E55AD2CFE6E55004ED059 /* StopDetailsFilteredHeaderTests.swift */,
 				9A2BCBDD2CED365200FB2913 /* StopDetailsPageTests.swift */,
 				9A2BCBDF2CED366300FB2913 /* StopDetailsViewTests.swift */,
 			);
@@ -1068,10 +1090,18 @@
 		9AFCD9DD2CE66AE1001A2384 /* StopDetails */ = {
 			isa = PBXGroup;
 			children = (
+				9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */,
+				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
 				9ACE4FCF2CE6707900FEB006 /* StopDetailsPage.swift */,
 				9A2BCBE12CEE8A9F00FB2913 /* StopDetailsPageHandlerExtension.swift */,
+				9AF29E052CFE2C4C005AA4A3 /* StopDetailsFilteredDepartureDetails.swift */,
+				9AF29DFF2CF63330005AA4A3 /* StopDetailsFilteredHeader.swift */,
+				9AF29DF72CF5454E005AA4A3 /* StopDetailsFilteredView.swift */,
+				9AF29DF92CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift */,
 				9ACE4FD12CE6709B00FEB006 /* StopDetailsView.swift */,
+				9AF29E012CF79554005AA4A3 /* TileData.swift */,
 				9ACE4FD32CE6D17D00FEB006 /* TripDetailsView.swift */,
+				9AF29DFD2CF61EED005AA4A3 /* TripStatus.swift */,
 			);
 			path = StopDetails;
 			sourceTree = "<group>";
@@ -1393,6 +1423,7 @@
 				8CB823DD2BC5F432002C87E0 /* StopDetailsFilteredRouteViewTests.swift in Sources */,
 				8CD58ECD2BEC115B0004E031 /* TripDetailsPageTests.swift in Sources */,
 				6E9DDFB52C3884B7009DD68A /* MapViewModelTests.swift in Sources */,
+				9A4D0AD52CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift in Sources */,
 				6E9F4D382BFE851D00BFB3DA /* UpcomingTripViewTests.swift in Sources */,
 				ED98F6332BD6E26F006EBDF5 /* MockPinnedRoutesRepository.swift in Sources */,
 				9A88AAC32BD07B3C00A5BF88 /* StopDetailsFilterPillsTests.swift in Sources */,
@@ -1424,10 +1455,12 @@
 				8C7FA8712B5F2EF2009B699D /* NearbyTransitViewTests.swift in Sources */,
 				8C5F47662C40842200FB71DA /* TripDetailsStopViewTests.swift in Sources */,
 				8CDF2C342BE9357E007FC912 /* OptionalNavigationLinkTests.swift in Sources */,
+				9AF29E042CFA3F77005AA4A3 /* DepartureTileTests.swift in Sources */,
 				8CA1FB772BF813F500384658 /* TripDetailsStopListSplitViewTests.swift in Sources */,
 				6E2D6CA12CC2EDD700959605 /* ErrorBannerViewModelTests.swift in Sources */,
 				8CB823DB2BC5F053002C87E0 /* StopDetailsRoutesViewTests.swift in Sources */,
 				6E4EACFC2B7A82AC0011AB8B /* MockLocationFetcher.swift in Sources */,
+				9A8E55AE2CFE6E55004ED059 /* StopDetailsFilteredHeaderTests.swift in Sources */,
 				8CE36C932CADEDD300D77F22 /* FetchApiTests.swift in Sources */,
 				8CB823D92BC5EDD2002C87E0 /* StopDetailsRouteViewTests.swift in Sources */,
 				6EE745882B965C2B0052227E /* MessageTests.swift in Sources */,
@@ -1451,6 +1484,7 @@
 			files = (
 				6EC6F18F2CE665DB0022799F /* StopDetailsDownstreamAlert.swift in Sources */,
 				9A6A51EF2C652BB100E3AC13 /* AlertActivePeriodFormattingExtension.swift in Sources */,
+				9AF29DF82CF5454E005AA4A3 /* StopDetailsFilteredView.swift in Sources */,
 				8C7726152BE58FE30088D423 /* TripDetailsPage.swift in Sources */,
 				9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */,
 				8C2752EF2C6D5CA900F0B0A5 /* TripDetailsAnalytics.swift in Sources */,
@@ -1462,12 +1496,15 @@
 				8CE36C8F2CAB231500D77F22 /* FetchApi.swift in Sources */,
 				9A4DB77A2CA47E6D00E8755B /* SearchField.swift in Sources */,
 				EDDE72EF2CBF19EF0000180D /* ArrayExtension.swift in Sources */,
+				9AF29DFE2CF61EED005AA4A3 /* TripStatus.swift in Sources */,
+				9AF29E002CF63330005AA4A3 /* StopDetailsFilteredHeader.swift in Sources */,
 				9A15DA3F2BF51BB7003A861C /* HomeMapViewHandlerExtension.swift in Sources */,
 				9A9E7DD12C2200F4000DA1FD /* TransitHeader.swift in Sources */,
 				8CB28DB92C2CC5AD0036258E /* MapViewModel.swift in Sources */,
 				6EA00B6C2C513D1600B1334C /* MapHttpInterceptor.swift in Sources */,
 				9A9E7DCD2C21FA71000DA1FD /* NearbyLineView.swift in Sources */,
 				9A6DDF912B976FDF004D141A /* EmptyWhenModifier.swift in Sources */,
+				9AF29E022CF79554005AA4A3 /* TileData.swift in Sources */,
 				9ADB849D2BAD05BC006581CE /* Inspection.swift in Sources */,
 				6EE76D1B2BF532010051D608 /* RouteIcon.swift in Sources */,
 				ED24EADE2C1A986900A7BE4D /* AnalyticsProvider.swift in Sources */,
@@ -1547,6 +1584,7 @@
 				ED6C80352BF65CD90036B456 /* PhoenixProtocolConformance.swift in Sources */,
 				9AAA26A12C2DB43600A7745A /* PredictionRowView.swift in Sources */,
 				9AAA269F2C2CAB2600A7745A /* DestinationRowView.swift in Sources */,
+				9AF29E062CFE2C4C005AA4A3 /* StopDetailsFilteredDepartureDetails.swift in Sources */,
 				9A2005C72B97B63300F562E1 /* NearbyStopView.swift in Sources */,
 				9AC4FDF12BACE216004479BF /* NearbyTransitPageView.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
@@ -1585,8 +1623,10 @@
 				8C5054A02CA47C3C00137CFE /* ErrorBanner.swift in Sources */,
 				6E973DA52C17384C00CBF341 /* SheetHeader.swift in Sources */,
 				9A9E7DD32C2203BE000DA1FD /* TransitCard.swift in Sources */,
+				9AF29DFA2CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift in Sources */,
 				8C6A48402BC09A2E0032A554 /* StopDetailsFilteredRouteView.swift in Sources */,
 				9A6ACA2D2CD00F8200299AF5 /* MoreItem.swift in Sources */,
+				9AF29DF62CF5431A005AA4A3 /* DepartureTile.swift in Sources */,
 				8C97F7CA2CCBF4E100A06B34 /* OnboardingPage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

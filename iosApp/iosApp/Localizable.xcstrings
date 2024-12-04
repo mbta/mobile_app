@@ -320,6 +320,53 @@
         }
       }
     },
+    "%@ %@ at %@" : {
+      "comment" : "VoiceOver text for the stop details page header,\ndescribes the selected route and and stop, ex '[Red Line] [train] at [Porter]'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ at %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ en %3$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ no %3$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@ tại %3$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@在%3$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@在%3$@"
+          }
+        }
+      }
+    },
     "%@ %@ to %@" : {
       "comment" : "VoiceOver text for the trip details page header,\ndescribes the route and destination of the vehicle,\nex 'Red Line train to Alewife'",
       "localizations" : {
@@ -1766,6 +1813,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即將到達"
+          }
+        }
+      }
+    },
+    "at **%1$@**" : {
+      "comment" : "Label for the stop a selected route is displayed at.\nFor example \"[Red Line] at [Porter]\".\nThe station name between the asterisks is bolded",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "en **%1$@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nan **%1$@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "no **%1$@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "tại **%1$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在**%1$@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在**%1$@**"
           }
         }
       }
@@ -7386,6 +7474,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網站關閉"
+          }
+        }
+      }
+    },
+    "Stop details" : {
+      "comment" : "Stop details header fallback voiceover text when data fails to load",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalles de parada"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detay estasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalhes da estação"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chi tiết dừng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "车站详情"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "車站詳情"
           }
         }
       }

@@ -28,7 +28,6 @@ struct WithRealtimeIndicator: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: iconSize, height: iconSize)
                 .padding(4)
-                .foregroundStyle(Color.text)
                 .opacity(0.6)
                 .accessibilityHidden(true)
             AnyView(prediction)
