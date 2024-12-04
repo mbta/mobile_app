@@ -86,7 +86,7 @@ fi
 echo "Adding build environment variables"
 cd ${CI_PRIMARY_REPOSITORY_PATH}
 touch .envrc
-echo "export SENTRY_DSN=${SENTRY_DSN}" >> .envrc
+echo "export SENTRY_DSN_IOS=${SENTRY_DSN}" >> .envrc
 echo "export SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}" >> .envrc
 echo "export FIREBASE_KEY=${FIREBASE_KEY}" >> .envrc
 echo "export GOOGLE_APP_ID=${GOOGLE_APP_ID}" >> .envrc
