@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.NearbyStaticData.StaticPatterns
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -568,14 +569,16 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
         if (filterCancellations) this.filterCancellations(isSubway) else this
 
-    fun RealtimePatterns.shouldShow(): Boolean {
+    fun RealtimePatterns.shouldShow(stopPatterns: NearbyStaticData.StopPatterns): Boolean {
         if (!allDataLoaded && showAllPatternsWhileLoading) return true
         val isUpcoming =
             when (cutoffTime) {
                 null -> this.isUpcoming()
                 else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
             }
-        return (isTypical() || isUpcoming) && !isArrivalOnly()
+        val isLastStopOnRoutePattern =
+            stopPatterns.patterns.any { it.stopIds.last() == stopPatterns.stop.id }
+        return (isTypical() || isUpcoming) && !(isLastStopOnRoutePattern && isArrivalOnly())
     }
 
     fun List<PatternsByStop>.filterEmptyAndSort(): List<PatternsByStop> {
@@ -597,7 +600,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                     upcomingTripsMap.maybeFilterCancellations(
                                         transit.route.type.isSubway()
                                     ),
-                                    { it.shouldShow() },
+                                    { it.shouldShow(stopPatterns) },
                                     activeRelevantAlerts,
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
@@ -617,7 +620,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                     upcomingTripsMap.maybeFilterCancellations(
                                         transit.routes.min().type.isSubway()
                                     ),
-                                    { it.shouldShow() },
+                                    { it.shouldShow(stopPatterns) },
                                     activeRelevantAlerts,
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
