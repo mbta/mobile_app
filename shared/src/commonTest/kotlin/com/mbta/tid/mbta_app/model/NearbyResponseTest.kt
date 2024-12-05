@@ -2965,12 +2965,13 @@ class NearbyResponseTest {
                 childStopIds = listOf("70001")
             }
 
-        val foresetHillsPlatform =
+        val forestHillsPlatform =
             objects.stop {
                 id = "70001"
                 locationType = LocationType.STOP
                 parentStationId = "place-forhl"
             }
+
         val orangeRoute = objects.route { id = "Orange" }
         val orangeNorthboundTypical =
             objects.routePattern(orangeRoute) {
@@ -2982,19 +2983,6 @@ class NearbyResponseTest {
                     headsign = "Oak Grove"
                     directionId = 1
                     stopIds = listOf("70001", "70027", "70036")
-                }
-            }
-
-        val orangeNorthboundDiversion =
-            objects.routePattern(orangeRoute) {
-                id = "Orange-6-1"
-                typicality = RoutePattern.Typicality.Diversion
-                directionId = 1
-                representativeTrip {
-                    id = "65686489"
-                    headsign = "North Station"
-                    directionId = 1
-                    stopIds = listOf("70001", "70027")
                 }
             }
 
@@ -3011,55 +2999,7 @@ class NearbyResponseTest {
                 }
             }
 
-        val orangeSouthboundDiversion =
-            objects.routePattern(orangeRoute) {
-                id = "Orange-6-0"
-                typicality = RoutePattern.Typicality.Diversion
-                directionId = 0
-                representativeTrip {
-                    id = "65743311"
-                    headsign = "Forest Hills"
-                    directionId = 0
-                    stopIds = listOf("70026", "70001")
-                }
-            }
-
-        val orangeNorthboundTypicalTrip = objects.trip(orangeNorthboundTypical)
-
-        val orangeNorthboundDiversionTrip = objects.trip(orangeNorthboundDiversion)
-
-        val orangeSouthboundDiversionTrip = objects.trip(orangeSouthboundDiversion)
-
         val time = Instant.parse("2024-10-30T16:40:00-04:00")
-
-        // Scheduled northbound arrivals with North station as last stop
-        val northboundSchedule =
-            objects.schedule {
-                trip = orangeNorthboundDiversionTrip
-                stopId = northStationNorthboundPlatform.id
-                stopSequence = 130
-                arrivalTime = time + 4.minutes
-                departureTime = null
-            }
-
-        val northboundPrediction =
-            objects.prediction {
-                trip = orangeNorthboundTypicalTrip
-                stopId = northStationNorthboundPlatform.id
-                stopSequence = 130
-                arrivalTime = time + 8.minutes
-                departureTime = null
-            }
-
-        // Scheduled southbound departures
-        val southboundSchedule =
-            objects.schedule {
-                trip = orangeSouthboundDiversionTrip
-                stopId = northStationSouthboundPlatform.id
-                stopSequence = 60
-                arrivalTime = null
-                departureTime = time + 6.minutes
-            }
 
         val alert =
             objects.alert {
@@ -3133,12 +3073,8 @@ class NearbyResponseTest {
             NearbyStaticData.build {
                 route(orangeRoute) {
                     stop(northStation) {
-                        headsign(
-                            "Forest Hills",
-                            listOf(orangeSouthboundTypical, orangeSouthboundDiversion)
-                        )
+                        headsign("Forest Hills", listOf(orangeSouthboundTypical))
                         headsign("Oak Grove", listOf(orangeNorthboundTypical))
-                        headsign("North Station", listOf(orangeNorthboundDiversion))
                     }
                 }
             }
@@ -3156,27 +3092,17 @@ class NearbyResponseTest {
                                     orangeRoute,
                                     "Forest Hills",
                                     null,
-                                    listOf(orangeSouthboundTypical, orangeSouthboundDiversion),
-                                    listOf(
-                                        UpcomingTrip(
-                                            trip = orangeSouthboundDiversionTrip,
-                                            schedule = southboundSchedule
-                                        )
-                                    ),
+                                    listOf(orangeSouthboundTypical),
+                                    emptyList(),
                                     alertsHere = listOf(alert),
-                                    hasSchedulesToday = true
+                                    hasSchedulesToday = false
                                 ),
                                 RealtimePatterns.ByHeadsign(
                                     orangeRoute,
                                     "Oak Grove",
                                     null,
                                     listOf(orangeNorthboundTypical),
-                                    listOf(
-                                        UpcomingTrip(
-                                            trip = orangeNorthboundTypicalTrip,
-                                            prediction = northboundPrediction
-                                        )
-                                    ),
+                                    emptyList(),
                                     alertsHere = listOf(alert),
                                     alertsDownstream = listOf(alert),
                                     hasSchedulesToday = false

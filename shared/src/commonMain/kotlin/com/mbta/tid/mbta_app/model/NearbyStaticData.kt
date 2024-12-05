@@ -577,7 +577,11 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                 else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
             }
         val isLastStopOnRoutePattern =
-            stopPatterns.patterns.any { it.stopIds.last() == stopPatterns.stop.id }
+            stopPatterns.patterns.any {
+                val lastStopIdInPattern = it.stopIds.last()
+                val stop = stopPatterns.stop
+                lastStopIdInPattern == stop.id || stop.childStopIds.contains(lastStopIdInPattern)
+            }
         return (isTypical() || isUpcoming) && !(isLastStopOnRoutePattern && isArrivalOnly())
     }
 

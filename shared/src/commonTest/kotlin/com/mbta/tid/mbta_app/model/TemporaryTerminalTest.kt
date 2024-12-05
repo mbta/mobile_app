@@ -476,18 +476,7 @@ class TemporaryTerminalTest {
                     listOf(UpcomingTrip(tripJfkAshmont, scheduleJfkAshmont)),
                     emptyList()
                 ),
-                RealtimePatterns.ByHeadsign(
-                    red,
-                    "Alewife",
-                    null,
-                    listOf(redBraintreeAlewife, redAshmontAlewife),
-                    listOf(
-                        UpcomingTrip(tripAshmontAlewife1, predictionAshmontAlewife1),
-                        UpcomingTrip(tripAshmontAlewife2, predictionAshmontAlewife2),
-                        UpcomingTrip(tripAshmontAlewife3, predictionAshmontAlewife3)
-                    ),
-                    listOf(alert)
-                )
+                // Alewife filtered out because arrival only
             )
         assertEquals(
             expected.condensed(),
