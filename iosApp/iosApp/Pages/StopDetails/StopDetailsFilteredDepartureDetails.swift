@@ -80,7 +80,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                             stopId: stopId,
                             stopSequence: tripFilter.stopSequence?.intValue,
                             now: now,
-                            global: stopDetailsVM.global,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,

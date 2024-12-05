@@ -60,6 +60,7 @@ class StopDetailsViewModel: ObservableObject {
     }
 
     func clearTripDetails() {
+        vehicle = nil
         trip = nil
         tripSchedules = nil
         leaveTripPredictions()

@@ -15,11 +15,14 @@ struct TripStops: View {
     let stopSequence: Int?
     let now: Date
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
-    let routeType: RouteType?
+    let route: Route?
 
     let splitStops: TripDetailsStopList.TargetSplit?
 
-    private var routeTypeText: String { routeType?.typeText(isOnly: true) ?? "" }
+    @State private var stopsExpanded = false
+
+    private var routeColor: Color { if let route { Color(hex: route.color) } else { Color.halo }}
+    private var routeTypeText: String { route?.type.typeText(isOnly: true) ?? "" }
     private var stopsAway: Int? { splitStops?.collapsedStops.count }
     private var target: TripDetailsStopList.Entry? { splitStops?.targetStop }
 
@@ -29,7 +32,7 @@ struct TripStops: View {
         stopSequence: Int?,
         now: Date,
         onTapLink: @escaping (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void,
-        routeType: RouteType?,
+        route: Route?,
         global: GlobalResponse?
     ) {
         self.targetId = targetId
@@ -37,7 +40,7 @@ struct TripStops: View {
         self.stopSequence = stopSequence
         self.now = now
         self.onTapLink = onTapLink
-        self.routeType = routeType
+        self.route = route
 
         splitStops = if let stopSequence, let global {
             stops.splitForTarget(
@@ -51,12 +54,25 @@ struct TripStops: View {
     @ViewBuilder
     func stopList(list: [TripDetailsStopList.Entry]) -> some View {
         ForEach(list, id: \.stopSequence) { stop in
-            TripDetailsStopView(
+            TripStopRow(
                 stop: stop,
                 now: now.toKotlinInstant(),
                 onTapLink: onTapLink,
-                routeType: routeType
+                route: route,
+                lastStop: stop.stopSequence == stops.stops.last?.stopSequence
             )
+        }
+    }
+
+    @ViewBuilder
+    var routeLineTwist: some View {
+        VStack(spacing: 0) {
+            RouteLine(routeColor)
+            ZStack {
+                Image(.stopTripLineTwist).foregroundStyle(routeColor)
+                Image(.stopTripLineTwistShadow)
+            }
+            RouteLine(routeColor)
         }
     }
 
@@ -66,13 +82,40 @@ struct TripStops: View {
                 if let splitStops, let target {
                     if !splitStops.collapsedStops.isEmpty, let stopsAway {
                         DisclosureGroup(
-                            content: { stopList(list: splitStops.collapsedStops) },
-                            label: { Text(
-                                "\(stopsAway, specifier: "%ld") stops away",
-                                comment: "How many stops away the vehicle is from the target stop"
-                            ) }
+                            isExpanded: $stopsExpanded,
+                            content: {
+                                VStack(spacing: 0) {
+                                    HaloSeparator().overlay(alignment: .leading) {
+                                        // Lil 1x4 pt route color bar to maintain an
+                                        // unbroken route color line over the separator
+                                        RouteLine(routeColor).padding(.leading, 42)
+                                    }
+                                    stopList(list: splitStops.collapsedStops)
+                                }
+                            },
+                            label: {
+                                HStack(spacing: 0) {
+                                    VStack(spacing: 0) {
+                                        if stopsExpanded {
+                                            RouteLine(routeColor)
+                                        } else {
+                                            routeLineTwist
+                                        }
+                                    }
+                                    .transition(.opacity.animation(.easeInOut(duration: 0.2)))
+                                    .frame(minWidth: 24)
+
+                                    Text(
+                                        "\(stopsAway, specifier: "%ld") stops away",
+                                        comment: "How many stops away the vehicle is from the target stop"
+                                    )
+                                    .foregroundStyle(Color.text)
+                                    .padding(.leading, 16)
+                                    Spacer()
+                                }.frame(maxWidth: .infinity, minHeight: 56)
+                            }
                         )
-                        .padding(.bottom, 16)
+                        .disclosureGroupStyle(.tripDetails)
                         .accessibilityElement()
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityHeading(.h2)
@@ -91,20 +134,25 @@ struct TripStops: View {
                             """
                         ))
                     }
-                    TripDetailsStopView(
+                    TripStopRow(
                         stop: target,
                         now: now.toKotlinInstant(),
                         onTapLink: onTapLink,
-                        routeType: routeType
+                        route: route,
+                        targeted: true
                     )
-                    .listRowBackground(Color.keyInverse.opacity(0.15))
+                    .background(Color.fill3)
                     stopList(list: splitStops.followingStops)
                 } else {
                     stopList(list: stops.stops)
                 }
             }
-            .padding(.top, 16)
+            .padding(.top, 56)
+            .overlay(alignment: .topLeading) {
+                RouteLine(routeColor).frame(maxHeight: 56).padding(.leading, 42)
+            }
             .background(Color.fill2)
+            .scrollBounceBehavior(.basedOnSize, axes: [.vertical])
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .padding(1)
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))

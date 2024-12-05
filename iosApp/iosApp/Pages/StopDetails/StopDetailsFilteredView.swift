@@ -34,13 +34,8 @@ struct StopDetailsFilteredView: View {
     var tiles: [TileData] = []
     var statuses: [TileData] = []
 
-    var stop: Stop? {
-        stopDetailsVM.global?.stops[stopId]
-    }
-
-    var nowInstant: Instant {
-        now.toKotlinInstant()
-    }
+    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var nowInstant: Instant { now.toKotlinInstant() }
 
     init(
         stopId: String,

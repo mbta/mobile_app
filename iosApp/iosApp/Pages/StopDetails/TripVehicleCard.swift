@@ -16,37 +16,26 @@ struct TripVehicleCard: View {
     let stop: Stop
     let tripId: String
 
-    var routeColor: Color {
-        Color(hex: route.color)
-    }
-
-    var routeTextColor: Color {
-        Color(hex: route.textColor)
-    }
+    var routeColor: Color { Color(hex: route.color) }
+    var routeTextColor: Color { Color(hex: route.textColor) }
 
     var body: some View {
         ZStack(alignment: .leading) {
             VStack(spacing: 0) {
                 // Use a clear rectangle as a spacer, the Spacer() view doesn't
                 // take up enough space, this is always exactly half
-                Rectangle()
-                    .frame(minWidth: 4, maxWidth: 4)
-                    .foregroundStyle(Color.clear)
-                    .padding(.leading, 36)
-                Rectangle()
-                    .frame(minWidth: 4, maxWidth: 4)
-                    .foregroundStyle(routeColor)
-                    .padding(.leading, 36)
-            }
+                RouteLine(Color.clear)
+                RouteLine(routeColor)
+            }.padding(.leading, 46)
             HStack(spacing: 8) {
-                routeVehicle
+                vehiclePuck
                 description
                 Spacer()
                 liveIndicator
             }
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
             .padding(.vertical, 12)
-            .padding(.leading, 20)
+            .padding(.leading, 30)
             .padding(.trailing, 16)
         }
         .background(Color.fill3)
@@ -113,7 +102,7 @@ struct TripVehicleCard: View {
         }
     }
 
-    private var routeVehicle: some View {
+    private var vehiclePuck: some View {
         ZStack {
             Group {
                 Image(.vehicleHalo)
