@@ -22,11 +22,6 @@ sentry {
     org = "mbtace"
     projectName = "mobile_app_android"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
-    ignoredBuildTypes = setOf("debug")
-    includeProguardMapping = false
-    autoUploadProguardMapping = false
-    uploadNativeSymbols = true
-    autoUploadNativeSymbols = true
 }
 
 android {
