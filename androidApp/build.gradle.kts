@@ -66,6 +66,8 @@ dependencies {
     testImplementation(libs.koin.test)
     implementation(libs.koin.junit4)
     androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.androidx.test.monitor)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.compose.ui.test.junit4)
     androidTestImplementation(libs.ktor.client.mock)
 }

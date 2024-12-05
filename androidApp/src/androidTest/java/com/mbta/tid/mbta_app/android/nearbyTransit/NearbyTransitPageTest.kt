@@ -1,18 +1,25 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.rule.GrantPermissionRule
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.util.LocalActivity
+import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -233,27 +240,35 @@ class NearbyTransitPageTest : KoinTest {
         )
     }
 
+    @get:Rule
+    val runtimePermissionRule =
+        GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun testNearbyTransitPageDisplaysCorrectly() {
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                NearbyTransitPage(
-                    Modifier,
-                    NearbyTransit(
-                        alertData = AlertsStreamDataResponse(builder.alerts),
-                        globalResponse = globalResponse,
-                        lastNearbyTransitLocation = Position(0.0, 0.0),
-                        scaffoldState = rememberBottomSheetScaffoldState(),
-                        locationDataManager = MockLocationDataManager(Location("mock")),
-                        viewportProvider = ViewportProvider(rememberMapViewportState()),
-                    ),
-                    false,
-                    {},
-                    {},
-                    bottomBar = {}
-                )
+                CompositionLocalProvider(
+                    LocalActivity provides (LocalContext.current as Activity),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
+                ) {
+                    NearbyTransitPage(
+                        Modifier,
+                        NearbyTransit(
+                            alertData = AlertsStreamDataResponse(builder.alerts),
+                            globalResponse = globalResponse,
+                            lastNearbyTransitLocation = Position(0.0, 0.0),
+                            scaffoldState = rememberBottomSheetScaffoldState(),
+                            locationDataManager = MockLocationDataManager(Location("mock")),
+                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                        ),
+                        false,
+                        {},
+                        {},
+                        bottomBar = {}
+                    )
+                }
             }
         }
 
