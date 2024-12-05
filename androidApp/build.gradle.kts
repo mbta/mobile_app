@@ -118,15 +118,21 @@ android {
     }
 
     task("envVars") {
+        val envFile = File(".envrc")
         val props = Properties()
-        val bufferedReader: BufferedReader = File(".envrc").bufferedReader()
-        bufferedReader.use {
-            it.readLines()
-                .filter { line -> line.contains("export") }
-                .map { line ->
-                    val cleanLine = line.replace("export", "")
-                    props.load(StringReader(cleanLine))
-                }
+
+        if (envFile.exists()) {
+            val bufferedReader: BufferedReader = envFile.bufferedReader()
+            bufferedReader.use {
+                it.readLines()
+                    .filter { line -> line.contains("export") }
+                    .map { line ->
+                        val cleanLine = line.replace("export", "")
+                        props.load(StringReader(cleanLine))
+                    }
+            }
+        } else {
+            println(".envrc file not configured, reading from system env instead")
         }
 
         android.defaultConfig.buildConfigField(
