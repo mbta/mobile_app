@@ -7,7 +7,9 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.rule.GrantPermissionRule
@@ -245,6 +247,7 @@ class NearbyTransitPageTest : KoinTest {
         GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitPageDisplaysCorrectly() {
         composeTestRule.setContent {
@@ -271,6 +274,8 @@ class NearbyTransitPageTest : KoinTest {
                 }
             }
         }
+
+        composeTestRule.waitUntilDoesNotExist(hasText("Loading..."))
 
         composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
 
