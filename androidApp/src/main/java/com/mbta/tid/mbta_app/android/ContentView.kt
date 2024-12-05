@@ -26,46 +26,25 @@ import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
-import com.mbta.tid.mbta_app.android.util.getGlobalData
+import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun ContentView(
-    alertsRepository: IAlertsRepository = koinInject(),
     socket: PhoenixSocket = koinInject(),
 ) {
     val navController = rememberNavController()
-    var alertData: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
-    DisposableEffect(null) {
-        val scope = CoroutineScope(Dispatchers.IO)
-        val job =
-            scope.launch {
-                alertsRepository.connect {
-                    when (it) {
-                        is ApiResult.Ok -> alertData = it.data
-                        is ApiResult.Error -> TODO("handle errors")
-                    }
-                }
-            }
-        onDispose {
-            alertsRepository.disconnect()
-            job.cancel()
-        }
-    }
+    var alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
