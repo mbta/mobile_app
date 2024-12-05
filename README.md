@@ -67,7 +67,7 @@ ios app:
 
 To switch between the staging and prod app flavors, go to Build > Select Build Variant and then set the `:androidApp` Active Build Variant.
 
-Populate any configuration needed in your the .envrc file. These will be read by a gradle buld task
+Populate any configuration needed in your the .envrc file. These will be read by a gradle build task
  set as BuildConfig values so that they can be read by the application.
 
 
