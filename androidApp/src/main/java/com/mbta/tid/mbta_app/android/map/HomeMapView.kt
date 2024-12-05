@@ -55,9 +55,9 @@ import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.state.getRailRouteShapes
+import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
-import com.mbta.tid.mbta_app.android.util.getRailRouteShapes
-import com.mbta.tid.mbta_app.android.util.getStopMapData
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint

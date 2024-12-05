@@ -8,33 +8,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.getSchedule
+import com.mbta.tid.mbta_app.android.state.getNearby
+import com.mbta.tid.mbta_app.android.state.getSchedule
+import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
-import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.koin.compose.koinInject
 
 @Composable
 fun NearbyTransitView(
@@ -44,12 +36,16 @@ fun NearbyTransitView(
     targetLocation: Position?,
     setLastLocation: (Position) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
-    nearbyRepository: INearbyRepository = koinInject(),
 ) {
-    var nearby: NearbyStaticData? by remember { mutableStateOf(null) }
-    val stopIds = remember(nearby) { nearby?.stopIds()?.toList() }
+    var nearby: NearbyStaticData? =
+        getNearby(
+            globalResponse,
+            targetLocation?.let { Coordinate(latitude = it.latitude, longitude = it.longitude) },
+            setLastLocation
+        )
     val now = timer(updateInterval = 5.seconds)
-    val schedules = getSchedule(stopIds, now)
+    val stopIds = remember(nearby) { nearby?.stopIds()?.toList() }
+    val schedules = getSchedule(stopIds)
     val predictions = subscribeToPredictions(stopIds)
 
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
@@ -80,29 +76,6 @@ fun NearbyTransitView(
                 null
             }
         }
-
-    LaunchedEffect(targetLocation, globalResponse) {
-        if (targetLocation != null && globalResponse != null) {
-            withContext(Dispatchers.IO) {
-                val response =
-                    nearbyRepository.getNearby(
-                        global = globalResponse,
-                        location =
-                            Coordinate(
-                                latitude = targetLocation.latitude,
-                                longitude = targetLocation.longitude
-                            )
-                    )
-                when (response) {
-                    is ApiResult.Ok -> {
-                        nearby = response.data
-                        setLastLocation(targetLocation)
-                    }
-                    is ApiResult.Error -> TODO("handle errors")
-                }
-            }
-        }
-    }
 
     Column(modifier) {
         Text(
