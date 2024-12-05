@@ -103,7 +103,8 @@ task("accessToken") {
     if (!tokenFile.exists()) {
         var mapboxAccessToken = System.getenv()["MAPBOX_PUBLIC_TOKEN"]
         if (mapboxAccessToken == null) {
-            Logging.getLogger(this.javaClass).warn("cess.")
+            Logging.getLogger(this.javaClass)
+                .warn("You should set the MAPBOX_PUBLIC_TOKEN environment variable.")
             mapboxAccessToken = ""
         }
         val tokenFileContents =
