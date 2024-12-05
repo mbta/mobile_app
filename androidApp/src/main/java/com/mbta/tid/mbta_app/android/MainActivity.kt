@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.initializeSentry
-import io.sentry.kotlin.multiplatform.Sentry
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +33,6 @@ class MainActivity : ComponentActivity() {
         if (dsn != null && env != null && !BuildConfig.DEBUG) {
             initializeSentry(dsn, env)
             Log.i("MainActivity", "Sentry initialized")
-            Sentry.captureMessage("KB TESTING MESSAGE")
         } else {
             Log.w("MainActivity", "skipping sentry initialization")
         }
