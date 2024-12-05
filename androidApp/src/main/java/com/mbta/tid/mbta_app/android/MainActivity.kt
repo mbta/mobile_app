@@ -31,14 +31,12 @@ class MainActivity : ComponentActivity() {
         val dsn = BuildConfig.SENTRY_DSN
         val env = BuildConfig.SENTRY_ENVIRONMENT
 
-        // TODO: RESTORE DEBUG CHECK
-        if (dsn != null && env != null) { // !BuildConfig.DEBUG &&) {
-            Log.i("MainActivity", "SENTRY INIT ${dsn} ${env}")
+        if (dsn != null && env != null && !BuildConfig.DEBUG) {
             initializeSentry(dsn, env)
-            Log.i("MainActivity", "SENTRY INIT OK")
+            Log.i("MainActivity", "Sentry initialized")
             Sentry.captureMessage("KB TESTING MESSAGE")
         } else {
-            Log.w("MainActivity", "skipping sentry initialization dsn=${dsn} env=${env}")
+            Log.w("MainActivity", "skipping sentry initialization")
         }
     }
 }
