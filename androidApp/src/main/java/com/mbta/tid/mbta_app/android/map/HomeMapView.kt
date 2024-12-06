@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,12 +29,12 @@ import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.ViewAnnotationAnchor
+import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.compose.DisposableMapEffect
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapEvents
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
-import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
@@ -78,6 +79,7 @@ fun HomeMapView(
     globalResponse: GlobalResponse?,
     alertsData: AlertsStreamDataResponse?,
     lastNearbyTransitLocation: Position?,
+    nearbyTransitSelectingLocationState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
     viewportProvider: ViewportProvider,
     currentNavEntry: NavBackStackEntry?,
@@ -86,6 +88,7 @@ fun HomeMapView(
     stopDetailsDepartures: StopDetailsDepartures?,
     stopDetailsFilter: StopDetailsFilter?
 ) {
+    var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
@@ -110,6 +113,10 @@ fun HomeMapView(
 
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
+
+    val isNearbyNotFollowing =
+        !viewportProvider.isFollowingPuck &&
+            currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -237,7 +244,7 @@ fun HomeMapView(
     val zoomLevel by
         cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
 
-    Box(modifier) {
+    Box(modifier, contentAlignment = Alignment.Center) {
         MapboxMap(
             Modifier.fillMaxSize(),
             mapEvents =
@@ -336,12 +343,20 @@ fun HomeMapView(
                     layerManager.`object` = MapLayerManager(map.mapboxMap, context)
             }
 
-            if (!viewportProvider.isFollowingPuck && lastNearbyTransitLocation != null) {
-                CircleAnnotation(
-                    point = lastNearbyTransitLocation.toPoint(),
-                    circleColorString = "#ba75c7",
-                    circleRadius = 10.0
-                )
+            if (
+                isNearbyNotFollowing &&
+                    lastNearbyTransitLocation != null &&
+                    !nearbyTransitSelectingLocation
+            ) {
+                ViewAnnotation(
+                    options =
+                        ViewAnnotationOptions.Builder()
+                            .geometry(lastNearbyTransitLocation.toPoint())
+                            .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
+                            .build()
+                ) {
+                    Crosshairs()
+                }
             }
 
             for (vehicle in vehiclesData) {
@@ -366,6 +381,19 @@ fun HomeMapView(
                 onClick = { viewportProvider.follow() },
                 Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
+        }
+
+        LaunchedEffect(viewportProvider.isManuallyCentering) {
+            if (
+                viewportProvider.isManuallyCentering &&
+                    currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+            ) {
+                nearbyTransitSelectingLocation = true
+            }
+        }
+
+        if (nearbyTransitSelectingLocation) {
+            Crosshairs()
         }
     }
 }
