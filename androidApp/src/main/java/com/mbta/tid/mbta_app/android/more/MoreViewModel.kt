@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MoreViewModel(val context: Context, private val settingsRepository: ISettingsRepository) :
-    ViewModel() {
+class MoreViewModel(
+    private val context: Context,
+    private val settingsRepository: ISettingsRepository
+) : ViewModel() {
 
     private val _settings = MutableStateFlow<Map<Settings, Boolean>>(mapOf())
     private val _sections = MutableStateFlow<List<MoreSection>>(listOf())
@@ -31,6 +33,38 @@ class MoreViewModel(val context: Context, private val settingsRepository: ISetti
     fun getSections(settings: Map<Settings, Boolean>): List<MoreSection> {
 
         return listOf(
+            MoreSection(
+                id = MoreSection.Category.Feedback,
+                items =
+                    listOf(
+                        MoreItem.Link(
+                            label = context.resources.getString(R.string.feedback_link_form),
+                            url = "https://mbta.com/appfeedback"
+                        )
+                    )
+            ),
+            MoreSection(
+                id = MoreSection.Category.Resources,
+                items =
+                    listOf(
+                        MoreItem.Link(
+                            label =
+                                context.resources.getString(R.string.resources_link_trip_planner),
+                            url = "https://www.mbta.com/trip-planner"
+                        ),
+                        MoreItem.Link(
+                            label = context.resources.getString(R.string.resources_link_fare_info),
+                            url = "https://www.mbta.com/fares"
+                        ),
+                        MoreItem.Link(
+                            label = context.resources.getString(R.string.resources_link_mticket),
+                            note =
+                                context.resources.getString(R.string.resources_link_mticket_note),
+                            url =
+                                "https://play.google.com/store/apps/details?id=com.mbta.mobileapp",
+                        )
+                    )
+            ),
             MoreSection(
                 id = MoreSection.Category.Settings,
                 items =
@@ -58,6 +92,29 @@ class MoreViewModel(val context: Context, private val settingsRepository: ISetti
                         )
                     )
             ),
+            MoreSection(
+                id = MoreSection.Category.Other,
+                items =
+                    listOf(
+                        MoreItem.Link(
+                            label = context.resources.getString(R.string.other_link_tos),
+                            url = "https://www.mbta.com/policies/terms-use"
+                        ),
+                        MoreItem.Link(
+                            label = context.resources.getString(R.string.other_link_privacy_policy),
+                            url = "https://www.mbta.com/policies/privacy-policy"
+                        ),
+                        MoreItem.Link(
+                            label = context.resources.getString(R.string.other_link_source_code),
+                            url = "https://github.com/mbta/mobile_app"
+                        )
+                    )
+            ),
+            MoreSection(
+                id = MoreSection.Category.Support,
+                items = listOf(MoreItem.Phone("617-222-3200", "6172223200")),
+                note = context.resources.getString(R.string.more_section_support_note)
+            )
         )
     }
 

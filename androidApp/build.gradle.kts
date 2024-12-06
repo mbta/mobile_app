@@ -21,7 +21,10 @@ android {
         versionName = (findProperty("android.injected.version.name") ?: "0.1.0") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes { getByName("release") { isMinifyEnabled = false } }
     flavorDimensions += "environment"
