@@ -6,11 +6,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
+import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.state.getSchedule
+import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
-import com.mbta.tid.mbta_app.android.util.getGlobalData
-import com.mbta.tid.mbta_app.android.util.getSchedule
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -36,7 +36,7 @@ fun StopDetailsPage(
 
     val now = timer(updateInterval = 5.seconds)
 
-    val schedulesResponse = getSchedule(stopIds = listOf(stop.id), now)
+    val schedulesResponse = getSchedule(stopIds = listOf(stop.id))
 
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
