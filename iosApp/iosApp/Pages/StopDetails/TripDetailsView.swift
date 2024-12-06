@@ -101,7 +101,10 @@ struct TripDetailsView: View {
         .padding(.horizontal, 6)
         .task { stopDetailsVM.loadTripDetails(tripId: tripId) }
         .onAppear { joinRealtime() }
-        .onDisappear { leaveRealtime() }
+        .onDisappear {
+            stopDetailsVM.clearTripDetails()
+            clearMapVehicle()
+        }
         .onChange(of: tripId) { nextTripId in
             mapVM.selectedVehicle = nil
             stopDetailsVM.clearTripDetails()
@@ -176,14 +179,15 @@ struct TripDetailsView: View {
         ).loadingPlaceholder()
     }
 
+    private func clearMapVehicle() {
+        if mapVM.selectedVehicle?.id == vehicleId {
+            mapVM.selectedVehicle = nil
+        }
+    }
+
     private func joinRealtime() {
         stopDetailsVM.joinTripPredictions(tripId: tripId)
         joinVehicle(vehicleId: vehicleId)
-    }
-
-    private func leaveRealtime() {
-        stopDetailsVM.leaveTripPredictions()
-        leaveVehicle()
     }
 
     private func joinVehicle(vehicleId: String?) {
@@ -194,11 +198,14 @@ struct TripDetailsView: View {
         )
     }
 
+    private func leaveRealtime() {
+        stopDetailsVM.leaveTripPredictions()
+        leaveVehicle()
+    }
+
     private func leaveVehicle() {
         stopDetailsVM.leaveVehicle()
-        if mapVM.selectedVehicle?.id == vehicleId {
-            mapVM.selectedVehicle = nil
-        }
+        clearMapVehicle()
     }
 
     func onTapStop(

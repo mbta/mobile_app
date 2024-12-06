@@ -60,11 +60,12 @@ class StopDetailsViewModel: ObservableObject {
     }
 
     func clearTripDetails() {
-        vehicle = nil
         trip = nil
         tripSchedules = nil
         leaveTripPredictions()
         tripPredictions = nil
+        leaveVehicle()
+        vehicle = nil
         errorBannerRepository.clearDataError(key: "TripDetailsView.loadTripSchedules")
         errorBannerRepository.clearDataError(key: "TripDetailsView.loadTrip")
     }
