@@ -51,7 +51,8 @@ fun ContentView(
         }
     }
     val viewportProvider = remember { ViewportProvider(mapViewportState) }
-    val lastNearbyTransitLocation by remember { mutableStateOf<Position?>(null) }
+    val lastNearbyTransitLocationState = remember { mutableStateOf<Position?>(null) }
+    val nearbyTransitSelectingLocationState = remember { mutableStateOf(false) }
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
@@ -69,7 +70,8 @@ fun ContentView(
                 NearbyTransit(
                     alertData = alertData,
                     globalResponse = globalResponse,
-                    lastNearbyTransitLocation = lastNearbyTransitLocation,
+                    lastNearbyTransitLocationState = lastNearbyTransitLocationState,
+                    nearbyTransitSelectingLocationState = nearbyTransitSelectingLocationState,
                     scaffoldState = scaffoldState,
                     locationDataManager = locationDataManager,
                     viewportProvider = viewportProvider,

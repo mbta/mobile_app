@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,11 +57,15 @@ import org.koin.compose.koinInject
 data class NearbyTransit(
     val alertData: AlertsStreamDataResponse?,
     val globalResponse: GlobalResponse?,
-    var lastNearbyTransitLocation: Position?,
+    val lastNearbyTransitLocationState: MutableState<Position?>,
+    val nearbyTransitSelectingLocationState: MutableState<Boolean>,
     val scaffoldState: BottomSheetScaffoldState,
     val locationDataManager: LocationDataManager,
     val viewportProvider: ViewportProvider,
-)
+) {
+    var lastNearbyTransitLocation by lastNearbyTransitLocationState
+    var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
+}
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class, FlowPreview::class)
 @Composable
@@ -223,6 +228,9 @@ fun NearbyTransitPage(
                                 globalResponse = nearbyTransit.globalResponse,
                                 targetLocation = targetLocation,
                                 setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                                setSelectingLocation = {
+                                    nearbyTransit.nearbyTransitSelectingLocation = it
+                                },
                                 onOpenStopDetails = { stopId, filter ->
                                     navController.navigate(
                                         SheetRoutes.StopDetails(
@@ -246,6 +254,8 @@ fun NearbyTransitPage(
                 globalResponse = nearbyTransit.globalResponse,
                 alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
+                nearbyTransitSelectingLocationState =
+                    nearbyTransit.nearbyTransitSelectingLocationState,
                 locationDataManager = nearbyTransit.locationDataManager,
                 viewportProvider = nearbyTransit.viewportProvider,
                 currentNavEntry = currentNavEntry,
