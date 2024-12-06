@@ -578,6 +578,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
             }
         val isLastStopOnRoutePattern =
             this.patterns
+                .filter { it?.typicality == RoutePattern.Typicality.Typical }
                 .mapNotNull { it?.representativeTripId }
                 .any { representativeTripId ->
                     val representativeTrip = globalData?.trips?.get(representativeTripId)
