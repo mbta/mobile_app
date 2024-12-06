@@ -239,8 +239,9 @@ data class Alert(
         }
 
         /**
-         * Gets the alerts of the first stop that is downstream of the target stop which has alerts.
-         * Considers only alerts that have specified stops.
+         * Gets the alerts of the first stop that is downstream of the target stop which has any
+         * alerts that are different from the alerts at the target stop. Considers only alerts that
+         * have specified stops.
          *
          * @param alerts: The full list of alerts
          * @param trip: The trip used to calculate downstream stops
@@ -255,6 +256,16 @@ data class Alert(
 
             val alerts = alerts.filter { it.hasStopsSpecified }
 
+            val targetStopAlertIds =
+                applicableAlerts(
+                        alerts.toList(),
+                        trip.directionId,
+                        listOf(trip.routeId),
+                        targetStopWithChildren
+                    )
+                    .map { it.id }
+                    .toSet()
+
             val indexOfTargetStopInPattern =
                 stopIds.indexOfFirst { targetStopWithChildren.contains(it) }
             if (indexOfTargetStopInPattern != -1 && indexOfTargetStopInPattern < stopIds.size - 1) {
@@ -262,12 +273,15 @@ data class Alert(
                 val firstStopAlerts =
                     downstreamStops
                         .map { stop ->
-                            applicableAlerts(
-                                alerts.toList() ?: listOf(),
-                                trip.directionId,
-                                listOf(trip.routeId),
-                                setOf(stop)
-                            )
+                            val alerts =
+                                applicableAlerts(
+                                        alerts.toList(),
+                                        trip.directionId,
+                                        listOf(trip.routeId),
+                                        setOf(stop)
+                                    )
+                                    .filter { !targetStopAlertIds.contains(it.id) }
+                            alerts
                         }
                         .firstOrNull { alerts -> !alerts.isNullOrEmpty() }
                         ?: listOf()
