@@ -569,7 +569,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
     fun UpcomingTripsMap.maybeFilterCancellations(isSubway: Boolean) =
         if (filterCancellations) this.filterCancellations(isSubway) else this
 
-    fun RealtimePatterns.shouldShow(stopPatterns: NearbyStaticData.StopPatterns): Boolean {
+    fun RealtimePatterns.shouldShow(stop: Stop): Boolean {
         if (!allDataLoaded && showAllPatternsWhileLoading) return true
         val isUpcoming =
             when (cutoffTime) {
@@ -577,11 +577,15 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                 else -> this.isUpcomingWithin(filterAtTime, cutoffTime)
             }
         val isLastStopOnRoutePattern =
-            stopPatterns.patterns.any {
-                val lastStopIdInPattern = it.stopIds.last()
-                val stop = stopPatterns.stop
-                lastStopIdInPattern == stop.id || stop.childStopIds.contains(lastStopIdInPattern)
-            }
+            this.patterns
+                .mapNotNull { it?.representativeTripId }
+                .any { representativeTripId ->
+                    val representativeTrip = globalData?.trips?.get(representativeTripId)
+                    val lastStopIdInPattern =
+                        representativeTrip?.stopIds?.last() ?: return@any false
+                    lastStopIdInPattern == stop.id ||
+                        stop.childStopIds.contains(lastStopIdInPattern)
+                }
         return (isTypical() || isUpcoming) && !(isLastStopOnRoutePattern && isArrivalOnly())
     }
 
@@ -604,7 +608,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                     upcomingTripsMap.maybeFilterCancellations(
                                         transit.route.type.isSubway()
                                     ),
-                                    { it.shouldShow(stopPatterns) },
+                                    { it.shouldShow(stopPatterns.stop) },
                                     activeRelevantAlerts,
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
@@ -624,7 +628,7 @@ fun NearbyStaticData.withRealtimeInfoWithoutTripHeadsigns(
                                     upcomingTripsMap.maybeFilterCancellations(
                                         transit.routes.min().type.isSubway()
                                     ),
-                                    { it.shouldShow(stopPatterns) },
+                                    { it.shouldShow(stopPatterns.stop) },
                                     activeRelevantAlerts,
                                     globalData?.trips ?: mapOf(),
                                     hasSchedulesTodayByPattern,
@@ -811,7 +815,7 @@ class NearbyStaticDataBuilder {
     }
 
     class PatternsBuilder(val line: Line?, val routes: List<Route>, val allStopIds: Set<String>) {
-        val data = mutableListOf<NearbyStaticData.StaticPatterns>()
+        val data = mutableListOf<StaticPatterns>()
         val directions = mutableListOf<Direction>()
 
         @DefaultArgumentInterop.Enabled
@@ -822,16 +826,7 @@ class NearbyStaticDataBuilder {
             stopIds: Set<String> = allStopIds,
             direction: Direction? = null
         ) {
-            data.add(
-                NearbyStaticData.StaticPatterns.ByHeadsign(
-                    route,
-                    headsign,
-                    line,
-                    patterns,
-                    stopIds,
-                    direction
-                )
-            )
+            data.add(StaticPatterns.ByHeadsign(route, headsign, line, patterns, stopIds, direction))
         }
 
         @DefaultArgumentInterop.Enabled
@@ -853,15 +848,7 @@ class NearbyStaticDataBuilder {
             if (line == null) {
                 throw RuntimeException("Can't build direction patterns without a line")
             }
-            data.add(
-                NearbyStaticData.StaticPatterns.ByDirection(
-                    line,
-                    routes,
-                    direction,
-                    patterns,
-                    stopIds
-                )
-            )
+            data.add(StaticPatterns.ByDirection(line, routes, direction, patterns, stopIds))
             directions.add(direction)
         }
     }
