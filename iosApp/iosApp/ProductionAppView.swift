@@ -96,11 +96,11 @@ struct ProductionAppView: View {
     }
 
     private static func initSentry() {
-        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String {
+        if let sentryDsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN_IOS") as? String {
             let sentryEnv = Bundle.main.object(forInfoDictionaryKey: "SENTRY_ENVIRONMENT") as? String ?? "debug"
             AppSetupKt.initializeSentry(dsn: sentryDsn, environment: sentryEnv)
         } else {
-            Logger().warning("skipping sentry initialization - SENTRY_DSN not configured")
+            Logger().warning("skipping sentry initialization - SENTRY_DSN_IOS not configured")
         }
     }
 }
