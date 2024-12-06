@@ -134,6 +134,7 @@ struct TripDetailsView: View {
         _ vehicleStop: Stop?,
         _ route: Route?
     ) -> some View {
+        let vehicleShown = vehicle != nil && route != nil && vehicleStop != nil
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
                 // Dummy vehicle card to space the stop list down exactly the height of the card
@@ -142,12 +143,13 @@ struct TripDetailsView: View {
                     targetId: stopId,
                     stops: stops,
                     stopSequence: stopSequence,
+                    vehicleShown: vehicleShown,
                     now: now,
                     onTapLink: onTapStop,
                     route: route,
                     global: stopDetailsVM.global
                 )
-                .padding(.top, -56)
+                .padding(.top, vehicleShown ? -56 : 0)
             }
             vehicleCardView(vehicle, vehicleStop, route)
         }

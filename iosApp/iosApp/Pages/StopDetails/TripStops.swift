@@ -13,6 +13,7 @@ struct TripStops: View {
     let targetId: String
     let stops: TripDetailsStopList
     let stopSequence: Int?
+    let vehicleShown: Bool
     let now: Date
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
     let route: Route?
@@ -30,6 +31,7 @@ struct TripStops: View {
         targetId: String,
         stops: TripDetailsStopList,
         stopSequence: Int?,
+        vehicleShown: Bool = true,
         now: Date,
         onTapLink: @escaping (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void,
         route: Route?,
@@ -38,6 +40,7 @@ struct TripStops: View {
         self.targetId = targetId
         self.stops = stops
         self.stopSequence = stopSequence
+        self.vehicleShown = vehicleShown
         self.now = now
         self.onTapLink = onTapLink
         self.route = route
@@ -147,9 +150,9 @@ struct TripStops: View {
                     stopList(list: stops.stops)
                 }
             }
-            .padding(.top, 56)
+            .padding(.top, vehicleShown ? 56 : 0)
             .overlay(alignment: .topLeading) {
-                RouteLine(routeColor).frame(maxHeight: 56).padding(.leading, 42)
+                RouteLine(routeColor).frame(maxHeight: vehicleShown ? 56 : 0).padding(.leading, 42)
             }
             .background(Color.fill2)
             .scrollBounceBehavior(.basedOnSize, axes: [.vertical])
