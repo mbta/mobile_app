@@ -780,7 +780,7 @@ fun NearbyStaticData.withRealtimeInfo(
             alerts,
             filterAtTime,
             showAllPatternsWhileLoading = false,
-            hideNonTypicalPatternsBeyondNext = 90.minutes,
+            hideNonTypicalPatternsBeyondNext = 120.minutes,
             filterCancellations = true,
             pinnedRoutes
         )
@@ -793,7 +793,7 @@ fun NearbyStaticData.withRealtimeInfo(
             alerts,
             filterAtTime,
             showAllPatternsWhileLoading = false,
-            hideNonTypicalPatternsBeyondNext = 90.minutes,
+            hideNonTypicalPatternsBeyondNext = 120.minutes,
             filterCancellations = true,
             pinnedRoutes
         )

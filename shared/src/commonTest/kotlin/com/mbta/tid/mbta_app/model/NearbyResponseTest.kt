@@ -1008,14 +1008,14 @@ class NearbyResponseTest {
             }
         val deviationOutboundPrediction =
             objects.prediction {
-                departureTime = time + 89.minutes
+                departureTime = time + 119.minutes
                 routeId = route1.id
                 stopId = stop1.id
                 tripId = deviationOutbound.representativeTripId
             }
         val deviationInboundPrediction =
             objects.prediction {
-                departureTime = time + 91.minutes
+                departureTime = time + 121.minutes
                 routeId = route1.id
                 stopId = stop1.id
                 tripId = deviationInbound.representativeTripId
@@ -1172,7 +1172,7 @@ class NearbyResponseTest {
             objects.schedule {
                 stopId = stop1.id
                 trip = objects.trip(scheduleLater)
-                departureTime = time + 91.minutes
+                departureTime = time + 121.minutes
             }
         val predictionPastPrediction =
             objects.prediction {
@@ -1204,7 +1204,7 @@ class NearbyResponseTest {
             objects.prediction {
                 stopId = stop1.id
                 trip = objects.trip(predictionLater)
-                departureTime = time + 91.minutes
+                departureTime = time + 121.minutes
             }
 
         assertEquals(
