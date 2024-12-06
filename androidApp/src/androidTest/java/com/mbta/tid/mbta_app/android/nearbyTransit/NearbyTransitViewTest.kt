@@ -238,6 +238,7 @@ class NearbyTransitViewTest : KoinTest {
                     globalResponse = globalResponse,
                     targetLocation = Position(0.0, 0.0),
                     setLastLocation = {},
+                    setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> }
                 )
             }

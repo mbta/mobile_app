@@ -5,6 +5,8 @@ import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -261,7 +263,10 @@ class NearbyTransitPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocation = Position(0.0, 0.0),
+                            lastNearbyTransitLocationState =
+                                remember { mutableStateOf(Position(0.0, 0.0)) },
+                            nearbyTransitSelectingLocationState =
+                                remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
                             viewportProvider = ViewportProvider(rememberMapViewportState()),
