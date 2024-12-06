@@ -20,9 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.mapbox.android.gestures.MoveGestureDetector
-import com.mapbox.android.gestures.ShoveGestureDetector
-import com.mapbox.android.gestures.StandardScaleGestureDetector
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
@@ -38,14 +35,9 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.style.MapStyle
-import com.mapbox.maps.plugin.gestures.OnMoveListener
-import com.mapbox.maps.plugin.gestures.OnScaleListener
-import com.mapbox.maps.plugin.gestures.OnShoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.gestures.gestures
-import com.mapbox.maps.plugin.locationcomponent.LocationConsumer
-import com.mapbox.maps.plugin.locationcomponent.LocationProvider
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -292,25 +284,7 @@ fun HomeMapView(
 
             val context = LocalContext.current
 
-            val locationProvider = remember {
-                object : LocationProvider {
-                    private val consumers = mutableSetOf<LocationConsumer>()
-
-                    fun sendLocation(location: Point) {
-                        for (consumer in consumers) {
-                            consumer.onLocationUpdated(location)
-                        }
-                    }
-
-                    override fun registerLocationConsumer(locationConsumer: LocationConsumer) {
-                        consumers.add(locationConsumer)
-                    }
-
-                    override fun unRegisterLocationConsumer(locationConsumer: LocationConsumer) {
-                        consumers.remove(locationConsumer)
-                    }
-                }
-            }
+            val locationProvider = remember { PassthroughLocationProvider() }
 
             LaunchedEffect(locationDataManager) {
                 locationDataManager.currentLocation.collect { location ->
@@ -346,38 +320,7 @@ fun HomeMapView(
             }
 
             DisposableMapEffect { map ->
-                val listener =
-                    object : OnMoveListener, OnScaleListener, OnShoveListener {
-                        override fun onMove(detector: MoveGestureDetector) = false
-
-                        override fun onMoveBegin(detector: MoveGestureDetector) {
-                            viewportProvider.setIsManuallyCentering(true)
-                        }
-
-                        override fun onMoveEnd(detector: MoveGestureDetector) {
-                            viewportProvider.setIsManuallyCentering(false)
-                        }
-
-                        override fun onScale(detector: StandardScaleGestureDetector) {}
-
-                        override fun onScaleBegin(detector: StandardScaleGestureDetector) {
-                            viewportProvider.setIsManuallyCentering(true)
-                        }
-
-                        override fun onScaleEnd(detector: StandardScaleGestureDetector) {
-                            viewportProvider.setIsManuallyCentering(false)
-                        }
-
-                        override fun onShove(detector: ShoveGestureDetector) {}
-
-                        override fun onShoveBegin(detector: ShoveGestureDetector) {
-                            viewportProvider.setIsManuallyCentering(true)
-                        }
-
-                        override fun onShoveEnd(detector: ShoveGestureDetector) {
-                            viewportProvider.setIsManuallyCentering(false)
-                        }
-                    }
+                val listener = ManuallyCenteringListener(viewportProvider)
                 map.gestures.addOnMoveListener(listener)
                 map.gestures.addOnScaleListener(listener)
                 map.gestures.addOnShoveListener(listener)
