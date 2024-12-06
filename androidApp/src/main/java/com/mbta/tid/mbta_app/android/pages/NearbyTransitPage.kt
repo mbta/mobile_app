@@ -200,7 +200,8 @@ fun NearbyTransitPage(
                                 nearbyTransit.viewportProvider.cameraStateFlow
                                     .debounce(0.5.seconds)
                                     .collect {
-                                        // TODO only if isNearbyVisible
+                                        // since this LaunchedEffect is cancelled when not on the
+                                        // nearby transit page, we don't need to check
                                         targetLocation = it.center.toPosition()
                                     }
                             }
