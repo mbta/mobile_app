@@ -80,21 +80,22 @@ open class IdleTripRepository : ITripRepository {
     }
 }
 
-open class MockTripRepository(
-    var tripSchedulesResponse: TripSchedulesResponse,
-    var tripResponse: TripResponse,
+open class MockTripRepository : ITripRepository {
+    var tripSchedulesResponse: TripSchedulesResponse
+    var tripResponse: TripResponse
     var tripShape: TripShape
-) : ITripRepository {
+
     @DefaultArgumentInterop.Enabled
+    // This can't be a primary constructor because DefaultArgumentInterop doesn't work on those
     constructor(
         tripSchedulesResponse: TripSchedulesResponse? = null,
         tripResponse: TripResponse? = null,
         tripShape: TripShape? = null
-    ) : this(
-        tripSchedulesResponse ?: TripSchedulesResponse.Unknown,
-        tripResponse ?: TripResponse(ObjectCollectionBuilder().trip {}),
-        tripShape ?: TripShape(ShapeWithStops(0, "", "", null, emptyList()))
-    )
+    ) {
+        this.tripSchedulesResponse = tripSchedulesResponse ?: TripSchedulesResponse.Unknown
+        this.tripResponse = tripResponse ?: TripResponse(ObjectCollectionBuilder().trip {})
+        this.tripShape = tripShape ?: TripShape(ShapeWithStops(0, "", "", null, emptyList()))
+    }
 
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
         return ApiResult.Ok(tripSchedulesResponse)
