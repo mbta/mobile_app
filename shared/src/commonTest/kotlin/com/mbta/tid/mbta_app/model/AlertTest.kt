@@ -319,6 +319,70 @@ class AlertTest {
 
 
     @Test
+    fun `downstreamAlerts excludes alerts affecting the target stop`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val targetStop = objects.stop()
+        val downstreamStop1 = objects.stop()
+        val downstreamStop2 = objects.stop()
+
+        val alertAllStops =
+            objects.alert {
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = targetStop.id,
+                    directionId = 0
+                )
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = downstreamStop1.id,
+                    directionId = 0
+                )
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = downstreamStop2.id,
+                    directionId = 0
+                )
+            }
+
+        val alertDownstream2Only =
+            objects.alert {
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id,
+                    stop = downstreamStop2.id,
+                    directionId = 0
+                )
+            }
+
+        val trip =
+            objects.trip {
+                routeId = route.id
+                directionId = 0
+                stopIds =
+                    listOf(
+                        targetStop.id,
+                        downstreamStop1.id,
+                        downstreamStop2.id,
+                    )
+            }
+
+        val downstreamAlerts =
+            Alert.downstreamAlerts(
+                listOf(alertAllStops, alertDownstream2Only),
+                trip,
+                setOf(targetStop.id)
+            )
+
+        assertEquals(listOf(alertDownstream2Only), downstreamAlerts)
+    }
+
+
+
+    @Test
     fun `downstreamAlerts ignores alert without stops specified`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
