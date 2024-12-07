@@ -15,14 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class NearbyViewModel(
     private val nearbyRepository: INearbyRepository,
     private val globalResponse: GlobalResponse?,
-    private val location: Coordinate,
+    private val location: Coordinate?,
     setLastLocation: (Position) -> Unit
 ) : ViewModel() {
     private val _nearbyResponse = MutableStateFlow<NearbyStaticData?>(null)
@@ -32,8 +31,8 @@ class NearbyViewModel(
     init {
         CoroutineScope(Dispatchers.IO).launch {
             nearbyResponse.collect {
-                if (globalResponse != null) {
-                    getNearby(globalResponse)
+                if (globalResponse != null && location != null) {
+                    getNearby(globalResponse, location)
                     setLastLocation(
                         Position(latitude = location.latitude, longitude = location.longitude)
                     )
@@ -42,7 +41,7 @@ class NearbyViewModel(
         }
     }
 
-    suspend fun getNearby(globalResponse: GlobalResponse) {
+    suspend fun getNearby(globalResponse: GlobalResponse, location: Coordinate) {
         when (val data = nearbyRepository.getNearby(globalResponse, location)) {
             is ApiResult.Ok -> _nearbyResponse.emit(data.data)
             is ApiResult.Error -> TODO("handle errors")
@@ -58,7 +57,7 @@ class NearbyViewModel(
 @Composable
 fun getNearby(
     globalResponse: GlobalResponse?,
-    location: Coordinate,
+    location: Coordinate?,
     setLastLocation: (Position) -> Unit,
     nearbyRepository: INearbyRepository = koinInject()
 ): NearbyStaticData? {
