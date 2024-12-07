@@ -34,13 +34,8 @@ struct StopDetailsFilteredView: View {
     var tiles: [TileData] = []
     var statuses: [TileData] = []
 
-    var stop: Stop? {
-        stopDetailsVM.global?.stops[stopId]
-    }
-
-    var nowInstant: Instant {
-        now.toKotlinInstant()
-    }
+    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+    var nowInstant: Instant { now.toKotlinInstant() }
 
     init(
         stopId: String,
@@ -143,7 +138,7 @@ struct StopDetailsFilteredView: View {
         VStack(spacing: 0) {
             ZStack {
                 Color.fill2
-                header.fixedSize(horizontal: false, vertical: true)
+                header
             }
             .fixedSize(horizontal: false, vertical: true)
             .ignoresSafeArea(.all)
@@ -160,6 +155,7 @@ struct StopDetailsFilteredView: View {
                     alerts: alerts,
                     patternsByStop: patternsByStop,
                     pinned: pinned,
+                    now: now,
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
@@ -195,6 +191,8 @@ struct StopDetailsFilteredView: View {
             ErrorBanner(errorBannerVM).padding(.horizontal, 16)
         }
         .padding(.bottom, 11)
+        .fixedSize(horizontal: false, vertical: true)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 
     @ViewBuilder private func loadingBody() -> some View {
@@ -218,6 +216,7 @@ struct StopDetailsFilteredView: View {
             alerts: alerts,
             patternsByStop: loadingPatterns,
             pinned: pinned,
+            now: now,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
