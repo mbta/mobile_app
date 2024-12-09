@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,40 +17,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.ViewAnnotationAnchor
+import com.mapbox.maps.extension.compose.DisposableMapEffect
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapEvents
 import com.mapbox.maps.extension.compose.MapboxMap
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
+import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
+import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getRailRouteShapes
 import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
-import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
-import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
-import com.mbta.tid.mbta_app.android.util.followPuck
-import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -69,15 +69,17 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.map
 
 @OptIn(MapboxExperimental::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeMapView(
     modifier: Modifier = Modifier,
-    mapViewportState: MapViewportState,
     globalResponse: GlobalResponse?,
     alertsData: AlertsStreamDataResponse?,
     lastNearbyTransitLocation: Position?,
+    locationDataManager: LocationDataManager,
+    viewportProvider: ViewportProvider,
     currentNavEntry: NavBackStackEntry?,
     handleStopNavigation: (String) -> Unit,
     vehiclesData: List<Vehicle>,
@@ -87,9 +89,6 @@ fun HomeMapView(
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
-    val locationPermissionState =
-        rememberPermissionState(permission = android.Manifest.permission.ACCESS_FINE_LOCATION)
-    var savedNearbyViewport: ViewportSnapshot? by rememberSaveable { mutableStateOf(null) }
     var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val railRouteShapes = getRailRouteShapes()
@@ -138,13 +137,7 @@ fun HomeMapView(
 
     fun positionViewportToStop() {
         val stop = selectedStop ?: return
-        val stopFeature = stopSourceData?.features()?.find { it.id().equals(stop.id) }
-        val stopPoint =
-            stopFeature?.geometry() as? Point ?: Point.fromLngLat(stop.longitude, stop.latitude)
-        mapViewportState.easeTo(
-            cameraOptions = CameraOptions.Builder().center(stopPoint).build(),
-            animationOptions = MapAnimationDefaults.options
-        )
+        viewportProvider.animateTo(stop.position.toMapbox())
     }
 
     fun updateDisplayedRoutesBasedOnStop() {
@@ -215,14 +208,13 @@ fun HomeMapView(
             previousNavEntry?.destination?.route?.contains("NearbyTransit") == true &&
                 currentNavEntry?.destination?.route?.contains("StopDetails") == true
         ) {
-            savedNearbyViewport = ViewportSnapshot(mapViewportState)
+            viewportProvider.saveNearbyTransitViewport()
         } else if (
             previousNavEntry?.destination?.route?.contains("StopDetails") == true &&
                 currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
         ) {
             refreshRouteLineSource()
-            savedNearbyViewport?.restoreOn(mapViewportState)
-            savedNearbyViewport = null
+            viewportProvider.restoreNearbyTransitViewport()
         }
     }
 
@@ -236,6 +228,15 @@ fun HomeMapView(
         selectedStop = globalResponse?.stops?.get(stopId)
     }
 
+    val locationPermissions = locationDataManager.rememberPermissions()
+
+    val cameraZoomFlow =
+        remember(viewportProvider.cameraStateFlow) {
+            viewportProvider.cameraStateFlow.map { it.zoom }
+        }
+    val zoomLevel by
+        cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
+
     Box(modifier) {
         MapboxMap(
             Modifier.fillMaxSize(),
@@ -245,7 +246,8 @@ fun HomeMapView(
                         layerManager.run {
                             addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
                         }
-                    }
+                    },
+                    onCameraChanged = { viewportProvider.updateCameraState(it.cameraState) }
                 ),
             gesturesSettings =
                 GesturesSettings {
@@ -260,7 +262,7 @@ fun HomeMapView(
                 },
             compass = {},
             scaleBar = {},
-            mapViewportState = mapViewportState,
+            mapViewportState = viewportProvider.viewport,
             style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
         ) {
             LaunchedEffect(currentNavEntry) { handleNavChange() }
@@ -282,9 +284,51 @@ fun HomeMapView(
 
             val context = LocalContext.current
 
+            val locationProvider = remember { PassthroughLocationProvider() }
+
+            LaunchedEffect(locationDataManager) {
+                locationDataManager.currentLocation.collect { location ->
+                    if (location != null) {
+                        locationProvider.sendLocation(
+                            Point.fromLngLat(location.longitude, location.latitude)
+                        )
+                    }
+                }
+            }
+
             MapEffect(true) { map ->
-                mapViewportState.followPuck()
                 map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+                map.location.setLocationProvider(locationProvider)
+            }
+
+            MapEffect(locationDataManager.hasPermission) { map ->
+                if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
+                    viewportProvider.follow(
+                        DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
+                    )
+                    layerManager.run { resetPuckPosition() }
+                }
+            }
+
+            LifecycleStartEffect(Unit) {
+                locationPermissions.launchMultiplePermissionRequest()
+                onStopOrDispose {}
+            }
+
+            LifecycleStartEffect(Unit) {
+                onStopOrDispose { viewportProvider.saveCurrentViewport() }
+            }
+
+            DisposableMapEffect { map ->
+                val listener = ManuallyCenteringListener(viewportProvider)
+                map.gestures.addOnMoveListener(listener)
+                map.gestures.addOnScaleListener(listener)
+                map.gestures.addOnShoveListener(listener)
+                onDispose {
+                    map.gestures.removeOnMoveListener(listener)
+                    map.gestures.removeOnScaleListener(listener)
+                    map.gestures.removeOnShoveListener(listener)
+                }
             }
 
             MapEffect { map ->
@@ -292,7 +336,7 @@ fun HomeMapView(
                     layerManager.`object` = MapLayerManager(map.mapboxMap, context)
             }
 
-            if (!mapViewportState.isFollowingPuck && lastNearbyTransitLocation != null) {
+            if (!viewportProvider.isFollowingPuck && lastNearbyTransitLocation != null) {
                 CircleAnnotation(
                     point = lastNearbyTransitLocation.toPoint(),
                     circleColorString = "#ba75c7",
@@ -309,6 +353,7 @@ fun HomeMapView(
                             annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                             allowOverlap(true)
                             allowOverlapWithPuck(true)
+                            visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)
                         }
                 ) {
                     VehiclePuck(vehicle = vehicle, route = route)
@@ -316,12 +361,9 @@ fun HomeMapView(
             }
         }
 
-        if (!mapViewportState.isFollowingPuck || !locationPermissionState.status.isGranted) {
+        if (!viewportProvider.isFollowingPuck) {
             RecenterButton(
-                onClick = {
-                    locationPermissionState.launchPermissionRequest()
-                    mapViewportState.followPuck()
-                },
+                onClick = { viewportProvider.follow() },
                 Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
         }

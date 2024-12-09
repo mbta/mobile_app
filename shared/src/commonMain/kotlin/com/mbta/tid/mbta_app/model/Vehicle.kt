@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,6 +19,8 @@ data class Vehicle(
     @SerialName("stop_id") val stopId: String?,
     @SerialName("trip_id") val tripId: String?,
 ) : BackendObject {
+    val position = Position(latitude = latitude, longitude = longitude)
+
     @Serializable
     enum class CurrentStatus {
         @SerialName("incoming_at") IncomingAt,
