@@ -1,10 +1,14 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-class MoreSection(var id: Category, var items: List<MoreItem>) {
+class MoreSection(var id: Category, var items: List<MoreItem>, var note: String? = null) {
 
     enum class Category {
+        Feedback,
         FeatureFlags,
-        Settings
+        Settings,
+        Resources,
+        Other,
+        Support
     }
 
     val requiresStaging: Boolean =
