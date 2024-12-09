@@ -46,7 +46,6 @@ jobs:
         run: ./gradlew shared:check
         env:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
-          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -56,7 +55,6 @@ jobs:
         run: ./gradlew androidApp:check
         env:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
-          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -102,7 +100,6 @@ jobs:
           script: ./bin/android-instrumented-test-ci.sh
         env:
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
-          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -147,7 +144,6 @@ jobs:
           KEY_ALIAS: "upload"
           KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
           MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
-          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           bundle exec fastlane android build flavor:Staging

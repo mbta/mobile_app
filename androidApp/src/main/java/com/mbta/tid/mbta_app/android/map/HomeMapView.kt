@@ -86,6 +86,7 @@ fun HomeMapView(
     stopDetailsDepartures: StopDetailsDepartures?,
     stopDetailsFilter: StopDetailsFilter?
 ) {
+
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }

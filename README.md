@@ -33,7 +33,7 @@ The public key is fetched dynamically from the backend. Be sure to follow the Fi
 
 Like on iOS, Mapbox for Android requires two keys. Follow the above keys link for instructions on how to configure the secret and public key.
 
-**Note**: The property name in `~/.gradle/gradle.properties` is `MAPBOX_SECRET_TOKEN`, not `MAPBOX_DOWNLOADS_TOKEN` as used in the Mapbox documentation. Also, the public token should be stored in `androidApp/src/main/res/values/secrets.xml`, which will be created with a placeholder value if it does not already exist at build time.
+**Note**: The property name in `~/.gradle/gradle.properties` is `MAPBOX_SECRET_TOKEN`, not `MAPBOX_DOWNLOADS_TOKEN` as used in the Mapbox documentation.
 
 #### Sentry - [docs](https://docs.sentry.io/platforms/kotlin-multiplatform/) - [keys](https://mbtace.sentry.io/settings/projects/mobile_app_ios/keys/)
 
