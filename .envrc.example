@@ -9,5 +9,6 @@ export GOOGLE_APP_ID=
 
 # Sentry - needed only to record sentry events from local development
 # Find DSN under the Client Keys settings of the mobile_app_ios project in Sentry
-export SENTRY_DSN=
+export SENTRY_DSN_IOS=
+export SENTRY_DSN_ANDROID=
 export SENTRY_ENVIRONMENT=debug
