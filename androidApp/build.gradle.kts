@@ -1,12 +1,27 @@
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
+import java.io.BufferedReader
+import java.io.StringReader
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
     alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.sentryGradle)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "mbtace"
+    projectName = "mobile_app_android"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
 android {
@@ -21,7 +36,10 @@ android {
         versionName = (findProperty("android.injected.version.name") ?: "0.1.0") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes { getByName("release") { isMinifyEnabled = false } }
     flavorDimensions += "environment"
@@ -99,6 +117,39 @@ task("accessToken") {
 </resources>"""
         tokenFile.writeText(tokenFileContents)
     }
+}
+
+task("envVars") {
+    val envFile = File(".envrc")
+    val props = Properties()
+
+    if (envFile.exists()) {
+        val bufferedReader: BufferedReader = envFile.bufferedReader()
+        bufferedReader.use {
+            it.readLines()
+                .filter { line -> line.contains("export") }
+                .map { line ->
+                    val cleanLine = line.replace("export", "")
+                    props.load(StringReader(cleanLine))
+                }
+        }
+    } else {
+        println(".envrc file not configured, reading from system env instead")
+    }
+
+    android.defaultConfig.buildConfigField(
+        "String",
+        "SENTRY_DSN",
+        "\"${props.getProperty("SENTRY_DSN_ANDROID")
+                ?: System.getenv("SENTRY_DSN_ANDROID") ?: ""}\""
+    )
+
+    android.defaultConfig.buildConfigField(
+        "String",
+        "SENTRY_ENVIRONMENT",
+        "\"${props.getProperty("SENTRY_ENVIRONMENT")
+                ?: System.getenv("SENTRY_ENVIRONMENT") ?: ""}\""
+    )
 }
 
 gradle.projectsEvaluated {
