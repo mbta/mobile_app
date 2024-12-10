@@ -58,14 +58,15 @@ struct TripDetailsView: View {
                 }
             }
             if let tripFilter,
-               stopDetailsVM.tripData?.tripFilter == tripFilter,
+               let tripData = stopDetailsVM.tripData,
+               tripData.tripFilter == tripFilter,
                let global = stopDetailsVM.global,
                let vehicle = stopDetailsVM.tripData?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
                    tripId: tripFilter.tripId,
-                   directionId: stopDetailsVM.tripData?.trip.directionId ?? vehicle.directionId,
-                   tripSchedules: stopDetailsVM.tripData?.tripSchedules,
-                   tripPredictions: stopDetailsVM.tripData?.tripPredictions,
+                   directionId: tripData.trip.directionId,
+                   tripSchedules: tripData.tripSchedules,
+                   tripPredictions: tripData.tripPredictions,
                    vehicle: vehicle,
                    alertsData: nearbyVM.alerts,
                    globalData: global
