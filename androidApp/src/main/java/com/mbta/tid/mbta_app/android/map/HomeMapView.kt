@@ -89,6 +89,7 @@ fun HomeMapView(
     val stopSourceData = viewModel.stopSourceData.collectAsState(initial = null).value
     val globalResponse = viewModel.globalResponse.collectAsState(initial = null).value
     val railRouteLineData = viewModel.railRouteLineData.collectAsState(initial = null).value
+
     val now = timer(updateInterval = 10.seconds)
     val globalMapData = remember(now) { viewModel.globalMapData(now) }
 
