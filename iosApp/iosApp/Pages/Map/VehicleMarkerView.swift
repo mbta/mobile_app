@@ -19,7 +19,7 @@ struct VehicleMarkerView: View {
         ZStack {
             ZStack {
                 Image(.vehicleHalo)
-                Image(.vehiclePuck).foregroundStyle(Color(hex: route.color))
+                Image(.vehiclePuck).foregroundStyle(route.uiColor)
             }
             .frame(width: 32, height: 32)
             .rotationEffect(.degrees(45))
@@ -29,7 +29,7 @@ struct VehicleMarkerView: View {
                 .frame(height: 18)
         }
         .padding(10)
-        .modifier(PulsingHaloModifier(isSelected: isSelected, routeColor: Color(hex: route.color)))
+        .modifier(PulsingHaloModifier(isSelected: isSelected, routeColor: route.uiColor))
         .onTapGesture { onTap() }
     }
 
