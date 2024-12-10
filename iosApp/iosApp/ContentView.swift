@@ -167,9 +167,13 @@ struct ContentView: View {
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
                             VStack(alignment: .trailing) {
-                                RecenterButton { Task { viewportProvider.follow() } }
+                                RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
+                                    viewportProvider.follow()
+                                }
+                                .accessibilityIdentifier("mapRecenterButton")
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
+                        conditionalRecenterOnVehicleButton
                     }.frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
@@ -343,6 +347,23 @@ struct ContentView: View {
                 }
             }
             .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
+        }
+    }
+
+    @ViewBuilder
+    private var conditionalRecenterOnVehicleButton: some View {
+        if !searchObserver.isSearching,
+           case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = nearbyVM
+           .navigationStack.lastSafe(),
+           !viewportProvider.viewport.isOverview,
+           let selectedVehicle = mapVM.selectedVehicle, let globalData = mapVM.globalData,
+           let stop = nearbyVM.getTargetStop(global: globalData), let routeId = stopFilter?.routeId,
+           let route = globalData.routes[routeId] {
+            VStack(alignment: .trailing) {
+                RecenterButton(icon: routeIconResource(route.type), size: 32) {
+                    viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
+                }
+            }.frame(maxWidth: .infinity, alignment: .topTrailing)
         }
     }
 

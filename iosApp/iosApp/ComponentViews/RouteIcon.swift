@@ -15,16 +15,14 @@ func routeIcon(_ route: Route) -> Image {
 }
 
 func routeIcon(_ routeType: RouteType) -> Image {
-    let image = switch routeType {
-    case .bus:
-        Image(.modeBus)
-    case .commuterRail:
-        Image(.modeCr)
-    case .ferry:
-        Image(.modeFerry)
-    default:
-        Image(.modeSubway)
-    }
+    Image(routeIconResource(routeType))
+}
 
-    return image
+func routeIconResource(_ routeType: RouteType) -> ImageResource {
+    switch routeType {
+    case .bus: .modeBus
+    case .commuterRail: .modeCr
+    case .ferry: .modeFerry
+    default: .modeSubway
+    }
 }
