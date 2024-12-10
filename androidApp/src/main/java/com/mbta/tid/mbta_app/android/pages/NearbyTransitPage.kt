@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +13,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.boundsInWindow
@@ -25,6 +24,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,21 +36,20 @@ import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
+import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
+import com.mbta.tid.mbta_app.android.state.VehiclesTopic
+import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 data class NearbyTransit(
@@ -70,15 +69,17 @@ fun NearbyTransitPage(
     navBarVisible: Boolean,
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
-    vehiclesRepository: IVehiclesRepository = koinInject(),
     bottomBar: @Composable () -> Unit
 ) {
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
-    var stopDetailsFilter by rememberSaveable { mutableStateOf<StopDetailsFilter?>(null) }
-    var stopDetailsDepartures by rememberSaveable { mutableStateOf<StopDetailsDepartures?>(null) }
-    var vehiclesData: List<Vehicle> by remember { mutableStateOf(emptyList()) }
+
+    var stopDetailsDepartures by remember { mutableStateOf<StopDetailsDepartures?>(null) }
+    val viewModel: NearbyTransitTabViewModel = viewModel()
+    val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
+    val vehiclesTopic by viewModel.vehicleSubscriptionTopic.collectAsState()
+    var vehiclesData: List<Vehicle> = subscribeToVehicles(topic = vehiclesTopic)
 
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
@@ -86,30 +87,25 @@ fun NearbyTransitPage(
         }
     }
 
-    fun handleReceiveVehicles(response: ApiResult<VehiclesStreamDataResponse>) {
-        when (response) {
-            is ApiResult.Ok -> {
-                val vehicleResponse = response.data
-                vehiclesData = vehicleResponse.vehicles.values.toList()
-            }
-            is ApiResult.Error -> {
-                Log.e("Map", "Vehicle stream failed: ${response.message}")
-                return
-            }
-        }
-    }
-
     fun handleRouteChange(route: SheetRoutes?) {
         vehiclesData = emptyList()
         if (route is SheetRoutes.StopDetails) {
+
             val routeId = stopDetailsFilter?.routeId
             val directionId = stopDetailsFilter?.directionId
+
+            vehiclesTopic
             if (routeId != null && directionId != null) {
-                vehiclesRepository.connect(routeId, directionId, ::handleReceiveVehicles)
+                viewModel.setVehiclesSubscriptionTopic(VehiclesTopic(routeId, directionId))
                 return
             }
         }
-        vehiclesRepository.disconnect()
+
+        viewModel.setVehiclesSubscriptionTopic(null)
+    }
+
+    fun updateStopFilter(filter: StopDetailsFilter?) {
+        viewModel.setStopDetailsFilter(filter)
     }
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
@@ -139,14 +135,10 @@ fun NearbyTransitPage(
                             val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                             val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
-                            fun updateStopFilter(filter: StopDetailsFilter?) {
-                                stopDetailsFilter = filter
-                            }
-
                             fun updateStopDepartures(departures: StopDetailsDepartures?) {
                                 stopDetailsDepartures = departures
                                 if (departures != null && stopDetailsFilter == null) {
-                                    stopDetailsFilter = departures.autoStopFilter()
+                                    updateStopFilter(departures.autoStopFilter())
                                 }
                             }
 
@@ -192,7 +184,7 @@ fun NearbyTransitPage(
                                     showNavBar()
                                 }
 
-                                stopDetailsFilter = null
+                                updateStopFilter(null)
                             }
 
                             var targetLocation by remember { mutableStateOf<Position?>(null) }
