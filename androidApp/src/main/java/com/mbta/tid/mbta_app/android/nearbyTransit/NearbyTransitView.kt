@@ -8,9 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,14 +33,14 @@ fun NearbyTransitView(
     modifier: Modifier = Modifier,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
-    targetLocation: Position,
+    targetLocation: Position?,
     setLastLocation: (Position) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
 ) {
     var nearby: NearbyStaticData? =
         getNearby(
             globalResponse,
-            Coordinate(latitude = targetLocation.latitude, longitude = targetLocation.longitude),
+            targetLocation?.let { Coordinate(latitude = it.latitude, longitude = it.longitude) },
             setLastLocation
         )
     val now = timer(updateInterval = 5.seconds)
@@ -63,16 +61,20 @@ fun NearbyTransitView(
             now,
             pinnedRoutes
         ) {
-            nearby?.withRealtimeInfo(
-                globalData = globalResponse,
-                sortByDistanceFrom = targetLocation,
-                schedules,
-                predictions,
-                alertData,
-                now,
-                pinnedRoutes.orEmpty(),
-                useTripHeadsigns = false,
-            )
+            if (targetLocation != null) {
+                nearby?.withRealtimeInfo(
+                    globalData = globalResponse,
+                    sortByDistanceFrom = targetLocation,
+                    schedules,
+                    predictions,
+                    alertData,
+                    now,
+                    pinnedRoutes.orEmpty(),
+                    useTripHeadsigns = false,
+                )
+            } else {
+                null
+            }
         }
 
     Column(modifier) {
