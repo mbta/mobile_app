@@ -72,20 +72,15 @@ struct StopDetailsFilteredDepartureDetails: View {
                     alertCards(patternsByStop, routeColor)
                     statusRows(patternsByStop)
 
-                    if let tripFilter {
-                        TripDetailsView(
-                            tripId: tripFilter.tripId,
-                            vehicleId: tripFilter.vehicleId,
-                            routeId: stopFilter.routeId,
-                            stopId: stopId,
-                            stopSequence: tripFilter.stopSequence?.intValue,
-                            now: now,
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM
-                        )
-                    }
+                    TripDetailsView(
+                        tripFilter: tripFilter,
+                        stopId: stopId,
+                        now: now,
+                        errorBannerVM: errorBannerVM,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM,
+                        stopDetailsVM: stopDetailsVM
+                    )
                 }
             }
         }

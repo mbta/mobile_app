@@ -58,18 +58,17 @@ final class TripDetailsViewTests: XCTestCase {
         stopDetailsVM.global = .init(objects: objects)
         stopDetailsVM.predictionsByStop = .init(objects: objects)
         stopDetailsVM.pinnedRoutes = .init()
-        stopDetailsVM.tripPredictions = .init(objects: objects)
-        stopDetailsVM.trip = trip
-        stopDetailsVM.tripSchedules = TripSchedulesResponse.Schedules(schedules: [schedule])
-        stopDetailsVM.vehicle = vehicle
-        stopDetailsVM.tripPredictionsLoaded = true
+        stopDetailsVM.tripData = TripData(
+            tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 0, selectionLock: false),
+            trip: trip,
+            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+            tripPredictions: .init(objects: objects),
+            vehicle: vehicle
+        )
 
         let sut = TripDetailsView(
-            tripId: trip.id,
-            vehicleId: vehicle.id,
-            routeId: route.id,
+            tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
-            stopSequence: vehicle.currentStopSequence?.intValue,
             now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
@@ -122,18 +121,22 @@ final class TripDetailsViewTests: XCTestCase {
         stopDetailsVM.global = .init(objects: objects)
         stopDetailsVM.predictionsByStop = .init(objects: objects)
         stopDetailsVM.pinnedRoutes = .init()
-        stopDetailsVM.tripPredictions = .init(objects: objects)
-        stopDetailsVM.trip = trip
-        stopDetailsVM.tripSchedules = TripSchedulesResponse.Schedules(schedules: [schedule])
-        stopDetailsVM.vehicle = vehicle
-        stopDetailsVM.tripPredictionsLoaded = true
+        stopDetailsVM.tripData = TripData(
+            tripFilter: .init(
+                tripId: trip.id,
+                vehicleId: vehicle.id,
+                stopSequence: nil,
+                selectionLock: false
+            ),
+            trip: trip,
+            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+            tripPredictions: .init(objects: objects),
+            vehicle: vehicle
+        )
 
         let sut = TripDetailsView(
-            tripId: trip.id,
-            vehicleId: vehicle.id,
-            routeId: route.id,
+            tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
-            stopSequence: vehicle.currentStopSequence?.intValue,
             now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,

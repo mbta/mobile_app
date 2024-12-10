@@ -37,7 +37,7 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _, _, _ in },
-            route: route
+            routeAccents: TripRouteAccents(route: route)
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: stop.name))
@@ -63,7 +63,7 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _, _, _ in },
-            route: route
+            routeAccents: TripRouteAccents(route: route)
         )
 
         XCTAssertNotNil(try sut.inspect().find(UpcomingTripView.self))
@@ -89,7 +89,7 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _, _, _ in },
-            route: route,
+            routeAccents: TripRouteAccents(route: route),
             targeted: true
         )
 
@@ -105,7 +105,7 @@ final class TripStopRowTests: XCTestCase {
             ),
             now: now.toKotlinInstant(),
             onTapLink: { _, _, _ in },
-            route: route
+            routeAccents: TripRouteAccents(route: route)
         )
 
         XCTAssertThrowsError(try notTargeted.inspect().find(ViewType.Image.self, where: { image in

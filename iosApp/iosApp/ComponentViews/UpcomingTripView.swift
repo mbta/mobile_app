@@ -20,7 +20,7 @@ extension TripInstantDisplay.Overridden {
 struct UpcomingTripView: View {
     let prediction: State
     var routeType: RouteType?
-    var showRealtimeIndicators: Bool = true
+    var hideRealtimeIndicators: Bool = false
     var isFirst: Bool = true
     var isOnly: Bool = true
 
@@ -57,7 +57,7 @@ struct UpcomingTripView: View {
             case .now:
                 Text("Now", comment: "Label for a trip that's arriving right now")
                     .font(Typography.headlineBold)
-                    .realtime(visible: showRealtimeIndicators)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
@@ -65,7 +65,7 @@ struct UpcomingTripView: View {
             case .boarding:
                 Text("BRD", comment: "Shorthand for boarding")
                     .font(Typography.headlineBold)
-                    .realtime(visible: showRealtimeIndicators)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .boardingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
@@ -73,17 +73,17 @@ struct UpcomingTripView: View {
             case .arriving:
                 Text("ARR", comment: "Shorthand for arriving")
                     .font(Typography.headlineBold)
-                    .realtime(visible: showRealtimeIndicators)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
-                PredictionText(minutes: 1).realtime(visible: showRealtimeIndicators)
+                PredictionText(minutes: 1).realtime(hideIndicator: hideRealtimeIndicators)
             case let .time(format):
                 Text(Date(instant: format.predictionTime), style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
-                    .realtime(visible: showRealtimeIndicators)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
                             date: format.predictionTime.toNSDate(),
@@ -93,7 +93,7 @@ struct UpcomingTripView: View {
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
-                    .realtime(visible: showRealtimeIndicators)
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.predictionMinutesFirst(
                             minutes: format.minutes,

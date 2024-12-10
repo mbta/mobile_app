@@ -100,7 +100,7 @@ final class TripStopsTests: XCTestCase {
             vehicleShown: true,
             now: now,
             onTapLink: { _, _, _ in },
-            route: route,
+            routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         )
 
@@ -180,7 +180,7 @@ final class TripStopsTests: XCTestCase {
             vehicleShown: true,
             now: now,
             onTapLink: { _, _, _ in },
-            route: route,
+            routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         )
 

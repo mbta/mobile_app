@@ -12,20 +12,17 @@ import SwiftUI
 
 struct TripVehicleCard: View {
     let vehicle: Vehicle
-    let route: Route
     let stop: Stop
     let tripId: String
-
-    var routeColor: Color { Color(hex: route.color) }
-    var routeTextColor: Color { Color(hex: route.textColor) }
+    let routeAccents: TripRouteAccents
 
     var body: some View {
         ZStack(alignment: .leading) {
             VStack(spacing: 0) {
                 // Use a clear rectangle as a spacer, the Spacer() view doesn't
                 // take up enough space, this is always exactly half
-                RouteLine(Color.clear)
-                RouteLine(routeColor)
+                ColoredRouteLine(Color.clear)
+                ColoredRouteLine(routeAccents.color)
             }.padding(.leading, 46)
             HStack(spacing: 8) {
                 vehiclePuck
@@ -61,7 +58,7 @@ struct TripVehicleCard: View {
             .accessibilityAddTraits(.isHeader)
             .accessibilityHeading(.h2)
             .accessibilityLabel(Text(
-                "\(route.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)",
+                "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)",
                 comment: """
                 VoiceOver text for the vehicle status on the trip details page,
                 ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
@@ -112,13 +109,13 @@ struct TripVehicleCard: View {
                 Image(.vehiclePuck)
                     .resizable()
                     .frame(width: 32, height: 32)
-                    .foregroundStyle(routeColor)
+                    .foregroundStyle(routeAccents.color)
             }
             .rotationEffect(.degrees(225))
-            routeIcon(route)
+            routeIcon(routeAccents.type)
                 .resizable()
                 .frame(width: 27, height: 27)
-                .foregroundColor(routeTextColor)
+                .foregroundColor(routeAccents.textColor)
         }
         .accessibilityHidden(true)
         .padding([.bottom], 6)
@@ -172,7 +169,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
         }
 
         List {
-            TripVehicleCard(vehicle: vehicle, route: red, stop: stop, tripId: trip.id)
+            TripVehicleCard(vehicle: vehicle, stop: stop, tripId: trip.id, routeAccents: TripRouteAccents(route: red))
         }
         .previewDisplayName("VehicleCard")
     }

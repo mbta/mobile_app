@@ -10,6 +10,6 @@ import SwiftUI
 
 struct HaloSeparator: View {
     var body: some View {
-        Rectangle().frame(maxHeight: 1).foregroundStyle(Color.halo)
+        Divider().frame(maxHeight: 1).foregroundStyle(Color.halo)
     }
 }

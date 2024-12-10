@@ -1,5 +1,5 @@
 //
-//  RouteLine.swift
+//  ColoredRouteLine.swift
 //  iosApp
 //
 //  Created by esimon on 12/5/24.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct RouteLine: View {
+struct ColoredRouteLine: View {
     var color: Color
 
     init(_ color: Color) {

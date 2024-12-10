@@ -10,17 +10,41 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+struct TripData {
+    let tripFilter: TripDetailsFilter
+    let trip: Trip
+    var tripSchedules: TripSchedulesResponse
+    var tripPredictions: PredictionsStreamDataResponse?
+    var vehicle: Vehicle?
+}
+
+// A subset of route attributes only for displaying as UI accents,
+// this is split out to allow defaults for when a route may not exist
+struct TripRouteAccents {
+    let color: Color
+    let textColor: Color
+    let type: RouteType
+
+    init(color: Color = .halo, textColor: Color = .text, type: RouteType = .bus) {
+        self.color = color
+        self.textColor = textColor
+        self.type = type
+    }
+
+    init(route: Route) {
+        color = route.uiColor
+        textColor = route.uiTextColor
+        type = route.type
+    }
+}
+
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
     @Published var pinnedRoutes: Set<String> = []
     @Published var predictionsByStop: PredictionsByStopJoinResponse?
     @Published var schedulesResponse: ScheduleResponse?
 
-    @Published var trip: Trip?
-    @Published var tripPredictions: PredictionsStreamDataResponse?
-    @Published var tripPredictionsLoaded: Bool = false
-    @Published var tripSchedules: TripSchedulesResponse?
-    @Published var vehicle: Vehicle?
+    @Published var tripData: TripData?
 
     let errorBannerRepository: IErrorBannerStateRepository
     let globalRepository: IGlobalRepository
@@ -55,19 +79,24 @@ class StopDetailsViewModel: ObservableObject {
 
     func activateGlobalListener() async {
         for await globalData in globalRepository.state {
-            Task { @MainActor in global = globalData }
+            Task { @MainActor in self.global = globalData }
         }
     }
 
-    func clearTripDetails() {
-        trip = nil
-        tripSchedules = nil
-        leaveTripPredictions()
-        tripPredictions = nil
-        leaveVehicle()
-        vehicle = nil
+    @MainActor func clearTripDetails() {
+        leaveTripChannels()
+        tripData = nil
         errorBannerRepository.clearDataError(key: "TripDetailsView.loadTripSchedules")
         errorBannerRepository.clearDataError(key: "TripDetailsView.loadTrip")
+    }
+
+    private func clearAndLoadTripDetails(_ filter: TripDetailsFilter) {
+        Task { @MainActor in
+            self.clearTripDetails()
+            await self.loadTripDetails(tripFilter: filter)
+            self.joinTripPredictions(tripFilter: filter)
+            self.joinVehicle(tripFilter: filter)
+        }
     }
 
     func getDepartures(
@@ -90,6 +119,61 @@ class StopDetailsViewModel: ObservableObject {
         } else {
             nil
         }
+    }
+
+    func getTripRouteAccents() -> TripRouteAccents {
+        guard let routeId = tripData?.trip.routeId,
+              let route = global?.routes[routeId]
+        else {
+            return TripRouteAccents()
+        }
+        return TripRouteAccents(route: route)
+    }
+
+    @MainActor
+    func handleTripFilterChange(_ tripFilter: TripDetailsFilter?) {
+        guard let tripFilter else {
+            // If the next trip filter is nil, clear everything and leave realtime
+            tripData = nil
+            leaveTripChannels()
+            return
+        }
+        if let tripData {
+            let currentFilter = tripData.tripFilter
+            if currentFilter.tripId == tripFilter.tripId, currentFilter.vehicleId == tripFilter.vehicleId {
+                // If the filter changed but the trip and vehicle are the same, do nothing
+                return
+            } else if currentFilter.tripId == tripFilter.tripId {
+                // If only the vehicle changed but the trip is the same, clear and reload only the vehicle,
+                // keep the prediction channel open and copy static trip data into new trip data
+                leaveVehicle()
+                self.tripData = TripData(
+                    tripFilter: tripFilter,
+                    trip: tripData.trip,
+                    tripSchedules: tripData.tripSchedules,
+                    tripPredictions: tripData.tripPredictions,
+                    vehicle: nil
+                )
+                joinVehicle(tripFilter: tripFilter)
+                return
+            } else if currentFilter.vehicleId == tripFilter.vehicleId {
+                // If only the trip changed but the vehicle is the same, clear and reload only the trip details,
+                // keep the vehicle channel open and copy the last vehicle into the new trip data
+                let currentVehicle = tripData.vehicle
+                leaveTripPredictions()
+                self.tripData = nil
+                Task {
+                    await self.loadTripDetails(tripFilter: tripFilter)
+                    Task { @MainActor in self.tripData?.vehicle = currentVehicle }
+                    self.joinTripPredictions(tripFilter: tripFilter)
+                }
+                return
+            }
+            // If current trip data exists but neither the trip ID or vehicle ID match,
+            // fall through and reload everything
+        }
+
+        clearAndLoadTripDetails(tripFilter)
     }
 
     func joinPredictions(_ stopId: String, onSuccess: @escaping () -> Void, onComplete: @escaping () -> Void) {
@@ -123,41 +207,42 @@ class StopDetailsViewModel: ObservableObject {
         })
     }
 
-    func joinTripPredictions(tripId: String) {
-        tripPredictionsRepository.connect(tripId: tripId) { outcome in
-            DispatchQueue.main.async {
+    func joinTripChannels(tripFilter: TripDetailsFilter) {
+        joinVehicle(tripFilter: tripFilter)
+        joinTripPredictions(tripFilter: tripFilter)
+    }
+
+    private func joinTripPredictions(tripFilter: TripDetailsFilter) {
+        tripPredictionsRepository.connect(tripId: tripFilter.tripId) { outcome in
+            Task { @MainActor in
                 // no error handling since persistent errors cause stale predictions
                 switch onEnum(of: outcome) {
-                case let .ok(result): self.tripPredictions = result.data
+                case let .ok(result): self.tripData?.tripPredictions = result.data
                 case .error: break
                 }
-                self.tripPredictionsLoaded = true
             }
         }
     }
 
-    func joinVehicle(
-        tripId: String,
-        vehicleId: String?,
-        onSuccess: @escaping (Vehicle?) -> Void
-    ) {
-        guard let vehicleId else { return }
+    private func joinVehicle(tripFilter: TripDetailsFilter) {
+        leaveVehicle()
+        guard let vehicleId = tripFilter.vehicleId else {
+            // If the filter has a null vehicle ID, we can't join anything, clear the vehicle and return
+            tripData?.vehicle = nil
+            return
+        }
         let errorKey = "TripDetailsPage.joinVehicle"
         vehicleRepository.connect(vehicleId: vehicleId) { outcome in
             Task { @MainActor in
                 switch onEnum(of: outcome) {
                 case let .ok(result):
-                    self.vehicle = result.data.vehicle
-                    onSuccess(self.vehicle)
+                    self.tripData?.vehicle = result.data.vehicle
                     self.errorBannerRepository.clearDataError(key: errorKey)
                 case .error:
-                    self.vehicle = nil
+                    self.tripData?.vehicle = nil
                     self.errorBannerRepository.setDataError(
                         key: errorKey,
-                        action: {
-                            self.loadTripDetails(tripId: tripId)
-                            self.joinVehicle(tripId: tripId, vehicleId: vehicleId, onSuccess: onSuccess)
-                        }
+                        action: { self.clearAndLoadTripDetails(tripFilter) }
                     )
                 }
             }
@@ -168,12 +253,16 @@ class StopDetailsViewModel: ObservableObject {
         predictionsRepository.disconnect()
     }
 
-    func leaveTripPredictions() {
-        tripPredictionsLoaded = false
+    func leaveTripChannels() {
+        leaveTripPredictions()
+        leaveVehicle()
+    }
+
+    private func leaveTripPredictions() {
         tripPredictionsRepository.disconnect()
     }
 
-    func leaveVehicle() {
+    private func leaveVehicle() {
         vehicleRepository.disconnect()
     }
 
@@ -181,7 +270,7 @@ class StopDetailsViewModel: ObservableObject {
         Task {
             do {
                 let nextPinned = try await pinnedRoutesRepository.getPinnedRoutes()
-                Task { @MainActor in pinnedRoutes = nextPinned }
+                Task { @MainActor in self.pinnedRoutes = nextPinned }
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {
@@ -191,54 +280,62 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func loadTripDetails(tripId: String) {
-        loadTrip(tripId: tripId)
-        loadTripSchedules(tripId: tripId)
+    private func loadTripDetails(tripFilter: TripDetailsFilter) async {
+        async let tripResult = loadTrip(tripFilter: tripFilter)
+        async let scheduleResult = loadTripSchedules(tripFilter: tripFilter)
+        let results = await (tripResult, scheduleResult)
+        let task = Task { @MainActor in
+            if let trip = results.0, let schedules = results.1 {
+                self.tripData = TripData(tripFilter: tripFilter, trip: trip, tripSchedules: schedules)
+            } else {
+                self.tripData = nil
+            }
+        }
+
+        await task.value
     }
 
-    func loadTrip(tripId: String) {
-        Task {
-            let errorKey = "TripDetailsPage.loadTrip"
-            let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripId)
-            Task { @MainActor in
+    private func loadTrip(tripFilter: TripDetailsFilter) async -> Trip? {
+        let errorKey = "TripDetailsPage.loadTrip"
+        do {
+            let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripFilter.tripId)
+            let task = Task<Trip?, Error> { @MainActor in
                 switch onEnum(of: response) {
                 case let .ok(okResponse):
-                    trip = okResponse.data.trip
-                    errorBannerRepository.clearDataError(key: errorKey)
+                    self.errorBannerRepository.clearDataError(key: errorKey)
+                    return okResponse.data.trip
                 case .error:
-                    trip = nil
-                    errorBannerRepository.setDataError(
+                    self.errorBannerRepository.setDataError(
                         key: errorKey,
-                        action: { self.loadTripDetails(tripId: tripId) }
+                        action: { self.clearAndLoadTripDetails(tripFilter) }
                     )
+                    return nil
                 }
             }
+
+            return try await task.result.get()
+        } catch {
+            return nil
         }
     }
 
-    func loadTripSchedules(tripId: String) {
-        Task {
+    private func loadTripSchedules(tripFilter: TripDetailsFilter) async -> TripSchedulesResponse? {
+        let task = Task<TripSchedulesResponse?, Error> {
+            var result: TripSchedulesResponse? = nil
             await fetchApi(
-                errorBannerRepository,
+                self.errorBannerRepository,
                 errorKey: "TripDetailsPage.loadTripSchedules",
-                getData: { try await tripRepository.getTripSchedules(tripId: tripId) },
-                onSuccess: { @MainActor in tripSchedules = $0 },
-                onRefreshAfterError: { self.loadTripDetails(tripId: tripId) }
+                getData: { try await self.tripRepository.getTripSchedules(tripId: tripFilter.tripId) },
+                onSuccess: { @MainActor in result = $0 },
+                onRefreshAfterError: { self.clearAndLoadTripDetails(tripFilter) }
             )
+            return result
         }
-    }
 
-    func togglePinnedRoute(_ routeId: String) {
-        Task {
-            do {
-                _ = try await togglePinnedUsecase.execute(route: routeId)
-                loadPinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // execute shouldn't actually fail
-                debugPrint(error)
-            }
+        do {
+            return try await task.result.get()
+        } catch {
+            return nil
         }
     }
 
@@ -249,10 +346,24 @@ class StopDetailsViewModel: ObservableObject {
             self.predictionsByStop = nil
         }
 
-        if let tripPredictions,
+        if let predictions = tripData?.tripPredictions,
            tripPredictionsRepository
-           .shouldForgetPredictions(predictionCount: tripPredictions.predictionQuantity()) {
-            self.tripPredictions = nil
+           .shouldForgetPredictions(predictionCount: predictions.predictionQuantity()) {
+            tripData?.tripPredictions = nil
+        }
+    }
+
+    func togglePinnedRoute(_ routeId: String) {
+        Task {
+            do {
+                _ = try await self.togglePinnedUsecase.execute(route: routeId)
+                self.loadPinnedRoutes()
+            } catch is CancellationError {
+                // do nothing on cancellation
+            } catch {
+                // execute shouldn't actually fail
+                debugPrint(error)
+            }
         }
     }
 }

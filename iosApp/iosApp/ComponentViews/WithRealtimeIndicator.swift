@@ -12,21 +12,21 @@ struct WithRealtimeIndicator: View {
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 12
     let prediction: any View
-    let visible: Bool
+    let hideIndicator: Bool
 
-    init(_ prediction: () -> any View, visible: Bool = true) {
+    init(_ prediction: () -> any View, hideIndicator: Bool = false) {
         self.prediction = prediction()
-        self.visible = visible
+        self.hideIndicator = hideIndicator
     }
 
-    init(_ prediction: any View, visible: Bool = true) {
+    init(_ prediction: any View, hideIndicator: Bool = false) {
         self.prediction = prediction
-        self.visible = visible
+        self.hideIndicator = hideIndicator
     }
 
     var body: some View {
         HStack(spacing: Self.subjectSpacing) {
-            if visible {
+            if !hideIndicator {
                 Image(.liveData)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -41,14 +41,14 @@ struct WithRealtimeIndicator: View {
 }
 
 struct WithRealtimeIndicatorModifier: ViewModifier {
-    var visible: Bool = true
+    var hideIndicator: Bool = false
     func body(content: Content) -> some View {
-        WithRealtimeIndicator(content, visible: visible)
+        WithRealtimeIndicator(content, hideIndicator: hideIndicator)
     }
 }
 
 extension View {
-    func realtime(visible: Bool = true) -> some View {
-        modifier(WithRealtimeIndicatorModifier(visible: visible))
+    func realtime(hideIndicator: Bool = false) -> some View {
+        modifier(WithRealtimeIndicatorModifier(hideIndicator: hideIndicator))
     }
 }

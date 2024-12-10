@@ -16,14 +16,13 @@ struct TripStops: View {
     let vehicleShown: Bool
     let now: Date
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
-    let route: Route?
+    let routeAccents: TripRouteAccents
 
     let splitStops: TripDetailsStopList.TargetSplit?
 
     @State private var stopsExpanded = false
 
-    private var routeColor: Color { if let route { Color(hex: route.color) } else { Color.halo }}
-    private var routeTypeText: String { route?.type.typeText(isOnly: true) ?? "" }
+    private var routeTypeText: String { routeAccents.type.typeText(isOnly: true) }
     private var stopsAway: Int? { splitStops?.collapsedStops.count }
     private var target: TripDetailsStopList.Entry? { splitStops?.targetStop }
 
@@ -34,7 +33,7 @@ struct TripStops: View {
         vehicleShown: Bool = true,
         now: Date,
         onTapLink: @escaping (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void,
-        route: Route?,
+        routeAccents: TripRouteAccents,
         global: GlobalResponse?
     ) {
         self.targetId = targetId
@@ -43,7 +42,7 @@ struct TripStops: View {
         self.vehicleShown = vehicleShown
         self.now = now
         self.onTapLink = onTapLink
-        self.route = route
+        self.routeAccents = routeAccents
 
         splitStops = if let stopSequence, let global {
             stops.splitForTarget(
@@ -61,7 +60,7 @@ struct TripStops: View {
                 stop: stop,
                 now: now.toKotlinInstant(),
                 onTapLink: onTapLink,
-                route: route,
+                routeAccents: routeAccents,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence
             )
         }
@@ -70,12 +69,12 @@ struct TripStops: View {
     @ViewBuilder
     var routeLineTwist: some View {
         VStack(spacing: 0) {
-            RouteLine(routeColor)
+            ColoredRouteLine(routeAccents.color)
             ZStack {
-                Image(.stopTripLineTwist).foregroundStyle(routeColor)
+                Image(.stopTripLineTwist).foregroundStyle(routeAccents.color)
                 Image(.stopTripLineTwistShadow)
             }
-            RouteLine(routeColor)
+            ColoredRouteLine(routeAccents.color)
         }
     }
 
@@ -91,7 +90,7 @@ struct TripStops: View {
                                     HaloSeparator().overlay(alignment: .leading) {
                                         // Lil 1x4 pt route color bar to maintain an
                                         // unbroken route color line over the separator
-                                        RouteLine(routeColor).padding(.leading, 42)
+                                        ColoredRouteLine(routeAccents.color).padding(.leading, 42)
                                     }
                                     stopList(list: splitStops.collapsedStops)
                                 }
@@ -100,7 +99,7 @@ struct TripStops: View {
                                 HStack(spacing: 0) {
                                     VStack(spacing: 0) {
                                         if stopsExpanded {
-                                            RouteLine(routeColor)
+                                            ColoredRouteLine(routeAccents.color)
                                         } else {
                                             routeLineTwist
                                         }
@@ -141,7 +140,7 @@ struct TripStops: View {
                         stop: target,
                         now: now.toKotlinInstant(),
                         onTapLink: onTapLink,
-                        route: route,
+                        routeAccents: routeAccents,
                         targeted: true
                     )
                     .background(Color.fill3)
@@ -152,7 +151,7 @@ struct TripStops: View {
             }
             .padding(.top, vehicleShown ? 56 : 0)
             .overlay(alignment: .topLeading) {
-                RouteLine(routeColor).frame(maxHeight: vehicleShown ? 56 : 0).padding(.leading, 42)
+                ColoredRouteLine(routeAccents.color).frame(maxHeight: vehicleShown ? 56 : 0).padding(.leading, 42)
             }
             .background(Color.fill2)
             .scrollBounceBehavior(.basedOnSize, axes: [.vertical])

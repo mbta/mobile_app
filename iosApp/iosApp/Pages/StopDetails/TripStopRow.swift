@@ -13,11 +13,9 @@ struct TripStopRow: View {
     var stop: TripDetailsStopList.Entry
     var now: Instant
     var onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
-    var route: Route?
+    var routeAccents: TripRouteAccents
     var targeted: Bool = false
     var lastStop: Bool = false
-
-    var routeColor: Color { if let route { Color(hex: route.color) } else { Color.halo } }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -52,8 +50,8 @@ struct TripStopRow: View {
                                 Spacer()
                                 UpcomingTripView(
                                     prediction: upcomingTripViewState,
-                                    routeType: route?.type,
-                                    showRealtimeIndicators: false
+                                    routeType: routeAccents.type,
+                                    hideRealtimeIndicators: true
                                 ).foregroundStyle(Color.text).opacity(0.6)
                             }
                             .accessibilityElement(children: .combine)
@@ -82,16 +80,16 @@ struct TripStopRow: View {
     var routeLine: some View {
         ZStack(alignment: .center) {
             VStack(spacing: 0) {
-                RouteLine(routeColor)
+                ColoredRouteLine(routeAccents.color)
                 if lastStop {
                     // Use a clear rectangle as a spacer, the Spacer() view doesn't
                     // take up enough space, this is always exactly half
-                    RouteLine(Color.clear)
+                    ColoredRouteLine(Color.clear)
                 }
             }
             Circle()
                 .strokeBorder(Color.stopDotHalo, lineWidth: 1)
-                .background(Circle().fill(routeColor))
+                .background(Circle().fill(routeAccents.color))
                 .frame(width: 14, height: 14)
                 .overlay {
                     if targeted {
@@ -143,7 +141,7 @@ struct TripStopRow: View {
         if let alert = stop.alert {
             .noService(alert.effect)
         } else {
-            .some(stop.format(now: now, routeType: route?.type))
+            .some(stop.format(now: now, routeType: routeAccents.type))
         }
     }
 
@@ -186,6 +184,6 @@ struct TripStopRow: View {
         ),
         now: Date.now.toKotlinInstant(),
         onTapLink: { _, _, _ in },
-        route: objects.route { route in route.type = .lightRail }
+        routeAccents: TripRouteAccents(type: .lightRail)
     ).font(Typography.body)
 }
