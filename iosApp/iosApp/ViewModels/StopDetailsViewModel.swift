@@ -91,11 +91,10 @@ class StopDetailsViewModel: ObservableObject {
     }
 
     private func clearAndLoadTripDetails(_ filter: TripDetailsFilter) {
-        Task { @MainActor in
-            self.clearTripDetails()
+        Task {
+            await self.clearTripDetails()
             await self.loadTripDetails(tripFilter: filter)
-            self.joinTripPredictions(tripFilter: filter)
-            self.joinVehicle(tripFilter: filter)
+            self.joinTripChannels(tripFilter: filter)
         }
     }
 
@@ -213,6 +212,7 @@ class StopDetailsViewModel: ObservableObject {
     }
 
     private func joinTripPredictions(tripFilter: TripDetailsFilter) {
+        leaveTripPredictions()
         tripPredictionsRepository.connect(tripId: tripFilter.tripId) { outcome in
             Task { @MainActor in
                 // no error handling since persistent errors cause stale predictions
