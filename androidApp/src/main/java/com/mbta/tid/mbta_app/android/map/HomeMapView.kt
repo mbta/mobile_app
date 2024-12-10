@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,8 +91,8 @@ fun HomeMapView(
     var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val railRouteShapes = getRailRouteShapes()
-    var railRouteLineData: List<RouteLineData>? by rememberSaveable { mutableStateOf(null) }
-    var stopSourceData: FeatureCollection? by rememberSaveable { mutableStateOf(null) }
+    var railRouteLineData: List<RouteLineData>? by remember { mutableStateOf(null) }
+    var stopSourceData: FeatureCollection? by remember { mutableStateOf(null) }
 
     val now = timer(updateInterval = 10.seconds)
     val globalMapData =
