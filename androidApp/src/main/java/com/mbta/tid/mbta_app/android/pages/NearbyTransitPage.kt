@@ -42,7 +42,7 @@ import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
-import com.mbta.tid.mbta_app.android.state.VehiclesTopic
+import com.mbta.tid.mbta_app.android.state.RouteDirection
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -87,8 +87,8 @@ fun NearbyTransitPage(
     var stopDetailsDepartures by remember { mutableStateOf<StopDetailsDepartures?>(null) }
     val viewModel: NearbyTransitTabViewModel = viewModel()
     val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
-    val vehiclesTopic by viewModel.vehicleSubscriptionTopic.collectAsState()
-    var vehiclesData: List<Vehicle> = subscribeToVehicles(topic = vehiclesTopic)
+    val vehiclesRouteDirection by viewModel.vehiclesRouteDirection.collectAsState()
+    var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = vehiclesRouteDirection)
 
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
@@ -103,14 +103,14 @@ fun NearbyTransitPage(
             val routeId = stopDetailsFilter?.routeId
             val directionId = stopDetailsFilter?.directionId
 
-            vehiclesTopic
+            vehiclesRouteDirection
             if (routeId != null && directionId != null) {
-                viewModel.setVehiclesSubscriptionTopic(VehiclesTopic(routeId, directionId))
+                viewModel.setVehiclesRouteDirection(RouteDirection(routeId, directionId))
                 return
             }
         }
 
-        viewModel.setVehiclesSubscriptionTopic(null)
+        viewModel.setVehiclesRouteDirection(null)
     }
 
     fun updateStopFilter(filter: StopDetailsFilter?) {
