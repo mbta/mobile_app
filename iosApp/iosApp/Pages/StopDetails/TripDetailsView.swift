@@ -12,66 +12,37 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct TripDetailsView: View {
-    let tripId: String
-    let vehicleId: String?
-    let routeId: String
-    let stopId: String
-    let stopSequence: Int?
+    var tripFilter: TripDetailsFilter?
+    var stopId: String
 
-    var global: GlobalResponse?
+    var now: Date
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: MapViewModel
-
-    @State var tripPredictionsRepository: ITripPredictionsRepository
-    @State var tripRepository: ITripRepository
-    @State var vehicleRepository: IVehicleRepository
-
-    @State var trip: Trip?
-    @State var tripPredictions: PredictionsStreamDataResponse?
-    @State var tripPredictionsLoaded: Bool = false
-    @State var tripSchedulesResponse: TripSchedulesResponse?
-    @State var vehicleResponse: VehicleStreamDataResponse?
-
-    @State var now = Date.now.toKotlinInstant()
+    @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     let analytics: TripDetailsAnalytics
     let inspection = Inspection<Self>()
 
-    private var routeType: RouteType? {
-        global?.routes[routeId]?.type
-    }
-
     init(
-        tripId: String,
-        vehicleId: String?,
-        routeId: String,
+        tripFilter: TripDetailsFilter?,
         stopId: String,
-        stopSequence: Int?,
-        global: GlobalResponse?,
+        now: Date,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: MapViewModel,
+        stopDetailsVM: StopDetailsViewModel,
 
-        tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
-        tripRepository: ITripRepository = RepositoryDI().trip,
-        vehicleRepository: IVehicleRepository = RepositoryDI().vehicle,
         analytics: TripDetailsAnalytics = AnalyticsProvider.shared
     ) {
-        self.tripId = tripId
-        self.vehicleId = vehicleId
-        self.routeId = routeId
+        self.tripFilter = tripFilter
         self.stopId = stopId
-        self.stopSequence = stopSequence
-        self.global = global
+        self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
-
-        self.tripPredictionsRepository = tripPredictionsRepository
-        self.tripRepository = tripRepository
-        self.vehicleRepository = vehicleRepository
+        self.stopDetailsVM = stopDetailsVM
 
         self.analytics = analytics
     }
@@ -81,215 +52,115 @@ struct TripDetailsView: View {
             if nearbyVM.showDebugMessages {
                 DebugView {
                     VStack {
-                        Text(verbatim: "trip id: \(tripId)")
-                        Text(verbatim: "vehicle id: \(vehicleId)")
+                        Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")
+                        Text(verbatim: "vehicle id: \(tripFilter?.vehicleId ?? "nil")")
                     }
                 }
             }
-            if tripPredictionsLoaded, let global, let vehicle = vehicleResponse?.vehicle,
+            if let tripFilter,
+               let tripData = stopDetailsVM.tripData,
+               tripData.tripFilter == tripFilter,
+               let global = stopDetailsVM.global,
+               let vehicle = stopDetailsVM.tripData?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
-                   tripId: tripId,
-                   directionId: trip?.directionId ?? vehicle.directionId,
-                   tripSchedules: tripSchedulesResponse,
-                   tripPredictions: tripPredictions,
+                   tripId: tripFilter.tripId,
+                   directionId: tripData.trip.directionId,
+                   tripSchedules: tripData.tripSchedules,
+                   tripPredictions: tripData.tripPredictions,
                    vehicle: vehicle,
                    alertsData: nearbyVM.alerts,
                    globalData: global
                ) {
-                vehicleCardView
-                if let stopSequence, let splitStops = stops.splitForTarget(
-                    targetStopId: stopId,
-                    targetStopSequence: Int32(stopSequence),
-                    globalData: global
-                ) {
-                    TripDetailsStopListSplitView(
-                        splitStops: splitStops,
-                        now: now,
-                        onTapLink: onTapStop,
-                        routeType: routeType
-                    )
-                    .onAppear { didLoadData?(self) }
+                let vehicleStop: Stop? = if let stopId = vehicle.stopId, let allStops = stopDetailsVM.global?.stops {
+                    allStops[stopId]?.resolveParent(stops: allStops)
                 } else {
-                    TripDetailsStopListView(stops: stops, now: now, onTapLink: onTapStop, routeType: routeType)
-                        .onAppear { didLoadData?(self) }
+                    nil
                 }
+                let routeAccents = stopDetailsVM.getTripRouteAccents()
+                tripDetails(tripFilter.tripId, stops, vehicle, vehicleStop, routeAccents)
             } else {
                 loadingBody()
             }
         }
-        .task { loadEverything(tripId: tripId) }
-        .task { now = Date.now.toKotlinInstant() }
-        .onAppear { joinRealtime() }
-        .onDisappear { leaveRealtime() }
-        .onChange(of: tripId) { nextTripId in
-            mapVM.selectedVehicle = nil
-            trip = nil
-            tripSchedulesResponse = nil
-            leavePredictions()
-            tripPredictions = nil
-            errorBannerVM.errorRepository.clearDataError(key: "TripDetailsView.loadTripSchedules")
-            errorBannerVM.errorRepository.clearDataError(key: "TripDetailsView.loadTrip")
-            loadTripSchedules(tripId: nextTripId)
-            loadTrip(tripId: nextTripId)
-            joinPredictions(tripId: nextTripId)
+        .padding(.horizontal, 6)
+        .task { stopDetailsVM.handleTripFilterChange(tripFilter) }
+        .onDisappear {
+            if stopDetailsVM.tripData?.tripFilter == tripFilter {
+                stopDetailsVM.clearTripDetails()
+            }
+            clearMapVehicle()
         }
-        .onChange(of: vehicleId) { vehicleId in
-            leaveVehicle()
-            joinVehicle(vehicleId: vehicleId)
-        }
+        .onChange(of: tripFilter) { nextTripFilter in stopDetailsVM.handleTripFilterChange(nextTripFilter) }
+        .onChange(of: stopDetailsVM.tripData?.vehicle) { vehicle in mapVM.selectedVehicle = vehicle }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .withScenePhaseHandlers(
             onActive: {
-                if let tripPredictions,
-                   tripPredictionsRepository
-                   .shouldForgetPredictions(predictionCount: tripPredictions.predictionQuantity()) {
-                    self.tripPredictions = nil
+                stopDetailsVM.returnFromBackground()
+                if let tripFilter {
+                    stopDetailsVM.joinTripChannels(tripFilter: tripFilter)
                 }
-                joinRealtime()
             },
-            onInactive: leaveRealtime,
-            onBackground: { leaveRealtime() }
+            onInactive: stopDetailsVM.leaveTripChannels,
+            onBackground: stopDetailsVM.leaveTripChannels
         )
     }
 
-    var didLoadData: ((Self) -> Void)?
-
-    @ViewBuilder private func loadingBody() -> some View {
-        TripDetailsStopListView(
-            stops: LoadingPlaceholders.shared.tripDetailsStops(),
-            now: now,
-            onTapLink: { _, _, _ in },
-            routeType: nil
-        )
-        .loadingPlaceholder()
+    @ViewBuilder private func tripDetails(
+        _ tripId: String,
+        _ stops: TripDetailsStopList,
+        _ vehicle: Vehicle?,
+        _ vehicleStop: Stop?,
+        _ routeAccents: TripRouteAccents
+    ) -> some View {
+        let vehicleShown = vehicle != nil && vehicleStop != nil
+        VStack(spacing: 0) {
+            vehicleCardView(vehicle, vehicleStop, tripId, routeAccents).zIndex(1)
+            TripStops(
+                targetId: stopId,
+                stops: stops,
+                stopSequence: tripFilter?.stopSequence?.intValue,
+                vehicleShown: vehicleShown,
+                now: now,
+                onTapLink: onTapStop,
+                routeAccents: routeAccents,
+                global: stopDetailsVM.global
+            )
+            .padding(.top, vehicleShown ? -56 : 0)
+        }
     }
 
-    private func loadEverything(tripId: String) {
-        loadTripSchedules(tripId: tripId)
-        loadTrip(tripId: tripId)
-    }
-
-    private func loadTripSchedules(tripId: String) {
-        Task {
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "TripDetailsPage.loadTripSchedules",
-                getData: { try await tripRepository.getTripSchedules(tripId: tripId) },
-                onSuccess: { tripSchedulesResponse = $0 },
-                onRefreshAfterError: { loadEverything(tripId: tripId) }
+    @ViewBuilder
+    func vehicleCardView(
+        _ vehicle: Vehicle?,
+        _ vehicleStop: Stop?,
+        _ tripId: String,
+        _ routeAccents: TripRouteAccents
+    ) -> some View {
+        if let vehicle, let vehicleStop {
+            TripVehicleCard(
+                vehicle: vehicle,
+                stop: vehicleStop,
+                tripId: tripId,
+                routeAccents: routeAccents
             )
         }
     }
 
-    private func loadTrip(tripId: String) {
-        Task {
-            let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripId)
-            let errorKey = "TripDetailsPage.loadTrip"
-            switch onEnum(of: response) {
-            case let .ok(okResponse):
-                errorBannerVM.errorRepository.clearDataError(key: errorKey)
-                trip = okResponse.data.trip
-            case .error:
-                errorBannerVM.errorRepository.setDataError(key: errorKey, action: { loadEverything(tripId: tripId) })
-                trip = nil
-            }
-        }
+    @ViewBuilder private func loadingBody() -> some View {
+        let placeholderInfo = LoadingPlaceholders.shared.tripDetailsInfo()
+        tripDetails(
+            "",
+            placeholderInfo.stops,
+            placeholderInfo.vehicle,
+            placeholderInfo.vehicleStop,
+            TripRouteAccents()
+        ).loadingPlaceholder()
     }
 
-    private func joinRealtime() {
-        joinPredictions(tripId: tripId)
-        joinVehicle(vehicleId: vehicleId)
-    }
-
-    private func leaveRealtime() {
-        leavePredictions()
-        leaveVehicle()
-    }
-
-    private func joinPredictions(tripId: String) {
-        tripPredictionsRepository.connect(tripId: tripId) { outcome in
-            DispatchQueue.main.async {
-                // no error handling since persistent errors cause stale predictions
-                switch onEnum(of: outcome) {
-                case let .ok(result): tripPredictions = result.data
-                case .error: break
-                }
-                tripPredictionsLoaded = true
-            }
-        }
-    }
-
-    private func leavePredictions() {
-        tripPredictionsLoaded = false
-        tripPredictionsRepository.disconnect()
-    }
-
-    private func joinVehicle(vehicleId: String?) {
-        guard let vehicleId else { return }
-        vehicleRepository.connect(vehicleId: vehicleId) { outcome in
-            Task { @MainActor in
-                let errorKey = "TripDetailsPage.joinVehicle"
-                switch onEnum(of: outcome) {
-                case let .ok(result):
-                    errorBannerVM.errorRepository.clearDataError(key: errorKey)
-                    vehicleResponse = result.data
-                    mapVM.selectedVehicle = result.data.vehicle
-                case .error:
-                    errorBannerVM.errorRepository.setDataError(
-                        key: errorKey,
-                        action: { loadEverything(tripId: tripId) }
-                    )
-                    vehicleResponse = nil
-                }
-            }
-        }
-    }
-
-    private func leaveVehicle() {
-        vehicleRepository.disconnect()
-        if mapVM.selectedVehicle?.id == vehicleId {
+    private func clearMapVehicle() {
+        if mapVM.selectedVehicle?.id == tripFilter?.vehicleId {
             mapVM.selectedVehicle = nil
         }
-    }
-
-    @ViewBuilder
-    var vehicleCardView: some View {
-        let trip: Trip? = tripPredictions?.trips[tripId]
-        let vehicle: Vehicle? = vehicleResponse?.vehicle
-        let vehicleStop: Stop? = if let stopId = vehicle?.stopId, let allStops = global?.stops {
-            allStops[stopId]?.resolveParent(stops: allStops)
-        } else {
-            nil
-        }
-        let route: Route? = if let routeId = trip?.routeId ?? vehicle?.routeId {
-            global?.routes[routeId]
-        } else {
-            nil
-        }
-        VehicleCardView(
-            vehicle: vehicle,
-            route: route,
-            stop: vehicleStop,
-            tripId: tripId
-        )
-    }
-
-    @ViewBuilder
-    var header: some View {
-        let trip: Trip? = tripPredictions?.trips[tripId]
-        let vehicle: Vehicle? = vehicleResponse?.vehicle
-        let route: Route? = if let routeId = trip?.routeId ?? vehicle?.routeId {
-            global?.routes[routeId]
-        } else {
-            nil
-        }
-        TripDetailsHeader(
-            route: route,
-            line: global?.getLine(lineId: route?.lineId),
-            trip: trip,
-            onBack: nearbyVM.goBack,
-            onClose: { nearbyVM.navigationStack.removeAll() }
-        )
     }
 
     func onTapStop(
@@ -300,16 +171,16 @@ struct TripDetailsView: View {
         // resolve parent stop before following link
         let realEntry = switch entry {
         case let .legacyStopDetails(stop, filter): SheetNavigationStackEntry.legacyStopDetails(
-                stop.resolveParent(stops: global?.stops ?? [:]),
+                stop.resolveParent(stops: stopDetailsVM.global?.stops ?? [:]),
                 filter
             )
         default: entry
         }
         nearbyVM.pushNavEntry(realEntry)
         analytics.tappedDownstreamStop(
-            routeId: trip?.routeId ?? "",
+            routeId: stopDetailsVM.tripData?.trip.routeId ?? "",
             stopId: stop.stop.id,
-            tripId: tripId,
+            tripId: tripFilter?.tripId ?? "",
             connectingRouteId: connectingRouteId
         )
     }
