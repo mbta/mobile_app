@@ -14,7 +14,10 @@ struct TripVehicleCard: View {
     let vehicle: Vehicle
     let stop: Stop
     let tripId: String
+    let targetId: String
+    let terminalEntry: TripDetailsStopList.Entry?
     let routeAccents: TripRouteAccents
+    let now: Date
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -31,7 +34,7 @@ struct TripVehicleCard: View {
                 liveIndicator
             }
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
-            .padding(.vertical, 12)
+            .padding(.vertical, 8)
             .padding(.leading, 30)
             .padding(.trailing, 16)
         }
@@ -92,7 +95,10 @@ struct TripVehicleCard: View {
                 "Next stop",
                 comment: "Label for a vehicle's next stop. For example: Next stop Alewife"
             )
-        case .stoppedAt: NSLocalizedString(
+        case .stoppedAt: terminalEntry != nil ? NSLocalizedString(
+                "Waiting to depart",
+                comment: "Label for a vehicle stopped at a terminal station waiting to start a trip. For example: Waiting to depart Alewife"
+            ) : NSLocalizedString(
                 "Now at",
                 comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
             )
@@ -114,28 +120,59 @@ struct TripVehicleCard: View {
             .rotationEffect(.degrees(225))
             routeIcon(routeAccents.type)
                 .resizable()
-                .frame(width: 27, height: 27)
+                .frame(width: 27.5, height: 27.5)
                 .foregroundColor(routeAccents.textColor)
+                .overlay {
+                    if targetId == stop.id, vehicle.currentStatus == .stoppedAt {
+                        Image(.stopPinIndicator)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 26)
+                            .padding(.bottom, 36)
+                    }
+                }
         }
         .accessibilityHidden(true)
         .padding([.bottom], 6)
     }
 
     var liveIndicator: some View {
-        HStack {
-            Image(.liveData)
-                .resizable()
-                .frame(width: 16, height: 16)
-            Text("Live", comment: "Indicates that data is being updated in real-time")
-                .font(Typography.footnote)
+        VStack {
+            HStack {
+                Image(.liveData)
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                Text("Live", comment: "Indicates that data is being updated in real-time")
+                    .font(Typography.footnote)
+            }
+            .opacity(0.6)
+            .accessibilityElement()
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityLabel(Text(
+                "Real-time arrivals updating live",
+                comment: "VoiceOver label for real-time indicator icon"
+            ))
+            if let upcomingTripViewState {
+                UpcomingTripView(
+                    prediction: upcomingTripViewState,
+                    routeType: routeAccents.type,
+                    hideRealtimeIndicators: true
+                ).foregroundStyle(Color.text).opacity(0.6)
+            }
         }
-        .opacity(0.6)
-        .accessibilityElement()
-        .accessibilityAddTraits(.isHeader)
-        .accessibilityLabel(Text(
-            "Real-time arrivals updating live",
-            comment: "VoiceOver label for real-time indicator icon"
-        ))
+    }
+
+    var upcomingTripViewState: UpcomingTripView.State? {
+        guard let terminalEntry else { return nil }
+        if let alert = terminalEntry.alert {
+            return .noService(alert.effect)
+        } else {
+            let formatted = terminalEntry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
+            return switch onEnum(of: formatted) {
+            case .hidden, .skipped: nil
+            default: .some(formatted)
+            }
+        }
     }
 }
 
@@ -153,23 +190,33 @@ struct TripVehicleCard_Previews: PreviewProvider {
             trip.id = "1234"
             trip.headsign = "Alewife"
         }
-        let vehicle = Vehicle(id: "y1234", bearing: nil,
-                              currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
-                              currentStopSequence: 30,
-                              directionId: 1,
-                              latitude: 0.0,
-                              longitude: 0.0,
-                              updatedAt: Date.now.addingTimeInterval(-10).toKotlinInstant(),
-                              routeId: "66",
-                              stopId: "place-davis",
-                              tripId: trip.id)
+        let vehicle = Vehicle(
+            id: "y1234", bearing: nil,
+            currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
+            currentStopSequence: 30,
+            directionId: 1,
+            latitude: 0.0,
+            longitude: 0.0,
+            updatedAt: Date.now.addingTimeInterval(-10).toKotlinInstant(),
+            routeId: "66",
+            stopId: "place-davis",
+            tripId: trip.id
+        )
 
         let stop = objects.stop { stop in
             stop.name = "Davis"
         }
 
         List {
-            TripVehicleCard(vehicle: vehicle, stop: stop, tripId: trip.id, routeAccents: TripRouteAccents(route: red))
+            TripVehicleCard(
+                vehicle: vehicle,
+                stop: stop,
+                tripId: trip.id,
+                targetId: "",
+                terminalEntry: nil,
+                routeAccents: TripRouteAccents(route: red),
+                now: Date.now
+            )
         }
         .previewDisplayName("VehicleCard")
     }
