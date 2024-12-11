@@ -97,7 +97,10 @@ struct TripVehicleCard: View {
             )
         case .stoppedAt: terminalEntry != nil ? NSLocalizedString(
                 "Waiting to depart",
-                comment: "Label for a vehicle stopped at a terminal station waiting to start a trip. For example: Waiting to depart Alewife"
+                comment: """
+                Label for a vehicle stopped at a terminal station waiting to start a trip.
+                For example: Waiting to depart Alewife
+                """
             ) : NSLocalizedString(
                 "Now at",
                 comment: "Label for a where a vehicle is currently stopped. For example: Now at Alewife"
