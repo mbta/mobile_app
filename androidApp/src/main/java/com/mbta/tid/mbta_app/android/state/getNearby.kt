@@ -22,7 +22,8 @@ class NearbyViewModel(
     private val nearbyRepository: INearbyRepository,
     private val globalResponse: GlobalResponse?,
     private val location: Coordinate?,
-    setLastLocation: (Position) -> Unit
+    setLastLocation: (Position) -> Unit,
+    setSelectingLocation: (Boolean) -> Unit,
 ) : ViewModel() {
     private val _nearbyResponse = MutableStateFlow<NearbyStaticData?>(null)
     val nearbyResponse: StateFlow<NearbyStaticData?> = _nearbyResponse
@@ -36,6 +37,7 @@ class NearbyViewModel(
                     setLastLocation(
                         Position(latitude = location.latitude, longitude = location.longitude)
                     )
+                    setSelectingLocation(false)
                 }
             }
         }
@@ -59,11 +61,18 @@ fun getNearby(
     globalResponse: GlobalResponse?,
     location: Coordinate?,
     setLastLocation: (Position) -> Unit,
+    setSelectingLocation: (Boolean) -> Unit,
     nearbyRepository: INearbyRepository = koinInject()
 ): NearbyStaticData? {
     val viewModel =
         remember(globalResponse, location) {
-            NearbyViewModel(nearbyRepository, globalResponse, location, setLastLocation)
+            NearbyViewModel(
+                nearbyRepository,
+                globalResponse,
+                location,
+                setLastLocation,
+                setSelectingLocation
+            )
         }
     return viewModel.nearbyResponse.collectAsState(initial = null).value
 }

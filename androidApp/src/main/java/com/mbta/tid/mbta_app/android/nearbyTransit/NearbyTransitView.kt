@@ -35,13 +35,15 @@ fun NearbyTransitView(
     globalResponse: GlobalResponse?,
     targetLocation: Position?,
     setLastLocation: (Position) -> Unit,
+    setSelectingLocation: (Boolean) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
 ) {
     var nearby: NearbyStaticData? =
         getNearby(
             globalResponse,
             targetLocation?.let { Coordinate(latitude = it.latitude, longitude = it.longitude) },
-            setLastLocation
+            setLastLocation,
+            setSelectingLocation,
         )
     val now = timer(updateInterval = 5.seconds)
     val stopIds = remember(nearby) { nearby?.stopIds()?.toList() }
