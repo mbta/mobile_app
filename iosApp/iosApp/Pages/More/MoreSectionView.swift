@@ -51,10 +51,7 @@ struct MoreSectionView: View {
                                 MoreNavLink(label: label, destination: destination)
                             }
                             if index < section.items.count {
-                                Rectangle()
-                                    .fill(Color.halo)
-                                    .frame(height: 1)
-                                    .frame(maxWidth: .infinity)
+                                HaloSeparator().frame(maxWidth: .infinity)
                             }
                         }
                     }

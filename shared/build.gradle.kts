@@ -322,10 +322,7 @@ task<CachedExecTask>("bomIosCocoapodsRaw") {
     workingDir = provider { layout.projectDirectory.dir("../iosApp") }
     commandLine("bundle", "exec", "cyclonedx-cocoapods", "-o", outputFile.get().toString())
     onError = { error ->
-        throw IllegalStateException(
-            "\nerror: bundle exec cyclonedx-cocoapods failed, try ./gradlew --stop then ./gradlew bomIosCocoapodsRaw in a terminal with a good PATH",
-            error
-        )
+        throw IllegalStateException("\nerror: BOM generation failed, see Gotchas in README", error)
     }
 }
 
