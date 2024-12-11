@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -85,13 +86,21 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockTripPredictionsRepository : ITripPredictionsRepository {
+class MockTripPredictionsRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    var onConnect: () -> Unit = {},
+    var onDisconnect: () -> Unit = {},
+    var response: PredictionsStreamDataResponse =
+        PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap())
+) : ITripPredictionsRepository {
 
     override fun connect(
         tripId: String,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit
     ) {
-        /* no-op */
+        onReceive(ApiResult.Ok(response))
+        onConnect()
     }
 
     override var lastUpdated: Instant? = null
@@ -99,6 +108,6 @@ class MockTripPredictionsRepository : ITripPredictionsRepository {
     override fun shouldForgetPredictions(predictionCount: Int) = false
 
     override fun disconnect() {
-        /* no-op */
+        onDisconnect()
     }
 }

@@ -21,13 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
-import com.mapbox.maps.Style
 import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.compose.DisposableMapEffect
@@ -46,6 +46,7 @@ import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
+import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getRailRouteShapes
@@ -270,7 +271,11 @@ fun HomeMapView(
             compass = {},
             scaleBar = {},
             mapViewportState = viewportProvider.viewport,
-            style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
+            style = {
+                MapStyle(
+                    style = if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle
+                )
+            }
         ) {
             LaunchedEffect(currentNavEntry) { handleNavChange() }
             LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
@@ -315,11 +320,6 @@ fun HomeMapView(
                     )
                     layerManager.run { resetPuckPosition() }
                 }
-            }
-
-            LifecycleStartEffect(Unit) {
-                locationPermissions.launchMultiplePermissionRequest()
-                onStopOrDispose {}
             }
 
             LifecycleStartEffect(Unit) {
@@ -378,7 +378,13 @@ fun HomeMapView(
 
         if (!viewportProvider.isFollowingPuck) {
             RecenterButton(
-                onClick = { viewportProvider.follow() },
+                onClick = {
+                    // don't request FINE if we already have COARSE
+                    if (!locationPermissions.permissions.any { it.status.isGranted }) {
+                        locationPermissions.launchMultiplePermissionRequest()
+                    }
+                    viewportProvider.follow()
+                },
                 Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
         }

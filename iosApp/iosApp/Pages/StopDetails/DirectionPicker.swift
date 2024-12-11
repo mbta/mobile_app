@@ -43,8 +43,8 @@ struct DirectionPicker: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
                     .accessibilityAddTraits(isSelected ? [.isSelected] : [])
-                    .background(isSelected ? Color(hex: route.color) : deselectedBackroundColor)
-                    .foregroundStyle(isSelected ? Color(hex: route.textColor) : .deselectedToggleText)
+                    .background(isSelected ? route.uiColor : deselectedBackroundColor)
+                    .foregroundStyle(isSelected ? route.uiTextColor : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 6))
                 }
             }
@@ -53,6 +53,7 @@ struct DirectionPicker: View {
             .clipShape(.rect(cornerRadius: 8))
         } else if availableDirections.count == 1, let direction = availableDirections.first {
             DirectionLabel(direction: directions[Int(direction)])
+                .foregroundStyle(route.uiTextColor)
                 .padding(8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
