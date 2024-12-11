@@ -173,7 +173,14 @@ struct ContentView: View {
                                 .accessibilityIdentifier("mapRecenterButton")
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
-                        conditionalRecenterOnVehicleButton
+                        if !searchObserver.isSearching, !viewportProvider.viewport.isOverview,
+                           let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
+                            VStack(alignment: .trailing) {
+                                RecenterButton(icon: routeIconResource(routeType), size: 32) {
+                                    viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
+                                }
+                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
+                        }
                     }.frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
@@ -350,21 +357,13 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder
-    private var conditionalRecenterOnVehicleButton: some View {
-        if !searchObserver.isSearching,
-           case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = nearbyVM
-           .navigationStack.lastSafe(),
-           !viewportProvider.viewport.isOverview,
-           let selectedVehicle = mapVM.selectedVehicle, let globalData = mapVM.globalData,
-           let stop = nearbyVM.getTargetStop(global: globalData), let routeId = stopFilter?.routeId,
-           let route = globalData.routes[routeId] {
-            VStack(alignment: .trailing) {
-                RecenterButton(icon: routeIconResource(route.type), size: 32) {
-                    viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
-                }
-            }.frame(maxWidth: .infinity, alignment: .topTrailing)
-        }
+    private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
+        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = nearbyVM
+            .navigationStack.lastSafe(),
+            let selectedVehicle = mapVM.selectedVehicle, let globalData = mapVM.globalData,
+            let stop = nearbyVM.getTargetStop(global: globalData), let routeId = stopFilter?.routeId,
+            let route = globalData.routes[routeId] else { return nil }
+        return (route.type, selectedVehicle, stop)
     }
 
     private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {
