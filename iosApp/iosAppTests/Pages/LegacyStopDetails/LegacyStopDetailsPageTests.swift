@@ -185,7 +185,7 @@ final class LegacyStopDetailsPageTests: XCTestCase {
                 objects: objects,
                 callback: { schedulesLoadedPublisher.send(true) }
             ),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,
@@ -278,11 +278,13 @@ final class LegacyStopDetailsPageTests: XCTestCase {
 
         let leaveExpectation = expectation(description: "leaves predictions")
 
-        let predictionsRepo = MockPredictionsRepository(onConnect: {},
-                                                        onConnectV2: { _ in joinExpectation.fulfill() },
-                                                        onDisconnect: { leaveExpectation.fulfill() },
-                                                        connectOutcome: nil,
-                                                        connectV2Outcome: nil)
+        let predictionsRepo = MockPredictionsRepository(
+            onConnect: {},
+            onConnectV2: { _ in joinExpectation.fulfill() },
+            onDisconnect: { leaveExpectation.fulfill() },
+            connectOutcome: nil,
+            connectV2Outcome: nil
+        )
         let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
@@ -318,11 +320,10 @@ final class LegacyStopDetailsPageTests: XCTestCase {
         joinExpectation.expectedFulfillmentCount = 2
         joinExpectation.assertForOverFulfill = true
 
-        let predictionsRepo = MockPredictionsRepository(onConnect: {},
-                                                        onConnectV2: { _ in joinExpectation.fulfill() },
-                                                        onDisconnect: { leaveExpectation.fulfill() },
-                                                        connectOutcome: nil,
-                                                        connectV2Outcome: nil)
+        let predictionsRepo = MockPredictionsRepository(
+            onConnectV2: { _ in joinExpectation.fulfill() },
+            onDisconnect: { leaveExpectation.fulfill() }
+        )
         let sut = LegacyStopDetailsPage(
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
@@ -363,9 +364,13 @@ final class LegacyStopDetailsPageTests: XCTestCase {
 
         let predictionsRepo = MockPredictionsRepository()
         let sut = LegacyStopDetailsPage(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects,
-                                                                   patternIdsByStop: [stop.id: [pattern.id]]),
-                                                   onGet: { globalDataLoaded.send() }),
+            globalRepository: MockGlobalRepository(
+                response: .init(
+                    objects: objects,
+                    patternIdsByStop: [stop.id: [pattern.id]]
+                ),
+                onGet: { globalDataLoaded.send() }
+            ),
             schedulesRepository: MockScheduleRepository(),
             predictionsRepository: predictionsRepo,
             viewportProvider: viewportProvider,
@@ -414,7 +419,7 @@ final class LegacyStopDetailsPageTests: XCTestCase {
                 scheduleResponse: .init(objects: objects),
                 callback: { _ in schedulesLoadedPublisher.send(true) }
             ),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             viewportProvider: viewportProvider,
             stop: stop,
             filter: filter,

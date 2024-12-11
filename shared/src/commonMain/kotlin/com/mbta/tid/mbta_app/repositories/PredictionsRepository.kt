@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -174,7 +175,9 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockPredictionsRepository(
+class MockPredictionsRepository
+@DefaultArgumentInterop.Enabled
+constructor(
     val onConnect: () -> Unit = {},
     val onConnectV2: (List<String>) -> Unit = {},
     val onDisconnect: () -> Unit = {},
@@ -182,27 +185,25 @@ class MockPredictionsRepository(
     private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null
 ) : IPredictionsRepository {
 
-    constructor() :
-        this(onConnect = {}, onConnectV2 = {}, connectOutcome = null, connectV2Outcome = null)
-
-    constructor(
-        response: PredictionsStreamDataResponse
-    ) : this(connectOutcome = ApiResult.Ok(response))
-
-    constructor(
-        connectV2Outcome: PredictionsByStopJoinResponse
-    ) : this(connectV2Outcome = ApiResult.Ok(connectV2Outcome))
-
+    @DefaultArgumentInterop.Enabled
     constructor(
         onConnect: () -> Unit = {},
         onConnectV2: (List<String>) -> Unit = {},
         onDisconnect: () -> Unit = {},
+        connectResponse: PredictionsStreamDataResponse? = null,
+        // v2 response is required because that's the main one we actually use, and not including
+        // a required param results in ambiguous constructor signatures
+        connectV2Response: PredictionsByStopJoinResponse
     ) : this(
-        onConnect = onConnect,
-        onConnectV2 = onConnectV2,
-        onDisconnect = onDisconnect,
-        connectOutcome = null,
-        connectV2Outcome = null
+        onConnect,
+        onConnectV2,
+        onDisconnect,
+        if (connectResponse != null) {
+            ApiResult.Ok(connectResponse)
+        } else {
+            null
+        },
+        ApiResult.Ok(connectV2Response)
     )
 
     override fun connect(

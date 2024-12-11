@@ -23,8 +23,8 @@ struct RouteHeader<Content: View>: View {
     var body: some View {
         TransitHeader(
             name: route.label,
-            backgroundColor: Color(hex: route.color),
-            textColor: Color(hex: route.textColor),
+            backgroundColor: route.uiColor,
+            textColor: route.uiTextColor,
             modeIcon: routeIcon(route),
             rightContent: rightContent
         )

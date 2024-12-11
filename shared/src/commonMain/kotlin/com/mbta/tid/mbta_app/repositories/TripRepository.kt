@@ -1,8 +1,11 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -74,5 +77,25 @@ open class IdleTripRepository : ITripRepository {
 
     override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
         return suspendCancellableCoroutine {}
+    }
+}
+
+class MockTripRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
+    var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
+    var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList()))
+) : ITripRepository {
+    override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
+        return ApiResult.Ok(tripSchedulesResponse)
+    }
+
+    override suspend fun getTrip(tripId: String): ApiResult<TripResponse> {
+        return ApiResult.Ok(tripResponse)
+    }
+
+    override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
+        return ApiResult.Ok(tripShape)
     }
 }
