@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
@@ -315,11 +316,6 @@ fun HomeMapView(
             }
 
             LifecycleStartEffect(Unit) {
-                locationPermissions.launchMultiplePermissionRequest()
-                onStopOrDispose {}
-            }
-
-            LifecycleStartEffect(Unit) {
                 onStopOrDispose { viewportProvider.saveCurrentViewport() }
             }
 
@@ -367,7 +363,13 @@ fun HomeMapView(
 
         if (!viewportProvider.isFollowingPuck) {
             RecenterButton(
-                onClick = { viewportProvider.follow() },
+                onClick = {
+                    // don't request FINE if we already have COARSE
+                    if (!locationPermissions.permissions.any { it.status.isGranted }) {
+                        locationPermissions.launchMultiplePermissionRequest()
+                    }
+                    viewportProvider.follow()
+                },
                 Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
         }
