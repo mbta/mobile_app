@@ -120,7 +120,7 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
                     Os.isFamily(Os.FAMILY_MAC) -> "`brew install librsvg`"
                     Os.isFamily(Os.FAMILY_UNIX) -> "`apt-get install librsvg2-bin`"
                     else -> "install it"
-                } }",
+                } } or see Gotchas in README",
                 ex,
             )
         }

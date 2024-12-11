@@ -47,6 +47,12 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 
 - Be sure to install the Android SDK Command-line Tools via Android Studio > Settings Android SDK > SDK Tool Tabs > Android SDK Command Line Tools.
 - If you're seeing the error "undefined method 'map' for nil:NilClass" when running pod installs locally, you likely need to run `bundle exec gem uninstall ffi` then `bundle install` to get a cocoapods requirement to be installed properly on M1 Macs.
+- If an Xcode build fails because of CocoaPods, try `bin/fix-cocoapods.sh`.
+- If some piece of BOM generation fails in Xcode, try quitting Xcode and then running `open /Applications/Xcode.app` from a terminal with a good `PATH`.
+- If iOS asset conversion fails in Android Studio, try quitting Android Studio and then running `open /Applications/Android\ Studio.app` from a terminal with a good `PATH`.
+- If some piece of BOM generation still fails in Xcode even when Xcode was launched with a good `PATH`, try running `./gradlew :shared:bomCodegenIos` manually from a terminal with a good `PATH`.
+- If `./gradlew :shared:bomCodegenIos` fails in a terminal with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try `./gradlew :shared:bomCodegenIos` again.
+- If Android Studio can't find `rsvg-convert` even when Android Studio was launched with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try the build again.
 
 ## Running Locally
 
