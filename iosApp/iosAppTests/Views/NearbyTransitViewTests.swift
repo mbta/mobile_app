@@ -155,7 +155,7 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
@@ -489,7 +489,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: predictions),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: predictions),
             schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects), callback: { _ in }),
             getNearby: { _, _ in },
             state: .constant(greenLineState),
@@ -727,7 +727,7 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
@@ -794,7 +794,7 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(route52State),
@@ -860,7 +860,7 @@ final class NearbyTransitViewTests: XCTestCase {
         var sut = NearbyTransitView(
             togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
             schedulesRepository: MockScheduleRepository(),
             getNearby: { _, _ in },
             state: .constant(.init(loadedLocation: .init(), nearbyByRouteAndStop: .init(data: []))),

@@ -6,6 +6,8 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+// swiftlint:disable type_body_length
+
 import shared
 import SwiftPhoenixClient
 import SwiftUI
@@ -133,14 +135,20 @@ class StopDetailsViewModel: ObservableObject {
     func handleTripFilterChange(_ tripFilter: TripDetailsFilter?) {
         guard let tripFilter else {
             // If the next trip filter is nil, clear everything and leave realtime
-            tripData = nil
-            leaveTripChannels()
+            clearTripDetails()
             return
         }
         if let tripData {
             let currentFilter = tripData.tripFilter
             if currentFilter.tripId == tripFilter.tripId, currentFilter.vehicleId == tripFilter.vehicleId {
-                // If the filter changed but the trip and vehicle are the same, do nothing
+                // If the filter changed but the trip and vehicle are the same, replace the filter but keep all the data
+                self.tripData = TripData(
+                    tripFilter: tripFilter,
+                    trip: tripData.trip,
+                    tripSchedules: tripData.tripSchedules,
+                    tripPredictions: tripData.tripPredictions,
+                    vehicle: tripData.vehicle
+                )
                 return
             } else if currentFilter.tripId == tripFilter.tripId {
                 // If only the vehicle changed but the trip is the same, clear and reload only the vehicle,
@@ -313,7 +321,7 @@ class StopDetailsViewModel: ObservableObject {
                 }
             }
 
-            return try await task.result.get()
+            return try await task.value
         } catch {
             return nil
         }
@@ -321,7 +329,7 @@ class StopDetailsViewModel: ObservableObject {
 
     private func loadTripSchedules(tripFilter: TripDetailsFilter) async -> TripSchedulesResponse? {
         let task = Task<TripSchedulesResponse?, Error> {
-            var result: TripSchedulesResponse? = nil
+            var result: TripSchedulesResponse?
             await fetchApi(
                 self.errorBannerRepository,
                 errorKey: "TripDetailsPage.loadTripSchedules",
@@ -333,7 +341,7 @@ class StopDetailsViewModel: ObservableObject {
         }
 
         do {
-            return try await task.result.get()
+            return try await task.value
         } catch {
             return nil
         }

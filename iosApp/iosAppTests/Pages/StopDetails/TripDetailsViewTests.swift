@@ -47,7 +47,7 @@ final class TripDetailsViewTests: XCTestCase {
 
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             tripPredictionsRepository: MockTripPredictionsRepository(),
             tripRepository: MockTripRepository(
                 tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
@@ -110,7 +110,7 @@ final class TripDetailsViewTests: XCTestCase {
 
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             tripPredictionsRepository: MockTripPredictionsRepository(),
             tripRepository: MockTripRepository(
                 tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import VehicleChannel
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
@@ -69,16 +70,22 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
     }
 }
 
-class MockVehicleRepository(private val outcome: ApiResult<VehicleStreamDataResponse>? = null) :
-    IVehicleRepository {
+class MockVehicleRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    var onConnect: () -> Unit = {},
+    var onDisconnect: () -> Unit = {},
+    private val outcome: ApiResult<VehicleStreamDataResponse>? = null
+) : IVehicleRepository {
     override fun connect(
         vehicleId: String,
         onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit
     ) {
         outcome?.let { onReceive(it) }
+        onConnect()
     }
 
     override fun disconnect() {
-        /* no-op */
+        onDisconnect()
     }
 }
