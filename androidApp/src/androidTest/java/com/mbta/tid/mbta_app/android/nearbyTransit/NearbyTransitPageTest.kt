@@ -18,6 +18,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.util.LocalActivity
@@ -46,6 +47,9 @@ import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
@@ -288,5 +292,56 @@ class NearbyTransitPageTest : KoinTest {
         composeTestRule.onNodeWithText("Sample Stop").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testReloadsMapboxConfigOnError() {
+
+        open class MockMapVM : IMapViewModel {
+            var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
+            override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
+
+            var loadConfigCalledCount = 0
+
+            override suspend fun loadConfig() {
+                loadConfigCalledCount += 1
+            }
+        }
+
+        val mockMapVM = MockMapVM()
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                CompositionLocalProvider(
+                    LocalActivity provides (LocalContext.current as Activity),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
+                ) {
+                    NearbyTransitPage(
+                        Modifier,
+                        NearbyTransit(
+                            alertData = AlertsStreamDataResponse(builder.alerts),
+                            globalResponse = globalResponse,
+                            lastNearbyTransitLocation = Position(0.0, 0.0),
+                            scaffoldState = rememberBottomSheetScaffoldState(),
+                            locationDataManager = MockLocationDataManager(Location("mock")),
+                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                        ),
+                        false,
+                        {},
+                        {},
+                        bottomBar = {},
+                        mapViewModel = mockMapVM
+                    )
+                }
+            }
+        }
+
+        composeTestRule.waitUntilDoesNotExist(hasText("Loading..."))
+
+        composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 1 }
+        mockMapVM.mutableLastErrorTimestamp.value = Clock.System.now()
+
+        composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 2 }
     }
 }

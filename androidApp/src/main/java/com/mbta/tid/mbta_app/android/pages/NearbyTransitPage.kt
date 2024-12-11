@@ -38,7 +38,7 @@ import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
-import com.mbta.tid.mbta_app.android.map.MapViewModel
+import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -74,7 +74,8 @@ fun NearbyTransitPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     vehiclesRepository: IVehiclesRepository = koinInject(),
-    bottomBar: @Composable () -> Unit
+    bottomBar: @Composable () -> Unit,
+    mapViewModel: IMapViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
@@ -82,7 +83,6 @@ fun NearbyTransitPage(
     var stopDetailsFilter by rememberSaveable { mutableStateOf<StopDetailsFilter?>(null) }
     var stopDetailsDepartures by rememberSaveable { mutableStateOf<StopDetailsDepartures?>(null) }
     var vehiclesData: List<Vehicle> by remember { mutableStateOf(emptyList()) }
-    val mapViewModel: MapViewModel = viewModel()
 
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {

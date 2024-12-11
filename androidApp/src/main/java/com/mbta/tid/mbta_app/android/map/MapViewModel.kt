@@ -8,23 +8,30 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ConfigResponse
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-class MapViewModel(
+interface IMapViewModel {
+    var lastMapboxErrorTimestamp: Flow<Instant?>
+
+    suspend fun loadConfig()
+}
+
+open class MapViewModel(
     private val configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
     val configureMapboxToken: (String) -> Unit = { token -> MapboxOptions.accessToken = token },
     setHttpInterceptor: (MapHttpInterceptor?) -> Unit = { interceptor ->
         HttpServiceFactory.setHttpServiceInterceptor(interceptor)
     }
-) : ViewModel() {
+) : ViewModel(), IMapViewModel {
     private val _config = MutableStateFlow<ApiResult<ConfigResponse>?>(null)
     var config: StateFlow<ApiResult<ConfigResponse>?> = _config
     private val _lastMapboxErrorTimestamp = MutableStateFlow<Instant?>(null)
-    var lastMapboxErrorTimestamp = _lastMapboxErrorTimestamp.debounce(1.seconds)
+    override var lastMapboxErrorTimestamp = _lastMapboxErrorTimestamp.debounce(1.seconds)
 
     init {
         setHttpInterceptor(MapHttpInterceptor { updateLastErrorTimestamp() })
@@ -34,7 +41,7 @@ class MapViewModel(
         _lastMapboxErrorTimestamp.value = Clock.System.now()
     }
 
-    suspend fun loadConfig() {
+    override suspend fun loadConfig() {
         val latestConfig = configUseCase.getConfig()
         if (latestConfig is ApiResult.Ok) {
             configureMapboxToken(latestConfig.data.mapboxPublicToken)
