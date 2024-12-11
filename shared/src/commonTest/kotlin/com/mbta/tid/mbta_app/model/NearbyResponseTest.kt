@@ -3108,7 +3108,7 @@ class NearbyResponseTest {
                                         )
                                     ),
                                     alertsHere = listOf(alert),
-                                    alertsDownstream = listOf(alert),
+                                    alertsDownstream = emptyList(),
                                     hasSchedulesToday = false
                                 ),
                             )
