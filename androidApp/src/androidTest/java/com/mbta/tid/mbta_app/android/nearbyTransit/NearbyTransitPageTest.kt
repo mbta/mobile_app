@@ -327,7 +327,10 @@ class NearbyTransitPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocation = Position(0.0, 0.0),
+                            lastNearbyTransitLocationState =
+                                remember { mutableStateOf(Position(0.0, 0.0)) },
+                            nearbyTransitSelectingLocationState =
+                                remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(Location("mock")),
                             viewportProvider = ViewportProvider(rememberMapViewportState()),
