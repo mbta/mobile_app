@@ -1,8 +1,11 @@
 package com.mbta.tid.mbta_app.android.map
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.mapbox.common.HttpServiceFactory
 import com.mapbox.common.MapboxOptions
+import com.mapbox.maps.MapboxMap
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ConfigResponse
@@ -42,10 +45,17 @@ open class MapViewModel(
     }
 
     override suspend fun loadConfig() {
+        MapboxMap.clearData({ Log.i("KB", "Map cache cleared") })
         val latestConfig = configUseCase.getConfig()
         if (latestConfig is ApiResult.Ok) {
             configureMapboxToken(latestConfig.data.mapboxPublicToken)
         }
         _config.value = latestConfig
+    }
+
+    class Factory : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return MapViewModel() as T
+        }
     }
 }

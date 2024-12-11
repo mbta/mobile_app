@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.IMapViewModel
+import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -75,7 +76,7 @@ fun NearbyTransitPage(
     hideNavBar: () -> Unit,
     vehiclesRepository: IVehiclesRepository = koinInject(),
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel = viewModel()
+    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory())
 ) {
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
