@@ -57,6 +57,7 @@ class GetNearbyTest {
                     globalResponse = globalResponse,
                     location = coordinate1,
                     setLastLocation = { /* null-op */},
+                    setSelectingLocation = {},
                     nearbyRepository = nearbyRepository
                 )
         }
