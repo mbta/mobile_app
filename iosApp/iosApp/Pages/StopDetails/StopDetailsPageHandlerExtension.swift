@@ -13,6 +13,7 @@ import SwiftUI
 extension StopDetailsPage {
     func changeStop(_ stopId: String) {
         stopDetailsVM.leavePredictions()
+        stopDetailsVM.clearTripDetails()
         fetchStopData(stopId)
     }
 

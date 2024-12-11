@@ -11,7 +11,7 @@ import SwiftUI
 
 struct LoadingPlaceholderModifier: ViewModifier {
     func body(content: Content) -> some View {
-        content.redacted(reason: .placeholder).shimmering()
+        content.redacted(reason: .placeholder).shimmering().allowsHitTesting(false)
     }
 }
 

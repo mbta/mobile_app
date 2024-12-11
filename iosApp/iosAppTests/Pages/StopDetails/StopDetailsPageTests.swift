@@ -88,8 +88,8 @@ final class StopDetailsPageTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
 
         let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects, patternIdsByStop: [:])),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .companion.empty),
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
             schedulesRepository: MockScheduleRepository(
                 scheduleResponse: .init(objects: objects),
                 callback: { _ in schedulesLoadedPublisher.send(true) }
@@ -376,7 +376,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             schedulesRepository: MockScheduleRepository(
                 scheduleResponse: .init(objects: objects),
                 callback: { _ in schedulesLoadedPublisher.send() }
@@ -445,7 +445,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Outcome: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             schedulesRepository: MockScheduleRepository(
                 scheduleResponse: .init(objects: objects),
                 callback: { _ in schedulesLoadedPublisher.send() }

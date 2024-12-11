@@ -12,37 +12,43 @@ struct WithRealtimeIndicator: View {
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 12
     let prediction: any View
+    let hideIndicator: Bool
 
-    init(_ prediction: () -> any View) {
+    init(_ prediction: () -> any View, hideIndicator: Bool = false) {
         self.prediction = prediction()
+        self.hideIndicator = hideIndicator
     }
 
-    init(_ prediction: any View) {
+    init(_ prediction: any View, hideIndicator: Bool = false) {
         self.prediction = prediction
+        self.hideIndicator = hideIndicator
     }
 
     var body: some View {
         HStack(spacing: Self.subjectSpacing) {
-            Image(.liveData)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: iconSize, height: iconSize)
-                .padding(4)
-                .opacity(0.6)
-                .accessibilityHidden(true)
+            if !hideIndicator {
+                Image(.liveData)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: iconSize, height: iconSize)
+                    .padding(4)
+                    .opacity(0.6)
+                    .accessibilityHidden(true)
+            }
             AnyView(prediction)
         }
     }
 }
 
 struct WithRealtimeIndicatorModifier: ViewModifier {
+    var hideIndicator: Bool = false
     func body(content: Content) -> some View {
-        WithRealtimeIndicator(content)
+        WithRealtimeIndicator(content, hideIndicator: hideIndicator)
     }
 }
 
 extension View {
-    func realtime() -> some View {
-        modifier(WithRealtimeIndicatorModifier())
+    func realtime(hideIndicator: Bool = false) -> some View {
+        modifier(WithRealtimeIndicatorModifier(hideIndicator: hideIndicator))
     }
 }
