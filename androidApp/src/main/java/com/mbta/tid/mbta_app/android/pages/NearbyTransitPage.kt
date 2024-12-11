@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -42,7 +41,6 @@ import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
-import com.mbta.tid.mbta_app.android.state.RouteDirection
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -87,30 +85,12 @@ fun NearbyTransitPage(
     var stopDetailsDepartures by remember { mutableStateOf<StopDetailsDepartures?>(null) }
     val viewModel: NearbyTransitTabViewModel = viewModel()
     val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
-    val vehiclesRouteDirection by viewModel.vehiclesRouteDirection.collectAsState()
-    var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = vehiclesRouteDirection)
+    var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = stopDetailsFilter)
 
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
-    }
-
-    fun handleRouteChange(route: SheetRoutes?) {
-        vehiclesData = emptyList()
-        if (route is SheetRoutes.StopDetails) {
-
-            val routeId = stopDetailsFilter?.routeId
-            val directionId = stopDetailsFilter?.directionId
-
-            vehiclesRouteDirection
-            if (routeId != null && directionId != null) {
-                viewModel.setVehiclesRouteDirection(RouteDirection(routeId, directionId))
-                return
-            }
-        }
-
-        viewModel.setVehiclesRouteDirection(null)
     }
 
     fun updateStopFilter(filter: StopDetailsFilter?) {
@@ -181,10 +161,22 @@ fun NearbyTransitPage(
                                 )
                             }
 
-                            DisposableEffect(navRoute, stopDetailsFilter) {
-                                handleRouteChange(navRoute)
+                            LaunchedEffect(navRoute) {
+                                if (navBarVisible) {
+                                    hideNavBar()
+                                }
 
-                                onDispose { handleRouteChange(null) }
+                                updateStopFilter(
+                                    if (
+                                        navRoute.filterRouteId != null &&
+                                            navRoute.filterDirectionId != null
+                                    )
+                                        StopDetailsFilter(
+                                            navRoute.filterRouteId,
+                                            navRoute.filterDirectionId
+                                        )
+                                    else null
+                                )
                             }
 
                             if (stop != null) {

@@ -10,14 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mbta.tid.mbta_app.model.RouteDirection
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
-import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
-
-@Serializable data class RouteDirection(val routeId: String, val directionId: Int)
 
 class VehiclesViewModel(
     private val vehiclesRepository: IVehiclesRepository,
@@ -38,13 +36,13 @@ class VehiclesViewModel(
         vehiclesRepository.disconnect()
     }
 
-    fun connectToVehicles(topic: RouteDirection?) {
+    fun connectToVehicles(routeDirection: RouteDirection?) {
         Log.i("KB", "connectToVehicles called")
         disconnect()
 
-        if (topic != null) {
+        if (routeDirection != null) {
             Log.i("KB", "connected")
-            vehiclesRepository.connect(topic.routeId, topic.directionId) {
+            vehiclesRepository.connect(routeDirection.routeId, routeDirection.directionId) {
                 when (it) {
                     is ApiResult.Ok -> {
                         Log.i("KB", "Received Vehicles ${it.data.vehicles.values.first().routeId}")

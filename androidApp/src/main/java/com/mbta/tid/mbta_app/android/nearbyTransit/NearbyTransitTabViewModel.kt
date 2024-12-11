@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.lifecycle.ViewModel
-import com.mbta.tid.mbta_app.android.state.RouteDirection
+import com.mbta.tid.mbta_app.model.RouteDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
