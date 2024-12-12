@@ -93,7 +93,7 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                     )
                 is TripInstantDisplay.Approaching ->
                     BoldedTripStatus(
-                        text = stringResource(R.string.approaching_abbr),
+                        text = stringResource(R.string.minutes_abbr, 1),
                         modifier = modifier
                     )
                 is TripInstantDisplay.Time ->

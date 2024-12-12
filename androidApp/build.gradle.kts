@@ -1,3 +1,4 @@
+import com.mbta.tid.mbta_app.gradle.ConvertIosLocalizationTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
 import java.io.BufferedReader
 import java.io.StringReader
@@ -56,6 +57,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions { jvmTarget = "1.8" }
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
+    }
 }
 
 dependencies {
@@ -98,6 +103,11 @@ tasks.cyclonedxBom {
 task<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
     assetsToRender = listOf("alert-large-*", "alert-small-*", "map-stop-*")
     assetsToReturnByName = listOf("alert-borderless-*")
+}
+
+task<ConvertIosLocalizationTask>("convertIosLocalization") {
+    xcstrings = layout.projectDirectory.file("../iosApp/iosApp/Localizable.xcstrings")
+    resources = layout.projectDirectory.dir("src/main/res")
 }
 
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle
@@ -147,6 +157,8 @@ task("envVars") {
 }
 
 gradle.projectsEvaluated {
-    tasks.getByPath("preBuild").dependsOn("mapboxTempToken", "convertIosIconsToAssets")
+    tasks
+        .getByPath("preBuild")
+        .dependsOn("mapboxTempToken", "convertIosIconsToAssets", "convertIosLocalization")
     tasks.getByPath("check").dependsOn("checkMapboxBridge")
 }

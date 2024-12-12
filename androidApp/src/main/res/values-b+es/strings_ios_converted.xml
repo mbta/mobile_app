@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_version_number">versión %1$s</string>
+    <string name="arriving_abbr">LLEGAN.</string>
+    <string name="boarding_abbr">ABORD.</string>
+    <string name="cancelled">Cancelado</string>
+    <string name="detour">Desvío</string>
+    <string name="directionTo">%1$s a</string>
+    <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
+    <string name="filterShowAll">Todos</string>
+    <string name="more_link">Más</string>
+    <string name="more_page_footer">Hecho con ♥ por T</string>
+    <string name="more_section_feature_flags">Banderas de características</string>
+    <string name="more_section_resources">Recursos</string>
+    <string name="more_section_settings">Configuración</string>
+    <string name="more_section_support">Información general y soporte de MBTA</string>
+    <string name="more_section_support_note">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
+    <string name="more_title">MBTA Go</string>
+    <string name="nearby_transit_link">Cerca</string>
+    <string name="no_service">Sin servicio</string>
+    <string name="no_stops_nearby">Estás fuera del área de servicio de MBTA.</string>
+    <string name="no_stops_nearby_title">No hay paradas cercanas</string>
+    <string name="now">Ahora</string>
+    <string name="other_link_privacy_policy">Política de privacidad</string>
+    <string name="other_link_source_code">Ver código fuente en GitHub</string>
+    <string name="other_link_tos">Términos de uso</string>
+    <string name="resources_link_fare_info">Información de tarifas</string>
+    <string name="resources_link_mticket">Boletos de tren de cercanías y ferri</string>
+    <string name="resources_link_mticket_note">mTicket App</string>
+    <string name="resources_link_trip_planner">Planificador de viaje</string>
+    <string name="setting_toggle_hide_maps">Ocultar Mapas</string>
+    <string name="settings_link">Configuración</string>
+    <string name="shuttle">Autobús de enlace</string>
+    <string name="stop_closed">Parada cerrada</string>
+    <string name="suspension">Suspensión</string>
+</resources>
