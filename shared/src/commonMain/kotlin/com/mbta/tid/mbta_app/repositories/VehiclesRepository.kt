@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -86,7 +87,13 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
     }
 }
 
-class MockVehiclesRepository(val response: VehiclesStreamDataResponse) : IVehiclesRepository {
+class MockVehiclesRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    val response: VehiclesStreamDataResponse,
+    val onConnect: (routeId: String, directionId: Int) -> Unit = { _: String, _: Int -> },
+    val onDisconnect: () -> Unit = {}
+) : IVehiclesRepository {
     constructor(
         vehicles: List<Vehicle> = emptyList()
     ) : this(response = VehiclesStreamDataResponse(vehicles.associateBy { it.id }))
@@ -100,10 +107,11 @@ class MockVehiclesRepository(val response: VehiclesStreamDataResponse) : IVehicl
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit
     ) {
+        onConnect(routeId, directionId)
         onReceive(ApiResult.Ok(response))
     }
 
     override fun disconnect() {
-        /* no-op */
+        onDisconnect()
     }
 }

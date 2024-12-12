@@ -80,11 +80,11 @@ fun subscribeToVehicles(
     val vehicleData = viewModel?.vehiclesFlow?.collectAsState(initial = null)?.value
 
     LifecycleResumeEffect(key1 = routeDirection) {
-        Log.i("KB", "resumed")
+        Log.i("KB", "resumed ${routeDirection?.routeId}${routeDirection?.directionId}")
         viewModel.connectToVehicles(routeDirection)
 
         onPauseOrDispose {
-            Log.i("KB", "paused")
+            Log.i("KB", "paused  ${routeDirection?.routeId}${routeDirection?.directionId}")
             viewModel.disconnect()
         }
     }

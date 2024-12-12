@@ -29,6 +29,7 @@ sentryGradle = "4.14.1"
 skie = "0.9.5"
 spatialk = "0.3.0"
 turbine = "1.2.0"
+lifecycleRuntimeTesting = "2.8.7"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
@@ -75,6 +76,7 @@ skie-configuration-annotations = { module = "co.touchlab.skie:configuration-anno
 spatialk-geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "spatialk" }
 spatialk-turf = { module = "io.github.dellisd.spatialk:turf", version.ref = "spatialk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-lifecycle-runtime-testing = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "lifecycleRuntimeTesting" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
