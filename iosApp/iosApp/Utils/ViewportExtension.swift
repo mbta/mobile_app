@@ -12,4 +12,8 @@ extension Viewport {
     var isFollowing: Bool {
         followPuck?.bearing == .constant(0)
     }
+
+    var isOverview: Bool {
+        overview != nil
+    }
 }

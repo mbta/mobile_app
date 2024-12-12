@@ -35,7 +35,7 @@ extension HomeMapView {
     }
 
     func handleGlobalMapDataChange(now: Date) {
-        guard let globalData else { return }
+        guard let globalData = mapVM.globalData else { return }
 
         Task(priority: .high) {
             let newMapData = GlobalMapData(
@@ -79,7 +79,7 @@ extension HomeMapView {
     @MainActor
     func activateGlobalListener() async {
         for await globalData in globalRepository.state {
-            self.globalData = globalData
+            mapVM.globalData = globalData
         }
     }
 
@@ -165,7 +165,7 @@ extension HomeMapView {
         }
         if case let .stopDetails(stopId, stopFilter, tripFilter) = nextNavEntry {
             if oldNavEntry?.stopId() != stopId {
-                if let stop = globalData?.stops[stopId] {
+                if let stop = mapVM.globalData?.stops[stopId] {
                     handleStopDetailsChange(stop, stopFilter)
                 }
             }
@@ -211,11 +211,11 @@ extension HomeMapView {
                 }
                 mapVM.routeSourceData = RouteFeaturesBuilder.shared.shapesWithStopsToMapFriendly(
                     shapesWithStops: shapesWithStops,
-                    stopsById: globalData?.stops
+                    stopsById: mapVM.globalData?.stops
                 )
 
                 let filteredStopIds = shapesWithStops.flatMap(\.stopIds).map { stopId in
-                    globalData?.stops[stopId]?.resolveParent(stops: globalData?.stops ?? [:]).id ?? stopId
+                    mapVM.globalData?.stops[stopId]?.resolveParent(stops: mapVM.globalData?.stops ?? [:]).id ?? stopId
                 }
 
                 mapVM.stopSourceData = .init(filteredStopIds: filteredStopIds, selectedStopId: targetStopId)
@@ -262,7 +262,7 @@ extension HomeMapView {
             """)
             return false
         }
-        guard let stop = globalData?.stops[stopId] else {
+        guard let stop = mapVM.globalData?.stops[stopId] else {
             let featureId = feature.feature.identifier.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.
@@ -312,7 +312,7 @@ extension HomeMapView {
     }
 
     func handleSelectedVehicleChange(_ previousVehicle: Vehicle?, _ nextVehicle: Vehicle?) {
-        guard let globalData else { return }
+        guard let globalData = mapVM.globalData else { return }
         guard let nextVehicle else {
             viewportProvider.updateFollowedVehicle(vehicle: nil)
             return
