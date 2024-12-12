@@ -121,7 +121,12 @@ class NearbyViewModel: ObservableObject {
             _ = navigationStack.popLast()
             navigationStack.append(entry)
         } else if case let .stopDetails(stopId: targetStop, stopFilter: _, tripFilter: _) = entry,
-                  case let .stopDetails(stopId: currentStop, stopFilter: _, tripFilter: _) = navigationStack.last,
+                  case let .stopDetails(
+                      stopId: currentStop,
+                      stopFilter: currentStopFilter,
+                      tripFilter: _
+                  ) = navigationStack.last,
+                  currentStopFilter != nil,
                   targetStop == currentStop {
             _ = navigationStack.popLast()
             navigationStack.append(entry)

@@ -101,8 +101,10 @@ extension [SheetNavigationStackEntry] {
             if case let .legacyStopDetails(stop, _) = self.last {
                 _ = self.popLast()
                 self.append(.legacyStopDetails(stop, newValue))
-            } else if case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _) = self.last {
-                _ = self.popLast()
+            } else if case let .stopDetails(stopId: stopId, stopFilter: currentStopFilter, tripFilter: _) = self.last {
+                if currentStopFilter != nil {
+                    _ = self.popLast()
+                }
                 self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
             }
         }
