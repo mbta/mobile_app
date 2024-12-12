@@ -680,7 +680,7 @@ final class HomeMapViewTests: XCTestCase {
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.actualView().globalData = globalResponse
+            mapVM.globalData = globalResponse
             XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
             XCTAssertFalse(viewportProvider.isFollowingVehicle)
             nearbyVM.navigationStack.append(.tripDetails(

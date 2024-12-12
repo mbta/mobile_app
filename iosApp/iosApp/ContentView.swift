@@ -167,7 +167,18 @@ struct ContentView: View {
                         if !searchObserver.isSearching, !viewportProvider.viewport.isFollowing,
                            locationDataManager.currentLocation != nil {
                             VStack(alignment: .trailing) {
-                                RecenterButton { Task { viewportProvider.follow() } }
+                                RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
+                                    viewportProvider.follow()
+                                }
+                                .accessibilityIdentifier("mapRecenterButton")
+                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
+                        }
+                        if !searchObserver.isSearching, !viewportProvider.viewport.isOverview,
+                           let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
+                            VStack(alignment: .trailing) {
+                                RecenterButton(icon: routeIconResource(routeType), size: 32) {
+                                    viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
+                                }
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
                         }
                     }.frame(maxWidth: .infinity, alignment: .trailing)
@@ -344,6 +355,17 @@ struct ContentView: View {
             }
             .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
         }
+    }
+
+    private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
+        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: tripFilter) = nearbyVM
+            .navigationStack.lastSafe(),
+            let selectedVehicle = mapVM.selectedVehicle, tripFilter?.vehicleId == selectedVehicle.id,
+            let globalData = mapVM.globalData,
+            let stop = nearbyVM.getTargetStop(global: globalData),
+            let routeId = selectedVehicle.routeId ?? stopFilter?.routeId,
+            let route = globalData.routes[routeId] else { return nil }
+        return (route.type, selectedVehicle, stop)
     }
 
     private func coverContents(coverIdentityEntry: NearbyCoverItem) -> some View {

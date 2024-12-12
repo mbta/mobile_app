@@ -16,7 +16,7 @@ import SwiftUI
 extension HomeMapView {
     func handleTryLayerInit(map: MapboxMap?) {
         guard let map,
-              globalData != nil,
+              mapVM.globalData != nil,
               railRouteShapes != nil,
               globalMapData?.mapStops != nil,
               mapVM.layerManager == nil
@@ -46,8 +46,8 @@ extension HomeMapView {
     func handleSetStopSources() {
         let snappedStopRouteLines = RouteFeaturesBuilder.shared.generateRouteLines(
             routeData: mapVM.allRailSourceData,
-            routesById: globalData?.routes,
-            stopsById: globalData?.stops,
+            routesById: mapVM.globalData?.routes,
+            stopsById: mapVM.globalData?.stops,
             alertsByStop: globalMapData?.alertsByStop
         )
         mapVM.snappedStopRouteLines = snappedStopRouteLines
@@ -98,18 +98,18 @@ extension HomeMapView {
                 mapVM.routeSourceData = RouteFeaturesBuilder.shared.forRailAtStop(
                     stopShapes: stopMapData.routeShapes,
                     railShapes: mapVM.allRailSourceData,
-                    routesById: globalData?.routes
+                    routesById: mapVM.globalData?.routes
                 )
             }
         }
     }
 
     func updateGlobalMapDataSources() {
-        mapVM.updateSources(globalData: globalData, globalMapData: globalMapData)
+        mapVM.updateSources(globalData: mapVM.globalData, globalMapData: globalMapData)
     }
 
     func updateRouteSource() {
-        mapVM.updateRouteSource(globalData: globalData, globalMapData: globalMapData)
+        mapVM.updateRouteSource(globalData: mapVM.globalData, globalMapData: globalMapData)
     }
 
     func updateStopSource() {

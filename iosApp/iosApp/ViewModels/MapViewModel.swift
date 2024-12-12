@@ -17,6 +17,7 @@ class MapViewModel: ObservableObject {
     @Published var stopSourceData: StopSourceData = .init()
     @Published var stopMapData: StopMapResponse?
     @Published var allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = []
+    @Published var globalData: GlobalResponse?
     var stopUpdateTask: Task<Void, Error>?
     var routeUpdateTask: Task<Void, Error>?
     var snappedStopRouteLines: [RouteLineData] = []
