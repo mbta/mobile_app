@@ -24,7 +24,6 @@ struct HomeMapView: View {
     var errorBannerRepository: IErrorBannerStateRepository
 
     var globalRepository: IGlobalRepository
-    @State var globalData: GlobalResponse?
 
     var railRouteShapeRepository: IRailRouteShapeRepository
     @State var railRouteShapes: MapFriendlyRouteResponse?
@@ -168,7 +167,7 @@ struct HomeMapView: View {
             handleAccessTokenLoaded: handleAccessTokenLoaded,
             globalMapData: globalMapData
         )
-        .onChange(of: globalData) { _ in
+        .onChange(of: mapVM.globalData) { _ in
             handleGlobalMapDataChange(now: now)
         }
         .onChange(of: locationDataManager.authorizationStatus) { status in
@@ -195,7 +194,7 @@ struct HomeMapView: View {
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
-            routes: globalData?.routes,
+            routes: mapVM.globalData?.routes,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
             vehicles: vehicles,
