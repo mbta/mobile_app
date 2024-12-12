@@ -50,7 +50,7 @@ struct UpcomingTripView: View {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
-                Text(overridden.textWithLocale()).realtime()
+                Text(overridden.textWithLocale()).realtime(hideIndicator: hideRealtimeIndicators)
             case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")

@@ -8721,6 +8721,47 @@
         }
       }
     },
+    "Waiting to depart" : {
+      "comment" : "Label for a vehicle stopped at a terminal station waiting to start a trip. For example: Waiting to depart Alewife",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esperando para partir"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ap tann pou yo pati"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esperando para partir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đang chờ khởi hành"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "等待出发"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "等待離開"
+          }
+        }
+      }
+    },
     "We use your location to show you nearby transit options." : {
       "localizations" : {
         "es" : {
