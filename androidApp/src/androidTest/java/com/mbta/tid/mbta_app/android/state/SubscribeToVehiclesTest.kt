@@ -49,7 +49,7 @@ class SubscribeToVehiclesTest {
         }
 
         waitUntil { connectProps == Pair("route_1", 1) }
-        assertEquals(listOf(vehicle), vehicles)
+        waitUntil { listOf(vehicle) == vehicles }
 
         runOnUiThread { stateFilter.value = StopDetailsFilter("route_2", 1) }
         waitUntil { connectProps == Pair("route_2", 1) }
