@@ -358,9 +358,10 @@ struct ContentView: View {
     }
 
     private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
-        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = nearbyVM
+        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: tripFilter) = nearbyVM
             .navigationStack.lastSafe(),
-            let selectedVehicle = mapVM.selectedVehicle, let globalData = mapVM.globalData,
+            let selectedVehicle = mapVM.selectedVehicle, tripFilter?.vehicleId == selectedVehicle.id,
+            let globalData = mapVM.globalData,
             let stop = nearbyVM.getTargetStop(global: globalData),
             let routeId = selectedVehicle.routeId ?? stopFilter?.routeId,
             let route = globalData.routes[routeId] else { return nil }
