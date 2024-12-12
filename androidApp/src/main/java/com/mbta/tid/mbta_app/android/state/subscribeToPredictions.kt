@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.state
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,13 +46,10 @@ class PredictionsViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        Log.i("KB", "PREDICTIONS CLEARED")
         predictionsRepository.disconnect()
     }
 
     private fun connectToPredictions() {
-        Log.i("KB", "PREDICTIONS CONNECTING")
-
         predictionsRepository.connectV2(
             stopIds,
             {

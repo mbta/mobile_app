@@ -24,28 +24,20 @@ class VehiclesViewModel(
     private val vehicles: LiveData<VehiclesStreamDataResponse> = _vehicles
     val vehiclesFlow = vehicles.asFlow()
 
-    init {
-        Log.i("KB", "init vehicles view model")
-    }
-
     override fun onCleared() {
         super.onCleared()
-        Log.i("KB", "OnCleared Called")
 
         _vehicles.value = VehiclesStreamDataResponse(vehicles = emptyMap())
         vehiclesRepository.disconnect()
     }
 
     fun connectToVehicles(routeDirection: RouteDirection?) {
-        Log.i("KB", "connectToVehicles called")
         disconnect()
 
         if (routeDirection != null) {
-            Log.i("KB", "connected")
             vehiclesRepository.connect(routeDirection.routeId, routeDirection.directionId) {
                 when (it) {
                     is ApiResult.Ok -> {
-                        Log.i("KB", "Received Vehicles ${it.data.vehicles.values.first().routeId}")
                         _vehicles.postValue(it.data)
                     }
                     is ApiResult.Error -> {
@@ -57,7 +49,6 @@ class VehiclesViewModel(
     }
 
     fun disconnect() {
-        Log.i("KB", "disconnected")
         _vehicles.value = VehiclesStreamDataResponse(vehicles = emptyMap())
         vehiclesRepository.disconnect()
     }
@@ -80,13 +71,9 @@ fun subscribeToVehicles(
     val vehicleData = viewModel?.vehiclesFlow?.collectAsState(initial = null)?.value
 
     LifecycleResumeEffect(key1 = routeDirection) {
-        Log.i("KB", "resumed ${routeDirection?.routeId}${routeDirection?.directionId}")
         viewModel.connectToVehicles(routeDirection)
 
-        onPauseOrDispose {
-            Log.i("KB", "paused  ${routeDirection?.routeId}${routeDirection?.directionId}")
-            viewModel.disconnect()
-        }
+        onPauseOrDispose { viewModel.disconnect() }
     }
 
     return vehicleData?.vehicles?.values?.toList() ?: emptyList()

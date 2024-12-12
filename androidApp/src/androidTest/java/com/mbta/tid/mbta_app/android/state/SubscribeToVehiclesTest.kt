@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.state
 
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -49,14 +48,10 @@ class SubscribeToVehiclesTest {
             vehicles = subscribeToVehicles(filter, vehiclesRepo)
         }
 
-        Log.i("KB", "await idle")
         waitUntil { connectProps == Pair("route_1", 1) }
         assertEquals(listOf(vehicle), vehicles)
 
-        runOnUiThread {
-            stateFilter.value = StopDetailsFilter("route_2", 1)
-            Log.i("KB", "filter set")
-        }
+        runOnUiThread { stateFilter.value = StopDetailsFilter("route_2", 1) }
         waitUntil { connectProps == Pair("route_2", 1) }
     }
 
@@ -87,7 +82,6 @@ class SubscribeToVehiclesTest {
             }
         }
 
-        Log.i("KB", "await idle")
         waitUntil { connectCount == 1 }
         // Disconnect called before connecting
         assertEquals(1, disconnectCount)
