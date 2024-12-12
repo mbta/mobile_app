@@ -160,5 +160,6 @@ gradle.projectsEvaluated {
     tasks
         .getByPath("preBuild")
         .dependsOn("mapboxTempToken", "convertIosIconsToAssets", "convertIosLocalization")
+    tasks.getByPath("spotlessKotlin").mustRunAfter("convertIosLocalization")
     tasks.getByPath("check").dependsOn("checkMapboxBridge")
 }
