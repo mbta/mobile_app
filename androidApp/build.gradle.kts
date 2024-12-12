@@ -101,19 +101,13 @@ task<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
 }
 
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle
-task("accessToken") {
+task("mapboxTempToken") {
     val tokenFile = File("${projectDir}/src/main/res/values/secrets.xml")
     if (!tokenFile.exists()) {
-        var mapboxAccessToken = System.getenv()["MAPBOX_PUBLIC_TOKEN"]
-        if (mapboxAccessToken == null) {
-            Logging.getLogger(this.javaClass)
-                .warn("You should set the MAPBOX_PUBLIC_TOKEN environment variable.")
-            mapboxAccessToken = ""
-        }
         val tokenFileContents =
             """<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mapbox_access_token" translatable="false">$mapboxAccessToken</string>
+    <string name="mapbox_access_token" translatable="false">"temporary_mapbox_token"</string>
 </resources>"""
         tokenFile.writeText(tokenFileContents)
     }
@@ -153,6 +147,6 @@ task("envVars") {
 }
 
 gradle.projectsEvaluated {
-    tasks.getByPath("preBuild").dependsOn("accessToken", "convertIosIconsToAssets")
+    tasks.getByPath("preBuild").dependsOn("mapboxTempToken", "convertIosIconsToAssets")
     tasks.getByPath("check").dependsOn("checkMapboxBridge")
 }

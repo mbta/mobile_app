@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,6 +39,8 @@ import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
+import com.mbta.tid.mbta_app.android.map.IMapViewModel
+import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -76,7 +80,8 @@ fun NearbyTransitPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     vehiclesRepository: IVehiclesRepository = koinInject(),
-    bottomBar: @Composable () -> Unit
+    bottomBar: @Composable () -> Unit,
+    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory())
 ) {
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
@@ -115,6 +120,10 @@ fun NearbyTransitPage(
             }
         }
         vehiclesRepository.disconnect()
+    }
+
+    LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
+        mapViewModel.loadConfig()
     }
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
