@@ -48,9 +48,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 .fill(Color.halo)
                 .frame(height: 2)
                 .frame(maxWidth: .infinity)
-            // This unscrollable scroll view is necessary to prevent the sheet from messing up the layout
-            // of the contents and cutting off the header when not in large detent.
-            ScrollView([], showsIndicators: false) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 16) {
                     ScrollViewReader { view in
                         DirectionPicker(
