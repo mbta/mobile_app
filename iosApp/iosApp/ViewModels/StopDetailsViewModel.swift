@@ -236,7 +236,7 @@ class StopDetailsViewModel: ObservableObject {
         leaveVehicle()
         guard let vehicleId = tripFilter.vehicleId else {
             // If the filter has a null vehicle ID, we can't join anything, clear the vehicle and return
-            tripData?.vehicle = nil
+            Task { @MainActor in tripData?.vehicle = nil }
             return
         }
         let errorKey = "TripDetailsPage.joinVehicle"
@@ -347,6 +347,7 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func returnFromBackground() {
         if let predictionsByStop,
            predictionsRepository
