@@ -30,8 +30,6 @@ class SubscribeToVehiclesTest {
     // https://github.com/androidx/androidx/blob/0b709f31b71110fe671ed8b4c03f96ad30a0cd37/lifecycle/lifecycle-runtime-compose/src/androidInstrumentedTest/kotlin/androidx/lifecycle/compose/LifecycleEffectTest.kt#L247
     @Test
     fun testSubscribeToVehicles() = runComposeUiTest {
-        val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
-
         val vehicle =
             ObjectCollectionBuilder().vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
         var connectProps: Pair<String, Int>? = null
@@ -47,10 +45,8 @@ class SubscribeToVehiclesTest {
         var stateFilter = mutableStateOf(StopDetailsFilter("route_1", 1))
 
         setContent {
-            CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
-                var filter by remember { stateFilter }
-                vehicles = subscribeToVehicles(filter, vehiclesRepo)
-            }
+            var filter by remember { stateFilter }
+            vehicles = subscribeToVehicles(filter, vehiclesRepo)
         }
 
         Log.i("KB", "await idle")

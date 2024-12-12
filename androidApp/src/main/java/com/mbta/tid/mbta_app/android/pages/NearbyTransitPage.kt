@@ -82,8 +82,8 @@ fun NearbyTransitPage(
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
 
-    var stopDetailsDepartures by remember { mutableStateOf<StopDetailsDepartures?>(null) }
     val viewModel: NearbyTransitTabViewModel = viewModel()
+    val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
     val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
     var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = stopDetailsFilter)
 
@@ -135,13 +135,12 @@ fun NearbyTransitPage(
                                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                                 val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
-
-                                fun updateStopDepartures(departures: StopDetailsDepartures?) {
-                                    stopDetailsDepartures = departures
-                                    if (departures != null && stopDetailsFilter == null) {
-                                        updateStopFilter(departures.autoStopFilter())
-                                    }
-                                    }
+                            fun updateStopDepartures(departures: StopDetailsDepartures?) {
+                                viewModel.setStopDetailsDepartures(departures)
+                                if (departures != null && stopDetailsFilter == null) {
+                                    updateStopFilter(departures.autoStopFilter())
+                                }
+                            }
 
                             LaunchedEffect(navRoute) {
                                 if (navBarVisible) {
