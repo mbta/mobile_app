@@ -116,19 +116,40 @@ class NearbyViewModel: ObservableObject {
             )
             pushNavEntry(.stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter))
         } else if case let .legacyStopDetails(targetStop, _) = entry,
-                  case let .legacyStopDetails(currentStop, _) = navigationStack.last,
-                  targetStop == currentStop {
+                  case let .legacyStopDetails(lastStop, _) = navigationStack.last,
+                  targetStop == lastStop {
             _ = navigationStack.popLast()
             navigationStack.append(entry)
-        } else if case let .stopDetails(stopId: targetStop, stopFilter: _, tripFilter: _) = entry,
-                  case let .stopDetails(
-                      stopId: currentStop,
-                      stopFilter: currentStopFilter,
-                      tripFilter: _
-                  ) = navigationStack.last,
-                  currentStopFilter != nil,
-                  targetStop == currentStop {
+        } else if
+            case let .stopDetails(
+                stopId: targetStop,
+                stopFilter: newFilter,
+                tripFilter: _
+            ) = entry,
+            case let .stopDetails(
+                stopId: lastStop,
+                stopFilter: lastFilter,
+                tripFilter: _
+            ) = navigationStack.last,
+            lastFilter != nil,
+            targetStop == lastStop {
+            // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // the entry with the old filter should be popped and replaced with the new value.
             _ = navigationStack.popLast()
+
+            // If the new filter is nil and there is already a nil filter in the stack for the same stop ID,
+            // we don't want a duplicate unfiltered entry, so skip appending a new one
+            if newFilter == nil,
+               case let .stopDetails(
+                   stopId: penultimateStop,
+                   stopFilter: penultimateFilter,
+                   tripFilter: _
+               ) = navigationStack.last,
+               penultimateStop == targetStop,
+               penultimateFilter == nil {
+                return
+            }
             navigationStack.append(entry)
         } else {
             navigationStack.append(entry)

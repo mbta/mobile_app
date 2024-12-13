@@ -101,10 +101,29 @@ extension [SheetNavigationStackEntry] {
             if case let .legacyStopDetails(stop, _) = self.last {
                 _ = self.popLast()
                 self.append(.legacyStopDetails(stop, newValue))
-            } else if case let .stopDetails(stopId: stopId, stopFilter: currentStopFilter, tripFilter: _) = self.last {
-                if currentStopFilter != nil {
-                    _ = self.popLast()
+            } else if case let .stopDetails(
+                stopId: stopId,
+                stopFilter: lastFilter,
+                tripFilter: _
+            ) = self.last {
+                // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+                // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+                // the entry with the old filter should be popped and replaced with the new value.
+                if lastFilter != nil { _ = self.popLast() }
+
+                // If the new value is nil and there is already a nil filter in the stack for the same stop ID,
+                // we don't want a duplicate unfiltered entry, so skip appending a new one
+                if newValue == nil,
+                   case let .stopDetails(
+                       stopId: penultimateStop,
+                       stopFilter: penultimateFilter,
+                       tripFilter: _
+                   ) = self.last,
+                   penultimateStop == stopId,
+                   penultimateFilter == nil {
+                    return
                 }
+
                 self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
             }
         }
