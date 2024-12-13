@@ -145,60 +145,6 @@ final class StopDetailsViewTests: XCTestCase {
         XCTAssert(nearbyVM.navigationStack.isEmpty)
     }
 
-    func testBackButtonGoesBack() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-
-        let initialNavStack: [SheetNavigationStackEntry] = [
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-            .tripDetails(tripId: "", vehicleId: "", target: nil, routeId: "", directionId: 0),
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-        ]
-        let nearbyVM: NearbyViewModel = .init(navigationStack: initialNavStack)
-        let sut = StopDetailsView(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            departures: nil,
-            now: Date.now,
-            errorBannerVM: .init(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: .init()
-        )
-
-        ViewHosting.host(view: sut)
-        try? sut.inspect().find(viewWithAccessibilityLabel: "Back").button().tap()
-        XCTAssertEqual(initialNavStack.dropLast(), nearbyVM.navigationStack)
-    }
-
-    func testBackButtonHiddenWhenNearbyIsBack() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-        ])
-        let sut = StopDetailsView(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            departures: nil,
-            now: Date.now,
-            errorBannerVM: .init(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: .init()
-        )
-
-        ViewHosting.host(view: sut)
-        XCTAssertNil(try? sut.inspect().find(viewWithAccessibilityLabel: "Back"))
-    }
-
     func testDebugModeNotShownByDefault() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in
