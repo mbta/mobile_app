@@ -27,7 +27,7 @@ fun TransitHeader(
     backgroundColor: Color,
     textColor: Color,
     modeIcon: Painter,
-    modeDescription: String,
+    modeDescription: String?,
     rightContent: (@Composable (textColor: Color) -> Unit)? = null
 ) {
     Column(

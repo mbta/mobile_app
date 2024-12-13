@@ -81,12 +81,12 @@ class MoreViewModel(
                 items =
                     listOf(
                         MoreItem.Toggle(
-                            label = "Debug Mode",
+                            label = context.getString(R.string.feature_flag_debug_mode),
                             settings = Settings.DevDebugMode,
                             value = settings[Settings.DevDebugMode] ?: false
                         ),
                         MoreItem.Toggle(
-                            label = "Route Search",
+                            label = context.getString(R.string.feature_flag_route_search),
                             settings = Settings.SearchRouteResults,
                             value = settings[Settings.SearchRouteResults] ?: false
                         )
