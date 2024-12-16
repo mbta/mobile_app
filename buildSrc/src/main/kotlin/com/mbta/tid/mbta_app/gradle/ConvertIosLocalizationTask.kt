@@ -11,6 +11,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 abstract class ConvertIosLocalizationTask : DefaultTask() {
+    @get:InputFile abstract var androidEnglishStrings: RegularFile
     @get:InputFile abstract var xcstrings: RegularFile
     @get:OutputDirectory abstract var resources: Directory
 
@@ -18,7 +19,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
     fun run() {
         val iosStrings = readIosStrings()
         val languageTags = iosStrings.values.map { it.keys }.reduce(Set<String>::plus) - "en"
-        val androidEnglishStringsById = parseAndroidStrings(resources.file("values/strings.xml"))
+        val androidEnglishStringsById = parseAndroidStrings(androidEnglishStrings)
         val androidIdsByEnglishString =
             androidEnglishStringsById.entries.groupBy({ it.value }, { it.key })
 

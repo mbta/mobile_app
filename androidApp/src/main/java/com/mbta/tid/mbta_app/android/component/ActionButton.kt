@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.component
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -18,11 +20,11 @@ import com.mbta.tid.mbta_app.android.R
 
 enum class ActionButtonKind(
     val iconSize: Dp,
-    val accessibilityLabel: String,
+    @StringRes val accessibilityLabel: Int,
     @DrawableRes val image: Int
 ) {
-    Back(14.dp, "Back", R.drawable.fa_chevron_left),
-    Close(10.dp, "Close", R.drawable.fa_xmark)
+    Back(14.dp, R.string.back_button_label, R.drawable.fa_chevron_left),
+    Close(10.dp, R.string.close_button_label, R.drawable.fa_xmark)
 }
 
 @Composable
@@ -38,7 +40,11 @@ fun ActionButton(kind: ActionButtonKind, action: () -> Unit) {
             ),
         contentPadding = PaddingValues(5.dp)
     ) {
-        Icon(painterResource(kind.image), kind.accessibilityLabel, Modifier.size(kind.iconSize))
+        Icon(
+            painterResource(kind.image),
+            stringResource(kind.accessibilityLabel),
+            Modifier.size(kind.iconSize)
+        )
     }
 }
 

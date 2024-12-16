@@ -52,6 +52,6 @@ class ContentViewTests : KoinTest {
         composeTestRule.onNodeWithText("MBTA Go").assertIsDisplayed()
 
         composeTestRule.onNodeWithText("Nearby").performClick()
-        composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
     }
 }

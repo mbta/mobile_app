@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
@@ -24,7 +25,7 @@ fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
                         if (pinned) R.drawable.pinned_route_active
                         else R.drawable.pinned_route_inactive
                 ),
-            contentDescription = "pin route",
+            contentDescription = stringResource(R.string.pin_route),
             modifier = Modifier.size(20.dp),
             tint = color
         )
