@@ -94,7 +94,7 @@ class HeadsignRowViewTest {
         init("Somewhere", RealtimePatterns.Format.None(secondaryAlert = null))
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
-        composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Predictions unavailable").assertIsDisplayed()
     }
 
     @Test
@@ -107,7 +107,7 @@ class HeadsignRowViewTest {
         )
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
-        composeTestRule.onNodeWithText("No Predictions").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Predictions unavailable").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
     }
 

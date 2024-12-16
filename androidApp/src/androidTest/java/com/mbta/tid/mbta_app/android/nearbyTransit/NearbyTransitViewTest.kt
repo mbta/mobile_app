@@ -244,7 +244,7 @@ class NearbyTransitViewTest : KoinTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
