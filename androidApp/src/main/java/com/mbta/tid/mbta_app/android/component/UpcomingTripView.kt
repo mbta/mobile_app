@@ -152,11 +152,12 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
             }
         is UpcomingTripViewState.NoService ->
             NoServiceView(NoServiceViewEffect.from(state.effect), modifier)
-        is UpcomingTripViewState.None -> Text("No Predictions", modifier, fontSize = 13.sp)
+        is UpcomingTripViewState.None ->
+            Text(stringResource(R.string.no_predictions), modifier, fontSize = 13.sp)
         is UpcomingTripViewState.ServiceEndedToday ->
-            Text("Service ended", modifier, fontSize = 13.sp)
+            Text(stringResource(R.string.service_ended), modifier, fontSize = 13.sp)
         is UpcomingTripViewState.NoSchedulesToday ->
-            Text("No service today", modifier, fontSize = 13.sp)
+            Text(stringResource(R.string.no_service_today), modifier, fontSize = 13.sp)
         is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
     }
 }

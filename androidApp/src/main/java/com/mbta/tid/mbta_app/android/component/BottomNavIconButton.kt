@@ -43,11 +43,7 @@ fun BottomNavIconButton(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                painterResource(icon),
-                contentDescription = "@null",
-                modifier = Modifier.size(24.dp)
-            )
+            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.height(4.dp))
             Text(label, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
         }

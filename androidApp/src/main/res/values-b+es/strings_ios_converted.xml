@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="alert">Alerta</string>
     <string name="app_version_number">versión %1$s</string>
     <string name="arriving_abbr">LLEGAN.</string>
+    <string name="back_button_label">Atrás</string>
     <string name="boarding_abbr">ABORD.</string>
     <string name="cancelled">Cancelado</string>
+    <string name="close_button_label">Cerrar</string>
     <string name="detour">Desvío</string>
     <string name="directionTo">%1$s a</string>
+    <string name="eastbound">En dirección este</string>
+    <string name="feature_flag_debug_mode">Modo de Depuración</string>
+    <string name="feature_flag_route_search">Buscador de rutas</string>
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
     <string name="filterShowAll">Todos</string>
+    <string name="heading">Rumbo</string>
+    <string name="inbound">Entrante</string>
+    <string name="loading">Cargando…</string>
     <string name="more_link">Más</string>
     <string name="more_page_footer">Hecho con ♥ por T</string>
     <string name="more_section_feature_flags">Banderas de características</string>
@@ -16,21 +25,30 @@
     <string name="more_section_support">Información general y soporte de MBTA</string>
     <string name="more_section_support_note">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
     <string name="more_title">MBTA Go</string>
+    <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
+    <string name="no_predictions">Las predicciones no están disponibles</string>
     <string name="no_service">Sin servicio</string>
+    <string name="no_service_today">No hay servicio hoy</string>
     <string name="no_stops_nearby">Estás fuera del área de servicio de MBTA.</string>
     <string name="no_stops_nearby_title">No hay paradas cercanas</string>
+    <string name="northbound">En dirección norte</string>
     <string name="now">Ahora</string>
     <string name="other_link_privacy_policy">Política de privacidad</string>
     <string name="other_link_source_code">Ver código fuente en GitHub</string>
     <string name="other_link_tos">Términos de uso</string>
+    <string name="outbound">Saliente</string>
+    <string name="pin_route">Marcar ruta favorita</string>
     <string name="resources_link_fare_info">Información de tarifas</string>
     <string name="resources_link_mticket">Boletos de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Planificador de viaje</string>
+    <string name="service_ended">Servicio finalizado</string>
     <string name="setting_toggle_hide_maps">Ocultar Mapas</string>
     <string name="settings_link">Configuración</string>
     <string name="shuttle">Autobús de enlace</string>
+    <string name="southbound">En dirección sur</string>
     <string name="stop_closed">Parada cerrada</string>
     <string name="suspension">Suspensión</string>
+    <string name="westbound">En dirección oeste</string>
 </resources>

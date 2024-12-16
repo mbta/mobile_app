@@ -81,13 +81,13 @@ fun NearbyTransitView(
 
     Column(modifier) {
         Text(
-            text = "Nearby transit",
+            text = stringResource(R.string.nearby_transit),
             modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
             style = MaterialTheme.typography.titleLarge
         )
 
         if (nearbyWithRealtimeInfo == null) {
-            Text(text = "Loading...", modifier)
+            Text(text = stringResource(R.string.loading), modifier)
         } else if (nearbyWithRealtimeInfo.isEmpty()) {
             Column(Modifier.padding(8.dp).weight(1f), verticalArrangement = Arrangement.Center) {
                 Text(

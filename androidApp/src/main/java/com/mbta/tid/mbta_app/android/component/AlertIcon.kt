@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.StopAlertState
 
@@ -21,7 +22,7 @@ fun AlertIcon(alertState: StopAlertState, color: Color?, modifier: Modifier = Mo
 
     Icon(
         painterResource(iconId),
-        contentDescription = alertState.name,
+        contentDescription = stringResource(R.string.alert),
         modifier,
         tint = color ?: colorResource(R.color.text)
     )

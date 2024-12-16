@@ -106,6 +106,7 @@ task<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
 }
 
 task<ConvertIosLocalizationTask>("convertIosLocalization") {
+    androidEnglishStrings = layout.projectDirectory.file("src/main/res/values/strings.xml")
     xcstrings = layout.projectDirectory.file("../iosApp/iosApp/Localizable.xcstrings")
     resources = layout.projectDirectory.dir("src/main/res")
 }

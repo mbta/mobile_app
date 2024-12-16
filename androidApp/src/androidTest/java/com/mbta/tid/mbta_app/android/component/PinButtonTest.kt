@@ -18,7 +18,7 @@ class PinButtonTest {
             PinButton(pinned = false, color = Color.Unspecified) { wasTapped = true }
         }
 
-        composeTestRule.onNodeWithContentDescription("pin route").performClick()
+        composeTestRule.onNodeWithContentDescription("Star route").performClick()
         assertTrue(wasTapped)
     }
 }

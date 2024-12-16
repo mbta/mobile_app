@@ -48,7 +48,7 @@ class DirectionPickerTest {
                 null,
                 stop,
                 patterns,
-                listOf(Direction("A", null, 0), Direction("B", null, 1))
+                listOf(Direction("North", null, 0), Direction("South", null, 1))
             )
         var filter: StopDetailsFilter? = StopDetailsFilter(routeId = route.id, directionId = 0)
         composeTestRule.setContent {
@@ -57,8 +57,8 @@ class DirectionPickerTest {
             }
         }
 
-        composeTestRule.onNodeWithText("A").assertIsDisplayed()
-        composeTestRule.onNodeWithText("B").performClick()
+        composeTestRule.onNodeWithText("Northbound").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Southbound").performClick()
         assertTrue(filter?.routeId == route.id)
         assertTrue(filter?.directionId == 1)
     }
