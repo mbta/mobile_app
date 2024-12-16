@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.delete
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,13 +28,40 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavBackStackEntry
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.search.results.StopResultsView
+import com.mbta.tid.mbta_app.android.state.getSearchResults
 
 @ExperimentalMaterial3Api
 @Composable
-fun SearchBarOverlay(content: @Composable () -> Unit) {
+fun SearchBarOverlay(
+    onStopNavigation: (stopId: String) -> Unit,
+    currentNavEntry: NavBackStackEntry?,
+    content: @Composable () -> Unit
+) {
+    var visible =
+        remember(currentNavEntry) {
+            currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+        }
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val searchInputState = rememberTextFieldState()
+    var searchInputState by rememberSaveable { mutableStateOf("") }
+    val searchResults = getSearchResults(searchInputState)
+
+    fun handleSearch(stopId: String) {
+        expanded = false
+        searchInputState = ""
+        onStopNavigation(stopId)
+    }
+
+    val buttonColors =
+        ButtonColors(
+            containerColor = colorResource(R.color.fill3),
+            disabledContainerColor = colorResource(R.color.fill3),
+            contentColor = colorResource(R.color.deemphasized),
+            disabledContentColor = colorResource(R.color.deemphasized),
+        )
+
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
             modifier =
@@ -41,86 +71,75 @@ fun SearchBarOverlay(content: @Composable () -> Unit) {
                     .zIndex(1f),
             contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier =
-                    Modifier.absoluteOffset(y = 3.5.dp)
-                        .height(64.dp)
-                        .width(364.dp)
-                        .border(2.dp, colorResource(R.color.halo), RoundedCornerShape(10.dp))
-            )
-            SearchBar(
-                shape = RoundedCornerShape(10.dp),
-                colors = SearchBarDefaults.colors(containerColor = colorResource(R.color.fill3)),
-                inputField = {
-                    SearchBarDefaults.InputField(
-                        colors =
-                            SearchBarDefaults.inputFieldColors(
-                                focusedTextColor = colorResource(R.color.deemphasized),
-                                unfocusedTextColor = colorResource(R.color.deemphasized),
-                                focusedPlaceholderColor = colorResource(R.color.deemphasized),
-                                unfocusedPlaceholderColor = colorResource(R.color.deemphasized),
-                            ),
-                        query = searchInputState.text.toString(),
-                        placeholder = { Text("Stops") },
-                        expanded = expanded,
-                        onQueryChange = { query ->
-                            searchInputState.edit {
-                                delete(0, length)
-                                append(query)
-                                val queryChars = query.toCharArray()
-                                val chars = asCharSequence()
-                                if (queryChars.isNotEmpty()) {
-                                    if (chars.isEmpty()) {
-                                        append(queryChars.joinToString(""))
-                                    } else if (chars.length > queryChars.size) {
-                                        delete(queryChars.size, chars.length)
-                                    } else {
-                                        for (i in queryChars.indices) {
-                                            if (i > chars.length) {
-                                                append(
-                                                    queryChars
-                                                        .slice(IntRange(i, queryChars.size - 1))
-                                                        .joinToString("")
-                                                )
-                                                break
-                                            } else if (queryChars[i] != chars[i]) {
-                                                delete(i, chars.length)
-                                                append(
-                                                    queryChars
-                                                        .slice(IntRange(i, queryChars.size - 1))
-                                                        .joinToString("")
-                                                )
-                                                break
-                                            }
-                                        }
+            if (visible) {
+                Box(
+                    modifier =
+                        Modifier.absoluteOffset(y = 3.5.dp)
+                            .height(64.dp)
+                            .width(364.dp)
+                            .border(2.dp, colorResource(R.color.halo), RoundedCornerShape(10.dp))
+                )
+                SearchBar(
+                    shape = RoundedCornerShape(10.dp),
+                    colors =
+                        SearchBarDefaults.colors(containerColor = colorResource(R.color.fill3)),
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            colors =
+                                SearchBarDefaults.inputFieldColors(
+                                    focusedTextColor = colorResource(R.color.deemphasized),
+                                    unfocusedTextColor = colorResource(R.color.deemphasized),
+                                    focusedPlaceholderColor = colorResource(R.color.deemphasized),
+                                    unfocusedPlaceholderColor = colorResource(R.color.deemphasized),
+                                ),
+                            query = searchInputState,
+                            placeholder = { Text("Stops") },
+                            expanded = expanded,
+                            onQueryChange = { searchInputState = it },
+                            onExpandedChange = { expanded = it },
+                            onSearch = {
+                                expanded = false
+                                if (
+                                    searchResults?.stops != null && searchResults.stops.isNotEmpty()
+                                ) {
+                                    handleSearch(searchResults.stops[0].id)
+                                }
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painterResource(R.drawable.magnifying_glass),
+                                    "Search",
+                                    tint = colorResource(R.color.deemphasized)
+                                )
+                            },
+                            trailingIcon = {
+                                if (expanded) {
+                                    Button(
+                                        colors = buttonColors,
+                                        onClick = { expanded = false },
+                                    ) {
+                                        Icon(
+                                            painterResource(R.drawable.fa_xmark),
+                                            "Voice Search",
+                                            tint = colorResource(R.color.deemphasized)
+                                        )
                                     }
-                                } else {
-                                    delete(0, length)
                                 }
                             }
-                        },
-                        onExpandedChange = { expanded = it },
-                        onSearch = { expanded = false },
-                        leadingIcon = {
-                            Icon(
-                                painterResource(R.drawable.magnifying_glass),
-                                "Search",
-                                tint = colorResource(R.color.deemphasized)
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painterResource(R.drawable.microphone),
-                                "Voice Search",
-                                tint = colorResource(R.color.deemphasized)
-                            )
+                        )
+                    },
+                    expanded = expanded,
+                    onExpandedChange = {},
+                ) {
+                    LazyColumn {
+                        items(searchResults?.stops ?: emptyList()) { stop ->
+                            StopResultsView(stop, ::handleSearch)
                         }
-                    )
-                },
-                expanded = expanded,
-                onExpandedChange = {},
-            ) {}
+                    }
+                }
+            }
         }
+
         content()
     }
 }

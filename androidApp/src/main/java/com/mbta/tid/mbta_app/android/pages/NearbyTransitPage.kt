@@ -133,7 +133,7 @@ fun NearbyTransitPage(
         mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
     }
 
-    SearchBarOverlay {
+    SearchBarOverlay(::handleStopNavigation, currentNavEntry) {
         Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
             BottomSheetScaffold(
                 sheetDragHandle = { DragHandle() },
