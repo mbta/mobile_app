@@ -24,8 +24,10 @@ import com.mbta.tid.mbta_app.android.location.rememberLocationDataManager
 import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.pages.OnboardingPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.state.getPendingOnboarding
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
@@ -40,6 +42,8 @@ fun ContentView(
     val navController = rememberNavController()
     var alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData()
+    val pendingOnboarding = getPendingOnboarding()
+    var onboardingJustCompleted by remember { mutableStateOf(false) }
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -62,6 +66,16 @@ fun ContentView(
         (socket as? PhoenixSocketWrapper)?.attachLogging()
         onDispose { socket.detach() }
     }
+
+    if (!pendingOnboarding.isNullOrEmpty() && !onboardingJustCompleted) {
+        OnboardingPage(
+            pendingOnboarding,
+            onFinish = { onboardingJustCompleted = true },
+            locationDataManager = locationDataManager
+        )
+        return
+    }
+
     val sheetModifier = Modifier.fillMaxSize().background(colorResource(id = R.color.fill1))
     NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
         composable<Routes.NearbyTransit> {

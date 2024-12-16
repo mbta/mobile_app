@@ -134,12 +134,13 @@ open class LocationDataManager {
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun rememberPermissions() =
+    fun rememberPermissions(onPermissionsResult: (Map<String, Boolean>) -> Unit = {}) =
         rememberMultiplePermissionsState(
             listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            )
+            ),
+            onPermissionsResult
         )
 
     open val currentLocation = _currentLocation.asStateFlow()

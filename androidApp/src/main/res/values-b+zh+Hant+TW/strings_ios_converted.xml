@@ -34,6 +34,17 @@
     <string name="no_stops_nearby_title">附近沒有停靠站</string>
     <string name="northbound">北行</string>
     <string name="now">現在</string>
+    <string name="onboarding_feedback_advance">開始</string>
+    <string name="onboarding_feedback_body">MBTA Go尚處於試運行階段！我們希望收到您的回饋，以便我們繼續改進和新增功能。</string>
+    <string name="onboarding_feedback_header">幫助我們改進</string>
+    <string name="onboarding_hide_maps_body">使用 TalkBack 時，我們可以跳過讀取地圖，讓您專注於交通資訊。</string>
+    <string name="onboarding_hide_maps_header">設定地圖偏好</string>
+    <string name="onboarding_hide_maps_hide">隱藏地圖</string>
+    <string name="onboarding_hide_maps_show">顯示地圖</string>
+    <string name="onboarding_location_advance">繼續</string>
+    <string name="onboarding_location_body">我們使用您的位置向您顯示附近的交通選擇。</string>
+    <string name="onboarding_location_footer">您可以隨時在「設定」應用程式中變更位置設定。</string>
+    <string name="onboarding_location_header">查看您附近的交通</string>
     <string name="other_link_privacy_policy">隱私政策</string>
     <string name="other_link_source_code">在GitHub上查看原始程式碼</string>
     <string name="other_link_tos">使用條款</string>
