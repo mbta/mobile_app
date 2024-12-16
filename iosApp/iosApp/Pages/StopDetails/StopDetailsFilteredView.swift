@@ -181,7 +181,7 @@ struct StopDetailsFilteredView: View {
                 stop: stop,
                 pinned: pinned,
                 onPin: toggledPinnedRoute,
-                onClose: { nearbyVM.navigationStack.removeAll() }
+                onClose: { nearbyVM.goBack() }
             )
             if nearbyVM.showDebugMessages {
                 DebugView {

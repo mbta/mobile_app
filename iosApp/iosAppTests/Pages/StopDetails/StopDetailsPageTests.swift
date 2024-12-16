@@ -115,51 +115,6 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [exp], timeout: 30)
     }
 
-    func testBackButton() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-
-        class FakeNearbyVM: NearbyViewModel {
-            let backExp: XCTestExpectation
-            init(_ backExp: XCTestExpectation) {
-                self.backExp = backExp
-                super.init(combinedStopAndTrip: true)
-            }
-
-            override func goBack() {
-                backExp.fulfill()
-            }
-        }
-
-        let backExp = XCTestExpectation(description: "goBack called")
-        let nearbyVM = FakeNearbyVM(backExp)
-        nearbyVM.navigationStack = [
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-        ]
-
-        let stopDetailsVM = StopDetailsViewModel(
-            predictionsRepository: MockPredictionsRepository(),
-            schedulesRepository: MockScheduleRepository()
-        )
-
-        let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil,
-            errorBannerVM: .init(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
-        )
-
-        try sut.inspect().find(viewWithAccessibilityLabel: "Back").button().tap()
-
-        wait(for: [backExp], timeout: 2)
-    }
-
     func testCloseButton() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }

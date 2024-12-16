@@ -101,8 +101,16 @@ extension [SheetNavigationStackEntry] {
             if case let .legacyStopDetails(stop, _) = self.last {
                 _ = self.popLast()
                 self.append(.legacyStopDetails(stop, newValue))
-            } else if case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _) = self.last {
-                _ = self.popLast()
+            } else if case let .stopDetails(
+                stopId: stopId,
+                stopFilter: lastFilter,
+                tripFilter: _
+            ) = self.last {
+                // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+                // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+                // the entry with the old filter should be popped and replaced with the new value.
+                if lastFilter != nil { _ = self.popLast() }
+                if self.shouldSkipStopFilterUpdate(newStop: stopId, newFilter: newValue) { return }
                 self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
             }
         }
@@ -150,5 +158,19 @@ extension [SheetNavigationStackEntry] {
 
     func lastSafe() -> SheetNavigationStackEntry {
         self.last ?? .nearby
+    }
+
+    func shouldSkipStopFilterUpdate(newStop: String, newFilter: StopDetailsFilter?) -> Bool {
+        // If the new filter is nil and there is already a nil filter in the stack for the same stop ID,
+        // we don't want a duplicate unfiltered entry, so skip appending a new one
+        if case let .stopDetails(
+            stopId: lastStop,
+            stopFilter: lastFilter,
+            tripFilter: _
+        ) = self.last {
+            lastStop == newStop && newFilter == nil && lastFilter == nil
+        } else {
+            false
+        }
     }
 }
