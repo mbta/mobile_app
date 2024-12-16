@@ -15,6 +15,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.rule.GrantPermissionRule
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
@@ -25,14 +26,18 @@ import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.map.RouteLineData
 import com.mbta.tid.mbta_app.model.Coordinate
+import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
@@ -306,12 +311,25 @@ class NearbyTransitPageTest : KoinTest {
         open class MockMapVM : IMapViewModel {
             var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
             override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
+            override var railRouteLineData: List<RouteLineData>? = null
+            override var stopSourceData: FeatureCollection? = null
+            override var globalResponse: GlobalResponse? = null
+            override var alertsData: AlertsStreamDataResponse? = null
+            override var railRouteShapes: MapFriendlyRouteResponse? = null
 
             var loadConfigCalledCount = 0
 
             override suspend fun loadConfig() {
                 loadConfigCalledCount += 1
             }
+
+            override fun globalMapData(now: Instant): GlobalMapData? {
+                return null
+            }
+
+            override fun refreshRouteLineData(now: Instant) {}
+
+            override fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {}
         }
 
         val mockMapVM = MockMapVM()

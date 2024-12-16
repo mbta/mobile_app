@@ -126,6 +126,12 @@ fun NearbyTransitPage(
         mapViewModel.loadConfig()
     }
 
+    LaunchedEffect(nearbyTransit.alertData) { mapViewModel.setAlertsData(nearbyTransit.alertData) }
+
+    LaunchedEffect(nearbyTransit.globalResponse) {
+        mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
+    }
+
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         BottomSheetScaffold(
             sheetDragHandle = { DragHandle() },
@@ -260,8 +266,6 @@ fun NearbyTransitPage(
         ) { sheetPadding ->
             HomeMapView(
                 Modifier.padding(sheetPadding),
-                globalResponse = nearbyTransit.globalResponse,
-                alertsData = nearbyTransit.alertData,
                 lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                 nearbyTransitSelectingLocationState =
                     nearbyTransit.nearbyTransitSelectingLocationState,
@@ -271,7 +275,8 @@ fun NearbyTransitPage(
                 handleStopNavigation = ::handleStopNavigation,
                 vehiclesData = vehiclesData,
                 stopDetailsDepartures = stopDetailsDepartures,
-                stopDetailsFilter = stopDetailsFilter
+                stopDetailsFilter = stopDetailsFilter,
+                viewModel = mapViewModel
             )
         }
     }
