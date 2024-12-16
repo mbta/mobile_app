@@ -131,25 +131,12 @@ class NearbyViewModel: ObservableObject {
                 stopFilter: lastFilter,
                 tripFilter: _
             ) = navigationStack.last,
-            lastFilter != nil,
             targetStop == lastStop {
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
             // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
-            _ = navigationStack.popLast()
-
-            // If the new filter is nil and there is already a nil filter in the stack for the same stop ID,
-            // we don't want a duplicate unfiltered entry, so skip appending a new one
-            if newFilter == nil,
-               case let .stopDetails(
-                   stopId: penultimateStop,
-                   stopFilter: penultimateFilter,
-                   tripFilter: _
-               ) = navigationStack.last,
-               penultimateStop == targetStop,
-               penultimateFilter == nil {
-                return
-            }
+            if lastFilter != nil { _ = navigationStack.popLast() }
+            if navigationStack.shouldSkipStopFilterUpdate(newStop: targetStop, newFilter: newFilter) { return }
             navigationStack.append(entry)
         } else {
             navigationStack.append(entry)

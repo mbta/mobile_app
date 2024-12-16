@@ -110,20 +110,7 @@ extension [SheetNavigationStackEntry] {
                 // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
                 // the entry with the old filter should be popped and replaced with the new value.
                 if lastFilter != nil { _ = self.popLast() }
-
-                // If the new value is nil and there is already a nil filter in the stack for the same stop ID,
-                // we don't want a duplicate unfiltered entry, so skip appending a new one
-                if newValue == nil,
-                   case let .stopDetails(
-                       stopId: penultimateStop,
-                       stopFilter: penultimateFilter,
-                       tripFilter: _
-                   ) = self.last,
-                   penultimateStop == stopId,
-                   penultimateFilter == nil {
-                    return
-                }
-
+                if self.shouldSkipStopFilterUpdate(newStop: stopId, newFilter: newValue) { return }
                 self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
             }
         }
@@ -171,5 +158,19 @@ extension [SheetNavigationStackEntry] {
 
     func lastSafe() -> SheetNavigationStackEntry {
         self.last ?? .nearby
+    }
+
+    func shouldSkipStopFilterUpdate(newStop: String, newFilter: StopDetailsFilter?) -> Bool {
+        // If the new filter is nil and there is already a nil filter in the stack for the same stop ID,
+        // we don't want a duplicate unfiltered entry, so skip appending a new one
+        if case let .stopDetails(
+            stopId: lastStop,
+            stopFilter: lastFilter,
+            tripFilter: _
+        ) = self.last {
+            lastStop == newStop && newFilter == nil && lastFilter == nil
+        } else {
+            false
+        }
     }
 }
