@@ -1,0 +1,87 @@
+name: Android Prod Deploy
+
+on:
+  push:
+    tags:
+      - android-*
+  workflow_dispatch:
+
+concurrency:
+  group: android-prod
+
+jobs:
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          java: true
+          kotlin-cache: true
+          rsvg: true
+          ruby: true
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      - name: Fetch AWS secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            mobile-app-android-upload-key-passphrase
+      - name: Load code signing key
+        run: |
+          cd androidApp
+          aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
+      - name: Build Android app
+        env:
+          KEYSTORE_FILE: "${{ github.workspace }}/androidApp/upload-keystore.jks"
+          KEYSTORE_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
+          KEY_ALIAS: "upload"
+          KEY_PASSWORD: ${{ env.MOBILE_APP_ANDROID_UPLOAD_KEY_PASSPHRASE }}
+          MAPBOX_SECRET_TOKEN: ${{ secrets.MAPBOX_SECRET_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          bundle exec fastlane android build flavor:Prod
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: androidApp/build/outputs/apk/prod/release/androidApp-prod-release.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/prodRelease/androidApp-prod-release.aab
+  deploy-android:
+    name: Upload to Google Play
+    concurrency:
+      group: deploy-android
+      cancel-in-progress: false
+    needs:
+      - build-android
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: androidApp/build/outputs/bundle/prodRelease
+      - uses: ./.github/actions/setup
+        with:
+          gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          ruby: true
+      - name: Upload to Google Play
+        run: |
+          bundle exec fastlane android internal flavor:Prod
