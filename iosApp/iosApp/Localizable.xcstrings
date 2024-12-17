@@ -8884,6 +8884,47 @@
         }
       }
     },
+    "When using TalkBack, we can skip reading out maps to keep you focused on transit information." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Al usar TalkBack, podemos omitir la lectura de mapas para que usted se concentre en la información de tránsito."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lè w ap itilize TalkBack, nou ka sote lekti kat yo pou kenbe w konsantre sou enfòmasyon transpò."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ao usar o TalkBack, podemos pular a leitura de mapas para manter você focado nas informações de trânsito."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Khi sử dụng TalkBack, chúng ta có thể bỏ qua việc đọc bản đồ để bạn tập trung vào thông tin giao thông."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "使用 TalkBack 时，我们可以跳过读地图的步骤，让您专注于交通信息。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "使用 TalkBack 時，我們可以跳過讀取地圖，讓您專注於交通資訊。"
+          }
+        }
+      }
+    },
     "When using VoiceOver, we can skip reading out maps to keep you focused on transit information." : {
       "localizations" : {
         "es" : {

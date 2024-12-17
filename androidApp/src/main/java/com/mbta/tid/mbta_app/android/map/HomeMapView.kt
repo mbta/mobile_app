@@ -259,6 +259,11 @@ fun HomeMapView(
 
             val locationProvider = remember { PassthroughLocationProvider() }
 
+            MapEffect(true) { map ->
+                map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+                map.location.setLocationProvider(locationProvider)
+            }
+
             LaunchedEffect(locationDataManager) {
                 locationDataManager.currentLocation.collect { location ->
                     if (location != null) {
@@ -267,11 +272,6 @@ fun HomeMapView(
                         )
                     }
                 }
-            }
-
-            MapEffect(true) { map ->
-                map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
-                map.location.setLocationProvider(locationProvider)
             }
 
             MapEffect(locationDataManager.hasPermission) { map ->

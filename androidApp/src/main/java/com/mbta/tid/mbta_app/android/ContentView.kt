@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,22 +25,26 @@ import com.mbta.tid.mbta_app.android.location.rememberLocationDataManager
 import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
+import com.mbta.tid.mbta_app.android.pages.OnboardingPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import io.github.dellisd.spatialk.geojson.Position
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ContentView(
     socket: PhoenixSocket = koinInject(),
+    viewModel: ContentViewModel = koinViewModel(),
 ) {
     val navController = rememberNavController()
-    var alertData: AlertsStreamDataResponse? = subscribeToAlerts()
+    val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData()
+    val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -61,6 +66,15 @@ fun ContentView(
         socket.attach()
         (socket as? PhoenixSocketWrapper)?.attachLogging()
         onPauseOrDispose { socket.detach() }
+    }
+
+    if (!pendingOnboarding.isNullOrEmpty()) {
+        OnboardingPage(
+            pendingOnboarding,
+            onFinish = { viewModel.clearPendingOnboarding() },
+            locationDataManager = locationDataManager
+        )
+        return
     }
 
     val sheetModifier = Modifier.fillMaxSize().background(colorResource(id = R.color.fill1))

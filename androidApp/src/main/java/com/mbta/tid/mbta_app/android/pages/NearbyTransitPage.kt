@@ -135,61 +135,61 @@ fun NearbyTransitPage(
                                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                                 val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
-                            fun updateStopDepartures(departures: StopDetailsDepartures?) {
-                                viewModel.setStopDetailsDepartures(departures)
-                                if (departures != null && stopDetailsFilter == null) {
-                                    updateStopFilter(departures.autoStopFilter())
-                                }
-                            }
-
-                            LaunchedEffect(navRoute) {
-                                if (navBarVisible) {
-                                    hideNavBar()
+                                fun updateStopDepartures(departures: StopDetailsDepartures?) {
+                                    viewModel.setStopDetailsDepartures(departures)
+                                    if (departures != null && stopDetailsFilter == null) {
+                                        updateStopFilter(departures.autoStopFilter())
+                                    }
                                 }
 
-                                updateStopFilter(
-                                    if (
-                                        navRoute.filterRouteId != null &&
-                                            navRoute.filterDirectionId != null
-                                    )
-                                        StopDetailsFilter(
-                                            navRoute.filterRouteId,
-                                            navRoute.filterDirectionId
+                                LaunchedEffect(navRoute) {
+                                    if (navBarVisible) {
+                                        hideNavBar()
+                                    }
+
+                                    updateStopFilter(
+                                        if (
+                                            navRoute.filterRouteId != null &&
+                                                navRoute.filterDirectionId != null
                                         )
-                                    else null
-                                )
-                            }
-
-                            LaunchedEffect(navRoute) {
-                                if (navBarVisible) {
-                                    hideNavBar()
+                                            StopDetailsFilter(
+                                                navRoute.filterRouteId,
+                                                navRoute.filterDirectionId
+                                            )
+                                        else null
+                                    )
                                 }
 
-                                updateStopFilter(
-                                    if (
-                                        navRoute.filterRouteId != null &&
-                                            navRoute.filterDirectionId != null
-                                    )
-                                        StopDetailsFilter(
-                                            navRoute.filterRouteId,
-                                            navRoute.filterDirectionId
-                                        )
-                                    else null
-                                )
-                            }
+                                LaunchedEffect(navRoute) {
+                                    if (navBarVisible) {
+                                        hideNavBar()
+                                    }
 
-                            if (stop != null) {
-                                StopDetailsPage(
-                                    modifier = modifier,
-                                    stop,
-                                    stopDetailsFilter,
-                                    nearbyTransit.alertData,
-                                    onClose = { navController.popBackStack() },
-                                    updateStopFilter = ::updateStopFilter,
-                                    updateDepartures = ::updateStopDepartures
-                                )
+                                    updateStopFilter(
+                                        if (
+                                            navRoute.filterRouteId != null &&
+                                                navRoute.filterDirectionId != null
+                                        )
+                                            StopDetailsFilter(
+                                                navRoute.filterRouteId,
+                                                navRoute.filterDirectionId
+                                            )
+                                        else null
+                                    )
+                                }
+
+                                if (stop != null) {
+                                    StopDetailsPage(
+                                        modifier = modifier,
+                                        stop,
+                                        stopDetailsFilter,
+                                        nearbyTransit.alertData,
+                                        onClose = { navController.popBackStack() },
+                                        updateStopFilter = ::updateStopFilter,
+                                        updateDepartures = ::updateStopDepartures
+                                    )
+                                }
                             }
-                        }
                             composable<SheetRoutes.NearbyTransit> {
                                 LaunchedEffect(true) {
                                     if (!navBarVisible) {

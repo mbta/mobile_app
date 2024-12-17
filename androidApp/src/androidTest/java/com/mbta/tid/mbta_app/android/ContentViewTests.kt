@@ -34,7 +34,8 @@ class ContentViewTests : KoinTest {
     val koinApplication = koinApplication {
         modules(
             repositoriesModule(MockRepositories.buildWithDefaults()),
-            module { single<PhoenixSocket> { MockPhoenixSocket() } }
+            MainApplication.koinViewModelModule,
+            module { single<PhoenixSocket> { MockPhoenixSocket() } },
         )
     }
 

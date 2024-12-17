@@ -34,6 +34,17 @@
     <string name="no_stops_nearby_title">Nenhuma parada próxima</string>
     <string name="northbound">Sentido norte</string>
     <string name="now">Agora</string>
+    <string name="onboarding_feedback_advance">Comece aqui</string>
+    <string name="onboarding_feedback_body">O MBTA Go está no estágio inicial! Queremos seus comentários enquanto continuamos a fazer melhorias e adicionar novos recursos.</string>
+    <string name="onboarding_feedback_header">Ajude-nos a melhorar</string>
+    <string name="onboarding_hide_maps_body">Ao usar o TalkBack, podemos pular a leitura de mapas para manter você focado nas informações de trânsito.</string>
+    <string name="onboarding_hide_maps_header">Definir preferência de mapas</string>
+    <string name="onboarding_hide_maps_hide">Ocultar mapas</string>
+    <string name="onboarding_hide_maps_show">Exibir mapas</string>
+    <string name="onboarding_location_advance">Continuar</string>
+    <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
+    <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
+    <string name="onboarding_location_header">Ver transporte perto de você</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>
     <string name="other_link_tos">Termos de Uso</string>
