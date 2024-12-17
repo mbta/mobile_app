@@ -131,7 +131,7 @@ fun HomeMapView(
     fun updateDisplayedRoutesBasedOnStop() {
         val globalResponse = globalResponse ?: return
         val railRouteShapes = railRouteShapes ?: return
-        if (stopMapData == null) return
+        val stopMapData = stopMapData ?: return
 
         val filteredRoutes =
             if (stopDetailsFilter != null) {
