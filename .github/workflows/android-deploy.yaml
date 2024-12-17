@@ -2,8 +2,6 @@ name: Android Prod Deploy
 
 on:
   push:
-    branches:
-      - mth-android-prod-release
     tags:
       - android-*
   workflow_dispatch:
