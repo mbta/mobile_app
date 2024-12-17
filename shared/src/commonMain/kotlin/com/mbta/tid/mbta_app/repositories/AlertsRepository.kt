@@ -82,14 +82,18 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
 
 class MockAlertsRepository
 @DefaultArgumentInterop.Enabled
-constructor(private val response: AlertsStreamDataResponse = AlertsStreamDataResponse(emptyMap())) :
-    IAlertsRepository {
+constructor(
+    private val response: AlertsStreamDataResponse = AlertsStreamDataResponse(emptyMap()),
+    private val onConnect: () -> Unit = {},
+    private val onDisconnect: () -> Unit = {}
+) : IAlertsRepository {
 
     override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
+        onConnect()
         onReceive(ApiResult.Ok(response))
     }
 
     override fun disconnect() {
-        /* no-op */
+        onDisconnect()
     }
 }
