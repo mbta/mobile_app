@@ -311,11 +311,12 @@ class NearbyTransitPageTest : KoinTest {
         open class MockMapVM : IMapViewModel {
             var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
             override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
-            override var railRouteLineData: List<RouteLineData>? = null
-            override var stopSourceData: FeatureCollection? = null
-            override var globalResponse: GlobalResponse? = null
-            override var alertsData: AlertsStreamDataResponse? = null
-            override var railRouteShapes: MapFriendlyRouteResponse? = null
+            override var railRouteLineData: Flow<List<RouteLineData>?> =
+                MutableStateFlow(value = null)
+            override var stopSourceData: Flow<FeatureCollection?> = MutableStateFlow(value = null)
+            override var globalResponse: Flow<GlobalResponse?> = MutableStateFlow(value = null)
+            override var railRouteShapes: Flow<MapFriendlyRouteResponse?> =
+                MutableStateFlow(value = null)
 
             var loadConfigCalledCount = 0
 
@@ -327,9 +328,13 @@ class NearbyTransitPageTest : KoinTest {
                 return null
             }
 
-            override fun refreshRouteLineData(now: Instant) {}
+            override suspend fun refreshRouteLineData(now: Instant) {}
 
-            override fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {}
+            override suspend fun refreshStopFeatures(now: Instant, selectedStop: Stop?) {}
+
+            override suspend fun setAlertsData(alertsData: AlertsStreamDataResponse?) {}
+
+            override suspend fun setGlobalResponse(globalResponse: GlobalResponse?) {}
         }
 
         val mockMapVM = MockMapVM()
