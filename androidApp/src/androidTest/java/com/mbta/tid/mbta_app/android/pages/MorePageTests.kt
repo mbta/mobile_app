@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -29,8 +30,7 @@ class MorePageTests : KoinTest {
     }
 
     @Test
-    fun testSettings() {
-
+    fun testSettings() = runTest {
         var hideMapToggleCalled = false
 
         val koinApplication = koinApplication {
@@ -54,6 +54,8 @@ class MorePageTests : KoinTest {
 
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hide Maps").performClick()
+
+        composeTestRule.awaitIdle()
 
         assertTrue { hideMapToggleCalled }
     }

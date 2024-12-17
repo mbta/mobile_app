@@ -43,6 +43,7 @@
     <string name="resources_link_mticket">Bilhetes de transporte diário por trem e balsa</string>
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
+    <string name="search_by_stop">Pesquisar por parada</string>
     <string name="service_ended">Serviço encerrado</string>
     <string name="setting_toggle_hide_maps">Ocultar mapas</string>
     <string name="settings_link">Configurações</string>

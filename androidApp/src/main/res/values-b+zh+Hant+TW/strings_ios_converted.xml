@@ -43,6 +43,7 @@
     <string name="resources_link_mticket">通勤列車和輪渡票</string>
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="search_by_stop">按站點搜尋</string>
     <string name="service_ended">服務已結束</string>
     <string name="setting_toggle_hide_maps">隱藏地圖</string>
     <string name="settings_link">設定</string>
