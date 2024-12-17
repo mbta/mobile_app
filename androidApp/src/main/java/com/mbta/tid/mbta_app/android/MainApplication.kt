@@ -6,6 +6,8 @@ import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.dsl.module
 import org.phoenixframework.Socket
 
 // unfortunately, expect/actual only works in multiplatform projects, so we can't
@@ -19,7 +21,12 @@ class MainApplication : Application() {
         initKoin(
             appVariant,
             makeNativeModule(AccessibilityStatusRepository(applicationContext), socket.wrapped()),
+            koinViewModelModule,
             this
         )
+    }
+
+    companion object {
+        val koinViewModelModule = module { viewModelOf(::ContentViewModel) }
     }
 }
