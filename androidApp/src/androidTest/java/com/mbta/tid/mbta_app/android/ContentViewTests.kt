@@ -68,6 +68,7 @@ class ContentViewTests : KoinTest {
         val koinApplication = koinApplication {
             modules(
                 repositoriesModule(MockRepositories.buildWithDefaults()),
+                MainApplication.koinViewModelModule,
                 module {
                     single<PhoenixSocket> {
                         MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 })
