@@ -126,7 +126,6 @@ fun NearbyTransitPage(
     LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
         mapViewModel.loadConfig()
     }
-
     LaunchedEffect(nearbyTransit.alertData) { mapViewModel.setAlertsData(nearbyTransit.alertData) }
 
     LaunchedEffect(nearbyTransit.globalResponse) {
@@ -142,20 +141,21 @@ fun NearbyTransitPage(
                     val density = LocalDensity.current
                     Box(
                         modifier =
-                        Modifier.onGloballyPositioned {
-                            // https://issuetracker.google.com/issues/287390075#comment7
-                            sheetHeight = with(density) { it.boundsInWindow().height.toDp() }
-                        }
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surface)
+                            Modifier.onGloballyPositioned {
+                                    // https://issuetracker.google.com/issues/287390075#comment7
+                                    sheetHeight =
+                                        with(density) { it.boundsInWindow().height.toDp() }
+                                }
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surface)
                     ) {
                         NavHost(
                             navController,
                             startDestination = SheetRoutes.NearbyTransit,
                             modifier =
-                            Modifier.height(sheetHeight)
-                                .padding(outerSheetPadding)
-                                .background(MaterialTheme.colorScheme.surface)
+                                Modifier.height(sheetHeight)
+                                    .padding(outerSheetPadding)
+                                    .background(MaterialTheme.colorScheme.surface)
                         ) {
                             composable<SheetRoutes.StopDetails> { backStackEntry ->
                                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
@@ -180,7 +180,7 @@ fun NearbyTransitPage(
                                     updateStopFilter(
                                         if (
                                             navRoute.filterRouteId != null &&
-                                            navRoute.filterDirectionId != null
+                                                navRoute.filterDirectionId != null
                                         )
                                             StopDetailsFilter(
                                                 navRoute.filterRouteId,
@@ -222,7 +222,8 @@ fun NearbyTransitPage(
                                     nearbyTransit.viewportProvider.cameraStateFlow
                                         .debounce(0.5.seconds)
                                         .collect {
-                                            // since this LaunchedEffect is cancelled when not on the
+                                            // since this LaunchedEffect is cancelled when not on
+                                            // the
                                             // nearby transit page, we don't need to check
                                             targetLocation = it.center.toPosition()
                                         }
@@ -244,7 +245,9 @@ fun NearbyTransitPage(
                                     alertData = nearbyTransit.alertData,
                                     globalResponse = nearbyTransit.globalResponse,
                                     targetLocation = targetLocation,
-                                    setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                                    setLastLocation = {
+                                        nearbyTransit.lastNearbyTransitLocation = it
+                                    },
                                     setSelectingLocation = {
                                         nearbyTransit.nearbyTransitSelectingLocation = it
                                     },
@@ -270,7 +273,7 @@ fun NearbyTransitPage(
                     Modifier.padding(sheetPadding),
                     lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
                     nearbyTransitSelectingLocationState =
-                    nearbyTransit.nearbyTransitSelectingLocationState,
+                        nearbyTransit.nearbyTransitSelectingLocationState,
                     locationDataManager = nearbyTransit.locationDataManager,
                     viewportProvider = nearbyTransit.viewportProvider,
                     currentNavEntry = currentNavEntry,
