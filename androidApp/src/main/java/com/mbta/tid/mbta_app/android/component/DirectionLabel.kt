@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,25 +11,36 @@ import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.Direction
 
-private val reformatDirectionNames = setOf("North", "South", "East", "West")
+private val localizedDirectionNames: Map<String, Int> =
+    mapOf(
+        "North" to R.string.northbound,
+        "South" to R.string.southbound,
+        "East" to R.string.eastbound,
+        "West" to R.string.westbound,
+        "Inbound" to R.string.inbound,
+        "Outbound" to R.string.outbound,
+    )
 
+@StringRes
 private fun directionNameFormatted(direction: Direction) =
-    if (reformatDirectionNames.contains(direction.name)) "${direction.name}bound"
-    else direction.name
+    localizedDirectionNames[direction.name] ?: R.string.heading
 
 @Composable
 fun DirectionLabel(direction: Direction, modifier: Modifier = Modifier) {
     val destination = direction.destination
-    Column {
+    Column(modifier = modifier) {
         if (destination != null) {
             Text(
-                stringResource(R.string.directionTo, directionNameFormatted(direction)),
+                stringResource(
+                    R.string.directionTo,
+                    stringResource(directionNameFormatted(direction))
+                ),
                 fontSize = 13.sp
             )
             Text(destination, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
         } else {
             Text(
-                directionNameFormatted(direction),
+                stringResource(directionNameFormatted(direction)),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold
             )

@@ -238,12 +238,13 @@ class NearbyTransitViewTest : KoinTest {
                     globalResponse = globalResponse,
                     targetLocation = Position(0.0, 0.0),
                     setLastLocation = {},
+                    setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> }
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Nearby transit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()

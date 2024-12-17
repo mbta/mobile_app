@@ -49,6 +49,12 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
+    fun resetPuckPosition() {
+        if (map.styleLayerExists("puck")) {
+            map.moveStyleLayer("puck", null)
+        }
+    }
+
     private fun updateSourceData(sourceId: String, data: FeatureCollection) {
         if (map.styleSourceExists(sourceId)) {
             map.setStyleGeoJSONSourceData(

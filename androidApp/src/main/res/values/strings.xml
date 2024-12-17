@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="hello_platform">Hello, %1$s!</string>
-    <string name="boarding_abbr">BRD</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="alert">Alert</string>
+    <string name="app_version_number">version %1$s</string>
     <string name="arriving_abbr">ARR</string>
-    <string name="now">Now</string>
-    <string name="minutes_abbr">%1$s min</string>
-    <string name="approaching_abbr">1 min</string>
+    <string name="back_button_label">Back</string>
+    <string name="boarding_abbr">BRD</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="close_button_label">Close</string>
     <string name="detour">Detour</string>
+    <string name="directionTo">%1$s to</string>
+    <string name="eastbound">Eastbound</string>
+    <string name="feature_flag_debug_mode">Debug Mode</string>
+    <string name="feature_flag_route_search">Route Search</string>
+    <string name="feedback_link_form">Send app feedback</string>
+    <string name="filterShowAll">All</string>
+    <string name="heading">Heading</string>
+    <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
+    <string name="inbound">Inbound</string>
+    <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
+    <string name="minutes_abbr" tools:ignore="MissingTranslation">%1$s min</string>
+    <string name="more_link">More</string>
+    <string name="more_page_footer">Made with ♥ by the T</string>
+    <string name="more_section_feature_flags">Feature Flags</string>
+    <string name="more_section_resources">Resources</string>
+    <string name="more_section_settings">Settings</string>
+    <string name="more_section_support">General MBTA Information &amp; Support</string>
+    <string name="more_section_support_note">Monday through Friday: 6:30 AM - 8 PM</string>
+    <string name="more_title">MBTA Go</string>
+    <string name="nearby_transit">Nearby Transit</string>
+    <string name="nearby_transit_link">Nearby</string>
+    <string name="no_predictions">Predictions unavailable</string>
+    <string name="no_service">No Service</string>
+    <string name="no_service_today">No service today</string>
+    <string name="no_stops_nearby">You’re outside the MBTA service area.</string>
+    <string name="no_stops_nearby_title">No nearby stops</string>
+    <string name="northbound">Northbound</string>
+    <string name="now">Now</string>
+    <string name="other_link_privacy_policy">Privacy Policy</string>
+    <string name="other_link_source_code">View source on GitHub</string>
+    <string name="other_link_tos">Terms of Use</string>
+    <string name="outbound">Outbound</string>
+    <string name="pin_route">Star route</string>
+    <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
+    <string name="resources_link_fare_info">Fare Information</string>
+    <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
+    <string name="resources_link_mticket_note">mTicket App</string>
+    <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="service_ended">Service ended</string>
+    <string name="setting_toggle_hide_maps">Hide Maps</string>
+    <string name="settings_link">Settings</string>
     <string name="shuttle">Shuttle</string>
+    <string name="southbound">Southbound</string>
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
-    <string name="no_service">No Service</string>
-    <string name="cancelled">Cancelled</string>
-    <string name="nearby_transit_link">Nearby</string>
-    <string name="settings_link">Settings</string>
-    <string name="filterShowAll">All</string>
-    <string name="directionTo">%1$s to</string>
-    <string name="no_stops_nearby_title">No nearby MBTA stops</string>
-    <string name="no_stops_nearby">Your current location is outside of our search area.</string>
+    <string name="westbound">Westbound</string>
 </resources>

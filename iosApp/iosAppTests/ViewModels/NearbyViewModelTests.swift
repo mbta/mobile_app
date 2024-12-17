@@ -19,10 +19,12 @@ final class NearbyViewModelTests: XCTestCase {
     func testIsNearbyVisibleFalseWhenStack() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
-        XCTAssertFalse(NearbyViewModel(navigationStack: [.legacyStopDetails(stop, nil)]).isNearbyVisible())
+        XCTAssertFalse(NearbyViewModel(navigationStack: [
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ]).isNearbyVisible())
     }
 
-    func testPushEntryAddsToStackWhenDifferentStops() {
+    func testPushEntryAddsToStackWhenDifferentStopsLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { _ in }
         let stop2 = objects.stop { _ in }
@@ -37,7 +39,7 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.navigationStack, [entry1, entry2])
     }
 
-    func testPushEntrySetsLastStopWhenSameStop() {
+    func testPushEntrySetsLastStopWhenSameStopLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { _ in }
         let nearbyVM: NearbyViewModel = .init(navigationStack: [])
@@ -51,7 +53,7 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.navigationStack, [entry2])
     }
 
-    func testSetLastStopDetailsFilterWhenIsLast() {
+    func testSetLastStopDetailsFilterWhenIsLastLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { _ in }
         let newFilter: StopDetailsFilter = .init(routeId: "2", directionId: 1)
@@ -64,7 +66,7 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.navigationStack.last, .legacyStopDetails(stop1, newFilter))
     }
 
-    func testSetLastStopDetailsFilterWhenIsNotLast() {
+    func testSetLastStopDetailsFilterWhenIsNotLastLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { _ in }
         let stop2 = objects.stop { _ in }
@@ -78,7 +80,7 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.navigationStack.last, .legacyStopDetails(stop2, nil))
     }
 
-    func testSetDeparturesWhenIsLast() {
+    func testSetDeparturesWhenIsLastLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { _ in }
         let route1 = objects.route { _ in }
@@ -91,7 +93,7 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.departures, departures)
     }
 
-    func testSetDeparturesWhenIsNotLast() {
+    func testSetDeparturesWhenIsNotLastLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { _ in }
         let stop2 = objects.stop { _ in }
@@ -106,7 +108,7 @@ final class NearbyViewModelTests: XCTestCase {
         XCTAssertEqual(nearbyVM.departures, nil)
     }
 
-    func testTargetStop() {
+    func testTargetStopLegacy() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let nearbyVM: NearbyViewModel = .init(navigationStack: [])
@@ -136,7 +138,7 @@ final class NearbyViewModelTests: XCTestCase {
         nearbyVM.goBack()
     }
 
-    func testVisitHistoryChanges() async {
+    func testVisitHistoryChangesLegacy() async {
         let objects = ObjectCollectionBuilder()
         let stopA = objects.stop { _ in }
         let stopB = objects.stop { _ in }
@@ -177,5 +179,61 @@ final class NearbyViewModelTests: XCTestCase {
         } catch {
             XCTFail("Getting latest visits failed, \(error)")
         }
+    }
+
+    func testStopDetailsNav() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ])
+
+        let filter1: StopDetailsFilter = .init(routeId: "1", directionId: 1)
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil))
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+            .stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil),
+        ], nearbyVM.navigationStack)
+
+        let filter2: StopDetailsFilter = .init(routeId: "1", directionId: 0)
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter2, tripFilter: nil))
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+            .stopDetails(stopId: stop.id, stopFilter: filter2, tripFilter: nil),
+        ], nearbyVM.navigationStack)
+
+        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ], nearbyVM.navigationStack)
+    }
+
+    func testSetLastStopDetailsFilter() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ])
+
+        let filter1: StopDetailsFilter = .init(routeId: "1", directionId: 1)
+        nearbyVM.setLastStopDetailsFilter(stop.id, filter1)
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+            .stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil),
+        ], nearbyVM.navigationStack)
+
+        let filter2: StopDetailsFilter = .init(routeId: "1", directionId: 0)
+        nearbyVM.setLastStopDetailsFilter(stop.id, filter2)
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+            .stopDetails(stopId: stop.id, stopFilter: filter2, tripFilter: nil),
+        ], nearbyVM.navigationStack)
+
+        nearbyVM.setLastStopDetailsFilter(stop.id, nil)
+        XCTAssertEqual([
+            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+        ], nearbyVM.navigationStack)
     }
 }

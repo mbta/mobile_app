@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
@@ -31,7 +30,6 @@ class RouteHeaderTest {
             )
         }
         composeTestRule.onNodeWithText("Short name").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Bus").assertIsDisplayed()
     }
 
     @Test
@@ -53,7 +51,6 @@ class RouteHeaderTest {
             )
         }
         composeTestRule.onNodeWithText("Long name").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Ferry").assertIsDisplayed()
     }
 
     @Test
@@ -75,7 +72,6 @@ class RouteHeaderTest {
             )
         }
         composeTestRule.onNodeWithText("Long name").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Commuter Rail").assertIsDisplayed()
     }
 
     @Test
@@ -97,6 +93,5 @@ class RouteHeaderTest {
             )
         }
         composeTestRule.onNodeWithText("Long name").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Subway").assertIsDisplayed()
     }
 }

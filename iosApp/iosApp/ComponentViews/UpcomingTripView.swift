@@ -20,6 +20,7 @@ extension TripInstantDisplay.Overridden {
 struct UpcomingTripView: View {
     let prediction: State
     var routeType: RouteType?
+    var hideRealtimeIndicators: Bool = false
     var isFirst: Bool = true
     var isOnly: Bool = true
 
@@ -39,7 +40,6 @@ struct UpcomingTripView: View {
 
     var body: some View {
         predictionView
-            .foregroundStyle(Color.text)
             .frame(minWidth: 48, alignment: .trailing)
             .padding(.trailing, 4)
     }
@@ -50,14 +50,14 @@ struct UpcomingTripView: View {
         case let .some(prediction):
             switch onEnum(of: prediction) {
             case let .overridden(overridden):
-                Text(overridden.textWithLocale()).realtime()
+                Text(overridden.textWithLocale()).realtime(hideIndicator: hideRealtimeIndicators)
             case .hidden, .skipped:
                 // should have been filtered out already
                 Text(verbatim: "")
             case .now:
                 Text("Now", comment: "Label for a trip that's arriving right now")
                     .font(Typography.headlineBold)
-                    .realtime()
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
@@ -65,7 +65,7 @@ struct UpcomingTripView: View {
             case .boarding:
                 Text("BRD", comment: "Shorthand for boarding")
                     .font(Typography.headlineBold)
-                    .realtime()
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .boardingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
@@ -73,17 +73,17 @@ struct UpcomingTripView: View {
             case .arriving:
                 Text("ARR", comment: "Shorthand for arriving")
                     .font(Typography.headlineBold)
-                    .realtime()
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters
                         .arrivingFirst(vehicleText: routeType?.typeText(isOnly: isOnly) ?? "")
                         : accessibilityFormatters.arrivingOther())
             case .approaching:
-                PredictionText(minutes: 1).realtime()
+                PredictionText(minutes: 1).realtime(hideIndicator: hideRealtimeIndicators)
             case let .time(format):
                 Text(Date(instant: format.predictionTime), style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
-                    .realtime()
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.distantFutureFirst(
                             date: format.predictionTime.toNSDate(),
@@ -93,7 +93,7 @@ struct UpcomingTripView: View {
                         .distantFutureOther(date: format.predictionTime.toNSDate()))
             case let .minutes(format):
                 PredictionText(minutes: format.minutes)
-                    .realtime()
+                    .realtime(hideIndicator: hideRealtimeIndicators)
                     .accessibilityLabel(isFirst
                         ? accessibilityFormatters.predictionMinutesFirst(
                             minutes: format.minutes,
@@ -123,11 +123,11 @@ struct UpcomingTripView: View {
                 HStack(spacing: Self.subjectSpacing) {
                     Text("Cancelled", comment: "The status label for a cancelled trip")
                         .font(Typography.footnote)
-                        .foregroundStyle(Color.deemphasized)
+                        .opacity(0.6)
                     Text(format.scheduledTime.toNSDate(), style: .time)
                         .font(Typography.footnoteSemibold)
                         .strikethrough()
-                        .foregroundStyle(Color.deemphasized)
+                        .opacity(0.6)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(isFirst

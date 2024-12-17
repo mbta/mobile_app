@@ -20,6 +20,7 @@ extension Color {
     static let halo = Color("Halo")
     static let key = Color("Key")
     static let keyInverse = Color("Key Inverse")
+    static let stopDotHalo = Color("Stop Dot Halo")
     static let text = Color("Text")
 }
 
@@ -39,5 +40,6 @@ extension UIColor {
     static let halo = UIColor(named: "Halo") ?? UIColor(Color(.halo))
     static let key = UIColor(named: "Key") ?? UIColor(Color(.key))
     static let keyInverse = UIColor(named: "Key Inverse") ?? UIColor(Color(.keyInverse))
+    static let stopDotHalo = UIColor(named: "Stop Dot Halo") ?? UIColor(Color(.stopDotHalo))
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
 }

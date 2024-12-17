@@ -1,12 +1,15 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import kotlinx.datetime.Instant
 
-data class TripDetailsStopList(val stops: List<Entry>) {
+data class TripDetailsStopList
+@DefaultArgumentInterop.Enabled
+constructor(val stops: List<Entry>, val terminalStop: Entry? = null) {
     data class Entry(
         val stop: Stop,
         val stopSequence: Int,
@@ -170,9 +173,25 @@ data class TripDetailsStopList(val stops: List<Entry>) {
             if (entries.isEmpty()) {
                 return TripDetailsStopList(emptyList())
             }
+
+            val sortedEntries = entries.entries.sortedBy { it.key }
+
+            fun getEntry(optionalWorking: WorkingEntry?): Entry? {
+                val working = optionalWorking ?: return null
+                val stop = globalData.stops[working.stopId] ?: return null
+                return Entry(
+                    stop,
+                    working.stopSequence,
+                    getAlert(working, alertsData, globalData, tripId, directionId),
+                    working.schedule,
+                    working.prediction,
+                    working.vehicle,
+                    getTransferRoutes(working, globalData)
+                )
+            }
+
             return TripDetailsStopList(
-                entries.entries
-                    .sortedBy { it.key }
+                sortedEntries
                     .dropWhile {
                         if (
                             vehicle == null ||
@@ -181,20 +200,13 @@ data class TripDetailsStopList(val stops: List<Entry>) {
                         ) {
                             false
                         } else {
-                            it.value.stopSequence < vehicle.currentStopSequence
+                            it.value.stopSequence < vehicle.currentStopSequence ||
+                                (it.value.stopSequence == vehicle.currentStopSequence &&
+                                    vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt)
                         }
                     }
-                    .mapNotNull {
-                        Entry(
-                            globalData.stops[it.value.stopId] ?: return@mapNotNull null,
-                            it.value.stopSequence,
-                            getAlert(it.value, alertsData, globalData, tripId, directionId),
-                            it.value.schedule,
-                            it.value.prediction,
-                            it.value.vehicle,
-                            getTransferRoutes(it.value, globalData)
-                        )
-                    }
+                    .mapNotNull { getEntry(it.value) },
+                getEntry(sortedEntries.firstOrNull()?.value)
             )
         }
 

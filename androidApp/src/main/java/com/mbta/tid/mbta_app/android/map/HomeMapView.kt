@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,40 +18,40 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
-import com.mapbox.maps.Style
 import com.mapbox.maps.ViewAnnotationAnchor
+import com.mapbox.maps.ViewAnnotationOptions
+import com.mapbox.maps.extension.compose.DisposableMapEffect
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapEvents
 import com.mapbox.maps.extension.compose.MapboxMap
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
-import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
+import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings
+import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
+import com.mbta.tid.mbta_app.android.appVariant
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.state.getRailRouteShapes
+import com.mbta.tid.mbta_app.android.state.getStopMapData
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
-import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
-import com.mbta.tid.mbta_app.android.util.ViewportSnapshot
-import com.mbta.tid.mbta_app.android.util.followPuck
-import com.mbta.tid.mbta_app.android.util.getRailRouteShapes
-import com.mbta.tid.mbta_app.android.util.getStopMapData
-import com.mbta.tid.mbta_app.android.util.isFollowingPuck
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -69,27 +71,28 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.map
 
 @OptIn(MapboxExperimental::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeMapView(
     modifier: Modifier = Modifier,
-    mapViewportState: MapViewportState,
     globalResponse: GlobalResponse?,
     alertsData: AlertsStreamDataResponse?,
     lastNearbyTransitLocation: Position?,
+    nearbyTransitSelectingLocationState: MutableState<Boolean>,
+    locationDataManager: LocationDataManager,
+    viewportProvider: ViewportProvider,
     currentNavEntry: NavBackStackEntry?,
     handleStopNavigation: (String) -> Unit,
     vehiclesData: List<Vehicle>,
     stopDetailsDepartures: StopDetailsDepartures?,
     stopDetailsFilter: StopDetailsFilter?
 ) {
+    var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
-    val locationPermissionState =
-        rememberPermissionState(permission = android.Manifest.permission.ACCESS_FINE_LOCATION)
-    var savedNearbyViewport: ViewportSnapshot? by rememberSaveable { mutableStateOf(null) }
     var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
     val railRouteShapes = getRailRouteShapes()
@@ -111,6 +114,10 @@ fun HomeMapView(
 
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
+
+    val isNearbyNotFollowing =
+        !viewportProvider.isFollowingPuck &&
+            currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -138,13 +145,7 @@ fun HomeMapView(
 
     fun positionViewportToStop() {
         val stop = selectedStop ?: return
-        val stopFeature = stopSourceData?.features()?.find { it.id().equals(stop.id) }
-        val stopPoint =
-            stopFeature?.geometry() as? Point ?: Point.fromLngLat(stop.longitude, stop.latitude)
-        mapViewportState.easeTo(
-            cameraOptions = CameraOptions.Builder().center(stopPoint).build(),
-            animationOptions = MapAnimationDefaults.options
-        )
+        viewportProvider.animateTo(stop.position.toMapbox())
     }
 
     fun updateDisplayedRoutesBasedOnStop() {
@@ -215,14 +216,13 @@ fun HomeMapView(
             previousNavEntry?.destination?.route?.contains("NearbyTransit") == true &&
                 currentNavEntry?.destination?.route?.contains("StopDetails") == true
         ) {
-            savedNearbyViewport = ViewportSnapshot(mapViewportState)
+            viewportProvider.saveNearbyTransitViewport()
         } else if (
             previousNavEntry?.destination?.route?.contains("StopDetails") == true &&
                 currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
         ) {
             refreshRouteLineSource()
-            savedNearbyViewport?.restoreOn(mapViewportState)
-            savedNearbyViewport = null
+            viewportProvider.restoreNearbyTransitViewport()
         }
     }
 
@@ -236,7 +236,16 @@ fun HomeMapView(
         selectedStop = globalResponse?.stops?.get(stopId)
     }
 
-    Box(modifier) {
+    val locationPermissions = locationDataManager.rememberPermissions()
+
+    val cameraZoomFlow =
+        remember(viewportProvider.cameraStateFlow) {
+            viewportProvider.cameraStateFlow.map { it.zoom }
+        }
+    val zoomLevel by
+        cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
+
+    Box(modifier, contentAlignment = Alignment.Center) {
         MapboxMap(
             Modifier.fillMaxSize(),
             mapEvents =
@@ -245,7 +254,8 @@ fun HomeMapView(
                         layerManager.run {
                             addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
                         }
-                    }
+                    },
+                    onCameraChanged = { viewportProvider.updateCameraState(it.cameraState) }
                 ),
             gesturesSettings =
                 GesturesSettings {
@@ -260,8 +270,12 @@ fun HomeMapView(
                 },
             compass = {},
             scaleBar = {},
-            mapViewportState = mapViewportState,
-            style = { MapStyle(style = if (isDarkMode) Style.DARK else Style.LIGHT) }
+            mapViewportState = viewportProvider.viewport,
+            style = {
+                MapStyle(
+                    style = if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle
+                )
+            }
         ) {
             LaunchedEffect(currentNavEntry) { handleNavChange() }
             LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
@@ -282,9 +296,46 @@ fun HomeMapView(
 
             val context = LocalContext.current
 
+            val locationProvider = remember { PassthroughLocationProvider() }
+
+            LaunchedEffect(locationDataManager) {
+                locationDataManager.currentLocation.collect { location ->
+                    if (location != null) {
+                        locationProvider.sendLocation(
+                            Point.fromLngLat(location.longitude, location.latitude)
+                        )
+                    }
+                }
+            }
+
             MapEffect(true) { map ->
-                mapViewportState.followPuck()
                 map.mapboxMap.addOnMapClickListener { point -> handleStopClick(map, point) }
+                map.location.setLocationProvider(locationProvider)
+            }
+
+            MapEffect(locationDataManager.hasPermission) { map ->
+                if (locationDataManager.hasPermission && viewportProvider.isDefault()) {
+                    viewportProvider.follow(
+                        DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
+                    )
+                    layerManager.run { resetPuckPosition() }
+                }
+            }
+
+            LifecycleStartEffect(Unit) {
+                onStopOrDispose { viewportProvider.saveCurrentViewport() }
+            }
+
+            DisposableMapEffect { map ->
+                val listener = ManuallyCenteringListener(viewportProvider)
+                map.gestures.addOnMoveListener(listener)
+                map.gestures.addOnScaleListener(listener)
+                map.gestures.addOnShoveListener(listener)
+                onDispose {
+                    map.gestures.removeOnMoveListener(listener)
+                    map.gestures.removeOnScaleListener(listener)
+                    map.gestures.removeOnShoveListener(listener)
+                }
             }
 
             MapEffect { map ->
@@ -292,12 +343,20 @@ fun HomeMapView(
                     layerManager.`object` = MapLayerManager(map.mapboxMap, context)
             }
 
-            if (!mapViewportState.isFollowingPuck && lastNearbyTransitLocation != null) {
-                CircleAnnotation(
-                    point = lastNearbyTransitLocation.toPoint(),
-                    circleColorString = "#ba75c7",
-                    circleRadius = 10.0
-                )
+            if (
+                isNearbyNotFollowing &&
+                    lastNearbyTransitLocation != null &&
+                    !nearbyTransitSelectingLocation
+            ) {
+                ViewAnnotation(
+                    options =
+                        ViewAnnotationOptions.Builder()
+                            .geometry(lastNearbyTransitLocation.toPoint())
+                            .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
+                            .build()
+                ) {
+                    Crosshairs()
+                }
             }
 
             for (vehicle in vehiclesData) {
@@ -309,6 +368,7 @@ fun HomeMapView(
                             annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                             allowOverlap(true)
                             allowOverlapWithPuck(true)
+                            visible(zoomLevel >= StopLayerGenerator.stopZoomThreshold)
                         }
                 ) {
                     VehiclePuck(vehicle = vehicle, route = route)
@@ -316,14 +376,30 @@ fun HomeMapView(
             }
         }
 
-        if (!mapViewportState.isFollowingPuck || !locationPermissionState.status.isGranted) {
+        if (!viewportProvider.isFollowingPuck) {
             RecenterButton(
                 onClick = {
-                    locationPermissionState.launchPermissionRequest()
-                    mapViewportState.followPuck()
+                    // don't request FINE if we already have COARSE
+                    if (!locationPermissions.permissions.any { it.status.isGranted }) {
+                        locationPermissions.launchMultiplePermissionRequest()
+                    }
+                    viewportProvider.follow()
                 },
                 Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
+        }
+
+        LaunchedEffect(viewportProvider.isManuallyCentering) {
+            if (
+                viewportProvider.isManuallyCentering &&
+                    currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+            ) {
+                nearbyTransitSelectingLocation = true
+            }
+        }
+
+        if (nearbyTransitSelectingLocation) {
+            Crosshairs()
         }
     }
 }
