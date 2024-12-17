@@ -6,10 +6,8 @@ import com.mapbox.maps.plugin.locationcomponent.LocationProvider
 
 class PassthroughLocationProvider : LocationProvider {
     private val consumers = mutableSetOf<LocationConsumer>()
-    private var lastLocation: Point? = null
 
     fun sendLocation(location: Point) {
-        lastLocation = location
         for (consumer in consumers) {
             consumer.onLocationUpdated(location)
         }
@@ -17,10 +15,6 @@ class PassthroughLocationProvider : LocationProvider {
 
     override fun registerLocationConsumer(locationConsumer: LocationConsumer) {
         consumers.add(locationConsumer)
-        val cachedLocation = lastLocation
-        if (cachedLocation != null) {
-            locationConsumer.onLocationUpdated(cachedLocation)
-        }
     }
 
     override fun unRegisterLocationConsumer(locationConsumer: LocationConsumer) {
