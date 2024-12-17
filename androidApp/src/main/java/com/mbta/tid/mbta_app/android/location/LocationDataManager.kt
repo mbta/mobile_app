@@ -81,7 +81,7 @@ open class LocationDataManager {
         if (hasPermission) {
             LaunchedEffect(Unit) {
                 locationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    _currentLocation.tryEmit(location)
+                    _currentLocation.value = location
                 }
             }
 
@@ -106,7 +106,7 @@ open class LocationDataManager {
         if (hasPermission && settingsCorrect) {
             DisposableEffect(locationRequest, lifecycleOwner) {
                 val locationCallback = LocationListener { location ->
-                    _currentLocation.tryEmit(location)
+                    _currentLocation.value = location
                 }
                 val lifecycleObserver = LifecycleEventObserver { _, event ->
                     if (event == Lifecycle.Event.ON_START) {
