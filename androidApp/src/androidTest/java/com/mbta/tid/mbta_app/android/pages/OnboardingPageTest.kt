@@ -36,15 +36,15 @@ class OnboardingPageTest {
         }
 
         composeTestRule.onNodeWithText("Continue").performClick()
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { completedScreens.size == 1 }
         assertEquals(1, completedScreens.size)
 
         composeTestRule.onNodeWithText("Show maps").performClick()
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { completedScreens.size == 2 }
         assertEquals(2, completedScreens.size)
 
         composeTestRule.onNodeWithText("Get started").performClick()
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { completedScreens.size == 3 }
         assertEquals(OnboardingScreen.entries.toSet(), completedScreens)
         assertTrue(finished)
     }
