@@ -54,6 +54,7 @@
     <string name="resources_link_mticket">Boletos de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Planificador de viaje</string>
+    <string name="search_by_stop">Buscar por parada</string>
     <string name="service_ended">Servicio finalizado</string>
     <string name="setting_toggle_hide_maps">Ocultar Mapas</string>
     <string name="settings_link">Configuración</string>
