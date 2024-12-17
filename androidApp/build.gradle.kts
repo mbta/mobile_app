@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.mapbox.turf)
     implementation(libs.okhttp)
     implementation(libs.playServices.location)
+    implementation(libs.androidx.lifecycle.runtime.testing)
     debugImplementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.test.manifest)
     debugImplementation(libs.compose.ui.tooling)

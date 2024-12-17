@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.network
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+
 enum class PhoenixPushStatus(val value: String) {
     Ok("ok"),
     Error("error"),
@@ -40,7 +42,10 @@ interface PhoenixSocket {
     fun detach()
 }
 
-class MockPhoenixSocket : PhoenixSocket {
+class MockPhoenixSocket
+@DefaultArgumentInterop.Enabled
+constructor(val onAttachCallback: () -> Unit = {}, val onDetatchCallback: () -> Unit = {}) :
+    PhoenixSocket {
     override fun onAttach(callback: () -> Unit): String {
         return "attached"
     }
@@ -49,13 +54,17 @@ class MockPhoenixSocket : PhoenixSocket {
         return "detached"
     }
 
-    override fun attach() {}
+    override fun attach() {
+        onAttachCallback()
+    }
 
     override fun getChannel(topic: String, params: Map<String, Any>): PhoenixChannel {
         return MockPhoenixChannel()
     }
 
-    override fun detach() {}
+    override fun detach() {
+        onDetatchCallback()
+    }
 }
 
 class MockPhoenixChannel : PhoenixChannel {

@@ -7,6 +7,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.util.LocalActivity
@@ -54,5 +57,46 @@ class ContentViewTests : KoinTest {
 
         composeTestRule.onNodeWithText("Nearby").performClick()
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+    }
+
+    @Test
+    fun testSocketClosedOnPause() {
+        val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
+        var onAttachCount = 0
+        var onDetatchCount = 0
+
+        val koinApplication = koinApplication {
+            modules(
+                repositoriesModule(MockRepositories.buildWithDefaults()),
+                MainApplication.koinViewModelModule,
+                module {
+                    single<PhoenixSocket> {
+                        MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 })
+                    }
+                }
+            )
+        }
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                CompositionLocalProvider(
+                    LocalActivity provides (LocalContext.current as Activity),
+                    LocalLocationClient provides MockFusedLocationProviderClient(),
+                    LocalLifecycleOwner provides lifecycleOwner
+                ) {
+                    ContentView()
+                }
+            }
+        }
+
+        composeTestRule.waitUntil { onAttachCount == 1 && onDetatchCount == 0 }
+
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+
+        composeTestRule.waitUntil { onAttachCount == 1 && onDetatchCount == 1 }
+
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
+
+        composeTestRule.waitUntil { onAttachCount == 2 && onDetatchCount == 1 }
     }
 }
