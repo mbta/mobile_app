@@ -16,6 +16,8 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +34,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavBackStackEntry
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
-import com.mbta.tid.mbta_app.android.state.getSearchResults
+import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 
 @ExperimentalMaterial3Api
 @Composable
@@ -47,13 +49,8 @@ fun SearchBarOverlay(
         }
     var expanded by rememberSaveable { mutableStateOf(false) }
     var searchInputState by rememberSaveable { mutableStateOf("") }
-    val searchResults = getSearchResults(searchInputState)
-
-    fun handleSearch(stopId: String) {
-        expanded = false
-        searchInputState = ""
-        onStopNavigation(stopId)
-    }
+    val searchResultsVm = getSearchResultsVm()
+    val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 
     val buttonColors =
         ButtonColors(
@@ -62,6 +59,7 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
+    LaunchedEffect(searchInputState) { searchResultsVm.getSearchResults(searchInputState) }
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
@@ -98,14 +96,7 @@ fun SearchBarOverlay(
                             expanded = expanded,
                             onQueryChange = { searchInputState = it },
                             onExpandedChange = { expanded = it },
-                            onSearch = {
-                                expanded = false
-                                if (
-                                    searchResults?.stops != null && searchResults.stops.isNotEmpty()
-                                ) {
-                                    handleSearch(searchResults.stops[0].id)
-                                }
-                            },
+                            onSearch = {},
                             leadingIcon = {
                                 Icon(
                                     painterResource(R.drawable.magnifying_glass),
@@ -134,7 +125,7 @@ fun SearchBarOverlay(
                 ) {
                     LazyColumn {
                         items(searchResults?.stops ?: emptyList()) { stop ->
-                            StopResultsView(stop, ::handleSearch)
+                            StopResultsView(stop, onStopNavigation)
                         }
                     }
                 }
