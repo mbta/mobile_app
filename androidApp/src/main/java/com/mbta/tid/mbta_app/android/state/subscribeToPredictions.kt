@@ -93,7 +93,6 @@ fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject()
 ): PredictionsStreamDataResponse? {
-
     val viewModel: PredictionsViewModel =
         viewModel(factory = PredictionsViewModel.Factory(predictionsRepository))
 
