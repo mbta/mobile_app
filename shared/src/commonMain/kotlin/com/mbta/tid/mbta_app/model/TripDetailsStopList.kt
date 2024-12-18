@@ -9,7 +9,7 @@ import kotlinx.datetime.Instant
 
 data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
-constructor(val stops: List<Entry>, val terminalStop: Entry? = null) {
+constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
     data class Entry(
         val stop: Stop,
         val stopSequence: Int,
@@ -190,6 +190,7 @@ constructor(val stops: List<Entry>, val terminalStop: Entry? = null) {
                 )
             }
 
+            val startTerminalEntry = getEntry(sortedEntries.firstOrNull()?.value)
             return TripDetailsStopList(
                 sortedEntries
                     .dropWhile {
@@ -205,8 +206,9 @@ constructor(val stops: List<Entry>, val terminalStop: Entry? = null) {
                                     vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt)
                         }
                     }
-                    .mapNotNull { getEntry(it.value) },
-                getEntry(sortedEntries.firstOrNull()?.value)
+                    .mapNotNull { getEntry(it.value) }
+                    .dropWhile { it == startTerminalEntry && it.vehicle == null },
+                startTerminalEntry
             )
         }
 

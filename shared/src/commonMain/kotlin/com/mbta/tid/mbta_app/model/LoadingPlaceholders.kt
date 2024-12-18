@@ -123,7 +123,7 @@ object LoadingPlaceholders {
                     val stop = objects.stop { name = "Loading" }
                     val prediction =
                         objects.prediction {
-                            this.trip = trip
+                            this.trip = objects.trip(routePattern)
                             this.stopId = stop.id
                             this.vehicleId = vehicle.id
                             departureTime = Clock.System.now() + sequence.minutes

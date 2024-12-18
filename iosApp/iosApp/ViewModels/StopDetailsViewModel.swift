@@ -53,6 +53,7 @@ class StopDetailsViewModel: ObservableObject {
 
     @Published var stopData: StopData?
     @Published var tripData: TripData?
+    @Published var explainer: Explainer?
 
     let errorBannerRepository: IErrorBannerStateRepository
     let globalRepository: IGlobalRepository
