@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StopDeparturesSummaryList
@@ -27,7 +28,10 @@ fun NearbyStopView(
 ) {
     Row(
         modifier =
-            Modifier.clickable { onOpenStopDetails(patternsAtStop.stop.id, null) }
+            Modifier.clickable(
+                    onClickLabel = stringResource(id = R.string.open_for_more_arrivals),
+                    onClick = { onOpenStopDetails(patternsAtStop.stop.id, null) }
+                )
                 .background(colorResource(id = R.color.fill2))
                 .fillMaxWidth()
     ) {
