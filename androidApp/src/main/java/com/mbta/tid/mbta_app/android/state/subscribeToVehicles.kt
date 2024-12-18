@@ -3,11 +3,8 @@ package com.mbta.tid.mbta_app.android.state
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.model.RouteDirection
@@ -15,14 +12,18 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class VehiclesViewModel(
     private val vehiclesRepository: IVehiclesRepository,
 ) : ViewModel() {
-    private val _vehicles: MutableLiveData<VehiclesStreamDataResponse> = MutableLiveData()
-    private val vehicles: LiveData<VehiclesStreamDataResponse> = _vehicles
-    val vehiclesFlow = vehicles.asFlow()
+    private val _vehicles = MutableStateFlow<VehiclesStreamDataResponse?>(null)
+    val vehiclesFlow: StateFlow<VehiclesStreamDataResponse?> = _vehicles
 
     override fun onCleared() {
         super.onCleared()
@@ -38,7 +39,7 @@ class VehiclesViewModel(
             vehiclesRepository.connect(routeDirection.routeId, routeDirection.directionId) {
                 when (it) {
                     is ApiResult.Ok -> {
-                        _vehicles.postValue(it.data)
+                        _vehicles.value = it.data
                     }
                     is ApiResult.Error -> {
                         Log.e("VehiclesViewModel", "Vehicle stream failed: ${it.message}")
@@ -71,7 +72,7 @@ fun subscribeToVehicles(
     val vehicleData = viewModel?.vehiclesFlow?.collectAsState(initial = null)?.value
 
     LifecycleResumeEffect(key1 = routeDirection) {
-        viewModel.connectToVehicles(routeDirection)
+        CoroutineScope(Dispatchers.IO).launch { viewModel.connectToVehicles(routeDirection) }
 
         onPauseOrDispose { viewModel.disconnect() }
     }
