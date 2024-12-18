@@ -13,10 +13,13 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class PredictionsViewModel(
@@ -96,7 +99,7 @@ fun subscribeToPredictions(
         viewModel(factory = PredictionsViewModel.Factory(predictionsRepository))
 
     LifecycleResumeEffect(key1 = stopIds) {
-        viewModel.connect(stopIds)
+        CoroutineScope(Dispatchers.IO).launch { viewModel.connect(stopIds) }
 
         onPauseOrDispose { viewModel.disconnect() }
     }
