@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.Coordinate
@@ -229,6 +231,7 @@ class NearbyTransitViewTest : KoinTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewDisplaysCorrectly() {
         composeTestRule.setContent {
@@ -245,6 +248,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
