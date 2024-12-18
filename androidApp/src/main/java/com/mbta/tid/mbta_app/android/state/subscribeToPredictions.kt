@@ -23,11 +23,10 @@ class PredictionsViewModel(
     private val predictionsRepository: IPredictionsRepository,
 ) : ViewModel() {
     private val _predictions = MutableStateFlow<PredictionsByStopJoinResponse?>(null)
-    private val _counter = MutableStateFlow<Int>(0)
 
     val predictions: StateFlow<PredictionsByStopJoinResponse?> = _predictions
     val predictionsFlow =
-        predictions.map { it?.toPredictionsStreamDataResponse() }.debounce(0.1.seconds)
+        predictions.debounce(0.1.seconds).map { it?.toPredictionsStreamDataResponse() }
 
     override fun onCleared() {
         super.onCleared()
