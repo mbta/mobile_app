@@ -4,6 +4,7 @@ import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -327,7 +328,12 @@ class NearbyTransitPageTest : KoinTest {
                 loadConfigCalledCount += 1
             }
 
-            override fun globalMapData(now: Instant): GlobalMapData? {
+            override suspend fun globalMapData(now: Instant): GlobalMapData? {
+                return null
+            }
+
+            @Composable
+            override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
                 return null
             }
 
