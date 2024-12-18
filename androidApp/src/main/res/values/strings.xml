@@ -73,4 +73,6 @@
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
     <string name="westbound">Westbound</string>
+    <string name="open_for_more_arrivals">Open for more arrivals</string>
+
 </resources>
