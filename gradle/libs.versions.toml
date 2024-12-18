@@ -1,5 +1,6 @@
 [versions]
 accompanist = "0.36.0"
+android-material3 = "1.3.1"
 androidx-activityCompose = "1.9.1"
 androidx-navigationCompose = "2.8.1"
 androidx-test-monitor = "1.7.2"
@@ -28,6 +29,7 @@ sentryGradle = "4.14.1"
 skie = "0.9.5"
 spatialk = "0.3.0"
 turbine = "1.2.0"
+lifecycleRuntimeTesting = "2.8.7"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
@@ -38,7 +40,7 @@ androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "andro
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
-compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "android-material3" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
@@ -74,6 +76,7 @@ skie-configuration-annotations = { module = "co.touchlab.skie:configuration-anno
 spatialk-geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "spatialk" }
 spatialk-turf = { module = "io.github.dellisd.spatialk:turf", version.ref = "spatialk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-lifecycle-runtime-testing = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "lifecycleRuntimeTesting" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -36,6 +36,17 @@
     <string name="no_stops_nearby_title">No nearby stops</string>
     <string name="northbound">Northbound</string>
     <string name="now">Now</string>
+    <string name="onboarding_feedback_advance">Get started</string>
+    <string name="onboarding_feedback_body">MBTA Go is in the early stages! We want your feedback as we continue making improvements and adding new features.</string>
+    <string name="onboarding_feedback_header">Help us improve</string>
+    <string name="onboarding_hide_maps_body">When using TalkBack, we can skip reading out maps to keep you focused on transit information.</string>
+    <string name="onboarding_hide_maps_header">Set map preference</string>
+    <string name="onboarding_hide_maps_hide">Hide maps</string>
+    <string name="onboarding_hide_maps_show">Show maps</string>
+    <string name="onboarding_location_advance">Continue</string>
+    <string name="onboarding_location_body">We use your location to show you nearby transit options.</string>
+    <string name="onboarding_location_footer">You can always change location settings later in the Settings app.</string>
+    <string name="onboarding_location_header">See transit near you</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
     <string name="other_link_source_code">View source on GitHub</string>
     <string name="other_link_tos">Terms of Use</string>
@@ -46,6 +57,7 @@
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
+    <string name="search_by_stop">Search by stop</string>
     <string name="service_ended">Service ended</string>
     <string name="setting_toggle_hide_maps">Hide Maps</string>
     <string name="settings_link">Settings</string>

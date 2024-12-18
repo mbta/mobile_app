@@ -81,7 +81,7 @@ open class LocationDataManager {
         if (hasPermission) {
             LaunchedEffect(Unit) {
                 locationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    _currentLocation.tryEmit(location)
+                    _currentLocation.value = location
                 }
             }
 
@@ -106,7 +106,7 @@ open class LocationDataManager {
         if (hasPermission && settingsCorrect) {
             DisposableEffect(locationRequest, lifecycleOwner) {
                 val locationCallback = LocationListener { location ->
-                    _currentLocation.tryEmit(location)
+                    _currentLocation.value = location
                 }
                 val lifecycleObserver = LifecycleEventObserver { _, event ->
                     if (event == Lifecycle.Event.ON_START) {
@@ -134,12 +134,13 @@ open class LocationDataManager {
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun rememberPermissions() =
+    fun rememberPermissions(onPermissionsResult: (Map<String, Boolean>) -> Unit = {}) =
         rememberMultiplePermissionsState(
             listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            )
+            ),
+            onPermissionsResult
         )
 
     open val currentLocation = _currentLocation.asStateFlow()

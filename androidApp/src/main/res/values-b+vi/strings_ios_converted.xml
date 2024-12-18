@@ -34,6 +34,17 @@
     <string name="no_stops_nearby_title">Không có điểm dừng gần đó</string>
     <string name="northbound">Về hướng bắc</string>
     <string name="now">Hiện nay</string>
+    <string name="onboarding_feedback_advance">Bắt đầu</string>
+    <string name="onboarding_feedback_body">MBTA Go đang trong giai đoạn đầu! Chúng tôi muốn nghe ý kiến đóng góp của bạn để tiếp tục cải thiện và bổ sung các tính năng mới.</string>
+    <string name="onboarding_feedback_header">Giúp chúng tôi cải thiện</string>
+    <string name="onboarding_hide_maps_body">Khi sử dụng TalkBack, chúng ta có thể bỏ qua việc đọc bản đồ để bạn tập trung vào thông tin giao thông.</string>
+    <string name="onboarding_hide_maps_header">Đặt tùy chọn bản đồ</string>
+    <string name="onboarding_hide_maps_hide">Ẩn bản đồ</string>
+    <string name="onboarding_hide_maps_show">Hiển thị bản đồ</string>
+    <string name="onboarding_location_advance">Tiếp tục</string>
+    <string name="onboarding_location_body">Chúng tôi sử dụng vị trí của bạn để hiển thị cho bạn các lựa chọn phương tiện công cộng ở gần.</string>
+    <string name="onboarding_location_footer">Bạn luôn có thể thay đổi cài đặt vị trí sau trong ứng dụng Cài đặt.</string>
+    <string name="onboarding_location_header">Xem phương tiện công cộng gần bạn</string>
     <string name="other_link_privacy_policy">Chính sách bảo mật</string>
     <string name="other_link_source_code">Xem nguồn trên GitHub</string>
     <string name="other_link_tos">Điều khoản sử dụng</string>
@@ -43,6 +54,7 @@
     <string name="resources_link_mticket">Vé phà vé đường sắt ngoại ô (Commuter Rail)</string>
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
+    <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
     <string name="setting_toggle_hide_maps">Ẩn bản đồ</string>
     <string name="settings_link">Cài đặt</string>

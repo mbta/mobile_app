@@ -1,0 +1,51 @@
+package com.mbta.tid.mbta_app.android.pages
+
+import android.location.Location
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.model.OnboardingScreen
+import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import org.junit.Rule
+import org.junit.Test
+
+class OnboardingPageTest {
+    @get:Rule val composeTestRule = createComposeRule()
+
+    @Test
+    fun testFlow() {
+        val completedScreens = mutableSetOf<OnboardingScreen>()
+        val onboardingRepository =
+            MockOnboardingRepository(
+                pendingOnboarding = OnboardingScreen.entries,
+                onMarkComplete = completedScreens::add
+            )
+        var finished = false
+
+        composeTestRule.setContent {
+            OnboardingPage(
+                screens = OnboardingScreen.entries,
+                locationDataManager = MockLocationDataManager(Location("mock")),
+                onFinish = { finished = true },
+                onboardingRepository = onboardingRepository,
+                skipLocationDialogue = true,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitUntil { completedScreens.size == 1 }
+        assertEquals(1, completedScreens.size)
+
+        composeTestRule.onNodeWithText("Show maps").performClick()
+        composeTestRule.waitUntil { completedScreens.size == 2 }
+        assertEquals(2, completedScreens.size)
+
+        composeTestRule.onNodeWithText("Get started").performClick()
+        composeTestRule.waitUntil { completedScreens.size == 3 }
+        assertEquals(OnboardingScreen.entries.toSet(), completedScreens)
+        assertTrue(finished)
+    }
+}

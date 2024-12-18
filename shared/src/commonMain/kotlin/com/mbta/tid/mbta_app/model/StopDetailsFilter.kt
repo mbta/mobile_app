@@ -2,4 +2,11 @@ package com.mbta.tid.mbta_app.model
 
 import kotlinx.serialization.Serializable
 
-@Serializable data class StopDetailsFilter(val routeId: String, val directionId: Int)
+interface RouteDirection {
+    val routeId: String
+    val directionId: Int
+}
+
+@Serializable
+data class StopDetailsFilter(override val routeId: String, override val directionId: Int) :
+    RouteDirection
