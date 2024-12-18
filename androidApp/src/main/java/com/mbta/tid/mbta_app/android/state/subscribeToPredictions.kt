@@ -3,13 +3,8 @@ package com.mbta.tid.mbta_app.android.state
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -17,15 +12,24 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class PredictionsViewModel(
     private val predictionsRepository: IPredictionsRepository,
 ) : ViewModel() {
-    private val _predictions: MutableLiveData<PredictionsByStopJoinResponse> = MutableLiveData()
-    val predictions: LiveData<PredictionsByStopJoinResponse> = _predictions
-    val predictionsFlow = predictions.asFlow().map { it.toPredictionsStreamDataResponse() }
+    private val _predictions = MutableStateFlow<PredictionsByStopJoinResponse?>(null)
+
+    val predictions: StateFlow<PredictionsByStopJoinResponse?> = _predictions
+    val predictionsFlow =
+        predictions.debounce(0.1.seconds).map { it?.toPredictionsStreamDataResponse() }
 
     override fun onCleared() {
         super.onCleared()
@@ -41,7 +45,7 @@ class PredictionsViewModel(
     private fun handleJoinMessage(message: ApiResult<PredictionsByStopJoinResponse>) {
         when (message) {
             is ApiResult.Ok -> {
-                _predictions.postValue(message.data)
+                _predictions.value = message.data
             }
             is ApiResult.Error -> {
                 Log.e(
@@ -55,7 +59,7 @@ class PredictionsViewModel(
     private fun handlePushMessage(message: ApiResult<PredictionsByStopMessageResponse>) {
         when (message) {
             is ApiResult.Ok -> {
-                _predictions.postValue(
+                _predictions.value =
                     (_predictions.value
                             ?: PredictionsByStopJoinResponse(
                                 mapOf(message.data.stopId to message.data.predictions),
@@ -63,7 +67,6 @@ class PredictionsViewModel(
                                 message.data.vehicles
                             ))
                         .mergePredictions(message.data)
-                )
             }
             is ApiResult.Error -> {
                 Log.e(
@@ -95,7 +98,7 @@ fun subscribeToPredictions(
         viewModel(factory = PredictionsViewModel.Factory(predictionsRepository))
 
     LifecycleResumeEffect(key1 = stopIds) {
-        viewModel.connect(stopIds)
+        CoroutineScope(Dispatchers.IO).launch { viewModel.connect(stopIds) }
 
         onPauseOrDispose { viewModel.disconnect() }
     }

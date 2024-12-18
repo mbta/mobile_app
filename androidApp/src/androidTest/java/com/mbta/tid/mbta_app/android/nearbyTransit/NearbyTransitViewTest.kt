@@ -234,6 +234,7 @@ class NearbyTransitViewTest : KoinTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewDisplaysCorrectly() {
         composeTestRule.setContent {
@@ -251,6 +252,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
         composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
