@@ -39,14 +39,7 @@ class SocketMessageTest {
 
         // data observed in practice
         assertEquals(
-            Message(
-                "0",
-                "0",
-                "predictions:stops",
-                "phx_reply",
-                emptyMap(),
-                """{"status":"ok","response":{}}"""
-            ),
+            Message("0", "0", "predictions:stops", "phx_reply", mapOf("status" to "ok"), "{}"),
             decodeMessage(
                 """["0","0","predictions:stops","phx_reply",{"status":"ok","response":{}}]"""
             )
