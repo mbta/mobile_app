@@ -818,6 +818,53 @@
         }
       }
     },
+    "%@ scheduled to depart %@" : {
+      "comment" : "VoiceOver text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ scheduled to depart %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ programado para salir de %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ki pwograme pou kite %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ programado para partir de %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ dự kiến khởi hành %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@计划从 %2$@ 出发"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "這%1$@預定從 %2$@ 出發"
+          }
+        }
+      }
+    },
     "%@ to" : {
       "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]",
       "localizations" : {
@@ -2849,6 +2896,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已發車"
+          }
+        }
+      }
+    },
+    "Details" : {
+      "comment" : "Header on the general explainer details page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalles"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detay yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalhes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thông tin chi tiết"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "详情"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "詳情"
           }
         }
       }
@@ -5720,6 +5808,47 @@
         }
       }
     },
+    "Prediction not available yet" : {
+      "comment" : "Headline for an explanation of why no predictions are shown",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predicción aún no disponible"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Prediksyon an poko disponib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Previsão ainda não disponível"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chưa có dự đoán"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "预测尚不可用"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "預測尚不可用"
+          }
+        }
+      }
+    },
     "Predictions unavailable" : {
       "comment" : "The status label when no predictions exist for a route and direction",
       "localizations" : {
@@ -6206,6 +6335,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "線路"
+          }
+        }
+      }
+    },
+    "Scheduled to depart" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Programado para salir"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwograme pou ale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Programado para partir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đã lên lịch khởi hành"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "预计出发"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "預定出發"
           }
         }
       }
@@ -8758,6 +8927,46 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "等待離開"
+          }
+        }
+      }
+    },
+    "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no tenemos predicciones en vivo para este viaje, pero aparecerán más cerca de la hora programada. Si el viaje se retrasa o se cancela, te lo informaremos aquí."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nou poko gen prediksyon an dirèk pou vwayaj sa a, men yo pral parèt pi pre lè pwograme a. Si vwayaj la an reta oswa anile, n ap fè w konnen isit la."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ainda não temos previsões ao vivo para esta viagem, mas elas aparecerão mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você aqui."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chúng tôi chưa có dự đoán trực tiếp cho chuyến đi này, nhưng chúng sẽ xuất hiện gần với thời gian dự kiến hơn. Nếu chuyến đi bị hoãn hoặc hủy, chúng tôi sẽ thông báo cho bạn tại đây."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们目前还没有此行程的实时预测，但会在接近预定时间时显示。如果行程延误或取消，我们会在这里通知您。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們還沒有這次旅行的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。"
           }
         }
       }
