@@ -88,7 +88,6 @@ struct StopDetailsFilteredView: View {
                 return TileData(
                     upcoming: upcoming,
                     route: route,
-                    stopId: patternsByStop.stop.id,
                     now: nowInstant
                 )
             }
@@ -197,21 +196,21 @@ struct StopDetailsFilteredView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         let loadingPatterns = LoadingPlaceholders.shared.patternsByStop(routeId: stopFilter.routeId, trips: 10)
-        let placeholderTile = TileData(
+        let tiles = (0 ..< 4).map { index in TileData(
             route: loadingPatterns.representativeRoute,
             headsign: "placeholder",
             formatted: RealtimePatterns.FormatSome(
-                trips: [.init(id: "", routeType: .lightRail, format: .Boarding())],
+                trips: [.init(id: "\(index)", routeType: .lightRail, format: .Boarding())],
                 secondaryAlert: nil
             )
-        )
+        ) }
         StopDetailsFilteredDepartureDetails(
             stopId: stopId,
             stopFilter: stopFilter,
             tripFilter: tripFilter,
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
-            tiles: [placeholderTile, placeholderTile, placeholderTile, placeholderTile],
+            tiles: tiles,
             statuses: statuses,
             alerts: alerts,
             patternsByStop: loadingPatterns,

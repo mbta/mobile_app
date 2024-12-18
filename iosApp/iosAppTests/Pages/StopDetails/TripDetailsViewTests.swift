@@ -81,8 +81,8 @@ final class TripDetailsViewTests: XCTestCase {
             stopDetailsVM: stopDetailsVM
         )
 
-        XCTAssertNotNil(try sut.inspect().find(TripVehicleCard.self).find(text: "Next stop"))
-        XCTAssertNotNil(try sut.inspect().find(TripVehicleCard.self).find(text: vehicleStop.name))
+        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: "Next stop"))
+        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: vehicleStop.name))
     }
 
     func testDisplaysStopList() throws {

@@ -1,5 +1,5 @@
 //
-//  TripVehicleCard.swift
+//  TripHeaderCard.swift
 //  iosApp
 //
 //  Created by esimon on 12/3/24.
@@ -10,13 +10,18 @@ import Foundation
 import shared
 import SwiftUI
 
-struct TripVehicleCard: View {
-    let vehicle: Vehicle
+enum TripHeaderSpec {
+    case vehicle(Vehicle, TripDetailsStopList.Entry?)
+    case scheduled(TripDetailsStopList.Entry)
+}
+
+struct TripHeaderCard: View {
+    let spec: TripHeaderSpec
     let stop: Stop
     let tripId: String
     let targetId: String
-    let terminalEntry: TripDetailsStopList.Entry?
     let routeAccents: TripRouteAccents
+    let onTap: (() -> Void)?
     let now: Date
 
     var body: some View {
@@ -28,15 +33,14 @@ struct TripVehicleCard: View {
                 ColoredRouteLine(routeAccents.color)
             }.padding(.leading, 46)
             HStack(spacing: 8) {
-                vehiclePuck
+                tripMarker
                 description
                 Spacer()
-                liveIndicator
+                tripTiming
             }
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
-            .padding(.vertical, 8)
+            .padding([.trailing, .vertical], 16)
             .padding(.leading, 30)
-            .padding(.trailing, 16)
         }
         .background(Color.fill3)
         .foregroundStyle(Color.text)
@@ -46,13 +50,22 @@ struct TripVehicleCard: View {
         .padding([.horizontal], 6)
         .fixedSize(horizontal: false, vertical: true)
         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+        .onTapGesture { if let onTap { onTap() } }
     }
 
     @ViewBuilder
     private var description: some View {
+        switch spec {
+        case let .vehicle(vehicle, stopEntry): vehicleDescription(vehicle, stopEntry)
+        case let .scheduled(stopEntry): scheduleDescription(stopEntry)
+        }
+    }
+
+    @ViewBuilder
+    private func vehicleDescription(_ vehicle: Vehicle, _ stopEntry: TripDetailsStopList.Entry?) -> some View {
         if vehicle.tripId == tripId {
             VStack(alignment: .leading, spacing: 2) {
-                vehicleStatusDescription(vehicle.currentStatus)
+                vehicleStatusDescription(vehicle.currentStatus, stopEntry)
                     .font(Typography.footnote)
                 Text(stop.name)
                     .font(Typography.headlineBold)
@@ -61,7 +74,7 @@ struct TripVehicleCard: View {
             .accessibilityAddTraits(.isHeader)
             .accessibilityHeading(.h2)
             .accessibilityLabel(Text(
-                "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus)) \(stop.name)",
+                "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusText(vehicle.currentStatus, stopEntry)) \(stop.name)",
                 comment: """
                 VoiceOver text for the vehicle status on the trip details page,
                 ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
@@ -77,14 +90,45 @@ struct TripVehicleCard: View {
     }
 
     @ViewBuilder
+    private func scheduleDescription(_ stopEntry: TripDetailsStopList.Entry?) -> some View {
+        if let stopEntry {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text("Scheduled to depart").font(Typography.footnote)
+                    if routeAccents.type != .ferry {
+                        Image(.faCircleInfo)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .foregroundStyle(Color.text.opacity(0.5))
+                    }
+                }
+                Text(stopEntry.stop.name)
+                    .font(Typography.headlineBold)
+            }
+            .accessibilityElement()
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityHeading(.h2)
+            .accessibilityLabel(Text(
+                "\(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name)",
+                comment: """
+                VoiceOver text for the departure status on the trip details page,
+                ex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'
+                """
+            ))
+        }
+    }
+
+    @ViewBuilder
     private func vehicleStatusDescription(
-        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
+        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus,
+        _ stopEntry: TripDetailsStopList.Entry?
     ) -> some View {
-        Text(vehicleStatusText(vehicleStatus))
+        Text(vehicleStatusText(vehicleStatus, stopEntry))
     }
 
     private func vehicleStatusText(
-        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus
+        _ vehicleStatus: __Bridge__Vehicle_CurrentStatus,
+        _ stopEntry: TripDetailsStopList.Entry?
     ) -> String {
         switch vehicleStatus {
         case .incomingAt: NSLocalizedString(
@@ -95,7 +139,7 @@ struct TripVehicleCard: View {
                 "Next stop",
                 comment: "Label for a vehicle's next stop. For example: Next stop Alewife"
             )
-        case .stoppedAt: terminalEntry != nil ? NSLocalizedString(
+        case .stoppedAt: stopEntry != nil ? NSLocalizedString(
                 "Waiting to depart",
                 comment: """
                 Label for a vehicle stopped at a terminal station waiting to start a trip.
@@ -108,7 +152,16 @@ struct TripVehicleCard: View {
         }
     }
 
-    private var vehiclePuck: some View {
+    @ViewBuilder
+    private var tripMarker: some View {
+        switch spec {
+        case let .vehicle(vehicle, _): vehiclePuck(vehicle)
+        case .scheduled: StopDot(routeAccents: routeAccents, targeted: targetId == stop.id).frame(width: 36, height: 36)
+        }
+    }
+
+    @ViewBuilder
+    private func vehiclePuck(_ vehicle: Vehicle) -> some View {
         ZStack {
             Group {
                 Image(.vehicleHalo)
@@ -139,22 +192,13 @@ struct TripVehicleCard: View {
         .padding([.bottom], 6)
     }
 
-    var liveIndicator: some View {
+    var tripTiming: some View {
         VStack {
-            HStack {
-                Image(.liveData)
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                Text("Live", comment: "Indicates that data is being updated in real-time")
-                    .font(Typography.footnote)
+            switch spec {
+            case .vehicle: liveIndicator
+            case .scheduled: EmptyView()
             }
-            .opacity(0.6)
-            .accessibilityElement()
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityLabel(Text(
-                "Real-time arrivals updating live",
-                comment: "VoiceOver label for real-time indicator icon"
-            ))
+
             if let upcomingTripViewState {
                 UpcomingTripView(
                     prediction: upcomingTripViewState,
@@ -165,12 +209,33 @@ struct TripVehicleCard: View {
         }
     }
 
+    var liveIndicator: some View {
+        HStack {
+            Image(.liveData)
+                .resizable()
+                .frame(width: 16, height: 16)
+            Text("Live", comment: "Indicates that data is being updated in real-time")
+                .font(Typography.footnote)
+        }
+        .opacity(0.6)
+        .accessibilityElement()
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel(Text(
+            "Real-time arrivals updating live",
+            comment: "VoiceOver label for real-time indicator icon"
+        ))
+    }
+
     var upcomingTripViewState: UpcomingTripView.State? {
-        guard let terminalEntry else { return nil }
-        if let alert = terminalEntry.alert {
+        let entry = switch spec {
+        case let .vehicle(_, stopEntry): stopEntry
+        case let .scheduled(stopEntry): stopEntry
+        }
+        guard let entry else { return nil }
+        if let alert = entry.alert {
             return .noService(alert.effect)
         } else {
-            let formatted = terminalEntry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
+            let formatted = entry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
             return switch onEnum(of: formatted) {
             case .hidden, .skipped: nil
             default: .some(formatted)
@@ -211,13 +276,13 @@ struct TripVehicleCard_Previews: PreviewProvider {
         }
 
         List {
-            TripVehicleCard(
-                vehicle: vehicle,
+            TripHeaderCard(
+                spec: .vehicle(vehicle, nil),
                 stop: stop,
                 tripId: trip.id,
                 targetId: "",
-                terminalEntry: nil,
                 routeAccents: TripRouteAccents(route: red),
+                onTap: nil,
                 now: Date.now
             )
         }

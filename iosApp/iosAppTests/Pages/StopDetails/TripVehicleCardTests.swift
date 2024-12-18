@@ -25,7 +25,7 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = ""
         }
-        let sut = TripVehicleCard(
+        let sut = TripHeaderCard(
             vehicle: vehicle,
             stop: stop,
             tripId: "",
@@ -47,7 +47,7 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = ""
         }
-        let inTransitSut = TripVehicleCard(
+        let inTransitSut = TripHeaderCard(
             vehicle: inTransitVehicle,
             stop: stop,
             tripId: "",
@@ -62,7 +62,7 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .incomingAt
             vehicle.tripId = ""
         }
-        let incomingSut = TripVehicleCard(
+        let incomingSut = TripHeaderCard(
             vehicle: incomingVehicle,
             stop: stop,
             tripId: "",
@@ -77,7 +77,7 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .stoppedAt
             vehicle.tripId = ""
         }
-        let stoppedSut = TripVehicleCard(
+        let stoppedSut = TripHeaderCard(
             vehicle: stoppedVehicle,
             stop: stop,
             tripId: "",
@@ -98,7 +98,7 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = "different"
         }
-        let sut = TripVehicleCard(
+        let sut = TripHeaderCard(
             vehicle: vehicle,
             stop: stop,
             tripId: "selected",
@@ -121,7 +121,7 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.tripId = ""
             vehicle.stopId = stop.id
         }
-        let targeted = TripVehicleCard(
+        let targeted = TripHeaderCard(
             vehicle: vehicle,
             stop: stop,
             tripId: "",
@@ -135,7 +135,7 @@ final class TripVehicleCardTests: XCTestCase {
             try image.actualImage().name() == "stop-pin-indicator"
         }))
 
-        let notTargeted = TripVehicleCard(
+        let notTargeted = TripHeaderCard(
             vehicle: vehicle,
             stop: stop,
             tripId: "",
@@ -165,7 +165,7 @@ final class TripVehicleCardTests: XCTestCase {
             prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
         }
 
-        let sut = TripVehicleCard(
+        let sut = TripHeaderCard(
             vehicle: vehicle,
             stop: stop,
             tripId: "",

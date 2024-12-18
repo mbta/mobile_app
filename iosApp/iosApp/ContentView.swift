@@ -209,8 +209,9 @@ struct ContentView: View {
         if contentVM.hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
-                    if case .alertDetails = nearbyVM.navigationStack.last {
-                        nearbyVM.goBack()
+                    switch nearbyVM.navigationStack.last {
+                    case .alertDetails: nearbyVM.goBack()
+                    default: break
                     }
                 }, content: coverContents)
                 .onAppear {
@@ -242,8 +243,9 @@ struct ContentView: View {
                             .fullScreenCover(
                                 item: .constant(nav.coverItemIdentifiable()),
                                 onDismiss: {
-                                    if case .alertDetails = nearbyVM.navigationStack.last {
-                                        nearbyVM.goBack()
+                                    switch nearbyVM.navigationStack.last {
+                                    case .alertDetails: nearbyVM.goBack()
+                                    default: break
                                     }
                                 },
                                 content: coverContents
@@ -268,9 +270,6 @@ struct ContentView: View {
         NavigationStack {
             VStack {
                 switch nearbyVM.navigationStack.lastSafe() {
-                case .alertDetails:
-                    EmptyView()
-
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
@@ -353,6 +352,8 @@ struct ContentView: View {
                         .onAppear {
                             screenTracker.track(screen: .nearbyTransit)
                         }
+
+                default: EmptyView()
                 }
             }
             .animation(.easeInOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
