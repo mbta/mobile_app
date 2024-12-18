@@ -127,7 +127,7 @@ class SubscribeToPredictionsTest {
             predictions = subscribeToPredictions(emptyList(), predictionsRepo)
         }
 
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { predictions != null }
         assertNotNull(predictions)
         assertTrue(connected)
     }

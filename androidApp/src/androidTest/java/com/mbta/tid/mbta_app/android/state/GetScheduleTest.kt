@@ -76,7 +76,7 @@ class GetScheduleTest {
             actualSchedules = getSchedule(stopIds = emptyList(), schedulesRepo)
         }
 
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { actualSchedules != null }
         assertNotNull(actualSchedules)
     }
 }
