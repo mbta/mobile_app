@@ -8,6 +8,8 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import kotlin.test.assertNotNull
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.junit.Assert.assertEquals
@@ -60,5 +62,21 @@ class GetScheduleTest {
         stopIds = stops2
         composeTestRule.awaitIdle()
         assertEquals(expectedSchedules2, actualSchedules)
+    }
+
+    @Test
+    fun testScheduleNoStops() {
+        val schedulesRepo =
+            MockScheduleRepository(
+                callback = { stopIds -> assertEquals(emptyList<String>(), stopIds) }
+            )
+        var actualSchedules: ScheduleResponse? = null
+
+        composeTestRule.setContent {
+            actualSchedules = getSchedule(stopIds = emptyList(), schedulesRepo)
+        }
+
+        composeTestRule.waitForIdle()
+        assertNotNull(actualSchedules)
     }
 }

@@ -14,6 +14,8 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -54,7 +56,7 @@ class SubscribeToPredictionsTest {
 
         composeTestRule.waitUntil {
             predictions != null &&
-                predictions == predictionsOnJoin?.toPredictionsStreamDataResponse()
+                predictions == predictionsOnJoin.toPredictionsStreamDataResponse()
         }
 
         assertEquals(0, disconnectCount)
@@ -104,5 +106,29 @@ class SubscribeToPredictionsTest {
 
         composeTestRule.waitUntil { connectCount == 2 }
         assertEquals(1, disconnectCount)
+    }
+
+    @Test
+    fun testEmptyStopList() {
+        var connected = false
+        val predictionsRepo =
+            MockPredictionsRepository(
+                onConnectV2 = { stopIds ->
+                    assertEquals(emptyList<String>(), stopIds)
+                    connected = true
+                },
+                connectV2Response =
+                    PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
+            )
+
+        var predictions: PredictionsStreamDataResponse? = null
+
+        composeTestRule.setContent {
+            predictions = subscribeToPredictions(emptyList(), predictionsRepo)
+        }
+
+        composeTestRule.waitForIdle()
+        assertNotNull(predictions)
+        assertTrue(connected)
     }
 }

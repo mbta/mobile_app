@@ -33,8 +33,7 @@ class PredictionsViewModel(
     }
 
     fun connect(stopIds: List<String>?) {
-
-        if (!stopIds.isNullOrEmpty()) {
+        if (stopIds != null) {
             predictionsRepository.connectV2(stopIds, ::handleJoinMessage, ::handlePushMessage)
         }
     }
