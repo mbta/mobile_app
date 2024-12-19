@@ -133,14 +133,18 @@ struct TripStops: View {
                         """
                     ))
                 }
-                TripStopRow(
-                    stop: target,
-                    now: now.toKotlinInstant(),
-                    onTapLink: onTapLink,
-                    routeAccents: routeAccents,
-                    targeted: true
-                )
-                .background(Color.fill3)
+                if target != stops.startTerminalEntry, target.vehicle != nil {
+                    // If the target is the first stop and there's no vehicle,
+                    // it's already displayed in the trip header
+                    TripStopRow(
+                        stop: target,
+                        now: now.toKotlinInstant(),
+                        onTapLink: onTapLink,
+                        routeAccents: routeAccents,
+                        targeted: true
+                    )
+                    .background(Color.fill3)
+                }
                 stopList(list: splitStops.followingStops)
             } else {
                 stopList(list: stops.stops)

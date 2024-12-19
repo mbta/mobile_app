@@ -148,28 +148,17 @@ struct StopDetailsFilteredDepartureDetails: View {
     func statusRows(_ patternsByStop: PatternsByStop) -> some View {
         ForEach(Array(statuses.enumerated()), id: \.offset) { index, row in
             VStack(spacing: 0) {
-                OptionalNavigationLink(
-                    value: nil,
-                    action: { entry in
-                        nearbyVM.pushNavEntry(entry)
-                        analytics.tappedDepartureRow(
-                            routeId: patternsByStop.routeIdentifier,
-                            stopId: patternsByStop.stop.id,
-                            pinned: pinned,
-                            alert: alerts.count > 0
-                        )
-                    },
-                    label: {
-                        HeadsignRowView(
-                            headsign: row.headsign,
-                            predictions: row.formatted,
-                            pillDecoration: patternsByStop.line != nil ?
-                                .onRow(route: row.route) : .none
-                        )
-                    }
+                HeadsignRowView(
+                    headsign: row.headsign,
+                    predictions: row.formatted,
+                    pillDecoration: patternsByStop.line != nil ?
+                        .onRow(route: row.route) : .none
                 )
                 .accessibilityInputLabels([row.headsign])
                 .padding(.vertical, 10)
+                .padding(.horizontal, 16)
+                .background(Color.fill3)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .padding(.horizontal, 16)
 
                 if index < statuses.count - 1 {
