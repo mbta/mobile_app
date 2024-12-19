@@ -17,6 +17,7 @@
     <string name="heading">方向</string>
     <string name="inbound">进站</string>
     <string name="loading">正在加载……</string>
+    <string name="minutes_abbr">&lt;b>%1$d&lt;/b>分钟</string>
     <string name="more_link">更多</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">功能标记</string>

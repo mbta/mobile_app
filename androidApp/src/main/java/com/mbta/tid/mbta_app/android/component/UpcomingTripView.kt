@@ -18,8 +18,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,9 +94,10 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                         fontWeight = FontWeight.Bold
                     )
                 is TripInstantDisplay.Approaching ->
-                    BoldedTripStatus(
-                        text = stringResource(R.string.minutes_abbr, 1),
-                        modifier = modifier
+                    Text(
+                        text = AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
+                        modifier = modifier,
+                        style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Time ->
                     Text(
@@ -119,14 +122,22 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                             }
                     )
                 is TripInstantDisplay.Minutes ->
-                    BoldedTripStatus(
-                        text = stringResource(R.string.minutes_abbr, state.trip.minutes),
-                        modifier = modifier
+                    Text(
+                        text =
+                            AnnotatedString.fromHtml(
+                                stringResource(R.string.minutes_abbr, state.trip.minutes)
+                            ),
+                        modifier = modifier,
+                        style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.ScheduleMinutes ->
-                    BoldedTripStatus(
-                        text = stringResource(R.string.minutes_abbr, state.trip.minutes),
-                        modifier = modifier.then(Modifier.alpha(0.6F))
+                    Text(
+                        text =
+                            AnnotatedString.fromHtml(
+                                stringResource(R.string.minutes_abbr, state.trip.minutes)
+                            ),
+                        modifier = modifier.then(Modifier.alpha(0.6F)),
+                        style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
                     Row(modifier, verticalAlignment = Alignment.CenterVertically) {

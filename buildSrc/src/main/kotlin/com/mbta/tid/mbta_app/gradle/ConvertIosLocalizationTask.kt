@@ -135,9 +135,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         private fun convertIosTemplate(iosTemplate: String): String {
             var unspecifiedIndex = 1
-            return iosTemplate.replace(template) {
-                replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
-            }
+            return iosTemplate
+                .replace(template) {
+                    replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
+                }
+                .replace("""\*\*([^*]+)\*\*""".toRegex(), "<b>$1</b>")
         }
     }
 }

@@ -1,5 +1,12 @@
 package com.mbta.tid.mbta_app.android.map
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -28,7 +35,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -43,7 +49,9 @@ interface IMapViewModel {
 
     suspend fun loadConfig()
 
-    fun globalMapData(now: Instant): GlobalMapData?
+    suspend fun globalMapData(now: Instant): GlobalMapData?
+
+    @Composable fun rememberGlobalMapData(now: Instant): GlobalMapData?
 
     suspend fun refreshRouteLineData(now: Instant)
 
@@ -74,7 +82,7 @@ open class MapViewModel(
     private val _railRouteShapes = MutableStateFlow<MapFriendlyRouteResponse?>(null)
     override var railRouteShapes: Flow<MapFriendlyRouteResponse?> = _railRouteShapes
 
-    private var alertsData: AlertsStreamDataResponse? = null
+    private var alertsData: AlertsStreamDataResponse? by mutableStateOf(null)
     private val railRouteShapeRepository: IRailRouteShapeRepository by inject()
 
     init {
@@ -94,12 +102,20 @@ open class MapViewModel(
         _config.value = latestConfig
     }
 
-    override fun globalMapData(now: Instant): GlobalMapData? =
-        runBlocking(Dispatchers.IO) {
-            globalResponse.first()?.let {
-                GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData, now))
-            }
+    override suspend fun globalMapData(now: Instant): GlobalMapData? =
+        globalResponse.first()?.let {
+            GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData, now))
         }
+
+    @Composable
+    override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
+        var result by remember { mutableStateOf<GlobalMapData?>(null) }
+        val globalResponse by this.globalResponse.collectAsState(initial = null)
+        LaunchedEffect(this.alertsData, globalResponse, now) {
+            launch(Dispatchers.IO) { result = globalMapData(now) }
+        }
+        return result
+    }
 
     override suspend fun refreshRouteLineData(now: Instant) {
         val globalResponse = globalResponse.first() ?: return
