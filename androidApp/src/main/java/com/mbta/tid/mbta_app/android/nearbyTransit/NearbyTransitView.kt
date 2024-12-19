@@ -2,9 +2,12 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,13 +33,13 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun NearbyTransitView(
-    modifier: Modifier = Modifier,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
     targetLocation: Position?,
     setLastLocation: (Position) -> Unit,
     setSelectingLocation: (Boolean) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
+    noNearbyStopsView: @Composable () -> Unit,
 ) {
     var nearby: NearbyStaticData? =
         getNearby(
@@ -79,7 +82,7 @@ fun NearbyTransitView(
             }
         }
 
-    Column(modifier) {
+    Column {
         Text(
             text = stringResource(R.string.nearby_transit),
             modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
@@ -87,20 +90,17 @@ fun NearbyTransitView(
         )
 
         if (nearbyWithRealtimeInfo == null) {
-            Text(text = stringResource(R.string.loading), modifier)
+            Text(text = stringResource(R.string.loading))
         } else if (nearbyWithRealtimeInfo.isEmpty()) {
-            Column(Modifier.padding(8.dp).weight(1f), verticalArrangement = Arrangement.Center) {
-                Text(
-                    stringResource(R.string.no_stops_nearby_title),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    stringResource(R.string.no_stops_nearby),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            Column(
+                Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                noNearbyStopsView()
+                Spacer(Modifier.weight(1f))
             }
         } else {
-            LazyColumn(modifier) {
+            LazyColumn {
                 items(nearbyWithRealtimeInfo) {
                     when (it) {
                         is StopsAssociated.WithRoute ->
