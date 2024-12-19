@@ -72,6 +72,19 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
+            .fullScreenCover(
+                isPresented: .init(
+                    get: { stopDetailsVM.explainer != nil },
+                    set: { value in if !value { stopDetailsVM.explainer = nil } }
+                )
+            ) {
+                if let explainer = stopDetailsVM.explainer {
+                    ExplainerPage(
+                        explainer: explainer,
+                        onClose: { stopDetailsVM.explainer = nil }
+                    )
+                }
+            }
             .onChange(of: stopDetailsVM.global) { _ in updateDepartures() }
             .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures() }
             .onChange(of: stopDetailsVM.stopData) { stopData in

@@ -154,6 +154,8 @@ final class TripDetailsPageTests: XCTestCase {
         let stop2 = objects.stop { stop in
             stop.name = "Elsewhere"
         }
+        let stop3 = objects.stop { _ in }
+        let stop4 = objects.stop { _ in }
 
         let trip = objects.trip { _ in }
 
@@ -161,7 +163,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripRepository = FakeTripRepository(
             tripResponse: .init(trip: trip),
-            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id]),
+            scheduleResponse: TripSchedulesResponse.StopIds(stopIds: [stop1.id, stop2.id, stop3.id, stop4.id]),
             onGetTripSchedules: { tripSchedulesLoaded.send() }
         )
 
@@ -176,7 +178,7 @@ final class TripDetailsPageTests: XCTestCase {
             tripId: tripId,
             vehicleId: vehicleId,
             routeId: trip.routeId,
-            target: .init(stopId: stop1.id, stopSequence: 998),
+            target: .init(stopId: stop3.id, stopSequence: 998),
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),

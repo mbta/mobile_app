@@ -87,15 +87,7 @@ struct TripStopRow: View {
                     ColoredRouteLine(Color.clear)
                 }
             }
-            Circle()
-                .strokeBorder(Color.stopDotHalo, lineWidth: 1)
-                .background(Circle().fill(routeAccents.color))
-                .frame(width: 14, height: 14)
-                .overlay {
-                    if targeted {
-                        Image(.stopPinIndicator).padding(.bottom, 32)
-                    }
-                }
+            StopDot(routeAccents: routeAccents, targeted: targeted)
         }
         .padding(.leading, 37)
         .padding(.trailing, 8)

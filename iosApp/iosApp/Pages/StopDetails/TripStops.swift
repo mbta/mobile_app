@@ -13,7 +13,6 @@ struct TripStops: View {
     let targetId: String
     let stops: TripDetailsStopList
     let stopSequence: Int?
-    let vehicleShown: Bool
     let now: Date
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
     let routeAccents: TripRouteAccents
@@ -30,7 +29,6 @@ struct TripStops: View {
         targetId: String,
         stops: TripDetailsStopList,
         stopSequence: Int?,
-        vehicleShown: Bool = true,
         now: Date,
         onTapLink: @escaping (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void,
         routeAccents: TripRouteAccents,
@@ -39,7 +37,6 @@ struct TripStops: View {
         self.targetId = targetId
         self.stops = stops
         self.stopSequence = stopSequence
-        self.vehicleShown = vehicleShown
         self.now = now
         self.onTapLink = onTapLink
         self.routeAccents = routeAccents
@@ -148,9 +145,9 @@ struct TripStops: View {
                 stopList(list: stops.stops)
             }
         }
-        .padding(.top, vehicleShown ? 56 : 0)
+        .padding(.top, 56)
         .overlay(alignment: .topLeading) {
-            ColoredRouteLine(routeAccents.color).frame(maxHeight: vehicleShown ? 56 : 0).padding(.leading, 42)
+            ColoredRouteLine(routeAccents.color).frame(maxHeight: 56).padding(.leading, 42)
         }
         .background(Color.fill2)
         .clipShape(RoundedRectangle(cornerRadius: 8))
