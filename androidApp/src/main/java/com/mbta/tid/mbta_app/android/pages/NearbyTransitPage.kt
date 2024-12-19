@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -40,6 +41,7 @@ import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
+import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.util.toPosition
@@ -87,10 +89,23 @@ fun NearbyTransitPage(
     val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
     var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = stopDetailsFilter)
 
+    val searchFocusRequester = remember { FocusRequester() }
+
     fun handleStopNavigation(stopId: String) {
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
+    }
+
+    fun openSearch() {
+        searchFocusRequester.requestFocus()
+    }
+
+    fun panToDefaultCenter() {
+        nearbyTransit.viewportProvider.animateTo(
+            ViewportProvider.Companion.Defaults.center,
+            zoom = 13.75
+        )
     }
 
     fun updateStopFilter(filter: StopDetailsFilter?) {
@@ -106,7 +121,7 @@ fun NearbyTransitPage(
         mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
     }
 
-    SearchBarOverlay(::handleStopNavigation, currentNavEntry) {
+    SearchBarOverlay(::handleStopNavigation, currentNavEntry, searchFocusRequester) {
         Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
             BottomSheetScaffold(
                 sheetDragHandle = { DragHandle() },
@@ -241,6 +256,9 @@ fun NearbyTransitPage(
                                                 filter?.directionId
                                             )
                                         )
+                                    },
+                                    noNearbyStopsView = {
+                                        NoNearbyStopsView(::openSearch, ::panToDefaultCenter)
                                     }
                                 )
                             }

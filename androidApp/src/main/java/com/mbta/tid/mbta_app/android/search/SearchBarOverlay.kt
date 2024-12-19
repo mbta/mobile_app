@@ -25,6 +25,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +43,7 @@ import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 fun SearchBarOverlay(
     onStopNavigation: (stopId: String) -> Unit,
     currentNavEntry: NavBackStackEntry?,
+    inputFieldFocusRequester: FocusRequester,
     content: @Composable () -> Unit
 ) {
     var visible =
@@ -96,6 +99,7 @@ fun SearchBarOverlay(
                             expanded = expanded,
                             onQueryChange = { searchInputState = it },
                             onExpandedChange = { expanded = it },
+                            modifier = Modifier.focusRequester(inputFieldFocusRequester),
                             onSearch = {},
                             leadingIcon = {
                                 Icon(
