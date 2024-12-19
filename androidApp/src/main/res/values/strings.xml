@@ -58,7 +58,6 @@
     <string name="other_link_source_code">View source on GitHub</string>
     <string name="other_link_tos">Terms of Use</string>
     <string name="outbound">Outbound</string>
-    <string name="pin_route">Star route</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="resources_link_fare_info">Fare Information</string>
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
@@ -74,5 +73,11 @@
     <string name="suspension">Suspension</string>
     <string name="westbound">Westbound</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
+    <string name="star_route">Star route</string>
+    <string name="star_route_hint">pins route to the top of the list</string>
+    <string name="unstar_route_hint">unpins route from the top of the list</string>
+
+
+
 
 </resources>

@@ -5516,6 +5516,47 @@
         }
       }
     },
+    "pin route to the top of the list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fijar ruta al principio de la lista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mete wout nan tèt lis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "fixar rota no topo da lista"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ghim đường dẫn đến đầu danh sách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将路线固定到列表顶部"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "將路線固定到清單頂部"
+          }
+        }
+      }
+    },
     "Pins route to the top of the list" : {
       "comment" : "VoiceOver hint for favorite button when a route is not favorited",
       "localizations" : {
@@ -6002,47 +6043,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重新載入資料"
-          }
-        }
-      }
-    },
-    "Removes route from the top of the list" : {
-      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elimina la ruta de la parte superior de la lista"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retire wout nan tèt lis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove rota do topo da lista"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xóa lộ trình khỏi đầu danh sách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消线路置顶"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消線路置頂"
           }
         }
       }
@@ -8295,6 +8295,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "無法連接"
+          }
+        }
+      }
+    },
+    "unpin route from the top of the list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "desanclar ruta de la parte superior de la lista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "retire wout ki soti anlè lis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "desafixar a rota do topo da lista"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "bỏ ghim tuyến đường khỏi đầu danh sách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从列表顶部取消固定路线"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從清單頂部取消固定路線"
+          }
+        }
+      }
+    },
+    "Unpins route from the top of the list" : {
+      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desancla la ruta de la parte superior de la lista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retire wout nan tèt lis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desafixa a rota do topo da lista"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gỡ ghim tuyến đường khỏi đầu danh sách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将路线从列表顶部取消固定"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從清單頂部取消固定路線"
           }
         }
       }
