@@ -90,6 +90,7 @@ struct TripDetailsStopListSplitView: View {
 
     return TripDetailsStopListSplitView(
         splitStops: .init(
+            firstStop: nil,
             collapsedStops: [entry(stop1, 10, pred1)],
             targetStop: entry(stop2, 20, pred2),
             followingStops: [entry(stop3, 30, pred3)]

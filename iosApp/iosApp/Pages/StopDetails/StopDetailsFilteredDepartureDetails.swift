@@ -38,12 +38,10 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     var body: some View {
-        let routeHex: String? = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
-        let routeColor: Color? = if let routeHex { Color(hex: routeHex) } else { nil }
+        let routeHex: String = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
+        let routeColor = Color(hex: routeHex)
         ZStack(alignment: .top) {
-            if let routeColor {
-                routeColor.ignoresSafeArea(.all)
-            }
+            routeColor.ignoresSafeArea(.all)
             Rectangle()
                 .fill(Color.halo)
                 .frame(height: 2)
@@ -54,11 +52,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                         DirectionPicker(
                             patternsByStop: patternsByStop,
                             filter: stopFilter,
-                            setFilter: { stopFilter in
-                                setStopFilter(stopFilter)
-                                view.scrollTo(0)
-                            }
+                            setFilter: { setStopFilter($0) }
                         )
+                        .onChange(of: tripFilter) { filter in if let filter { view.scrollTo(filter.tripId) } }
                         .fixedSize(horizontal: false, vertical: true)
                         .padding([.horizontal, .top], 16)
                         .padding(.bottom, 6)
@@ -66,6 +62,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
                         departureTiles(patternsByStop, view)
                             .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                            .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
                     }
                     alertCards(patternsByStop, routeColor)
                     statusRows(patternsByStop)
@@ -82,6 +79,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
         }
+
         .ignoresSafeArea(.all)
     }
 
@@ -89,23 +87,25 @@ struct StopDetailsFilteredDepartureDetails: View {
     func departureTiles(_ patternsByStop: PatternsByStop, _ view: ScrollViewProxy) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 0) {
-                ForEach(Array(tiles.enumerated()), id: \.offset) { data in
-                    let tileData: TileData = data.element
+                ForEach(tiles) { tileData in
                     DepartureTile(
                         data: tileData,
                         onTap: {
-                            if let entry = tileData.navigationTarget {
-                                nearbyVM.pushNavEntry(entry)
-                                withAnimation(.easeInOut(duration: 0.5)) {
-                                    view.scrollTo(data.offset)
-                                }
+                            if let upcoming = tileData.upcoming {
+                                nearbyVM.navigationStack.lastTripDetailsFilter = .init(
+                                    tripId: upcoming.trip.id,
+                                    vehicleId: upcoming.prediction?.vehicleId,
+                                    stopSequence: upcoming.stopSequence,
+                                    selectionLock: false
+                                )
+                                analytics.tappedDepartureRow(
+                                    routeId: patternsByStop.routeIdentifier,
+                                    stopId: patternsByStop.stop.id,
+                                    pinned: pinned,
+                                    alert: alerts.count > 0
+                                )
+                                view.scrollTo(tileData.id)
                             }
-                            analytics.tappedDepartureRow(
-                                routeId: patternsByStop.routeIdentifier,
-                                stopId: patternsByStop.stop.id,
-                                pinned: pinned,
-                                alert: alerts.count > 0
-                            )
                         },
                         pillDecoration: patternsByStop
                             .line != nil ? .onPrediction(route: tileData.route) : .none,
@@ -148,28 +148,17 @@ struct StopDetailsFilteredDepartureDetails: View {
     func statusRows(_ patternsByStop: PatternsByStop) -> some View {
         ForEach(Array(statuses.enumerated()), id: \.offset) { index, row in
             VStack(spacing: 0) {
-                OptionalNavigationLink(
-                    value: row.navigationTarget,
-                    action: { entry in
-                        nearbyVM.pushNavEntry(entry)
-                        analytics.tappedDepartureRow(
-                            routeId: patternsByStop.routeIdentifier,
-                            stopId: patternsByStop.stop.id,
-                            pinned: pinned,
-                            alert: alerts.count > 0
-                        )
-                    },
-                    label: {
-                        HeadsignRowView(
-                            headsign: row.headsign,
-                            predictions: row.formatted,
-                            pillDecoration: patternsByStop.line != nil ?
-                                .onRow(route: row.route) : .none
-                        )
-                    }
+                HeadsignRowView(
+                    headsign: row.headsign,
+                    predictions: row.formatted,
+                    pillDecoration: patternsByStop.line != nil ?
+                        .onRow(route: row.route) : .none
                 )
                 .accessibilityInputLabels([row.headsign])
                 .padding(.vertical, 10)
+                .padding(.horizontal, 16)
+                .background(Color.fill3)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .padding(.horizontal, 16)
 
                 if index < statuses.count - 1 {

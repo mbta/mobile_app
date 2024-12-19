@@ -36,6 +36,7 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
     func testNoAccordionIfFirstStop() throws {
         let sut = TripDetailsStopListSplitView(
             splitStops: .init(
+                firstStop: nil,
                 collapsedStops: [],
                 targetStop: entry(stop1, 10, pred1),
                 followingStops: [entry(stop2, 20, pred2), entry(stop3, 30, pred3)]
@@ -51,6 +52,7 @@ final class TripDetailsStopListSplitViewTests: XCTestCase {
     func testCollapsedStopsInAccordion() throws {
         let sut = TripDetailsStopListSplitView(
             splitStops: .init(
+                firstStop: nil,
                 collapsedStops: [entry(stop1, 10, pred1), entry(stop2, 20, pred2)],
                 targetStop: entry(stop3, 30, pred3),
                 followingStops: []

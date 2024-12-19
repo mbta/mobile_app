@@ -6,30 +6,30 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Foundation
 import shared
 
-struct TileData {
+struct TileData: Identifiable {
+    let id: String
     let route: Route
     let headsign: String
     let formatted: RealtimePatterns.Format
     let upcoming: UpcomingTrip?
-    let navigationTarget: SheetNavigationStackEntry?
 
     init(
         route: Route,
         headsign: String,
         formatted: RealtimePatterns.Format,
-        upcoming: UpcomingTrip? = nil,
-        navigationTarget: SheetNavigationStackEntry? = nil
+        upcoming: UpcomingTrip? = nil
     ) {
         self.route = route
         self.headsign = headsign
         self.formatted = formatted
         self.upcoming = upcoming
-        self.navigationTarget = navigationTarget
+        id = upcoming?.trip.id ?? UUID().uuidString
     }
 
-    init?(upcoming: UpcomingTrip, route: Route, stopId: String, now: Instant) {
+    init?(upcoming: UpcomingTrip, route: Route, now: Instant) {
         let formatted = if let formattedUpcomingTrip = RealtimePatterns.companion.formatUpcomingTrip(
             now: now,
             upcomingTrip: upcoming,
@@ -49,17 +49,6 @@ struct TileData {
         headsign = upcoming.trip.headsign
         self.formatted = formatted
         self.upcoming = upcoming
-
-        if let vehicleId = upcoming.prediction?.vehicleId, let stopSequence = upcoming.stopSequence {
-            navigationTarget = .tripDetails(
-                tripId: upcoming.trip.id,
-                vehicleId: vehicleId,
-                target: .init(stopId: stopId, stopSequence: stopSequence.intValue),
-                routeId: upcoming.trip.routeId,
-                directionId: upcoming.trip.directionId
-            )
-        } else {
-            navigationTarget = nil
-        }
+        id = upcoming.trip.id
     }
 }
