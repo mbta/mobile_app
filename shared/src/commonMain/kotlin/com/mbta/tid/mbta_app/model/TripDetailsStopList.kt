@@ -39,7 +39,9 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
     fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int,
-        globalData: GlobalResponse
+        globalData: GlobalResponse,
+        // TODO: Remove this once the feature flag is removed
+        combinedStopDetails: Boolean = false
     ): TargetSplit? {
         var targetStopIndex =
             stops.indexOfFirst {
@@ -54,15 +56,26 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
             return null
         }
 
-        val collapsedStops = stops.subList(fromIndex = 0, toIndex = targetStopIndex)
+        var firstStop: Entry? = null
+        var collapsedStops = stops.subList(fromIndex = 0, toIndex = targetStopIndex)
+        val firstCollapsed = collapsedStops.firstOrNull()
+        if (
+            combinedStopDetails &&
+                firstCollapsed == startTerminalEntry &&
+                startTerminalEntry?.vehicle == null
+        ) {
+            collapsedStops = collapsedStops.drop(1)
+            firstStop = firstCollapsed
+        }
         val targetStop = stops[targetStopIndex]
         val followingStops =
             stops.subList(fromIndex = targetStopIndex + 1, toIndex = stops.lastIndex + 1)
 
-        return TargetSplit(collapsedStops, targetStop, followingStops)
+        return TargetSplit(firstStop, collapsedStops, targetStop, followingStops)
     }
 
     data class TargetSplit(
+        val firstStop: Entry? = null,
         val collapsedStops: List<Entry>,
         val targetStop: Entry,
         val followingStops: List<Entry>
@@ -206,8 +219,7 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
                                     vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt)
                         }
                     }
-                    .mapNotNull { getEntry(it.value) }
-                    .dropWhile { it == startTerminalEntry && it.vehicle == null },
+                    .mapNotNull { getEntry(it.value) },
                 startTerminalEntry
             )
         }

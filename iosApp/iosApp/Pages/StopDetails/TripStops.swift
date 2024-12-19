@@ -45,7 +45,8 @@ struct TripStops: View {
             stops.splitForTarget(
                 targetStopId: targetId,
                 targetStopSequence: Int32(stopSequence),
-                globalData: global
+                globalData: global,
+                combinedStopDetails: true
             )
         } else { nil }
     }
