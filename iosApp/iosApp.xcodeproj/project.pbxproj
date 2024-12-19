@@ -631,16 +631,16 @@
 			isa = PBXGroup;
 			children = (
 				6EF50F4F2B988BC500833070 /* Fetchers */,
-				9A6FA0222BC70D0A0067769C /* InspectionEmissary.swift */,
-				6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */,
-				8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */,
 				6E4EACFA2B7A829C0011AB8B /* Mocks */,
 				9A5B275D2BB242EF009A6FC6 /* Pages */,
 				6EE745822B965B8D0052227E /* Phoenix */,
 				9ADB849E2BAD1B6B006581CE /* Utils */,
-				8CA606A82CC02FBC0019C448 /* ViewInspectorExtensions.swift */,
 				6EFEE4292BEC0FF000810319 /* ViewModels */,
 				6EED5EA92B3DF1BF0052A1B8 /* Views */,
+				9A6FA0222BC70D0A0067769C /* InspectionEmissary.swift */,
+				6EED5E8E2B3DC6A00052A1B8 /* IosAppTests.swift */,
+				8C7FA86E2B5EEA34009B699D /* LocationDataManagerTests.swift */,
+				8CA606A82CC02FBC0019C448 /* ViewInspectorExtensions.swift */,
 			);
 			path = iosAppTests;
 			sourceTree = "<group>";
@@ -713,16 +713,16 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
-				EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */,
-				8C304C652B69C0C300263886 /* .swift-version */,
-				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
-				8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */,
 				7555FFB0242A642200829871 /* Frameworks */,
 				7555FF7D242A565900829871 /* iosApp */,
-				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
 				6EED5E8D2B3DC69F0052A1B8 /* iosAppTests */,
 				6EED5E9A2B3DC6C10052A1B8 /* iosAppUITests */,
 				7A3CBAAEF3F420C6E00CC576 /* Pods */,
+				8C304C652B69C0C300263886 /* .swift-version */,
+				8C42F06F2B890BC800F9A77B /* .swiftlint.yml */,
+				8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */,
+				6E9BCCE12B3F221A005FB96E /* iosApp.xctestplan */,
+				EDE4D3B32CD0255F00D3F517 /* Launch Screen.storyboard */,
 				9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */,
 				7555FF7C242A565900829871 /* Products */,
 			);
@@ -742,11 +742,16 @@
 			isa = PBXGroup;
 			children = (
 				ED24EAD62C1A940700A7BE4D /* Analytics */,
-				9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */,
 				9A4E8E572B7EC49A0066B936 /* ComponentViews */,
+				9A9E05F22B6D6D9F0086B437 /* Fetchers */,
+				9A2005C02B97B56100F562E1 /* Pages */,
+				6EE7457C2B965AD40052227E /* Phoenix */,
+				058557D7273AAEEB004C7B11 /* Preview Content */,
+				9AC10BD82B80060E00EA4605 /* Utils */,
+				9A392C952CC03ACF00DE1FBE /* ViewModels */,
+				9A3BAB712BEAB8E200DAFDE2 /* Colors.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				6E20278D2BD989630037554F /* DummyTestAppView.swift */,
-				9A9E05F22B6D6D9F0086B437 /* Fetchers */,
 				9AB3F50E2BE45382008D9E40 /* GoogleService-Info.plist */,
 				058557BA273AAA24004C7B11 /* Icons.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -755,12 +760,7 @@
 				2152FB032600AC8F00CF470E /* IOSApp.swift */,
 				9AF88E042B48913C00E08C7C /* Localizable.xcstrings */,
 				8CC1BB3F2B59D1F6005386FE /* LocationDataManager.swift */,
-				9A2005C02B97B56100F562E1 /* Pages */,
-				6EE7457C2B965AD40052227E /* Phoenix */,
-				058557D7273AAEEB004C7B11 /* Preview Content */,
 				6E20278F2BD989AC0037554F /* ProductionAppView.swift */,
-				9AC10BD82B80060E00EA4605 /* Utils */,
-				9A392C952CC03ACF00DE1FBE /* ViewModels */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
