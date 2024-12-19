@@ -64,7 +64,23 @@
     <string name="shuttle">Autobús de enlace</string>
     <string name="southbound">En dirección sur</string>
     <string name="star_route">Marcar ruta favorita</string>
+    <string name="star_route_hint">Fijar ruta al principio de la lista</string>
     <string name="stop_closed">Parada cerrada</string>
     <string name="suspension">Suspensión</string>
+    <string name="unstar_route_hint">desanclar ruta de la parte superior de la lista</string>
+    <string name="vehicle_arriving_first">%1$s está llegando ahora</string>
+    <string name="vehicle_arriving_other">y llegando ahora</string>
+    <string name="vehicle_boarding_first">%1$s abordando ahora</string>
+    <string name="vehicle_boarding_other">abordando ahora</string>
+    <string name="vehicle_cancelled_first">%1$s que llega a las %2$s cancelado</string>
+    <string name="vehicle_cancelled_other">y a las %1$s cancelado</string>
+    <string name="vehicle_prediction_minutes_first">%1$s llegará en %2$d min.</string>
+    <string name="vehicle_prediction_minutes_other">y en %1$d min.</string>
+    <string name="vehicle_prediction_time_first">%1$s llegará a la(s) %2$s</string>
+    <string name="vehicle_prediction_time_other">y a la(s) %1$s</string>
+    <string name="vehicle_schedule_minutes_first">%1$s llegará en %2$d min programado</string>
+    <string name="vehicle_schedule_minutes_other">y en %1$d min programado</string>
+    <string name="vehicle_schedule_time_first">%1$s llegará a la(s) %2$s como se programó</string>
+    <string name="vehicle_schedule_time_other">y a la(s) %1$s como se programó</string>
     <string name="westbound">En dirección oeste</string>
 </resources>

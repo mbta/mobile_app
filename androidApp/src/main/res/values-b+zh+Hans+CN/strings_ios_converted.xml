@@ -64,7 +64,23 @@
     <string name="shuttle">摆渡巴士</string>
     <string name="southbound">南行</string>
     <string name="star_route">为线路添加星号</string>
+    <string name="star_route_hint">将路线固定到列表顶部</string>
     <string name="stop_closed">站点已关闭</string>
     <string name="suspension">暂停</string>
+    <string name="unstar_route_hint">从列表顶部取消固定路线</string>
+    <string name="vehicle_arriving_first">%1$s现已到站</string>
+    <string name="vehicle_arriving_other">下一趟车现已到站</string>
+    <string name="vehicle_boarding_first">%1$s正在上客</string>
+    <string name="vehicle_boarding_other">正在上客</string>
+    <string name="vehicle_cancelled_first">于%2$s到站的%1$s已取消</string>
+    <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
+    <string name="vehicle_prediction_minutes_first">%1$s将在%2$d分钟内到站</string>
+    <string name="vehicle_prediction_minutes_other">下一趟车将在%1$d分钟内抵达</string>
+    <string name="vehicle_prediction_time_first">%1$s于%2$s到站</string>
+    <string name="vehicle_prediction_time_other">下一趟车将于%1$s到站</string>
+    <string name="vehicle_schedule_minutes_first">%1$s预定将于%2$d分钟内到站</string>
+    <string name="vehicle_schedule_minutes_other">下一趟车预定将在%1$d分钟内抵达</string>
+    <string name="vehicle_schedule_time_first">%1$s预定于%2$s到站</string>
+    <string name="vehicle_schedule_time_other">下一趟车预定将于%1$s到站</string>
     <string name="westbound">西行</string>
 </resources>

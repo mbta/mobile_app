@@ -78,7 +78,7 @@ class UpcomingTripAccessibilityFormatters {
     }
 
     public func scheduleMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving in \(minutes) min scheduled",
+        Text("\(vehicleText) arriving in \(minutes, specifier: "%d") min scheduled",
              comment: """
              Describe the number of minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
              First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
@@ -87,7 +87,7 @@ class UpcomingTripAccessibilityFormatters {
     }
 
     public func scheduleMinutesOther(minutes: Int32) -> Text {
-        Text("and in \(minutes) min scheduled",
+        Text("and in \(minutes, specifier: "%d") min scheduled",
              comment: """
              The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
              For example, '[bus arriving in 5 minutes], and in 10 minutes, scheduled'
@@ -95,7 +95,7 @@ class UpcomingTripAccessibilityFormatters {
     }
 
     public func predictionMinutesFirst(minutes: Int32, vehicleText: String) -> Text {
-        Text("\(vehicleText) arriving in \(minutes) min",
+        Text("\(vehicleText) arriving in \(minutes, specifier: "%d") min",
              comment: """
              Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.
              First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
@@ -104,7 +104,7 @@ class UpcomingTripAccessibilityFormatters {
     }
 
     public func predictionMinutesOther(minutes: Int32) -> Text {
-        Text("and in \(minutes) min",
+        Text("and in \(minutes, specifier: "%d") min",
              comment: """
              The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
              For example, '[bus arriving in 5 minutes], and in 10 minutes'

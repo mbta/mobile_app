@@ -64,7 +64,23 @@
     <string name="shuttle">Navèt</string>
     <string name="southbound">Nan direksyon sid</string>
     <string name="star_route">Mete wout nan favori</string>
+    <string name="star_route_hint">mete wout nan tèt lis la</string>
     <string name="stop_closed">Arè Fèmen</string>
     <string name="suspension">Sispansyon</string>
+    <string name="unstar_route_hint">retire wout ki soti anlè lis la</string>
+    <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
+    <string name="vehicle_arriving_other">ap rive kounye a</string>
+    <string name="vehicle_boarding_first">%1$s ap pran moun kounye a</string>
+    <string name="vehicle_boarding_other">epi ap pran moun kounye a</string>
+    <string name="vehicle_cancelled_first">%1$s ap rive a %2$s anile</string>
+    <string name="vehicle_cancelled_other">epi a %1$s anile</string>
+    <string name="vehicle_prediction_minutes_first">%1$s ap rive nan %2$d minit</string>
+    <string name="vehicle_prediction_minutes_other">epi nan %1$d minit</string>
+    <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>
+    <string name="vehicle_prediction_time_other">epi a %1$s</string>
+    <string name="vehicle_schedule_minutes_first">%1$s ap rive nan %2$d min pwograme</string>
+    <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
+    <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
+    <string name="vehicle_schedule_time_other">epi a %1$s pwograme</string>
     <string name="westbound">Pran direksyon lwès</string>
 </resources>

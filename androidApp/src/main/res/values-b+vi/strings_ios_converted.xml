@@ -64,7 +64,23 @@
     <string name="shuttle">Xe đưa đón</string>
     <string name="southbound">Về hướng nam</string>
     <string name="star_route">Tuyến đường sao</string>
+    <string name="star_route_hint">ghim đường dẫn đến đầu danh sách</string>
     <string name="stop_closed">Điểm dừng bị đóng</string>
     <string name="suspension">Đình chỉ</string>
+    <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>
+    <string name="vehicle_arriving_first">%1$s đang đến</string>
+    <string name="vehicle_arriving_other">và đang đến</string>
+    <string name="vehicle_boarding_first">%1$s đang cho khách lên</string>
+    <string name="vehicle_boarding_other">và đang cho khách lên</string>
+    <string name="vehicle_cancelled_first">%1$s đến %2$s bị hủy</string>
+    <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
+    <string name="vehicle_prediction_minutes_first">%1$s sẽ đến sau %2$d phút nữa</string>
+    <string name="vehicle_prediction_minutes_other">và sau %1$d phút nữa</string>
+    <string name="vehicle_prediction_time_first">%1$s sẽ đến lúc %2$s</string>
+    <string name="vehicle_prediction_time_other">và lúc %1$s</string>
+    <string name="vehicle_schedule_minutes_first">%1$s sẽ đến sau %2$d phút nữa theo lịch trình</string>
+    <string name="vehicle_schedule_minutes_other">và sau %1$d phút nữa theo lịch trình</string>
+    <string name="vehicle_schedule_time_first">%1$s sẽ đến lúc %2$s theo lịch trình</string>
+    <string name="vehicle_schedule_time_other">và lúc %1$s theo lịch trình</string>
     <string name="westbound">Về hướng tây</string>
 </resources>

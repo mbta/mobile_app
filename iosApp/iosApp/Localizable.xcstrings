@@ -595,96 +595,96 @@
         }
       }
     },
-    "%@ arriving in %@ min" : {
+    "%@ arriving in %d min" : {
       "comment" : "Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives\nFor example, 'bus arriving in 5 minutes'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ arriving in %2$@ min"
+            "value" : "%1$@ arriving in %2$d min"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará en %2$@ min."
+            "value" : "%1$@ llegará en %2$d min."
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ap rive nan %2$@ minit"
+            "value" : "%1$@ ap rive nan %2$d minit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando em %2$@ min"
+            "value" : "%1$@ chegando em %2$d min"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ sẽ đến sau %2$@ phút nữa"
+            "value" : "%1$@ sẽ đến sau %2$d phút nữa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@将在%2$@分钟内到站"
+            "value" : "%1$@将在%2$d分钟内到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@將在%2$@分鐘內到站"
+            "value" : "%1$@將在%2$d分鐘內到站"
           }
         }
       }
     },
-    "%@ arriving in %@ min scheduled" : {
+    "%@ arriving in %d min scheduled" : {
       "comment" : "Describe the number of minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives\nFor example, 'bus arriving in 5 minutes, scheduled'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ arriving in %2$@ min scheduled"
+            "value" : "%1$@ arriving in %2$d min scheduled"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará en %2$@ min programado"
+            "value" : "%1$@ llegará en %2$d min programado"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ap rive nan %2$@ min pwograme"
+            "value" : "%1$@ ap rive nan %2$d min pwograme"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando em %2$@ min programado"
+            "value" : "%1$@ chegando em %2$d min programado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ sẽ đến sau %2$@ phút nữa theo lịch trình"
+            "value" : "%1$@ sẽ đến sau %2$d phút nữa theo lịch trình"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@预定将于%2$@分钟内到站"
+            "value" : "%1$@预定将于%2$d分钟内到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@預定將於%2$@分鐘內到站"
+            "value" : "%1$@預定將於%2$d分鐘內到站"
           }
         }
       }
@@ -1611,84 +1611,84 @@
         }
       }
     },
-    "and in %@ min" : {
+    "and in %d min" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %@ min."
+            "value" : "y en %d min."
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %@ minit"
+            "value" : "epi nan %d minit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e em %@ min"
+            "value" : "e em %d min"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và sau %@ phút nữa"
+            "value" : "và sau %d phút nữa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车将在%@分钟内抵达"
+            "value" : "下一趟车将在%d分钟内抵达"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將在%@分鐘內抵達"
+            "value" : "下一趟車將在%d分鐘內抵達"
           }
         }
       }
     },
-    "and in %@ min scheduled" : {
+    "and in %d min scheduled" : {
       "comment" : "The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes, scheduled'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %@ min programado"
+            "value" : "y en %d min programado"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %@ min pwograme"
+            "value" : "epi nan %d min pwograme"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e em %@ min programado"
+            "value" : "e em %d min programado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và sau %@ phút nữa theo lịch trình"
+            "value" : "và sau %d phút nữa theo lịch trình"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车预定将在%@分钟内抵达"
+            "value" : "下一趟车预定将在%d分钟内抵达"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車預定將在%@分鐘內抵達"
+            "value" : "下一趟車預定將在%d分鐘內抵達"
           }
         }
       }
