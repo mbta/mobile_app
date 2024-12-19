@@ -116,11 +116,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
             appendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
             appendLine("<resources>")
             for ((id, value) in entriesToWrite) {
-                val escapedValue =
-                    value
-                        .replace("&", "&amp;")
-                        .replace("""\*\*([^*]+)\*\*""".toRegex(), "<b>$1</b>")
-                        .replace("<", "&lt;")
+                val escapedValue = value.replace("&", "&amp;").replace("<", "&lt;")
                 appendLine("    <string name=\"$id\">$escapedValue</string>")
             }
             appendLine("</resources>")
@@ -139,9 +135,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         private fun convertIosTemplate(iosTemplate: String): String {
             var unspecifiedIndex = 1
-            return iosTemplate.replace(template) {
-                replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
-            }
+            return iosTemplate
+                .replace(template) {
+                    replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
+                }
+                .replace("""\*\*([^*]+)\*\*""".toRegex(), "<b>$1</b>")
         }
     }
 }

@@ -23,7 +23,7 @@
      must escape the html styling tags
      https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML
     -->
-    <string name="minutes_abbr" tools:ignore="MissingTranslation">&lt;b>%1$s&lt;/b> min</string>
+    <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">More</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">Feature Flags</string>
