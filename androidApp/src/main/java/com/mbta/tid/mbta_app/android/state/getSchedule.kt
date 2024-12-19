@@ -37,6 +37,8 @@ class ScheduleViewModel(
                     /* TODO("handle errors") */
                 }
             }
+        } else {
+            _schedule.value = ScheduleResponse(emptyList(), emptyMap())
         }
     }
 }
