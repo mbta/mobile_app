@@ -220,6 +220,9 @@ final class TripHeaderCardTests: XCTestCase {
         try XCTAssertNotNil(sut.inspect().find(text: "Scheduled to depart"))
         try XCTAssertNotNil(sut.inspect().find(text: stop.name))
         try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
+        try XCTAssertThrowsError(sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
     }
 
     func testScheduledTap() throws {
@@ -253,5 +256,8 @@ final class TripHeaderCardTests: XCTestCase {
 
         try sut.inspect().find(ViewType.ZStack.self).callOnTapGesture()
         wait(for: [tapExpectation], timeout: 1)
+        try XCTAssertNotNil(sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
     }
 }
