@@ -20,50 +20,7 @@ final class StopDetailsPageTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testStopChangeFetchesNewData() throws {
-        let objects = ObjectCollectionBuilder()
-        let route = objects.route()
-        let stop = objects.stop { _ in }
-        let nextStop = objects.stop { $0.id = "next" }
-        let routePattern = objects.routePattern(route: route) { _ in }
-
-        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let stopFilter: StopDetailsFilter? = .init(
-            routeId: route.id,
-            directionId: routePattern.directionId
-        )
-
-        let newStopSchedulesFetchedExpectation = XCTestExpectation(description: "Fetched stops for next stop")
-        func callback(stopIds: [String]) {
-            if stopIds == [nextStop.id] {
-                newStopSchedulesFetchedExpectation.fulfill()
-            }
-        }
-
-        let stopDetailsVM = StopDetailsViewModel(
-            predictionsRepository: MockPredictionsRepository(),
-            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects), callback: callback)
-        )
-
-        let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
-            errorBannerVM: .init(),
-            nearbyVM: .init(combinedStopAndTrip: true),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            viewportProvider: viewportProvider
-        )
-
-        ViewHosting.host(view: sut)
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: nextStop.id)
-
-        wait(for: [newStopSchedulesFetchedExpectation], timeout: 5)
-    }
-
-    @MainActor
-    func testDisplaysSchedules() {
+    @MainActor func testDisplaysSchedules() async throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -76,8 +33,6 @@ final class StopDetailsPageTests: XCTestCase {
         }
         let routePattern = objects.routePattern(route: route) { _ in }
 
-        let schedulesLoadedPublisher = PassthroughSubject<Bool, Never>()
-
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let stopFilter: StopDetailsFilter? = .init(
             routeId: route.id,
@@ -88,12 +43,14 @@ final class StopDetailsPageTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
 
         let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
-            schedulesRepository: MockScheduleRepository(
-                scheduleResponse: .init(objects: objects),
-                callback: { _ in schedulesLoadedPublisher.send(true) }
-            )
+            globalRepository: MockGlobalRepository(response: .init(objects: objects))
+        )
+
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .companion.empty,
+            predictionsLoaded: true
         )
 
         let sut = StopDetailsPage(
@@ -107,12 +64,12 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        let exp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher, after: 1) { view in
-            XCTAssertNotNil(try view.find(StopDetailsFilteredView.self))
-            XCTAssertNotNil(try view.find(DepartureTile.self))
-        }
         ViewHosting.host(view: sut)
-        wait(for: [exp], timeout: 30)
+        sut.updateDepartures()
+
+        try await Task.sleep(for: .seconds(1))
+        XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
+        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
     }
 
     func testCloseButton() throws {
@@ -156,9 +113,6 @@ final class StopDetailsPageTests: XCTestCase {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let stopFilter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
         let joinExpectation = expectation(description: "joins predictions")
-        joinExpectation.expectedFulfillmentCount = 2
-        joinExpectation.assertForOverFulfill = true
-
         let leaveExpectation = expectation(description: "leaves predictions")
 
         let predictionsRepo = MockPredictionsRepository(
@@ -196,54 +150,8 @@ final class StopDetailsPageTests: XCTestCase {
         wait(for: [joinExpectation], timeout: 1)
     }
 
-    func testLeavesAndJoinsPredictionsOnStopChange() throws {
-        let objects = ObjectCollectionBuilder()
-        let route = objects.route()
-        let stop = objects.stop { _ in }
-
-        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let stopFilter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
-        let leaveExpectation = expectation(description: "leaves predictions")
-        leaveExpectation.expectedFulfillmentCount = 1
-
-        let joinExpectation = expectation(description: "joins predictions")
-        joinExpectation.expectedFulfillmentCount = 2
-        joinExpectation.assertForOverFulfill = true
-
-        let predictionsRepo = MockPredictionsRepository(
-            onConnect: {},
-            onConnectV2: { _ in joinExpectation.fulfill() },
-            onDisconnect: { leaveExpectation.fulfill() },
-            connectOutcome: nil,
-            connectV2Outcome: nil
-        )
-
-        let stopDetailsVM = StopDetailsViewModel(
-            predictionsRepository: predictionsRepo,
-            schedulesRepository: MockScheduleRepository()
-        )
-
-        let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
-            errorBannerVM: .init(),
-            nearbyVM: .init(combinedStopAndTrip: true),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            viewportProvider: viewportProvider
-        )
-
-        ViewHosting.host(view: sut)
-
-        try sut.inspect().find(StopDetailsView.self).callOnChange(newValue: stop.id)
-
-        wait(for: [leaveExpectation], timeout: 1)
-        wait(for: [joinExpectation], timeout: 1)
-    }
-
     @MainActor
-    func testUpdatesDeparturesOnPredictionsChange() throws {
+    func testUpdatesDeparturesOnPredictionsChange() async throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
@@ -269,8 +177,7 @@ final class StopDetailsPageTests: XCTestCase {
             schedulesRepository: MockScheduleRepository()
         )
         stopDetailsVM.global = .init(objects: objects, patternIdsByStop: [stop.id: [pattern.id]])
-        stopDetailsVM.predictionsByStop = .init(objects: objects)
-        stopDetailsVM.schedulesResponse = .init(objects: objects)
+        stopDetailsVM.stopData = nil
 
         let sut = StopDetailsPage(
             stopId: stop.id,
@@ -285,18 +192,25 @@ final class StopDetailsPageTests: XCTestCase {
 
         XCTAssertNil(nearbyVM.departures)
 
-        let hasSetDepartures = sut.inspection.inspect { view in
+        ViewHosting.host(view: sut)
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
+
+        let hasSetDepartures = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(nearbyVM.departures)
             // Keeps internal departures in sync with VM departures
             XCTAssertEqual(try view.actualView().internalDepartures, nearbyVM.departures)
         }
-        ViewHosting.host(view: sut)
 
-        wait(for: [hasSetDepartures], timeout: 2)
+        await fulfillment(of: [hasSetDepartures], timeout: 2)
     }
 
     @MainActor
-    func testAppliesStopFilterAutomatically() throws {
+    func testAppliesStopFilterAutomatically() async throws {
         let objects = ObjectCollectionBuilder()
 
         let route = objects.route()
@@ -320,8 +234,6 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
         }
 
-        let schedulesLoadedPublisher = PassthroughSubject<Void, Never>()
-
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)],
@@ -334,8 +246,16 @@ final class StopDetailsPageTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
             schedulesRepository: MockScheduleRepository(
                 scheduleResponse: .init(objects: objects),
-                callback: { _ in schedulesLoadedPublisher.send() }
+                callback: { _ in }
             )
+        )
+
+        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
         )
 
         let sut = StopDetailsPage(
@@ -348,20 +268,19 @@ final class StopDetailsPageTests: XCTestCase {
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
-
-        let stopFilterExp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher) { _ in
-            XCTAssertEqual(
-                nearbyVM.navigationStack.lastStopDetailsFilter,
-                StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId)
-            )
-        }
-
         ViewHosting.host(view: sut)
-        wait(for: [stopFilterExp], timeout: 2)
+
+        sut.updateDepartures()
+
+        try await Task.sleep(for: .seconds(1))
+        XCTAssertEqual(
+            nearbyVM.navigationStack.lastStopDetailsFilter,
+            StopDetailsFilter(routeId: route.id, directionId: routePattern.directionId)
+        )
     }
 
     @MainActor
-    func testAppliesTripFilterAutomatically() throws {
+    func testAppliesTripFilterAutomatically() async throws {
         let objects = ObjectCollectionBuilder()
 
         let route = objects.route()
@@ -388,8 +307,6 @@ final class StopDetailsPageTests: XCTestCase {
             prediction.departureTime = (Date.now + 10 * 60).toKotlinInstant()
         }
 
-        let schedulesLoadedPublisher = PassthroughSubject<Void, Never>()
-
         let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
@@ -401,10 +318,15 @@ final class StopDetailsPageTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: .init(objects: objects)),
             predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            schedulesRepository: MockScheduleRepository(
-                scheduleResponse: .init(objects: objects),
-                callback: { _ in schedulesLoadedPublisher.send() }
-            )
+            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects), callback: { _ in })
+        )
+
+        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
         )
 
         let sut = StopDetailsPage(
@@ -418,13 +340,13 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        let vehicleFilterExp = sut.inspection.inspect(onReceive: schedulesLoadedPublisher) { _ in
-            XCTAssertEqual(
-                nearbyVM.navigationStack.lastTripDetailsFilter,
-                TripDetailsFilter(tripId: trip.id, vehicleId: nil, stopSequence: 0, selectionLock: false)
-            )
-        }
         ViewHosting.host(view: sut)
-        wait(for: [vehicleFilterExp], timeout: 2)
+        sut.updateDepartures()
+        try await Task.sleep(for: .seconds(1))
+
+        XCTAssertEqual(
+            nearbyVM.navigationStack.lastTripDetailsFilter,
+            TripDetailsFilter(tripId: trip.id, vehicleId: nil, stopSequence: 0, selectionLock: false)
+        )
     }
 }

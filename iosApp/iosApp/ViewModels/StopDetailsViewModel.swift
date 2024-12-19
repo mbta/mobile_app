@@ -12,6 +12,13 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
+struct StopData: Equatable {
+    let stopId: String
+    let schedules: ScheduleResponse
+    var predictionsByStop: PredictionsByStopJoinResponse?
+    var predictionsLoaded: Bool = false
+}
+
 struct TripData {
     let tripFilter: TripDetailsFilter
     let trip: Trip
@@ -22,7 +29,7 @@ struct TripData {
 
 // A subset of route attributes only for displaying as UI accents,
 // this is split out to allow defaults for when a route may not exist
-struct TripRouteAccents {
+struct TripRouteAccents: Hashable {
     let color: Color
     let textColor: Color
     let type: RouteType
@@ -43,9 +50,8 @@ struct TripRouteAccents {
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
     @Published var pinnedRoutes: Set<String> = []
-    @Published var predictionsByStop: PredictionsByStopJoinResponse?
-    @Published var schedulesResponse: ScheduleResponse?
 
+    @Published var stopData: StopData?
     @Published var tripData: TripData?
 
     let errorBannerRepository: IErrorBannerStateRepository
@@ -79,10 +85,35 @@ class StopDetailsViewModel: ObservableObject {
         self.vehicleRepository = vehicleRepository
     }
 
-    func activateGlobalListener() async {
+    private func activateGlobalListener() async {
         for await globalData in globalRepository.state {
             Task { @MainActor in self.global = globalData }
         }
+    }
+
+    func checkStopPredictionsStale() {
+        Task {
+            if let lastPredictions = predictionsRepository.lastUpdated {
+                errorBannerRepository.checkPredictionsStale(
+                    predictionsLastUpdated: lastPredictions,
+                    predictionQuantity: Int32(
+                        stopData?.predictionsByStop?.predictionQuantity() ?? 0
+                    ),
+                    action: {
+                        self.leaveStopPredictions()
+                        if let stopId = self.stopData?.stopId {
+                            self.joinStopPredictions(stopId)
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    @MainActor func clearStopDetails() {
+        leaveStopPredictions()
+        stopData = nil
+        errorBannerRepository.clearDataError(key: "StopDetailsPage.getSchedule")
     }
 
     @MainActor func clearTripDetails() {
@@ -106,12 +137,12 @@ class StopDetailsViewModel: ObservableObject {
         useTripHeadsigns: Bool,
         now: Date
     ) -> StopDetailsDepartures? {
-        if let global {
+        if let global, let schedules = stopData?.schedules {
             StopDetailsDepartures.companion.fromData(
                 stopId: stopId,
                 global: global,
-                schedules: schedulesResponse,
-                predictions: predictionsByStop?.toPredictionsStreamDataResponse(),
+                schedules: schedules,
+                predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 pinnedRoutes: pinnedRoutes,
                 filterAtTime: now.toKotlinInstant(),
@@ -129,6 +160,23 @@ class StopDetailsViewModel: ObservableObject {
             return TripRouteAccents()
         }
         return TripRouteAccents(route: route)
+    }
+
+    func handleStopAppear(_ stopId: String) {
+        Task {
+            loadGlobalData()
+            loadPinnedRoutes()
+            await handleStopChange(stopId)
+        }
+    }
+
+    @MainActor
+    func handleStopChange(_ stopId: String) {
+        clearStopDetails()
+        Task {
+            await self.loadStopDetails(stopId: stopId)
+            self.joinStopPredictions(stopId)
+        }
     }
 
     @MainActor
@@ -183,19 +231,19 @@ class StopDetailsViewModel: ObservableObject {
         clearAndLoadTripDetails(tripFilter)
     }
 
-    func joinPredictions(_ stopId: String, onSuccess: @escaping () -> Void, onComplete: @escaping () -> Void) {
+    func joinStopPredictions(_ stopId: String) {
         // no error handling since persistent errors cause stale predictions
         predictionsRepository.connectV2(stopIds: [stopId], onJoin: { outcome in
             Task { @MainActor in
                 if case let .ok(result) = onEnum(of: outcome) {
-                    self.predictionsByStop = result.data
-                    onSuccess()
+                    self.stopData?.predictionsByStop = result.data
+                    self.checkStopPredictionsStale()
                 }
-                onComplete()
+                self.stopData?.predictionsLoaded = true
             }
         }, onMessage: { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                let nextPredictions = if let existingPredictionsByStop = self.predictionsByStop {
+                let nextPredictions = if let existingPredictionsByStop = self.stopData?.predictionsByStop {
                     existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
                 } else {
                     PredictionsByStopJoinResponse(
@@ -205,12 +253,12 @@ class StopDetailsViewModel: ObservableObject {
                     )
                 }
                 Task { @MainActor in
-                    self.predictionsByStop = nextPredictions
-                    onSuccess()
+                    self.stopData?.predictionsByStop = nextPredictions
+                    self.checkStopPredictionsStale()
                 }
             }
 
-            Task { @MainActor in onComplete() }
+            Task { @MainActor in self.stopData?.predictionsLoaded = true }
         })
     }
 
@@ -257,7 +305,7 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func leavePredictions() {
+    func leaveStopPredictions() {
         predictionsRepository.disconnect()
     }
 
@@ -274,6 +322,20 @@ class StopDetailsViewModel: ObservableObject {
         vehicleRepository.disconnect()
     }
 
+    func loadGlobalData() {
+        Task(priority: .high) {
+            await activateGlobalListener()
+        }
+        Task {
+            await fetchApi(
+                errorBannerRepository,
+                errorKey: "StopDetailsPage.loadGlobalData",
+                getData: { try await globalRepository.getGlobalData() },
+                onRefreshAfterError: loadGlobalData
+            )
+        }
+    }
+
     func loadPinnedRoutes() {
         Task {
             do {
@@ -285,6 +347,38 @@ class StopDetailsViewModel: ObservableObject {
                 // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
+        }
+    }
+
+    func loadStopDetails(stopId: String) async {
+        let schedules = await loadStopSchedules(stopId: stopId)
+        let task = Task { @MainActor in
+            if let schedules {
+                self.stopData = StopData(stopId: stopId, schedules: schedules)
+            } else {
+                self.stopData = nil
+            }
+        }
+        await task.value
+    }
+
+    private func loadStopSchedules(stopId: String) async -> ScheduleResponse? {
+        let task = Task<ScheduleResponse?, Error> {
+            var result: ScheduleResponse?
+            await fetchApi(
+                self.errorBannerRepository,
+                errorKey: "StopDetailsPage.getSchedule",
+                getData: { try await self.schedulesRepository.getSchedule(stopIds: [stopId]) },
+                onSuccess: { @MainActor in result = $0 },
+                onRefreshAfterError: { Task { await self.handleStopChange(stopId) } }
+            )
+            return result
+        }
+
+        do {
+            return try await task.value
+        } catch {
+            return nil
         }
     }
 
@@ -349,15 +443,15 @@ class StopDetailsViewModel: ObservableObject {
 
     @MainActor
     func returnFromBackground() {
-        if let predictionsByStop,
+        if let stopPredictions = stopData?.predictionsByStop,
            predictionsRepository
-           .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
-            self.predictionsByStop = nil
+           .shouldForgetPredictions(predictionCount: stopPredictions.predictionQuantity()) {
+            stopData?.predictionsByStop = nil
         }
 
-        if let predictions = tripData?.tripPredictions,
+        if let tripPredictions = tripData?.tripPredictions,
            tripPredictionsRepository
-           .shouldForgetPredictions(predictionCount: predictions.predictionQuantity()) {
+           .shouldForgetPredictions(predictionCount: tripPredictions.predictionQuantity()) {
             tripData?.tripPredictions = nil
         }
     }

@@ -286,16 +286,18 @@ struct ContentView: View {
                             viewportProvider: viewportProvider
                         )
                         .toolbar(.hidden, for: .tabBar)
-                        .onAppear {
-                            let filtered = stopFilter != nil
-                            screenTracker.track(
-                                screen: filtered ? .stopDetailsFiltered : .stopDetailsUnfiltered
-                            )
-                        }
                     }
                     // Set id per stop so that transitioning from one stop to another is handled by removing
                     // the existing stop view & creating a new one
                     .id(stopId)
+                    .onChange(of: stopId) { nextStopId in stopDetailsVM.handleStopChange(nextStopId) }
+                    .onAppear {
+                        stopDetailsVM.handleStopAppear(stopId)
+                        screenTracker.track(
+                            screen: stopFilter != nil ? .stopDetailsFiltered : .stopDetailsUnfiltered
+                        )
+                    }
+                    .onDisappear { stopDetailsVM.leaveStopPredictions() }
                     .transition(transition)
 
                 case let .legacyStopDetails(stop, filter):
