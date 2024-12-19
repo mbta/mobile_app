@@ -116,7 +116,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
             appendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
             appendLine("<resources>")
             for ((id, value) in entriesToWrite) {
-                val escapedValue = value.replace("&", "&amp;").replace("<", "&lt;")
+                val escapedValue =
+                    value
+                        .replace("&", "&amp;")
+                        .replace("""\*\*([^*]+)\*\*""".toRegex(), "<b>$1</b>")
+                        .replace("<", "&lt;")
                 appendLine("    <string name=\"$id\">$escapedValue</string>")
             }
             appendLine("</resources>")

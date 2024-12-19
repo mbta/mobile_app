@@ -18,7 +18,12 @@
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
     <string name="inbound">Inbound</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
-    <string name="minutes_abbr" tools:ignore="MissingTranslation">%1$s min</string>
+    <!--
+     In order to preserve style tags while simultaneously formatting the string with parameters, we
+     must escape the html styling tags
+     https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML
+    -->
+    <string name="minutes_abbr" tools:ignore="MissingTranslation">&lt;b>%1$s&lt;/b> min</string>
     <string name="more_link">More</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">Feature Flags</string>
