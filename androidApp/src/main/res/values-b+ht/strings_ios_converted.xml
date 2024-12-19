@@ -50,7 +50,6 @@
     <string name="other_link_source_code">Gade sous sou GitHub</string>
     <string name="other_link_tos">Kondisyon itilizasyon</string>
     <string name="outbound">Soti</string>
-    <string name="pin_route">Mete wout nan favori</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
@@ -62,9 +61,7 @@
     <string name="shuttle">Navèt</string>
     <string name="southbound">Nan direksyon sid</string>
     <string name="star_route">Mete wout nan favori</string>
-    <string name="star_route_hint">Mete wout nan tèt lis la</string>
     <string name="stop_closed">Arè Fèmen</string>
     <string name="suspension">Sispansyon</string>
-    <string name="unstar_route_hint">Retire wout nan tèt lis la</string>
     <string name="westbound">Pran direksyon lwès</string>
 </resources>

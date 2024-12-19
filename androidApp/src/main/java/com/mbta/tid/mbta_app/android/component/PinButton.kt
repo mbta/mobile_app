@@ -33,7 +33,7 @@ fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
                         if (pinned) R.drawable.pinned_route_active
                         else R.drawable.pinned_route_inactive
                 ),
-            contentDescription = stringResource(R.string.pin_route),
+            contentDescription = stringResource(R.string.star_route),
             modifier = Modifier.size(20.dp),
             tint = color
         )

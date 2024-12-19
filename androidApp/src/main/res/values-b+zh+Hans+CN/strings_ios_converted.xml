@@ -50,7 +50,6 @@
     <string name="other_link_source_code">在GitHub上查看源代码</string>
     <string name="other_link_tos">使用条款</string>
     <string name="outbound">出站</string>
-    <string name="pin_route">为线路添加星号</string>
     <string name="resources_link_fare_info">票价信息</string>
     <string name="resources_link_mticket">通勤列车和轮渡票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
@@ -62,9 +61,7 @@
     <string name="shuttle">摆渡巴士</string>
     <string name="southbound">南行</string>
     <string name="star_route">为线路添加星号</string>
-    <string name="star_route_hint">将线路置顶</string>
     <string name="stop_closed">站点已关闭</string>
     <string name="suspension">暂停</string>
-    <string name="unstar_route_hint">取消线路置顶</string>
     <string name="westbound">西行</string>
 </resources>
