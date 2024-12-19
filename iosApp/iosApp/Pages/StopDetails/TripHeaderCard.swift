@@ -51,6 +51,7 @@ struct TripHeaderCard: View {
         .fixedSize(horizontal: false, vertical: true)
         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
         .onTapGesture { if let onTap { onTap() } }
+        .accessibilityAddTraits(onTap != nil ? .isButton : [])
     }
 
     @ViewBuilder
@@ -95,13 +96,15 @@ struct TripHeaderCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text("Scheduled to depart").font(Typography.footnote)
-                    if routeAccents.type != .ferry {
+                    if onTap != nil {
                         Image(.faCircleInfo)
                             .resizable()
                             .frame(width: 16, height: 16)
                             .foregroundStyle(Color.text.opacity(0.5))
+                            .accessibilityHidden(true)
                     }
                 }
+
                 Text(stopEntry.stop.name)
                     .font(Typography.headlineBold)
             }
