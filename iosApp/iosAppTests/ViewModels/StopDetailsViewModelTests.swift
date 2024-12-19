@@ -22,11 +22,51 @@ final class StopDetailsViewModelTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: global, onGet: { exp.fulfill() })
         )
-        Task { await stopDetailsVM.activateGlobalListener() }
-        _ = try await stopDetailsVM.globalRepository.getGlobalData()
+        _ = stopDetailsVM.loadGlobalData()
         await fulfillment(of: [exp], timeout: 1)
         try await Task.sleep(for: .seconds(1))
         XCTAssertEqual(stopDetailsVM.global, global)
+    }
+
+    func testHandleStopChange() async throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let leaveExpectation = expectation(description: "leaves predictions")
+        let joinExpectation = expectation(description: "joins predictions")
+
+        let predictionsRepo = MockPredictionsRepository(
+            onConnect: {},
+            onConnectV2: { _ in joinExpectation.fulfill() },
+            onDisconnect: { leaveExpectation.fulfill() },
+            connectOutcome: nil,
+            connectV2Outcome: ApiResultOk(data: .init(objects: objects))
+        )
+
+        let scheduleExpectation = expectation(description: "schedules loaded")
+
+        let stopDetailsVM = StopDetailsViewModel(
+            predictionsRepository: predictionsRepo,
+            schedulesRepository: MockScheduleRepository(
+                scheduleResponse: .init(objects: objects),
+                callback: { _ in scheduleExpectation.fulfill() }
+            )
+        )
+        stopDetailsVM.stopData = .init(stopId: "old id", schedules: .init(objects: .init()))
+
+        await stopDetailsVM.handleStopChange(stop.id)
+
+        wait(for: [leaveExpectation, joinExpectation, scheduleExpectation], timeout: 1)
+        try await Task.sleep(for: .seconds(1))
+        XCTAssertEqual(
+            StopData(
+                stopId: stop.id,
+                schedules: .init(objects: objects),
+                predictionsByStop: .init(objects: objects),
+                predictionsLoaded: true
+            ),
+            stopDetailsVM.stopData
+        )
     }
 
     func testLoadPredictions() async throws {
@@ -34,8 +74,6 @@ final class StopDetailsViewModelTests: XCTestCase {
         let stop = objects.stop { _ in }
         let predictions = PredictionsByStopJoinResponse(objects: objects)
         let connectExp = expectation(description: "predictions are connected")
-        let successExp = expectation(description: "prediction success callback was called")
-        let completeExp = expectation(description: "prediction complete callback was called")
         let disconnectExp = expectation(description: "predictions are disconnected")
         let stopDetailsVM = StopDetailsViewModel(
             predictionsRepository: MockPredictionsRepository(
@@ -44,15 +82,17 @@ final class StopDetailsViewModelTests: XCTestCase {
                 connectV2Response: predictions
             )
         )
-
-        stopDetailsVM.joinPredictions(
-            stop.id,
-            onSuccess: { successExp.fulfill() },
-            onComplete: { completeExp.fulfill() }
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: nil,
+            predictionsLoaded: false
         )
-        await fulfillment(of: [connectExp, successExp, completeExp], timeout: 2)
-        XCTAssertEqual(stopDetailsVM.predictionsByStop, predictions)
-        stopDetailsVM.leavePredictions()
+
+        stopDetailsVM.joinStopPredictions(stop.id)
+        await fulfillment(of: [connectExp], timeout: 2)
+        XCTAssertEqual(stopDetailsVM.stopData?.predictionsByStop, predictions)
+        stopDetailsVM.leaveStopPredictions()
         await fulfillment(of: [disconnectExp], timeout: 1)
     }
 
@@ -111,8 +151,12 @@ final class StopDetailsViewModelTests: XCTestCase {
 
         let stopDetailsVM = StopDetailsViewModel()
         stopDetailsVM.global = .init(objects: objects, patternIdsByStop: [stop.id: [pattern0.id, pattern1.id]])
-        stopDetailsVM.predictionsByStop = .init(objects: objects)
-        stopDetailsVM.schedulesResponse = .init(objects: objects)
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
 
         let departures = stopDetailsVM.getDepartures(
             stopId: stop.id,

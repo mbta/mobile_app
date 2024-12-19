@@ -56,8 +56,13 @@ final class TripDetailsViewTests: XCTestCase {
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
         stopDetailsVM.global = .init(objects: objects)
-        stopDetailsVM.predictionsByStop = .init(objects: objects)
         stopDetailsVM.pinnedRoutes = .init()
+        stopDetailsVM.stopData = .init(
+            stopId: targetStop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
         stopDetailsVM.tripData = TripData(
             tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 0, selectionLock: false),
             trip: trip,
@@ -119,8 +124,13 @@ final class TripDetailsViewTests: XCTestCase {
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
         stopDetailsVM.global = .init(objects: objects)
-        stopDetailsVM.predictionsByStop = .init(objects: objects)
         stopDetailsVM.pinnedRoutes = .init()
+        stopDetailsVM.stopData = .init(
+            stopId: targetStop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
         stopDetailsVM.tripData = TripData(
             tripFilter: .init(
                 tripId: trip.id,

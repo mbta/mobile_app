@@ -72,37 +72,69 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
-            .onChange(of: stopId) { nextStopId in changeStop(nextStopId) }
             .onChange(of: stopDetailsVM.global) { _ in updateDepartures() }
             .onChange(of: stopDetailsVM.pinnedRoutes) { _ in updateDepartures() }
-            .onChange(of: stopDetailsVM.predictionsByStop) { _ in updateDepartures() }
-            .onChange(of: stopDetailsVM.schedulesResponse) { _ in updateDepartures() }
+            .onChange(of: stopDetailsVM.stopData) { stopData in
+                errorBannerVM.loadingWhenPredictionsStale = !(stopData?.predictionsLoaded ?? true)
+                updateDepartures()
+            }
             .onChange(of: stopFilter) { nextStopFilter in setTripFilter(stopFilter: nextStopFilter) }
             .onChange(of: internalDepartures) { _ in
                 let nextStopFilter = setStopFilter()
                 setTripFilter(stopFilter: nextStopFilter)
             }
-            .onAppear { loadEverything() }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task(id: stopId) {
                 while !Task.isCancelled {
                     now = Date.now
                     updateDepartures()
-                    checkPredictionsStale()
+                    stopDetailsVM.checkStopPredictionsStale()
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
-            .onDisappear { stopDetailsVM.leavePredictions() }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .withScenePhaseHandlers(
                 onActive: {
                     stopDetailsVM.returnFromBackground()
-                    joinPredictions()
+                    stopDetailsVM.joinStopPredictions(stopId)
                 },
-                onInactive: stopDetailsVM.leavePredictions,
+                onInactive: stopDetailsVM.leaveStopPredictions,
                 onBackground: {
-                    stopDetailsVM.leavePredictions()
+                    stopDetailsVM.leaveStopPredictions()
                     errorBannerVM.loadingWhenPredictionsStale = true
                 }
             )
+    }
+
+    func setStopFilter() -> StopDetailsFilter? {
+        let nextStopFilter = stopFilter ?? internalDepartures?.autoStopFilter()
+        if stopFilter != nextStopFilter {
+            nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
+        }
+        return nextStopFilter
+    }
+
+    func setTripFilter(stopFilter: StopDetailsFilter?) {
+        let tripFilter = internalDepartures?.autoTripFilter(
+            stopFilter: stopFilter,
+            currentTripFilter: tripFilter,
+            filterAtTime: now.toKotlinInstant()
+        )
+        nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)
+    }
+
+    func updateDepartures() {
+        Task {
+            if stopId != stopDetailsVM.stopData?.stopId { return }
+            let nextDepartures = stopDetailsVM.getDepartures(
+                stopId: stopId,
+                alerts: nearbyVM.alerts,
+                useTripHeadsigns: nearbyVM.tripHeadsignsEnabled,
+                now: now
+            )
+            Task { @MainActor in
+                nearbyVM.setDepartures(stopId, nextDepartures)
+                internalDepartures = nextDepartures
+            }
+        }
     }
 }
