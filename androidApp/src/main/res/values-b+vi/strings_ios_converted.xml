@@ -17,6 +17,7 @@
     <string name="heading">Tiêu đề</string>
     <string name="inbound">Đến</string>
     <string name="loading">Đang tải...</string>
+    <string name="minutes_abbr">&lt;b>%1$d&lt;/b> phút</string>
     <string name="more_link">Thêm</string>
     <string name="more_page_footer">Được tạo ra với ♥ bởi T</string>
     <string name="more_section_feature_flags">Cờ tính năng</string>
