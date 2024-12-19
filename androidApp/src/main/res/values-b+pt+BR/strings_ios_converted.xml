@@ -45,6 +45,7 @@
     <string name="onboarding_location_body">Usamos sua localização para lhe mostrar suas opções de transporte próximas.</string>
     <string name="onboarding_location_footer">Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações.</string>
     <string name="onboarding_location_header">Ver transporte perto de você</string>
+    <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
     <string name="other_link_source_code">Exibir origem no GitHub</string>
     <string name="other_link_tos">Termos de Uso</string>
@@ -60,7 +61,10 @@
     <string name="settings_link">Configurações</string>
     <string name="shuttle">Ônibus vai-e-vem</string>
     <string name="southbound">Sentido sul</string>
+    <string name="star_route">Marcar rota como favorita</string>
+    <string name="star_route_hint">Fixa rota no topo da lista</string>
     <string name="stop_closed">Parada fechada</string>
     <string name="suspension">Suspensão</string>
+    <string name="unstar_route_hint">Remove rota do topo da lista</string>
     <string name="westbound">Sentido oeste</string>
 </resources>

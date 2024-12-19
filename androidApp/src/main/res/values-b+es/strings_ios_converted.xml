@@ -45,6 +45,7 @@
     <string name="onboarding_location_body">Usamos su ubicación para mostrarle opciones de tráfico cercanas.</string>
     <string name="onboarding_location_footer">Puede cambiar la configuración de ubicación en la aplicación de Configuración.</string>
     <string name="onboarding_location_header">Ver tráfico cerca de usted</string>
+    <string name="open_for_more_arrivals">Abierto para más llegadas</string>
     <string name="other_link_privacy_policy">Política de privacidad</string>
     <string name="other_link_source_code">Ver código fuente en GitHub</string>
     <string name="other_link_tos">Términos de uso</string>
@@ -60,7 +61,10 @@
     <string name="settings_link">Configuración</string>
     <string name="shuttle">Autobús de enlace</string>
     <string name="southbound">En dirección sur</string>
+    <string name="star_route">Marcar ruta favorita</string>
+    <string name="star_route_hint">Fija la ruta en la parte superior de la lista</string>
     <string name="stop_closed">Parada cerrada</string>
     <string name="suspension">Suspensión</string>
+    <string name="unstar_route_hint">Elimina la ruta de la parte superior de la lista</string>
     <string name="westbound">En dirección oeste</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -13,10 +14,17 @@ import com.mbta.tid.mbta_app.android.R
 
 @Composable
 fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {
+    val onClickLabel =
+        if (pinned) {
+            stringResource(id = R.string.unstar_route_hint)
+        } else {
+            stringResource(id = R.string.star_route_hint)
+        }
     IconToggleButton(
         checked = pinned,
         onCheckedChange = { action() },
-        modifier = Modifier.size(30.dp)
+        modifier =
+            Modifier.size(30.dp).clickable(onClickLabel = onClickLabel, onClick = { action() })
     ) {
         Icon(
             painter =

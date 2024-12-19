@@ -67,5 +67,11 @@
     <string name="suspension">Suspension</string>
     <string name="westbound">Westbound</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
+    <string name="star_route">Star route</string>
+    <string name="star_route_hint">Pins route to the top of the list</string>
+    <string name="unstar_route_hint">Removes route from the top of the list</string>
+
+
+
 
 </resources>
