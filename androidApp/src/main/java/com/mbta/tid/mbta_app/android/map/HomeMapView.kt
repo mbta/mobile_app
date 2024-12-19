@@ -90,8 +90,8 @@ fun HomeMapView(
     val globalResponse = viewModel.globalResponse.collectAsState(initial = null).value
     val railRouteLineData = viewModel.railRouteLineData.collectAsState(initial = null).value
 
-    val now = timer(updateInterval = 10.seconds)
-    val globalMapData = remember(now) { viewModel.globalMapData(now) }
+    val now = timer(updateInterval = 300.seconds)
+    val globalMapData = viewModel.rememberGlobalMapData(now)
 
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }

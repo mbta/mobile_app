@@ -32,6 +32,8 @@
     <string name="no_service">无服务</string>
     <string name="no_service_today">今日无服务</string>
     <string name="no_stops_nearby">您位于 MBTA 服务区之外。</string>
+    <string name="no_stops_nearby_pan">查看波士顿附近的交通</string>
+    <string name="no_stops_nearby_search">按站点搜索</string>
     <string name="no_stops_nearby_title">附近无站点</string>
     <string name="northbound">北行</string>
     <string name="now">现在</string>

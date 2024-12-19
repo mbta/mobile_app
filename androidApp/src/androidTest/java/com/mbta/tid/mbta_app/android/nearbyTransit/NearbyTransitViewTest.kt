@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
@@ -22,6 +23,8 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
+import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
@@ -242,7 +245,8 @@ class NearbyTransitViewTest : KoinTest {
                     targetLocation = Position(0.0, 0.0),
                     setLastLocation = {},
                     setSelectingLocation = {},
-                    onOpenStopDetails = { _, _ -> }
+                    onOpenStopDetails = { _, _ -> },
+                    noNearbyStopsView = {}
                 )
             }
         }
@@ -257,5 +261,51 @@ class NearbyTransitViewTest : KoinTest {
         composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Head Sign").assertIsDisplayed()
         composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testNearbyTransitViewNoNearbyStops() {
+        val emptyNearbyKoinApplication = koinApplication {
+            modules(
+                module {
+                    single<INearbyRepository> { MockNearbyRepository() }
+                    single<ISchedulesRepository> { MockScheduleRepository() }
+                    single<IPredictionsRepository> {
+                        MockPredictionsRepository(
+                            connectV2Response =
+                                PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
+                        )
+                    }
+                    single<IPinnedRoutesRepository> {
+                        object : IPinnedRoutesRepository {
+                            override suspend fun getPinnedRoutes(): Set<String> {
+                                return emptySet()
+                            }
+
+                            override suspend fun setPinnedRoutes(routes: Set<String>) {}
+                        }
+                    }
+                    single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                }
+            )
+        }
+        composeTestRule.setContent {
+            KoinContext(emptyNearbyKoinApplication.koin) {
+                NearbyTransitView(
+                    alertData = AlertsStreamDataResponse(emptyMap()),
+                    globalResponse = globalResponse,
+                    targetLocation = Position(0.0, 0.0),
+                    setLastLocation = {},
+                    setSelectingLocation = {},
+                    onOpenStopDetails = { _, _ -> },
+                    noNearbyStopsView = { Text("This would be the no nearby stops view") }
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExists(hasText("This would be the no nearby stops view"))
+        composeTestRule.onNodeWithText("This would be the no nearby stops view").assertIsDisplayed()
     }
 }

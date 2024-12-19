@@ -32,6 +32,8 @@
     <string name="no_service">Sin servicio</string>
     <string name="no_service_today">No hay servicio hoy</string>
     <string name="no_stops_nearby">Estás fuera del área de servicio de MBTA.</string>
+    <string name="no_stops_nearby_pan">Ver el tránsito cerca de Boston</string>
+    <string name="no_stops_nearby_search">Buscar por parada</string>
     <string name="no_stops_nearby_title">No hay paradas cercanas</string>
     <string name="northbound">En dirección norte</string>
     <string name="now">Ahora</string>

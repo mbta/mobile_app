@@ -32,6 +32,8 @@
     <string name="no_service">Không có dịch vụ</string>
     <string name="no_service_today">Hôm nay không có dịch vụ</string>
     <string name="no_stops_nearby">Bạn đang ở ngoài khu vực dịch vụ của MBTA.</string>
+    <string name="no_stops_nearby_pan">Xem phương tiện giao thông gần Boston</string>
+    <string name="no_stops_nearby_search">Tìm kiếm theo điểm dừng</string>
     <string name="no_stops_nearby_title">Không có điểm dừng gần đó</string>
     <string name="northbound">Về hướng bắc</string>
     <string name="now">Hiện nay</string>

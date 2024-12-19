@@ -32,6 +32,8 @@
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
     <string name="no_stops_nearby">Ou andeyò zòn sèvis MBTA a.</string>
+    <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
+    <string name="no_stops_nearby_search">Chèche pa kanpe</string>
     <string name="no_stops_nearby_title">Pa gen arè ki tou pre</string>
     <string name="northbound">Nan direksyon nò</string>
     <string name="now">Kounye a</string>
