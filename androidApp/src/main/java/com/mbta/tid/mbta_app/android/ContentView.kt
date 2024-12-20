@@ -3,8 +3,6 @@ package com.mbta.tid.mbta_app.android
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,6 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.android.component.BottomNavBar
+import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheetState
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.location.rememberLocationDataManager
 import com.mbta.tid.mbta_app.android.pages.MorePage
