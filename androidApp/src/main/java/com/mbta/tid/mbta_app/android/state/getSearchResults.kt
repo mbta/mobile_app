@@ -36,6 +36,15 @@ class SearchResultsViewModel(
                         null -> {}
                     }
                 }
+        } else if (lastClickTime == null) {
+            job =
+                CoroutineScope(Dispatchers.IO).launch {
+                    when (val data = searchResultRepository.getSearchResults(query)) {
+                        is ApiResult.Ok -> _searchResults.emit(data.data)
+                        is ApiResult.Error -> _searchResults.emit(null)
+                        null -> {}
+                    }
+                }
         }
         lastClickTime = currentTime
     }
