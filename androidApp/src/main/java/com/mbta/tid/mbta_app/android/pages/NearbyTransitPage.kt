@@ -34,6 +34,7 @@ import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
@@ -119,6 +120,10 @@ fun NearbyTransitPage(
 
     LaunchedEffect(nearbyTransit.globalResponse) {
         mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
+    }
+
+    LaunchedEffect(currentNavEntry) {
+        nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
     }
 
     SearchBarOverlay(::handleStopNavigation, currentNavEntry, searchFocusRequester) {
