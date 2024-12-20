@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 import android.app.Activity
 import android.location.Location
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +18,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
