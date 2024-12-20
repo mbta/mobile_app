@@ -818,6 +818,9 @@
         }
       }
     },
+    "%@ location not available yet" : {
+      "comment" : "Headline on an explainer page about missing vehicle location, the value can be either \"bus\" or \"train\",\nex \"[Bus] location not available yet\""
+    },
     "%@ scheduled to depart %@" : {
       "comment" : "VoiceOver text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
       "localizations" : {
@@ -3474,6 +3477,9 @@
         }
       }
     },
+    "Finishing another trip" : {
+      "comment" : "Headline for a page explaining that the vehicle shown is finishing a different trip"
+    },
     "Fire" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4501,6 +4507,9 @@
           }
         }
       }
+    },
+    "Location not available yet" : {
+
     },
     "Location Services is off" : {
       "comment" : "Banner letting the user know they aren't sharing their location",
@@ -8017,6 +8026,12 @@
           }
         }
       }
+    },
+    "The %@ assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip." : {
+      "comment" : "Description on an explainer page about missing vehicle location, the interpolated value can be either \"bus\" or \"train\","
+    },
+    "The %@ location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location." : {
+      "comment" : "Description on an explainer page about missing vehicle location, the interpolated value can be either \"bus\" or \"train\","
     },
     "This vehicle is completing another trip" : {
       "localizations" : {
