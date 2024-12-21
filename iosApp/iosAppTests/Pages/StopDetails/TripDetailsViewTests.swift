@@ -68,6 +68,7 @@ final class TripDetailsViewTests: XCTestCase {
             trip: trip,
             tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
             tripPredictions: .init(objects: objects),
+            tripPredictionsLoaded: true,
             vehicle: vehicle
         )
 
@@ -128,6 +129,7 @@ final class TripDetailsViewTests: XCTestCase {
             trip: trip,
             tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
             tripPredictions: .init(objects: objects),
+            tripPredictionsLoaded: true,
             vehicle: nil
         )
 
@@ -201,6 +203,7 @@ final class TripDetailsViewTests: XCTestCase {
             trip: trip,
             tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
             tripPredictions: .init(objects: objects),
+            tripPredictionsLoaded: true,
             vehicle: vehicle
         )
 
