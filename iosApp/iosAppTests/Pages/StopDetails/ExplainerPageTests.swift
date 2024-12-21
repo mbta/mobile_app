@@ -17,9 +17,28 @@ final class ExplainerPageTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    func testFinishingTrip() throws {
+        let sut = ExplainerPage(
+            explainer: .init(type: .finishingAnotherTrip, routeAccents: .init(type: .bus)),
+            onClose: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Finishing another trip"))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "turnaround-icon-bus"
+        }))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "turnaround-shape"
+        }))
+    }
+
     func testNoPrediction() throws {
         let sut = ExplainerPage(explainer: .init(type: .noPrediction, routeAccents: .init()), onClose: {})
         XCTAssertNotNil(try sut.inspect().find(text: "Prediction not available yet"))
+    }
+
+    func testNoVehicle() throws {
+        let sut = ExplainerPage(explainer: .init(type: .noVehicle, routeAccents: .init(type: .lightRail)), onClose: {})
+        XCTAssertNotNil(try sut.inspect().find(text: "Train location not available yet"))
     }
 
     func testRouteType() throws {
