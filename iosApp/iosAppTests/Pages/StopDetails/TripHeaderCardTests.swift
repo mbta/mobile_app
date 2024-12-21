@@ -20,14 +20,13 @@ final class TripHeaderCardTests: XCTestCase {
     func testDisplaysStopName() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
         let vehicle = objects.vehicle { vehicle in
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = ""
         }
         let sut = TripHeaderCard(
-            spec: .vehicle(vehicle, nil),
-            stop: stop,
+            spec: .vehicle(vehicle, stop, nil),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -48,8 +47,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let inTransitSut = TripHeaderCard(
-            spec: .vehicle(inTransitVehicle, nil),
-            stop: stop,
+            spec: .vehicle(inTransitVehicle, stop, nil),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -63,8 +61,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let incomingSut = TripHeaderCard(
-            spec: .vehicle(incomingVehicle, nil),
-            stop: stop,
+            spec: .vehicle(incomingVehicle, stop, nil),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -78,8 +75,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.tripId = ""
         }
         let stoppedSut = TripHeaderCard(
-            spec: .vehicle(stoppedVehicle, nil),
-            stop: stop,
+            spec: .vehicle(stoppedVehicle, stop, nil),
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -92,22 +88,34 @@ final class TripHeaderCardTests: XCTestCase {
     func testDifferentTrip() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
 
-        let vehicle = objects.vehicle { vehicle in
-            vehicle.currentStatus = .inTransitTo
-            vehicle.tripId = "different"
-        }
         let sut = TripHeaderCard(
-            spec: .vehicle(vehicle, nil),
-            stop: stop,
+            spec: .finishingAnotherTrip,
             tripId: "selected",
             targetId: "",
             routeAccents: .init(),
             onTap: nil,
             now: now
         )
-        try XCTAssertNotNil(sut.inspect().find(text: "This vehicle is completing another trip"))
+        try XCTAssertNotNil(sut.inspect().find(text: "Finishing another trip"))
+        try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
+    }
+
+    func testNoVehicle() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+
+        let sut = TripHeaderCard(
+            spec: .noVehicle,
+            tripId: "selected",
+            targetId: "",
+            routeAccents: .init(),
+            onTap: nil,
+            now: now
+        )
+        try XCTAssertNotNil(sut.inspect().find(text: "Location not available yet"))
         try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
     }
 
@@ -122,8 +130,8 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.stopId = stop.id
         }
         let targeted = TripHeaderCard(
-            spec: .vehicle(vehicle, nil),
-            stop: stop,
+            spec: .vehicle(vehicle, stop, nil),
+
             tripId: "",
             targetId: stop.id,
             routeAccents: .init(),
@@ -136,8 +144,8 @@ final class TripHeaderCardTests: XCTestCase {
         }))
 
         let notTargeted = TripHeaderCard(
-            spec: .vehicle(vehicle, nil),
-            stop: stop,
+            spec: .vehicle(vehicle, stop, nil),
+
             tripId: "",
             targetId: "",
             routeAccents: .init(),
@@ -166,7 +174,7 @@ final class TripHeaderCardTests: XCTestCase {
         }
 
         let sut = TripHeaderCard(
-            spec: .vehicle(vehicle, .init(
+            spec: .vehicle(vehicle, stop, .init(
                 stop: stop,
                 stopSequence: 0,
                 alert: nil,
@@ -175,7 +183,6 @@ final class TripHeaderCardTests: XCTestCase {
                 vehicle: vehicle,
                 routes: []
             )),
-            stop: stop,
             tripId: "",
             targetId: stop.id,
             routeAccents: .init(),
@@ -193,14 +200,14 @@ final class TripHeaderCardTests: XCTestCase {
     func testScheduled() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
 
         let schedule = objects.schedule { schedule in
             schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
         }
 
         let sut = TripHeaderCard(
-            spec: .scheduled(.init(
+            spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
                 alert: nil,
@@ -209,7 +216,6 @@ final class TripHeaderCardTests: XCTestCase {
                 vehicle: nil,
                 routes: []
             )),
-            stop: stop,
             tripId: "",
             targetId: stop.id,
             routeAccents: .init(),
@@ -237,7 +243,7 @@ final class TripHeaderCardTests: XCTestCase {
         let tapExpectation = expectation(description: "card tapped")
 
         let sut = TripHeaderCard(
-            spec: .scheduled(.init(
+            spec: .scheduled(stop, .init(
                 stop: stop,
                 stopSequence: 0,
                 alert: nil,
@@ -246,7 +252,6 @@ final class TripHeaderCardTests: XCTestCase {
                 vehicle: nil,
                 routes: []
             )),
-            stop: stop,
             tripId: "",
             targetId: stop.id,
             routeAccents: .init(),

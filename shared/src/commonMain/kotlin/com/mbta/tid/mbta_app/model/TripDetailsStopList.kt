@@ -169,7 +169,6 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
                 predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
             }
-
             if (tripSchedules is TripSchedulesResponse.Schedules) {
                 tripSchedules.schedules.forEach { entries.putSchedule(it) }
             } else if (tripSchedules is TripSchedulesResponse.StopIds) {

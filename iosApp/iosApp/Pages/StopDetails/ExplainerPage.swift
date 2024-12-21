@@ -109,7 +109,8 @@ struct ExplainerPage: View {
         capitalizeFirst(String(format: NSLocalizedString(
             "The %@ assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip.",
             comment: """
-            Description on an explainer page about missing vehicle location, the interpolated value can be either "bus" or "train",
+            Description on an explainer page about missing vehicle location,
+            the interpolated value can be either "bus" or "train"
             """
         ), modeText))
     }
@@ -118,7 +119,8 @@ struct ExplainerPage: View {
         capitalizeFirst(String(format: NSLocalizedString(
             "%@ location not available yet",
             comment: """
-            Headline on an explainer page about missing vehicle location, the value can be either "bus" or "train",
+            Headline on an explainer page about missing vehicle location,
+            the interpolated value can be either "bus" or "train",
             ex "[Bus] location not available yet"
             """
         ), modeText))
@@ -128,7 +130,8 @@ struct ExplainerPage: View {
         capitalizeFirst(String(format: NSLocalizedString(
             "The %@ location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.",
             comment: """
-            Description on an explainer page about missing vehicle location, the interpolated value can be either "bus" or "train",
+            Description on an explainer page about missing vehicle location,
+            the interpolated value can be either "bus" or "train"
             """
         ), modeText))
     }
