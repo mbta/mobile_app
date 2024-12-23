@@ -310,7 +310,7 @@ class NearbyTransitPageTest : KoinTest {
             composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         } catch (ex: ComposeTimeoutException) {
             // by some mechanism there are two roots
-            composeTestRule.onAllNodes(isRoot()).printToLog("ci-keep")
+            composeTestRule.onAllNodes(isRoot()).printToLog("ci-keep", maxDepth = Int.MAX_VALUE)
             throw ex
         }
         composeTestRule.onNodeWithText("Sample Route").assertExists()
