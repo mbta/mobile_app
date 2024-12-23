@@ -1,5 +1,8 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -149,7 +152,13 @@ fun NearbyTransitPage(
                             modifier =
                                 Modifier.height(sheetHeight)
                                     .padding(outerSheetPadding)
-                                    .background(MaterialTheme.colorScheme.surface)
+                                    .background(MaterialTheme.colorScheme.surface),
+                            enterTransition = {
+                                slideIntoContainer(
+                                    AnimatedContentTransitionScope.SlideDirection.Up,
+                                    animationSpec = tween(easing = EaseInOut)
+                                )
+                            }
                         ) {
                             composable<SheetRoutes.StopDetails> { backStackEntry ->
                                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
