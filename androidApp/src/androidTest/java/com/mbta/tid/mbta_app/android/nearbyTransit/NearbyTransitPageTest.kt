@@ -9,11 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.printToLog
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
@@ -303,7 +306,12 @@ class NearbyTransitPageTest : KoinTest {
         composeTestRule.onNodeWithText("Green Line Head Sign").assertExists()
         composeTestRule.onNodeWithText("5 min").assertExists()
 
-        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        try {
+            composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
+        } catch (ex: ComposeTimeoutException) {
+            composeTestRule.onRoot().printToLog("ci-keep")
+            throw ex
+        }
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Stop").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
