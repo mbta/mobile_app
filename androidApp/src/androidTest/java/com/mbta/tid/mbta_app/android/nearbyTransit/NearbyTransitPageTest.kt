@@ -10,16 +10,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.test.printToLog
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.MapboxExperimental
@@ -300,6 +297,9 @@ class NearbyTransitPageTest : KoinTest {
         }
 
         composeTestRule.waitUntilDoesNotExist(hasText("Loading..."))
+        composeTestRule
+            .onNodeWithContentDescription("Drag handle")
+            .performSemanticsAction(SemanticsActions.Expand)
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
         composeTestRule.onNodeWithText("Search by stop").assertIsDisplayed()
@@ -309,16 +309,6 @@ class NearbyTransitPageTest : KoinTest {
         composeTestRule.onNodeWithText("Green Line Head Sign").assertExists()
         composeTestRule.onNodeWithText("5 min").assertExists()
 
-        composeTestRule
-            .onNodeWithContentDescription("Drag handle")
-            .performSemanticsAction(SemanticsActions.Expand)
-        try {
-            composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
-        } catch (ex: ComposeTimeoutException) {
-            // by some mechanism there are two roots
-            composeTestRule.onAllNodes(isRoot()).printToLog("ci-keep", maxDepth = Int.MAX_VALUE)
-            throw ex
-        }
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Stop").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
