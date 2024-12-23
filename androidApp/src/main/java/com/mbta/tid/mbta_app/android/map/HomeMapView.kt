@@ -48,6 +48,7 @@ import com.mbta.tid.mbta_app.android.appVariant
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getStopMapData
+import com.mbta.tid.mbta_app.android.util.LaunchedOnDispatcherEffect
 import com.mbta.tid.mbta_app.android.util.LazyObjectQueue
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.timer
@@ -62,6 +63,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 
 @OptIn(MapboxExperimental::class, ExperimentalPermissionsApi::class)
@@ -242,11 +244,11 @@ fun HomeMapView(
             LaunchedEffect(railRouteShapes, globalResponse, globalMapData) {
                 viewModel.refreshRouteLineData(now)
             }
-            LaunchedEffect(railRouteLineData) {
+            LaunchedOnDispatcherEffect(Dispatchers.Default, railRouteLineData) {
                 refreshRouteLineSource()
                 viewModel.refreshStopFeatures(now, selectedStop)
             }
-            LaunchedEffect(selectedStop) {
+            LaunchedOnDispatcherEffect(Dispatchers.Default, selectedStop) {
                 positionViewportToStop()
                 viewModel.refreshStopFeatures(now, selectedStop)
             }

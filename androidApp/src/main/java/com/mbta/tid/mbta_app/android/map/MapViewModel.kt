@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.map
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.mapbox.common.HttpServiceFactory
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.FeatureCollection
+import com.mbta.tid.mbta_app.android.util.LaunchedOnDispatcherEffect
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLineData
@@ -111,8 +111,8 @@ open class MapViewModel(
     override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
         var result by remember { mutableStateOf<GlobalMapData?>(null) }
         val globalResponse by this.globalResponse.collectAsState(initial = null)
-        LaunchedEffect(this.alertsData, globalResponse, now) {
-            launch(Dispatchers.IO) { result = globalMapData(now) }
+        LaunchedOnDispatcherEffect(Dispatchers.IO, this.alertsData, globalResponse, now) {
+            result = globalMapData(now)
         }
         return result
     }

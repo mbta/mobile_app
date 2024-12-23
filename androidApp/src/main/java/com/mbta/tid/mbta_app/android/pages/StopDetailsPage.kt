@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.pages
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -11,12 +10,14 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.rememberOnDispatcher
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 @ExperimentalMaterial3Api
@@ -41,7 +42,8 @@ fun StopDetailsPage(
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
     val departures =
-        remember(
+        rememberOnDispatcher(
+            Dispatchers.Default,
             stop,
             globalResponse,
             schedulesResponse,
