@@ -13,9 +13,9 @@ import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.printToLog
 import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.FeatureCollection
@@ -309,7 +309,8 @@ class NearbyTransitPageTest : KoinTest {
         try {
             composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         } catch (ex: ComposeTimeoutException) {
-            composeTestRule.onRoot().printToLog("ci-keep")
+            // by some mechanism there are two roots
+            composeTestRule.onAllNodes(isRoot()).printToLog("ci-keep")
             throw ex
         }
         composeTestRule.onNodeWithText("Sample Route").assertExists()
