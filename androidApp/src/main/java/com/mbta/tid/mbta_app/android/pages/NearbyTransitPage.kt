@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,6 +35,9 @@ import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
+import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
+import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.HomeMapView
@@ -122,6 +123,10 @@ fun NearbyTransitPage(
 
     LaunchedEffect(nearbyTransit.globalResponse) {
         mapViewModel.setGlobalResponse(nearbyTransit.globalResponse)
+    }
+
+    LaunchedEffect(currentNavEntry) {
+        nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
     }
 
     SearchBarOverlay(::handleStopNavigation, currentNavEntry, searchFocusRequester) {
@@ -276,7 +281,6 @@ fun NearbyTransitPage(
                 },
                 sheetContainerColor = MaterialTheme.colorScheme.surface,
                 scaffoldState = nearbyTransit.scaffoldState,
-                sheetPeekHeight = 422.dp,
             ) { sheetPadding ->
                 HomeMapView(
                     Modifier.padding(sheetPadding),
