@@ -303,6 +303,7 @@ class NearbyTransitPageTest : KoinTest {
         composeTestRule.onNodeWithText("Green Line Head Sign").assertExists()
         composeTestRule.onNodeWithText("5 min").assertExists()
 
+        composeTestRule.waitUntilExactlyOneExists(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Stop").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
