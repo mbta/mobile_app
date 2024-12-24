@@ -60,57 +60,65 @@ fun formatTime(time: Instant): String =
     format.format(time.toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime())
 
 @Composable
-fun UpcomingTripView(state: UpcomingTripViewState) {
+fun UpcomingTripView(state: UpcomingTripViewState, hideRealtimeIndicators: Boolean = false) {
     val modifier = Modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
-                    Text(state.trip.text, modifier, fontSize = 13.sp)
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(state.trip.text, fontSize = 13.sp)
+                    }
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
                 is TripInstantDisplay.Boarding ->
-                    Text(
-                        stringResource(R.string.boarding_abbr),
-                        modifier,
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            stringResource(R.string.boarding_abbr),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 is TripInstantDisplay.Arriving ->
-                    Text(
-                        stringResource(R.string.arriving_abbr),
-                        modifier,
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            stringResource(R.string.arriving_abbr),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 is TripInstantDisplay.Now ->
-                    Text(
-                        stringResource(R.string.now),
-                        modifier,
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            stringResource(R.string.now),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 is TripInstantDisplay.Approaching ->
-                    Text(
-                        text = AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
-                        modifier = modifier,
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            text =
+                                AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+                    }
                 is TripInstantDisplay.Time ->
-                    Text(
-                        formatTime(state.trip.predictionTime),
-                        modifier,
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            formatTime(state.trip.predictionTime),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
                         formatTime(state.trip.scheduledTime),
-                        modifier.then(Modifier.alpha(0.6F)),
+                        modifier.alpha(0.6F),
                         textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
@@ -122,21 +130,22 @@ fun UpcomingTripView(state: UpcomingTripViewState) {
                             }
                     )
                 is TripInstantDisplay.Minutes ->
-                    Text(
-                        text =
-                            AnnotatedString.fromHtml(
-                                stringResource(R.string.minutes_abbr, state.trip.minutes)
-                            ),
-                        modifier = modifier,
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            text =
+                                AnnotatedString.fromHtml(
+                                    stringResource(R.string.minutes_abbr, state.trip.minutes)
+                                ),
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+                    }
                 is TripInstantDisplay.ScheduleMinutes ->
                     Text(
                         text =
                             AnnotatedString.fromHtml(
                                 stringResource(R.string.minutes_abbr, state.trip.minutes)
                             ),
-                        modifier = modifier.then(Modifier.alpha(0.6F)),
+                        modifier = modifier.alpha(0.6F),
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
