@@ -63,6 +63,13 @@ fun RoutePill(
             else -> 24.dp
         }
 
+    val lineHeight =
+        when (spec.size) {
+            RoutePillSpec.Size.CircleSmall,
+            RoutePillSpec.Size.FlexPillSmall -> 16.sp
+            else -> 24.sp
+        }
+
     fun Modifier.withSizePadding() =
         when (spec.size) {
             RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
@@ -94,7 +101,7 @@ fun RoutePill(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
                 textAlign = TextAlign.Center,
-                lineHeight = 24.sp,
+                lineHeight = lineHeight,
                 maxLines = 1
             )
         is RoutePillSpec.Content.ModeImage -> {
@@ -118,6 +125,7 @@ private fun RoutePillPreviews() {
             RoutePill(route = route, line = line, type = RoutePillType.Fixed, isActive = false)
             RoutePill(route = route, line = line, type = RoutePillType.Fixed)
             RoutePill(route = route, line = line, type = RoutePillType.Flex)
+            RoutePill(route = route, line = line, type = RoutePillType.FlexCompact)
         }
     }
 
