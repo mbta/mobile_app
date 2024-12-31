@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -141,10 +142,11 @@ class UpcomingTripViewTest {
     }
 
     @Test
-    fun testUpcomingTripViewWithSomeMinutesOther() {
+    fun testUpcomingTripViewWithSomeMinutesOtherBus() {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                RouteType.BUS,
                 isFirst = false
             )
         }
@@ -152,6 +154,23 @@ class UpcomingTripViewTest {
             .onNodeWithText("5 min")
             .assertIsDisplayed()
             .assertContentDescriptionContains("and in 5 min", substring = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeMinutesFirstBus() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                RouteType.BUS,
+                isFirst = true,
+                isOnly = false
+            )
+        }
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("buses arriving in 5 min", substring = true)
             .assertIsDisplayed()
     }
 }

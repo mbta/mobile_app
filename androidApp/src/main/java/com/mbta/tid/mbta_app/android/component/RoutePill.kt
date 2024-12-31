@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePillSpec
@@ -90,10 +92,11 @@ fun RoutePill(
             border(1.dp, routeColor, shape).padding(1.dp)
         }
 
+    val typeText = route?.type?.typeText(LocalContext.current, true)
+
     val finalModifier =
         modifier.withColor().withSizePadding().semantics {
-            // TODO: Vehicle type
-            contentDescription = "${route?.label ?: line?.longName ?: ""}"
+            contentDescription = "${route?.label ?: line?.longName ?: ""} ${typeText ?: ""}"
         }
 
     when (pillContent) {
