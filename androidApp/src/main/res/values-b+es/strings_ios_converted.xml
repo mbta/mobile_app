@@ -17,6 +17,7 @@
     <string name="heading">Rumbo</string>
     <string name="inbound">Entrante</string>
     <string name="loading">Cargando…</string>
+    <string name="location_services_off">Los servicios de ubicación están desactivados</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">Más</string>
     <string name="more_page_footer">Hecho con ♥ por T</string>

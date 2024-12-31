@@ -17,6 +17,7 @@
     <string name="heading">Prale nan direksyon</string>
     <string name="inbound">Antran</string>
     <string name="loading">Chajman...</string>
+    <string name="location_services_off">Sèvis Pozisyon Fèmen</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
     <string name="more_link">Plis</string>
     <string name="more_page_footer">Ki fèt ak ♥ pa T a</string>

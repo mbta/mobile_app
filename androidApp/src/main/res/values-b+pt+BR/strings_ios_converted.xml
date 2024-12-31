@@ -17,6 +17,7 @@
     <string name="heading">Rumo</string>
     <string name="inbound">Entrada</string>
     <string name="loading">Carregando...</string>
+    <string name="location_services_off">Serviços de localização desativados</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">Mais</string>
     <string name="more_page_footer">Feito com ♥ pelo T</string>

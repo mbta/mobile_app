@@ -85,4 +85,5 @@
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="westbound">Westbound</string>
+    <string name="location_services_off">Location Services is off</string>
 </resources>
