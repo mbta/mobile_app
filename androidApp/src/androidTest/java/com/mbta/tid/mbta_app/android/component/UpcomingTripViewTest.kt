@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -43,7 +44,10 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
         }
-        composeTestRule.onNodeWithText("Now").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Now")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving now", substring = true)
     }
 
     @Test
@@ -51,7 +55,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Boarding))
         }
-        composeTestRule.onNodeWithText("BRD").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("BRD")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("boarding now", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -59,7 +67,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Approaching))
         }
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("1 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 min", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -67,25 +79,40 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Arriving))
         }
-        composeTestRule.onNodeWithText("ARR").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("ARR")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving now", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeAsTime() {
         val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant)))
         }
-        composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(instant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving at $shortTime", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeScheduleTime() {
         val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant)))
         }
-        composeTestRule.onNodeWithText(formatTime(instant)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(formatTime(instant))
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving at $shortTime scheduled", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -93,7 +120,11 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
         }
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 5 min", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -102,6 +133,25 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5)))
         }
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 5 min scheduled", substring = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeMinutesOther() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                isFirst = false
+            )
+        }
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("and in 5 min", substring = true)
+            .assertIsDisplayed()
     }
 }
