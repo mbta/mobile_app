@@ -139,6 +139,11 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                 .replace(template) {
                     replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
                 }
+                /*
+                In order to preserve style tags while simultaneously formatting the string with parameters, we
+                must escape the html styling tags
+                        https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML
+                */
                 .replace("""\*\*([^*]+)\*\*""".toRegex(), "<b>$1</b>")
         }
     }
