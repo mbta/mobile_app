@@ -96,9 +96,8 @@ fun HomeMapView(
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
 
-    val isNearbyNotFollowing =
-        !viewportProvider.isFollowingPuck &&
-            currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+    val isNearby = currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
+    val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -338,6 +337,14 @@ fun HomeMapView(
         }
 
         if (!viewportProvider.isFollowingPuck) {
+            val recenterModifier =
+                if (isNearby) {
+                    Modifier.align(Alignment.TopEnd)
+                        .padding(top = 86.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                } else {
+                    Modifier.align(Alignment.TopEnd).padding(16.dp)
+                }
+
             RecenterButton(
                 onClick = {
                     // don't request FINE if we already have COARSE
@@ -346,7 +353,7 @@ fun HomeMapView(
                     }
                     viewportProvider.follow()
                 },
-                Modifier.align(Alignment.TopEnd).padding(16.dp)
+                modifier = recenterModifier
             )
         }
 

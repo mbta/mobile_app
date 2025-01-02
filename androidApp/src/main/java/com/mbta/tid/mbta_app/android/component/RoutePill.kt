@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +65,13 @@ fun RoutePill(
             else -> 24.dp
         }
 
+    val lineHeight =
+        when (spec.size) {
+            RoutePillSpec.Size.CircleSmall,
+            RoutePillSpec.Size.FlexPillSmall -> 16.sp
+            else -> 24.sp
+        }
+
     fun Modifier.withSizePadding() =
         when (spec.size) {
             RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
@@ -81,7 +90,11 @@ fun RoutePill(
             border(1.dp, routeColor, shape).padding(1.dp)
         }
 
-    val finalModifier = modifier.withColor().withSizePadding()
+    val finalModifier =
+        modifier.withColor().withSizePadding().semantics {
+            // TODO: Vehicle type
+            contentDescription = "${route?.label ?: line?.longName ?: ""}"
+        }
 
     when (pillContent) {
         RoutePillSpec.Content.Empty -> {}
@@ -94,7 +107,7 @@ fun RoutePill(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp,
                 textAlign = TextAlign.Center,
-                lineHeight = 24.sp,
+                lineHeight = lineHeight,
                 maxLines = 1
             )
         is RoutePillSpec.Content.ModeImage -> {
@@ -118,6 +131,7 @@ private fun RoutePillPreviews() {
             RoutePill(route = route, line = line, type = RoutePillType.Fixed, isActive = false)
             RoutePill(route = route, line = line, type = RoutePillType.Fixed)
             RoutePill(route = route, line = line, type = RoutePillType.Flex)
+            RoutePill(route = route, line = line, type = RoutePillType.FlexCompact)
         }
     }
 
