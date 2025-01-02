@@ -595,96 +595,96 @@
         }
       }
     },
-    "%@ arriving in %@ min" : {
+    "%@ arriving in %d min" : {
       "comment" : "Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives\nFor example, 'bus arriving in 5 minutes'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ arriving in %2$@ min"
+            "value" : "%1$@ arriving in %2$d min"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará en %2$@ min."
+            "value" : "%1$@ llegará en %2$d min."
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ap rive nan %2$@ minit"
+            "value" : "%1$@ ap rive nan %2$d minit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando em %2$@ min"
+            "value" : "%1$@ chegando em %2$d min"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ sẽ đến sau %2$@ phút nữa"
+            "value" : "%1$@ sẽ đến sau %2$d phút nữa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@将在%2$@分钟内到站"
+            "value" : "%1$@将在%2$d分钟内到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@將在%2$@分鐘內到站"
+            "value" : "%1$@將在%2$d分鐘內到站"
           }
         }
       }
     },
-    "%@ arriving in %@ min scheduled" : {
+    "%@ arriving in %d min scheduled" : {
       "comment" : "Describe the number of minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives\nFor example, 'bus arriving in 5 minutes, scheduled'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ arriving in %2$@ min scheduled"
+            "value" : "%1$@ arriving in %2$d min scheduled"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará en %2$@ min programado"
+            "value" : "%1$@ llegará en %2$d min programado"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ap rive nan %2$@ min pwograme"
+            "value" : "%1$@ ap rive nan %2$d min pwograme"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando em %2$@ min programado"
+            "value" : "%1$@ chegando em %2$d min programado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ sẽ đến sau %2$@ phút nữa theo lịch trình"
+            "value" : "%1$@ sẽ đến sau %2$d phút nữa theo lịch trình"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@预定将于%2$@分钟内到站"
+            "value" : "%1$@预定将于%2$d分钟内到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@預定將於%2$@分鐘內到站"
+            "value" : "%1$@預定將於%2$d分鐘內到站"
           }
         }
       }
@@ -814,6 +814,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@距離%3$@還有%2$ld站"
+          }
+        }
+      }
+    },
+    "%@ scheduled to depart %@" : {
+      "comment" : "VoiceOver text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ scheduled to depart %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ programado para salir de %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ki pwograme pou kite %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ programado para partir de %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ dự kiến khởi hành %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@计划从 %2$@ 出发"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "這%1$@預定從 %2$@ 出發"
           }
         }
       }
@@ -1611,84 +1658,84 @@
         }
       }
     },
-    "and in %@ min" : {
+    "and in %d min" : {
       "comment" : "The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %@ min."
+            "value" : "y en %d min."
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %@ minit"
+            "value" : "epi nan %d minit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e em %@ min"
+            "value" : "e em %d min"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và sau %@ phút nữa"
+            "value" : "và sau %d phút nữa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车将在%@分钟内抵达"
+            "value" : "下一趟车将在%d分钟内抵达"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將在%@分鐘內抵達"
+            "value" : "下一趟車將在%d分鐘內抵達"
           }
         }
       }
     },
-    "and in %@ min scheduled" : {
+    "and in %d min scheduled" : {
       "comment" : "The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving in 5 minutes], and in 10 minutes, scheduled'",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %@ min programado"
+            "value" : "y en %d min programado"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %@ min pwograme"
+            "value" : "epi nan %d min pwograme"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e em %@ min programado"
+            "value" : "e em %d min programado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "và sau %@ phút nữa theo lịch trình"
+            "value" : "và sau %d phút nữa theo lịch trình"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟车预定将在%@分钟内抵达"
+            "value" : "下一趟车预定将在%d分钟内抵达"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車預定將在%@分鐘內抵達"
+            "value" : "下一趟車預定將在%d分鐘內抵達"
           }
         }
       }
@@ -2849,6 +2896,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已發車"
+          }
+        }
+      }
+    },
+    "Details" : {
+      "comment" : "Header on the general explainer details page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalles"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detay yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalhes"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thông tin chi tiết"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "详情"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "詳情"
           }
         }
       }
@@ -5516,6 +5604,47 @@
         }
       }
     },
+    "pin route to the top of the list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fijar ruta al principio de la lista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mete wout nan tèt lis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "fixar rota no topo da lista"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ghim đường dẫn đến đầu danh sách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将路线固定到列表顶部"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "將路線固定到清單頂部"
+          }
+        }
+      }
+    },
     "Pins route to the top of the list" : {
       "comment" : "VoiceOver hint for favorite button when a route is not favorited",
       "localizations" : {
@@ -5716,6 +5845,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "電力故障"
+          }
+        }
+      }
+    },
+    "Prediction not available yet" : {
+      "comment" : "Headline for an explanation of why no predictions are shown",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predicción aún no disponible"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Prediksyon an poko disponib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Previsão ainda não disponível"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chưa có dự đoán"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "预测尚不可用"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "預測尚不可用"
           }
         }
       }
@@ -6006,47 +6176,6 @@
         }
       }
     },
-    "Removes route from the top of the list" : {
-      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elimina la ruta de la parte superior de la lista"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retire wout nan tèt lis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove rota do topo da lista"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xóa lộ trình khỏi đầu danh sách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消线路置顶"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消線路置頂"
-          }
-        }
-      }
-    },
     "Removes selected filter so that arrivals from all routes are displayed" : {
       "comment" : "VoiceOver hint for the button to\nclear selected route to display all routes at a station",
       "localizations" : {
@@ -6206,6 +6335,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "線路"
+          }
+        }
+      }
+    },
+    "Scheduled to depart" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Programado para salir"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwograme pou ale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Programado para partir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đã lên lịch khởi hành"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "预计出发"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "預定出發"
           }
         }
       }
@@ -8299,6 +8468,88 @@
         }
       }
     },
+    "unpin route from the top of the list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "desanclar ruta de la parte superior de la lista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "retire wout ki soti anlè lis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "desafixar a rota do topo da lista"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "bỏ ghim tuyến đường khỏi đầu danh sách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从列表顶部取消固定路线"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從清單頂部取消固定路線"
+          }
+        }
+      }
+    },
+    "Unpins route from the top of the list" : {
+      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desancla la ruta de la parte superior de la lista"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retire wout nan tèt lis la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desafixa a rota do topo da lista"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gỡ ghim tuyến đường khỏi đầu danh sách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将路线从列表顶部取消固定"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從清單頂部取消固定路線"
+          }
+        }
+      }
+    },
     "Unruly Passenger" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -8758,6 +9009,46 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "等待離開"
+          }
+        }
+      }
+    },
+    "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no tenemos predicciones en vivo para este viaje, pero aparecerán más cerca de la hora programada. Si el viaje se retrasa o se cancela, te lo informaremos aquí."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nou poko gen prediksyon an dirèk pou vwayaj sa a, men yo pral parèt pi pre lè pwograme a. Si vwayaj la an reta oswa anile, n ap fè w konnen isit la."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ainda não temos previsões ao vivo para esta viagem, mas elas aparecerão mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você aqui."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chúng tôi chưa có dự đoán trực tiếp cho chuyến đi này, nhưng chúng sẽ xuất hiện gần với thời gian dự kiến hơn. Nếu chuyến đi bị hoãn hoặc hủy, chúng tôi sẽ thông báo cho bạn tại đây."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们目前还没有此行程的实时预测，但会在接近预定时间时显示。如果行程延误或取消，我们会在这里通知您。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們還沒有這次旅行的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。"
           }
         }
       }

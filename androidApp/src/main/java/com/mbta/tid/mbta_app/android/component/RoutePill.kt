@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -88,7 +90,11 @@ fun RoutePill(
             border(1.dp, routeColor, shape).padding(1.dp)
         }
 
-    val finalModifier = modifier.withColor().withSizePadding()
+    val finalModifier =
+        modifier.withColor().withSizePadding().semantics {
+            // TODO: Vehicle type
+            contentDescription = "${route?.label ?: line?.longName ?: ""}"
+        }
 
     when (pillContent) {
         RoutePillSpec.Content.Empty -> {}

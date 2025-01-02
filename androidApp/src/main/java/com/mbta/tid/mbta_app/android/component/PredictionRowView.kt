@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ fun PredictionRowView(
     pillDecoration: PillDecoration? = null,
     destination: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     Row(
         modifier
             .fillMaxWidth()
@@ -68,9 +70,13 @@ fun PredictionRowView(
             ) {
                 when (predictions) {
                     is RealtimePatterns.Format.Some ->
-                        for (prediction in predictions.trips) {
+                        predictions.trips.mapIndexed { index, prediction ->
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                UpcomingTripView(UpcomingTripViewState.Some(prediction.format))
+                                UpcomingTripView(
+                                    UpcomingTripViewState.Some(prediction.format),
+                                    isFirst = index == 0,
+                                    isOnly = index == 0 && predictions.trips.count() == 1
+                                )
                                 if (pillDecoration is PillDecoration.OnPrediction) {
                                     val route = pillDecoration.routesByTrip.getValue(prediction.id)
                                     RoutePill(

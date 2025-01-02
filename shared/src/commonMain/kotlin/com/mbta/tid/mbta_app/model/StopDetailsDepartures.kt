@@ -49,6 +49,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                             TripInstantDisplay.Context.StopDetailsFiltered
                         )
                             ?: return@mapNotNull null
+
                     TripAndFormat(it, format)
                 }
         return trips

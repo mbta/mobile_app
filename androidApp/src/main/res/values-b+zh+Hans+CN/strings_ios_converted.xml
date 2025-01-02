@@ -48,11 +48,11 @@
     <string name="onboarding_location_body">我们使用您的位置向您显示附近的交通选择。</string>
     <string name="onboarding_location_footer">您可以随时在“设置”应用程序中更改位置设置。</string>
     <string name="onboarding_location_header">查看您附近的交通</string>
+    <string name="open_for_more_arrivals">开启获得更多到站信息</string>
     <string name="other_link_privacy_policy">隐私政策</string>
     <string name="other_link_source_code">在GitHub上查看源代码</string>
     <string name="other_link_tos">使用条款</string>
     <string name="outbound">出站</string>
-    <string name="pin_route">为线路添加星号</string>
     <string name="resources_link_fare_info">票价信息</string>
     <string name="resources_link_mticket">通勤列车和轮渡票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
@@ -63,7 +63,24 @@
     <string name="settings_link">设置</string>
     <string name="shuttle">摆渡巴士</string>
     <string name="southbound">南行</string>
+    <string name="star_route">为线路添加星号</string>
+    <string name="star_route_hint">将路线固定到列表顶部</string>
     <string name="stop_closed">站点已关闭</string>
     <string name="suspension">暂停</string>
+    <string name="unstar_route_hint">从列表顶部取消固定路线</string>
+    <string name="vehicle_arriving_first">%1$s现已到站</string>
+    <string name="vehicle_arriving_other">下一趟车现已到站</string>
+    <string name="vehicle_boarding_first">%1$s正在上客</string>
+    <string name="vehicle_boarding_other">正在上客</string>
+    <string name="vehicle_cancelled_first">于%2$s到站的%1$s已取消</string>
+    <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
+    <string name="vehicle_prediction_minutes_first">%1$s将在%2$d分钟内到站</string>
+    <string name="vehicle_prediction_minutes_other">下一趟车将在%1$d分钟内抵达</string>
+    <string name="vehicle_prediction_time_first">%1$s于%2$s到站</string>
+    <string name="vehicle_prediction_time_other">下一趟车将于%1$s到站</string>
+    <string name="vehicle_schedule_minutes_first">%1$s预定将于%2$d分钟内到站</string>
+    <string name="vehicle_schedule_minutes_other">下一趟车预定将在%1$d分钟内抵达</string>
+    <string name="vehicle_schedule_time_first">%1$s预定于%2$s到站</string>
+    <string name="vehicle_schedule_time_other">下一趟车预定将于%1$s到站</string>
     <string name="westbound">西行</string>
 </resources>
