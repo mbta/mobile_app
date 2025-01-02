@@ -18,11 +18,6 @@
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
     <string name="inbound">Inbound</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
-    <!--
-     In order to preserve style tags while simultaneously formatting the string with parameters, we
-     must escape the html styling tags
-     https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML
-    -->
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">More</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
@@ -54,11 +49,11 @@
     <string name="onboarding_location_body">We use your location to show you nearby transit options.</string>
     <string name="onboarding_location_footer">You can always change location settings later in the Settings app.</string>
     <string name="onboarding_location_header">See transit near you</string>
+    <string name="open_for_more_arrivals">Open for more arrivals</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
     <string name="other_link_source_code">View source on GitHub</string>
     <string name="other_link_tos">Terms of Use</string>
     <string name="outbound">Outbound</string>
-    <string name="pin_route">Star route</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="resources_link_fare_info">Fare Information</string>
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
@@ -70,7 +65,24 @@
     <string name="settings_link">Settings</string>
     <string name="shuttle">Shuttle</string>
     <string name="southbound">Southbound</string>
+    <string name="star_route">Star route</string>
+    <string name="star_route_hint">pin route to the top of the list</string>
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
+    <string name="unstar_route_hint">unpin route from the top of the list</string>
+    <string name="vehicle_arriving_first">%1$s arriving now</string>
+    <string name="vehicle_arriving_other">and arriving now</string>
+    <string name="vehicle_boarding_first">%1$s boarding now</string>
+    <string name="vehicle_boarding_other">and boarding now</string>
+    <string name="vehicle_cancelled_first">%1$s arriving at %2$s cancelled</string>
+    <string name="vehicle_cancelled_other">and at %1$s cancelled</string>
+    <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
+    <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
+    <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
+    <string name="vehicle_prediction_time_other">and at %1$s</string>
+    <string name="vehicle_schedule_minutes_first">%1$s arriving in %2$d min scheduled</string>
+    <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
+    <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
+    <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="westbound">Westbound</string>
 </resources>

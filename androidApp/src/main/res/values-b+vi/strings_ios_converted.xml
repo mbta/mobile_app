@@ -48,11 +48,11 @@
     <string name="onboarding_location_body">Chúng tôi sử dụng vị trí của bạn để hiển thị cho bạn các lựa chọn phương tiện công cộng ở gần.</string>
     <string name="onboarding_location_footer">Bạn luôn có thể thay đổi cài đặt vị trí sau trong ứng dụng Cài đặt.</string>
     <string name="onboarding_location_header">Xem phương tiện công cộng gần bạn</string>
+    <string name="open_for_more_arrivals">Mở cửa đón thêm khách đến</string>
     <string name="other_link_privacy_policy">Chính sách bảo mật</string>
     <string name="other_link_source_code">Xem nguồn trên GitHub</string>
     <string name="other_link_tos">Điều khoản sử dụng</string>
     <string name="outbound">Đi</string>
-    <string name="pin_route">Tuyến đường sao</string>
     <string name="resources_link_fare_info">Thông tin giá vé</string>
     <string name="resources_link_mticket">Vé phà vé đường sắt ngoại ô (Commuter Rail)</string>
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
@@ -63,7 +63,24 @@
     <string name="settings_link">Cài đặt</string>
     <string name="shuttle">Xe đưa đón</string>
     <string name="southbound">Về hướng nam</string>
+    <string name="star_route">Tuyến đường sao</string>
+    <string name="star_route_hint">ghim đường dẫn đến đầu danh sách</string>
     <string name="stop_closed">Điểm dừng bị đóng</string>
     <string name="suspension">Đình chỉ</string>
+    <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>
+    <string name="vehicle_arriving_first">%1$s đang đến</string>
+    <string name="vehicle_arriving_other">và đang đến</string>
+    <string name="vehicle_boarding_first">%1$s đang cho khách lên</string>
+    <string name="vehicle_boarding_other">và đang cho khách lên</string>
+    <string name="vehicle_cancelled_first">%1$s đến %2$s bị hủy</string>
+    <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
+    <string name="vehicle_prediction_minutes_first">%1$s sẽ đến sau %2$d phút nữa</string>
+    <string name="vehicle_prediction_minutes_other">và sau %1$d phút nữa</string>
+    <string name="vehicle_prediction_time_first">%1$s sẽ đến lúc %2$s</string>
+    <string name="vehicle_prediction_time_other">và lúc %1$s</string>
+    <string name="vehicle_schedule_minutes_first">%1$s sẽ đến sau %2$d phút nữa theo lịch trình</string>
+    <string name="vehicle_schedule_minutes_other">và sau %1$d phút nữa theo lịch trình</string>
+    <string name="vehicle_schedule_time_first">%1$s sẽ đến lúc %2$s theo lịch trình</string>
+    <string name="vehicle_schedule_time_other">và lúc %1$s theo lịch trình</string>
     <string name="westbound">Về hướng tây</string>
 </resources>

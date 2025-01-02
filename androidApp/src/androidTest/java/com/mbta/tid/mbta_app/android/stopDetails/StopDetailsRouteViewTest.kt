@@ -2,13 +2,16 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
@@ -119,12 +122,59 @@ class StopDetailsRouteViewTest {
                     ),
                 now = now,
                 pinned = false,
-                onPin = {}
+                onPin = {},
+                updateStopFilter = {}
             )
         }
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
+    }
+
+    @Test
+    fun testUpdatesStopFilter() {
+        var updatedStopFilter: StopDetailsFilter? = null
+        composeTestRule.setContent {
+            StopDetailsRouteView(
+                patternsByStop =
+                    PatternsByStop(
+                        route,
+                        stop,
+                        listOf(
+                            RealtimePatterns.ByHeadsign(
+                                staticData =
+                                    NearbyStaticData.StaticPatterns.ByHeadsign(
+                                        route,
+                                        trip.headsign,
+                                        line,
+                                        listOf(routePatternOne, routePatternTwo),
+                                        stopIds = setOf(stop.id),
+                                    ),
+                                upcomingTripsMap =
+                                    mapOf(
+                                        RealtimePatterns.UpcomingTripKey.ByRoutePattern(
+                                            route.id,
+                                            trip.routePatternId,
+                                            stop.id,
+                                        ) to listOf(UpcomingTrip(trip, prediction))
+                                    ),
+                                parentStopId = stop.id,
+                                alertsHere = emptyList(),
+                                alertsDownstream = emptyList(),
+                                hasSchedulesTodayByPattern = null,
+                                allDataLoaded = false
+                            )
+                        )
+                    ),
+                now = now,
+                pinned = false,
+                onPin = {},
+                updateStopFilter = { updatedStopFilter = it }
+            )
+        }
+
+        composeTestRule.onNodeWithText("Sample Headsign").performClick()
+        assertEquals(StopDetailsFilter(route.id, trip.directionId), updatedStopFilter)
     }
 }

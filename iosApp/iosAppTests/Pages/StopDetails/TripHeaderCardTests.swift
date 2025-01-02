@@ -1,5 +1,5 @@
 //
-//  TripVehicleCardTests.swift
+//  TripHeaderCardTests.swift
 //  iosAppTests
 //
 //  Created by esimon on 12/11/24.
@@ -12,7 +12,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class TripVehicleCardTests: XCTestCase {
+final class TripHeaderCardTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -20,18 +20,17 @@ final class TripVehicleCardTests: XCTestCase {
     func testDisplaysStopName() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
         let vehicle = objects.vehicle { vehicle in
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = ""
         }
-        let sut = TripVehicleCard(
-            vehicle: vehicle,
-            stop: stop,
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, nil),
             tripId: "",
             targetId: "",
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
 
@@ -47,13 +46,12 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = ""
         }
-        let inTransitSut = TripVehicleCard(
-            vehicle: inTransitVehicle,
-            stop: stop,
+        let inTransitSut = TripHeaderCard(
+            spec: .vehicle(inTransitVehicle, stop, nil),
             tripId: "",
             targetId: "",
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
         try XCTAssertNotNil(inTransitSut.inspect().find(text: "Next stop"))
@@ -62,13 +60,12 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .incomingAt
             vehicle.tripId = ""
         }
-        let incomingSut = TripVehicleCard(
-            vehicle: incomingVehicle,
-            stop: stop,
+        let incomingSut = TripHeaderCard(
+            spec: .vehicle(incomingVehicle, stop, nil),
             tripId: "",
             targetId: "",
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
         try XCTAssertNotNil(incomingSut.inspect().find(text: "Approaching"))
@@ -77,13 +74,12 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.currentStatus = .stoppedAt
             vehicle.tripId = ""
         }
-        let stoppedSut = TripVehicleCard(
-            vehicle: stoppedVehicle,
-            stop: stop,
+        let stoppedSut = TripHeaderCard(
+            spec: .vehicle(stoppedVehicle, stop, nil),
             tripId: "",
             targetId: "",
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
         try XCTAssertNotNil(stoppedSut.inspect().find(text: "Now at"))
@@ -92,22 +88,34 @@ final class TripVehicleCardTests: XCTestCase {
     func testDifferentTrip() throws {
         let now = Date.now
         let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
 
-        let vehicle = objects.vehicle { vehicle in
-            vehicle.currentStatus = .inTransitTo
-            vehicle.tripId = "different"
-        }
-        let sut = TripVehicleCard(
-            vehicle: vehicle,
-            stop: stop,
+        let sut = TripHeaderCard(
+            spec: .finishingAnotherTrip,
             tripId: "selected",
             targetId: "",
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
-        try XCTAssertNotNil(sut.inspect().find(text: "This vehicle is completing another trip"))
+        try XCTAssertNotNil(sut.inspect().find(text: "Finishing another trip"))
+        try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
+    }
+
+    func testNoVehicle() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+
+        let sut = TripHeaderCard(
+            spec: .noVehicle,
+            tripId: "selected",
+            targetId: "",
+            routeAccents: .init(),
+            onTap: nil,
+            now: now
+        )
+        try XCTAssertNotNil(sut.inspect().find(text: "Location not available yet"))
         try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
     }
 
@@ -121,13 +129,13 @@ final class TripVehicleCardTests: XCTestCase {
             vehicle.tripId = ""
             vehicle.stopId = stop.id
         }
-        let targeted = TripVehicleCard(
-            vehicle: vehicle,
-            stop: stop,
+        let targeted = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, nil),
+
             tripId: "",
             targetId: stop.id,
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
 
@@ -135,13 +143,13 @@ final class TripVehicleCardTests: XCTestCase {
             try image.actualImage().name() == "stop-pin-indicator"
         }))
 
-        let notTargeted = TripVehicleCard(
-            vehicle: vehicle,
-            stop: stop,
+        let notTargeted = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, nil),
+
             tripId: "",
             targetId: "",
-            terminalEntry: nil,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
 
@@ -165,12 +173,8 @@ final class TripVehicleCardTests: XCTestCase {
             prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
         }
 
-        let sut = TripVehicleCard(
-            vehicle: vehicle,
-            stop: stop,
-            tripId: "",
-            targetId: stop.id,
-            terminalEntry: .init(
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, .init(
                 stop: stop,
                 stopSequence: 0,
                 alert: nil,
@@ -178,8 +182,11 @@ final class TripVehicleCardTests: XCTestCase {
                 prediction: prediction,
                 vehicle: vehicle,
                 routes: []
-            ),
+            )),
+            tripId: "",
+            targetId: stop.id,
             routeAccents: .init(),
+            onTap: nil,
             now: now
         )
 
@@ -188,5 +195,74 @@ final class TripVehicleCardTests: XCTestCase {
             try image.actualImage().name() == "stop-pin-indicator"
         }))
         try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
+    }
+
+    func testScheduled() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+        }
+
+        let sut = TripHeaderCard(
+            spec: .scheduled(stop, .init(
+                stop: stop,
+                stopSequence: 0,
+                alert: nil,
+                schedule: schedule,
+                prediction: nil,
+                vehicle: nil,
+                routes: []
+            )),
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(),
+            onTap: nil,
+            now: now
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(text: "Scheduled to depart"))
+        try XCTAssertNotNil(sut.inspect().find(text: stop.name))
+        try XCTAssertNotNil(sut.inspect().find(UpcomingTripView.self))
+        try XCTAssertThrowsError(sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
+    }
+
+    func testScheduledTap() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+        }
+
+        let tapExpectation = expectation(description: "card tapped")
+
+        let sut = TripHeaderCard(
+            spec: .scheduled(stop, .init(
+                stop: stop,
+                stopSequence: 0,
+                alert: nil,
+                schedule: schedule,
+                prediction: nil,
+                vehicle: nil,
+                routes: []
+            )),
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(),
+            onTap: { tapExpectation.fulfill() },
+            now: now
+        )
+
+        try sut.inspect().find(ViewType.ZStack.self).callOnTapGesture()
+        wait(for: [tapExpectation], timeout: 1)
+        try XCTAssertNotNil(sut.inspect().find(ViewType.Image.self, where: { image in
+            try image.actualImage().name() == "fa-circle-info"
+        }))
     }
 }
