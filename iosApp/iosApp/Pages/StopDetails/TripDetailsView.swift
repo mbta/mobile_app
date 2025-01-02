@@ -55,7 +55,7 @@ struct TripDetailsView: View {
         content
             .task { stopDetailsVM.handleTripFilterChange(tripFilter) }
             .onDisappear {
-                if stopDetailsVM.tripData?.tripFilter == tripFilter {
+                if stopDetailsVM.tripData?.tripFilter == tripFilter || tripFilter == nil {
                     stopDetailsVM.clearTripDetails()
                 }
                 clearMapVehicle()
@@ -85,11 +85,13 @@ struct TripDetailsView: View {
                     }
                 }
             }
+            let vehicle = stopDetailsVM.tripData?.vehicle
             if let tripFilter,
+               tripFilter.vehicleId != nil ? vehicle != nil : true,
                let tripData = stopDetailsVM.tripData,
                tripData.tripFilter == tripFilter,
+               tripData.tripPredictionsLoaded,
                let global = stopDetailsVM.global,
-               let vehicle = stopDetailsVM.tripData?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
                    tripId: tripFilter.tripId,
                    directionId: tripData.trip.directionId,
@@ -99,15 +101,10 @@ struct TripDetailsView: View {
                    alertsData: nearbyVM.alerts,
                    globalData: global
                ) {
-                let vehicleStop: Stop? = getParentFor(vehicle.stopId, stops: global.stops)
-
-                let terminalStop: Stop? = getParentFor(tripData.trip.stopIds?.first, stops: global.stops)
-                let atTerminal = terminalStop != nil && terminalStop?.id == vehicleStop?.id
-                    && vehicle.currentStatus == .stoppedAt
-                let terminalEntry = atTerminal ? stops.terminalStop : nil
-
                 let routeAccents = stopDetailsVM.getTripRouteAccents()
-                tripDetails(tripFilter.tripId, stops, vehicle, vehicleStop, terminalEntry, routeAccents)
+                let terminalStop = getParentFor(tripData.trip.stopIds?.first, stops: global.stops)
+                let vehicleStop = getParentFor(vehicle?.stopId, stops: global.stops)
+                tripDetails(tripFilter.tripId, stops, terminalStop, vehicle, vehicleStop, routeAccents)
             } else {
                 loadingBody()
             }
@@ -118,44 +115,66 @@ struct TripDetailsView: View {
     @ViewBuilder private func tripDetails(
         _ tripId: String,
         _ stops: TripDetailsStopList,
+        _ terminalStop: Stop?,
         _ vehicle: Vehicle?,
         _ vehicleStop: Stop?,
-        _ terminalEntry: TripDetailsStopList.Entry?,
         _ routeAccents: TripRouteAccents
     ) -> some View {
-        let vehicleShown = vehicle != nil && vehicleStop != nil
+        let headerSpec: TripHeaderSpec? = {
+            if let vehicle, let vehicleStop {
+                let atTerminal = terminalStop != nil && terminalStop?.id == vehicleStop.id
+                    && vehicle.currentStatus == .stoppedAt
+                let terminalEntry = atTerminal ? stops.startTerminalEntry : nil
+                return vehicle.tripId == tripId
+                    ? .vehicle(vehicle, vehicleStop, terminalEntry)
+                    : .finishingAnotherTrip
+            } else if stops.stops.contains(where: { entry in entry.prediction != nil }) {
+                return .noVehicle
+            } else if let terminalStop, let terminalEntry = stops.startTerminalEntry {
+                return .scheduled(terminalStop, terminalEntry)
+            } else { return nil }
+        }()
+
+        let explainerType: ExplainerType? = switch headerSpec {
+        case .scheduled: routeAccents.type != .ferry ? .noPrediction : nil
+        case .finishingAnotherTrip: .finishingAnotherTrip
+        case .noVehicle: .noVehicle
+        default: nil
+        }
+        let onHeaderTap: (() -> Void)? = if let explainerType { {
+            stopDetailsVM.explainer = .init(type: explainerType, routeAccents: routeAccents)
+        } } else { nil }
+
         VStack(spacing: 0) {
-            vehicleCardView(vehicle, vehicleStop, tripId, terminalEntry, routeAccents).zIndex(1)
+            tripHeaderCard(tripId, headerSpec, onHeaderTap, routeAccents).zIndex(1)
             TripStops(
                 targetId: stopId,
                 stops: stops,
                 stopSequence: tripFilter?.stopSequence?.intValue,
-                vehicleShown: vehicleShown,
+                headerSpec: headerSpec,
                 now: now,
                 onTapLink: onTapStop,
                 routeAccents: routeAccents,
                 global: stopDetailsVM.global
             )
-            .padding(.top, vehicleShown ? -56 : 0)
+            .padding(.top, -56)
         }
     }
 
     @ViewBuilder
-    func vehicleCardView(
-        _ vehicle: Vehicle?,
-        _ vehicleStop: Stop?,
+    func tripHeaderCard(
         _ tripId: String,
-        _ terminalEntry: TripDetailsStopList.Entry?,
+        _ spec: TripHeaderSpec?,
+        _ onTap: (() -> Void)?,
         _ routeAccents: TripRouteAccents
     ) -> some View {
-        if let vehicle, let vehicleStop {
-            TripVehicleCard(
-                vehicle: vehicle,
-                stop: vehicleStop,
+        if let spec {
+            TripHeaderCard(
+                spec: spec,
                 tripId: tripId,
                 targetId: stopId,
-                terminalEntry: terminalEntry,
                 routeAccents: routeAccents,
+                onTap: onTap,
                 now: now
             )
         }
@@ -164,11 +183,11 @@ struct TripDetailsView: View {
     @ViewBuilder private func loadingBody() -> some View {
         let placeholderInfo = LoadingPlaceholders.shared.tripDetailsInfo()
         tripDetails(
-            "",
+            placeholderInfo.vehicle.tripId ?? "",
             placeholderInfo.stops,
+            nil,
             placeholderInfo.vehicle,
             placeholderInfo.vehicleStop,
-            nil,
             TripRouteAccents()
         ).loadingPlaceholder()
     }

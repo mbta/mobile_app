@@ -90,7 +90,8 @@ final class StopDetailsViewModelTests: XCTestCase {
         )
 
         stopDetailsVM.joinStopPredictions(stop.id)
-        await fulfillment(of: [connectExp], timeout: 2)
+        await fulfillment(of: [connectExp], timeout: 1)
+        try await Task.sleep(for: .seconds(1))
         XCTAssertEqual(stopDetailsVM.stopData?.predictionsByStop, predictions)
         stopDetailsVM.leaveStopPredictions()
         await fulfillment(of: [disconnectExp], timeout: 1)

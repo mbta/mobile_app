@@ -5,6 +5,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
@@ -18,7 +20,9 @@ fun StopDeparturesSummaryList(
     context: TripInstantDisplay.Context,
     onClick: (RealtimePatterns) -> Unit
 ) {
+    val localContext = LocalContext.current
     for (patterns in patternsAtStop.patterns) {
+
         when (patterns) {
             is RealtimePatterns.ByHeadsign -> {
                 HeadsignRowView(
@@ -29,7 +33,11 @@ fun StopDeparturesSummaryList(
                         if (condenseHeadsignPredictions) 1 else 2,
                         context
                     ),
-                    modifier = Modifier.clickable { onClick(patterns) },
+                    modifier =
+                        Modifier.clickable(
+                            onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
+                            onClick = { onClick(patterns) }
+                        ),
                     pillDecoration =
                         if (patternsAtStop.line != null) PillDecoration.OnRow(patterns.route)
                         else null
@@ -39,11 +47,16 @@ fun StopDeparturesSummaryList(
                 DirectionRowView(
                     patterns.direction,
                     patterns.format(now, patternsAtStop.representativeRoute.type, context),
-                    modifier = Modifier.clickable { onClick(patterns) },
+                    modifier =
+                        Modifier.clickable(
+                            onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
+                            onClick = { onClick(patterns) }
+                        ),
                     pillDecoration = PillDecoration.OnPrediction(patterns.routesByTrip)
                 )
             }
         }
+
         if (patterns != patternsAtStop.patterns.last()) {
             HorizontalDivider(color = MaterialTheme.colorScheme.surface)
         }
