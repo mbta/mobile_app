@@ -10,7 +10,7 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.rememberOnDispatcher
+import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 @ExperimentalMaterial3Api
@@ -42,8 +43,7 @@ fun StopDetailsPage(
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
     val departures =
-        rememberOnDispatcher(
-            Dispatchers.Default,
+        rememberSuspend(
             stop,
             globalResponse,
             schedulesResponse,
@@ -52,18 +52,20 @@ fun StopDetailsPage(
             pinnedRoutes,
             now
         ) {
-            if (globalResponse != null) {
-                StopDetailsDepartures.fromData(
-                    stop,
-                    globalResponse,
-                    schedulesResponse,
-                    predictionsResponse,
-                    alertData,
-                    pinnedRoutes.orEmpty(),
-                    now,
-                    useTripHeadsigns = false,
-                )
-            } else null
+            withContext(Dispatchers.Default) {
+                if (globalResponse != null) {
+                    StopDetailsDepartures.fromData(
+                        stop,
+                        globalResponse,
+                        schedulesResponse,
+                        predictionsResponse,
+                        alertData,
+                        pinnedRoutes.orEmpty(),
+                        now,
+                        useTripHeadsigns = false,
+                    )
+                } else null
+            }
         }
 
     LaunchedEffect(departures) { updateDepartures(departures) }
