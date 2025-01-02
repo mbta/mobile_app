@@ -63,7 +63,6 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -251,7 +250,7 @@ fun HomeMapView(
                 refreshRouteLineSource()
                 viewModel.refreshStopFeatures(now, selectedStop)
             }
-            LaunchedEffect(Dispatchers.Default, selectedStop) {
+            LaunchedEffect(selectedStop) {
                 positionViewportToStop()
                 viewModel.refreshStopFeatures(now, selectedStop)
             }
