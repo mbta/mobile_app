@@ -95,7 +95,8 @@ struct TripDetailsPage: View {
                 if let target, let stopSequence = target.stopSequence, let splitStops = stops.splitForTarget(
                     targetStopId: target.stopId,
                     targetStopSequence: Int32(stopSequence),
-                    globalData: globalResponse
+                    globalData: globalResponse,
+                    combinedStopDetails: false
                 ) {
                     TripDetailsStopListSplitView(
                         splitStops: splitStops,

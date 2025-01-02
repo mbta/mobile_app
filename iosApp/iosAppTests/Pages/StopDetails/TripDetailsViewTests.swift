@@ -81,8 +81,68 @@ final class TripDetailsViewTests: XCTestCase {
             stopDetailsVM: stopDetailsVM
         )
 
-        XCTAssertNotNil(try sut.inspect().find(TripVehicleCard.self).find(text: "Next stop"))
-        XCTAssertNotNil(try sut.inspect().find(TripVehicleCard.self).find(text: vehicleStop.name))
+        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: "Next stop"))
+        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: vehicleStop.name))
+    }
+
+    func testDisplaysScheduleCard() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { _ in }
+        let pattern = objects.routePattern(route: route) { _ in }
+
+        let firstStop = objects.stop { _ in }
+        let targetStop = objects.stop { _ in }
+        let trip = objects.trip(routePattern: pattern) { trip in
+            trip.stopIds = [firstStop.id, targetStop.id]
+        }
+
+        let schedule = objects.schedule { schedule in
+            schedule.routeId = route.id
+            schedule.stopId = targetStop.id
+            schedule.trip = trip
+        }
+
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(objects: objects)
+
+        let stopDetailsVM = StopDetailsViewModel(
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
+            tripPredictionsRepository: MockTripPredictionsRepository(),
+            tripRepository: MockTripRepository(
+                tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
+                tripResponse: .init(trip: trip)
+            )
+        )
+        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.pinnedRoutes = .init()
+        stopDetailsVM.stopData = .init(
+            stopId: targetStop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
+        )
+        stopDetailsVM.tripData = TripData(
+            tripFilter: .init(tripId: trip.id, vehicleId: nil, stopSequence: 0, selectionLock: false),
+            trip: trip,
+            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+            tripPredictions: .init(objects: objects),
+            vehicle: nil
+        )
+
+        let sut = TripDetailsView(
+            tripFilter: stopDetailsVM.tripData?.tripFilter,
+            stopId: targetStop.id,
+            now: now,
+            errorBannerVM: .init(),
+            nearbyVM: nearbyVM,
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: "Scheduled to depart"))
+        XCTAssertNotNil(try sut.inspect().find(TripHeaderCard.self).find(text: targetStop.name))
     }
 
     func testDisplaysStopList() throws {
