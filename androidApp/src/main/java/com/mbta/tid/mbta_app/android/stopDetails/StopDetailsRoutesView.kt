@@ -49,7 +49,8 @@ fun StopDetailsRoutesView(
                     patternsByStop,
                     now,
                     pinned = pinnedRoutes.contains(patternsByStop.routeIdentifier),
-                    onPin = pinRoute
+                    onPin = pinRoute,
+                    updateStopFilter
                 )
             }
         }
