@@ -341,7 +341,9 @@ fun HomeMapView(
                     Modifier.align(Alignment.TopEnd).padding(16.dp)
                 }
 
-            RecenterButton(onClick = { viewportProvider.follow() }, modifier = recenterModifier)
+            if (locationDataManager.hasPermission) {
+                RecenterButton(onClick = { viewportProvider.follow() }, modifier = recenterModifier)
+            }
             LocationAuthButton(
                 locationDataManager,
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
