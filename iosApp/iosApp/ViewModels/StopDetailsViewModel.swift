@@ -24,6 +24,7 @@ struct TripData {
     let trip: Trip
     var tripSchedules: TripSchedulesResponse
     var tripPredictions: PredictionsStreamDataResponse?
+    var tripPredictionsLoaded: Bool = false
     var vehicle: Vehicle?
 }
 
@@ -196,6 +197,7 @@ class StopDetailsViewModel: ObservableObject {
                     trip: tripData.trip,
                     tripSchedules: tripData.tripSchedules,
                     tripPredictions: tripData.tripPredictions,
+                    tripPredictionsLoaded: true,
                     vehicle: tripData.vehicle
                 )
                 return
@@ -208,6 +210,7 @@ class StopDetailsViewModel: ObservableObject {
                     trip: tripData.trip,
                     tripSchedules: tripData.tripSchedules,
                     tripPredictions: tripData.tripPredictions,
+                    tripPredictionsLoaded: true,
                     vehicle: nil
                 )
                 joinVehicle(tripFilter: tripFilter)
@@ -277,6 +280,7 @@ class StopDetailsViewModel: ObservableObject {
                 case let .ok(result): self.tripData?.tripPredictions = result.data
                 case .error: break
                 }
+                self.tripData?.tripPredictionsLoaded = true
             }
         }
     }

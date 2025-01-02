@@ -15,6 +15,7 @@ struct TripStopRow: View {
     var onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
     var routeAccents: TripRouteAccents
     var targeted: Bool = false
+    var firstStop: Bool = false
     var lastStop: Bool = false
 
     var body: some View {
@@ -80,6 +81,11 @@ struct TripStopRow: View {
     var routeLine: some View {
         ZStack(alignment: .center) {
             VStack(spacing: 0) {
+                if firstStop {
+                    // Use a clear rectangle as a spacer, the Spacer() view doesn't
+                    // take up enough space, this is always exactly half
+                    ColoredRouteLine(Color.clear)
+                }
                 ColoredRouteLine(routeAccents.color)
                 if lastStop {
                     // Use a clear rectangle as a spacer, the Spacer() view doesn't
