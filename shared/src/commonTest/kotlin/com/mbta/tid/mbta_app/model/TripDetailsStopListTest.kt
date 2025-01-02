@@ -800,6 +800,26 @@ class TripDetailsStopListTest {
     }
 
     @Test
+    fun `splitForTarget removes first stop from collapsed when no vehicle exists`() = test {
+        val list = stopListOf(
+            entry("A", 10),
+            entry("B", 20),
+            entry("C", 30),
+            entry("D", 40)
+        )
+
+        assertEquals(
+            TripDetailsStopList.TargetSplit(
+                firstStop = entry("A", 10),
+                collapsedStops = listOf(entry("B", 20)),
+                targetStop = entry("C", 30),
+                followingStops = listOf(entry("D", 40)),
+            ),
+            list.splitForTarget("C", 30, globalData(), true)
+        )
+    }
+
+    @Test
     fun `splitForTarget returns null if target not found`() = test {
         val list = stopListOf(entry("A", 10), entry("B", 20), entry("C", 30))
         stop("D")
