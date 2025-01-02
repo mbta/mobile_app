@@ -818,6 +818,47 @@
         }
       }
     },
+    "%@ location not available yet" : {
+      "comment" : "Headline on an explainer page about missing vehicle location,\nthe interpolated value can be either \"bus\" or \"train\",\nex \"[Bus] location not available yet\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "la ubicación del %@ aún no está disponible"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pozisyon %@ la poko disponib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "localização do %@ ainda não disponível"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vị trí %@ chưa có sẵn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@位置尚未确定"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@位置尚未確定"
+          }
+        }
+      }
+    },
     "%@ scheduled to depart %@" : {
       "comment" : "VoiceOver text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
       "localizations" : {
@@ -3474,6 +3515,47 @@
         }
       }
     },
+    "Finishing another trip" : {
+      "comment" : "Headline for a page explaining that the vehicle shown is finishing a different trip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terminando otro viaje"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fini yon lòt vwayaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terminando mais uma viagem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kết thúc thêm một chuyến đi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "完成另一趟旅程"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "結束另一趟旅程"
+          }
+        }
+      }
+    },
     "Fire" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4498,6 +4580,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在載入……"
+          }
+        }
+      }
+    },
+    "Location not available yet" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ubicación no disponible aún"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pozisyon poko disponib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Localização ainda não disponível"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vị trí chưa có sẵn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "位置尚未可用"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "位置尚未確定"
           }
         }
       }
@@ -8014,6 +8136,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用條款"
+          }
+        }
+      }
+    },
+    "The %@ assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip." : {
+      "comment" : "Description on an explainer page about missing vehicle location,\nthe interpolated value can be either \"bus\" or \"train\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El %@ asignado a esta ruta actualmente está realizando otro viaje. Lo mostraremos en la ruta una vez que comience este viaje."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ki asiyen nan wout sa a kounye a ap sèvi yon lòt vwayaj. Nou pral montre li sou wout la yon fwa li kòmanse vwayaj sa a."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "O %@ atribuído a esta rota está atualmente servindo outra viagem. Nós o mostraremos na rota assim que ela iniciar esta viagem."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ được chỉ định cho tuyến đường này hiện đang phục vụ một chuyến đi khác. Chúng tôi sẽ hiển thị nó trên tuyến đường khi nó bắt đầu chuyến đi này."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "指定给此路线的%@目前正在为另一趟行程提供服务。一旦它开始此趟行程，我们将在路线上显示它。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "分配給此路線的%@目前正在為另一趟行程提供服務。一旦旅行開始，我們就會在路線上顯示它。"
+          }
+        }
+      }
+    },
+    "The %@ location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location." : {
+      "comment" : "Description on an explainer page about missing vehicle location,\nthe interpolated value can be either \"bus\" or \"train\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Es posible que la ubicación %@ no esté disponible con anticipación si aún no se ha asignado un vehículo. Una vez que el conductor comience el viaje, comenzaremos a mostrar la ubicación en vivo."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kote %@ a ka pa disponib davans si yo poko plase yon machin. Yon fwa chofè a kòmanse vwayaj la, nou pral kòmanse montre kote a ap viv la."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "O local %@ pode não estar disponível com antecedência se um veículo ainda não tiver sido atribuído. Assim que o motorista iniciar a viagem, começaremos a mostrar o local ao vivo."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vị trí %@ có thể không khả dụng trước nếu xe chưa được chỉ định. Khi tài xế bắt đầu chuyến đi, chúng tôi sẽ bắt đầu hiển thị vị trí trực tiếp."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "如果尚未分配车辆，%@位置可能无法提前显示。一旦司机开始行程，我们将开始显示实时位置。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "如果尚未分配車輛，%@位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。"
           }
         }
       }

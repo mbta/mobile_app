@@ -9,7 +9,7 @@ import kotlinx.datetime.Instant
 
 data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
-constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
+constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
     data class Entry(
         val stop: Stop,
         val stopSequence: Int,
@@ -62,7 +62,7 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
         if (
             combinedStopDetails &&
                 firstCollapsed == startTerminalEntry &&
-                startTerminalEntry?.vehicle == null
+                (firstCollapsed?.vehicle == null || firstCollapsed.vehicle.tripId != this.tripId)
         ) {
             collapsedStops = collapsedStops.drop(1)
             firstStop = firstCollapsed
@@ -169,7 +169,6 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
 
                 predictions.forEach { prediction -> entries.putPrediction(prediction, vehicle) }
             }
-
             if (tripSchedules is TripSchedulesResponse.Schedules) {
                 tripSchedules.schedules.forEach { entries.putSchedule(it) }
             } else if (tripSchedules is TripSchedulesResponse.StopIds) {
@@ -184,7 +183,7 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
             }
 
             if (entries.isEmpty()) {
-                return TripDetailsStopList(emptyList())
+                return TripDetailsStopList(tripId, emptyList())
             }
 
             val sortedEntries = entries.entries.sortedBy { it.key }
@@ -205,6 +204,7 @@ constructor(val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
 
             val startTerminalEntry = getEntry(sortedEntries.firstOrNull()?.value)
             return TripDetailsStopList(
+                tripId,
                 sortedEntries
                     .dropWhile {
                         if (
