@@ -87,7 +87,8 @@ struct ExplainerPage: View {
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: .infinity)
-            }
+                    .foregroundStyle(explainer.routeAccents.textColor)
+            }.accessibilityHidden(true)
         default: EmptyView()
         }
     }
