@@ -70,6 +70,8 @@
     <string name="star_route">Tuyến đường sao</string>
     <string name="star_route_hint">ghim đường dẫn đến đầu danh sách</string>
     <string name="stop_closed">Điểm dừng bị đóng</string>
+    <string name="stop_filter_pills_filter_hint">Áp dụng bộ lọc để chỉ hiển thị các chuyến đến từ tuyến đường này</string>
+    <string name="stop_filter_pills_remove_hint">Xóa bộ lọc và hiển thị tất cả các tuyến đường</string>
     <string name="suspension">Đình chỉ</string>
     <string name="train">tàu</string>
     <string name="trains">tàu</string>

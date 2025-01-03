@@ -70,6 +70,8 @@
     <string name="star_route">Mete wout nan favori</string>
     <string name="star_route_hint">mete wout nan tèt lis la</string>
     <string name="stop_closed">Arè Fèmen</string>
+    <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt</string>
+    <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
     <string name="suspension">Sispansyon</string>
     <string name="train">tren</string>
     <string name="trains">tren yo</string>
