@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Clock
@@ -19,6 +20,7 @@ class UpcomingTripViewTest {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test")))
         }
         composeTestRule.onNodeWithText("Test").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -27,6 +29,7 @@ class UpcomingTripViewTest {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Hidden))
         }
         composeTestRule.onNodeWithText("Test").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
     @Test
@@ -37,6 +40,7 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule.onNodeWithText("Test").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
     @Test
@@ -48,6 +52,7 @@ class UpcomingTripViewTest {
             .onNodeWithText("Now")
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving now", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -60,6 +65,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("boarding now", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -72,6 +78,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving in 1 min", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -84,6 +91,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving now", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -98,6 +106,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving at $shortTime", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -113,6 +122,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving at $shortTime scheduled", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
     @Test
@@ -125,6 +135,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving in 5 min", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
@@ -138,6 +149,7 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("arriving in 5 min scheduled", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
     @Test
@@ -153,5 +165,6 @@ class UpcomingTripViewTest {
             .assertIsDisplayed()
             .assertContentDescriptionContains("and in 5 min", substring = true)
             .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -32,7 +33,7 @@ fun WithRealtimeIndicator(
             Image(
                 painterResource(R.drawable.live_data),
                 contentDescription = null,
-                modifier = Modifier.size(iconSize).padding(4.dp),
+                modifier = Modifier.size(iconSize).padding(4.dp).testTag("realtimeIndicator"),
                 alpha = 0.6f,
                 colorFilter = ColorFilter.tint(LocalContentColor.current)
             )
