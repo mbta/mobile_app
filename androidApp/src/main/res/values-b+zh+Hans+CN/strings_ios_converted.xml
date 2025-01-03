@@ -20,6 +20,8 @@
     <string name="location_services_off">定位服务已关闭</string>
     <string name="location_settings_prompt_body">打开MBTA Go的定位服务后，您将看到附近的交通选择并获得更好的搜索结果。</string>
     <string name="location_settings_prompt_keep_off">保持关闭定位服务</string>
+    <string name="location_settings_prompt_title">MBTA Go在定位服务开启时效果最佳</string>
+    <string name="location_settings_prompt_turn_on">在设置中打开</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b>分钟</string>
     <string name="more_link">更多</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
