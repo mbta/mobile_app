@@ -5,6 +5,8 @@
     <string name="arriving_abbr">ARR</string>
     <string name="back_button_label">Back</string>
     <string name="boarding_abbr">BRD</string>
+    <string name="bus">bus</string>
+    <string name="buses">buses</string>
     <string name="cancelled">Cancelled</string>
     <string name="close_button_label">Close</string>
     <string name="detour">Detour</string>
@@ -13,6 +15,8 @@
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send app feedback</string>
+    <string name="ferries">ferries</string>
+    <string name="ferry">ferry</string>
     <string name="filterShowAll">All</string>
     <string name="heading">Heading</string>
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
@@ -69,6 +73,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="stop_closed">Stop Closed</string>
     <string name="suspension">Suspension</string>
+    <string name="train">train</string>
+    <string name="trains">trains</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
     <string name="vehicle_arriving_first">%1$s arriving now</string>
     <string name="vehicle_arriving_other">and arriving now</string>

@@ -33,7 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
+import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -66,6 +68,7 @@ fun formatTime(time: Instant): String =
 @Composable
 fun UpcomingTripView(
     state: UpcomingTripViewState,
+    routeType: RouteType? = null,
     isFirst: Boolean = true,
     isOnly: Boolean = true,
     hideRealtimeIndicators: Boolean = false
@@ -73,7 +76,7 @@ fun UpcomingTripView(
     val modifier = Modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
     val context = LocalContext.current
     // TODO: actually pull through vehicle type
-    val vehicleType = ""
+    val vehicleType = routeType?.typeText(context, isOnly) ?: ""
     when (state) {
         is UpcomingTripViewState.Some ->
             when (state.trip) {

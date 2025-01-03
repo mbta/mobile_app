@@ -5,6 +5,8 @@
     <string name="arriving_abbr">到站</string>
     <string name="back_button_label">後退</string>
     <string name="boarding_abbr">上客</string>
+    <string name="bus">巴士</string>
+    <string name="buses">巴士</string>
     <string name="cancelled">已取消</string>
     <string name="close_button_label">關閉</string>
     <string name="detour">交通改道</string>
@@ -13,6 +15,8 @@
     <string name="feature_flag_debug_mode">調試模式</string>
     <string name="feature_flag_route_search">線路搜尋</string>
     <string name="feedback_link_form">傳送應用程式回饋</string>
+    <string name="ferries">輪渡</string>
+    <string name="ferry">輪渡</string>
     <string name="filterShowAll">全部</string>
     <string name="heading">方向</string>
     <string name="inbound">進站</string>
@@ -67,6 +71,8 @@
     <string name="star_route_hint">將路線固定到清單頂部</string>
     <string name="stop_closed">網站已關閉</string>
     <string name="suspension">暫停</string>
+    <string name="train">列車</string>
+    <string name="trains">列車</string>
     <string name="unstar_route_hint">從清單頂部取消固定路線</string>
     <string name="vehicle_arriving_first">%1$s現已到站</string>
     <string name="vehicle_arriving_other">下一趟車現已到站</string>

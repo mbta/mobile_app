@@ -5,6 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -41,6 +43,20 @@ class UpcomingTripViewTest {
         }
         composeTestRule.onNodeWithText("Test").assertDoesNotExist()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithCancelled() {
+        val instant = Instant.fromEpochSeconds(1722535384)
+        val shortTime = formatTime(instant)
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Cancelled(instant)))
+        }
+        composeTestRule
+            .onNodeWithText("Cancelled", substring = true)
+            .onParent()
+            .assertExists()
+            .assertContentDescriptionContains("arriving at $shortTime cancelled", substring = true)
     }
 
     @Test
@@ -153,10 +169,11 @@ class UpcomingTripViewTest {
     }
 
     @Test
-    fun testUpcomingTripViewWithSomeMinutesOther() {
+    fun testUpcomingTripViewWithSomeMinutesOtherBus() {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                RouteType.BUS,
                 isFirst = false
             )
         }
@@ -166,5 +183,22 @@ class UpcomingTripViewTest {
             .assertContentDescriptionContains("and in 5 min", substring = true)
             .assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeMinutesFirstBus() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                RouteType.BUS,
+                isFirst = true,
+                isOnly = false
+            )
+        }
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("buses arriving in 5 min", substring = true)
+            .assertIsDisplayed()
     }
 }
