@@ -25,7 +25,7 @@ class GlobalDataViewModel(private val globalRepository: IGlobalRepository) : Vie
     suspend fun getGlobalData() {
         when (val data = globalRepository.getGlobalData()) {
             is ApiResult.Ok -> _globalResponse.emit(data.data)
-            is ApiResult.Error -> TODO("handle errors")
+            is ApiResult.Error -> {}
         }
     }
 }

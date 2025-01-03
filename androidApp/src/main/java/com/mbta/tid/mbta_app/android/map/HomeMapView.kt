@@ -20,8 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavBackStackEntry
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
@@ -46,6 +44,7 @@ import com.mapbox.maps.viewannotation.annotationAnchor
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mbta.tid.mbta_app.android.appVariant
+import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getStopMapData
@@ -66,7 +65,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-@OptIn(MapboxExperimental::class, ExperimentalPermissionsApi::class)
+@OptIn(MapboxExperimental::class)
 @Composable
 fun HomeMapView(
     modifier: Modifier = Modifier,
@@ -95,12 +94,13 @@ fun HomeMapView(
 
     val now = timer(updateInterval = 300.seconds)
     val globalMapData = viewModel.rememberGlobalMapData(now)
-
     val isDarkMode = isSystemInDarkTheme()
     val stopMapData: StopMapResponse? = selectedStop?.let { getStopMapData(stopId = it.id) }
 
     val isNearby = currentNavEntry?.destination?.route?.contains("NearbyTransit") == true
     val isNearbyNotFollowing = !viewportProvider.isFollowingPuck && isNearby
+
+    val context = LocalContext.current
 
     fun handleStopClick(map: MapView, point: Point): Boolean {
         val pixel = map.mapboxMap.pixelForCoordinate(point)
@@ -199,8 +199,6 @@ fun HomeMapView(
         selectedStop = globalResponse?.stops?.get(stopId)
     }
 
-    val locationPermissions = locationDataManager.rememberPermissions()
-
     val cameraZoomFlow =
         remember(viewportProvider.cameraStateFlow) {
             viewportProvider.cameraStateFlow.map { it.zoom }
@@ -258,8 +256,6 @@ fun HomeMapView(
 
             LaunchedEffect(stopMapData) { updateDisplayedRoutesBasedOnStop() }
             LaunchedEffect(stopDetailsFilter) { updateDisplayedRoutesBasedOnStop() }
-
-            val context = LocalContext.current
 
             val locationProvider = remember { PassthroughLocationProvider() }
 
@@ -351,16 +347,15 @@ fun HomeMapView(
                     Modifier.align(Alignment.TopEnd).padding(16.dp)
                 }
 
-            RecenterButton(
-                onClick = {
-                    // don't request FINE if we already have COARSE
-                    if (!locationPermissions.permissions.any { it.status.isGranted }) {
-                        locationPermissions.launchMultiplePermissionRequest()
-                    }
-                    viewportProvider.follow()
-                },
-                modifier = recenterModifier
-            )
+            if (locationDataManager.hasPermission) {
+                RecenterButton(onClick = { viewportProvider.follow() }, modifier = recenterModifier)
+            }
+            if (isNearby) {
+                LocationAuthButton(
+                    locationDataManager,
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
+                )
+            }
         }
 
         LaunchedEffect(viewportProvider.isManuallyCentering) {

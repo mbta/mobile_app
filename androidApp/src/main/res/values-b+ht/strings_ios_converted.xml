@@ -21,6 +21,11 @@
     <string name="heading">Prale nan direksyon</string>
     <string name="inbound">Antran</string>
     <string name="loading">Chajman...</string>
+    <string name="location_services_off">Sèvis Pozisyon Fèmen</string>
+    <string name="location_settings_prompt_body">W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w ouvri Sèvis Pozisyon an pou MBTA Go.</string>
+    <string name="location_settings_prompt_keep_off">Kenbe Sèvis Pozisyon Fèmen</string>
+    <string name="location_settings_prompt_title">MBTA Go mache pi byen lè Sèvis Pozisyon w yo aktive</string>
+    <string name="location_settings_prompt_turn_on">Ouvri nan pa Paramèt</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
     <string name="more_link">Plis</string>
     <string name="more_page_footer">Ki fèt ak ♥ pa T a</string>
