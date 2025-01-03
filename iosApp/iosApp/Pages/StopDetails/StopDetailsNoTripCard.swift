@@ -10,32 +10,30 @@ import shared
 import SwiftUI
 
 struct StopDetailsNoTripCard: View {
-    var status: RealtimePatterns.Format?
+    var status: RealtimePatterns.Format
     var headerColor: Color
     var routeType: RouteType
 
     var body: some View {
-        if let status {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 16) {
-                    noPredictionImage(status).foregroundStyle(headerColor).frame(width: 48, height: 48)
-                    noPredictionHeader(status).font(Typography.title2Bold).foregroundStyle(headerColor)
-                }.frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 16) {
+                headerImage.foregroundStyle(headerColor).frame(width: 48, height: 48)
+                headerText.font(Typography.title2Bold).foregroundStyle(headerColor)
+            }.frame(maxWidth: .infinity, alignment: .leading)
 
-                if let details = noPredictionDetails(status) {
-                    HaloSeparator()
-                    Text(details).font(Typography.callout)
-                }
+            if let details = detailString {
+                HaloSeparator()
+                Text(details).font(Typography.callout)
             }
-            .padding(16)
-            .background(Color.fill3)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 1))
-            .padding(.horizontal, 16)
         }
+        .padding(16)
+        .background(Color.fill3)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 1))
+        .padding(.horizontal, 16)
     }
 
-    func noPredictionDetails(_ status: RealtimePatterns.Format) -> String? {
+    var detailString: String? {
         switch onEnum(of: status) {
         case .none: String(format: NSLocalizedString(
                 "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
@@ -49,7 +47,7 @@ struct StopDetailsNoTripCard: View {
     }
 
     @ViewBuilder
-    func noPredictionHeader(_ status: RealtimePatterns.Format) -> some View {
+    var headerText: some View {
         // Text needed to be copied from UpcomingTripView because that sets the font style,
         // which means we're unable to override to use a larger font if we use that view directly
         switch onEnum(of: status) {
@@ -64,17 +62,17 @@ struct StopDetailsNoTripCard: View {
     }
 
     @ViewBuilder
-    func noPredictionImage(_ status: RealtimePatterns.Format) -> some View {
+    var headerImage: some View {
         switch onEnum(of: status) {
         case .none: Image(.liveDataSlash)
             .resizable().scaledToFit().frame(width: 35, height: 35)
-        case .noSchedulesToday, .serviceEndedToday: noPredictionModeSlashImage
+        case .noSchedulesToday, .serviceEndedToday: modeSlashImage
             .resizable().scaledToFit().frame(width: 35, height: 35)
         default: EmptyView()
         }
     }
 
-    var noPredictionModeSlashImage: Image {
+    var modeSlashImage: Image {
         switch routeType {
         case .bus: Image(.modeBusSlash)
         case .commuterRail: Image(.modeCrSlash)
