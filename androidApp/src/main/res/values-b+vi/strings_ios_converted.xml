@@ -5,6 +5,8 @@
     <string name="arriving_abbr">ARR</string>
     <string name="back_button_label">Mặt sau</string>
     <string name="boarding_abbr">BRD</string>
+    <string name="bus">xe buýt</string>
+    <string name="buses">xe buýt</string>
     <string name="cancelled">Đã hủy</string>
     <string name="close_button_label">Đóng</string>
     <string name="detour">Đường vòng</string>
@@ -13,6 +15,8 @@
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi ý phản hồi về ứng dụng</string>
+    <string name="ferries">phà</string>
+    <string name="ferry">phà</string>
     <string name="filterShowAll">Tất cả</string>
     <string name="heading">Tiêu đề</string>
     <string name="inbound">Đến</string>
@@ -72,6 +76,8 @@
     <string name="star_route_hint">ghim đường dẫn đến đầu danh sách</string>
     <string name="stop_closed">Điểm dừng bị đóng</string>
     <string name="suspension">Đình chỉ</string>
+    <string name="train">tàu</string>
+    <string name="trains">tàu</string>
     <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>
     <string name="vehicle_arriving_first">%1$s đang đến</string>
     <string name="vehicle_arriving_other">và đang đến</string>

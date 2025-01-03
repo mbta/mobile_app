@@ -163,13 +163,13 @@ class ObjectCollectionBuilder {
     class RouteBuilder : ObjectBuilder<Route> {
         var id = uuid()
         var type = RouteType.LIGHT_RAIL
-        var color = ""
+        var color = "FFFFFF"
         var directionNames = listOf("", "")
         var directionDestinations = listOf("", "")
         var longName = ""
         var shortName = ""
         var sortOrder = 0
-        var textColor = ""
+        var textColor = "000000"
         var lineId: String? = null
         var routePatternIds = mutableListOf<String>()
 

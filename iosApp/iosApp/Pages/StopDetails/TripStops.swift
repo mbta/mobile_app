@@ -13,7 +13,7 @@ struct TripStops: View {
     let targetId: String
     let stops: TripDetailsStopList
     let stopSequence: Int?
-    let vehicleShown: Bool
+    let headerSpec: TripHeaderSpec?
     let now: Date
     let onTapLink: (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void
     let routeAccents: TripRouteAccents
@@ -25,12 +25,15 @@ struct TripStops: View {
     private var routeTypeText: String { routeAccents.type.typeText(isOnly: true) }
     private var stopsAway: Int? { splitStops?.collapsedStops.count }
     private var target: TripDetailsStopList.Entry? { splitStops?.targetStop }
+    private var hideTarget: Bool {
+        if case .scheduled = headerSpec, target != nil, target == stops.startTerminalEntry { true } else { false }
+    }
 
     init(
         targetId: String,
         stops: TripDetailsStopList,
         stopSequence: Int?,
-        vehicleShown: Bool = true,
+        headerSpec: TripHeaderSpec?,
         now: Date,
         onTapLink: @escaping (SheetNavigationStackEntry, TripDetailsStopList.Entry, String?) -> Void,
         routeAccents: TripRouteAccents,
@@ -39,7 +42,7 @@ struct TripStops: View {
         self.targetId = targetId
         self.stops = stops
         self.stopSequence = stopSequence
-        self.vehicleShown = vehicleShown
+        self.headerSpec = headerSpec
         self.now = now
         self.onTapLink = onTapLink
         self.routeAccents = routeAccents
@@ -48,9 +51,17 @@ struct TripStops: View {
             stops.splitForTarget(
                 targetStopId: targetId,
                 targetStopSequence: Int32(stopSequence),
-                globalData: global
+                globalData: global,
+                combinedStopDetails: true
             )
         } else { nil }
+    }
+
+    var showFirstStopSeparately: Bool {
+        switch headerSpec {
+        case .finishingAnotherTrip, .noVehicle: true
+        default: false
+        }
     }
 
     @ViewBuilder
@@ -82,14 +93,25 @@ struct TripStops: View {
         VStack(alignment: .center, spacing: 0) {
             if let splitStops, let target {
                 if !splitStops.collapsedStops.isEmpty, let stopsAway {
+                    if showFirstStopSeparately, let firstStop = splitStops.firstStop {
+                        TripStopRow(
+                            stop: firstStop,
+                            now: now.toKotlinInstant(),
+                            onTapLink: onTapLink,
+                            routeAccents: routeAccents,
+                            firstStop: true
+                        )
+                    }
                     DisclosureGroup(
                         isExpanded: $stopsExpanded,
                         content: {
                             VStack(spacing: 0) {
                                 HaloSeparator().overlay(alignment: .leading) {
-                                    // Lil 1x4 pt route color bar to maintain an
-                                    // unbroken route color line over the separator
-                                    ColoredRouteLine(routeAccents.color).padding(.leading, 42)
+                                    if !showFirstStopSeparately {
+                                        // Lil 1x4 pt route color bar to maintain an
+                                        // unbroken route color line over the separator
+                                        ColoredRouteLine(routeAccents.color).padding(.leading, 42)
+                                    }
                                 }
                                 stopList(list: splitStops.collapsedStops)
                             }
@@ -135,22 +157,29 @@ struct TripStops: View {
                         """
                     ))
                 }
-                TripStopRow(
-                    stop: target,
-                    now: now.toKotlinInstant(),
-                    onTapLink: onTapLink,
-                    routeAccents: routeAccents,
-                    targeted: true
-                )
-                .background(Color.fill3)
+                if !hideTarget {
+                    // If the target is the first stop and there's no vehicle,
+                    // it's already displayed in the trip header
+                    TripStopRow(
+                        stop: target,
+                        now: now.toKotlinInstant(),
+                        onTapLink: onTapLink,
+                        routeAccents: routeAccents,
+                        targeted: true,
+                        firstStop: showFirstStopSeparately && target == stops.startTerminalEntry
+                    )
+                    .background(Color.fill3)
+                }
                 stopList(list: splitStops.followingStops)
             } else {
                 stopList(list: stops.stops)
             }
         }
-        .padding(.top, vehicleShown ? 56 : 0)
+        .padding(.top, 56)
         .overlay(alignment: .topLeading) {
-            ColoredRouteLine(routeAccents.color).frame(maxHeight: vehicleShown ? 56 : 0).padding(.leading, 42)
+            if !showFirstStopSeparately {
+                ColoredRouteLine(routeAccents.color).frame(maxHeight: 56).padding(.leading, 42)
+            }
         }
         .background(Color.fill2)
         .clipShape(RoundedRectangle(cornerRadius: 8))

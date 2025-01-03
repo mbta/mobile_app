@@ -119,6 +119,7 @@ object LoadingPlaceholders {
             }
         return TripDetailsInfo(
             TripDetailsStopList(
+                trip.id,
                 (1..8).map { sequence ->
                     val stop = objects.stop { name = "Loading" }
                     val prediction =

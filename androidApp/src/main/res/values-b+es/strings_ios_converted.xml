@@ -5,6 +5,8 @@
     <string name="arriving_abbr">LLEGAN.</string>
     <string name="back_button_label">Atrás</string>
     <string name="boarding_abbr">ABORD.</string>
+    <string name="bus">autobús</string>
+    <string name="buses">autobuses</string>
     <string name="cancelled">Cancelado</string>
     <string name="close_button_label">Cerrar</string>
     <string name="detour">Desvío</string>
@@ -13,6 +15,8 @@
     <string name="feature_flag_debug_mode">Modo de Depuración</string>
     <string name="feature_flag_route_search">Buscador de rutas</string>
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
+    <string name="ferries">ferris</string>
+    <string name="ferry">ferry</string>
     <string name="filterShowAll">Todos</string>
     <string name="heading">Rumbo</string>
     <string name="inbound">Entrante</string>
@@ -72,6 +76,8 @@
     <string name="star_route_hint">Fijar ruta al principio de la lista</string>
     <string name="stop_closed">Parada cerrada</string>
     <string name="suspension">Suspensión</string>
+    <string name="train">tren</string>
+    <string name="trains">trenes</string>
     <string name="unstar_route_hint">desanclar ruta de la parte superior de la lista</string>
     <string name="vehicle_arriving_first">%1$s está llegando ahora</string>
     <string name="vehicle_arriving_other">y llegando ahora</string>

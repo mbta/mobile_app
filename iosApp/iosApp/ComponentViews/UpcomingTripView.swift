@@ -131,11 +131,11 @@ struct UpcomingTripView: View {
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(isFirst
-                    ? accessibilityFormatters.scheduleTimeFirst(
+                    ? accessibilityFormatters.cancelledFirst(
                         date: format.scheduledTime.toNSDate(),
                         vehicleText: routeType?.typeText(isOnly: isOnly) ?? ""
                     )
-                    : accessibilityFormatters.scheduleTimeOther(date: format.scheduledTime.toNSDate()))
+                    : accessibilityFormatters.cancelledOther(date: format.scheduledTime.toNSDate()))
             }
         case let .noService(alertEffect):
             NoServiceView(effect: .from(alertEffect: alertEffect))

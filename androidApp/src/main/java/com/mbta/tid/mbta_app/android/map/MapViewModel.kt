@@ -1,11 +1,9 @@
 package com.mbta.tid.mbta_app.android.map
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.mapbox.common.HttpServiceFactory
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.FeatureCollection
+import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteLineData
@@ -35,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.KoinComponent
@@ -103,18 +103,16 @@ open class MapViewModel(
     }
 
     override suspend fun globalMapData(now: Instant): GlobalMapData? =
-        globalResponse.first()?.let {
-            GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData, now))
+        withContext(Dispatchers.Default) {
+            globalResponse.first()?.let {
+                GlobalMapData(it, GlobalMapData.getAlertsByStop(it, alertsData, now))
+            }
         }
 
     @Composable
     override fun rememberGlobalMapData(now: Instant): GlobalMapData? {
-        var result by remember { mutableStateOf<GlobalMapData?>(null) }
         val globalResponse by this.globalResponse.collectAsState(initial = null)
-        LaunchedEffect(this.alertsData, globalResponse, now) {
-            launch(Dispatchers.IO) { result = globalMapData(now) }
-        }
-        return result
+        return rememberSuspend(this.alertsData, globalResponse, now) { globalMapData(now) }
     }
 
     override suspend fun refreshRouteLineData(now: Instant) {
