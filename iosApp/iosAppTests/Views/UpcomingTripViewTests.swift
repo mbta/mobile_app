@@ -111,6 +111,19 @@ final class UpcomingTripViewTests: XCTestCase {
         )
     }
 
+    func testCancelledAccessibilityLabel() throws {
+        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!.toKotlinInstant()
+        let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
+                                   routeType: .heavyRail,
+                                   isFirst: false,
+                                   isOnly: false)
+        let predictionView = try sut.inspect().find(ViewType.HStack.self)
+        XCTAssertEqual(
+            "and at 4:00 PM cancelled",
+            try predictionView.accessibilityLabel().string(locale: Locale(identifier: "en"))
+        )
+    }
+
     func testShuttleAccessibilityLabel() throws {
         let sut = UpcomingTripView(prediction: .noService(.shuttle), isFirst: false)
         XCTAssertEqual(

@@ -5,6 +5,8 @@
     <string name="arriving_abbr">ARR</string>
     <string name="back_button_label">Retounen</string>
     <string name="boarding_abbr">BRD</string>
+    <string name="bus">bis</string>
+    <string name="buses">bis yo</string>
     <string name="cancelled">Anile</string>
     <string name="close_button_label">Fèmen</string>
     <string name="detour">Detou</string>
@@ -13,6 +15,8 @@
     <string name="feature_flag_debug_mode">Mòd Debug</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye kòmantè sou aplikasyon</string>
+    <string name="ferries">bato yo</string>
+    <string name="ferry">bato</string>
     <string name="filterShowAll">Tout</string>
     <string name="heading">Prale nan direksyon</string>
     <string name="inbound">Antran</string>
@@ -67,6 +71,8 @@
     <string name="star_route_hint">mete wout nan tèt lis la</string>
     <string name="stop_closed">Arè Fèmen</string>
     <string name="suspension">Sispansyon</string>
+    <string name="train">tren</string>
+    <string name="trains">tren yo</string>
     <string name="unstar_route_hint">retire wout ki soti anlè lis la</string>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
