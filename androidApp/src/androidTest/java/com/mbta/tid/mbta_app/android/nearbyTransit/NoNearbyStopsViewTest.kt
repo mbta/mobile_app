@@ -13,7 +13,9 @@ class NoNearbyStopsViewTest {
 
     @Test
     fun displaysText() {
-        composeTestRule.setContent { NoNearbyStopsView({}, {}) }
+        composeTestRule.setContent {
+            NoNearbyStopsView(hideMaps = false, onOpenSearch = {}, onPanToDefaultCenter = {})
+        }
 
         composeTestRule.onNodeWithText("No nearby stops").assertIsDisplayed()
         composeTestRule.onNodeWithText("You’re outside the MBTA service area.").assertIsDisplayed()
@@ -27,6 +29,7 @@ class NoNearbyStopsViewTest {
         var pannedToDefaultCenter = false
         composeTestRule.setContent {
             NoNearbyStopsView(
+                hideMaps = false,
                 onOpenSearch = { openedSearch = true },
                 onPanToDefaultCenter = { pannedToDefaultCenter = true }
             )
