@@ -70,7 +70,8 @@ fun UpcomingTripView(
     state: UpcomingTripViewState,
     routeType: RouteType? = null,
     isFirst: Boolean = true,
-    isOnly: Boolean = true
+    isOnly: Boolean = true,
+    hideRealtimeIndicators: Boolean = false
 ) {
     val modifier = Modifier.widthIn(min = 48.dp).padding(bottom = 4.dp)
     val context = LocalContext.current
@@ -80,89 +81,102 @@ fun UpcomingTripView(
         is UpcomingTripViewState.Some ->
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
-                    Text(state.trip.text, modifier, fontSize = 13.sp)
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(state.trip.text, fontSize = 13.sp)
+                    }
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
                 is TripInstantDisplay.Boarding ->
-                    Text(
-                        stringResource(R.string.boarding_abbr),
-                        modifier.semantics {
-                            contentDescription =
-                                UpcomingTripAccessibilityFormatters.boardingLabel(
-                                    context = context,
-                                    isFirst = isFirst,
-                                    vehicleType = vehicleType
-                                )
-                        },
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                is TripInstantDisplay.Arriving ->
-                    Text(
-                        stringResource(R.string.arriving_abbr),
-                        modifier.semantics {
-                            contentDescription =
-                                UpcomingTripAccessibilityFormatters.arrivingLabel(
-                                    context,
-                                    isFirst,
-                                    vehicleType
-                                )
-                        },
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                is TripInstantDisplay.Now ->
-                    Text(
-                        stringResource(R.string.now),
-                        modifier.semantics {
-                            contentDescription =
-                                UpcomingTripAccessibilityFormatters.arrivingLabel(
-                                    context,
-                                    isFirst,
-                                    vehicleType
-                                )
-                        },
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                is TripInstantDisplay.Approaching ->
-                    Text(
-                        text = AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
-                        modifier =
-                            modifier.semantics {
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            stringResource(R.string.boarding_abbr),
+                            Modifier.semantics {
                                 contentDescription =
-                                    UpcomingTripAccessibilityFormatters.predictedMinutesLabel(
+                                    UpcomingTripAccessibilityFormatters.boardingLabel(
+                                        context = context,
+                                        isFirst = isFirst,
+                                        vehicleType = vehicleType
+                                    )
+                            },
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                is TripInstantDisplay.Arriving ->
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            stringResource(R.string.arriving_abbr),
+                            Modifier.semantics {
+                                contentDescription =
+                                    UpcomingTripAccessibilityFormatters.arrivingLabel(
                                         context,
-                                        minutes = 1,
                                         isFirst,
                                         vehicleType
                                     )
                             },
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                is TripInstantDisplay.Now ->
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            stringResource(R.string.now),
+                            Modifier.semantics {
+                                contentDescription =
+                                    UpcomingTripAccessibilityFormatters.arrivingLabel(
+                                        context,
+                                        isFirst,
+                                        vehicleType
+                                    )
+                            },
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                is TripInstantDisplay.Approaching ->
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            text =
+                                AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
+                            modifier =
+                                Modifier.semantics {
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.predictedMinutesLabel(
+                                            context,
+                                            minutes = 1,
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                },
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+                    }
                 is TripInstantDisplay.Time ->
-                    Text(
-                        formatTime(state.trip.predictionTime),
-                        modifier.semantics {
-                            contentDescription =
-                                UpcomingTripAccessibilityFormatters.predictedTimeLabel(
-                                    context,
-                                    time = formatTime(state.trip.predictionTime),
-                                    isFirst,
-                                    vehicleType
-                                )
-                        },
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            formatTime(state.trip.predictionTime),
+                            Modifier.semantics {
+                                contentDescription =
+                                    UpcomingTripAccessibilityFormatters.predictedTimeLabel(
+                                        context,
+                                        time = formatTime(state.trip.predictionTime),
+                                        isFirst,
+                                        vehicleType
+                                    )
+                            },
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
                         formatTime(state.trip.scheduledTime),
-                        modifier.then(Modifier.alpha(0.6F)).semantics {
+                        modifier.alpha(0.6F).semantics {
                             contentDescription =
                                 UpcomingTripAccessibilityFormatters.scheduledTimeLabel(
                                     context,
@@ -182,23 +196,25 @@ fun UpcomingTripView(
                             }
                     )
                 is TripInstantDisplay.Minutes ->
-                    Text(
-                        text =
-                            AnnotatedString.fromHtml(
-                                stringResource(R.string.minutes_abbr, state.trip.minutes)
-                            ),
-                        modifier =
-                            modifier.semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.predictedMinutesLabel(
-                                        context,
-                                        minutes = state.trip.minutes,
-                                        isFirst,
-                                        vehicleType
-                                    )
-                            },
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
+                    WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
+                        Text(
+                            text =
+                                AnnotatedString.fromHtml(
+                                    stringResource(R.string.minutes_abbr, state.trip.minutes)
+                                ),
+                            modifier =
+                                Modifier.semantics {
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.predictedMinutesLabel(
+                                            context,
+                                            minutes = state.trip.minutes,
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                },
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+                    }
                 is TripInstantDisplay.ScheduleMinutes ->
                     Text(
                         text =
@@ -206,7 +222,7 @@ fun UpcomingTripView(
                                 stringResource(R.string.minutes_abbr, state.trip.minutes)
                             ),
                         modifier =
-                            modifier.then(Modifier.alpha(0.6F)).semantics {
+                            modifier.alpha(0.6F).semantics {
                                 contentDescription =
                                     UpcomingTripAccessibilityFormatters.scheduledMinutesLabel(
                                         context,
