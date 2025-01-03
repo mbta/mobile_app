@@ -39,7 +39,10 @@ struct StopDetailsNoTripCard: View {
         switch onEnum(of: status) {
         case .none: String(format: NSLocalizedString(
                 "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
-                comment: "Explanation under the 'Predictions unavailable' header in stop details"
+                comment: """
+                Explanation under the 'Predictions unavailable' header in stop details.
+                The interpolated value can be "buses" or "trains".
+                """
             ), routeType.typeText(isOnly: false))
         default: nil
         }
