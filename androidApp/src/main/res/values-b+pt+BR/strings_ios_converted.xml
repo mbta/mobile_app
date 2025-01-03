@@ -70,6 +70,8 @@
     <string name="star_route">Marcar rota como favorita</string>
     <string name="star_route_hint">fixar rota no topo da lista</string>
     <string name="stop_closed">Parada fechada</string>
+    <string name="stop_filter_pills_filter_hint">Aplique um filtro para que apenas as chegadas desta rota sejam exibidas</string>
+    <string name="stop_filter_pills_remove_hint">Remova o filtro e exiba todas as rotas</string>
     <string name="suspension">Suspensão</string>
     <string name="train">trem</string>
     <string name="trains">trens</string>

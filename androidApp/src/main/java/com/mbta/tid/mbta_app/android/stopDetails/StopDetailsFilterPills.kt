@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -23,6 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -53,6 +57,17 @@ fun StopDetailsFilterPills(
     onTapRoutePill: (PillFilter) -> Unit,
     onClearFilter: () -> Unit
 ) {
+
+    @Composable
+    fun pillHint(appliedFilter: StopDetailsFilter?, pillFilter: PillFilter): String {
+        val filteredToPill = appliedFilter?.routeId == pillFilter.id
+        return if (filteredToPill) {
+            stringResource(R.string.stop_filter_pills_remove_hint)
+        } else {
+            stringResource(R.string.stop_filter_pills_filter_hint)
+        }
+    }
+
     Box(Modifier.fillMaxWidth().padding(end = 16.dp)) {
         val scrollState = rememberScrollState()
 
@@ -68,7 +83,15 @@ fun StopDetailsFilterPills(
                     Modifier.padding(end = 8.dp)
                         .minimumInteractiveComponentSize()
                         .bringIntoViewRequester(requester)
-                        .toggleable(isActive) { onTapRoutePill(filterBy) }
+                        .clickable(
+                            onClickLabel = pillHint(filter, filterBy),
+                            onClick = { onTapRoutePill(filterBy) },
+                        )
+                        .semantics {
+                            role = Role.Button
+                            selected = isActive
+                        }
+
                 when (filterBy) {
                     is PillFilter.ByRoute -> {
                         RoutePill(

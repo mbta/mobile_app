@@ -70,6 +70,8 @@
     <string name="star_route">為線路添加星號</string>
     <string name="star_route_hint">將路線固定到清單頂部</string>
     <string name="stop_closed">網站已關閉</string>
+    <string name="stop_filter_pills_filter_hint">應用過濾器，以便僅顯示來自該路線的到達</string>
+    <string name="stop_filter_pills_remove_hint">刪除過濾器並顯示所有路由</string>
     <string name="suspension">暫停</string>
     <string name="train">列車</string>
     <string name="trains">列車</string>

@@ -1781,6 +1781,47 @@
         }
       }
     },
+    "Apply a filter so that only arrivals from this route are displayed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aplicar un filtro para que sólo se muestren las llegadas de esta ruta"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aplike yon filtè pou ke sèlman arive soti nan wout sa a yo parèt"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aplique um filtro para que apenas as chegadas desta rota sejam exibidas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Áp dụng bộ lọc để chỉ hiển thị các chuyến đến từ tuyến đường này"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "应用过滤器，以便仅显示来自该路线的到达"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "應用過濾器，以便僅顯示來自該路線的到達"
+          }
+        }
+      }
+    },
     "Approaching" : {
       "comment" : "Label for a vehicle's next stop. For example: Approaching Alewife",
       "localizations" : {
@@ -6294,6 +6335,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重新載入資料"
+          }
+        }
+      }
+    },
+    "Remove the filter and display all routes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar el filtro y mostrar todas las rutas"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retire filtè a epi montre tout wout yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Remova o filtro e exiba todas as rotas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xóa bộ lọc và hiển thị tất cả các tuyến đường"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "删除过滤器并显示所有路线"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "刪除過濾器並顯示所有路由"
           }
         }
       }

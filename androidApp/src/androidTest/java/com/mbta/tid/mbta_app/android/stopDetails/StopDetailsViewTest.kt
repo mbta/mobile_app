@@ -2,6 +2,9 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.Coordinate
@@ -232,7 +235,8 @@ class StopDetailsViewTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Sample Stop").assertExists()
+        composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertIsDisplayed()
+
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
