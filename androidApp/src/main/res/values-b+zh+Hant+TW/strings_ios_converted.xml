@@ -18,6 +18,8 @@
     <string name="inbound">進站</string>
     <string name="loading">正在載入……</string>
     <string name="location_services_off">定位服務已關閉</string>
+    <string name="location_settings_prompt_body">打開MBTA Go的定位服務後，您將看到附近的交通選擇並獲得更好的搜尋結果。</string>
+    <string name="location_settings_prompt_keep_off">保持關閉定位服務</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b>分鐘</string>
     <string name="more_link">更多</string>
     <string name="more_page_footer">Made with ♥ by the T</string>

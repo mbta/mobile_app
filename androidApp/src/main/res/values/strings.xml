@@ -18,6 +18,11 @@
     <string name="icon_description_external_link" tools:ignore="MissingTranslation">External Link</string>
     <string name="inbound">Inbound</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
+    <string name="location_services_off">Location Services is off</string>
+    <string name="location_settings_prompt_body">You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go.</string>
+    <string name="location_settings_prompt_keep_off">Keep Location Services Off</string>
+    <string name="location_settings_prompt_title">MBTA Go works best with Location Services turned on"</string>
+    <string name="location_settings_prompt_turn_on">Turn on in Settings</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">More</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
@@ -85,5 +90,4 @@
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="westbound">Westbound</string>
-    <string name="location_services_off">Location Services is off</string>
 </resources>

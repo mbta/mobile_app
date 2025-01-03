@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.component
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -53,8 +52,6 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
     val requestPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             val currentTime = Clock.System.now()
-
-            Log.i("KB", "duration ${(currentTime - lastRequestStart!!).inWholeMilliseconds}")
 
             showSettingsPrompt =
                 shouldShowSettingsPrompt(
@@ -112,30 +109,28 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                                 showSettingsPrompt = false
                             }
                         ) {
-                            // TODO localize
-                            Text("Turn on in Settings", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                stringResource(R.string.location_settings_prompt_turn_on),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                             //
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showSettingsPrompt = false }) {
                             Text(
-                                "Keep Location Services Off",
+                                stringResource(R.string.location_settings_prompt_keep_off),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     },
                     title = {
                         Text(
-                            "MBTA Go works best with Location Services turned on",
+                            stringResource(R.string.location_settings_prompt_title),
                             style = MaterialTheme.typography.headlineLarge
                         )
                     },
-                    text = {
-                        Text(
-                            "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go."
-                        )
-                    },
+                    text = { Text(stringResource(R.string.location_settings_prompt_body)) },
                     containerColor = colorResource(R.color.fill3)
                 )
             }

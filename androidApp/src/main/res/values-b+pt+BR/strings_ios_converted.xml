@@ -18,6 +18,8 @@
     <string name="inbound">Entrada</string>
     <string name="loading">Carregando...</string>
     <string name="location_services_off">Serviços de localização desativados</string>
+    <string name="location_settings_prompt_body">Você verá opções de transporte próximas e obterá melhores resultados se ativar os Serviços de Localização para o MBTA Go.</string>
+    <string name="location_settings_prompt_keep_off">Manter serviços de localização desativados</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">Mais</string>
     <string name="more_page_footer">Feito com ♥ pelo T</string>
