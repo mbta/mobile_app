@@ -193,13 +193,13 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                     }
                 }
 
-            return if (patternStatuses.isEmpty()) {
+            return if (patternStatuses.isEmpty() || patternStatuses.size != realtimePatterns.size) {
                 null
             } else if (patternStatuses.all { patternStatuses.first()::class == it::class }) {
                 patternStatuses.first()
             } else if (
                 patternStatuses.all {
-                    when (patternStatuses.first()) {
+                    when (it) {
                         is RealtimePatterns.Format.NoSchedulesToday -> true
                         is RealtimePatterns.Format.ServiceEndedToday -> true
                         else -> false

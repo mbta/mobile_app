@@ -53,7 +53,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [tile1, tile2, tile3],
-            statuses: [],
+            noPredictionsStatus: nil,
             alerts: [],
             patternsByStop: .init(route: route, stop: stop, patterns: []),
             pinned: false,
@@ -61,8 +61,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
-            stopDetailsVM: .init()
-        )
+            stopDetailsVM: .init(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(text: "A"))
         XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
@@ -108,7 +109,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [tile1, tile2, tile3],
-            statuses: [],
+            noPredictionsStatus: nil,
             alerts: [],
             patternsByStop: .init(route: route, stop: stop, patterns: []),
             pinned: false,
@@ -116,8 +117,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
-            stopDetailsVM: .init()
-        )
+            stopDetailsVM: .init(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider())
 
         XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign))
         XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
@@ -162,7 +164,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [tile1, tile2, tile3],
-            statuses: [],
+            noPredictionsStatus: nil,
             alerts: [],
             patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
             pinned: false,
@@ -170,8 +172,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
-            stopDetailsVM: .init()
-        )
+            stopDetailsVM: .init(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: tile1.headsign))
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(RoutePill.self))
@@ -222,7 +225,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [tile1, tile2, tile3],
-            statuses: [],
+            noPredictionsStatus: nil,
             alerts: [],
             patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
             pinned: false,
@@ -230,9 +233,40 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
-            stopDetailsVM: .init()
-        )
+            stopDetailsVM: .init(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider())
 
         XCTAssertNotNil(try sut.inspect().find(TripDetailsView.self))
+    }
+
+    func testShowsNoTripCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { route in route.id = "Green-B" }
+        let line = objects.line { line in line.id = "Green" }
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            tiles: [],
+            noPredictionsStatus: RealtimePatterns.FormatServiceEndedToday(secondaryAlert: nil),
+            alerts: [],
+            patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
+            pinned: false,
+            now: Date.now,
+            errorBannerVM: .init(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: .init(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider())
+
+        XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
+        XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
+        XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
     }
 }
