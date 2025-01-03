@@ -218,6 +218,8 @@
 		9AE98DAB2CF4CCAE00EE80AA /* StopDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE98DAA2CF4CCAD00EE80AA /* StopDetailsViewModel.swift */; };
 		9AF093782BD943A4001DF39F /* DirectionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093772BD943A4001DF39F /* DirectionPicker.swift */; };
 		9AF0937A2BD962FF001DF39F /* DirectionPickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */; };
+		9AF28F0D2D2854C200EC1C12 /* StopDetailsNoTripCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF28F0C2D2854C200EC1C12 /* StopDetailsNoTripCard.swift */; };
+		9AF28F0F2D287DFF00EC1C12 /* StopDetailsNoTripCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF28F0E2D287DFF00EC1C12 /* StopDetailsNoTripCardTests.swift */; };
 		9AF29DF62CF5431A005AA4A3 /* DepartureTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */; };
 		9AF29DF82CF5454E005AA4A3 /* StopDetailsFilteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DF72CF5454E005AA4A3 /* StopDetailsFilteredView.swift */; };
 		9AF29DFA2CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF29DF92CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift */; };
@@ -518,6 +520,8 @@
 		9AF093772BD943A4001DF39F /* DirectionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPicker.swift; sourceTree = "<group>"; };
 		9AF093792BD962FF001DF39F /* DirectionPickerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionPickerTests.swift; sourceTree = "<group>"; };
 		9AF0937C2BDC1FC5001DF39F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9AF28F0C2D2854C200EC1C12 /* StopDetailsNoTripCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsNoTripCard.swift; sourceTree = "<group>"; };
+		9AF28F0E2D287DFF00EC1C12 /* StopDetailsNoTripCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsNoTripCardTests.swift; sourceTree = "<group>"; };
 		9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureTile.swift; sourceTree = "<group>"; };
 		9AF29DF72CF5454E005AA4A3 /* StopDetailsFilteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsFilteredView.swift; sourceTree = "<group>"; };
 		9AF29DF92CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailsUnfilteredView.swift; sourceTree = "<group>"; };
@@ -963,6 +967,7 @@
 				9A6172D42D1395EB002AF6D2 /* ExplainerPageTests.swift */,
 				9A4D0AD42CFEA16C009C1054 /* StopDetailsFilteredDepartureDetailsTests.swift */,
 				9A8E55AD2CFE6E55004ED059 /* StopDetailsFilteredHeaderTests.swift */,
+				9AF28F0E2D287DFF00EC1C12 /* StopDetailsNoTripCardTests.swift */,
 				9A2BCBDD2CED365200FB2913 /* StopDetailsPageTests.swift */,
 				9A2BCBDF2CED366300FB2913 /* StopDetailsViewTests.swift */,
 				9A9B9FFF2D03565800BCB2BD /* TripDetailsViewTests.swift */,
@@ -1130,10 +1135,11 @@
 				9AF29DF52CF54319005AA4A3 /* DepartureTile.swift */,
 				9AF093772BD943A4001DF39F /* DirectionPicker.swift */,
 				9A9733512D11CFF800242972 /* ExplainerPage.swift */,
-				9ACE4FCF2CE6707900FEB006 /* StopDetailsPage.swift */,
 				9AF29E052CFE2C4C005AA4A3 /* StopDetailsFilteredDepartureDetails.swift */,
 				9AF29DFF2CF63330005AA4A3 /* StopDetailsFilteredHeader.swift */,
 				9AF29DF72CF5454E005AA4A3 /* StopDetailsFilteredView.swift */,
+				9AF28F0C2D2854C200EC1C12 /* StopDetailsNoTripCard.swift */,
+				9ACE4FCF2CE6707900FEB006 /* StopDetailsPage.swift */,
 				9AF29DF92CF548E5005AA4A3 /* StopDetailsUnfilteredView.swift */,
 				9ACE4FD12CE6709B00FEB006 /* StopDetailsView.swift */,
 				9A97334E2D0CD61C00242972 /* StopDot.swift */,
@@ -1479,6 +1485,7 @@
 				6EFEE42F2BED18AD00810319 /* ScenePhaseChangeModifierTests.swift in Sources */,
 				9A52B3362C6A93390028EEAB /* AlertDetailsTests.swift in Sources */,
 				8C2106F52CA6159600228287 /* ErrorBannerTests.swift in Sources */,
+				9AF28F0F2D287DFF00EC1C12 /* StopDetailsNoTripCardTests.swift in Sources */,
 				6E4C375E2C4BDC9F00EA67CF /* ContentViewModelTests.swift in Sources */,
 				8CA606A92CC02FBC0019C448 /* ViewInspectorExtensions.swift in Sources */,
 				9A7B7CA92B98E41B0045214F /* NonNilModifierTests.swift in Sources */,
@@ -1569,6 +1576,7 @@
 				6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */,
 				9A2005CB2B97B68700F562E1 /* UpcomingTripView.swift in Sources */,
 				6EFEE42D2BED0FA800810319 /* ScenePhaseChangeModifier.swift in Sources */,
+				9AF28F0D2D2854C200EC1C12 /* StopDetailsNoTripCard.swift in Sources */,
 				8CD79F112C46F6E200AFF17D /* MapboxBridge.swift in Sources */,
 				EDC768C72BCF6FD6008BAE58 /* RouteCard.swift in Sources */,
 				9AB44A132B911E6400E8FFB3 /* DateExtension.swift in Sources */,

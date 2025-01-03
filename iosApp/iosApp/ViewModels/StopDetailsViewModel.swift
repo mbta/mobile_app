@@ -113,6 +113,7 @@ class StopDetailsViewModel: ObservableObject {
     }
 
     @MainActor func clearStopDetails() {
+        clearTripDetails()
         leaveStopPredictions()
         stopData = nil
         errorBannerRepository.clearDataError(key: "StopDetailsPage.getSchedule")
@@ -121,6 +122,7 @@ class StopDetailsViewModel: ObservableObject {
     @MainActor func clearTripDetails() {
         leaveTripChannels()
         tripData = nil
+        errorBannerRepository.clearDataError(key: "TripDetailsView.joinVehicle")
         errorBannerRepository.clearDataError(key: "TripDetailsView.loadTripSchedules")
         errorBannerRepository.clearDataError(key: "TripDetailsView.loadTrip")
     }
@@ -292,7 +294,7 @@ class StopDetailsViewModel: ObservableObject {
             Task { @MainActor in tripData?.vehicle = nil }
             return
         }
-        let errorKey = "TripDetailsPage.joinVehicle"
+        let errorKey = "TripDetailsView.joinVehicle"
         vehicleRepository.connect(vehicleId: vehicleId) { outcome in
             Task { @MainActor in
                 switch onEnum(of: outcome) {
@@ -403,7 +405,7 @@ class StopDetailsViewModel: ObservableObject {
     }
 
     private func loadTrip(tripFilter: TripDetailsFilter) async -> Trip? {
-        let errorKey = "TripDetailsPage.loadTrip"
+        let errorKey = "TripDetailsView.loadTrip"
         do {
             let response: ApiResult<TripResponse> = try await tripRepository.getTrip(tripId: tripFilter.tripId)
             let task = Task<Trip?, Error> { @MainActor in
@@ -431,7 +433,7 @@ class StopDetailsViewModel: ObservableObject {
             var result: TripSchedulesResponse?
             await fetchApi(
                 self.errorBannerRepository,
-                errorKey: "TripDetailsPage.loadTripSchedules",
+                errorKey: "TripDetailsView.loadTripSchedules",
                 getData: { try await self.tripRepository.getTripSchedules(tripId: tripFilter.tripId) },
                 onSuccess: { @MainActor in result = $0 },
                 onRefreshAfterError: { self.clearAndLoadTripDetails(tripFilter) }

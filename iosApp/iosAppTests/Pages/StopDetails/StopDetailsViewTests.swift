@@ -114,7 +114,7 @@ final class StopDetailsViewTests: XCTestCase {
             stopDetailsVM: .init()
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
         XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
     }
 

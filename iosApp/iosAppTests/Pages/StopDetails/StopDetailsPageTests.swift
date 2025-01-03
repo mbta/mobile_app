@@ -54,9 +54,11 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: stopFilter,
+                tripFilter: nil
+            ),
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
@@ -64,7 +66,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()))
         sut.updateDepartures()
 
         try await Task.sleep(for: .seconds(1))
@@ -91,9 +93,11 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil,
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: nil,
+                tripFilter: nil
+            ),
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
@@ -129,9 +133,11 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: stopFilter,
+                tripFilter: nil
+            ),
             errorBannerVM: .init(),
             nearbyVM: .init(combinedStopAndTrip: true),
             mapVM: .init(),
@@ -180,9 +186,11 @@ final class StopDetailsPageTests: XCTestCase {
         stopDetailsVM.stopData = nil
 
         let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: stopFilter,
+                tripFilter: nil
+            ),
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
@@ -259,9 +267,11 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil,
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: nil,
+                tripFilter: nil
+            ),
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
@@ -330,9 +340,11 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         let sut = StopDetailsPage(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
+            filters: .init(
+                stopId: stop.id,
+                stopFilter: stopFilter,
+                tripFilter: nil
+            ),
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),

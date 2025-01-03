@@ -250,15 +250,9 @@ struct ContentView: View {
                                 },
                                 content: coverContents
                             )
-                            .onChange(of: sheetItemId) { _ in
-                                selectedDetent = .halfScreen
-                            }
-                            .onAppear {
-                                recordSheetHeight(proxy.size.height)
-                            }
-                            .onChange(of: proxy.size.height) { newValue in
-                                recordSheetHeight(newValue)
-                            }
+                            .onChange(of: sheetItemId) { _ in selectedDetent = .halfScreen }
+                            .onAppear { recordSheetHeight(proxy.size.height) }
+                            .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
                         }
                     }
                 )
@@ -267,17 +261,20 @@ struct ContentView: View {
 
     @ViewBuilder
     var navSheetContents: some View {
+        let navEntry = nearbyVM.navigationStack.lastSafe()
         NavigationStack {
             VStack {
-                switch nearbyVM.navigationStack.lastSafe() {
+                switch navEntry {
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
                         StopDetailsPage(
-                            stopId: stopId,
-                            stopFilter: stopFilter,
-                            tripFilter: tripFilter,
+                            filters: .init(
+                                stopId: stopId,
+                                stopFilter: stopFilter,
+                                tripFilter: tripFilter
+                            ),
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
@@ -309,7 +306,6 @@ struct ContentView: View {
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM
                         )
-
                         .toolbar(.hidden, for: .tabBar)
                         .onAppear {
                             let filtered = filter != nil
@@ -340,18 +336,14 @@ struct ContentView: View {
                             nearbyVM: nearbyVM,
                             mapVM: mapVM
                         ).toolbar(.hidden, for: .tabBar)
-                            .onAppear {
-                                screenTracker.track(screen: .tripDetails)
-                            }
+                            .onAppear { screenTracker.track(screen: .tripDetails) }
                     }
                     .transition(transition)
 
                 case .nearby:
                     nearbySheetContents
                         .transition(transition)
-                        .onAppear {
-                            screenTracker.track(screen: .nearbyTransit)
-                        }
+                        .onAppear { screenTracker.track(screen: .nearbyTransit) }
 
                 default: EmptyView()
                 }
