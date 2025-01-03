@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +64,7 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @OptIn(MapboxExperimental::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -82,6 +84,7 @@ fun HomeMapView(
     var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
     val previousNavEntry: NavBackStackEntry? = rememberPrevious(current = currentNavEntry)
 
+    val coroutineScope = rememberCoroutineScope()
     val layerManager = remember { LazyObjectQueue<MapLayerManager>() }
     var selectedStop by remember { mutableStateOf<Stop?>(null) }
 
@@ -128,7 +131,7 @@ fun HomeMapView(
         viewportProvider.animateTo(stop.position.toMapbox())
     }
 
-    fun updateDisplayedRoutesBasedOnStop() {
+    suspend fun updateDisplayedRoutesBasedOnStop() {
         val globalResponse = globalResponse ?: return
         val railRouteShapes = railRouteShapes ?: return
         val stopMapData = stopMapData ?: return
@@ -159,19 +162,19 @@ fun HomeMapView(
         }
     }
 
-    fun refreshRouteLineSource() {
+    suspend fun refreshRouteLineSource() {
         val routeData = railRouteLineData ?: return
         layerManager.run {
             updateRouteSourceData(RouteFeaturesBuilder.buildCollection(routeData).toMapbox())
         }
     }
 
-    fun refreshStopSource() {
+    suspend fun refreshStopSource() {
         val sourceData = stopSourceData ?: return
         layerManager.run { updateStopSourceData(sourceData) }
     }
 
-    fun handleNearbyNavRestoration() {
+    suspend fun handleNearbyNavRestoration() {
         if (
             previousNavEntry?.destination?.route?.contains("NearbyTransit") == true &&
                 currentNavEntry?.destination?.route?.contains("StopDetails") == true
@@ -186,7 +189,7 @@ fun HomeMapView(
         }
     }
 
-    fun handleNavChange() {
+    suspend fun handleNavChange() {
         handleNearbyNavRestoration()
         val stopId = currentNavEntry?.arguments?.getString("stopId")
         if (stopId == null) {
@@ -211,8 +214,10 @@ fun HomeMapView(
             mapEvents =
                 MapEvents(
                     onStyleLoaded = {
-                        layerManager.run {
-                            addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
+                        coroutineScope.launch {
+                            layerManager.run {
+                                addLayers(if (isDarkMode) ColorPalette.dark else ColorPalette.light)
+                            }
                         }
                     },
                     onCameraChanged = { viewportProvider.updateCameraState(it.cameraState) }
@@ -299,8 +304,9 @@ fun HomeMapView(
             }
 
             MapEffect { map ->
-                if (layerManager.`object` == null)
-                    layerManager.`object` = MapLayerManager(map.mapboxMap, context)
+                if (layerManager.`object` == null) {
+                    layerManager.setObject(MapLayerManager(map.mapboxMap, context))
+                }
             }
 
             if (

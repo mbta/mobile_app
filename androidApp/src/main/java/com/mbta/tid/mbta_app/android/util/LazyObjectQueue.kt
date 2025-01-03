@@ -6,20 +6,22 @@ package com.mbta.tid.mbta_app.android.util
  */
 class LazyObjectQueue<T> {
     var `object`: T? = null
-        set(value) {
-            field = value
-            if (value != null) {
-                val oldQueue = queue
-                queue = mutableListOf()
-                for (op in oldQueue) {
-                    value.op()
-                }
+        private set
+
+    suspend fun setObject(value: T?) {
+        `object` = value
+        if (value != null) {
+            val oldQueue = queue
+            queue = mutableListOf()
+            for (op in oldQueue) {
+                value.op()
             }
         }
+    }
 
-    private var queue: MutableList<T.() -> Unit> = mutableListOf()
+    private var queue: MutableList<suspend T.() -> Unit> = mutableListOf()
 
-    fun run(op: T.() -> Unit) {
+    suspend fun run(op: suspend T.() -> Unit) {
         val `object` = this.`object`
         if (`object` != null) {
             `object`.op()

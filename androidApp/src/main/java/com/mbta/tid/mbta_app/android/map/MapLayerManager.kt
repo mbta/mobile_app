@@ -18,6 +18,8 @@ import com.mbta.tid.mbta_app.map.RouteLayerGenerator
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
 import com.mbta.tid.mbta_app.map.StopIcons
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MapLayerManager(val map: MapboxMap, context: Context) {
     init {
@@ -28,23 +30,27 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    fun addSource(source: GeoJsonSource) {
-        this.map.addSource(source)
+    suspend fun addSource(source: GeoJsonSource) {
+        withContext(Dispatchers.Main) { map.addSource(source) }
     }
 
-    fun addLayers(colorPalette: ColorPalette) {
+    suspend fun addLayers(colorPalette: ColorPalette) {
         val layers: List<MapboxLayer> =
-            RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
-                StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
-        for (layer in layers) {
-            if (map.styleLayerExists(checkNotNull(layer.layerId))) {
-                // Skip attempting to add layer if it already exists
-                continue
+            withContext(Dispatchers.Default) {
+                RouteLayerGenerator.createAllRouteLayers(colorPalette).map { it.toMapbox() } +
+                    StopLayerGenerator.createStopLayers(colorPalette).map { it.toMapbox() }
             }
-            if (map.styleLayerExists("puck")) {
-                map.addLayerBelow(layer, below = "puck")
-            } else {
-                map.addLayer(layer)
+        withContext(Dispatchers.Main) {
+            for (layer in layers) {
+                if (map.styleLayerExists(checkNotNull(layer.layerId))) {
+                    // Skip attempting to add layer if it already exists
+                    continue
+                }
+                if (map.styleLayerExists("puck")) {
+                    map.addLayerBelow(layer, below = "puck")
+                } else {
+                    map.addLayer(layer)
+                }
             }
         }
     }
@@ -55,24 +61,27 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    private fun updateSourceData(sourceId: String, data: FeatureCollection) {
-        if (map.styleSourceExists(sourceId)) {
-            map.setStyleGeoJSONSourceData(
-                sourceId,
-                "",
-                GeoJSONSourceData(checkNotNull(data.features()))
-            )
+    private suspend fun updateSourceData(sourceId: String, data: FeatureCollection) {
+        // styleSourceExists is not thread safe, but setStyleGeoJSONSourceData is
+        if (withContext(Dispatchers.Main) { map.styleSourceExists(sourceId) }) {
+            withContext(Dispatchers.Default) {
+                map.setStyleGeoJSONSourceData(
+                    sourceId,
+                    "",
+                    GeoJSONSourceData(checkNotNull(data.features()))
+                )
+            }
         } else {
             val source = GeoJsonSource.Builder(sourceId).featureCollection(data).build()
             addSource(source)
         }
     }
 
-    fun updateRouteSourceData(routeData: FeatureCollection) {
+    suspend fun updateRouteSourceData(routeData: FeatureCollection) {
         updateSourceData(RouteFeaturesBuilder.routeSourceId, routeData)
     }
 
-    fun updateStopSourceData(stopData: FeatureCollection) {
+    suspend fun updateStopSourceData(stopData: FeatureCollection) {
         updateSourceData(StopFeaturesBuilder.stopSourceId, stopData)
     }
 }

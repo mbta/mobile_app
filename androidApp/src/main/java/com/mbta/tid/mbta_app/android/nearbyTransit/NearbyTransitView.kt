@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.android.state.getNearby
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -32,6 +33,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.withRealtimeInfo
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun NearbyTransitView(
@@ -58,7 +61,7 @@ fun NearbyTransitView(
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
     val nearbyWithRealtimeInfo =
-        remember(
+        rememberSuspend(
             nearby,
             globalResponse,
             targetLocation,
@@ -68,19 +71,21 @@ fun NearbyTransitView(
             now,
             pinnedRoutes
         ) {
-            if (targetLocation != null) {
-                nearby?.withRealtimeInfo(
-                    globalData = globalResponse,
-                    sortByDistanceFrom = targetLocation,
-                    schedules,
-                    predictions,
-                    alertData,
-                    now,
-                    pinnedRoutes.orEmpty(),
-                    useTripHeadsigns = false,
-                )
-            } else {
-                null
+            withContext(Dispatchers.Default) {
+                if (targetLocation != null) {
+                    nearby?.withRealtimeInfo(
+                        globalData = globalResponse,
+                        sortByDistanceFrom = targetLocation,
+                        schedules,
+                        predictions,
+                        alertData,
+                        now,
+                        pinnedRoutes.orEmpty(),
+                        useTripHeadsigns = false,
+                    )
+                } else {
+                    null
+                }
             }
         }
 
