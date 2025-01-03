@@ -6826,6 +6826,9 @@
         }
       }
     },
+    "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are." : {
+      "comment" : "Explanation under the 'Predictions unavailable' header in stop details"
+    },
     "Service suspended" : {
       "comment" : "Possible alert effect\nSuspension alert VoiceOver text",
       "localizations" : {

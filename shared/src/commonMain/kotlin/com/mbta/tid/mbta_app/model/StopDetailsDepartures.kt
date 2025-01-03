@@ -181,6 +181,39 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             return routes?.let { StopDetailsDepartures(it) }
         }
 
+        fun getNoPredictionsStatus(
+            realtimePatterns: List<RealtimePatterns>,
+            now: Instant
+        ): RealtimePatterns.Format? {
+            val patternStatuses =
+                realtimePatterns.mapNotNull { pattern ->
+                    when (pattern) {
+                        is ByHeadsign -> getStatusFormat(pattern, now)
+                        else -> null
+                    }
+                }
+
+            return if (patternStatuses.isEmpty()) {
+                null
+            } else if (patternStatuses.all { patternStatuses.first()::class == it::class }) {
+                patternStatuses.first()
+            } else if (
+                patternStatuses.all {
+                    when (patternStatuses.first()) {
+                        is RealtimePatterns.Format.NoSchedulesToday -> true
+                        is RealtimePatterns.Format.ServiceEndedToday -> true
+                        else -> false
+                    }
+                }
+            ) {
+                // If there's a mixture of no service today and service ended, but nothing else,
+                // service ended takes precedence
+                RealtimePatterns.Format.ServiceEndedToday(null)
+            } else {
+                RealtimePatterns.Format.None(null)
+            }
+        }
+
         fun getStatusDepartures(
             realtimePatterns: List<RealtimePatterns>,
             now: Instant
