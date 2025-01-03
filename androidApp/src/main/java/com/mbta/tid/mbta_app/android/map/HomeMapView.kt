@@ -344,10 +344,12 @@ fun HomeMapView(
             if (locationDataManager.hasPermission) {
                 RecenterButton(onClick = { viewportProvider.follow() }, modifier = recenterModifier)
             }
-            LocationAuthButton(
-                locationDataManager,
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
-            )
+            if (isNearby) {
+                LocationAuthButton(
+                    locationDataManager,
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 86.dp)
+                )
+            }
         }
 
         LaunchedEffect(viewportProvider.isManuallyCentering) {

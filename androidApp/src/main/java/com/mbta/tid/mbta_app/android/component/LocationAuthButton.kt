@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.component
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -14,10 +15,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,34 +35,42 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modifier) {
+fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modifier = Modifier) {
     val locationPermissions = locationDataManager.rememberPermissions()
 
     var showSettingsPrompt by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
 
+    var lastRequestStart: Instant? by remember { mutableStateOf(null) }
+
     val requestPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            if (!locationPermissions.shouldShowRationale) {
-                // Either of the following just happened:
-                // * the system permissions dialog was shown and the user denied permissions
-                // * the system permissions dialog was not shown because the user has permanently
-                // denied permissions
+            val currentTime = Clock.System.now()
 
-                // the system dialog will not be shown again, so pop the prompt to go to settings
-                showSettingsPrompt = true
-            }
+            Log.i("KB", "duration ${(currentTime - lastRequestStart!!).inWholeMilliseconds}")
+
+            showSettingsPrompt =
+                shouldShowSettingsPrompt(
+                    locationPermissions.shouldShowRationale,
+                    lastRequestStart,
+                    currentTime
+                )
         }
+
     if (locationDataManager.hasPermission) {
         // Don't show button if they've granted any location permissions already
     } else {
         Button(
             modifier = modifier,
             onClick = {
+                lastRequestStart = Clock.System.now()
                 requestPermissionLauncher.launch(
                     arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -89,7 +101,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                 AlertDialog(
                     onDismissRequest = { showSettingsPrompt = false },
                     confirmButton = {
-                        Button(
+                        TextButton(
                             onClick = {
                                 context.startActivity(
                                     Intent(
@@ -101,23 +113,48 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                             }
                         ) {
                             // TODO localize
-                            Text("Turn on in Settings")
+                            Text("Turn on in Settings", style = MaterialTheme.typography.bodyMedium)
                             //
                         }
                     },
                     dismissButton = {
-                        Button(onClick = { showSettingsPrompt = false }) {
-                            Text("Keep Location Services Off")
+                        TextButton(onClick = { showSettingsPrompt = false }) {
+                            Text(
+                                "Keep Location Services Off",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                     },
-                    title = { Text("MBTA Go works best with Location Services turned on") },
+                    title = {
+                        Text(
+                            "MBTA Go works best with Location Services turned on",
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                    },
                     text = {
                         Text(
                             "You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go."
                         )
-                    }
+                    },
+                    containerColor = colorResource(R.color.fill3)
                 )
             }
         }
     }
+}
+
+/**
+ * Whether the user should be prompted to turn location permissions on in settings. True in two
+ * cases: the user was not shown the permissions prompt because they previously permanently denied
+ * permissions the user was shown the permissions prompt and permanently denied permissions in <
+ * 0.35 seconds (extreme edge case)
+ */
+fun shouldShowSettingsPrompt(
+    shouldShowRationale: Boolean,
+    startPermissionRequest: Instant?,
+    endPermissionRequest: Instant
+): Boolean {
+    return !shouldShowRationale &&
+        startPermissionRequest != null &&
+        (endPermissionRequest - startPermissionRequest!! < 0.35.seconds)
 }
