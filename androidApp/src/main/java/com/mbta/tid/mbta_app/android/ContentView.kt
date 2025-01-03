@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ fun ContentView(
     val navController = rememberNavController()
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData()
+    val hideMaps by viewModel.hideMaps.collectAsState()
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
@@ -80,11 +82,14 @@ fun ContentView(
     val sheetModifier = Modifier.fillMaxSize().background(colorResource(id = R.color.fill1))
     NavHost(navController = navController, startDestination = Routes.NearbyTransit) {
         composable<Routes.NearbyTransit> {
+            LaunchedEffect(null) { viewModel.loadHideMaps() }
+
             NearbyTransitPage(
                 modifier = sheetModifier,
                 NearbyTransit(
                     alertData = alertData,
                     globalResponse = globalResponse,
+                    hideMaps = hideMaps,
                     lastNearbyTransitLocationState = lastNearbyTransitLocationState,
                     nearbyTransitSelectingLocationState = nearbyTransitSelectingLocationState,
                     scaffoldState = scaffoldState,

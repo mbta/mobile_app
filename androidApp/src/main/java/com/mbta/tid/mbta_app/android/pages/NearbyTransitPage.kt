@@ -5,6 +5,7 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.boundsInWindow
@@ -35,6 +37,7 @@ import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
+import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
@@ -63,6 +66,7 @@ import kotlinx.coroutines.flow.debounce
 data class NearbyTransit(
     val alertData: AlertsStreamDataResponse?,
     val globalResponse: GlobalResponse?,
+    val hideMaps: Boolean,
     val lastNearbyTransitLocationState: MutableState<Position?>,
     val nearbyTransitSelectingLocationState: MutableState<Boolean>,
     val scaffoldState: BottomSheetScaffoldState,
@@ -129,173 +133,189 @@ fun NearbyTransitPage(
         nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
     }
 
-    SearchBarOverlay(::handleStopNavigation, currentNavEntry, searchFocusRequester) {
-        Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
-            BottomSheetScaffold(
-                sheetDragHandle = { DragHandle() },
-                sheetContent = {
-                    var sheetHeight by remember { mutableStateOf(0.dp) }
-                    val density = LocalDensity.current
-                    Box(
-                        modifier =
-                            Modifier.onGloballyPositioned {
-                                    // https://issuetracker.google.com/issues/287390075#comment7
-                                    sheetHeight =
-                                        with(density) { it.boundsInWindow().height.toDp() }
-                                }
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        NavHost(
-                            navController,
-                            startDestination = SheetRoutes.NearbyTransit,
-                            modifier =
-                                Modifier.height(sheetHeight)
-                                    .padding(outerSheetPadding)
-                                    .background(MaterialTheme.colorScheme.surface),
-                            enterTransition = {
-                                slideIntoContainer(
-                                    AnimatedContentTransitionScope.SlideDirection.Up,
-                                    animationSpec = tween(easing = EaseInOut)
-                                )
-                            }
-                        ) {
-                            composable<SheetRoutes.StopDetails> { backStackEntry ->
-                                val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-                                val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
+    @Composable
+    fun SheetContent(modifier: Modifier = Modifier) {
+        NavHost(
+            navController,
+            startDestination = SheetRoutes.NearbyTransit,
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface).then(modifier),
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(easing = EaseInOut)
+                )
+            }
+        ) {
+            composable<SheetRoutes.StopDetails> { backStackEntry ->
+                val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
+                val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
-                                fun updateStopDepartures(departures: StopDetailsDepartures?) {
-                                    viewModel.setStopDetailsDepartures(departures)
-                                    if (departures != null && stopDetailsFilter == null) {
-                                        updateStopFilter(departures.autoStopFilter())
-                                    }
-                                }
+                fun updateStopDepartures(departures: StopDetailsDepartures?) {
+                    viewModel.setStopDetailsDepartures(departures)
+                    if (departures != null && stopDetailsFilter == null) {
+                        updateStopFilter(departures.autoStopFilter())
+                    }
+                }
 
-                                LaunchedEffect(navRoute) {
-                                    if (navBarVisible) {
-                                        hideNavBar()
-                                    }
+                LaunchedEffect(navRoute) {
+                    if (navBarVisible) {
+                        hideNavBar()
+                    }
 
-                                    updateStopFilter(
-                                        if (
-                                            navRoute.filterRouteId != null &&
-                                                navRoute.filterDirectionId != null
-                                        )
-                                            StopDetailsFilter(
-                                                navRoute.filterRouteId,
-                                                navRoute.filterDirectionId
-                                            )
-                                        else null
-                                    )
-                                }
+                    updateStopFilter(
+                        if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
+                            StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
+                        else null
+                    )
+                }
 
-                                LaunchedEffect(navRoute) {
-                                    if (navBarVisible) {
-                                        hideNavBar()
-                                    }
+                LaunchedEffect(navRoute) {
+                    if (navBarVisible) {
+                        hideNavBar()
+                    }
 
-                                    updateStopFilter(
-                                        if (
-                                            navRoute.filterRouteId != null &&
-                                                navRoute.filterDirectionId != null
-                                        )
-                                            StopDetailsFilter(
-                                                navRoute.filterRouteId,
-                                                navRoute.filterDirectionId
-                                            )
-                                        else null
-                                    )
-                                }
+                    updateStopFilter(
+                        if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
+                            StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
+                        else null
+                    )
+                }
 
-                                if (stop != null) {
-                                    StopDetailsPage(
-                                        modifier = modifier,
-                                        stop,
-                                        stopDetailsFilter,
-                                        nearbyTransit.alertData,
-                                        onClose = { navController.popBackStack() },
-                                        updateStopFilter = ::updateStopFilter,
-                                        updateDepartures = ::updateStopDepartures
-                                    )
-                                }
-                            }
-                            composable<SheetRoutes.NearbyTransit> {
-                                LaunchedEffect(true) {
-                                    if (!navBarVisible) {
-                                        showNavBar()
-                                    }
+                if (stop != null) {
+                    StopDetailsPage(
+                        modifier = modifier,
+                        stop,
+                        stopDetailsFilter,
+                        nearbyTransit.alertData,
+                        onClose = { navController.popBackStack() },
+                        updateStopFilter = ::updateStopFilter,
+                        updateDepartures = ::updateStopDepartures
+                    )
+                }
+            }
+            composable<SheetRoutes.NearbyTransit> {
+                LaunchedEffect(true) {
+                    if (!navBarVisible) {
+                        showNavBar()
+                    }
 
-                                    updateStopFilter(null)
-                                }
+                    updateStopFilter(null)
+                }
 
-                                var targetLocation by remember { mutableStateOf<Position?>(null) }
-                                LaunchedEffect(nearbyTransit.viewportProvider) {
-                                    nearbyTransit.viewportProvider.cameraStateFlow
-                                        .debounce(0.5.seconds)
-                                        .collect {
-                                            // since this LaunchedEffect is cancelled when not on
-                                            // the
-                                            // nearby transit page, we don't need to check
-                                            targetLocation = it.center.toPosition()
-                                        }
-                                }
-                                LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
-                                    if (nearbyTransit.viewportProvider.isManuallyCentering) {
-                                        // TODO reset view model
-                                        targetLocation = null
-                                    }
-                                }
-                                LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {
-                                    if (nearbyTransit.viewportProvider.isFollowingPuck) {
-                                        // TODO reset view model
-                                        targetLocation = null
-                                    }
-                                }
+                var targetLocation by remember { mutableStateOf<Position?>(null) }
+                LaunchedEffect(nearbyTransit.viewportProvider) {
+                    nearbyTransit.viewportProvider.cameraStateFlow.debounce(0.5.seconds).collect {
+                        // since this LaunchedEffect is cancelled when not on the nearby transit
+                        // page, we don't need to check
+                        targetLocation = it.center.toPosition()
+                    }
+                }
+                LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
+                    if (nearbyTransit.viewportProvider.isManuallyCentering) {
+                        // TODO reset view model
+                        targetLocation = null
+                    }
+                }
+                LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {
+                    if (nearbyTransit.viewportProvider.isFollowingPuck) {
+                        // TODO reset view model
+                        targetLocation = null
+                    }
+                }
 
-                                NearbyTransitView(
-                                    alertData = nearbyTransit.alertData,
-                                    globalResponse = nearbyTransit.globalResponse,
-                                    targetLocation = targetLocation,
-                                    setLastLocation = {
-                                        nearbyTransit.lastNearbyTransitLocation = it
-                                    },
-                                    setSelectingLocation = {
-                                        nearbyTransit.nearbyTransitSelectingLocation = it
-                                    },
-                                    onOpenStopDetails = { stopId, filter ->
-                                        navController.navigate(
-                                            SheetRoutes.StopDetails(
-                                                stopId,
-                                                filter?.routeId,
-                                                filter?.directionId
-                                            )
-                                        )
-                                    },
-                                    noNearbyStopsView = {
-                                        NoNearbyStopsView(::openSearch, ::panToDefaultCenter)
-                                    }
-                                )
+                LaunchedEffect(nearbyTransit.hideMaps) {
+                    if (nearbyTransit.hideMaps) {
+                        nearbyTransit.locationDataManager.currentLocation.collect { location ->
+                            if (location != null) {
+                                nearbyTransit.viewportProvider.updateCameraState(location)
                             }
                         }
                     }
-                },
-                sheetContainerColor = MaterialTheme.colorScheme.surface,
-                scaffoldState = nearbyTransit.scaffoldState,
-            ) { sheetPadding ->
-                HomeMapView(
-                    Modifier.padding(sheetPadding),
-                    lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
-                    nearbyTransitSelectingLocationState =
-                        nearbyTransit.nearbyTransitSelectingLocationState,
-                    locationDataManager = nearbyTransit.locationDataManager,
-                    viewportProvider = nearbyTransit.viewportProvider,
-                    currentNavEntry = currentNavEntry,
-                    handleStopNavigation = ::handleStopNavigation,
-                    vehiclesData = vehiclesData,
-                    stopDetailsDepartures = stopDetailsDepartures,
-                    stopDetailsFilter = stopDetailsFilter,
-                    viewModel = mapViewModel
+                }
+
+                Column {
+                    if (nearbyTransit.hideMaps) {
+                        LocationAuthButton(
+                            nearbyTransit.locationDataManager,
+                            Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+
+                    NearbyTransitView(
+                        alertData = nearbyTransit.alertData,
+                        globalResponse = nearbyTransit.globalResponse,
+                        targetLocation = targetLocation,
+                        setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                        setSelectingLocation = {
+                            nearbyTransit.nearbyTransitSelectingLocation = it
+                        },
+                        onOpenStopDetails = { stopId, filter ->
+                            navController.navigate(
+                                SheetRoutes.StopDetails(
+                                    stopId,
+                                    filter?.routeId,
+                                    filter?.directionId
+                                )
+                            )
+                        },
+                        noNearbyStopsView = {
+                            NoNearbyStopsView(
+                                hideMaps = nearbyTransit.hideMaps,
+                                ::openSearch,
+                                ::panToDefaultCenter
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    SearchBarOverlay(::handleStopNavigation, currentNavEntry, searchFocusRequester) {
+        Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
+            if (nearbyTransit.hideMaps) {
+                val isNearbyTransit =
+                    currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+                SheetContent(
+                    Modifier.padding(top = if (isNearbyTransit) 86.dp else 0.dp).fillMaxSize()
                 )
+            } else {
+                BottomSheetScaffold(
+                    sheetDragHandle = { DragHandle() },
+                    sheetContent = {
+                        var sheetHeight by remember { mutableStateOf(0.dp) }
+                        val density = LocalDensity.current
+                        Box(
+                            modifier =
+                                Modifier.onGloballyPositioned {
+                                        // https://issuetracker.google.com/issues/287390075#comment7
+                                        sheetHeight =
+                                            with(density) { it.boundsInWindow().height.toDp() }
+                                    }
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            SheetContent(Modifier.height(sheetHeight).padding(outerSheetPadding))
+                        }
+                    },
+                    sheetContainerColor = MaterialTheme.colorScheme.surface,
+                    scaffoldState = nearbyTransit.scaffoldState,
+                ) { sheetPadding ->
+                    HomeMapView(
+                        Modifier.padding(sheetPadding),
+                        lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
+                        nearbyTransitSelectingLocationState =
+                            nearbyTransit.nearbyTransitSelectingLocationState,
+                        locationDataManager = nearbyTransit.locationDataManager,
+                        viewportProvider = nearbyTransit.viewportProvider,
+                        currentNavEntry = currentNavEntry,
+                        handleStopNavigation = ::handleStopNavigation,
+                        vehiclesData = vehiclesData,
+                        stopDetailsDepartures = stopDetailsDepartures,
+                        stopDetailsFilter = stopDetailsFilter,
+                        viewModel = mapViewModel
+                    )
+                }
             }
         }
     }
