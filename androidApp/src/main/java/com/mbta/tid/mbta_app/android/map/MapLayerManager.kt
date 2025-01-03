@@ -2,8 +2,6 @@ package com.mbta.tid.mbta_app.android.map
 
 import android.content.Context
 import android.graphics.drawable.BitmapDrawable
-import androidx.annotation.AnyThread
-import androidx.annotation.MainThread
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.GeoJSONSourceData
 import com.mapbox.maps.MapboxMap
@@ -32,12 +30,10 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    @AnyThread
     suspend fun addSource(source: GeoJsonSource) {
         withContext(Dispatchers.Main) { map.addSource(source) }
     }
 
-    @AnyThread
     suspend fun addLayers(colorPalette: ColorPalette) {
         val layers: List<MapboxLayer> =
             withContext(Dispatchers.Default) {
@@ -59,14 +55,12 @@ class MapLayerManager(val map: MapboxMap, context: Context) {
         }
     }
 
-    @MainThread
     fun resetPuckPosition() {
         if (map.styleLayerExists("puck")) {
             map.moveStyleLayer("puck", null)
         }
     }
 
-    @AnyThread
     private suspend fun updateSourceData(sourceId: String, data: FeatureCollection) {
         // styleSourceExists is not thread safe, but setStyleGeoJSONSourceData is
         if (withContext(Dispatchers.Main) { map.styleSourceExists(sourceId) }) {
