@@ -29,7 +29,11 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 
 @Composable
-fun NoNearbyStopsView(onOpenSearch: () -> Unit, onPanToDefaultCenter: () -> Unit) {
+fun NoNearbyStopsView(
+    hideMaps: Boolean,
+    onOpenSearch: () -> Unit,
+    onPanToDefaultCenter: () -> Unit
+) {
     Column(
         modifier =
             Modifier.clip(RoundedCornerShape(8.dp))
@@ -75,26 +79,29 @@ fun NoNearbyStopsView(onOpenSearch: () -> Unit, onPanToDefaultCenter: () -> Unit
                 )
             }
         }
-        OutlinedButton(
-            onClick = onPanToDefaultCenter,
-            modifier = Modifier.requiredHeightIn(min = 48.dp),
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, colorResource(R.color.key))
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically
+        if (!hideMaps) {
+            OutlinedButton(
+                onClick = onPanToDefaultCenter,
+                modifier = Modifier.requiredHeightIn(min = 48.dp),
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, colorResource(R.color.key))
             ) {
-                Text(
-                    stringResource(R.string.no_stops_nearby_pan),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Icon(
-                    painterResource(R.drawable.fa_map),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement =
+                        Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        stringResource(R.string.no_stops_nearby_pan),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Icon(
+                        painterResource(R.drawable.fa_map),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         }
     }
@@ -103,5 +110,5 @@ fun NoNearbyStopsView(onOpenSearch: () -> Unit, onPanToDefaultCenter: () -> Unit
 @Preview
 @Composable
 private fun NoNearbyStopsViewPreview() {
-    MyApplicationTheme { NoNearbyStopsView({}, {}) }
+    MyApplicationTheme { NoNearbyStopsView(hideMaps = false, {}, {}) }
 }

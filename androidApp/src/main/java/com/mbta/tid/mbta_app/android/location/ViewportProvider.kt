@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.location
 
+import android.location.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -92,6 +93,20 @@ constructor(var viewport: MapViewportState, isManuallyCentering: Boolean = false
         animation: MapAnimationOptions = MapAnimationDefaults.options
     ) {
         this.viewport.easeTo(options, animation)
+    }
+
+    fun updateCameraState(location: Location?) {
+        val latitude = location?.latitude ?: return
+        val longitude = location.longitude
+        updateCameraState(
+            CameraState(
+                Point.fromLngLat(longitude, latitude),
+                EdgeInsets(0.0, 0.0, 0.0, 0.0),
+                Defaults.zoom,
+                0.0,
+                0.0
+            )
+        )
     }
 
     fun updateCameraState(state: CameraState) {
