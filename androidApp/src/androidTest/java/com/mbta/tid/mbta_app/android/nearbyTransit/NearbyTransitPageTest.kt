@@ -54,13 +54,16 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
@@ -263,6 +266,8 @@ class NearbyTransitPageTest : KoinTest {
                 single<IVehiclesRepository> { MockVehiclesRepository() }
                 single<ISearchResultRepository> { MockSearchResultRepository() }
                 viewModelOf(::NearbyTransitViewModel)
+                single<IVisitHistoryRepository> { MockVisitHistoryRepository() }
+                single<VisitHistoryUsecase> { VisitHistoryUsecase(get()) }
             }
         )
     }

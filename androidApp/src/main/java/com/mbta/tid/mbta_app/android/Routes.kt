@@ -2,8 +2,8 @@ package com.mbta.tid.mbta_app.android
 
 import kotlinx.serialization.Serializable
 
-object Routes {
-    @Serializable object NearbyTransit
+sealed class Routes {
+    @Serializable object NearbyTransit : Routes()
 
-    @Serializable object More
+    @Serializable object More : Routes()
 }

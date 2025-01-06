@@ -101,13 +101,25 @@ fun ContentView(
                 hideNavBar = { navBarVisible = false },
                 bottomBar = {
                     if (navBarVisible) {
-                        BottomNavBar(navController = navController)
+                        BottomNavBar(
+                            currentDestination = navController.currentBackStackEntry?.destination,
+                            navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
+                            navigateToMore = { navController.navigate(Routes.More) }
+                        )
                     }
                 }
             )
         }
         composable<Routes.More> {
-            MorePage(bottomBar = { BottomNavBar(navController = navController) })
+            MorePage(
+                bottomBar = {
+                    BottomNavBar(
+                        currentDestination = navController.currentBackStackEntry?.destination,
+                        navigateToNearby = { navController.navigate(Routes.NearbyTransit) },
+                        navigateToMore = { navController.navigate(Routes.More) }
+                    )
+                }
+            )
         }
     }
 }
