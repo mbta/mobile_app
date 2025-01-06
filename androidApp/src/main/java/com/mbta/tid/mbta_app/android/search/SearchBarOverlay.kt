@@ -114,7 +114,7 @@ fun SearchBarOverlay(
                             leadingIcon = {
                                 Icon(
                                     painterResource(R.drawable.magnifying_glass),
-                                    "Search",
+                                    null,
                                     tint = colorResource(R.color.deemphasized)
                                 )
                             },
@@ -126,7 +126,7 @@ fun SearchBarOverlay(
                                     ) {
                                         Icon(
                                             painterResource(R.drawable.fa_xmark),
-                                            "Voice Search",
+                                            stringResource(R.string.close_button_label),
                                             tint = colorResource(R.color.deemphasized)
                                         )
                                     }
@@ -145,7 +145,7 @@ fun SearchBarOverlay(
                             item {
                                 Text(
                                     modifier = Modifier.padding(bottom = 10.dp),
-                                    text = "Recently Visited",
+                                    text = stringResource(R.string.recently_visited),
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.Bold
                                 )

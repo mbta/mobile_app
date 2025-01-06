@@ -114,7 +114,7 @@ fun NearbyTransitPage(
     val searchFocusRequester = remember { FocusRequester() }
 
     fun updateVisitHistory(stopId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             visitHistoryUsecase.addVisit(Visit.StopVisit(stopId))
         }
     }
