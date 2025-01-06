@@ -21,6 +21,11 @@
     <string name="heading">Tiêu đề</string>
     <string name="inbound">Đến</string>
     <string name="loading">Đang tải...</string>
+    <string name="location_services_off">Dịch vụ định vị đã tắt</string>
+    <string name="location_settings_prompt_body">Bạn sẽ thấy các lựa chọn phương tiện công cộng ở gần và có được kết quả tìm kiếm tốt hơn khi bật dịch vụ vị trí cho MBTA Go.</string>
+    <string name="location_settings_prompt_keep_off">Tắt dịch vụ định vị</string>
+    <string name="location_settings_prompt_title">MBTA Go hoạt động tốt nhất khi bật dịch vụ định vị</string>
+    <string name="location_settings_prompt_turn_on">Bật trong Cài đặt</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> phút</string>
     <string name="more_link">Thêm</string>
     <string name="more_page_footer">Được tạo ra với ♥ bởi T</string>
