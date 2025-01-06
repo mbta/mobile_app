@@ -21,6 +21,11 @@
     <string name="heading">Rumbo</string>
     <string name="inbound">Entrante</string>
     <string name="loading">Cargando…</string>
+    <string name="location_services_off">Los servicios de ubicación están desactivados</string>
+    <string name="location_settings_prompt_body">Verá opciones de tráfico cercanas y obtendrá mejores resultados de búsqueda cuando active los Servicios de Ubicación para MBTA Go.</string>
+    <string name="location_settings_prompt_keep_off">Mantener servicios de ubicación desactivados</string>
+    <string name="location_settings_prompt_title">MBTA Go funciona mejor con los Servicios de Ubicación activados</string>
+    <string name="location_settings_prompt_turn_on">Activar en Configuración</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="more_link">Más</string>
     <string name="more_page_footer">Hecho con ♥ por T</string>
@@ -70,6 +75,8 @@
     <string name="star_route">Marcar ruta favorita</string>
     <string name="star_route_hint">Fijar ruta al principio de la lista</string>
     <string name="stop_closed">Parada cerrada</string>
+    <string name="stop_filter_pills_filter_hint">Aplicar un filtro para que sólo se muestren las llegadas de esta ruta</string>
+    <string name="stop_filter_pills_remove_hint">Eliminar el filtro y mostrar todas las rutas</string>
     <string name="suspension">Suspensión</string>
     <string name="train">tren</string>
     <string name="trains">trenes</string>
