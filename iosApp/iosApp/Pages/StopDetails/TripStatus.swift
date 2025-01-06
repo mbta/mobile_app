@@ -22,14 +22,10 @@ struct TripStatus: View {
             } else {
                 EmptyView()
             }
-        case let .noService(alert):
-            UpcomingTripView(prediction: .noService(alert.alert.effect))
-        case .none:
-            UpcomingTripView(prediction: .none)
-        case .noSchedulesToday:
-            UpcomingTripView(prediction: .noSchedulesToday)
-        case .serviceEndedToday:
-            UpcomingTripView(prediction: .serviceEndedToday)
+        case let .disruption(alert):
+            UpcomingTripView(prediction: .disruption(alert.alert.effect))
+        case let .noTrips(format):
+            UpcomingTripView(prediction: .noTrips(format.noTripsFormat))
         case .loading:
             UpcomingTripView(prediction: .loading)
         }

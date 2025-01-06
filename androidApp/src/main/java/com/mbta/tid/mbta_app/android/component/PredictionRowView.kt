@@ -88,13 +88,10 @@ fun PredictionRowView(
                                 }
                             }
                         }
-                    is RealtimePatterns.Format.NoService ->
-                        UpcomingTripView(UpcomingTripViewState.NoService(predictions.alert.effect))
-                    is RealtimePatterns.Format.None -> UpcomingTripView(UpcomingTripViewState.None)
-                    is RealtimePatterns.Format.ServiceEndedToday ->
-                        UpcomingTripView(UpcomingTripViewState.ServiceEndedToday)
-                    is RealtimePatterns.Format.NoSchedulesToday ->
-                        UpcomingTripView(UpcomingTripViewState.NoSchedulesToday)
+                    is RealtimePatterns.Format.Disruption ->
+                        UpcomingTripView(UpcomingTripViewState.Disruption(predictions.alert.effect))
+                    is RealtimePatterns.Format.NoTrips ->
+                        UpcomingTripView((UpcomingTripViewState.NoTrips(predictions.noTripsFormat)))
                     is RealtimePatterns.Format.Loading ->
                         UpcomingTripView(UpcomingTripViewState.Loading)
                 }

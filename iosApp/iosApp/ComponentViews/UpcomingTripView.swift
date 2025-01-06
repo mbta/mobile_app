@@ -31,10 +31,8 @@ struct UpcomingTripView: View {
 
     enum State: Equatable {
         case loading
-        case none
-        case noSchedulesToday
-        case serviceEndedToday
-        case noService(shared.Alert.Effect)
+        case noTrips(RealtimePatterns.NoTripsFormat)
+        case disruption(shared.Alert.Effect)
         case some(TripInstantDisplay)
     }
 
@@ -137,23 +135,26 @@ struct UpcomingTripView: View {
                     )
                     : accessibilityFormatters.cancelledOther(date: format.scheduledTime.toNSDate()))
             }
-        case let .noService(alertEffect):
-            NoServiceView(effect: .from(alertEffect: alertEffect))
-        case .none:
-            Text(
-                "Predictions unavailable",
-                comment: "The status label when no predictions exist for a route and direction"
-            ).font(Typography.footnote)
-        case .serviceEndedToday:
-            Text(
-                "Service ended",
-                comment: "The status label for a route and direction when service was running earlier, but no more trips are running today"
-            ).font(Typography.footnote)
-        case .noSchedulesToday:
-            Text(
-                "No service today",
-                comment: "The status label for a route when no service is running for the entire service day"
-            ).font(Typography.footnote)
+        case let .disruption(alertEffect):
+            DisruptionView(effect: .from(alertEffect: alertEffect))
+        case let .noTrips(format):
+            switch onEnum(of: format) {
+            case .predictionsUnavailable:
+                Text(
+                    "Predictions unavailable",
+                    comment: "The status label when no predictions exist for a route and direction"
+                ).font(Typography.footnote)
+            case .serviceEndedToday:
+                Text(
+                    "Service ended",
+                    comment: "The status label for a route and direction when service was running earlier, but no more trips are running today"
+                ).font(Typography.footnote)
+            case .noSchedulesToday:
+                Text(
+                    "No service today",
+                    comment: "The status label for a route when no service is running for the entire service day"
+                ).font(Typography.footnote)
+            }
         case .loading:
             ProgressView()
         }
@@ -167,7 +168,7 @@ func makeTimeFormatter() -> DateFormatter {
     return formatter
 }
 
-struct NoServiceView: View {
+struct DisruptionView: View {
     let effect: Effect
 
     @ScaledMetric private var iconSize: CGFloat = 20
@@ -250,11 +251,11 @@ struct NoServiceView: View {
 struct UpcomingTripView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .trailing) {
-            UpcomingTripView(prediction: .noService(.suspension), routeType: .heavyRail)
-            UpcomingTripView(prediction: .noService(.shuttle), routeType: .heavyRail)
-            UpcomingTripView(prediction: .noService(.stopClosure), routeType: .heavyRail)
-            UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
-            UpcomingTripView(prediction: .noService(.detour), routeType: .heavyRail)
+            UpcomingTripView(prediction: .disruption(.suspension), routeType: .heavyRail)
+            UpcomingTripView(prediction: .disruption(.shuttle), routeType: .heavyRail)
+            UpcomingTripView(prediction: .disruption(.stopClosure), routeType: .heavyRail)
+            UpcomingTripView(prediction: .disruption(.detour), routeType: .heavyRail)
+            UpcomingTripView(prediction: .disruption(.detour), routeType: .heavyRail)
         }
         .padding(8)
         .frame(maxWidth: 150)

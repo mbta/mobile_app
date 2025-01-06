@@ -65,49 +65,69 @@ struct HeadsignRowView_Previews: PreviewProvider {
             }
 
             List {
-                HeadsignRowView(headsign: "Some",
-                                predictions: RealtimePatterns.FormatSome(trips: [
-                                    .init(
-                                        trip: .init(trip: trip1, prediction: prediction1),
-                                        routeType: RouteType.lightRail,
-                                        now: now.toKotlinInstant(), context: .nearbyTransit
-                                    ),
-                                    .init(
-                                        trip: .init(trip: trip2, prediction: prediction2),
-                                        routeType: .heavyRail,
-                                        now: now.toKotlinInstant(), context: .nearbyTransit
-                                    ),
-                                ], secondaryAlert: nil))
-                HeadsignRowView(headsign: "Some with Alert",
-                                predictions: RealtimePatterns.FormatSome(trips: [
-                                    .init(
-                                        trip: .init(trip: trip1, prediction: prediction1),
-                                        routeType: RouteType.lightRail,
-                                        now: now.toKotlinInstant(), context: .nearbyTransit
-                                    ),
-                                    .init(
-                                        trip: .init(trip: trip2, prediction: prediction2),
-                                        routeType: .heavyRail,
-                                        now: now.toKotlinInstant(), context: .nearbyTransit
-                                    ),
-                                ], secondaryAlert: secondaryAlert))
-                HeadsignRowView(headsign: "None",
-                                predictions: RealtimePatterns.FormatNone(secondaryAlert: nil))
-                HeadsignRowView(headsign: "None with Alert",
-                                predictions: RealtimePatterns
-                                    .FormatNone(secondaryAlert: secondaryAlert))
-                HeadsignRowView(headsign: "Decorated None with Alert",
-                                predictions: RealtimePatterns
-                                    .FormatNone(secondaryAlert: greenLineEAlert),
-                                pillDecoration: .onRow(route: greenLineERoute))
-                HeadsignRowView(headsign: "Loading",
-                                predictions: RealtimePatterns.FormatLoading.shared)
-                HeadsignRowView(headsign: "No Service",
-                                predictions: RealtimePatterns.FormatNoService(
-                                    alert: ObjectCollectionBuilder.Single.shared.alert { alert in
-                                        alert.effect = .suspension
-                                    }
-                                ))
+                HeadsignRowView(
+                    headsign: "Some",
+                    predictions: RealtimePatterns.FormatSome(trips: [
+                        .init(
+                            trip: .init(trip: trip1, prediction: prediction1),
+                            routeType: RouteType.lightRail,
+                            now: now.toKotlinInstant(), context: .nearbyTransit
+                        ),
+                        .init(
+                            trip: .init(trip: trip2, prediction: prediction2),
+                            routeType: .heavyRail,
+                            now: now.toKotlinInstant(), context: .nearbyTransit
+                        ),
+                    ], secondaryAlert: nil)
+                )
+                HeadsignRowView(
+                    headsign: "Some with Alert",
+                    predictions: RealtimePatterns.FormatSome(trips: [
+                        .init(
+                            trip: .init(trip: trip1, prediction: prediction1),
+                            routeType: RouteType.lightRail,
+                            now: now.toKotlinInstant(), context: .nearbyTransit
+                        ),
+                        .init(
+                            trip: .init(trip: trip2, prediction: prediction2),
+                            routeType: .heavyRail,
+                            now: now.toKotlinInstant(), context: .nearbyTransit
+                        ),
+                    ], secondaryAlert: secondaryAlert)
+                )
+                HeadsignRowView(
+                    headsign: "None",
+                    predictions: RealtimePatterns.FormatNoTrips(
+                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable()
+                    )
+                )
+                HeadsignRowView(
+                    headsign: "None with Alert",
+                    predictions: RealtimePatterns.FormatNoTrips(
+                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
+                        secondaryAlert: secondaryAlert
+                    )
+                )
+                HeadsignRowView(
+                    headsign: "Decorated None with Alert",
+                    predictions: RealtimePatterns.FormatNoTrips(
+                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
+                        secondaryAlert: greenLineEAlert
+                    ),
+                    pillDecoration: .onRow(route: greenLineERoute)
+                )
+                HeadsignRowView(
+                    headsign: "Loading",
+                    predictions: RealtimePatterns.FormatLoading.shared
+                )
+                HeadsignRowView(
+                    headsign: "No Service",
+                    predictions: RealtimePatterns.FormatDisruption(
+                        alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                            alert.effect = .suspension
+                        }
+                    )
+                )
             }
         }.font(Typography.body)
     }

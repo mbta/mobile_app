@@ -66,18 +66,17 @@ struct PredictionRowView: View {
                 }
             }
             .padding(.vertical, 4)
-        case let .noService(alert):
+
+        case let .disruption(alert):
             UpcomingTripView(
-                prediction: .noService(alert.alert.effect),
+                prediction: .disruption(alert.alert.effect),
                 isFirst: true,
                 isOnly: true
             )
-        case .none:
-            UpcomingTripView(prediction: .none, isFirst: true, isOnly: true)
-        case .noSchedulesToday:
-            UpcomingTripView(prediction: .noSchedulesToday, isFirst: true, isOnly: true)
-        case .serviceEndedToday:
-            UpcomingTripView(prediction: .serviceEndedToday, isFirst: true, isOnly: true)
+
+        case let .noTrips(format):
+            UpcomingTripView(prediction: .noTrips(format.noTripsFormat), isFirst: true, isOnly: true)
+
         case .loading:
             UpcomingTripView(prediction: .loading, isFirst: true, isOnly: true)
         }

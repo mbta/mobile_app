@@ -17,7 +17,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var tiles: [TileData]
-    var noPredictionsStatus: RealtimePatterns.Format?
+    var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
     var alerts: [shared.Alert]
     var patternsByStop: PatternsByStop
     var pinned: Bool
@@ -103,10 +103,10 @@ struct StopDetailsFilteredDepartureDetails: View {
         .ignoresSafeArea(.all)
     }
 
-    func handleViewportForStatus(_ status: RealtimePatterns.Format?) {
+    func handleViewportForStatus(_ status: RealtimePatterns.NoTripsFormat?) {
         if let stop, let status {
             switch onEnum(of: status) {
-            case .none: viewportProvider.animateTo(
+            case .predictionsUnavailable: viewportProvider.animateTo(
                     coordinates: stop.coordinate,
                     zoom: MapDefaults.shared.midZoomThreshold
                 )

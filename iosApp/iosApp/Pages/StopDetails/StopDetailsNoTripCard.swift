@@ -10,7 +10,7 @@ import shared
 import SwiftUI
 
 struct StopDetailsNoTripCard: View {
-    var status: RealtimePatterns.Format
+    var status: RealtimePatterns.NoTripsFormat
     var headerColor: Color
     var routeType: RouteType
 
@@ -35,7 +35,7 @@ struct StopDetailsNoTripCard: View {
 
     var detailString: String? {
         switch onEnum(of: status) {
-        case .none: String(format: NSLocalizedString(
+        case .predictionsUnavailable: String(format: NSLocalizedString(
                 "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
                 comment: """
                 Explanation under the 'Predictions unavailable' header in stop details.
@@ -51,24 +51,22 @@ struct StopDetailsNoTripCard: View {
         // Text needed to be copied from UpcomingTripView because that sets the font style,
         // which means we're unable to override to use a larger font if we use that view directly
         switch onEnum(of: status) {
-        case .none:
+        case .predictionsUnavailable:
             Text("Predictions unavailable")
         case .noSchedulesToday:
             Text("No service today")
         case .serviceEndedToday:
             Text("Service ended")
-        default: EmptyView()
         }
     }
 
     @ViewBuilder
     var headerImage: some View {
         switch onEnum(of: status) {
-        case .none: Image(.liveDataSlash)
+        case .predictionsUnavailable: Image(.liveDataSlash)
             .resizable().scaledToFit().frame(width: 35, height: 35)
         case .noSchedulesToday, .serviceEndedToday: modeSlashImage
             .resizable().scaledToFit().frame(width: 35, height: 35)
-        default: EmptyView()
         }
     }
 
