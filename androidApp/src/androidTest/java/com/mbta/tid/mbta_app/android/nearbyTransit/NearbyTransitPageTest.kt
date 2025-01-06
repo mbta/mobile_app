@@ -46,6 +46,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
@@ -56,6 +57,7 @@ import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
@@ -210,6 +212,9 @@ class NearbyTransitPageTest : KoinTest {
             module {
                 single<ISettingsRepository> { MockSettingsRepository() }
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
+                single<IGlobalRepository> {
+                    MockGlobalRepository(response = GlobalResponse(builder))
+                }
                 single<ISchedulesRepository> { MockScheduleRepository() }
                 single<IPredictionsRepository> {
                     object : IPredictionsRepository {

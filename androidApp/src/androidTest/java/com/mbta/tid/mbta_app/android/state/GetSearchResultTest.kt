@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -56,7 +56,7 @@ class GetSearchResultTest {
         val mockVisitHistoryRepository = MockVisitHistoryRepository()
         val visitHistory = VisitHistory()
 
-        backgroundScope.launch {
+        runBlocking {
             visitHistory.add(Visit.StopVisit(visitedStop.id))
             mockVisitHistoryRepository.setVisitHistory(visitHistory)
         }

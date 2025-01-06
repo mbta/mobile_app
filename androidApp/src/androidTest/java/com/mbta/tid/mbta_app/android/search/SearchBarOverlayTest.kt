@@ -29,7 +29,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -111,7 +111,7 @@ class SearchBarOverlayTest : KoinTest {
             }
         }
 
-        backgroundScope.launch {
+        runBlocking {
             mockVisitHistoryRepository.setVisitHistory(
                 VisitHistory().apply { add(Visit.StopVisit(visitedStop.id)) }
             )
@@ -121,7 +121,7 @@ class SearchBarOverlayTest : KoinTest {
         searchNode.assertExists()
         searchNode.requestFocus()
         composeTestRule.awaitIdle()
-
+        composeTestRule.onNodeWithText("Recently Visited").assertExists()
         composeTestRule.onNodeWithText(visitedStop.name).assertExists()
 
         searchNode.performTextInput("sto")
