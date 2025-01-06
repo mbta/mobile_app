@@ -96,4 +96,7 @@
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="westbound">Westbound</string>
+    <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
+    <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
+
 </resources>

@@ -75,6 +75,8 @@
     <string name="star_route">Marcar ruta favorita</string>
     <string name="star_route_hint">Fijar ruta al principio de la lista</string>
     <string name="stop_closed">Parada cerrada</string>
+    <string name="stop_filter_pills_filter_hint">Aplicar un filtro para que sólo se muestren las llegadas de esta ruta</string>
+    <string name="stop_filter_pills_remove_hint">Eliminar el filtro y mostrar todas las rutas</string>
     <string name="suspension">Suspensión</string>
     <string name="train">tren</string>
     <string name="trains">trenes</string>

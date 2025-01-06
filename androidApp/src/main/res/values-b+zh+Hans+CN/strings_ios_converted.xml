@@ -75,6 +75,8 @@
     <string name="star_route">为线路添加星号</string>
     <string name="star_route_hint">将路线固定到列表顶部</string>
     <string name="stop_closed">站点已关闭</string>
+    <string name="stop_filter_pills_filter_hint">应用过滤器，以便仅显示来自该路线的到达</string>
+    <string name="stop_filter_pills_remove_hint">删除过滤器并显示所有路线</string>
     <string name="suspension">暂停</string>
     <string name="train">列车</string>
     <string name="trains">列车</string>
