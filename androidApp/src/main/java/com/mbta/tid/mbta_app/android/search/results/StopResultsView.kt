@@ -43,6 +43,7 @@ fun StopResultsView(
     val scrollState = rememberScrollState()
 
     val routes = globalResponse?.getTypicalRoutesFor(stop.id) ?: emptyList()
+    val isLast = shape.bottomStart.toPx(Size.VisibilityThreshold, Density(1f)) == 0f
 
     Column {
         Row(
@@ -91,7 +92,7 @@ fun StopResultsView(
                 }
             }
         }
-        if (shape.bottomStart.toPx(Size.VisibilityThreshold, Density(1f)) == 0f) {
+        if (!isLast) {
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth().height(1.dp),
                 color = colorResource(id = R.color.fill1)

@@ -153,7 +153,9 @@ fun SearchBarOverlay(
                         }
                         items(searchResults?.stops ?: emptyList()) { stop ->
                             val shape =
-                                if (searchResults?.stops?.first() == stop) {
+                                if (searchResults?.stops?.size == 1) {
+                                    RoundedCornerShape(10.dp)
+                                } else if (searchResults?.stops?.first() == stop) {
                                     RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
                                 } else if (searchResults?.stops?.last() == stop) {
                                     RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
