@@ -17,7 +17,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var tiles: [TileData]
-    var statuses: [TileData]
+    var noPredictionsStatus: RealtimePatterns.Format?
     var alerts: [shared.Alert]
     var patternsByStop: PatternsByStop
     var pinned: Bool
@@ -29,6 +29,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @EnvironmentObject var viewportProvider: ViewportProvider
+
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
 
     var showTileHeadsigns: Bool {
@@ -37,9 +39,17 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
+    var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
+
+    var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
+    var routeType: RouteType { patternsByStop.representativeRoute.type }
+    var headerColor: Color {
+        // Regular bus color needs to be overridden for contrast, but SL should not be
+        let isSL = MapStopRoute.silver.matches(route: patternsByStop.representativeRoute)
+        return if routeType == .bus, !isSL { Color.text } else { routeColor }
+    }
+
     var body: some View {
-        let routeHex: String = patternsByStop.line?.color ?? patternsByStop.representativeRoute.color
-        let routeColor = Color(hex: routeHex)
         ZStack(alignment: .top) {
             routeColor.ignoresSafeArea(.all)
             Rectangle()
@@ -60,31 +70,54 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .padding(.bottom, 6)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
-                        departureTiles(patternsByStop, view)
-                            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-                            .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
+                        if !tiles.isEmpty {
+                            departureTiles(view)
+                                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                                .onAppear { if let id = tripFilter?.tripId { view.scrollTo(id) } }
+                        }
                     }
-                    alertCards(patternsByStop, routeColor)
-                    statusRows(patternsByStop)
+                    alertCards
 
-                    TripDetailsView(
-                        tripFilter: tripFilter,
-                        stopId: stopId,
-                        now: now,
-                        errorBannerVM: errorBannerVM,
-                        nearbyVM: nearbyVM,
-                        mapVM: mapVM,
-                        stopDetailsVM: stopDetailsVM
-                    )
+                    if let noPredictionsStatus {
+                        StopDetailsNoTripCard(
+                            status: noPredictionsStatus,
+                            headerColor: headerColor,
+                            routeType: routeType
+                        )
+                    } else {
+                        TripDetailsView(
+                            tripFilter: tripFilter,
+                            stopId: stopId,
+                            now: now,
+                            errorBannerVM: errorBannerVM,
+                            nearbyVM: nearbyVM,
+                            mapVM: mapVM,
+                            stopDetailsVM: stopDetailsVM
+                        )
+                    }
                 }
             }
         }
-
+        .onAppear { handleViewportForStatus(noPredictionsStatus) }
+        .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .ignoresSafeArea(.all)
     }
 
+    func handleViewportForStatus(_ status: RealtimePatterns.Format?) {
+        if let stop, let status {
+            switch onEnum(of: status) {
+            case .none: viewportProvider.animateTo(
+                    coordinates: stop.coordinate,
+                    zoom: MapDefaults.shared.midZoomThreshold
+                )
+            case .noSchedulesToday, .serviceEndedToday: viewportProvider.animateTo(coordinates: stop.coordinate)
+            default: break
+            }
+        }
+    }
+
     @ViewBuilder
-    func departureTiles(_ patternsByStop: PatternsByStop, _ view: ScrollViewProxy) -> some View {
+    func departureTiles(_ view: ScrollViewProxy) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 0) {
                 ForEach(tiles) { tileData in
@@ -121,8 +154,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     @ViewBuilder
-    func alertCards(_ patternsByStop: PatternsByStop, _ routeColor: Color?) -> some View {
-        ForEach(Array(alerts.enumerated()), id: \.offset) { index, alert in
+    var alertCards: some View {
+        ForEach(alerts, id: \.id) { alert in
             VStack(spacing: 0) {
                 StopDetailsAlertHeader(alert: alert, routeColor: routeColor)
                     .onTapGesture {
@@ -137,33 +170,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                             alertId: alert.id
                         )
                     }.padding(.horizontal, 8)
-                if index < alerts.count - 1 || !statuses.isEmpty {
-                    Divider().background(Color.halo)
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    func statusRows(_ patternsByStop: PatternsByStop) -> some View {
-        ForEach(Array(statuses.enumerated()), id: \.offset) { index, row in
-            VStack(spacing: 0) {
-                HeadsignRowView(
-                    headsign: row.headsign,
-                    predictions: row.formatted,
-                    pillDecoration: patternsByStop.line != nil ?
-                        .onRow(route: row.route) : .none
-                )
-                .accessibilityInputLabels([row.headsign])
-                .padding(.vertical, 10)
-                .padding(.horizontal, 16)
-                .background(Color.fill3)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .padding(.horizontal, 16)
-
-                if index < statuses.count - 1 {
-                    Divider().background(Color.halo)
-                }
             }
         }
     }

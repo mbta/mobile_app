@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RealtimePatterns.ByHeadsign
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -181,13 +180,41 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             return routes?.let { StopDetailsDepartures(it) }
         }
 
+        fun getNoPredictionsStatus(
+            realtimePatterns: List<RealtimePatterns>,
+            now: Instant
+        ): RealtimePatterns.Format? {
+            val patternStatuses =
+                realtimePatterns.mapNotNull { pattern -> getStatusFormat(pattern, now) }
+
+            return if (patternStatuses.isEmpty() || patternStatuses.size != realtimePatterns.size) {
+                null
+            } else if (patternStatuses.all { patternStatuses.first()::class == it::class }) {
+                patternStatuses.first()
+            } else if (
+                patternStatuses.all {
+                    when (it) {
+                        is RealtimePatterns.Format.NoSchedulesToday -> true
+                        is RealtimePatterns.Format.ServiceEndedToday -> true
+                        else -> false
+                    }
+                }
+            ) {
+                // If there's a mixture of no service today and service ended, but nothing else,
+                // service ended takes precedence
+                RealtimePatterns.Format.ServiceEndedToday(null)
+            } else {
+                RealtimePatterns.Format.None(null)
+            }
+        }
+
         fun getStatusDepartures(
             realtimePatterns: List<RealtimePatterns>,
             now: Instant
         ): List<StopDetailsStatusRowData> {
             return realtimePatterns.mapNotNull { pattern ->
                 when (pattern) {
-                    is ByHeadsign -> {
+                    is RealtimePatterns.ByHeadsign -> {
                         getStatusFormat(pattern, now)?.let {
                             StopDetailsStatusRowData(pattern.route, pattern.headsign, it)
                         }
@@ -197,17 +224,24 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             }
         }
 
-        private fun getStatusFormat(pattern: ByHeadsign, now: Instant): RealtimePatterns.Format? {
+        private fun getStatusFormat(
+            pattern: RealtimePatterns,
+            now: Instant
+        ): RealtimePatterns.Format? {
             val noPredictions =
                 pattern.upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+            val routeType =
+                when (pattern) {
+                    is RealtimePatterns.ByDirection -> pattern.representativeRoute.type
+                    is RealtimePatterns.ByHeadsign -> pattern.route.type
+                }
             val hasTripsToShow =
                 pattern.upcomingTrips.any {
                     formatUpcomingTrip(
                         now,
                         it,
-                        pattern.route.type,
-                        TripInstantDisplay.Context.StopDetailsFiltered,
-                        pattern.route.type.isSubway()
+                        routeType,
+                        TripInstantDisplay.Context.StopDetailsFiltered
                     ) != null
                 }
             return when {

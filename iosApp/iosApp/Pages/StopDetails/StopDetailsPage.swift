@@ -10,10 +10,14 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsPage: View {
+struct StopDetailsPageFilters: Equatable {
     var stopId: String
     var stopFilter: StopDetailsFilter?
     var tripFilter: TripDetailsFilter?
+}
+
+struct StopDetailsPage: View {
+    var filters: StopDetailsPageFilters
 
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
@@ -30,10 +34,12 @@ struct StopDetailsPage: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
+    var stopId: String { filters.stopId }
+    var stopFilter: StopDetailsFilter? { filters.stopFilter }
+    var tripFilter: TripDetailsFilter? { filters.tripFilter }
+
     init(
-        stopId: String,
-        stopFilter: StopDetailsFilter?,
-        tripFilter: TripDetailsFilter?,
+        filters: StopDetailsPageFilters,
         internalDepartures _: StopDetailsDepartures? = nil,
 
         errorBannerVM: ErrorBannerViewModel,
@@ -42,9 +48,7 @@ struct StopDetailsPage: View {
         stopDetailsVM: StopDetailsViewModel,
         viewportProvider: ViewportProvider
     ) {
-        self.stopId = stopId
-        self.stopFilter = stopFilter
-        self.tripFilter = tripFilter
+        self.filters = filters
 
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -91,10 +95,10 @@ struct StopDetailsPage: View {
                 errorBannerVM.loadingWhenPredictionsStale = !(stopData?.predictionsLoaded ?? true)
                 updateDepartures()
             }
-            .onChange(of: stopFilter) { nextStopFilter in setTripFilter(stopFilter: nextStopFilter) }
+            .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
             .onChange(of: internalDepartures) { _ in
                 let nextStopFilter = setStopFilter()
-                setTripFilter(stopFilter: nextStopFilter)
+                setTripFilter(filters: .init(stopId: stopId, stopFilter: nextStopFilter, tripFilter: tripFilter))
             }
             .task(id: stopId) {
                 while !Task.isCancelled {
@@ -126,10 +130,10 @@ struct StopDetailsPage: View {
         return nextStopFilter
     }
 
-    func setTripFilter(stopFilter: StopDetailsFilter?) {
+    func setTripFilter(filters: StopDetailsPageFilters) {
         let tripFilter = internalDepartures?.autoTripFilter(
-            stopFilter: stopFilter,
-            currentTripFilter: tripFilter,
+            stopFilter: filters.stopFilter,
+            currentTripFilter: filters.tripFilter,
             filterAtTime: now.toKotlinInstant()
         )
         nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)

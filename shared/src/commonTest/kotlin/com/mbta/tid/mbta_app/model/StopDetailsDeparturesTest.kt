@@ -12,6 +12,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.test.assertNull
 
 class StopDetailsDeparturesTest {
     @Test
@@ -1546,4 +1547,284 @@ class StopDetailsDeparturesTest {
                     route2.id, routePattern2.directionId, time)
             )
         }
+
+    @Test
+    fun `getNoPredictionsStatus resolves service ended`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByHeadsign(
+                route,
+                "A",
+                null,
+                listOf(routePattern1),
+                listOf()
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "B",
+                null,
+                listOf(routePattern2),
+                listOf()
+            )
+        )
+        assertEquals(
+            RealtimePatterns.Format.ServiceEndedToday(null),
+            StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+        )
+    }
+
+    @Test
+    fun `getNoPredictionsStatus resolves no scheduled service`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByHeadsign(
+                route,
+                "A",
+                null,
+                listOf(routePattern1),
+                listOf(),
+                hasSchedulesToday = false
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "B",
+                null,
+                listOf(routePattern2),
+                listOf(),
+                hasSchedulesToday = false
+            )
+        )
+        assertEquals(
+            RealtimePatterns.Format.NoSchedulesToday(null),
+            StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+        )
+    }
+
+    @Test
+    fun `getNoPredictionsStatus resolves a combination of no scheduled service and service ended`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "A" }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByHeadsign(
+                route,
+                "A",
+                null,
+                listOf(routePattern1),
+                listOf()
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "B",
+                null,
+                listOf(routePattern2),
+                listOf(),
+                hasSchedulesToday = false
+            )
+        )
+        assertEquals(
+            RealtimePatterns.Format.ServiceEndedToday(null),
+            StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+        )
+    }
+
+    @Test
+    fun `getNoPredictionsStatus resolves predictions unavailable`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.LIGHT_RAIL }
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "A" }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+        val routePattern3 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "C" }
+            }
+
+        val trip = objects.trip(routePattern3)
+        val schedule = objects.schedule {
+            tripId = trip.id
+            routeId = route.id
+            departureTime = now.plus(10.minutes)
+        }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByHeadsign(
+                route,
+                "A",
+                null,
+                listOf(routePattern1),
+                listOf()
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "B",
+                null,
+                listOf(routePattern2),
+                listOf(),
+                hasSchedulesToday = false
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "C",
+                null,
+                listOf(routePattern3),
+                listOf(UpcomingTrip(trip, schedule))
+            )
+        )
+        assertEquals(
+            RealtimePatterns.Format.None(null),
+            StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+        )
+    }
+
+    @Test
+    fun `getNoPredictionsStatus resolves null when not loaded`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.LIGHT_RAIL }
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "A" }
+            }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByHeadsign(
+                route,
+                "A",
+                null,
+                listOf(routePattern1),
+                listOf(),
+                allDataLoaded = false
+            )
+        )
+        assertNull(StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now))
+    }
+
+    @Test
+    fun `getNoPredictionsStatus resolves null when predictions exist`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.LIGHT_RAIL }
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip { headsign = "A" }
+            }
+
+        val trip = objects.trip(routePattern1)
+        val schedule = objects.schedule {
+            tripId = trip.id
+            routeId = route.id
+            departureTime = now.plus(10.minutes)
+        }
+        val prediction = objects.prediction {
+            tripId = trip.id
+            routeId = route.id
+            departureTime = now.plus(9.minutes)
+        }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByHeadsign(
+                route,
+                "A",
+                null,
+                listOf(routePattern1),
+                listOf(UpcomingTrip(trip, schedule, prediction))
+            )
+        )
+        assertNull(StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now))
+    }
+
+    @Test
+    fun `getNoPredictionsStatus resolves with ByDirection`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val line = objects.line()
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByDirection(
+                line,
+                listOf(route),
+                Direction(routePattern1.directionId, route),
+                listOf(routePattern1),
+                listOf()
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "B",
+                null,
+                listOf(routePattern2),
+                listOf()
+            )
+        )
+        assertEquals(
+            RealtimePatterns.Format.ServiceEndedToday(null),
+            StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+        )
+    }
 }

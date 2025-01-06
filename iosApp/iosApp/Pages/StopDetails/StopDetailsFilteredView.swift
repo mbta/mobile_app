@@ -32,7 +32,7 @@ struct StopDetailsFilteredView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
 
     var tiles: [TileData] = []
-    var statuses: [TileData] = []
+    var noPredictionsStatus: RealtimePatterns.Format?
 
     var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
     var nowInstant: Instant { now.toKotlinInstant() }
@@ -92,28 +92,20 @@ struct StopDetailsFilteredView: View {
                 )
             }
             let realtimePatterns = patternsByStop.patterns.filter { $0.directionId() == stopFilter.directionId }
-            statuses = Self.getStatusDepartures(realtimePatterns: realtimePatterns, now: nowInstant)
+            noPredictionsStatus = tiles.isEmpty ? StopDetailsDepartures.companion.getNoPredictionsStatus(
+                realtimePatterns: realtimePatterns,
+                now: nowInstant
+            ) : nil
 
         } else {
             alerts = []
-            statuses = []
+            noPredictionsStatus = nil
             tiles = []
         }
     }
 
     var pinned: Bool {
         stopDetailsVM.pinnedRoutes.contains(stopFilter.routeId)
-    }
-
-    static func getStatusDepartures(realtimePatterns: [RealtimePatterns], now: Instant) -> [TileData] {
-        StopDetailsDepartures.companion.getStatusDepartures(realtimePatterns: realtimePatterns, now: now)
-            .map {
-                TileData(
-                    route: $0.route,
-                    headsign: $0.headsign,
-                    formatted: $0.formatted
-                )
-            }
     }
 
     func toggledPinnedRoute() {
@@ -150,7 +142,7 @@ struct StopDetailsFilteredView: View {
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
                     tiles: tiles,
-                    statuses: statuses,
+                    noPredictionsStatus: noPredictionsStatus,
                     alerts: alerts,
                     patternsByStop: patternsByStop,
                     pinned: pinned,
@@ -211,7 +203,7 @@ struct StopDetailsFilteredView: View {
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
             tiles: tiles,
-            statuses: statuses,
+            noPredictionsStatus: nil,
             alerts: alerts,
             patternsByStop: loadingPatterns,
             pinned: pinned,
