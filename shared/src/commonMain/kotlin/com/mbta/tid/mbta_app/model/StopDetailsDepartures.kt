@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RealtimePatterns.ByHeadsign
 import com.mbta.tid.mbta_app.model.RealtimePatterns.Companion.formatUpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -186,12 +185,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             now: Instant
         ): RealtimePatterns.Format? {
             val patternStatuses =
-                realtimePatterns.mapNotNull { pattern ->
-                    when (pattern) {
-                        is ByHeadsign -> getStatusFormat(pattern, now)
-                        else -> null
-                    }
-                }
+                realtimePatterns.mapNotNull { pattern -> getStatusFormat(pattern, now) }
 
             return if (patternStatuses.isEmpty() || patternStatuses.size != realtimePatterns.size) {
                 null
@@ -220,7 +214,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         ): List<StopDetailsStatusRowData> {
             return realtimePatterns.mapNotNull { pattern ->
                 when (pattern) {
-                    is ByHeadsign -> {
+                    is RealtimePatterns.ByHeadsign -> {
                         getStatusFormat(pattern, now)?.let {
                             StopDetailsStatusRowData(pattern.route, pattern.headsign, it)
                         }
@@ -230,17 +224,24 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             }
         }
 
-        private fun getStatusFormat(pattern: ByHeadsign, now: Instant): RealtimePatterns.Format? {
+        private fun getStatusFormat(
+            pattern: RealtimePatterns,
+            now: Instant
+        ): RealtimePatterns.Format? {
             val noPredictions =
                 pattern.upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+            val routeType =
+                when (pattern) {
+                    is RealtimePatterns.ByDirection -> pattern.representativeRoute.type
+                    is RealtimePatterns.ByHeadsign -> pattern.route.type
+                }
             val hasTripsToShow =
                 pattern.upcomingTrips.any {
                     formatUpcomingTrip(
                         now,
                         it,
-                        pattern.route.type,
-                        TripInstantDisplay.Context.StopDetailsFiltered,
-                        pattern.route.type.isSubway()
+                        routeType,
+                        TripInstantDisplay.Context.StopDetailsFiltered
                     ) != null
                 }
             return when {

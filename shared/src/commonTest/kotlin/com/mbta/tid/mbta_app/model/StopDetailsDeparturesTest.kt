@@ -1787,4 +1787,44 @@ class StopDetailsDeparturesTest {
         )
         assertNull(StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now))
     }
+
+    @Test
+    fun `getNoPredictionsStatus resolves with ByDirection`() {
+        val now = Clock.System.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val line = objects.line()
+
+        val routePattern1 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+        val routePattern2 =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+
+        val realtimePatterns = listOf(
+            RealtimePatterns.ByDirection(
+                line,
+                listOf(route),
+                Direction(routePattern1.directionId, route),
+                listOf(routePattern1),
+                listOf()
+            ),
+            RealtimePatterns.ByHeadsign(
+                route,
+                "B",
+                null,
+                listOf(routePattern2),
+                listOf()
+            )
+        )
+        assertEquals(
+            RealtimePatterns.Format.ServiceEndedToday(null),
+            StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
+        )
+    }
 }
