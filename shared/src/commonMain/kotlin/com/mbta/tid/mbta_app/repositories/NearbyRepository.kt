@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -11,11 +10,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 
 interface INearbyRepository {
-    suspend fun getNearby(global: GlobalResponse, location: Coordinate): ApiResult<NearbyStaticData>
+    suspend fun getNearby(global: GlobalResponse, location: Position): ApiResult<NearbyStaticData>
 }
 
 class NearbyRepository : KoinComponent, INearbyRepository {
-    override suspend fun getNearby(global: GlobalResponse, location: Coordinate) =
+    override suspend fun getNearby(global: GlobalResponse, location: Position) =
         ApiResult.runCatching {
             val searchPosition =
                 Position(latitude = location.latitude, longitude = location.longitude)
@@ -61,7 +60,7 @@ class NearbyRepository : KoinComponent, INearbyRepository {
 class MockNearbyRepository : INearbyRepository {
     override suspend fun getNearby(
         global: GlobalResponse,
-        location: Coordinate
+        location: Position
     ): ApiResult<NearbyStaticData> {
         return ApiResult.Ok(NearbyStaticData(data = emptyList()))
     }
@@ -70,7 +69,7 @@ class MockNearbyRepository : INearbyRepository {
 class IdleNearbyRepository : INearbyRepository {
     override suspend fun getNearby(
         global: GlobalResponse,
-        location: Coordinate
+        location: Position
     ): ApiResult<NearbyStaticData> {
         return suspendCancellableCoroutine {}
     }

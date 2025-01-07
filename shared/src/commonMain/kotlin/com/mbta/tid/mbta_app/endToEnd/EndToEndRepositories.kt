@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.endToEnd
 
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -52,6 +51,7 @@ import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
@@ -118,7 +118,7 @@ fun endToEndModule(): Module {
             object : INearbyRepository {
                 override suspend fun getNearby(
                     global: GlobalResponse,
-                    location: Coordinate
+                    location: Position
                 ): ApiResult<NearbyStaticData> =
                     ApiResult.Ok(
                         NearbyStaticData(global, NearbyResponse(listOf(stopParkStreet.id)))

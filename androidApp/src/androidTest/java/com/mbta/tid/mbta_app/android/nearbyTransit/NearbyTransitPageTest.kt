@@ -31,7 +31,6 @@ import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.util.LocalActivity
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.map.RouteLineData
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
@@ -245,7 +244,7 @@ class NearbyTransitPageTest : KoinTest {
                     object : INearbyRepository {
                         override suspend fun getNearby(
                             global: GlobalResponse,
-                            location: Coordinate
+                            location: Position
                         ): ApiResult<NearbyStaticData> {
                             val data = NearbyStaticData(global, NearbyResponse(builder))
                             return ApiResult.Ok(data)

@@ -24,7 +24,6 @@ import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
@@ -49,7 +48,7 @@ fun NearbyTransitView(
     var nearby: NearbyStaticData? =
         getNearby(
             globalResponse,
-            targetLocation?.let { Coordinate(latitude = it.latitude, longitude = it.longitude) },
+            targetLocation,
             setLastLocation,
             setSelectingLocation,
         )
