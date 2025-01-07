@@ -262,7 +262,7 @@ struct TripHeaderCard: View {
         }
         guard let entry else { return nil }
         if let alert = entry.alert {
-            return .noService(alert.effect)
+            return .disruption(alert.effect)
         } else {
             let formatted = entry.format(now: now.toKotlinInstant(), routeType: routeAccents.type)
             return switch onEnum(of: formatted) {

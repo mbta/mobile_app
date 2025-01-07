@@ -125,7 +125,7 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testShuttleAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .noService(.shuttle), isFirst: false)
+        let sut = UpcomingTripView(prediction: .disruption(.shuttle), isFirst: false)
         XCTAssertEqual(
             "Shuttle buses replace service",
             try sut.inspect().find(text: "Shuttle")
@@ -134,7 +134,7 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testSuspensionAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .noService(.suspension), isFirst: false)
+        let sut = UpcomingTripView(prediction: .disruption(.suspension), isFirst: false)
         XCTAssertEqual(
             "Service suspended",
             try sut.inspect().find(text: "Suspension")

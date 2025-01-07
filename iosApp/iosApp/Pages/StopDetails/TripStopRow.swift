@@ -137,7 +137,7 @@ struct TripStopRow: View {
 
     var upcomingTripViewState: UpcomingTripView.State {
         if let alert = stop.alert {
-            .noService(alert.effect)
+            .disruption(alert.effect)
         } else {
             .some(stop.format(now: now, routeType: routeAccents.type))
         }

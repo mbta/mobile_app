@@ -15,9 +15,10 @@ import XCTest
 final class PredictionRowViewTests: XCTestCase {
     func testSecondaryAlert() throws {
         let sut = PredictionRowView(
-            predictions: RealtimePatterns.FormatNone(secondaryAlert: .init(
-                iconName: "alert-large-bus-issue"
-            )),
+            predictions: RealtimePatterns.FormatNoTrips(
+                noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
+                secondaryAlert: .init(iconName: "alert-large-bus-issue")
+            ),
             pillDecoration: .none,
             destination: { EmptyView() }
         )

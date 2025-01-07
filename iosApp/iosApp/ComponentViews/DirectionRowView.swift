@@ -48,29 +48,39 @@ struct DirectionRowView_Previews: PreviewProvider {
                 prediction.departureTime = now.addingTimeInterval(12 * 60).toKotlinInstant()
             }
             List {
-                DirectionRowView(direction: Direction(name: "West", destination: "Some", id: 0),
-                                 predictions: RealtimePatterns.FormatSome(trips: [
-                                     .init(
-                                         trip: .init(trip: trip1, prediction: prediction1),
-                                         routeType: RouteType.heavyRail,
-                                         now: now.toKotlinInstant(), context: .nearbyTransit
-                                     ),
-                                     .init(
-                                         trip: .init(trip: trip2, prediction: prediction2),
-                                         routeType: RouteType.heavyRail,
-                                         now: now.toKotlinInstant(), context: .nearbyTransit
-                                     ),
-                                 ], secondaryAlert: nil))
-                DirectionRowView(direction: Direction(name: "North", destination: "None", id: 0),
-                                 predictions: RealtimePatterns.FormatNone(secondaryAlert: nil))
-                DirectionRowView(direction: Direction(name: "South", destination: "Loading", id: 1),
-                                 predictions: RealtimePatterns.FormatLoading.shared)
-                DirectionRowView(direction: Direction(name: "East", destination: "No Service", id: 1),
-                                 predictions: RealtimePatterns.FormatNoService(
-                                     alert: ObjectCollectionBuilder.Single.shared.alert { alert in
-                                         alert.effect = .suspension
-                                     }
-                                 ))
+                DirectionRowView(
+                    direction: Direction(name: "West", destination: "Some", id: 0),
+                    predictions: RealtimePatterns.FormatSome(trips: [
+                        .init(
+                            trip: .init(trip: trip1, prediction: prediction1),
+                            routeType: RouteType.heavyRail,
+                            now: now.toKotlinInstant(), context: .nearbyTransit
+                        ),
+                        .init(
+                            trip: .init(trip: trip2, prediction: prediction2),
+                            routeType: RouteType.heavyRail,
+                            now: now.toKotlinInstant(), context: .nearbyTransit
+                        ),
+                    ], secondaryAlert: nil)
+                )
+                DirectionRowView(
+                    direction: Direction(name: "North", destination: "None", id: 0),
+                    predictions: RealtimePatterns.FormatNoTrips(
+                        noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable()
+                    )
+                )
+                DirectionRowView(
+                    direction: Direction(name: "South", destination: "Loading", id: 1),
+                    predictions: RealtimePatterns.FormatLoading.shared
+                )
+                DirectionRowView(
+                    direction: Direction(name: "East", destination: "No Service", id: 1),
+                    predictions: RealtimePatterns.FormatDisruption(
+                        alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                            alert.effect = .suspension
+                        }
+                    )
+                )
             }
         }.font(Typography.body)
     }

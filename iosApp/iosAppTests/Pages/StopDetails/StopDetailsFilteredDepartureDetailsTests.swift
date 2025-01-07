@@ -253,7 +253,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             tiles: [],
-            noPredictionsStatus: RealtimePatterns.FormatServiceEndedToday(secondaryAlert: nil),
+            noPredictionsStatus: RealtimePatterns.NoTripsFormatServiceEndedToday(),
             alerts: [],
             patternsByStop: .init(routes: [route], line: line, stop: stop, patterns: [], directions: []),
             pinned: false,

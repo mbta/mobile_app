@@ -74,7 +74,10 @@ private fun DirectionRowViewPreview() {
             )
             DirectionRowView(
                 direction = Direction(name = "North", destination = "None", id = 0),
-                predictions = RealtimePatterns.Format.None(secondaryAlert = null)
+                predictions =
+                    RealtimePatterns.Format.NoTrips(
+                        RealtimePatterns.NoTripsFormat.PredictionsUnavailable
+                    )
             )
             DirectionRowView(
                 direction = Direction(name = "South", destination = "Loading", id = 1),
@@ -83,7 +86,7 @@ private fun DirectionRowViewPreview() {
             DirectionRowView(
                 direction = Direction(name = "East", destination = "No Service", id = 1),
                 predictions =
-                    RealtimePatterns.Format.NoService(
+                    RealtimePatterns.Format.Disruption(
                         alert =
                             ObjectCollectionBuilder.Single.alert {
                                 effect = Alert.Effect.Suspension

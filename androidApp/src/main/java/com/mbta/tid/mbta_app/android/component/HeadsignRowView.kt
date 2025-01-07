@@ -76,16 +76,23 @@ fun HeadsignRowViewPreview() {
                     secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
                 )
             )
-            HeadsignRowView("None", RealtimePatterns.Format.None(secondaryAlert = null))
+            HeadsignRowView(
+                "None",
+                RealtimePatterns.Format.NoTrips(
+                    RealtimePatterns.NoTripsFormat.PredictionsUnavailable
+                )
+            )
             HeadsignRowView(
                 "None with Alert",
-                RealtimePatterns.Format.None(
+                RealtimePatterns.Format.NoTrips(
+                    RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
                     secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
                 )
             )
             HeadsignRowView(
                 "Decorated None with Alert",
-                RealtimePatterns.Format.None(
+                RealtimePatterns.Format.NoTrips(
+                    RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
                     secondaryAlert =
                         RealtimePatterns.Format.SecondaryAlert("alert-large-green-issue")
                 ),
@@ -104,7 +111,7 @@ fun HeadsignRowViewPreview() {
             HeadsignRowView("Loading", RealtimePatterns.Format.Loading)
             HeadsignRowView(
                 "No Service",
-                RealtimePatterns.Format.NoService(alert { effect = Alert.Effect.Suspension })
+                RealtimePatterns.Format.Disruption(alert { effect = Alert.Effect.Suspension })
             )
         }
     }
