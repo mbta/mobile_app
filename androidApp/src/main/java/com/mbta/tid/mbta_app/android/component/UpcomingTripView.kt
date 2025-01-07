@@ -35,6 +35,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import java.time.format.DateTimeFormatter
@@ -49,13 +50,9 @@ import kotlinx.datetime.toLocalDateTime
 sealed interface UpcomingTripViewState {
     data object Loading : UpcomingTripViewState
 
-    data object None : UpcomingTripViewState
+    data class NoTrips(val format: RealtimePatterns.NoTripsFormat) : UpcomingTripViewState
 
-    data object NoSchedulesToday : UpcomingTripViewState
-
-    data object ServiceEndedToday : UpcomingTripViewState
-
-    data class NoService(val effect: Alert.Effect) : UpcomingTripViewState
+    data class Disruption(val effect: Alert.Effect) : UpcomingTripViewState
 
     data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
 }
@@ -266,19 +263,22 @@ fun UpcomingTripView(
                         )
                     }
             }
-        is UpcomingTripViewState.NoService ->
-            NoServiceView(NoServiceViewEffect.from(state.effect), modifier)
-        is UpcomingTripViewState.None ->
-            Text(stringResource(R.string.no_predictions), modifier, fontSize = 13.sp)
-        is UpcomingTripViewState.ServiceEndedToday ->
-            Text(stringResource(R.string.service_ended), modifier, fontSize = 13.sp)
-        is UpcomingTripViewState.NoSchedulesToday ->
-            Text(stringResource(R.string.no_service_today), modifier, fontSize = 13.sp)
+        is UpcomingTripViewState.Disruption ->
+            DisruptionView(DisruptionViewEffect.from(state.effect), modifier)
+        is UpcomingTripViewState.NoTrips ->
+            when (state.format) {
+                is RealtimePatterns.NoTripsFormat.PredictionsUnavailable ->
+                    Text(stringResource(R.string.no_predictions), modifier, fontSize = 13.sp)
+                is RealtimePatterns.NoTripsFormat.ServiceEndedToday ->
+                    Text(stringResource(R.string.service_ended), modifier, fontSize = 13.sp)
+                is RealtimePatterns.NoTripsFormat.NoSchedulesToday ->
+                    Text(stringResource(R.string.no_service_today), modifier, fontSize = 13.sp)
+            }
         is UpcomingTripViewState.Loading -> CircularProgressIndicator(modifier)
     }
 }
 
-enum class NoServiceViewEffect {
+enum class DisruptionViewEffect {
     Detour,
     Shuttle,
     StopClosed,
@@ -299,23 +299,23 @@ enum class NoServiceViewEffect {
 }
 
 @Composable
-fun NoServiceView(effect: NoServiceViewEffect, modifier: Modifier = Modifier) {
+fun DisruptionView(effect: DisruptionViewEffect, modifier: Modifier = Modifier) {
     val text =
         when (effect) {
-            NoServiceViewEffect.Detour -> stringResource(R.string.detour)
-            NoServiceViewEffect.Shuttle -> stringResource(R.string.shuttle)
-            NoServiceViewEffect.StopClosed -> stringResource(R.string.stop_closed)
-            NoServiceViewEffect.Suspension -> stringResource(R.string.suspension)
-            NoServiceViewEffect.Unknown -> stringResource(R.string.no_service)
+            DisruptionViewEffect.Detour -> stringResource(R.string.detour)
+            DisruptionViewEffect.Shuttle -> stringResource(R.string.shuttle)
+            DisruptionViewEffect.StopClosed -> stringResource(R.string.stop_closed)
+            DisruptionViewEffect.Suspension -> stringResource(R.string.suspension)
+            DisruptionViewEffect.Unknown -> stringResource(R.string.no_service)
         }
     val icon =
         when (effect) {
-            NoServiceViewEffect.Detour -> painterResource(R.drawable.baseline_circle_24)
-            NoServiceViewEffect.Shuttle -> painterResource(R.drawable.baseline_directions_bus_24)
-            NoServiceViewEffect.StopClosed ->
+            DisruptionViewEffect.Detour -> painterResource(R.drawable.baseline_circle_24)
+            DisruptionViewEffect.Shuttle -> painterResource(R.drawable.baseline_directions_bus_24)
+            DisruptionViewEffect.StopClosed ->
                 painterResource(R.drawable.baseline_report_gmailerrorred_24)
-            NoServiceViewEffect.Suspension -> painterResource(R.drawable.baseline_warning_24)
-            NoServiceViewEffect.Unknown -> painterResource(R.drawable.baseline_question_mark_24)
+            DisruptionViewEffect.Suspension -> painterResource(R.drawable.baseline_warning_24)
+            DisruptionViewEffect.Unknown -> painterResource(R.drawable.baseline_question_mark_24)
         }
     Row(
         modifier,
@@ -348,11 +348,11 @@ fun UpcomingTripViewPreview() {
 
 @Preview
 @Composable
-fun NoServiceViewPreview() {
+fun DisruptionViewPreview() {
     Column(horizontalAlignment = Alignment.End) {
-        NoServiceView(NoServiceViewEffect.Detour)
-        NoServiceView(NoServiceViewEffect.Shuttle)
-        NoServiceView(NoServiceViewEffect.StopClosed)
-        NoServiceView(NoServiceViewEffect.Suspension)
+        DisruptionView(DisruptionViewEffect.Detour)
+        DisruptionView(DisruptionViewEffect.Shuttle)
+        DisruptionView(DisruptionViewEffect.StopClosed)
+        DisruptionView(DisruptionViewEffect.Suspension)
     }
 }

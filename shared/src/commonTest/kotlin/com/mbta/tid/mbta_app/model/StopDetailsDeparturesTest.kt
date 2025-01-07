@@ -1582,7 +1582,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.Format.ServiceEndedToday(null),
+            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -1623,7 +1623,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.Format.NoSchedulesToday(null),
+            RealtimePatterns.NoTripsFormat.NoSchedulesToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -1663,7 +1663,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.Format.ServiceEndedToday(null),
+            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -1722,7 +1722,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.Format.None(null),
+            RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }
@@ -1823,7 +1823,7 @@ class StopDetailsDeparturesTest {
             )
         )
         assertEquals(
-            RealtimePatterns.Format.ServiceEndedToday(null),
+            RealtimePatterns.NoTripsFormat.ServiceEndedToday,
             StopDetailsDepartures.getNoPredictionsStatus(realtimePatterns, now)
         )
     }

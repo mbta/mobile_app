@@ -34,7 +34,7 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            RealtimePatterns.Format.NoService(alert),
+            RealtimePatterns.Format.Disruption(alert),
             RealtimePatterns.ByHeadsign(route, "", null, emptyList(), emptyList(), listOf(alert))
                 .format(now, anyNonScheduleBasedRouteType(), anyContext())
         )
@@ -66,7 +66,8 @@ class RealtimePatternsTest {
 
         for ((route, icon) in cases) {
             assertEquals(
-                RealtimePatterns.Format.ServiceEndedToday(
+                RealtimePatterns.Format.NoTrips(
+                    RealtimePatterns.NoTripsFormat.ServiceEndedToday,
                     RealtimePatterns.Format.SecondaryAlert(icon)
                 ),
                 RealtimePatterns.ByHeadsign(
@@ -101,7 +102,7 @@ class RealtimePatternsTest {
         val alert = objects.alert { effect = Alert.Effect.Suspension }
 
         assertEquals(
-            RealtimePatterns.Format.NoService(alert),
+            RealtimePatterns.Format.Disruption(alert),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -203,7 +204,7 @@ class RealtimePatternsTest {
         val route = objects.route()
 
         assertEquals(
-            RealtimePatterns.Format.ServiceEndedToday(null),
+            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.ServiceEndedToday),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -230,7 +231,7 @@ class RealtimePatternsTest {
                 departureTime = now + 2.minutes
             }
         assertEquals(
-            RealtimePatterns.Format.None(null),
+            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.PredictionsUnavailable),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",
@@ -391,7 +392,7 @@ class RealtimePatternsTest {
         val route = objects.route { type = RouteType.BUS }
 
         assertEquals(
-            RealtimePatterns.Format.NoSchedulesToday(null),
+            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.NoSchedulesToday),
             RealtimePatterns.ByHeadsign(
                     route,
                     "",

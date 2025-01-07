@@ -91,7 +91,10 @@ class HeadsignRowViewTest {
 
     @Test
     fun showsNoPredictions() {
-        init("Somewhere", RealtimePatterns.Format.None(secondaryAlert = null))
+        init(
+            "Somewhere",
+            RealtimePatterns.Format.NoTrips(RealtimePatterns.NoTripsFormat.PredictionsUnavailable)
+        )
 
         composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
         composeTestRule.onNodeWithText("Predictions unavailable").assertIsDisplayed()
@@ -101,7 +104,8 @@ class HeadsignRowViewTest {
     fun showsNoPredictionsWithSecondaryAlert() {
         init(
             "Somewhere",
-            RealtimePatterns.Format.None(
+            RealtimePatterns.Format.NoTrips(
+                noTripsFormat = RealtimePatterns.NoTripsFormat.PredictionsUnavailable,
                 secondaryAlert = RealtimePatterns.Format.SecondaryAlert("alert-large-bus-issue")
             )
         )
@@ -113,7 +117,10 @@ class HeadsignRowViewTest {
 
     @Test
     fun showsAlert() {
-        init("Headsign", RealtimePatterns.Format.NoService(alert { effect = Alert.Effect.Shuttle }))
+        init(
+            "Headsign",
+            RealtimePatterns.Format.Disruption(alert { effect = Alert.Effect.Shuttle })
+        )
 
         composeTestRule.onNodeWithText("Shuttle", ignoreCase = true).assertIsDisplayed()
     }

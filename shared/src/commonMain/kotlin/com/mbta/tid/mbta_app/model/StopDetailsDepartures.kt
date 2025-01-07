@@ -77,12 +77,6 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         }
         val relevantTrips =
             stopDetailsFormattedTrips(stopFilter.routeId, stopFilter.directionId, filterAtTime)
-                .filter {
-                    when (it.formatted.format) {
-                        is TripInstantDisplay.Cancelled -> false
-                        else -> true
-                    }
-                }
                 .map { it.upcoming }
 
         if (
@@ -183,7 +177,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         fun getNoPredictionsStatus(
             realtimePatterns: List<RealtimePatterns>,
             now: Instant
-        ): RealtimePatterns.Format? {
+        ): RealtimePatterns.NoTripsFormat? {
             val patternStatuses =
                 realtimePatterns.mapNotNull { pattern -> getStatusFormat(pattern, now) }
 
@@ -194,17 +188,17 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             } else if (
                 patternStatuses.all {
                     when (it) {
-                        is RealtimePatterns.Format.NoSchedulesToday -> true
-                        is RealtimePatterns.Format.ServiceEndedToday -> true
+                        is RealtimePatterns.NoTripsFormat.NoSchedulesToday -> true
+                        is RealtimePatterns.NoTripsFormat.ServiceEndedToday -> true
                         else -> false
                     }
                 }
             ) {
                 // If there's a mixture of no service today and service ended, but nothing else,
                 // service ended takes precedence
-                RealtimePatterns.Format.ServiceEndedToday(null)
+                RealtimePatterns.NoTripsFormat.ServiceEndedToday
             } else {
-                RealtimePatterns.Format.None(null)
+                RealtimePatterns.NoTripsFormat.PredictionsUnavailable
             }
         }
 
@@ -216,7 +210,11 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 when (pattern) {
                     is RealtimePatterns.ByHeadsign -> {
                         getStatusFormat(pattern, now)?.let {
-                            StopDetailsStatusRowData(pattern.route, pattern.headsign, it)
+                            StopDetailsStatusRowData(
+                                pattern.route,
+                                pattern.headsign,
+                                RealtimePatterns.Format.NoTrips(it)
+                            )
                         }
                     }
                     else -> null
@@ -227,7 +225,7 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         private fun getStatusFormat(
             pattern: RealtimePatterns,
             now: Instant
-        ): RealtimePatterns.Format? {
+        ): RealtimePatterns.NoTripsFormat? {
             val noPredictions =
                 pattern.upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
             val routeType =
@@ -246,9 +244,9 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
                 }
             return when {
                 hasTripsToShow || !pattern.allDataLoaded -> null
-                noPredictions -> RealtimePatterns.Format.None(null)
-                !pattern.hasSchedulesToday -> RealtimePatterns.Format.NoSchedulesToday(null)
-                else -> RealtimePatterns.Format.ServiceEndedToday(null)
+                noPredictions -> RealtimePatterns.NoTripsFormat.PredictionsUnavailable
+                !pattern.hasSchedulesToday -> RealtimePatterns.NoTripsFormat.NoSchedulesToday
+                else -> RealtimePatterns.NoTripsFormat.ServiceEndedToday
             }
         }
     }
