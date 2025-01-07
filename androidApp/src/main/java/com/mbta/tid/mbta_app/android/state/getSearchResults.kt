@@ -36,8 +36,8 @@ class SearchResultsViewModel(
         job?.cancel()
         job =
             CoroutineScope(Dispatchers.IO).launch {
-                delay(500)
                 if (query.isNotEmpty()) {
+                    delay(500)
                     when (val data = searchResultRepository.getSearchResults(query)) {
                         is ApiResult.Ok -> _searchResults.emit(data.data)
                         is ApiResult.Error -> _searchResults.emit(null)
