@@ -15,33 +15,23 @@ struct StopDetailsNoTripCard: View {
     var routeType: RouteType
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 16) {
-                headerImage.foregroundStyle(headerColor).frame(width: 48, height: 48)
-                headerText.font(Typography.title2Bold).foregroundStyle(headerColor)
-            }.frame(maxWidth: .infinity, alignment: .leading)
-
-            if let details = detailString {
-                HaloSeparator()
-                Text(details).font(Typography.callout)
-            }
-        }
-        .padding(16)
-        .background(Color.fill3)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 1))
-        .padding(.horizontal, 16)
+        StopDetailsIconCard(
+            details: detailText,
+            header: headerText,
+            headerColor: headerColor,
+            icon: headerImage
+        )
     }
 
-    var detailString: String? {
+    var detailText: Text? {
         switch onEnum(of: status) {
-        case .predictionsUnavailable: String(format: NSLocalizedString(
+        case .predictionsUnavailable: Text(String(format: NSLocalizedString(
                 "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
                 comment: """
                 Explanation under the 'Predictions unavailable' header in stop details.
                 The interpolated value can be "buses" or "trains".
                 """
-            ), routeType.typeText(isOnly: false))
+            ), routeType.typeText(isOnly: false)))
         default: nil
         }
     }
@@ -60,22 +50,10 @@ struct StopDetailsNoTripCard: View {
         }
     }
 
-    @ViewBuilder
-    var headerImage: some View {
+    var headerImage: Image {
         switch onEnum(of: status) {
         case .predictionsUnavailable: Image(.liveDataSlash)
-            .resizable().scaledToFit().frame(width: 35, height: 35)
-        case .noSchedulesToday, .serviceEndedToday: modeSlashImage
-            .resizable().scaledToFit().frame(width: 35, height: 35)
-        }
-    }
-
-    var modeSlashImage: Image {
-        switch routeType {
-        case .bus: Image(.modeBusSlash)
-        case .commuterRail: Image(.modeCrSlash)
-        case .ferry: Image(.modeFerrySlash)
-        default: Image(.modeSubwaySlash)
+        case .noSchedulesToday, .serviceEndedToday: routeSlashIcon(routeType)
         }
     }
 }

@@ -26,3 +26,20 @@ func routeIconResource(_ routeType: RouteType) -> ImageResource {
     default: .modeSubway
     }
 }
+
+func routeSlashIcon(_ route: Route) -> Image {
+    routeSlashIcon(route.type)
+}
+
+func routeSlashIcon(_ routeType: RouteType) -> Image {
+    Image(routeSlashIconResource(routeType))
+}
+
+func routeSlashIconResource(_ routeType: RouteType) -> ImageResource {
+    switch routeType {
+    case .bus: .modeBusSlash
+    case .commuterRail: .modeCrSlash
+    case .ferry: .modeFerrySlash
+    default: .modeSubwaySlash
+    }
+}

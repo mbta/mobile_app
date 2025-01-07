@@ -49,6 +49,18 @@ struct StopDetailsFilteredDepartureDetails: View {
         return if routeType == .bus, !isSL { Color.text } else { routeColor }
     }
 
+    var selectedTripIsCancelled: Bool {
+        if let tripFilter {
+            patternsByStop.patterns.contains { pattern in
+                pattern.upcomingTrips.contains { trip in
+                    trip.trip.id == tripFilter.tripId && trip.isCancelled
+                }
+            }
+        } else {
+            false
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             routeColor.ignoresSafeArea(.all)
@@ -84,6 +96,19 @@ struct StopDetailsFilteredDepartureDetails: View {
                             headerColor: headerColor,
                             routeType: routeType
                         )
+                    } else if selectedTripIsCancelled {
+                        StopDetailsIconCard(
+                            details: Text(
+                                "This trip has been cancelled. We’re sorry for the inconvenience.",
+                                comment: "Explanation for a cancelled trip on stop details"
+                            ),
+                            header: Text(
+                                "Trip cancelled",
+                                comment: "Header for a cancelled trip card on stop details"
+                            ),
+                            headerColor: headerColor,
+                            icon: routeSlashIcon(routeType)
+                        )
                     } else {
                         TripDetailsView(
                             tripFilter: tripFilter,
@@ -100,19 +125,25 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
         .onAppear { handleViewportForStatus(noPredictionsStatus) }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
+        .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .ignoresSafeArea(.all)
     }
 
     func handleViewportForStatus(_ status: RealtimePatterns.NoTripsFormat?) {
-        if let stop, let status {
+        if let status {
             switch onEnum(of: status) {
-            case .predictionsUnavailable: viewportProvider.animateTo(
-                    coordinates: stop.coordinate,
-                    zoom: MapDefaults.shared.midZoomThreshold
-                )
-            case .noSchedulesToday, .serviceEndedToday: viewportProvider.animateTo(coordinates: stop.coordinate)
-            default: break
+            case .predictionsUnavailable: setViewportToStop(midZoom: true)
+            case .noSchedulesToday, .serviceEndedToday: setViewportToStop()
             }
+        }
+    }
+
+    func setViewportToStop(midZoom: Bool = false) {
+        if let stop {
+            viewportProvider.animateTo(
+                coordinates: stop.coordinate,
+                zoom: midZoom ? MapDefaults.shared.midZoomThreshold : nil
+            )
         }
     }
 
