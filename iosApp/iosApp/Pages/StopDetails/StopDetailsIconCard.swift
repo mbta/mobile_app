@@ -10,9 +10,9 @@ import shared
 import SwiftUI
 
 struct StopDetailsIconCard<Header: View, Details: View>: View {
+    var accentColor: Color
     var details: Details?
     var header: Header
-    var headerColor: Color
     var icon: Image
 
     var body: some View {
@@ -21,13 +21,15 @@ struct StopDetailsIconCard<Header: View, Details: View>: View {
                 icon
                     .resizable().scaledToFit()
                     .frame(width: 35, height: 35)
-                    .foregroundStyle(headerColor)
                     .frame(width: 48, height: 48)
-                header.font(Typography.title2Bold).foregroundStyle(headerColor)
+                    .foregroundStyle(accentColor)
+                header
+                    .font(Typography.title2Bold)
+                    .foregroundStyle(Color.text)
             }.frame(maxWidth: .infinity, alignment: .leading)
 
             if let details {
-                HaloSeparator()
+                Divider().frame(height: 2).background(accentColor.opacity(0.25))
                 details.font(Typography.callout)
             }
         }

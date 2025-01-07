@@ -11,14 +11,14 @@ import SwiftUI
 
 struct StopDetailsNoTripCard: View {
     var status: RealtimePatterns.NoTripsFormat
-    var headerColor: Color
+    var accentColor: Color
     var routeType: RouteType
 
     var body: some View {
         StopDetailsIconCard(
+            accentColor: accentColor,
             details: detailText,
             header: headerText,
-            headerColor: headerColor,
             icon: headerImage
         )
     }

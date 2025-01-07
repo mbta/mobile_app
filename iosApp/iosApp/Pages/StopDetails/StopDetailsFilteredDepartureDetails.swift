@@ -43,11 +43,6 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var routeColor: Color { Color(hex: patternsByStop.representativeRoute.color) }
     var routeType: RouteType { patternsByStop.representativeRoute.type }
-    var headerColor: Color {
-        // Regular bus color needs to be overridden for contrast, but SL should not be
-        let isSL = MapStopRoute.silver.matches(route: patternsByStop.representativeRoute)
-        return if routeType == .bus, !isSL { Color.text } else { routeColor }
-    }
 
     var selectedTripIsCancelled: Bool {
         if let tripFilter {
@@ -93,11 +88,12 @@ struct StopDetailsFilteredDepartureDetails: View {
                     if let noPredictionsStatus {
                         StopDetailsNoTripCard(
                             status: noPredictionsStatus,
-                            headerColor: headerColor,
+                            accentColor: routeColor,
                             routeType: routeType
                         )
                     } else if selectedTripIsCancelled {
                         StopDetailsIconCard(
+                            accentColor: routeColor,
                             details: Text(
                                 "This trip has been cancelled. We’re sorry for the inconvenience.",
                                 comment: "Explanation for a cancelled trip on stop details"
@@ -106,7 +102,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                                 "Trip cancelled",
                                 comment: "Header for a cancelled trip card on stop details"
                             ),
-                            headerColor: headerColor,
                             icon: routeSlashIcon(routeType)
                         )
                     } else {
