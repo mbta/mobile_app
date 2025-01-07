@@ -121,7 +121,7 @@ class SearchBarOverlayTest : KoinTest {
         searchNode.assertExists()
         searchNode.requestFocus()
         composeTestRule.awaitIdle()
-        composeTestRule.onNodeWithText("Recently Visited").assertExists()
+        composeTestRule.onNodeWithText("Recently Viewed").assertExists()
         composeTestRule.waitUntilAtLeastOneExists(hasText(visitedStop.name))
         composeTestRule.onNodeWithText(visitedStop.name).assertExists()
 
