@@ -9,6 +9,8 @@ agp = "8.5.2"
 # see https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # and https://developer.android.com/jetpack/androidx/releases/compose for release notes
 compose-bom = "2024.12.01"
+compose-placeholder-material3= "1.0.8"
+compose-shimmer= "1.3.1"
 cyclonedx = "1.10.0"
 datastorePreferencesCore = "1.1.1"
 kotlin = "2.1.0"
@@ -41,6 +43,8 @@ androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "android-material3" }
+compose-placeholder-material3 = {module = "com.eygraber:compose-placeholder-material3", version.ref = "compose-placeholder-material3"}
+compose-shimmer = {module="com.valentinilk.shimmer:compose-shimmer", version.ref = "compose-shimmer"}
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
