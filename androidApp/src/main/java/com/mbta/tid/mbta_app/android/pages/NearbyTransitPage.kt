@@ -38,6 +38,7 @@ import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.LocationAuthButton
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
@@ -61,6 +62,7 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 data class NearbyTransit(
@@ -86,8 +88,17 @@ fun NearbyTransitPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory())
+    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    errorBannerViewModel: ErrorBannerViewModel =
+        viewModel(
+            factory =
+                ErrorBannerViewModel.Factory(
+                    errorRepository = koinInject(),
+                    settingsRepository = koinInject()
+                )
+        )
 ) {
+    LaunchedEffect(Unit) { errorBannerViewModel.activate() }
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -189,7 +200,8 @@ fun NearbyTransitPage(
                         nearbyTransit.alertData,
                         onClose = { navController.popBackStack() },
                         updateStopFilter = ::updateStopFilter,
-                        updateDepartures = ::updateStopDepartures
+                        updateDepartures = ::updateStopDepartures,
+                        errorBannerViewModel = errorBannerViewModel
                     )
                 }
             }
@@ -264,7 +276,8 @@ fun NearbyTransitPage(
                                 ::openSearch,
                                 ::panToDefaultCenter
                             )
-                        }
+                        },
+                        errorBannerViewModel = errorBannerViewModel
                     )
                 }
             }

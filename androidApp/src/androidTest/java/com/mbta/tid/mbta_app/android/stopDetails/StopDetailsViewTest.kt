@@ -7,6 +7,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -28,9 +29,11 @@ import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
@@ -230,7 +233,13 @@ class StopDetailsViewTest {
                     togglePinnedRoute = {},
                     onClose = {},
                     filter = filterState.value,
-                    updateStopFilter = filterState::value::set
+                    updateStopFilter = filterState::value::set,
+                    errorBannerViewModel =
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        )
                 )
             }
         }
