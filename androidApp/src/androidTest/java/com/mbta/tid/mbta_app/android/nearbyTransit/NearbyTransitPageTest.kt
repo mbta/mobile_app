@@ -279,6 +279,7 @@ class NearbyTransitPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
+                            hideMaps = false,
                             lastNearbyTransitLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
                             nearbyTransitSelectingLocationState =
@@ -296,6 +297,7 @@ class NearbyTransitPageTest : KoinTest {
             }
         }
 
+        composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertIsDisplayed()
         composeTestRule.waitUntilDoesNotExist(hasText("Loading..."))
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
@@ -366,6 +368,7 @@ class NearbyTransitPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
+                            hideMaps = false,
                             lastNearbyTransitLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
                             nearbyTransitSelectingLocationState =
@@ -390,5 +393,39 @@ class NearbyTransitPageTest : KoinTest {
         mockMapVM.mutableLastErrorTimestamp.value = Clock.System.now()
 
         composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 2 }
+    }
+
+    @Test
+    fun testHidesMap() {
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                CompositionLocalProvider(
+                    LocalActivity provides (LocalContext.current as Activity),
+                    LocalLocationClient provides MockFusedLocationProviderClient()
+                ) {
+                    NearbyTransitPage(
+                        Modifier,
+                        NearbyTransit(
+                            alertData = AlertsStreamDataResponse(builder.alerts),
+                            globalResponse = globalResponse,
+                            hideMaps = true,
+                            lastNearbyTransitLocationState =
+                                remember { mutableStateOf(Position(0.0, 0.0)) },
+                            nearbyTransitSelectingLocationState =
+                                remember { mutableStateOf(false) },
+                            scaffoldState = rememberBottomSheetScaffoldState(),
+                            locationDataManager = MockLocationDataManager(Location("mock")),
+                            viewportProvider = ViewportProvider(rememberMapViewportState()),
+                        ),
+                        false,
+                        {},
+                        {},
+                        bottomBar = {}
+                    )
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertDoesNotExist()
     }
 }
