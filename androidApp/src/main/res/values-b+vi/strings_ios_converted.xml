@@ -66,6 +66,7 @@
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>
     <string name="reload_data">Tải lại dữ liệu</string>
+    <string name="recently_viewed">Đã xem gần đây</string>
     <string name="resources_link_fare_info">Thông tin giá vé</string>
     <string name="resources_link_mticket">Vé phà vé đường sắt ngoại ô (Commuter Rail)</string>
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>

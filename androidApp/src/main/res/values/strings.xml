@@ -64,7 +64,7 @@
     <string name="other_link_tos">Terms of Use</string>
     <string name="outbound">Outbound</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
-    <string name="recently_visited" tools:ignore="MissingTranslation">Recently Visited</string>
+    <string name="recently_viewed">Recently Viewed</string>
     <string name="resources_link_fare_info">Fare Information</string>
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>

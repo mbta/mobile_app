@@ -70,9 +70,7 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState, expanded) {
-        searchResultsVm.getSearchResults(searchInputState)
-    }
+    LaunchedEffect(searchInputState, visible) { searchResultsVm.getSearchResults(searchInputState) }
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
@@ -145,7 +143,7 @@ fun SearchBarOverlay(
                             item {
                                 Text(
                                     modifier = Modifier.padding(bottom = 10.dp),
-                                    text = stringResource(R.string.recently_visited),
+                                    text = stringResource(R.string.recently_viewed),
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.Bold
                                 )
