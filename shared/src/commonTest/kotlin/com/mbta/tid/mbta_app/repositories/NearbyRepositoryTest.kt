@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -71,7 +70,7 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val staticData = runBlocking {
-            repo.getNearby(globalData, Coordinate(searchPoint.latitude, searchPoint.longitude))
+            repo.getNearby(globalData, Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude))
         }
 
         assertEquals(
@@ -118,7 +117,7 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val staticData = runBlocking {
-            repo.getNearby(globalData, Coordinate(searchPoint.latitude, searchPoint.longitude))
+            repo.getNearby(globalData, Position(latitude = searchPoint.latitude, longitude =  searchPoint.longitude))
         }
 
         assertEquals(
@@ -156,7 +155,7 @@ class NearbyRepositoryTest {
 
         val repo = NearbyRepository()
         val staticData = runBlocking {
-            repo.getNearby(globalData, Coordinate(searchPoint.latitude, searchPoint.longitude))
+            repo.getNearby(globalData, Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude))
         }
 
         assertEquals(ApiResult.Ok(NearbyStaticData(emptyList())), staticData)

@@ -21,8 +21,8 @@ extension CLLocationCoordinate2D {
             && longitude.rounded(toPlaces: 6) == other.longitude.rounded(toPlaces: 6)
     }
 
-    /// Convenience conversion to Kotlin Coordinate class
-    var coordinateKt: Coordinate {
-        Coordinate(latitude: latitude, longitude: longitude)
+    /// Convenience conversion to Kotlin Position class
+    var positionKt: GeojsonPosition {
+        GeojsonPosition(longitude: longitude, latitude: latitude)
     }
 }
