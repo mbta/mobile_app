@@ -19,7 +19,7 @@ suspend fun <T : Any> fetchApi(
         try {
             getData()
         } catch (e: Exception) {
-            ApiResult.Error(code = null, message = e.message ?: "No error message")
+            ApiResult.Error(code = null, message = e.message ?: "")
         }
     when (result) {
         is ApiResult.Error -> {

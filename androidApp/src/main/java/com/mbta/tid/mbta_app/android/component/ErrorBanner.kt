@@ -53,11 +53,7 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
             ErrorCard(
                 details = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Rounded.Clear,
-                            contentDescription =
-                                "Displayed when the phone is not connected to the network"
-                        )
+                        Icon(Icons.Rounded.Clear, contentDescription = "")
                         Text(
                             stringResource(R.string.unable_to_connect),
                             modifier = Modifier.padding(start = 8.dp)

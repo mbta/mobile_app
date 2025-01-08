@@ -37,8 +37,8 @@ import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
-import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
