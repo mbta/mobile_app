@@ -296,6 +296,10 @@ extension HomeMapView {
             // TODO: figure out something to do if this is nil
             return
         }
+        guard let directionId = vehicle.directionId?.int32Value ?? trip?.trip.directionId else {
+            // TODO: figure out something to do if this is nil
+            return
+        }
 
         // If we're missing the stop ID or stop sequence, we can still navigate to the trip details
         // page, but we won't be able to tell what the target stop was.
@@ -307,7 +311,7 @@ extension HomeMapView {
                 stopSequence: stopSequence
             ) : nil,
             routeId: routeId,
-            directionId: vehicle.directionId
+            directionId: directionId
         ), mapSelection: true)
     }
 

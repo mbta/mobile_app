@@ -143,7 +143,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
 
         fun fromPieces(
             tripId: String,
-            directionId: Int,
+            directionId: Int?,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
             vehicle: Vehicle?,
@@ -396,7 +396,7 @@ constructor(val tripId: String, val stops: List<Entry>, val startTerminalEntry: 
             alertsData: AlertsStreamDataResponse?,
             globalData: GlobalResponse,
             tripId: String,
-            directionId: Int
+            directionId: Int?
         ): Alert? {
             val entryTime = entry.prediction?.predictionTime ?: entry.schedule?.scheduleTime
             val entryRoute = entry.prediction?.routeId ?: entry.schedule?.routeId

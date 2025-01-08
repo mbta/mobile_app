@@ -551,7 +551,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let initialNav: SheetNavigationStackEntry = .legacyStopDetails(
             stop,
-            .init(routeId: vehicle.routeId!, directionId: vehicle.directionId)
+            .init(routeId: vehicle.routeId!, directionId: vehicle.directionId!.int32Value)
         )
         nearbyVM.navigationStack = [initialNav]
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
@@ -656,7 +656,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let initialNav: SheetNavigationStackEntry = .legacyStopDetails(
             stop,
-            .init(routeId: vehicle1.routeId!, directionId: vehicle1.directionId)
+            .init(routeId: vehicle1.routeId!, directionId: vehicle1.directionId!.int32Value)
         )
         let mapVM: MapViewModel = .init(
             allRailSourceData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,

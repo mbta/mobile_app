@@ -11,7 +11,7 @@ data class Vehicle(
     val bearing: Double?,
     @SerialName("current_status") val currentStatus: CurrentStatus,
     @SerialName("current_stop_sequence") val currentStopSequence: Int?,
-    @SerialName("direction_id") val directionId: Int,
+    @SerialName("direction_id") val directionId: Int?,
     val latitude: Double,
     val longitude: Double,
     @SerialName("updated_at") val updatedAt: Instant,

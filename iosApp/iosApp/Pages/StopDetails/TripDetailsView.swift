@@ -94,7 +94,7 @@ struct TripDetailsView: View {
                let global = stopDetailsVM.global,
                let stops = TripDetailsStopList.companion.fromPieces(
                    tripId: tripFilter.tripId,
-                   directionId: tripData.trip.directionId,
+                   directionId: KotlinInt(int: tripData.trip.directionId),
                    tripSchedules: tripData.tripSchedules,
                    tripPredictions: tripData.tripPredictions,
                    vehicle: vehicle,

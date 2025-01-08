@@ -83,7 +83,7 @@ struct TripDetailsPage: View {
             if tripPredictionsLoaded, let globalResponse, let vehicle = vehicleResponse?.vehicle,
                let stops = TripDetailsStopList.companion.fromPieces(
                    tripId: tripId,
-                   directionId: trip?.directionId ?? vehicle.directionId,
+                   directionId: KotlinInt(int: trip?.directionId) ?? vehicle.directionId,
                    tripSchedules: tripSchedulesResponse,
                    tripPredictions: tripPredictions,
                    vehicle: vehicle,

@@ -75,6 +75,7 @@
 		8C2F26962CDD709700386D4F /* NoNearbyStopsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2F26952CDD709700386D4F /* NoNearbyStopsView.swift */; };
 		8C2F26982CDE7B3600386D4F /* NoNearbyStopsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2F26972CDE7B3600386D4F /* NoNearbyStopsViewTests.swift */; };
 		8C3D64102BE19DBA0026DD53 /* MorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3D640F2BE19DBA0026DD53 /* MorePage.swift */; };
+		8C4E22672D2F04DE00616C42 /* KotlinIntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4E22662D2F04DE00616C42 /* KotlinIntExtension.swift */; };
 		8C5054582BB5EB6C00C6A51C /* LegacyStopDetailsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5054572BB5EB6C00C6A51C /* LegacyStopDetailsPage.swift */; };
 		8C5054A02CA47C3C00137CFE /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C50549F2CA47C3C00137CFE /* ErrorBanner.swift */; };
 		8C5F47662C40842200FB71DA /* TripDetailsStopViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5F47652C40842200FB71DA /* TripDetailsStopViewTests.swift */; };
@@ -378,6 +379,7 @@
 		8C349BB72B754F2600AC7FFB /* 10 Park Plaza.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "10 Park Plaza.gpx"; sourceTree = "<group>"; };
 		8C3D640F2BE19DBA0026DD53 /* MorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePage.swift; sourceTree = "<group>"; };
 		8C42F06F2B890BC800F9A77B /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		8C4E22662D2F04DE00616C42 /* KotlinIntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotlinIntExtension.swift; sourceTree = "<group>"; };
 		8C5054572BB5EB6C00C6A51C /* LegacyStopDetailsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyStopDetailsPage.swift; sourceTree = "<group>"; };
 		8C50549F2CA47C3C00137CFE /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
 		8C5F47652C40842200FB71DA /* TripDetailsStopViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailsStopViewTests.swift; sourceTree = "<group>"; };
@@ -1101,6 +1103,7 @@
 				9A6DDF902B976FDF004D141A /* EmptyWhenModifier.swift */,
 				8CE36C8E2CAB231500D77F22 /* FetchApi.swift */,
 				9ADB849C2BAD05BC006581CE /* Inspection.swift */,
+				8C4E22662D2F04DE00616C42 /* KotlinIntExtension.swift */,
 				8CE1D6752CC9690400E3BDB1 /* LoadingPlaceholderModifier.swift */,
 				8CD79F102C46F6E200AFF17D /* MapboxBridge.swift */,
 				9A3B09352B967CEC00691427 /* NonNilModifier.swift */,
@@ -1574,6 +1577,7 @@
 				6EE7457E2B965ADE0052227E /* Socket.swift in Sources */,
 				9A5B27582BB22BF9009A6FC6 /* MapLayerManager.swift in Sources */,
 				9A03F3662BA9E68500DA40DC /* Debouncer.swift in Sources */,
+				8C4E22672D2F04DE00616C42 /* KotlinIntExtension.swift in Sources */,
 				8CE014102BBDB8DC00918FAE /* StopDetailsRoutesView.swift in Sources */,
 				ED93D6042CB6C0B4003B1C12 /* StopResultsView.swift in Sources */,
 				6EA231712C21BF8900789173 /* RoundedBorderModifier.swift in Sources */,
