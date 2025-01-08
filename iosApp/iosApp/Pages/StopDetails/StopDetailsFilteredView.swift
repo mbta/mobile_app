@@ -128,11 +128,10 @@ struct StopDetailsFilteredView: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                Color.fill2
+                Color.fill2.ignoresSafeArea(.all)
                 header
             }
             .fixedSize(horizontal: false, vertical: true)
-            .ignoresSafeArea(.all)
 
             if let patternsByStop {
                 StopDetailsFilteredDepartureDetails(
