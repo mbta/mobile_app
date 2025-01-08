@@ -12,6 +12,7 @@
     <string name="detour">Desvío</string>
     <string name="directionTo">%1$s a</string>
     <string name="eastbound">En dirección este</string>
+    <string name="error_loading_data">Error al cargar datos</string>
     <string name="feature_flag_debug_mode">Modo de Depuración</string>
     <string name="feature_flag_route_search">Buscador de rutas</string>
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
@@ -62,6 +63,9 @@
     <string name="other_link_source_code">Ver código fuente en GitHub</string>
     <string name="other_link_tos">Términos de uso</string>
     <string name="outbound">Saliente</string>
+    <string name="refresh">Refrescar</string>
+    <string name="refresh_predictions">Refrescar predicciones</string>
+    <string name="reload_data">Recargar datos</string>
     <string name="resources_link_fare_info">Información de tarifas</string>
     <string name="resources_link_mticket">Boletos de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>
@@ -80,6 +84,7 @@
     <string name="suspension">Suspensión</string>
     <string name="train">tren</string>
     <string name="trains">trenes</string>
+    <string name="unable_to_connect">No se puede conectar</string>
     <string name="unstar_route_hint">desanclar ruta de la parte superior de la lista</string>
     <string name="vehicle_arriving_first">%1$s está llegando ahora</string>
     <string name="vehicle_arriving_other">y llegando ahora</string>

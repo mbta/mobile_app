@@ -6,8 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,8 @@ import org.koin.compose.koinInject
 
 class ScheduleViewModel(
     stopIds: List<String>,
-    private val schedulesRepository: ISchedulesRepository
+    private val schedulesRepository: ISchedulesRepository,
+    private val errorBannerRepository: IErrorBannerStateRepository
 ) : ViewModel() {
     private val _schedule = MutableStateFlow<ScheduleResponse?>(null)
     val schedule: StateFlow<ScheduleResponse?> = _schedule
@@ -29,13 +31,16 @@ class ScheduleViewModel(
         CoroutineScope(Dispatchers.IO).launch { schedule.collect { getSchedule(stopIds) } }
     }
 
-    private suspend fun getSchedule(stopIds: List<String>) {
-        if (stopIds.size > 0) {
-            when (val data = schedulesRepository.getSchedule(stopIds, Clock.System.now())) {
-                is ApiResult.Ok -> _schedule.value = data.data
-                is ApiResult.Error -> {
-                    /* TODO("handle errors") */
-                }
+    private fun getSchedule(stopIds: List<String>) {
+        if (stopIds.isNotEmpty()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                fetchApi(
+                    errorBannerRepo = errorBannerRepository,
+                    errorKey = "ScheduleViewModel.getSchedule",
+                    getData = { schedulesRepository.getSchedule(stopIds, Clock.System.now()) },
+                    onSuccess = { _schedule.emit(it) },
+                    onRefreshAfterError = { getSchedule(stopIds) }
+                )
             }
         } else {
             _schedule.value = ScheduleResponse(emptyList(), emptyMap())
@@ -46,10 +51,13 @@ class ScheduleViewModel(
 @Composable
 fun getSchedule(
     stopIds: List<String>?,
-    schedulesRepository: ISchedulesRepository = koinInject()
+    schedulesRepository: ISchedulesRepository = koinInject(),
+    errorBannerRepository: IErrorBannerStateRepository = koinInject()
 ): ScheduleResponse? {
     var viewModel: ScheduleViewModel? =
-        remember(stopIds) { ScheduleViewModel(stopIds ?: emptyList(), schedulesRepository) }
+        remember(stopIds) {
+            ScheduleViewModel(stopIds ?: emptyList(), schedulesRepository, errorBannerRepository)
+        }
 
     return viewModel?.schedule?.collectAsState(initial = null)?.value
 }

@@ -19,6 +19,8 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.ErrorBanner
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
@@ -45,6 +47,7 @@ fun NearbyTransitView(
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     noNearbyStopsView: @Composable () -> Unit,
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
+    errorBannerViewModel: ErrorBannerViewModel
 ) {
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
@@ -59,7 +62,7 @@ fun NearbyTransitView(
     val now = timer(updateInterval = 5.seconds)
     val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
     val schedules = getSchedule(stopIds)
-    val predictions = subscribeToPredictions(stopIds)
+    val predictions = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
 
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
@@ -100,7 +103,7 @@ fun NearbyTransitView(
                     .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
             style = MaterialTheme.typography.titleLarge
         )
-
+        ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {
             Text(text = stringResource(R.string.loading))
         } else if (nearbyWithRealtimeInfo.isEmpty()) {

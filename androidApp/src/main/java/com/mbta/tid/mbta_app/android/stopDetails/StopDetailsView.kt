@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.ErrorBanner
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.timer
@@ -30,6 +32,7 @@ fun StopDetailsView(
     togglePinnedRoute: (String) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
+    errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData()
 
@@ -86,6 +89,8 @@ fun StopDetailsView(
                     .border(2.dp, colorResource(R.color.halo))
             )
         }
+
+        ErrorBanner(errorBannerViewModel)
 
         if (departures != null) {
             StopDetailsRoutesView(

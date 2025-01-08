@@ -12,6 +12,7 @@
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
     <string name="eastbound">东行</string>
+    <string name="error_loading_data">加载数据时出错</string>
     <string name="feature_flag_debug_mode">调试模式</string>
     <string name="feature_flag_route_search">线路搜索</string>
     <string name="feedback_link_form">发送应用程序反馈</string>
@@ -62,6 +63,9 @@
     <string name="other_link_source_code">在GitHub上查看源代码</string>
     <string name="other_link_tos">使用条款</string>
     <string name="outbound">出站</string>
+    <string name="refresh">刷新</string>
+    <string name="refresh_predictions">刷新预测</string>
+    <string name="reload_data">重新加载数据</string>
     <string name="resources_link_fare_info">票价信息</string>
     <string name="resources_link_mticket">通勤列车和轮渡票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
@@ -80,6 +84,7 @@
     <string name="suspension">暂停</string>
     <string name="train">列车</string>
     <string name="trains">列车</string>
+    <string name="unable_to_connect">无法连接</string>
     <string name="unstar_route_hint">从列表顶部取消固定路线</string>
     <string name="vehicle_arriving_first">%1$s现已到站</string>
     <string name="vehicle_arriving_other">下一趟车现已到站</string>

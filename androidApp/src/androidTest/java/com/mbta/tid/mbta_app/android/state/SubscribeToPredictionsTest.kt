@@ -10,10 +10,13 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
@@ -49,7 +52,16 @@ class SubscribeToPredictionsTest {
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
-            predictions = subscribeToPredictions(stopIds, predictionsRepo)
+            predictions =
+                subscribeToPredictions(
+                    stopIds,
+                    predictionsRepo,
+                    ErrorBannerViewModel(
+                        false,
+                        MockErrorBannerStateRepository(),
+                        MockSettingsRepository()
+                    )
+                )
         }
 
         composeTestRule.waitUntil { connectProps == listOf("place-a") }
@@ -90,7 +102,16 @@ class SubscribeToPredictionsTest {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var stopIds by remember { stopIds }
-                predictions = subscribeToPredictions(stopIds, predictionsRepo)
+                predictions =
+                    subscribeToPredictions(
+                        stopIds,
+                        predictionsRepo,
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        )
+                    )
             }
         }
 
@@ -124,7 +145,16 @@ class SubscribeToPredictionsTest {
         var predictions: PredictionsStreamDataResponse? = null
 
         composeTestRule.setContent {
-            predictions = subscribeToPredictions(emptyList(), predictionsRepo)
+            predictions =
+                subscribeToPredictions(
+                    emptyList(),
+                    predictionsRepo,
+                    ErrorBannerViewModel(
+                        false,
+                        MockErrorBannerStateRepository(),
+                        MockSettingsRepository()
+                    )
+                )
         }
 
         composeTestRule.waitUntil { predictions != null }
