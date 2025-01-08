@@ -1,5 +1,6 @@
-package com.mbta.tid.mbta_app.android.state
+package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,62 +12,62 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.test.assertEquals
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class GetNearbyTest {
+class NearbyTransitViewModelTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun testNearby() = runTest {
-        val builder1 = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder()
 
-        val globalResponse = GlobalResponse(builder1)
+        val stop1 = objects.stop()
+        val stop2 = objects.stop()
 
-        val builder2 = ObjectCollectionBuilder()
+        val globalResponse = GlobalResponse(objects)
 
         val position1 = Position(0.0, 0.0)
         val position2 = Position(1.0, 1.0)
 
+        val response1 = NearbyStaticData(globalResponse, NearbyResponse(listOf(stop1.id)))
+        val response2 = NearbyStaticData(globalResponse, NearbyResponse(listOf(stop2.id)))
+
         val nearbyRepository =
             object : INearbyRepository {
                 override suspend fun getNearby(
-                    globalResponse: GlobalResponse,
+                    global: GlobalResponse,
                     location: Position
                 ): ApiResult<NearbyStaticData> {
-                    if (location == position1) {
-                        return ApiResult.Ok(
-                            NearbyStaticData(globalResponse, NearbyResponse(builder1))
-                        )
+                    return if (location === position1) {
+                        ApiResult.Ok(response1)
                     } else {
-                        return ApiResult.Ok(
-                            NearbyStaticData(globalResponse, NearbyResponse(builder2))
-                        )
+                        ApiResult.Ok(response2)
                     }
                 }
             }
 
         var position by mutableStateOf(position1)
-        var actualNearby: NearbyStaticData? = null
+        val nearbyVM = NearbyTransitViewModel(nearbyRepository)
 
         composeTestRule.setContent {
-            actualNearby =
-                getNearby(
-                    globalResponse = globalResponse,
-                    location = position1,
-                    setLastLocation = { /* null-op */},
-                    setSelectingLocation = {},
-                    nearbyRepository = nearbyRepository
+            LaunchedEffect(position) {
+                nearbyVM.getNearby(
+                    globalResponse,
+                    position,
+                    setLastLocation = {},
+                    setSelectingLocation = {}
                 )
+            }
         }
 
         composeTestRule.awaitIdle()
-        assertEquals(NearbyStaticData(globalResponse, NearbyResponse(builder1)), actualNearby)
+        assertEquals(response1, nearbyVM.nearby)
 
         position = position2
         composeTestRule.awaitIdle()
-        assertEquals(NearbyStaticData(globalResponse, NearbyResponse(builder2)), actualNearby)
+        assertEquals(response2, nearbyVM.nearby)
     }
 }

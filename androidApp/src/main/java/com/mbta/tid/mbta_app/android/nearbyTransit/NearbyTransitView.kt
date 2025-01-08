@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,13 +19,11 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.state.getNearby
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopsAssociated
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -34,6 +33,7 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NearbyTransitView(
@@ -44,16 +44,20 @@ fun NearbyTransitView(
     setSelectingLocation: (Boolean) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     noNearbyStopsView: @Composable () -> Unit,
+    nearbyVM: NearbyTransitViewModel = koinViewModel(),
 ) {
-    var nearby: NearbyStaticData? =
-        getNearby(
-            globalResponse,
-            targetLocation,
-            setLastLocation,
-            setSelectingLocation,
-        )
+    LaunchedEffect(targetLocation, globalResponse) {
+        if (globalResponse != null && targetLocation != null) {
+            nearbyVM.getNearby(
+                globalResponse,
+                targetLocation,
+                setLastLocation,
+                setSelectingLocation
+            )
+        }
+    }
     val now = timer(updateInterval = 5.seconds)
-    val stopIds = remember(nearby) { nearby?.stopIds()?.toList() }
+    val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
     val schedules = getSchedule(stopIds)
     val predictions = subscribeToPredictions(stopIds)
 
@@ -61,7 +65,7 @@ fun NearbyTransitView(
 
     val nearbyWithRealtimeInfo =
         rememberSuspend(
-            nearby,
+            nearbyVM.nearby,
             globalResponse,
             targetLocation,
             schedules,
@@ -72,7 +76,7 @@ fun NearbyTransitView(
         ) {
             withContext(Dispatchers.Default) {
                 if (targetLocation != null) {
-                    nearby?.withRealtimeInfo(
+                    nearbyVM.nearby?.withRealtimeInfo(
                         globalData = globalResponse,
                         sortByDistanceFrom = targetLocation,
                         schedules,

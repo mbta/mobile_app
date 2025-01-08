@@ -65,6 +65,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -255,6 +256,7 @@ class NearbyTransitPageTest : KoinTest {
                 single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
                 single<IVehiclesRepository> { MockVehiclesRepository() }
                 single<ISearchResultRepository> { MockSearchResultRepository() }
+                viewModelOf(::NearbyTransitViewModel)
             }
         )
     }

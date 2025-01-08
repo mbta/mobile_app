@@ -32,6 +32,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -227,6 +228,7 @@ class NearbyTransitViewTest : KoinTest {
                 }
                 single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
                 single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                viewModelOf(::NearbyTransitViewModel)
             }
         )
     }
@@ -286,6 +288,7 @@ class NearbyTransitViewTest : KoinTest {
                         }
                     }
                     single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                    viewModelOf(::NearbyTransitViewModel)
                 }
             )
         }
