@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.model.NearbyStaticData
-import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -16,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
