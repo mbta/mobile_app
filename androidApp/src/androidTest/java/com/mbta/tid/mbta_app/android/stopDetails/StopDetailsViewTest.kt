@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
@@ -121,6 +122,7 @@ class StopDetailsViewTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<ISchedulesRepository> { MockScheduleRepository() }
                 single<IPredictionsRepository> {
                     object : IPredictionsRepository {

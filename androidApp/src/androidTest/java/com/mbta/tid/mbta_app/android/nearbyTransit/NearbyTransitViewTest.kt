@@ -18,11 +18,13 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
@@ -178,6 +180,8 @@ class NearbyTransitViewTest : KoinTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<ISettingsRepository> { MockSettingsRepository() }
+                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<ISchedulesRepository> { MockScheduleRepository() }
                 single<IPredictionsRepository> {
                     object : IPredictionsRepository {
@@ -279,6 +283,8 @@ class NearbyTransitViewTest : KoinTest {
         val emptyNearbyKoinApplication = koinApplication {
             modules(
                 module {
+                    single<ISettingsRepository> { MockSettingsRepository() }
+                    single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                     single<INearbyRepository> { MockNearbyRepository() }
                     single<ISchedulesRepository> { MockScheduleRepository() }
                     single<IPredictionsRepository> {
