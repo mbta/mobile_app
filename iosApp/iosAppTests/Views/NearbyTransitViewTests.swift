@@ -272,7 +272,10 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertEqual(try upcomingPrediction.find(ViewType.Image.self).actualImage().name(), "live-data")
 
             XCTAssertEqual(try patterns[2].actualView().headsign, "Watertown Yard")
-            XCTAssertEqual(try patterns[2].find(UpcomingTripView.self).actualView().prediction, .serviceEndedToday)
+            XCTAssertEqual(
+                try patterns[2].find(UpcomingTripView.self).actualView().prediction,
+                .noTrips(RealtimePatterns.NoTripsFormatServiceEndedToday())
+            )
         }
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 1)

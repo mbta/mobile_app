@@ -32,7 +32,7 @@ struct StopDetailsFilteredView: View {
     var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
 
     var tiles: [TileData] = []
-    var noPredictionsStatus: RealtimePatterns.Format?
+    var noPredictionsStatus: RealtimePatterns.NoTripsFormat?
 
     var stop: Stop? { stopDetailsVM.global?.stops[stopId] }
     var nowInstant: Instant { now.toKotlinInstant() }

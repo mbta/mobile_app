@@ -4,13 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -27,16 +27,16 @@ class GetNearbyTest {
 
         val builder2 = ObjectCollectionBuilder()
 
-        val coordinate1 = Coordinate(0.0, 0.0)
-        val coordinate2 = Coordinate(1.0, 1.0)
+        val position1 = Position(0.0, 0.0)
+        val position2 = Position(1.0, 1.0)
 
         val nearbyRepository =
             object : INearbyRepository {
                 override suspend fun getNearby(
                     globalResponse: GlobalResponse,
-                    location: Coordinate
+                    location: Position
                 ): ApiResult<NearbyStaticData> {
-                    if (location == coordinate1) {
+                    if (location == position1) {
                         return ApiResult.Ok(
                             NearbyStaticData(globalResponse, NearbyResponse(builder1))
                         )
@@ -48,14 +48,14 @@ class GetNearbyTest {
                 }
             }
 
-        var coordinate by mutableStateOf(coordinate1)
+        var position by mutableStateOf(position1)
         var actualNearby: NearbyStaticData? = null
 
         composeTestRule.setContent {
             actualNearby =
                 getNearby(
                     globalResponse = globalResponse,
-                    location = coordinate1,
+                    location = position1,
                     setLastLocation = { /* null-op */},
                     setSelectingLocation = {},
                     nearbyRepository = nearbyRepository
@@ -65,7 +65,7 @@ class GetNearbyTest {
         composeTestRule.awaitIdle()
         assertEquals(NearbyStaticData(globalResponse, NearbyResponse(builder1)), actualNearby)
 
-        coordinate = coordinate2
+        position = position2
         composeTestRule.awaitIdle()
         assertEquals(NearbyStaticData(globalResponse, NearbyResponse(builder2)), actualNearby)
     }

@@ -242,7 +242,7 @@ sealed class RealtimePatterns {
         context: TripInstantDisplay.Context
     ): Format {
         val majorAlert = alertsHere?.firstOrNull { it.significance >= AlertSignificance.Major }
-        if (majorAlert != null) return Format.NoService(majorAlert)
+        if (majorAlert != null) return Format.Disruption(majorAlert)
         val secondaryAlertToDisplay =
             alertsHere?.firstOrNull { it.significance >= AlertSignificance.Secondary }
                 ?: alertsDownstream?.firstOrNull()
@@ -276,14 +276,14 @@ sealed class RealtimePatterns {
         return when {
             tripsToShow.isNotEmpty() -> Format.Some(tripsToShow, secondaryAlert)
             !allDataLoaded -> Format.Loading
-            !hasSchedulesToday -> Format.NoSchedulesToday(secondaryAlert)
+            !hasSchedulesToday -> Format.NoTrips(NoTripsFormat.NoSchedulesToday, secondaryAlert)
             upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled } ->
                 // there are trips in the future but we're not showing them (maybe because we're on
                 // the subway and we have schedules but can't get predictions)
-                Format.None(secondaryAlert)
+                Format.NoTrips(NoTripsFormat.PredictionsUnavailable, secondaryAlert)
             else ->
                 // if there were schedules but there are no trips in the future, service is over
-                Format.ServiceEndedToday(secondaryAlert)
+                Format.NoTrips(NoTripsFormat.ServiceEndedToday, secondaryAlert)
         }
     }
 
@@ -347,6 +347,14 @@ sealed class RealtimePatterns {
         throw NoSuchElementException("Got directionId of empty PatternsByHeadsign")
     }
 
+    sealed class NoTripsFormat {
+        data object NoSchedulesToday : NoTripsFormat()
+
+        data object ServiceEndedToday : NoTripsFormat()
+
+        data object PredictionsUnavailable : NoTripsFormat()
+    }
+
     sealed class Format {
         abstract val secondaryAlert: SecondaryAlert?
 
@@ -368,12 +376,6 @@ sealed class RealtimePatterns {
             override val secondaryAlert = null
         }
 
-        data class None(override val secondaryAlert: SecondaryAlert?) : Format()
-
-        data class NoSchedulesToday(override val secondaryAlert: SecondaryAlert?) : Format()
-
-        data class ServiceEndedToday(override val secondaryAlert: SecondaryAlert?) : Format()
-
         data class Some(
             val trips: List<FormatWithId>,
             override val secondaryAlert: SecondaryAlert?
@@ -392,7 +394,14 @@ sealed class RealtimePatterns {
             }
         }
 
-        data class NoService(val alert: Alert) : Format() {
+        data class NoTrips
+        @DefaultArgumentInterop.Enabled
+        constructor(
+            val noTripsFormat: NoTripsFormat,
+            override val secondaryAlert: SecondaryAlert? = null
+        ) : Format()
+
+        data class Disruption(val alert: Alert) : Format() {
             override val secondaryAlert = null
         }
     }

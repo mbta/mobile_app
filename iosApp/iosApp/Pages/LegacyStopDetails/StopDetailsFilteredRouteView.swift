@@ -48,7 +48,9 @@ struct StopDetailsFilteredRouteView: View {
             ) {
                 RealtimePatterns.FormatSome(trips: [formattedUpcomingTrip], secondaryAlert: nil)
             } else {
-                RealtimePatterns.FormatNone(secondaryAlert: nil)
+                RealtimePatterns.FormatNoTrips(
+                    noTripsFormat: RealtimePatterns.NoTripsFormatPredictionsUnavailable()
+                )
             }
 
             if !(formatted is RealtimePatterns.FormatSome) {

@@ -6,7 +6,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -219,7 +218,7 @@ class NearbyTransitViewTest : KoinTest {
                     object : INearbyRepository {
                         override suspend fun getNearby(
                             global: GlobalResponse,
-                            location: Coordinate
+                            location: Position
                         ): ApiResult<NearbyStaticData> {
                             val data = NearbyStaticData(global, NearbyResponse(builder))
                             return ApiResult.Ok(data)

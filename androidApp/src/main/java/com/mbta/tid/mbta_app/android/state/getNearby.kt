@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
-import com.mbta.tid.mbta_app.model.Coordinate
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -21,7 +20,7 @@ import org.koin.compose.koinInject
 class NearbyViewModel(
     private val nearbyRepository: INearbyRepository,
     private val globalResponse: GlobalResponse?,
-    private val location: Coordinate?,
+    private val location: Position?,
     setLastLocation: (Position) -> Unit,
     setSelectingLocation: (Boolean) -> Unit,
 ) : ViewModel() {
@@ -34,16 +33,14 @@ class NearbyViewModel(
             nearbyResponse.collect {
                 if (globalResponse != null && location != null) {
                     getNearby(globalResponse, location)
-                    setLastLocation(
-                        Position(latitude = location.latitude, longitude = location.longitude)
-                    )
+                    setLastLocation(location)
                     setSelectingLocation(false)
                 }
             }
         }
     }
 
-    suspend fun getNearby(globalResponse: GlobalResponse, location: Coordinate) {
+    suspend fun getNearby(globalResponse: GlobalResponse, location: Position) {
         when (val data = nearbyRepository.getNearby(globalResponse, location)) {
             is ApiResult.Ok -> _nearbyResponse.emit(data.data)
             is ApiResult.Error -> TODO("handle errors")
@@ -59,7 +56,7 @@ class NearbyViewModel(
 @Composable
 fun getNearby(
     globalResponse: GlobalResponse?,
-    location: Coordinate?,
+    location: Position?,
     setLastLocation: (Position) -> Unit,
     setSelectingLocation: (Boolean) -> Unit,
     nearbyRepository: INearbyRepository = koinInject()
