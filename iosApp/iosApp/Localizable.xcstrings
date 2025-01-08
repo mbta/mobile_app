@@ -8345,6 +8345,47 @@
         }
       }
     },
+    "This trip has been cancelled. We’re sorry for the inconvenience." : {
+      "comment" : "Explanation for a cancelled trip on stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este viaje ha sido cancelado. Lamentamos las molestias."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vwayaj sa a te anile. Nou regrèt deranjman an."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta viagem foi cancelada. Lamentamos o inconveniente."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此行程已取消。我们对此造成的不便深表歉意。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "這次旅行已取消。對於造成您的不便，我們深表歉意。"
+          }
+        }
+      }
+    },
     "This vehicle is completing another trip" : {
       "localizations" : {
         "es" : {
@@ -8668,6 +8709,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "列車"
+          }
+        }
+      }
+    },
+    "Trip cancelled" : {
+      "comment" : "Header for a cancelled trip card on stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Viaje cancelado"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vwayaj anile"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Viagem cancelada"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi bị hủy"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "行程取消"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "行程取消"
           }
         }
       }

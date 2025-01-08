@@ -1448,6 +1448,175 @@ class StopDetailsDeparturesTest {
         }
 
     @Test
+    fun `autoTripFilter skips cancelled trips`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route = objects.route {
+                type = RouteType.COMMUTER_RAIL
+            }
+
+            val routePattern =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    directionId = 0
+                    representativeTrip { headsign = "A" }
+                }
+
+            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val trip1 = objects.trip(routePattern)
+            val trip2 = objects.trip(routePattern)
+            val trip3 = objects.trip(routePattern)
+            val trip4 = objects.trip(routePattern)
+            val vehicle = objects.vehicle {
+                tripId = trip3.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip1
+                departureTime = time.plus(2.minutes)
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip2
+                departureTime = time.plus(5.minutes)
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip3
+                departureTime = time.plus(7.minutes)
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip4
+                departureTime = time.plus(20.minutes)
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip1
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip2
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip3
+                departureTime = time.plus(10.minutes)
+                vehicleId = vehicle.id
+            }
+
+            val departures =
+                StopDetailsDepartures.fromData(
+                    stop,
+                    GlobalResponse(
+                        objects,
+                        mapOf(stop.id to listOf(routePattern.id))
+                    ),
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    emptySet(),
+                    time,
+                    useTripHeadsigns = anyBoolean(),
+                )
+
+            assertEquals(
+                TripDetailsFilter(trip3.id, vehicle.id, 0, false),
+                checkNotNull(departures).autoTripFilter(
+                    StopDetailsFilter(route.id, routePattern.directionId), null, time)
+            )
+        }
+
+    @Test
+    fun `autoTripFilter selects the first cancelled trip if there are only cancelled trips`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route = objects.route {
+                type = RouteType.FERRY
+            }
+
+            val routePattern =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "A" }
+                }
+
+            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val trip1 = objects.trip(routePattern)
+            val trip2 = objects.trip(routePattern)
+            val trip3 = objects.trip(routePattern)
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip1
+                departureTime = time.plus(2.minutes)
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip2
+                departureTime = time.plus(5.minutes)
+            }
+            objects.schedule {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip3
+                departureTime = time.plus(7.minutes)
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip1
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip2
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+            objects.prediction {
+                stopId = stop.id
+                stopSequence = 0
+                trip = trip3
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+
+            val departures =
+                StopDetailsDepartures.fromData(
+                    stop,
+                    GlobalResponse(
+                        objects,
+                        mapOf(stop.id to listOf(routePattern.id))
+                    ),
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    AlertsStreamDataResponse(objects),
+                    emptySet(),
+                    time,
+                    useTripHeadsigns = anyBoolean(),
+                )
+
+            assertEquals(
+                TripDetailsFilter(trip1.id, null, 0, false),
+                checkNotNull(departures).autoTripFilter(
+                    StopDetailsFilter(route.id, routePattern.directionId), null, time)
+            )
+        }
+
+    @Test
     fun `stopDetailsFormattedTrips provides upcoming trips in a route and direction`() =
         parametricTest {
             val objects = ObjectCollectionBuilder()
