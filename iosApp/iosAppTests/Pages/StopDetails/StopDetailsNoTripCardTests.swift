@@ -20,14 +20,14 @@ final class StopDetailsNoTripCardTests: XCTestCase {
     func testPredictionsUnavailable() throws {
         let sut = StopDetailsNoTripCard(
             status: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
-            headerColor: Color.text,
+            accentColor: Color.text,
             routeType: .bus
         )
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "live-data-slash"
         }))
         XCTAssertNotNil(try sut.inspect().find(text: "Predictions unavailable"))
-        XCTAssertNotNil(try sut.inspect().find(HaloSeparator.self))
+        XCTAssertNotNil(try sut.inspect().find(ViewType.Divider.self))
         XCTAssertNotNil(try sut.inspect().find(
             text: "Service is running, but predicted arrival times aren’t available." +
                 " The map shows where buses on this route currently are."
@@ -37,26 +37,26 @@ final class StopDetailsNoTripCardTests: XCTestCase {
     func testServiceEnded() throws {
         let sut = StopDetailsNoTripCard(
             status: RealtimePatterns.NoTripsFormatServiceEndedToday(),
-            headerColor: Color.text,
+            accentColor: Color.text,
             routeType: .ferry
         )
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "mode-ferry-slash"
         }))
         XCTAssertNotNil(try sut.inspect().find(text: "Service ended"))
-        XCTAssertThrowsError(try sut.inspect().find(HaloSeparator.self))
+        XCTAssertThrowsError(try sut.inspect().find(ViewType.Divider.self))
     }
 
     func testNoSchedulesToday() throws {
         let sut = StopDetailsNoTripCard(
             status: RealtimePatterns.NoTripsFormatNoSchedulesToday(),
-            headerColor: Color.text,
+            accentColor: Color.text,
             routeType: .commuterRail
         )
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "mode-cr-slash"
         }))
         XCTAssertNotNil(try sut.inspect().find(text: "No service today"))
-        XCTAssertThrowsError(try sut.inspect().find(HaloSeparator.self))
+        XCTAssertThrowsError(try sut.inspect().find(ViewType.Divider.self))
     }
 }
