@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
-import com.mbta.tid.mbta_app.android.util.placeholderIfLoading
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
