@@ -91,14 +91,7 @@ fun NearbyTransitPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
-    errorBannerViewModel: ErrorBannerViewModel =
-        viewModel(
-            factory =
-                ErrorBannerViewModel.Factory(
-                    errorRepository = koinInject(),
-                    settingsRepository = koinInject()
-                )
-        ),
+    errorBannerViewModel: ErrorBannerViewModel,
     visitHistoryUsecase: VisitHistoryUsecase = koinInject()
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }

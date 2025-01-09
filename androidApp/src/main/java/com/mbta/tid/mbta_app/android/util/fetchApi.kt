@@ -26,6 +26,7 @@ suspend fun <T : Any> fetchApi(
             errorBannerRepo.setDataError(key = errorKey, action = onRefreshAfterError)
         }
         is ApiResult.Ok -> {
+            //         Log.i("KB", "Clearing error ${errorKey}")
             errorBannerRepo.clearDataError(key = errorKey)
             onSuccess(result.data)
         }

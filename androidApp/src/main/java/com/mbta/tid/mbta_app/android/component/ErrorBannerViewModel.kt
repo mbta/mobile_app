@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.mbta.tid.mbta_app.model.ErrorBannerState
@@ -18,19 +19,32 @@ class ErrorBannerViewModel(
     val settingsRepository: ISettingsRepository
 ) : ViewModel() {
 
+    init {
+        Log.i("KB", "Error VM init")
+    }
+
     private val _errorState = MutableStateFlow<ErrorBannerState?>(null)
     val errorState: StateFlow<ErrorBannerState?> = _errorState.asStateFlow()
 
     var showDebugMessages: Boolean = false
 
     suspend fun activate() {
+        Log.i("KB", "activate")
         errorRepository.subscribeToNetworkStatusChanges()
         showDebugMessages = settingsRepository.getSettings()[Settings.DevDebugMode] ?: false
 
-        errorRepository.state.onEach { _errorState.emit(it) }.collect()
+        errorRepository.state
+            .onEach {
+                Log.i("KB", "error state emit ${it}")
+
+                _errorState.emit(it)
+            }
+            .collect()
     }
 
     fun clearState() {
+        // Log.i("KB", "clear state")
+
         errorRepository.clearState()
     }
 

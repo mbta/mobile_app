@@ -13,12 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.android.component.BottomNavBar
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheetState
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
@@ -64,6 +66,15 @@ fun ContentView(
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
 
+    val errorBannerViewModel: ErrorBannerViewModel =
+        viewModel(
+            factory =
+                ErrorBannerViewModel.Factory(
+                    errorRepository = koinInject(),
+                    settingsRepository = koinInject()
+                )
+        )
+
     LifecycleResumeEffect(null) {
         socket.attach()
         (socket as? PhoenixSocketWrapper)?.attachLogging()
@@ -107,7 +118,8 @@ fun ContentView(
                             navigateToMore = { navController.navigate(Routes.More) }
                         )
                     }
-                }
+                },
+                errorBannerViewModel = errorBannerViewModel
             )
         }
         composable<Routes.More> {
