@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -315,7 +315,7 @@ class NearbyTransitPageTest : KoinTest {
         }
 
         composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertIsDisplayed()
-        composeTestRule.waitUntilDoesNotExist(hasText("Loading..."))
+        composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading..."))
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
             .performSemanticsAction(SemanticsActions.Expand)
@@ -404,7 +404,7 @@ class NearbyTransitPageTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilDoesNotExist(hasText("Loading..."))
+        composeTestRule.waitUntilDoesNotExist(hasContentDescription("Loading...", substring = true))
 
         composeTestRule.waitUntil { mockMapVM.loadConfigCalledCount == 1 }
         mockMapVM.mutableLastErrorTimestamp.value = Clock.System.now()

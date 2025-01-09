@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mbta.tid.mbta_app.android.util.placeholderIfLoading
 
 @Composable
 fun TransitHeader(
@@ -41,12 +42,17 @@ fun TransitHeader(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(modeIcon, contentDescription = modeDescription, tint = textColor)
+            Icon(
+                modeIcon,
+                contentDescription = modeDescription,
+                tint = textColor,
+                modifier = Modifier.placeholderIfLoading()
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = name,
                 maxLines = 1,
-                modifier = Modifier.semantics { heading() },
+                modifier = Modifier.semantics { heading() }.placeholderIfLoading(),
                 style =
                     LocalTextStyle.current.copy(
                         color = textColor,
