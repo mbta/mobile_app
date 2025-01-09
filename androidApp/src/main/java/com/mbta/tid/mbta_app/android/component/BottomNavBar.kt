@@ -8,22 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavDestination
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.Routes
 
 @Composable
-fun BottomNavBar(navController: NavHostController) {
-
-    val currentDestination = navController.currentBackStackEntry?.destination
-
+fun BottomNavBar(
+    currentDestination: NavDestination?,
+    navigateToNearby: () -> Unit,
+    navigateToMore: () -> Unit
+) {
     BottomAppBar(
         modifier = Modifier.height(83.dp),
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         actions = {
             BottomNavIconButton(
                 modifier = Modifier.fillMaxSize().weight(1f),
-                onClick = { navController.navigate(Routes.NearbyTransit) },
+                onClick = navigateToNearby,
                 icon = R.drawable.map_pin,
                 label = stringResource(R.string.nearby_transit_link),
                 // currentDestination?.hiearchy?.any { it.hasRoute(Routes.NearbyTransit::class)
@@ -34,7 +34,7 @@ fun BottomNavBar(navController: NavHostController) {
 
             BottomNavIconButton(
                 modifier = Modifier.fillMaxSize().weight(1f),
-                onClick = { navController.navigate(Routes.More) },
+                onClick = navigateToMore,
                 icon = R.drawable.more,
                 label = stringResource(R.string.more_link),
                 active = currentDestination?.route?.contains("More") ?: true

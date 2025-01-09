@@ -66,6 +66,7 @@
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>
     <string name="reload_data">Recarregar dados</string>
+    <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="resources_link_fare_info">Informações sobre tarifas</string>
     <string name="resources_link_mticket">Bilhetes de transporte diário por trem e balsa</string>
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
