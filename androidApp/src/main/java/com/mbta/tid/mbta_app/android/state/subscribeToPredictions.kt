@@ -45,6 +45,9 @@ class PredictionsViewModel(
         currentStopIds = stopIds
         if (stopIds != null) {
             predictionsRepository.connectV2(stopIds, ::handleJoinMessage, ::handlePushMessage)
+        } else {
+            // reset predictions if nearby stop list has been reset
+            _predictions.value = null
         }
     }
 
@@ -88,7 +91,6 @@ class PredictionsViewModel(
 
     fun disconnect() {
         predictionsRepository.disconnect()
-        _predictions.value = null
         errorBannerViewModel.loadingWhenPredictionsStale = true
     }
 
