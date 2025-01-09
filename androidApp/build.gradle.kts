@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.material3)
+    implementation(libs.compose.placeholder.material3)
+    implementation(libs.compose.shimmer)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.javaPhoenixClient)
