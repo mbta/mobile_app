@@ -88,6 +88,7 @@ class PredictionsViewModel(
 
     fun disconnect() {
         predictionsRepository.disconnect()
+        _predictions.value = null
         errorBannerViewModel.loadingWhenPredictionsStale = true
     }
 
