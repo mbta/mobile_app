@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -56,10 +57,12 @@ class MorePageTests : KoinTest {
         composeTestRule.onNodeWithText("Hide Maps").performClick()
 
         composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { hideMapToggleCalled }
 
         assertTrue { hideMapToggleCalled }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testLinksExist() {
         val koinApplication = koinApplication {
@@ -73,11 +76,15 @@ class MorePageTests : KoinTest {
             KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
         }
 
+        composeTestRule.waitUntilExactlyOneExists(hasText("Send app feedback"))
         composeTestRule.onNodeWithText("Send app feedback").assertIsDisplayed()
         composeTestRule.onNodeWithText("Trip Planner").assertIsDisplayed()
         composeTestRule.onNodeWithText("Fare Information").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Commuter Rail and Ferry tickets").performScrollTo()
         composeTestRule.onNodeWithText("Commuter Rail and Ferry tickets").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Terms of Use").performScrollTo()
         composeTestRule.onNodeWithText("Terms of Use").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Privacy Policy").performScrollTo()
         composeTestRule.onNodeWithText("Privacy Policy").assertIsDisplayed()
         composeTestRule.onNode(hasText("View source on GitHub")).performScrollTo()
         composeTestRule.onNodeWithText("View source on GitHub").assertIsDisplayed()
