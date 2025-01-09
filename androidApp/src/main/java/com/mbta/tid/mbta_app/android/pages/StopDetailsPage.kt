@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
@@ -31,10 +32,15 @@ fun StopDetailsPage(
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateDepartures: (StopDetailsDepartures?) -> Unit,
+    errorBannerViewModel: ErrorBannerViewModel
 ) {
     val globalResponse = getGlobalData()
 
-    val predictionsResponse = subscribeToPredictions(stopIds = listOf(stop.id))
+    val predictionsResponse =
+        subscribeToPredictions(
+            stopIds = listOf(stop.id),
+            errorBannerViewModel = errorBannerViewModel
+        )
 
     val now = timer(updateInterval = 5.seconds)
 
@@ -79,5 +85,6 @@ fun StopDetailsPage(
         togglePinnedRoute,
         onClose,
         updateStopFilter,
+        errorBannerViewModel
     )
 }

@@ -5,7 +5,6 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.boundsInWindow
@@ -37,7 +35,7 @@ import androidx.navigation.toRoute
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.DragHandle
-import com.mbta.tid.mbta_app.android.component.LocationAuthButton
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
@@ -52,15 +50,21 @@ import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.util.toPosition
+import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 data class NearbyTransit(
@@ -86,8 +90,18 @@ fun NearbyTransitPage(
     showNavBar: () -> Unit,
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory())
+    mapViewModel: IMapViewModel = viewModel(factory = MapViewModel.Factory()),
+    errorBannerViewModel: ErrorBannerViewModel =
+        viewModel(
+            factory =
+                ErrorBannerViewModel.Factory(
+                    errorRepository = koinInject(),
+                    settingsRepository = koinInject()
+                )
+        ),
+    visitHistoryUsecase: VisitHistoryUsecase = koinInject()
 ) {
+    LaunchedEffect(Unit) { errorBannerViewModel.activate() }
     val navController = rememberNavController()
     val currentNavEntry: NavBackStackEntry? by
         navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -99,7 +113,14 @@ fun NearbyTransitPage(
 
     val searchFocusRequester = remember { FocusRequester() }
 
+    fun updateVisitHistory(stopId: String) {
+        CoroutineScope(Dispatchers.Default).launch {
+            visitHistoryUsecase.addVisit(Visit.StopVisit(stopId))
+        }
+    }
+
     fun handleStopNavigation(stopId: String) {
+        updateVisitHistory(stopId)
         navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
@@ -189,7 +210,8 @@ fun NearbyTransitPage(
                         nearbyTransit.alertData,
                         onClose = { navController.popBackStack() },
                         updateStopFilter = ::updateStopFilter,
-                        updateDepartures = ::updateStopDepartures
+                        updateDepartures = ::updateStopDepartures,
+                        errorBannerViewModel = errorBannerViewModel
                     )
                 }
             }
@@ -223,50 +245,27 @@ fun NearbyTransitPage(
                     }
                 }
 
-                LaunchedEffect(nearbyTransit.hideMaps) {
-                    if (nearbyTransit.hideMaps) {
-                        nearbyTransit.locationDataManager.currentLocation.collect { location ->
-                            if (location != null) {
-                                nearbyTransit.viewportProvider.updateCameraState(location)
-                            }
-                        }
-                    }
-                }
-
-                Column {
-                    if (nearbyTransit.hideMaps) {
-                        LocationAuthButton(
-                            nearbyTransit.locationDataManager,
-                            Modifier.align(Alignment.CenterHorizontally)
+                NearbyTransitView(
+                    alertData = nearbyTransit.alertData,
+                    globalResponse = nearbyTransit.globalResponse,
+                    targetLocation = targetLocation,
+                    setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
+                    setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
+                    onOpenStopDetails = { stopId, filter ->
+                        updateVisitHistory(stopId)
+                        navController.navigate(
+                            SheetRoutes.StopDetails(stopId, filter?.routeId, filter?.directionId)
                         )
-                    }
-
-                    NearbyTransitView(
-                        alertData = nearbyTransit.alertData,
-                        globalResponse = nearbyTransit.globalResponse,
-                        targetLocation = targetLocation,
-                        setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
-                        setSelectingLocation = {
-                            nearbyTransit.nearbyTransitSelectingLocation = it
-                        },
-                        onOpenStopDetails = { stopId, filter ->
-                            navController.navigate(
-                                SheetRoutes.StopDetails(
-                                    stopId,
-                                    filter?.routeId,
-                                    filter?.directionId
-                                )
-                            )
-                        },
-                        noNearbyStopsView = {
-                            NoNearbyStopsView(
-                                hideMaps = nearbyTransit.hideMaps,
-                                ::openSearch,
-                                ::panToDefaultCenter
-                            )
-                        }
-                    )
-                }
+                    },
+                    noNearbyStopsView = {
+                        NoNearbyStopsView(
+                            nearbyTransit.hideMaps,
+                            ::openSearch,
+                            ::panToDefaultCenter
+                        )
+                    },
+                    errorBannerViewModel = errorBannerViewModel
+                )
             }
         }
     }

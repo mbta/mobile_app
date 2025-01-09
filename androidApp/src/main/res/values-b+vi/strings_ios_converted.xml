@@ -12,6 +12,7 @@
     <string name="detour">Đường vòng</string>
     <string name="directionTo">%1$s đến</string>
     <string name="eastbound">Về hướng đông</string>
+    <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
     <string name="feedback_link_form">Gửi ý phản hồi về ứng dụng</string>
@@ -62,6 +63,10 @@
     <string name="other_link_source_code">Xem nguồn trên GitHub</string>
     <string name="other_link_tos">Điều khoản sử dụng</string>
     <string name="outbound">Đi</string>
+    <string name="refresh">Làm mới</string>
+    <string name="refresh_predictions">Làm mới dự đoán</string>
+    <string name="reload_data">Tải lại dữ liệu</string>
+    <string name="recently_viewed">Đã xem gần đây</string>
     <string name="resources_link_fare_info">Thông tin giá vé</string>
     <string name="resources_link_mticket">Vé phà vé đường sắt ngoại ô (Commuter Rail)</string>
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
@@ -80,6 +85,7 @@
     <string name="suspension">Đình chỉ</string>
     <string name="train">tàu</string>
     <string name="trains">tàu</string>
+    <string name="unable_to_connect">Không thể kết nối</string>
     <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>
     <string name="vehicle_arriving_first">%1$s đang đến</string>
     <string name="vehicle_arriving_other">và đang đến</string>

@@ -64,6 +64,7 @@
     <string name="other_link_tos">Terms of Use</string>
     <string name="outbound">Outbound</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
+    <string name="recently_viewed">Recently Viewed</string>
     <string name="resources_link_fare_info">Fare Information</string>
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>
@@ -98,5 +99,10 @@
     <string name="westbound">Westbound</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
-
+    <string name="refresh">Refresh</string>
+    <string name="refresh_predictions">Refresh predictions</string>
+    <string name="updated_mins_ago" tools:ignore="MissingTranslation">Updated %1$d minutes ago</string>
+    <string name="unable_to_connect">Unable to connect</string>
+    <string name="reload_data">Reload data</string>
+    <string name="error_loading_data">Error loading data</string>
 </resources>

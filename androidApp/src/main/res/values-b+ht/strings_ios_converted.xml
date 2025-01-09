@@ -12,6 +12,7 @@
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
     <string name="eastbound">Pran direksyon lès</string>
+    <string name="error_loading_data">Erè nan chajman done</string>
     <string name="feature_flag_debug_mode">Mòd Debug</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye kòmantè sou aplikasyon</string>
@@ -62,6 +63,10 @@
     <string name="other_link_source_code">Gade sous sou GitHub</string>
     <string name="other_link_tos">Kondisyon itilizasyon</string>
     <string name="outbound">Soti</string>
+    <string name="refresh">Rafrechi</string>
+    <string name="refresh_predictions">Rafrechi prediksyon</string>
+    <string name="reload_data">Rechaje done</string>
+    <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
@@ -80,6 +85,7 @@
     <string name="suspension">Sispansyon</string>
     <string name="train">tren</string>
     <string name="trains">tren yo</string>
+    <string name="unable_to_connect">Pa ka konekte</string>
     <string name="unstar_route_hint">retire wout ki soti anlè lis la</string>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
