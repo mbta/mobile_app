@@ -92,16 +92,16 @@ struct TripStops: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             if let splitStops, let target {
+                if showFirstStopSeparately, let firstStop = splitStops.firstStop {
+                    TripStopRow(
+                        stop: firstStop,
+                        now: now.toKotlinInstant(),
+                        onTapLink: onTapLink,
+                        routeAccents: routeAccents,
+                        firstStop: true
+                    )
+                }
                 if !splitStops.collapsedStops.isEmpty, let stopsAway {
-                    if showFirstStopSeparately, let firstStop = splitStops.firstStop {
-                        TripStopRow(
-                            stop: firstStop,
-                            now: now.toKotlinInstant(),
-                            onTapLink: onTapLink,
-                            routeAccents: routeAccents,
-                            firstStop: true
-                        )
-                    }
                     DisclosureGroup(
                         isExpanded: $stopsExpanded,
                         content: {

@@ -17,8 +17,10 @@ import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.StopResultRoute
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -34,6 +36,7 @@ class SearchBarOverlayTest : KoinTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> { MockGlobalRepository() }
                 single<ISearchResultRepository> {
                     object : ISearchResultRepository {

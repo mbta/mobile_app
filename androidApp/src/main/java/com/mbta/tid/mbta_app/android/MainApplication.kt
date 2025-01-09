@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
 import android.app.Application
+import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
@@ -27,6 +28,9 @@ class MainApplication : Application() {
     }
 
     companion object {
-        val koinViewModelModule = module { viewModelOf(::ContentViewModel) }
+        val koinViewModelModule = module {
+            viewModelOf(::ContentViewModel)
+            viewModelOf(::NearbyTransitViewModel)
+        }
     }
 }

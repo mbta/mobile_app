@@ -87,11 +87,21 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
             return currentTripFilter
         }
 
-        val firstTrip: UpcomingTrip = relevantTrips.firstOrNull() ?: return null
+        var filterTrip: UpcomingTrip = relevantTrips.firstOrNull() ?: return null
+        var cancelIndex = 1
+        while (filterTrip.isCancelled && relevantTrips.size > cancelIndex) {
+            // If the auto trip filter would select a cancelled trip,
+            // select the next uncancelled trip instead
+            val nextTrip = relevantTrips[cancelIndex]
+            if (!nextTrip.isCancelled) {
+                filterTrip = nextTrip
+            }
+            cancelIndex++
+        }
         return TripDetailsFilter(
-            tripId = firstTrip.trip.id,
-            vehicleId = firstTrip.vehicle?.id,
-            stopSequence = firstTrip.stopSequence
+            tripId = filterTrip.trip.id,
+            vehicleId = filterTrip.vehicle?.id,
+            stopSequence = filterTrip.stopSequence
         )
     }
 

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.NearbyStaticData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -17,21 +18,26 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -174,6 +180,8 @@ class NearbyTransitViewTest : KoinTest {
     val koinApplication = koinApplication {
         modules(
             module {
+                single<ISettingsRepository> { MockSettingsRepository() }
+                single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<ISchedulesRepository> { MockScheduleRepository() }
                 single<IPredictionsRepository> {
                     object : IPredictionsRepository {
@@ -227,6 +235,7 @@ class NearbyTransitViewTest : KoinTest {
                 }
                 single<IRailRouteShapeRepository> { MockRailRouteShapeRepository() }
                 single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                viewModelOf(::NearbyTransitViewModel)
             }
         )
     }
@@ -245,7 +254,13 @@ class NearbyTransitViewTest : KoinTest {
                     setLastLocation = {},
                     setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {}
+                    noNearbyStopsView = {},
+                    errorBannerViewModel =
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        )
                 )
             }
         }
@@ -268,6 +283,8 @@ class NearbyTransitViewTest : KoinTest {
         val emptyNearbyKoinApplication = koinApplication {
             modules(
                 module {
+                    single<ISettingsRepository> { MockSettingsRepository() }
+                    single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                     single<INearbyRepository> { MockNearbyRepository() }
                     single<ISchedulesRepository> { MockScheduleRepository() }
                     single<IPredictionsRepository> {
@@ -286,6 +303,7 @@ class NearbyTransitViewTest : KoinTest {
                         }
                     }
                     single<TogglePinnedRouteUsecase> { TogglePinnedRouteUsecase(get()) }
+                    viewModelOf(::NearbyTransitViewModel)
                 }
             )
         }
@@ -298,7 +316,13 @@ class NearbyTransitViewTest : KoinTest {
                     setLastLocation = {},
                     setSelectingLocation = {},
                     onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = { Text("This would be the no nearby stops view") }
+                    noNearbyStopsView = { Text("This would be the no nearby stops view") },
+                    errorBannerViewModel =
+                        ErrorBannerViewModel(
+                            false,
+                            MockErrorBannerStateRepository(),
+                            MockSettingsRepository()
+                        )
                 )
             }
         }
