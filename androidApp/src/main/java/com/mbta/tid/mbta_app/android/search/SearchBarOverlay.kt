@@ -1,9 +1,13 @@
 package com.mbta.tid.mbta_app.android.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
@@ -30,12 +35,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavBackStackEntry
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
+import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 
 @ExperimentalMaterial3Api
@@ -52,7 +59,8 @@ fun SearchBarOverlay(
         }
     var expanded by rememberSaveable { mutableStateOf(false) }
     var searchInputState by rememberSaveable { mutableStateOf("") }
-    val searchResultsVm = getSearchResultsVm()
+    val globalResponse = getGlobalData()
+    val searchResultsVm = getSearchResultsVm(globalResponse = globalResponse)
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 
     val buttonColors =
@@ -62,7 +70,7 @@ fun SearchBarOverlay(
             contentColor = colorResource(R.color.deemphasized),
             disabledContentColor = colorResource(R.color.deemphasized),
         )
-    LaunchedEffect(searchInputState) { searchResultsVm.getSearchResults(searchInputState) }
+    LaunchedEffect(searchInputState, visible) { searchResultsVm.getSearchResults(searchInputState) }
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
@@ -104,7 +112,7 @@ fun SearchBarOverlay(
                             leadingIcon = {
                                 Icon(
                                     painterResource(R.drawable.magnifying_glass),
-                                    "Search",
+                                    null,
                                     tint = colorResource(R.color.deemphasized)
                                 )
                             },
@@ -116,7 +124,7 @@ fun SearchBarOverlay(
                                     ) {
                                         Icon(
                                             painterResource(R.drawable.fa_xmark),
-                                            "Voice Search",
+                                            stringResource(R.string.close_button_label),
                                             tint = colorResource(R.color.deemphasized)
                                         )
                                     }
@@ -127,9 +135,32 @@ fun SearchBarOverlay(
                     expanded = expanded,
                     onExpandedChange = {},
                 ) {
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().background(colorResource(R.color.fill2)),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        if (searchInputState.isEmpty()) {
+                            item {
+                                Text(
+                                    modifier = Modifier.padding(bottom = 10.dp),
+                                    text = stringResource(R.string.recently_viewed),
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                         items(searchResults?.stops ?: emptyList()) { stop ->
-                            StopResultsView(stop, onStopNavigation)
+                            val shape =
+                                if (searchResults?.stops?.size == 1) {
+                                    RoundedCornerShape(10.dp)
+                                } else if (searchResults?.stops?.first() == stop) {
+                                    RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                                } else if (searchResults?.stops?.last() == stop) {
+                                    RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
+                                } else {
+                                    RoundedCornerShape(0.dp)
+                                }
+                            StopResultsView(shape, stop, globalResponse, onStopNavigation)
                         }
                     }
                 }
