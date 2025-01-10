@@ -25,15 +25,15 @@ class ScheduleViewModel(
     private val _schedule = MutableStateFlow<ScheduleResponse?>(null)
     val schedule: StateFlow<ScheduleResponse?> = _schedule
 
-    fun getSchedule(stopIds: List<String>) {
+    fun getSchedule(stopIds: List<String>, errorKey: String) {
         if (stopIds.isNotEmpty()) {
             CoroutineScope(Dispatchers.IO).launch {
                 fetchApi(
                     errorBannerRepo = errorBannerRepository,
-                    errorKey = "ScheduleViewModel.getSchedule",
+                    errorKey = errorKey,
                     getData = { schedulesRepository.getSchedule(stopIds, Clock.System.now()) },
                     onSuccess = { _schedule.value = it },
-                    onRefreshAfterError = { getSchedule(stopIds) }
+                    onRefreshAfterError = { getSchedule(stopIds, errorKey) }
                 )
             }
         } else {
@@ -54,13 +54,14 @@ class ScheduleViewModel(
 @Composable
 fun getSchedule(
     stopIds: List<String>?,
+    errorKey: String,
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
 ): ScheduleResponse? {
     var viewModel: ScheduleViewModel =
         viewModel(factory = ScheduleViewModel.Factory(schedulesRepository, errorBannerRepository))
 
-    LaunchedEffect(key1 = stopIds) { viewModel.getSchedule(stopIds ?: emptyList()) }
+    LaunchedEffect(key1 = stopIds) { viewModel.getSchedule(stopIds ?: emptyList(), errorKey) }
 
     return viewModel?.schedule?.collectAsState(initial = null)?.value
 }
