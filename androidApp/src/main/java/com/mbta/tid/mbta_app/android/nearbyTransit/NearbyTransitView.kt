@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -67,7 +69,13 @@ fun NearbyTransitView(
     val now = timer(updateInterval = 5.seconds)
     val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
     val schedules = getSchedule(stopIds)
-    val predictions = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
+    val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
+    val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
+    LaunchedEffect(targetLocation == null) {
+        if (targetLocation == null) {
+            predictionsVM.reset()
+        }
+    }
 
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 

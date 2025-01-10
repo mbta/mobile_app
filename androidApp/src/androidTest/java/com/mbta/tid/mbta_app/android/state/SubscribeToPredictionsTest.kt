@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.state
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,7 @@ class SubscribeToPredictionsTest {
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
-            predictions =
+            val predictionsVM =
                 subscribeToPredictions(
                     stopIds,
                     predictionsRepo,
@@ -62,6 +63,7 @@ class SubscribeToPredictionsTest {
                         MockSettingsRepository()
                     )
                 )
+            predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
         composeTestRule.waitUntil { connectProps == listOf("place-a") }
@@ -102,7 +104,7 @@ class SubscribeToPredictionsTest {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var stopIds by remember { stopIds }
-                predictions =
+                val predictionsVM =
                     subscribeToPredictions(
                         stopIds,
                         predictionsRepo,
@@ -112,6 +114,7 @@ class SubscribeToPredictionsTest {
                             MockSettingsRepository()
                         )
                     )
+                predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
             }
         }
 
@@ -145,7 +148,7 @@ class SubscribeToPredictionsTest {
         var predictions: PredictionsStreamDataResponse? = null
 
         composeTestRule.setContent {
-            predictions =
+            val predictionsVM =
                 subscribeToPredictions(
                     emptyList(),
                     predictionsRepo,
@@ -155,6 +158,7 @@ class SubscribeToPredictionsTest {
                         MockSettingsRepository()
                     )
                 )
+            predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
         composeTestRule.waitUntil { predictions != null }

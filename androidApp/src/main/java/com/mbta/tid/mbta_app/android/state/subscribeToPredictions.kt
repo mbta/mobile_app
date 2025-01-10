@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.state
 
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -11,7 +10,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -45,9 +43,6 @@ class PredictionsViewModel(
         currentStopIds = stopIds
         if (stopIds != null) {
             predictionsRepository.connectV2(stopIds, ::handleJoinMessage, ::handlePushMessage)
-        } else {
-            // reset predictions if nearby stop list has been reset
-            _predictions.value = null
         }
     }
 
@@ -89,6 +84,10 @@ class PredictionsViewModel(
         }
     }
 
+    fun reset() {
+        _predictions.value = null
+    }
+
     fun disconnect() {
         predictionsRepository.disconnect()
         errorBannerViewModel.loadingWhenPredictionsStale = true
@@ -122,7 +121,7 @@ fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject(),
     errorBannerViewModel: ErrorBannerViewModel
-): PredictionsStreamDataResponse? {
+): PredictionsViewModel {
     val viewModel: PredictionsViewModel =
         viewModel(
             factory = PredictionsViewModel.Factory(predictionsRepository, errorBannerViewModel)
@@ -136,5 +135,5 @@ fun subscribeToPredictions(
 
         onPauseOrDispose { viewModel.disconnect() }
     }
-    return viewModel.predictionsFlow.collectAsState(initial = null).value
+    return viewModel
 }
