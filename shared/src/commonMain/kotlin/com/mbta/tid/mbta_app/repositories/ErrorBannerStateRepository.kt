@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import kotlin.time.Duration.Companion.minutes
@@ -90,7 +91,9 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
 
 class ErrorBannerStateRepository : IErrorBannerStateRepository(), KoinComponent
 
-class MockErrorBannerStateRepository(
+class MockErrorBannerStateRepository
+@DefaultArgumentInterop.Enabled
+constructor(
     state: ErrorBannerState? = null,
     onSubscribeToNetworkChanges: (() -> Unit)? = null,
     onCheckPredictionsStale: (() -> Unit)? = null
