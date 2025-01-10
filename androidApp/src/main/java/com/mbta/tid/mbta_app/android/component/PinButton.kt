@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.placeholderIfLoading
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 @Composable
 fun PinButton(pinned: Boolean, color: Color, action: () -> Unit) {

@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Direction
 
 private val localizedDirectionNames: Map<String, Int> =
@@ -35,14 +36,21 @@ fun DirectionLabel(direction: Direction, modifier: Modifier = Modifier) {
                     R.string.directionTo,
                     stringResource(directionNameFormatted(direction))
                 ),
-                fontSize = 13.sp
+                fontSize = 13.sp,
+                modifier = Modifier.placeholderIfLoading()
             )
-            Text(destination, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                destination,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.placeholderIfLoading()
+            )
         } else {
             Text(
                 stringResource(directionNameFormatted(direction)),
                 fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.placeholderIfLoading()
             )
         }
     }

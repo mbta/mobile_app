@@ -12,6 +12,7 @@
     <string name="detour">Detour</string>
     <string name="directionTo">%1$s to</string>
     <string name="eastbound">Eastbound</string>
+    <string name="error_loading_data">Error loading data</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send app feedback</string>
@@ -65,6 +66,9 @@
     <string name="outbound">Outbound</string>
     <string name="recenter" tools:ignore="MissingTranslation">Recenter</string>
     <string name="recently_viewed">Recently Viewed</string>
+    <string name="refresh">Refresh</string>
+    <string name="refresh_predictions">Refresh predictions</string>
+    <string name="reload_data">Reload data</string>
     <string name="resources_link_fare_info">Fare Information</string>
     <string name="resources_link_mticket">Commuter Rail and Ferry tickets</string>
     <string name="resources_link_mticket_note">mTicket App</string>
@@ -78,10 +82,14 @@
     <string name="star_route">Star route</string>
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="stop_closed">Stop Closed</string>
+    <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
+    <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
     <string name="suspension">Suspension</string>
     <string name="train">train</string>
     <string name="trains">trains</string>
+    <string name="unable_to_connect">Unable to connect</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
+    <string name="updated_mins_ago" tools:ignore="MissingTranslation">Updated %1$d minutes ago</string>
     <string name="vehicle_arriving_first">%1$s arriving now</string>
     <string name="vehicle_arriving_other">and arriving now</string>
     <string name="vehicle_boarding_first">%1$s boarding now</string>
@@ -97,12 +105,4 @@
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="westbound">Westbound</string>
-    <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
-    <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
-    <string name="refresh">Refresh</string>
-    <string name="refresh_predictions">Refresh predictions</string>
-    <string name="updated_mins_ago" tools:ignore="MissingTranslation">Updated %1$d minutes ago</string>
-    <string name="unable_to_connect">Unable to connect</string>
-    <string name="reload_data">Reload data</string>
-    <string name="error_loading_data">Error loading data</string>
 </resources>
