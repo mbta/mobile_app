@@ -20,7 +20,9 @@ value class PhoenixSocketWrapper(private val socket: Socket) : PhoenixSocket {
 
     fun attachLogging() {
         socket.onMessage { message -> Log.i("Socket", message.toString()) }
-        socket.onError { throwable, response -> Log.e("Socket", response.toString(), throwable) }
+        socket.onError { throwable, response ->
+            Log.e("Socket", response?.toString() ?: throwable.toString(), throwable)
+        }
     }
 }
 

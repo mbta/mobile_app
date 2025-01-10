@@ -4,7 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -92,18 +91,14 @@ fun StopDetailsView(
 
         ErrorBanner(errorBannerViewModel)
 
-        if (departures != null) {
-            StopDetailsRoutesView(
-                departures,
-                globalResponse,
-                now,
-                filter ?: departures.autoStopFilter(),
-                togglePinnedRoute,
-                pinnedRoutes,
-                updateStopFilter
-            )
-        } else {
-            CircularProgressIndicator()
-        }
+        StopDetailsRoutesView(
+            departures,
+            globalResponse,
+            now,
+            filter ?: departures?.autoStopFilter(),
+            togglePinnedRoute,
+            pinnedRoutes,
+            updateStopFilter
+        )
     }
 }

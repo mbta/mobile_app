@@ -28,6 +28,11 @@ class NetworkConnectivityMonitor(context: Context) : INetworkConnectivityMonitor
                     onNetworkLost()
                 }
             }
+        // The above callback does not get called when there is no network on app startup,
+        // this covers that scenario.
+        if (connectivityManager.activeNetwork == null) {
+            onNetworkLost()
+        }
         networkCallback?.let { connectivityManager.registerDefaultNetworkCallback(it) }
     }
 }
