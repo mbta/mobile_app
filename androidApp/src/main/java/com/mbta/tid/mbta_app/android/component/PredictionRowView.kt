@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
-import com.mbta.tid.mbta_app.android.util.placeholderIfLoading
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 

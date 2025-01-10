@@ -63,10 +63,10 @@
     <string name="other_link_source_code">Ver código fuente en GitHub</string>
     <string name="other_link_tos">Términos de uso</string>
     <string name="outbound">Saliente</string>
+    <string name="recently_viewed">Visto recientemente</string>
     <string name="refresh">Refrescar</string>
     <string name="refresh_predictions">Refrescar predicciones</string>
     <string name="reload_data">Recargar datos</string>
-    <string name="recently_viewed">Visto recientemente</string>
     <string name="resources_link_fare_info">Información de tarifas</string>
     <string name="resources_link_mticket">Boletos de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>

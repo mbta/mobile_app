@@ -11,7 +11,12 @@ import SwiftUI
 
 struct LoadingPlaceholderModifier: ViewModifier {
     func body(content: Content) -> some View {
-        content.redacted(reason: .placeholder).shimmering().allowsHitTesting(false)
+        content
+            .redacted(reason: .placeholder)
+            .shimmering()
+            .allowsHitTesting(false)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Loading...")
     }
 }
 

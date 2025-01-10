@@ -26,7 +26,7 @@ import kotlinx.datetime.Instant
 
 @Composable
 fun StopDetailsRoutesView(
-    departures: StopDetailsDepartures,
+    departures: StopDetailsDepartures?,
     global: GlobalResponse?,
     now: Instant,
     filter: StopDetailsFilter?,
@@ -34,7 +34,9 @@ fun StopDetailsRoutesView(
     pinnedRoutes: Set<String>,
     updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
-    if (filter != null) {
+    if (departures == null) {
+        LoadingStopDetailsView(filter)
+    } else if (filter != null) {
         StopDetailsFilteredRouteView(
             departures = departures,
             global = global,
