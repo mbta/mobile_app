@@ -52,7 +52,7 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
             }
     }
 
-    fun checkPredictionsStale(
+    open fun checkPredictionsStale(
         predictionsLastUpdated: Instant,
         predictionQuantity: Int,
         action: () -> Unit
@@ -93,12 +93,23 @@ class ErrorBannerStateRepository : IErrorBannerStateRepository(), KoinComponent
 class MockErrorBannerStateRepository(
     state: ErrorBannerState? = null,
     onSubscribeToNetworkChanges: (() -> Unit)? = null,
+    onCheckPredictionsStale: (() -> Unit)? = null
 ) : IErrorBannerStateRepository(state) {
     private val onSubscribeToNetworkChanges = onSubscribeToNetworkChanges
+    private val onCheckPredictionsStale = onCheckPredictionsStale
+
     val mutableFlow
         get() = flow
 
     override fun subscribeToNetworkStatusChanges() {
         onSubscribeToNetworkChanges?.invoke()
+    }
+
+    override fun checkPredictionsStale(
+        predictionsLastUpdated: Instant,
+        predictionQuantity: Int,
+        action: () -> Unit
+    ) {
+        onCheckPredictionsStale?.invoke()
     }
 }
