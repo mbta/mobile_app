@@ -35,6 +35,7 @@ class SubscribeToAlertsTest {
         var actualData: AlertsStreamDataResponse? = null
         composeRule.setContent { actualData = subscribeToAlerts(alertsRepo) }
         composeRule.waitUntil { connectCount == 1 }
+        composeRule.waitUntil { alertsStreamDataResponse == actualData }
         assertEquals(alertsStreamDataResponse, actualData)
     }
 

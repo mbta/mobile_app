@@ -46,6 +46,7 @@ class GetGlobalDataTest {
 
         requestSync.send(Unit)
         composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { globalData == actualData }
         assertEquals(globalData, actualData)
     }
 }

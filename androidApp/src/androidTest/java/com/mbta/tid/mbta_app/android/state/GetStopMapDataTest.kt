@@ -32,6 +32,7 @@ class GetStopMapDataTest {
         }
 
         composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { stopMapResponse == actualStopMapResponse }
         assertEquals(stopMapResponse, actualStopMapResponse)
     }
 }
