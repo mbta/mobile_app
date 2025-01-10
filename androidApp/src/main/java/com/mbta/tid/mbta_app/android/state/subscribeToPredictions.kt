@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.state
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -145,7 +144,7 @@ fun subscribeToPredictions(
         onPauseOrDispose { viewModel.disconnect() }
     }
 
-        LaunchedEffect(key1 = timer) { viewModel.checkPredictionsStale() }
+    LaunchedEffect(key1 = timer) { viewModel.checkPredictionsStale() }
 
-        return viewModel
+    return viewModel
 }
