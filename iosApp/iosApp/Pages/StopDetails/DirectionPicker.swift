@@ -43,6 +43,11 @@ struct DirectionPicker: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     }
                     .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+                    .accessibilityRemoveTraits(isSelected ? [.isButton] : [])
+                    .accessibilityHint(isSelected ? "" : NSLocalizedString(
+                        "switches direction",
+                        comment: "Screen reader hint for the direction toggle action"
+                    ))
                     .background(isSelected ? route.uiColor : deselectedBackroundColor)
                     .foregroundStyle(isSelected ? route.uiTextColor : .deselectedToggleText)
                     .clipShape(.rect(cornerRadius: 6))
@@ -56,6 +61,7 @@ struct DirectionPicker: View {
                 .foregroundStyle(route.uiTextColor)
                 .padding(8)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .accessibilityElement(children: .combine)
         }
     }
 

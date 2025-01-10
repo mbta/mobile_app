@@ -23,9 +23,9 @@ struct RouteHeader<Content: View>: View {
     var body: some View {
         TransitHeader(
             name: route.label,
+            routeType: route.type,
             backgroundColor: route.uiColor,
             textColor: route.uiTextColor,
-            modeIcon: routeIcon(route),
             rightContent: rightContent
         )
         .accessibilityElement(children: .combine)

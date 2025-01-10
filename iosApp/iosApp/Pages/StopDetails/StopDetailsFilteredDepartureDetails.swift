@@ -76,6 +76,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .padding([.horizontal, .top], 16)
                         .padding(.bottom, 6)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityHeading(.h2)
 
                         if !tiles.isEmpty {
                             departureTiles(view)
@@ -89,7 +91,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                         StopDetailsNoTripCard(
                             status: noPredictionsStatus,
                             accentColor: routeColor,
-                            routeType: routeType
+                            routeType: routeType,
+                            hideMaps: stopDetailsVM.hideMaps
                         )
                     } else if selectedTripIsCancelled {
                         StopDetailsIconCard(

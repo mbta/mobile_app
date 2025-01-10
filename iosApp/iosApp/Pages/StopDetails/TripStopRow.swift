@@ -48,6 +48,7 @@ struct TripStopRow: View {
                                     .font(Typography.body)
                                     .foregroundStyle(Color.text)
                                     .multilineTextAlignment(.leading)
+                                    .accessibilityLabel(stopAccessibilityLabel)
                                 Spacer()
                                 UpcomingTripView(
                                     prediction: upcomingTripViewState,
@@ -55,11 +56,9 @@ struct TripStopRow: View {
                                     hideRealtimeIndicators: true
                                 ).foregroundStyle(Color.text).opacity(0.6)
                             }
-                            .accessibilityElement(children: .combine)
-                            .accessibilityAddTraits(.isHeader)
-                            .accessibilityHeading(.h2)
                         }
                     )
+                    .accessibilityElement(children: .combine)
                     .accessibilityInputLabels([stop.stop.name])
 
                     if !stop.routes.isEmpty {
@@ -109,6 +108,19 @@ struct TripStopRow: View {
         ), route.label, route.type.typeText(isOnly: true))
     }
 
+    var scrollRoutes: some View {
+        let routeView = ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(stop.routes, id: \.id) { route in
+                    RoutePill(route: route, line: nil, type: .flex)
+                }
+            }.padding(.trailing, 20)
+        }.onTapGesture {
+            onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
+        }
+        return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
+    }
+
     var scrollRoutesAccessibilityLabel: String {
         if stop.routes.isEmpty {
             return ""
@@ -135,25 +147,34 @@ struct TripStopRow: View {
         }
     }
 
+    var stopAccessibilityLabel: String {
+        let name = stop.stop.name
+        return if targeted, firstStop {
+            String(format: NSLocalizedString(
+                "%@, selected stop, first stop",
+                comment: "Screen reader text for a stop name on the stop details page when that stop is both selected and first"
+            ), name)
+        } else if targeted {
+            String(format: NSLocalizedString(
+                "%@, selected stop",
+                comment: "Screen reader text for a stop name on the stop details page when that stop is the selected one"
+            ), name)
+        } else if firstStop {
+            String(format: NSLocalizedString(
+                "%@, first stop",
+                comment: "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line"
+            ), name)
+        } else {
+            name
+        }
+    }
+
     var upcomingTripViewState: UpcomingTripView.State {
         if let alert = stop.alert {
             .disruption(alert.effect)
         } else {
             .some(stop.format(now: now, routeType: routeAccents.type))
         }
-    }
-
-    var scrollRoutes: some View {
-        let routeView = ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(stop.routes, id: \.id) { route in
-                    RoutePill(route: route, line: nil, type: .flex)
-                }
-            }.padding(.trailing, 20)
-        }.onTapGesture {
-            onTapLink(.legacyStopDetails(stop.stop, nil), stop, nil)
-        }
-        return routeView.scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
     }
 }
 

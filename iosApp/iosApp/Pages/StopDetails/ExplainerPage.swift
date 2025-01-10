@@ -30,7 +30,10 @@ struct ExplainerPage: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             VStack(alignment: .leading, spacing: 24) {
-                explanationHeadline.font(Typography.title2Bold)
+                explanationHeadline
+                    .font(Typography.title2Bold)
+                    .accessibilityHeading(.h2)
+                    .accessibilityAddTraits([.isHeader])
                 explanationImage
                 explanationText.font(Typography.body)
                 Spacer()
@@ -50,8 +53,12 @@ struct ExplainerPage: View {
                 .aspectRatio(contentMode: .fit)
                 .scaledToFit()
                 .frame(maxHeight: modeIconHeight, alignment: .topLeading)
+                .accessibilityHidden(true)
 
-            Text("Details", comment: "Header on the general explainer details page").font(Typography.headline)
+            Text("Details", comment: "Header on the general explainer details page")
+                .font(Typography.headline)
+                .accessibilityHeading(.h1)
+                .accessibilityAddTraits([.isHeader])
             Spacer()
             ActionButton(kind: .close) { onClose() }
         }

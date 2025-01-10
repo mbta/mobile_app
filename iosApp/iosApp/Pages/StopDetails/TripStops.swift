@@ -134,28 +134,33 @@ struct TripStops: View {
                                 )
                                 .foregroundStyle(Color.text)
                                 .padding(.leading, 16)
+                                .accessibilityLabel(Text(
+                                    "\(routeTypeText) is \(stopsAway, specifier: "%ld") stops away from \(target.stop.name)",
+                                    comment: """
+                                    VoiceOver label for how many stops away a vehicle is from a stop,
+                                    ex 'bus is 4 stops away from Harvard'
+                                    """
+                                ))
+                                .accessibilityHint(stopsExpanded ? Text(
+                                    "Hides remaining stops",
+                                    comment: """
+                                    Screen reader hint explaining what happens when 'x stops away'
+                                    is selected when it's already open (closes the accordion listing those stops)
+                                    """
+                                ) : Text(
+                                    "Lists remaining stops",
+                                    comment: """
+                                    Screen reader hint explaining what happens when 'x stops away'
+                                    is selected (open an accordion listing those stops)
+                                    """
+                                ))
+                                .accessibilityAddTraits(.updatesFrequently)
                                 Spacer()
-                            }.frame(maxWidth: .infinity, minHeight: 56)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 56)
                         }
                     )
                     .disclosureGroupStyle(.tripDetails)
-                    .accessibilityElement()
-                    .accessibilityAddTraits(.isHeader)
-                    .accessibilityHeading(.h2)
-                    .accessibilityLabel(Text(
-                        "\(routeTypeText) is \(stopsAway, specifier: "%ld") stops away from \(target.stop.name)",
-                        comment: """
-                        VoiceOver label for how many stops away a vehicle is from a stop,
-                        ex 'bus is 4 stops away from Harvard'
-                        """
-                    ))
-                    .accessibilityHint(Text(
-                        "List remaining stops",
-                        comment: """
-                        VoiceOver hint explaining what happens when 'x stops away'
-                        is selected (open an accordion listing those stops)
-                        """
-                    ))
                 }
                 if !hideTarget {
                     // If the target is the first stop and there's no vehicle,

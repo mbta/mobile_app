@@ -42,9 +42,7 @@ struct TripHeaderCard: View {
                 Spacer()
                 tripIndicator
             }
-            .accessibilityElement()
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityHeading(.h2)
+
             .padding([.trailing, .vertical], 16)
             .padding(.leading, 30)
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
@@ -58,7 +56,14 @@ struct TripHeaderCard: View {
         .fixedSize(horizontal: false, vertical: true)
         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
         .onTapGesture { if let onTap { onTap() } }
+        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(onTap != nil ? .isButton : [])
+        .accessibilityAddTraits([.isHeader, .updatesFrequently])
+        .accessibilityHint(onTap != nil ? NSLocalizedString(
+            "displays more information",
+            comment: "Screen reader hint for tapping on the trip details header on the stop page"
+        ) : "")
+        .accessibilityHeading(.h2)
     }
 
     @ViewBuilder private var description: some View {
@@ -87,18 +92,30 @@ struct TripHeaderCard: View {
                     Text("Scheduled to depart").font(Typography.footnote)
                     if onTap != nil { infoIcon }
                 }
-
                 Text(stopEntry.stop.name)
                     .font(Typography.headlineBold)
             }
-            .accessibilityLabel(Text(
-                "\(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name)",
-                comment: """
-                VoiceOver text for the departure status on the trip details page,
-                ex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'
-                """
-            ))
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
         }
+    }
+
+    private func scheduleDescriptionAccessibilityText(
+        _ stopEntry: TripDetailsStopList.Entry
+    ) -> Text {
+        targetId == stopEntry.stop.id ? Text(
+            "\(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name), selected stop",
+            comment: """
+            Screen reader text for the departure status on the trip details page when the stop is selected,
+            ex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard], selected stop'
+            """
+        ) : Text(
+            "\(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name)",
+            comment: """
+            Screen reader text for the departure status on the trip details page,
+            ex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'
+            """
+        )
     }
 
     @ViewBuilder private func vehicleDescription(
@@ -112,15 +129,30 @@ struct TripHeaderCard: View {
                 Text(stop.name)
                     .font(Typography.headlineBold)
             }
-            .accessibilityLabel(Text(
-                "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name)",
-                comment: """
-                VoiceOver text for the vehicle status on the trip details page,
-                ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
-                Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
-                """
-            ))
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, stopEntry))
         }
+    }
+
+    private func vehicleDescriptionAccessibilityText(
+        _ vehicle: Vehicle, _ stop: Stop,
+        _ stopEntry: TripDetailsStopList.Entry?
+    ) -> Text {
+        targetId == stop.id ? Text(
+            "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name), selected stop",
+            comment: """
+            Screen reader text for the vehicle status on the trip details page when the stop is selected,
+            ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard], selected stop'
+            Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
+            """
+        ) : Text(
+            "\(routeAccents.type.typeText(isOnly: true)) \(vehicleStatusString(vehicle.currentStatus, stopEntry)) \(stop.name)",
+            comment: """
+            Screen reader text for the vehicle status on the trip details page,
+            ex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'
+            Possible values for the vehicle status are "Approaching", "Next stop", or "Now at"
+            """
+        )
     }
 
     @ViewBuilder private func vehicleStatusDescription(

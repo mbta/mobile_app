@@ -112,7 +112,7 @@ struct StopDetailsFilteredView: View {
         Task {
             if let routeId = patternsByStop?.routeIdentifier {
                 do {
-                    let pinned = try await stopDetailsVM.togglePinnedUsecase.execute(route: routeId).boolValue
+                    let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
                     analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
                     stopDetailsVM.loadPinnedRoutes()
                 } catch is CancellationError {

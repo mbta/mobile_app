@@ -42,6 +42,8 @@ struct StopDetailsFilterPills: View {
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == route.id
                                 )
+                                .accessibilityAddTraits(filter?.routeId == route.id ? [.isSelected] : [])
+                                .accessibilityAddTraits([.isButton])
                                 .accessibilityHint(routePillHint)
                                 .frame(minWidth: 44, minHeight: 44, alignment: .center)
                                 .onTapGesture { tapRoutePill(filterBy) }
@@ -52,6 +54,8 @@ struct StopDetailsFilterPills: View {
                                     type: .flex,
                                     isActive: filter == nil || filter?.routeId == line.id
                                 )
+                                .accessibilityAddTraits(filter?.routeId == line.id ? [.isSelected] : [])
+                                .accessibilityAddTraits([.isButton])
                                 .accessibilityHint(routePillHint)
                                 .frame(minWidth: 44, minHeight: 44, alignment: .center)
                                 .onTapGesture { tapRoutePill(filterBy) }

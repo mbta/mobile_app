@@ -50,22 +50,24 @@ struct TripRouteAccents: Hashable {
 
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
+    @Published var hideMaps: Bool = false
     @Published var pinnedRoutes: Set<String> = []
 
     @Published var stopData: StopData?
     @Published var tripData: TripData?
     @Published var explainer: Explainer?
 
-    let errorBannerRepository: IErrorBannerStateRepository
-    let globalRepository: IGlobalRepository
-    let pinnedRoutesRepository: IPinnedRoutesRepository
-    let predictionsRepository: IPredictionsRepository
-    let schedulesRepository: ISchedulesRepository
-    let tripPredictionsRepository: ITripPredictionsRepository
-    let tripRepository: ITripRepository
-    let vehicleRepository: IVehicleRepository
+    private let errorBannerRepository: IErrorBannerStateRepository
+    private let globalRepository: IGlobalRepository
+    private let pinnedRoutesRepository: IPinnedRoutesRepository
+    private let predictionsRepository: IPredictionsRepository
+    private let schedulesRepository: ISchedulesRepository
+    private let settingsRepository: ISettingsRepository
+    private let tripPredictionsRepository: ITripPredictionsRepository
+    private let tripRepository: ITripRepository
+    private let vehicleRepository: IVehicleRepository
 
-    let togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
+    private let togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
 
     init(
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
@@ -73,6 +75,7 @@ class StopDetailsViewModel: ObservableObject {
         pinnedRoutesRepository: IPinnedRoutesRepository = RepositoryDI().pinnedRoutes,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
+        settingsRepository: ISettingsRepository = RepositoryDI().settings,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
         tripRepository: ITripRepository = RepositoryDI().trip,
         vehicleRepository: IVehicleRepository = RepositoryDI().vehicle
@@ -82,6 +85,7 @@ class StopDetailsViewModel: ObservableObject {
         self.pinnedRoutesRepository = pinnedRoutesRepository
         self.predictionsRepository = predictionsRepository
         self.schedulesRepository = schedulesRepository
+        self.settingsRepository = settingsRepository
         self.tripPredictionsRepository = tripPredictionsRepository
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
@@ -171,6 +175,7 @@ class StopDetailsViewModel: ObservableObject {
             loadGlobalData()
             loadPinnedRoutes()
             await handleStopChange(stopId)
+            hideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
         }
     }
 
@@ -463,17 +468,25 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func togglePinnedRoute(_ routeId: String) {
-        Task {
+    func togglePinnedRoute(_ routeId: String) async -> Bool {
+        let task = Task<Bool, Error> {
             do {
-                _ = try await self.togglePinnedUsecase.execute(route: routeId)
+                let newValue = try await self.togglePinnedUsecase.execute(route: routeId).boolValue
                 self.loadPinnedRoutes()
+                return newValue
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {
                 // execute shouldn't actually fail
                 debugPrint(error)
             }
+            return false
+        }
+
+        do {
+            return try await task.value
+        } catch {
+            return false
         }
     }
 }
