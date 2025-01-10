@@ -1,0 +1,15 @@
+package com.mbta.tid.mbta_app.model.morePage
+
+fun feedbackFormUrl(translation: String) =
+    when (translation) {
+        "es" -> "https://mbta.com/appfeedback?lang=es-US"
+        "ht" -> {
+            // TODO Haitian Creole form URL
+            "https://mbta.com/appfeedback"
+        }
+        "pt-BR" -> "https://mbta.com/appfeedback"
+        "vi" -> "https://mbta.com/appfeedback"
+        "zh-Hans-CN" -> "https://mbta.com/appfeedback?lang=zh-Hans"
+        "zh-Hant-TW" -> "https://mbta.com/appfeedback?lang=zh-Hant"
+        else -> "https://mbta.com/appfeedback"
+    }

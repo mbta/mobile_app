@@ -1,10 +1,12 @@
 package com.mbta.tid.mbta_app.android.more
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
+import com.mbta.tid.mbta_app.model.morePage.feedbackFormUrl
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +33,21 @@ class MoreViewModel(
     }
 
     fun getSections(settings: Map<Settings, Boolean>): List<MoreSection> {
-
+        val feedbackFormUrl = run {
+            val locales = AppCompatDelegate.getApplicationLocales()
+            val primaryLocale = locales[0] ?: context.resources.configuration.locales[0]
+            val translation =
+                when {
+                    primaryLocale.language == "es" -> "es"
+                    primaryLocale.language == "ht" -> "ht"
+                    primaryLocale.language == "pt" && primaryLocale.country == "BR" -> "pt-BR"
+                    primaryLocale.language == "vi" -> "vi"
+                    primaryLocale.language == "zh" && primaryLocale.script == "Hans" -> "zh-Hans-CN"
+                    primaryLocale.language == "zh" && primaryLocale.script == "Hant" -> "zh-Hant-TW"
+                    else -> "en"
+                }
+            feedbackFormUrl(translation)
+        }
         return listOf(
             MoreSection(
                 id = MoreSection.Category.Feedback,
@@ -39,7 +55,7 @@ class MoreViewModel(
                     listOf(
                         MoreItem.Link(
                             label = context.resources.getString(R.string.feedback_link_form),
-                            url = "https://mbta.com/appfeedback"
+                            url = feedbackFormUrl
                         )
                     )
             ),
