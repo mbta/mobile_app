@@ -71,7 +71,7 @@ class ErrorBannerTests {
     }
 
     @Test
-    fun testPredictionsStale() {
+    fun testPluralPredictionsStale() {
         val staleRepo =
             MockErrorBannerStateRepository(
                 state =
@@ -87,6 +87,25 @@ class ErrorBannerTests {
         }
 
         composeTestRule.onNodeWithText("Updated 2 minutes ago").assertExists()
+    }
+
+    @Test
+    fun testSinglePredictionsStale() {
+        val staleRepo =
+            MockErrorBannerStateRepository(
+                state =
+                    ErrorBannerState.StalePredictions(
+                        lastUpdated = Clock.System.now().minus(1.minutes),
+                        action = {}
+                    )
+            )
+        val staleVM = ErrorBannerViewModel(false, staleRepo, MockSettingsRepository())
+        composeTestRule.setContent {
+            LaunchedEffect(null) { staleVM.activate() }
+            ErrorBanner(staleVM)
+        }
+
+        composeTestRule.onNodeWithText("Updated 1 minute ago").assertExists()
     }
 
     @Test

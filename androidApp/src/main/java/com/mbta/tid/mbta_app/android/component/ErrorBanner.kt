@@ -4,26 +4,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,7 +43,12 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
     when (state) {
         is ErrorBannerState.DataError -> {
             ErrorCard(
-                details = { Text(stringResource(R.string.error_loading_data)) },
+                details = {
+                    Text(
+                        stringResource(R.string.error_loading_data),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
                 button = {
                     RefreshButton(label = stringResource(R.string.reload_data)) {
                         (state as ErrorBannerState.DataError).action()
@@ -53,10 +61,11 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
             ErrorCard(
                 details = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Rounded.Clear, contentDescription = "")
+                        Icon(painterResource(R.drawable.wifi_slash), contentDescription = "")
                         Text(
                             stringResource(R.string.unable_to_connect),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 12.dp),
+                            style = MaterialTheme.typography.headlineSmall
                         )
                         Spacer(Modifier.weight(1f))
                     }
@@ -70,14 +79,21 @@ fun ErrorBanner(vm: ErrorBannerViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
-                    IndeterminateLoadingIndicator()
+                    IndeterminateLoadingIndicator(Modifier.width(48.dp))
                     Spacer(modifier = Modifier.weight(1f))
                 }
             } else {
                 ErrorCard(
                     details = {
                         val minutes = (state as ErrorBannerState.StalePredictions).minutesAgo()
-                        Text(stringResource(R.string.updated_mins_ago, minutes))
+                        Text(
+                            pluralStringResource(
+                                R.plurals.updated_mins_ago,
+                                minutes.toInt(),
+                                minutes
+                            ),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                     },
                     button = {
                         RefreshButton(label = stringResource(R.string.refresh_predictions)) {
@@ -98,14 +114,13 @@ private fun ErrorCard(details: @Composable () -> Unit, button: (@Composable () -
         modifier =
             Modifier.padding(16.dp)
                 .heightIn(60.dp)
-                .background(Color.Gray.copy(alpha = 0.1f))
-                .clip(RoundedCornerShape(15.dp)),
+                .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = Modifier.padding(horizontal = 8.dp)) { details() }
+        Box(modifier = Modifier.padding(horizontal = 16.dp)) { details() }
         Spacer(Modifier.weight(1f))
         if (button != null) {
-            Box(modifier = Modifier.padding(horizontal = 8.dp)) { button() }
+            Box(modifier = Modifier.padding(horizontal = 16.dp)) { button() }
         }
     }
 }
@@ -116,7 +131,11 @@ private fun RefreshButton(
     label: String = stringResource(R.string.refresh),
     action: () -> Unit
 ) {
-    Button(onClick = action) {
+    TextButton(
+        onClick = action,
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier.height(20.dp).width(20.dp)
+    ) {
         Box {
             if (loading) {
                 IndeterminateLoadingIndicator()
@@ -124,7 +143,8 @@ private fun RefreshButton(
                 Icon(
                     Icons.Rounded.Refresh,
                     contentDescription = label,
-                    modifier = Modifier.width(20.dp)
+                    modifier = Modifier.width(20.dp),
+                    tint = Color.Unspecified
                 )
             }
         }
@@ -155,10 +175,14 @@ private fun ErrorBannerPreviews() {
     LaunchedEffect(null) { dataErrorVM.activate() }
     LaunchedEffect(null) { staleVM.activate() }
     LaunchedEffect(null) { staleLoadingVM.activate() }
-    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
         ErrorBanner(networkErrorVM)
         ErrorBanner(dataErrorVM)
         ErrorBanner(staleVM)
         ErrorBanner(staleLoadingVM)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
