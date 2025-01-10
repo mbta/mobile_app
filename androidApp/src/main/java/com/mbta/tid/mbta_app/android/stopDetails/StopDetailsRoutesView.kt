@@ -1,23 +1,16 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
-import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.Prediction
@@ -42,36 +35,7 @@ fun StopDetailsRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
     if (departures == null) {
-        Column {
-            CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                Column(modifier = Modifier.loadingShimmer()) {
-                    if (filter == null) {
-                        Column(
-                            modifier =
-                                Modifier.verticalScroll(rememberScrollState())
-                                    .padding(8.dp)
-                                    .weight(1f)
-                        ) {
-                            val placeholderPatterns = LoadingPlaceholders.patternsByStop()
-                            StopDetailsRouteView(
-                                LoadingPlaceholders.patternsByStop(),
-                                now,
-                                pinned = pinnedRoutes.contains(placeholderPatterns.routeIdentifier),
-                                onPin = {},
-                                {}
-                            )
-                        }
-                    } else {
-                        StopDetailsFilteredRouteView(
-                            departures = LoadingPlaceholders.stopDetailsDepartures(filter),
-                            global = global,
-                            now = now,
-                            filter = filter
-                        ) {}
-                    }
-                }
-            }
-        }
+        LoadingStopDetailsView(filter)
     } else if (filter != null) {
         StopDetailsFilteredRouteView(
             departures = departures,
