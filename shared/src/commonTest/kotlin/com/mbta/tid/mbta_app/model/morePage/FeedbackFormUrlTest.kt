@@ -21,12 +21,12 @@ class FeedbackFormUrlTest {
 
     @Test
     fun testPTBR() {
-        assertEquals("https://mbta.com/appfeedback", feedbackFormUrl("pt-BR"))
+        assertEquals("https://mbta.com/appfeedback?lang=pt-BR", feedbackFormUrl("pt-BR"))
     }
 
     @Test
     fun testVI() {
-        assertEquals("https://mbta.com/appfeedback", feedbackFormUrl("vi"))
+        assertEquals("https://mbta.com/appfeedback?lang=vi", feedbackFormUrl("vi"))
     }
 
     @Test
