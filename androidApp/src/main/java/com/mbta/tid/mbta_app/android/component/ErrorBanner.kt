@@ -134,7 +134,7 @@ private fun RefreshButton(
     TextButton(
         onClick = action,
         contentPadding = PaddingValues(0.dp),
-        modifier = Modifier.height(20.dp).width(20.dp)
+        modifier = Modifier.size(20.dp)
     ) {
         Box {
             if (loading) {
