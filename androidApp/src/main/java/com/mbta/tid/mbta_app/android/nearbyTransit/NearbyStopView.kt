@@ -12,6 +12,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StopDeparturesSummaryList
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.PatternsByStop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
@@ -27,7 +28,9 @@ fun NearbyStopView(
     Row(modifier = Modifier.background(colorResource(id = R.color.fill2)).fillMaxWidth()) {
         Text(
             text = patternsAtStop.stop.name,
-            modifier = Modifier.padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp),
+            modifier =
+                Modifier.padding(top = 11.dp, bottom = 11.dp, start = 16.dp, end = 8.dp)
+                    .placeholderIfLoading(),
             style = MaterialTheme.typography.headlineSmall
         )
     }

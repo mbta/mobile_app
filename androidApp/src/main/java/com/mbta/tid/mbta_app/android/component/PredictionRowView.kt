@@ -15,12 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 
@@ -37,7 +37,6 @@ fun PredictionRowView(
     pillDecoration: PillDecoration? = null,
     destination: @Composable () -> Unit
 ) {
-    val context = LocalContext.current
     Row(
         modifier
             .fillMaxWidth()
@@ -50,7 +49,8 @@ fun PredictionRowView(
         predictions.secondaryAlert?.let { secondaryAlert ->
             Image(
                 painterResource(drawableByName(secondaryAlert.iconName)),
-                stringResource(R.string.alert)
+                stringResource(R.string.alert),
+                modifier = Modifier.placeholderIfLoading()
             )
         }
         if (pillDecoration is PillDecoration.OnRow) {

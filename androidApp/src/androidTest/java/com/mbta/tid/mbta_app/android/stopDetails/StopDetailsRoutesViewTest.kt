@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -125,5 +126,45 @@ class StopDetailsRoutesViewTest {
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
+    }
+
+    @Test
+    fun testLoadingStateFiltered() {
+        composeTestRule.setContent {
+            val filterState = remember {
+                mutableStateOf<StopDetailsFilter?>(StopDetailsFilter("routeId", 1))
+            }
+
+            StopDetailsRoutesView(
+                departures = null,
+                global = globalResponse,
+                now = now,
+                pinRoute = {},
+                pinnedRoutes = emptySet(),
+                filter = filterState.value,
+                updateStopFilter = filterState::value::set
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Loading...").assertExists()
+    }
+
+    @Test
+    fun testLoadingStateUnfiltered() {
+        composeTestRule.setContent {
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+
+            StopDetailsRoutesView(
+                departures = null,
+                global = globalResponse,
+                now = now,
+                pinRoute = {},
+                pinnedRoutes = emptySet(),
+                filter = filterState.value,
+                updateStopFilter = filterState::value::set
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Loading...").assertExists()
     }
 }

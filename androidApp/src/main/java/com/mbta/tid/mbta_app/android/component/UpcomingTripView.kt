@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.UpcomingTripAccessibilityFormatters
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.RealtimePatterns
@@ -79,7 +80,11 @@ fun UpcomingTripView(
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
                     WithRealtimeIndicator(modifier, hideRealtimeIndicators) {
-                        Text(state.trip.text, fontSize = 13.sp)
+                        Text(
+                            state.trip.text,
+                            fontSize = 13.sp,
+                            modifier = Modifier.placeholderIfLoading()
+                        )
                     }
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
@@ -88,16 +93,17 @@ fun UpcomingTripView(
                         Text(
                             stringResource(R.string.boarding_abbr),
                             Modifier.semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.boardingLabel(
-                                        context = context,
-                                        isFirst = isFirst,
-                                        vehicleType = vehicleType
-                                    )
-                            },
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.boardingLabel(
+                                            context = context,
+                                            isFirst = isFirst,
+                                            vehicleType = vehicleType
+                                        )
+                                }
+                                .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 is TripInstantDisplay.Arriving ->
@@ -105,13 +111,14 @@ fun UpcomingTripView(
                         Text(
                             stringResource(R.string.arriving_abbr),
                             Modifier.semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.arrivingLabel(
-                                        context,
-                                        isFirst,
-                                        vehicleType
-                                    )
-                            },
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.arrivingLabel(
+                                            context,
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                }
+                                .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
@@ -122,13 +129,14 @@ fun UpcomingTripView(
                         Text(
                             stringResource(R.string.now),
                             Modifier.semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.arrivingLabel(
-                                        context,
-                                        isFirst,
-                                        vehicleType
-                                    )
-                            },
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.arrivingLabel(
+                                            context,
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                }
+                                .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
@@ -141,14 +149,16 @@ fun UpcomingTripView(
                                 AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
                             modifier =
                                 Modifier.semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.predictedMinutesLabel(
-                                            context,
-                                            minutes = 1,
-                                            isFirst,
-                                            vehicleType
-                                        )
-                                },
+                                        contentDescription =
+                                            UpcomingTripAccessibilityFormatters
+                                                .predictedMinutesLabel(
+                                                    context,
+                                                    minutes = 1,
+                                                    isFirst,
+                                                    vehicleType
+                                                )
+                                    }
+                                    .placeholderIfLoading(),
                             style = MaterialTheme.typography.headlineMedium,
                         )
                     }
@@ -157,14 +167,15 @@ fun UpcomingTripView(
                         Text(
                             formatTime(state.trip.predictionTime),
                             Modifier.semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.predictedTimeLabel(
-                                        context,
-                                        time = formatTime(state.trip.predictionTime),
-                                        isFirst,
-                                        vehicleType
-                                    )
-                            },
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.predictedTimeLabel(
+                                            context,
+                                            time = formatTime(state.trip.predictionTime),
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                }
+                                .placeholderIfLoading(),
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
@@ -173,15 +184,18 @@ fun UpcomingTripView(
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
                         formatTime(state.trip.scheduledTime),
-                        modifier.alpha(0.6F).semantics {
-                            contentDescription =
-                                UpcomingTripAccessibilityFormatters.scheduledTimeLabel(
-                                    context,
-                                    time = formatTime(state.trip.scheduledTime),
-                                    isFirst,
-                                    vehicleType
-                                )
-                        },
+                        modifier
+                            .alpha(0.6F)
+                            .semantics {
+                                contentDescription =
+                                    UpcomingTripAccessibilityFormatters.scheduledTimeLabel(
+                                        context,
+                                        time = formatTime(state.trip.scheduledTime),
+                                        isFirst,
+                                        vehicleType
+                                    )
+                            }
+                            .placeholderIfLoading(),
                         textAlign = TextAlign.End,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
@@ -201,14 +215,16 @@ fun UpcomingTripView(
                                 ),
                             modifier =
                                 Modifier.semantics {
-                                    contentDescription =
-                                        UpcomingTripAccessibilityFormatters.predictedMinutesLabel(
-                                            context,
-                                            minutes = state.trip.minutes,
-                                            isFirst,
-                                            vehicleType
-                                        )
-                                },
+                                        contentDescription =
+                                            UpcomingTripAccessibilityFormatters
+                                                .predictedMinutesLabel(
+                                                    context,
+                                                    minutes = state.trip.minutes,
+                                                    isFirst,
+                                                    vehicleType
+                                                )
+                                    }
+                                    .placeholderIfLoading(),
                             style = MaterialTheme.typography.headlineMedium,
                         )
                     }
@@ -219,28 +235,33 @@ fun UpcomingTripView(
                                 stringResource(R.string.minutes_abbr, state.trip.minutes)
                             ),
                         modifier =
-                            modifier.alpha(0.6F).semantics {
-                                contentDescription =
-                                    UpcomingTripAccessibilityFormatters.scheduledMinutesLabel(
-                                        context,
-                                        minutes = state.trip.minutes,
-                                        isFirst,
-                                        vehicleType
-                                    )
-                            },
+                            modifier
+                                .alpha(0.6F)
+                                .semantics {
+                                    contentDescription =
+                                        UpcomingTripAccessibilityFormatters.scheduledMinutesLabel(
+                                            context,
+                                            minutes = state.trip.minutes,
+                                            isFirst,
+                                            vehicleType
+                                        )
+                                }
+                                .placeholderIfLoading(),
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 is TripInstantDisplay.Cancelled ->
                     Row(
-                        modifier.semantics {
-                            contentDescription =
-                                UpcomingTripAccessibilityFormatters.cancelledLabel(
-                                    context,
-                                    scheduledTime = formatTime(state.trip.scheduledTime),
-                                    isFirst,
-                                    vehicleType
-                                )
-                        },
+                        modifier
+                            .semantics {
+                                contentDescription =
+                                    UpcomingTripAccessibilityFormatters.cancelledLabel(
+                                        context,
+                                        scheduledTime = formatTime(state.trip.scheduledTime),
+                                        isFirst,
+                                        vehicleType
+                                    )
+                            }
+                            .placeholderIfLoading(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(

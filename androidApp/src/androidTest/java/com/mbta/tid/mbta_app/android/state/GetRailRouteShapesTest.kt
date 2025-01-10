@@ -57,6 +57,7 @@ class GetRailRouteShapesTest {
         }
 
         composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { mapFriendlyRouteResponse == actualRailRouteShapes }
         assertEquals(mapFriendlyRouteResponse, actualRailRouteShapes)
     }
 }

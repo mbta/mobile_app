@@ -33,6 +33,7 @@ class MoreViewModelTests {
         composeTestRule.awaitIdle()
         vm!!.toggleSetting(Settings.HideMaps)
         composeTestRule.awaitIdle()
+        composeTestRule.waitUntil { toggledHideMaps }
 
         assertTrue { toggledHideMaps }
     }

@@ -95,6 +95,7 @@ class SubscribeToVehiclesTest {
         runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
         waitUntil { disconnectCount == 3 }
+        waitUntil { connectCount == 2 }
         assertEquals(2, connectCount)
     }
 }

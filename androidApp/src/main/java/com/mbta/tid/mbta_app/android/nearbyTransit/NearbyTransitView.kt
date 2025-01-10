@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
+import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.timer
@@ -105,7 +108,16 @@ fun NearbyTransitView(
         )
         ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {
-            Text(text = stringResource(R.string.loading))
+            CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
+                ) {
+                    for (i in 1..5) {
+                        LoadingRouteCard()
+                    }
+                    Spacer(Modifier.weight(1f))
+                }
+            }
         } else if (nearbyWithRealtimeInfo.isEmpty()) {
             Column(
                 Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f),
