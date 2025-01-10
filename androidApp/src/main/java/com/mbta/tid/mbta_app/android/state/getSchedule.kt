@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.state
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,10 +31,7 @@ class ScheduleViewModel(
                 fetchApi(
                     errorBannerRepo = errorBannerRepository,
                     errorKey = "ScheduleViewModel.getSchedule",
-                    getData = {
-                        Log.i("KB", "fetch for stops ${stopIds}")
-                        schedulesRepository.getSchedule(stopIds, Clock.System.now())
-                    },
+                    getData = { schedulesRepository.getSchedule(stopIds, Clock.System.now()) },
                     onSuccess = { _schedule.value = it },
                     onRefreshAfterError = { getSchedule(stopIds) }
                 )
