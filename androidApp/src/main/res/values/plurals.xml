@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <plurals name="updated_mins_ago" tools:ignore="MissingTranslation">
-        <item quantity="one">Updated %d minute ago</item>
-        <item quantity="other">Updated %d minutes ago</item>
-    </plurals>
-</resources>
