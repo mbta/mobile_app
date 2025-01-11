@@ -33,7 +33,7 @@ struct ExplainerPage: View {
                 explanationHeadline
                     .font(Typography.title2Bold)
                     .accessibilityHeading(.h2)
-                    .accessibilityAddTraits([.isHeader])
+                    .accessibilityAddTraits(.isHeader)
                 explanationImage
                 explanationText.font(Typography.body)
                 Spacer()
@@ -58,7 +58,7 @@ struct ExplainerPage: View {
             Text("Details", comment: "Header on the general explainer details page")
                 .font(Typography.headline)
                 .accessibilityHeading(.h1)
-                .accessibilityAddTraits([.isHeader])
+                .accessibilityAddTraits(.isHeader)
             Spacer()
             ActionButton(kind: .close) { onClose() }
         }

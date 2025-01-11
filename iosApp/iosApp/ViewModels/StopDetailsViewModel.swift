@@ -175,7 +175,7 @@ class StopDetailsViewModel: ObservableObject {
             loadGlobalData()
             loadPinnedRoutes()
             await handleStopChange(stopId)
-            hideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
+            loadSettings()
         }
     }
 
@@ -359,6 +359,13 @@ class StopDetailsViewModel: ObservableObject {
                 // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
+        }
+    }
+
+    func loadSettings() {
+        Task {
+            let nextHideMaps = await (try? settingsRepository.getSettings()[.hideMaps]?.boolValue) ?? false
+            Task { @MainActor in hideMaps = nextHideMaps }
         }
     }
 

@@ -27,8 +27,7 @@ struct StopDetailsIconCard<Header: View, Details: View>: View {
                 header
                     .font(Typography.title2Bold)
                     .foregroundStyle(Color.text)
-                    .accessibilityHeading(.h2)
-                    .accessibilityAddTraits([.isHeader])
+                    .accessibilityAddTraits(.isHeader)
             }.frame(maxWidth: .infinity, alignment: .leading)
 
             if let details {

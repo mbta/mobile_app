@@ -79,8 +79,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .padding([.horizontal, .top], 16)
                         .padding(.bottom, 6)
                         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-                        .accessibilityAddTraits(.isHeader)
-                        .accessibilityHeading(.h2)
 
                         if !tiles.isEmpty {
                             departureTiles(view)
@@ -97,6 +95,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             routeType: routeType,
                             hideMaps: stopDetailsVM.hideMaps
                         )
+                        .accessibilityHeading(.h3)
                         .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else if selectedTripIsCancelled {
                         StopDetailsIconCard(
@@ -111,6 +110,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             ),
                             icon: routeSlashIcon(routeType)
                         )
+                        .accessibilityHeading(.h4)
                         .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else {
                         TripDetailsView(

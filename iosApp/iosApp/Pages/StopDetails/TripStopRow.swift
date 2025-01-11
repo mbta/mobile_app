@@ -60,6 +60,8 @@ struct TripStopRow: View {
                     )
                     .accessibilityElement(children: .combine)
                     .accessibilityInputLabels([stop.stop.name])
+                    .accessibilityAddTraits(targeted ? [.isHeader] : [])
+                    .accessibilityHeading(targeted ? .h4 : .unspecified)
 
                     if !stop.routes.isEmpty {
                         scrollRoutes

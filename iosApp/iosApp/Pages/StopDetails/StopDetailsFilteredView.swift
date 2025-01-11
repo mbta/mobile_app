@@ -111,16 +111,9 @@ struct StopDetailsFilteredView: View {
     func toggledPinnedRoute() {
         Task {
             if let routeId = patternsByStop?.routeIdentifier {
-                do {
-                    let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
-                    analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
-                    stopDetailsVM.loadPinnedRoutes()
-                } catch is CancellationError {
-                    // do nothing on cancellation
-                } catch {
-                    // execute shouldn't actually fail
-                    debugPrint(error)
-                }
+                let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
+                analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
+                stopDetailsVM.loadPinnedRoutes()
             }
         }
     }

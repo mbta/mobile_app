@@ -63,7 +63,7 @@ struct TripHeaderCard: View {
             "displays more information",
             comment: "Screen reader hint for tapping on the trip details header on the stop page"
         ) : "")
-        .accessibilityHeading(.h2)
+        .accessibilityHeading(.h4)
     }
 
     @ViewBuilder private var description: some View {

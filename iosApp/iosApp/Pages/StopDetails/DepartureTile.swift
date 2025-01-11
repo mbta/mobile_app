@@ -48,7 +48,7 @@ struct DepartureTile: View {
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(isSelected ? Color.halo : Color.clear, lineWidth: 2))
         .accessibilityAddTraits(isSelected ? [.isHeader, .isSelected, .updatesFrequently] : [])
         .accessibilityRemoveTraits(isSelected ? [.isButton] : [])
-        .accessibilityHeading(isSelected ? .h2 : .unspecified)
+        .accessibilityHeading(isSelected ? .h3 : .unspecified)
         .accessibilityHint(isSelected ? "" : NSLocalizedString(
             "displays more information about this trip",
             comment: "Screen reader hint for tapping a departure card in stop details"
