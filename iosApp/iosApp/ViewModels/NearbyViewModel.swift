@@ -28,6 +28,8 @@ class NearbyViewModel: ObservableObject {
                 switch navEntry {
                 case let .legacyStopDetails(stop, _):
                     try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stop.id))
+                case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _):
+                    try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stopId))
                 default: break
                 }
             } catch {
