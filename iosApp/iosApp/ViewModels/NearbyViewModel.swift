@@ -100,6 +100,7 @@ class NearbyViewModel: ObservableObject {
     // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
     // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
     func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection: Bool = false) {
+        let currentEntry = navigationStack.lastSafe()
         if case let .legacyStopDetails(stop, filter) = entry, combinedStopAndTrip {
             pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter, tripFilter: nil))
         } else if case let .tripDetails(tripId, vehicleId, target, _, _) = entry,
@@ -140,6 +141,17 @@ class NearbyViewModel: ObservableObject {
             navigationStack.append(entry)
         } else {
             navigationStack.append(entry)
+        }
+
+        if !entry.hasSamePage(as: currentEntry) {
+            if #available(iOS 17, *) {
+                AccessibilityNotification.ScreenChanged().post()
+            } else {
+                UIAccessibility.post(
+                    notification: .screenChanged,
+                    argument: nil
+                )
+            }
         }
     }
 
