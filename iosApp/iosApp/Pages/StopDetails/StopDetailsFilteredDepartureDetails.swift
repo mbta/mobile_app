@@ -56,6 +56,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
+    @AccessibilityFocusState private var selectedDepartureFocus: String?
+    private let cardFocusId = "_card"
+
     var body: some View {
         ZStack(alignment: .top) {
             routeColor.ignoresSafeArea(.all)
@@ -94,6 +97,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             routeType: routeType,
                             hideMaps: stopDetailsVM.hideMaps
                         )
+                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else if selectedTripIsCancelled {
                         StopDetailsIconCard(
                             accentColor: routeColor,
@@ -107,6 +111,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                             ),
                             icon: routeSlashIcon(routeType)
                         )
+                        .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
                     } else {
                         TripDetailsView(
                             tripFilter: tripFilter,
@@ -124,6 +129,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onAppear { handleViewportForStatus(noPredictionsStatus) }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
+        .onChange(of: tripFilter) { tripFilter in
+            selectedDepartureFocus = tiles.first { $0.upcoming?.trip.id == tripFilter?.tripId }?.id ?? cardFocusId
+        }
         .ignoresSafeArea(.all)
     }
 
@@ -173,7 +181,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                             .line != nil ? .onPrediction(route: tileData.route) : .none,
                         showHeadsign: showTileHeadsigns,
                         isSelected: tileData.upcoming?.trip.id == tripFilter?.tripId
-                    ).padding(.horizontal, 4)
+                    )
+                    .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
+                    .padding(.horizontal, 4)
                 }
             }
             .padding(.horizontal, 12)
