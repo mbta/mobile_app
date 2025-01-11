@@ -978,6 +978,12 @@
     "%@, selected stop, first stop" : {
       "comment" : "Screen reader text for a stop name on the stop details page when that stop is both selected and first"
     },
+    "%1$@ has departed %2$@" : {
+      "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] has departed [Central]\", \"[bus] has departed [Harvard]\""
+    },
+    "%1$@ to %2$@ has departed %3$@" : {
+      "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] to [Alewife] has departed [Central]\", \"[bus] to [Nubian] has departed [Harvard]\""
+    },
     "%ld stops away" : {
       "comment" : "How many stops away the vehicle is from the target stop",
       "localizations" : {
