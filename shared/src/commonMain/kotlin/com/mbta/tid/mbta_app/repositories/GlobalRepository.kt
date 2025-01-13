@@ -41,6 +41,7 @@ class MockGlobalRepository
 @DefaultArgumentInterop.Enabled
 constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) : IGlobalRepository {
 
+    @DefaultArgumentInterop.Enabled
     constructor(
         response: GlobalResponse =
             GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
