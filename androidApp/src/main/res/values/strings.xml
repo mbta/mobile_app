@@ -89,7 +89,6 @@
     <string name="trains">trains</string>
     <string name="unable_to_connect">Unable to connect</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
-    <string name="updated_mins_ago" tools:ignore="MissingTranslation">Updated %1$d minutes ago</string>
     <string name="vehicle_arriving_first">%1$s arriving now</string>
     <string name="vehicle_arriving_other">and arriving now</string>
     <string name="vehicle_boarding_first">%1$s boarding now</string>
@@ -105,4 +104,8 @@
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
     <string name="westbound">Westbound</string>
+    <plurals name="updated_mins_ago" tools:ignore="MissingTranslation">
+        <item quantity="one">Updated %d minute ago</item>
+        <item quantity="other">Updated %d minutes ago</item>
+    </plurals>
 </resources>
