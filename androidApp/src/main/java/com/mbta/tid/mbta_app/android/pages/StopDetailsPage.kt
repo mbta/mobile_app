@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.android.pages
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -36,11 +38,12 @@ fun StopDetailsPage(
 ) {
     val globalResponse = getGlobalData()
 
-    val predictionsResponse =
+    val predictionsVM =
         subscribeToPredictions(
             stopIds = listOf(stop.id),
             errorBannerViewModel = errorBannerViewModel
         )
+    val predictionsResponse by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
     val now = timer(updateInterval = 5.seconds)
 

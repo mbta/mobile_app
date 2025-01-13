@@ -46,6 +46,7 @@ import com.mbta.tid.mbta_app.android.map.IMapViewModel
 import com.mbta.tid.mbta_app.android.map.MapViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
+import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
@@ -64,6 +65,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -216,6 +218,8 @@ fun NearbyTransitPage(
                 }
             }
             composable<SheetRoutes.NearbyTransit> {
+                // for ViewModel reasons, must be within the `composable` to be the same instance
+                val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
                 LaunchedEffect(true) {
                     if (!navBarVisible) {
                         showNavBar()
@@ -234,13 +238,13 @@ fun NearbyTransitPage(
                 }
                 LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
                     if (nearbyTransit.viewportProvider.isManuallyCentering) {
-                        // TODO reset view model
+                        nearbyViewModel.reset()
                         targetLocation = null
                     }
                 }
                 LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {
                     if (nearbyTransit.viewportProvider.isFollowingPuck) {
-                        // TODO reset view model
+                        nearbyViewModel.reset()
                         targetLocation = null
                     }
                 }
