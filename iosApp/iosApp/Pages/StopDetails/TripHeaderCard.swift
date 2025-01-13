@@ -17,6 +17,7 @@ enum TripHeaderSpec {
     case vehicle(Vehicle, Stop, TripDetailsStopList.Entry?)
 }
 
+// swiftlint:disable:next type_body_length
 struct TripHeaderCard: View {
     let spec: TripHeaderSpec
     let tripId: String

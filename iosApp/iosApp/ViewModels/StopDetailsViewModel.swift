@@ -6,8 +6,6 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-// swiftlint:disable type_body_length
-
 import shared
 import SwiftPhoenixClient
 import SwiftUI
@@ -48,6 +46,7 @@ struct TripRouteAccents: Hashable {
     }
 }
 
+// swiftlint:disable:next type_body_length
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
     @Published var hideMaps: Bool = false
