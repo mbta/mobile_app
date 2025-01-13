@@ -14,6 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
@@ -26,7 +29,12 @@ fun DragHandle() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Surface(color = colorResource(R.color.neutral75), shape = MaterialTheme.shapes.extraLarge) {
+        val description = stringResource(R.string.drag_handle)
+        Surface(
+            modifier = Modifier.semantics { contentDescription = description },
+            color = colorResource(R.color.neutral75),
+            shape = MaterialTheme.shapes.extraLarge
+        ) {
             Box(Modifier.size(width = 32.dp, height = 4.dp))
         }
     }
