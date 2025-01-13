@@ -112,4 +112,61 @@ final class TripStopRowTests: XCTestCase {
             try image.actualImage().name() == "stop-pin-indicator"
         }))
     }
+
+    func testAccessibility() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "stop" }
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+        }
+        let prediction = objects.prediction(schedule: schedule) { prediction in
+            prediction.departureTime = now.addingTimeInterval(6).toKotlinInstant()
+        }
+        let route = objects.route()
+
+        let stopEntry = TripDetailsStopList.Entry(
+            stop: stop, stopSequence: 0, alert: nil,
+            schedule: schedule, prediction: prediction,
+            vehicle: nil, routes: [route]
+        )
+
+        let basicRow = TripStopRow(
+            stop: stopEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeAccents: TripRouteAccents(route: route)
+        )
+        XCTAssertNotNil(try basicRow.inspect().find(viewWithAccessibilityLabel: "stop"))
+
+        let selectedRow = TripStopRow(
+            stop: stopEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeAccents: TripRouteAccents(route: route),
+            targeted: true
+        )
+        XCTAssertNotNil(try selectedRow.inspect().find(viewWithAccessibilityLabel: "stop, selected stop"))
+
+        let firstRow = TripStopRow(
+            stop: stopEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeAccents: TripRouteAccents(route: route),
+            firstStop: true
+        )
+        XCTAssertNotNil(try firstRow.inspect().find(viewWithAccessibilityLabel: "stop, first stop"))
+
+        let selectedFirstRow = TripStopRow(
+            stop: stopEntry,
+            now: now.toKotlinInstant(),
+            onTapLink: { _, _, _ in },
+            routeAccents: TripRouteAccents(route: route),
+            targeted: true,
+            firstStop: true
+        )
+        XCTAssertNotNil(try selectedFirstRow.inspect().find(
+            viewWithAccessibilityLabel: "stop, selected stop, first stop"
+        ))
+    }
 }

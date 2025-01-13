@@ -22,7 +22,7 @@ struct LineCard<Content: View>: View {
         TransitCard(header: {
             LineHeader(line: line, routes: routes) {
                 PinButton(pinned: pinned, action: { onPin(line.id) })
-            }
+            }.accessibilityAddTraits(.isButton)
         }, content: content)
     }
 }

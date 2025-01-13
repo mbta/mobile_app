@@ -34,6 +34,7 @@ struct TripDetailsDisclosureGroup: DisclosureGroupStyle {
             configuration.content
                 .frame(height: configuration.isExpanded ? nil : 0, alignment: .top)
                 .clipped()
+                .accessibilityHidden(!configuration.isExpanded)
         }
     }
 }

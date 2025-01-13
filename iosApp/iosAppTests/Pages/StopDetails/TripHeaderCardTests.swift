@@ -265,4 +265,108 @@ final class TripHeaderCardTests: XCTestCase {
             try image.actualImage().name() == "fa-circle-info"
         }))
     }
+
+    func testAccessibility() throws {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "stop" }
+
+        let withTap = TripHeaderCard(
+            spec: .finishingAnotherTrip,
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(),
+            onTap: {},
+            now: now
+        )
+        XCTAssertEqual(
+            "displays more information",
+            try withTap.inspect().zStack().accessibilityHint().string()
+        )
+
+        let withoutTap = TripHeaderCard(
+            spec: .finishingAnotherTrip,
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(),
+            onTap: nil,
+            now: now
+        )
+        XCTAssertEqual(
+            "",
+            try withoutTap.inspect().zStack().accessibilityHint().string()
+        )
+
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .incomingAt
+        }
+
+        let withVehicleAtStop = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, nil),
+            tripId: "", targetId: stop.id,
+            routeAccents: .init(type: .bus),
+            onTap: {},
+            now: now
+        )
+        XCTAssertNotNil(try withVehicleAtStop.inspect().find(
+            viewWithAccessibilityLabel: "bus Approaching stop, selected stop"
+        ))
+
+        let otherStop = objects.stop { stop in
+            stop.name = "other stop"
+        }
+        let withVehicleAtOtherStop = TripHeaderCard(
+            spec: .vehicle(vehicle, otherStop, nil),
+            tripId: "", targetId: stop.id,
+            routeAccents: .init(type: .bus),
+            onTap: {},
+            now: now
+        )
+        XCTAssertNotNil(try withVehicleAtOtherStop.inspect().find(
+            viewWithAccessibilityLabel: "bus Approaching other stop"
+        ))
+
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+        }
+        let withScheduleAtStop = TripHeaderCard(
+            spec: .scheduled(stop, .init(
+                stop: stop,
+                stopSequence: 0,
+                alert: nil,
+                schedule: schedule,
+                prediction: nil,
+                vehicle: nil,
+                routes: []
+            )),
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(),
+            onTap: {},
+            now: now
+        )
+        XCTAssertNotNil(try withScheduleAtStop.inspect().find(
+            viewWithAccessibilityLabel: "bus scheduled to depart stop, selected stop"
+        ))
+
+        let withScheduleAtOtherStop = TripHeaderCard(
+            spec: .scheduled(otherStop, .init(
+                stop: otherStop,
+                stopSequence: 0,
+                alert: nil,
+                schedule: schedule,
+                prediction: nil,
+                vehicle: nil,
+                routes: []
+            )),
+            tripId: "",
+            targetId: stop.id,
+            routeAccents: .init(),
+            onTap: {},
+            now: now
+        )
+        XCTAssertNotNil(try withScheduleAtOtherStop.inspect().find(
+            viewWithAccessibilityLabel: "bus scheduled to depart other stop"
+        ))
+    }
 }

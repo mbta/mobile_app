@@ -46,6 +46,12 @@ struct DepartureTile: View {
         .clipShape(.rect(cornerRadius: 8))
         .padding(1)
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(isSelected ? Color.halo : Color.clear, lineWidth: 2))
+        .accessibilityAddTraits(isSelected ? [.isHeader, .isSelected, .updatesFrequently] : [])
+        .accessibilityHeading(isSelected ? .h3 : .unspecified)
+        .accessibilityHint(isSelected ? "" : NSLocalizedString(
+            "displays more information about this trip",
+            comment: "Screen reader hint for tapping a departure card in stop details"
+        ))
     }
 
     private func deselectedBackgroundColor(_ route: Route) -> Color {
