@@ -40,7 +40,7 @@ class MoreViewModel(
                 when {
                     primaryLocale.language == "es" -> "es"
                     primaryLocale.language == "ht" -> "ht"
-                    primaryLocale.language == "pt" && primaryLocale.country == "BR" -> "pt-BR"
+                    primaryLocale.language == "pt" -> "pt-BR"
                     primaryLocale.language == "vi" -> "vi"
                     primaryLocale.language == "zh" && primaryLocale.script == "Hans" -> "zh-Hans-CN"
                     primaryLocale.language == "zh" && primaryLocale.script == "Hant" -> "zh-Hant-TW"
