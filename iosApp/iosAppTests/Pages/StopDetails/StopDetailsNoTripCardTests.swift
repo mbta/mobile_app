@@ -21,7 +21,8 @@ final class StopDetailsNoTripCardTests: XCTestCase {
         let sut = StopDetailsNoTripCard(
             status: RealtimePatterns.NoTripsFormatPredictionsUnavailable(),
             accentColor: Color.text,
-            routeType: .bus
+            routeType: .bus,
+            hideMaps: false
         )
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "live-data-slash"
@@ -38,7 +39,8 @@ final class StopDetailsNoTripCardTests: XCTestCase {
         let sut = StopDetailsNoTripCard(
             status: RealtimePatterns.NoTripsFormatServiceEndedToday(),
             accentColor: Color.text,
-            routeType: .ferry
+            routeType: .ferry,
+            hideMaps: false
         )
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "mode-ferry-slash"
@@ -51,7 +53,8 @@ final class StopDetailsNoTripCardTests: XCTestCase {
         let sut = StopDetailsNoTripCard(
             status: RealtimePatterns.NoTripsFormatNoSchedulesToday(),
             accentColor: Color.text,
-            routeType: .commuterRail
+            routeType: .commuterRail,
+            hideMaps: false
         )
         XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
             try image.actualImage().name() == "mode-cr-slash"

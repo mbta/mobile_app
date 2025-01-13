@@ -78,4 +78,26 @@ final class DepartureTileTests: XCTestCase {
         XCTAssertNoThrow(try sut.inspect().find(ViewType.Button.self).tap())
         wait(for: [tapExpectation], timeout: 1)
     }
+
+    func testAccessibility() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+
+        let tileData = TileData(
+            route: route,
+            headsign: "headsign",
+            formatted: RealtimePatterns.FormatSome(
+                trips: [.init(id: "id", routeType: .heavyRail, format: .Minutes(minutes: 5))],
+                secondaryAlert: nil
+            )
+        )
+        let notSelected = DepartureTile(data: tileData, onTap: {})
+        XCTAssertEqual(
+            "displays more information about this trip",
+            try notSelected.inspect().button().accessibilityHint().string()
+        )
+
+        let selected = DepartureTile(data: tileData, onTap: {}, isSelected: true)
+        XCTAssertEqual("", try selected.inspect().button().accessibilityHint().string())
+    }
 }

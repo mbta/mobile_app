@@ -105,6 +105,29 @@ data class StopDetailsDepartures(val routes: List<PatternsByStop>) {
         )
     }
 
+    class ScreenReaderContext(
+        val routeType: RouteType,
+        val destination: String?,
+        val stopName: String
+    )
+
+    fun getScreenReaderTripDepartureContext(
+        previousFilters: StopDetailsPageFilters
+    ): ScreenReaderContext? {
+        val stopFilter = previousFilters.stopFilter ?: return null
+        val selectedPattern =
+            this.routes.firstOrNull { it.routeIdentifier == stopFilter.routeId } ?: return null
+        val trip = allUpcomingTrips.firstOrNull { it.trip.id == previousFilters.tripFilter?.tripId }
+        val destination =
+            trip?.trip?.headsign ?: selectedPattern.directions[stopFilter.directionId].destination
+
+        return ScreenReaderContext(
+            selectedPattern.representativeRoute.type,
+            destination,
+            selectedPattern.stop.name
+        )
+    }
+
     companion object {
         fun fromData(
             stopId: String,
