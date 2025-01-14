@@ -86,6 +86,11 @@ class MoreViewModel(
                             value = settings[Settings.DevDebugMode] ?: false
                         ),
                         MoreItem.Toggle(
+                            label = context.getString(R.string.setting_elevator_accessibility),
+                            settings = Settings.ElevatorAccessibility,
+                            value = settings[Settings.ElevatorAccessibility] ?: false
+                        ),
+                        MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_route_search),
                             settings = Settings.SearchRouteResults,
                             value = settings[Settings.SearchRouteResults] ?: false

@@ -7165,6 +7165,47 @@
         }
       }
     },
+    "Show elevator accessibility" : {
+      "comment" : "A setting on the More page to display elevator accessibility",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostrar accesibilidad del ascensor"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Montre aksè nan asansè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostrar acessibilidade do elevador"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hiển thị khả năng tiếp cận thang máy"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "显示电梯可达性"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "顯示電梯可及性"
+          }
+        }
+      }
+    },
     "Show maps" : {
       "comment" : "Onboarding button text for setting maps to shown",
       "localizations" : {

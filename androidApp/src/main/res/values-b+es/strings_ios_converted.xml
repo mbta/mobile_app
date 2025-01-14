@@ -73,6 +73,7 @@
     <string name="resources_link_trip_planner">Planificador de viaje</string>
     <string name="search_by_stop">Buscar por parada</string>
     <string name="service_ended">Servicio finalizado</string>
+    <string name="setting_elevator_accessibility">Mostrar accesibilidad del ascensor</string>
     <string name="setting_toggle_hide_maps">Ocultar Mapas</string>
     <string name="settings_link">Configuración</string>
     <string name="shuttle">Autobús de enlace</string>
