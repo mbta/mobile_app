@@ -111,16 +111,9 @@ struct StopDetailsFilteredView: View {
     func toggledPinnedRoute() {
         Task {
             if let routeId = patternsByStop?.routeIdentifier {
-                do {
-                    let pinned = try await stopDetailsVM.togglePinnedUsecase.execute(route: routeId).boolValue
-                    analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
-                    stopDetailsVM.loadPinnedRoutes()
-                } catch is CancellationError {
-                    // do nothing on cancellation
-                } catch {
-                    // execute shouldn't actually fail
-                    debugPrint(error)
-                }
+                let pinned = await stopDetailsVM.togglePinnedRoute(routeId)
+                analytics.toggledPinnedRouteAtStop(pinned: pinned, routeId: routeId)
+                stopDetailsVM.loadPinnedRoutes()
             }
         }
     }
@@ -128,11 +121,10 @@ struct StopDetailsFilteredView: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                Color.fill2
+                Color.fill2.ignoresSafeArea(.all)
                 header
             }
             .fixedSize(horizontal: false, vertical: true)
-            .ignoresSafeArea(.all)
 
             if let patternsByStop {
                 StopDetailsFilteredDepartureDetails(
