@@ -112,7 +112,7 @@ fun NearbyTransitView(
             modifier =
                 Modifier.semantics { heading() }
                     .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {
