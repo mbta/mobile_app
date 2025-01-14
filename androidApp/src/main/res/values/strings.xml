@@ -108,4 +108,5 @@
         <item quantity="one">Updated %d minute ago</item>
         <item quantity="other">Updated %d minutes ago</item>
     </plurals>
+    <string name="drag_handle" tools:ignore="MissingTranslation">Drag handle</string>
 </resources>
