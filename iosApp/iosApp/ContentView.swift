@@ -6,6 +6,8 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
     let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
@@ -25,6 +27,7 @@ struct ContentView: View {
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     var screenTracker: ScreenTracker = AnalyticsProvider.shared
+    let analytics: SessionAnalytics = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
 
@@ -53,6 +56,9 @@ struct ContentView: View {
         .onAppear {
             Task { await contentVM.loadOnboardingScreens() }
             Task { await nearbyVM.loadDebugSetting() }
+            analytics.recordSession(colorScheme: colorScheme)
+            analytics.recordSession(voiceOver: voiceOver)
+            analytics.recordSession(hideMaps: contentVM.hideMaps)
         }
         .task {
             // We can't set stale caches in ResponseCache on init because of our Koin setup,
@@ -72,6 +78,15 @@ struct ContentView: View {
                 nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
             }
+        }
+        .onChange(of: colorScheme) { _ in
+            analytics.recordSession(colorScheme: colorScheme)
+        }
+        .onChange(of: voiceOver) { _ in
+            analytics.recordSession(voiceOver: voiceOver)
+        }
+        .onChange(of: contentVM.hideMaps) { _ in
+            analytics.recordSession(hideMaps: contentVM.hideMaps)
         }
         .onChange(of: contentVM.configResponse) { response in
             switch onEnum(of: response) {
