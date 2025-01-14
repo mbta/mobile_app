@@ -168,11 +168,13 @@ struct StopDetailsFilteredDepartureDetails: View {
                                     stopSequence: upcoming.stopSequence,
                                     selectionLock: false
                                 )
-                                analytics.tappedDepartureRow(
+                                analytics.tappedDeparture(
                                     routeId: patternsByStop.routeIdentifier,
                                     stopId: patternsByStop.stop.id,
                                     pinned: pinned,
-                                    alert: alerts.count > 0
+                                    alert: alerts.count > 0,
+                                    routeType: patternsByStop.representativeRoute.type,
+                                    noTrips: nil
                                 )
                                 view.scrollTo(tileData.id)
                             }
