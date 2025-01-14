@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -43,9 +44,16 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
 }
 
 class MockScheduleRepository(
-    private val scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
+    private val response: ApiResult<ScheduleResponse>,
     private val callback: (stopIds: List<String>) -> Unit = {}
 ) : ISchedulesRepository {
+
+    @DefaultArgumentInterop.Enabled
+    constructor(
+        scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
+        callback: (stopIds: List<String>) -> Unit = {}
+    ) : this(ApiResult.Ok(scheduleResponse), callback)
+
     constructor() :
         this(
             scheduleResponse = ScheduleResponse(schedules = listOf(), trips = mapOf()),
@@ -57,12 +65,12 @@ class MockScheduleRepository(
         now: Instant
     ): ApiResult<ScheduleResponse> {
         callback(stopIds)
-        return ApiResult.Ok(scheduleResponse)
+        return response
     }
 
     override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
         callback(stopIds)
-        return ApiResult.Ok(scheduleResponse)
+        return response
     }
 }
 

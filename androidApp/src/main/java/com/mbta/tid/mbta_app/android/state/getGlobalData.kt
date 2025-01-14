@@ -24,14 +24,14 @@ class GlobalDataViewModel(
     private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
     var globalResponse: StateFlow<GlobalResponse?> = _globalResponse
 
-    fun getGlobalData() {
+    fun getGlobalData(errorKey: String) {
         CoroutineScope(Dispatchers.IO).launch {
             fetchApi(
                 errorBannerRepo = errorBannerRepository,
-                errorKey = "GlobalDataViewModel.getGlobalData",
+                errorKey = errorKey,
                 getData = { globalRepository.getGlobalData() },
                 onSuccess = { _globalResponse.emit(it) },
-                onRefreshAfterError = { getGlobalData() }
+                onRefreshAfterError = { getGlobalData(errorKey) }
             )
         }
     }
@@ -48,12 +48,13 @@ class GlobalDataViewModel(
 
 @Composable
 fun getGlobalData(
+    errorKey: String,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject()
 ): GlobalResponse? {
     val viewModel: GlobalDataViewModel =
         viewModel(factory = GlobalDataViewModel.Factory(globalRepository, errorBannerRepository))
 
-    LaunchedEffect(key1 = null) { viewModel.getGlobalData() }
+    LaunchedEffect(key1 = null) { viewModel.getGlobalData(errorKey) }
     return viewModel.globalResponse.collectAsState(initial = null).value
 }

@@ -39,16 +39,26 @@ class GlobalRepository(
 
 class MockGlobalRepository
 @DefaultArgumentInterop.Enabled
-constructor(
-    val response: GlobalResponse =
-        GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
-    val onGet: () -> Unit = {}
-) : IGlobalRepository {
-    override val state = MutableStateFlow(response)
+constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) : IGlobalRepository {
+
+    @DefaultArgumentInterop.Enabled
+    constructor(
+        response: GlobalResponse =
+            GlobalResponse(emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap()),
+        onGet: () -> Unit = {}
+    ) : this(ApiResult.Ok(response), onGet)
+
+    override val state =
+        MutableStateFlow(
+            when (result) {
+                is ApiResult.Error -> null
+                is ApiResult.Ok -> result.data
+            }
+        )
 
     override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
         onGet()
-        return ApiResult.Ok(response)
+        return result
     }
 }
 

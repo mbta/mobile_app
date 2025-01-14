@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import kotlin.time.Duration.Companion.minutes
@@ -52,7 +53,7 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
             }
     }
 
-    fun checkPredictionsStale(
+    open fun checkPredictionsStale(
         predictionsLastUpdated: Instant,
         predictionQuantity: Int,
         action: () -> Unit
@@ -90,15 +91,28 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
 
 class ErrorBannerStateRepository : IErrorBannerStateRepository(), KoinComponent
 
-class MockErrorBannerStateRepository(
+class MockErrorBannerStateRepository
+@DefaultArgumentInterop.Enabled
+constructor(
     state: ErrorBannerState? = null,
     onSubscribeToNetworkChanges: (() -> Unit)? = null,
+    onCheckPredictionsStale: (() -> Unit)? = null
 ) : IErrorBannerStateRepository(state) {
     private val onSubscribeToNetworkChanges = onSubscribeToNetworkChanges
+    private val onCheckPredictionsStale = onCheckPredictionsStale
+
     val mutableFlow
         get() = flow
 
     override fun subscribeToNetworkStatusChanges() {
         onSubscribeToNetworkChanges?.invoke()
+    }
+
+    override fun checkPredictionsStale(
+        predictionsLastUpdated: Instant,
+        predictionQuantity: Int,
+        action: () -> Unit
+    ) {
+        onCheckPredictionsStale?.invoke()
     }
 }
