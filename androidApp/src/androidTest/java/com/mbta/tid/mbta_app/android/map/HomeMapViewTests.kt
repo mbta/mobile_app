@@ -2,14 +2,13 @@ package com.mbta.tid.mbta_app.android.map
 
 import android.location.Location
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.ComposeNavigator
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
@@ -39,7 +38,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 vehiclesData = emptyList(),
                 stopDetailsDepartures = null,
-                stopDetailsFilter = null,
                 viewModel =
                     MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
             )
@@ -65,7 +63,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 vehiclesData = emptyList(),
                 stopDetailsDepartures = null,
-                stopDetailsFilter = null,
                 viewModel =
                     MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
             )
@@ -81,21 +78,16 @@ class HomeMapViewTests {
 
         locationManager.hasPermission = false
 
-        val destination = ComposeNavigator().createDestination()
-
-        destination.route = "NearbyTransit"
-
         composeTestRule.setContent {
             HomeMapView(
                 lastNearbyTransitLocation = null,
                 nearbyTransitSelectingLocationState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = ViewportProvider(MapViewportState()),
-                currentNavEntry = NavBackStackEntry.create(LocalContext.current, destination),
+                currentNavEntry = SheetRoutes.NearbyTransit,
                 handleStopNavigation = {},
                 vehiclesData = emptyList(),
                 stopDetailsDepartures = null,
-                stopDetailsFilter = null,
                 viewModel =
                     MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
             )
@@ -121,7 +113,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 vehiclesData = emptyList(),
                 stopDetailsDepartures = null,
-                stopDetailsFilter = null,
                 viewModel =
                     MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
             )
@@ -138,20 +129,16 @@ class HomeMapViewTests {
         locationManager.hasPermission = false
 
         val destination = ComposeNavigator().createDestination()
-
-        destination.route = "StopDetails"
-
         composeTestRule.setContent {
             HomeMapView(
                 lastNearbyTransitLocation = null,
                 nearbyTransitSelectingLocationState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = ViewportProvider(MapViewportState()),
-                currentNavEntry = NavBackStackEntry.create(LocalContext.current, destination),
+                currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
                 handleStopNavigation = {},
                 vehiclesData = emptyList(),
                 stopDetailsDepartures = null,
-                stopDetailsFilter = null,
                 viewModel =
                     MapViewModel(ConfigUseCase(MockConfigRepository(), MockSentryRepository()), {})
             )

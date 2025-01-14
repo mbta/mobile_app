@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavBackStackEntry
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.search.results.StopResultsView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
@@ -51,13 +51,13 @@ fun SearchBarOverlay(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
-    currentNavEntry: NavBackStackEntry?,
+    currentNavEntry: SheetRoutes?,
     inputFieldFocusRequester: FocusRequester,
     content: @Composable () -> Unit
 ) {
     var visible =
         remember(currentNavEntry) {
-            currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+            currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
         }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")

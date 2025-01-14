@@ -12,14 +12,15 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import kotlinx.datetime.Clock
 
 @Composable
-fun LoadingStopDetailsView(filter: StopDetailsFilter?) {
+fun LoadingStopDetailsView(stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?) {
     Column {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = Modifier.loadingShimmer()) {
-                if (filter == null) {
+                if (stopFilter == null) {
                     Column(
                         modifier =
                             Modifier.verticalScroll(rememberScrollState()).padding(8.dp).weight(1f)
@@ -35,10 +36,11 @@ fun LoadingStopDetailsView(filter: StopDetailsFilter?) {
                     }
                 } else {
                     StopDetailsFilteredRouteView(
-                        departures = LoadingPlaceholders.stopDetailsDepartures(filter),
+                        departures = LoadingPlaceholders.stopDetailsDepartures(stopFilter),
                         global = null,
                         now = Clock.System.now(),
-                        filter = filter
+                        stopFilter = stopFilter,
+                        tripFilter = tripFilter
                     ) {}
                 }
             }

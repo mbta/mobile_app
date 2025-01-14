@@ -119,8 +119,9 @@ class StopDetailsFilteredRouteViewTest {
                     ),
                 global = globalResponse,
                 now = now,
-                filter = filterState.value,
-                updateStopFilter = filterState::value::set
+                stopFilter = filterState.value,
+                updateStopFilter = filterState::value::set,
+                tripFilter = null
             )
         }
 
