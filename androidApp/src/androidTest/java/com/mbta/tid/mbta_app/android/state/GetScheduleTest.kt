@@ -4,10 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.test.runTest
@@ -53,7 +55,7 @@ class GetScheduleTest {
         var stopIds by mutableStateOf(stops1)
         var actualSchedules: ScheduleResponse? = expectedSchedules1
         composeTestRule.setContent {
-            actualSchedules = getSchedule(stopIds = stopIds, schedulesRepo)
+            actualSchedules = getSchedule(stopIds = stopIds, "errorKey", schedulesRepo)
         }
 
         composeTestRule.awaitIdle()
@@ -73,10 +75,28 @@ class GetScheduleTest {
         var actualSchedules: ScheduleResponse? = null
 
         composeTestRule.setContent {
-            actualSchedules = getSchedule(stopIds = emptyList(), schedulesRepo)
+            actualSchedules = getSchedule(stopIds = emptyList(), "errorKey", schedulesRepo)
         }
 
         composeTestRule.waitUntil { actualSchedules != null }
         assertNotNull(actualSchedules)
+    }
+
+    @Test
+    fun testErrorCase() {
+        val schedulesRepo = MockScheduleRepository(ApiResult.Error(500, "oops"))
+
+        val errorRepo = MockErrorBannerStateRepository()
+
+        composeTestRule.setContent {
+            getSchedule(stopIds = listOf("stop1"), "errorKey", schedulesRepo, errorRepo)
+        }
+
+        composeTestRule.waitUntil {
+            when (val errorState = errorRepo.state.value) {
+                is ErrorBannerState.DataError -> errorState.messages == setOf("errorKey")
+                else -> false
+            }
+        }
     }
 }
