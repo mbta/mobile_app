@@ -33,7 +33,7 @@ fun StopDetailsView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    val globalResponse = getGlobalData()
+    val globalResponse = getGlobalData("SopDetailsView.getGlobalData")
 
     val now = timer(updateInterval = 5.seconds)
 
