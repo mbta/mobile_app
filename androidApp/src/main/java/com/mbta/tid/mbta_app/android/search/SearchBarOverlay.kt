@@ -59,7 +59,7 @@ fun SearchBarOverlay(
         }
     var expanded by rememberSaveable { mutableStateOf(false) }
     var searchInputState by rememberSaveable { mutableStateOf("") }
-    val globalResponse = getGlobalData()
+    val globalResponse = getGlobalData("SearchBar.getGlobalData")
     val searchResultsVm = getSearchResultsVm(globalResponse = globalResponse)
     val searchResults = searchResultsVm.searchResults.collectAsState(initial = null).value
 

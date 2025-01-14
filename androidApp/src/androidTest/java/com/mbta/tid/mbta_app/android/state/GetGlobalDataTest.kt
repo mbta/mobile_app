@@ -1,10 +1,13 @@
 package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +42,7 @@ class GetGlobalDataTest {
             }
 
         var actualData: GlobalResponse? = globalData
-        composeTestRule.setContent { actualData = getGlobalData(globalRepo) }
+        composeTestRule.setContent { actualData = getGlobalData("errorKey", globalRepo) }
 
         composeTestRule.awaitIdle()
         assertNull(actualData)
@@ -48,5 +51,21 @@ class GetGlobalDataTest {
         composeTestRule.awaitIdle()
         composeTestRule.waitUntil { globalData == actualData }
         assertEquals(globalData, actualData)
+    }
+
+    @Test
+    fun testApiError() = runTest {
+        val globalRepo = MockGlobalRepository(ApiResult.Error(500, "oops"))
+
+        val errorRepo = MockErrorBannerStateRepository()
+
+        composeTestRule.setContent { getGlobalData("errorKey", globalRepo, errorRepo) }
+
+        composeTestRule.waitUntil {
+            when (val errorState = errorRepo.state.value) {
+                is ErrorBannerState.DataError -> errorState.messages == setOf("errorKey")
+                else -> false
+            }
+        }
     }
 }
