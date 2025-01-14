@@ -44,15 +44,9 @@ struct NearbyStopView: View {
             condenseHeadsignPredictions: condenseHeadsignPredictions,
             now: now,
             context: .nearbyTransit,
-            pushNavEntry: { entry, alertsHere in
-                pushNavEntry(entry)
-                analytics.tappedDeparture(
-                    routeId: patternsAtStop.routeIdentifier,
-                    stopId: patternsAtStop.stop.id,
-                    pinned: pinned,
-                    alert: alertsHere
-                )
-            }
+            pushNavEntry: pushNavEntry,
+            analytics: analytics,
+            pinned: pinned
         )
     }
 }
