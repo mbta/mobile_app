@@ -2,6 +2,7 @@ import com.mbta.tid.mbta_app.gradle.ConvertIosLocalizationTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
 import java.io.BufferedReader
 import java.io.StringReader
+import java.util.Locale
 import java.util.Properties
 
 plugins {
@@ -152,11 +153,30 @@ task("envVars") {
                 ?: System.getenv("SENTRY_DSN_ANDROID") ?: ""}\""
     )
 
+    // https://stackoverflow.com/a/53261807
+    val sentryEnv =
+        if (
+            gradle.startParameter.taskNames.any {
+                it.lowercase(Locale.getDefault()).contains("debug")
+            }
+        ) {
+            "debug"
+        } else if (
+            gradle.startParameter.taskNames.any {
+                it.lowercase(Locale.getDefault()).contains("prod")
+            }
+        ) {
+            "prod"
+        } else {
+            "staging"
+        }
+
+    val sentryEnvOverride: String = props.getProperty("SENTRY_ENVIRONMENT", sentryEnv)
+
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_ENVIRONMENT",
-        "\"${props.getProperty("SENTRY_ENVIRONMENT")
-                ?: System.getenv("SENTRY_ENVIRONMENT") ?: ""}\""
+        "\"${sentryEnvOverride}\""
     )
 }
 

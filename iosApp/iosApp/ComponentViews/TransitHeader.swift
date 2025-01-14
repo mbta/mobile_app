@@ -12,9 +12,9 @@ import SwiftUI
 
 struct TransitHeader<Content: View>: View {
     let name: String
+    let routeType: RouteType
     let backgroundColor: Color
     let textColor: Color
-    let modeIcon: Image
     var rightContent: () -> Content?
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
@@ -27,10 +27,11 @@ struct TransitHeader<Content: View>: View {
                 .foregroundStyle(textColor)
                 .textCase(.none)
                 .frame(maxWidth: .infinity, maxHeight: modeIconHeight, alignment: .leading)
+                .accessibilityLabel(Text("\(name) \(routeType.typeText(isOnly: true))"))
             rightContent()
                 .foregroundStyle(textColor)
         } icon: {
-            modeIcon
+            routeIcon(routeType)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .scaledToFit()

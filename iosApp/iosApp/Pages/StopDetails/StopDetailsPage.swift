@@ -10,12 +10,6 @@ import shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsPageFilters: Equatable {
-    var stopId: String
-    var stopFilter: StopDetailsFilter?
-    var tripFilter: TripDetailsFilter?
-}
-
 struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
 
@@ -122,6 +116,45 @@ struct StopDetailsPage: View {
             )
     }
 
+    func announceDeparture(_ previousFilters: StopDetailsPageFilters) {
+        guard let context = internalDepartures?.getScreenReaderTripDepartureContext(
+            previousFilters: previousFilters
+        ) else { return }
+        let routeType = context.routeType.typeText(isOnly: true)
+        let stopName = context.stopName
+
+        let announcementString = if let destination = context.destination {
+            String(format: NSLocalizedString(
+                "%1$@ to %2$@ has departed %3$@",
+                comment: """
+                Screen reader text that is announced when a trip disappears from the screen.,
+                in the format "[train/bus/ferry] to [destination] has departed [stop name]",
+                ex. "[train] to [Alewife] has departed [Central]", "[bus] to [Nubian] has departed [Harvard]"
+                """
+            ), routeType, destination, stopName)
+        } else {
+            String(format: NSLocalizedString(
+                "%1$@ has departed %2$@",
+                comment: """
+                Screen reader text that is announced when a trip disappears from the screen.,
+                in the format "[train/bus/ferry] to [destination] has departed [stop name]",
+                ex. "[train] has departed [Central]", "[bus] has departed [Harvard]"
+                """
+            ), routeType, stopName)
+        }
+
+        if #available(iOS 17, *) {
+            var departureAnnouncement = AttributedString(announcementString)
+            departureAnnouncement.accessibilitySpeechAnnouncementPriority = .high
+            AccessibilityNotification.Announcement(departureAnnouncement).post()
+        } else {
+            UIAccessibility.post(
+                notification: .layoutChanged,
+                argument: announcementString
+            )
+        }
+    }
+
     func setStopFilter() -> StopDetailsFilter? {
         let nextStopFilter = stopFilter ?? internalDepartures?.autoStopFilter()
         if stopFilter != nextStopFilter {
@@ -136,6 +169,11 @@ struct StopDetailsPage: View {
             currentTripFilter: filters.tripFilter,
             filterAtTime: now.toKotlinInstant()
         )
+
+        if let previousFilter = filters.tripFilter, tripFilter != previousFilter {
+            announceDeparture(filters)
+        }
+
         nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)
     }
 
