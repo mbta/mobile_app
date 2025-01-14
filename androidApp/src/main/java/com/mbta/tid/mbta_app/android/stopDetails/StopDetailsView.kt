@@ -48,6 +48,8 @@ fun StopDetailsView(
 
     val stop: Stop? = globalResponse?.stops?.get(stopId)
 
+    val stop: Stop? = globalResponse?.stops?.get(stopId)
+
     val now = timer(updateInterval = 5.seconds)
 
     val servedRoutes =
@@ -129,7 +131,6 @@ fun StopDetailsView(
                     }
                 }
             }
-
             StopDetailsRoutesView(
                 departures,
                 globalResponse,
