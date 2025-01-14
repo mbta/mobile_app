@@ -36,7 +36,7 @@ fun StopDetailsPage(
     updateDepartures: (StopDetailsDepartures?) -> Unit,
     errorBannerViewModel: ErrorBannerViewModel
 ) {
-    val globalResponse = getGlobalData()
+    val globalResponse = getGlobalData("StopDetailsPage.getGlobalData")
 
     val predictionsVM =
         subscribeToPredictions(
@@ -47,7 +47,7 @@ fun StopDetailsPage(
 
     val now = timer(updateInterval = 5.seconds)
 
-    val schedulesResponse = getSchedule(stopIds = listOf(stop.id))
+    val schedulesResponse = getSchedule(stopIds = listOf(stop.id), "StopDetailsPage.getSchedule")
 
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 

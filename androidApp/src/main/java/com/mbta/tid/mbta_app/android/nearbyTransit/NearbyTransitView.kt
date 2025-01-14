@@ -66,15 +66,15 @@ fun NearbyTransitView(
     }
     val now = timer(updateInterval = 5.seconds)
     val stopIds = remember(nearbyVM.nearby) { nearbyVM.nearby?.stopIds()?.toList() }
-    val schedules = getSchedule(stopIds)
+    val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
+
     LaunchedEffect(targetLocation == null) {
         if (targetLocation == null) {
             predictionsVM.reset()
         }
     }
-
     val (pinnedRoutes, togglePinnedRoute) = managePinnedRoutes()
 
     val nearbyWithRealtimeInfo =
@@ -112,7 +112,7 @@ fun NearbyTransitView(
             modifier =
                 Modifier.semantics { heading() }
                     .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         ErrorBanner(errorBannerViewModel)
         if (nearbyWithRealtimeInfo == null) {

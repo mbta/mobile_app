@@ -2,15 +2,18 @@ package com.mbta.tid.mbta_app.android.state
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,15 +97,17 @@ class PredictionsViewModel(
     }
 
     fun checkPredictionsStale() {
-        predictionsRepository.lastUpdated?.let { lastPredictions ->
-            errorBannerViewModel.errorRepository.checkPredictionsStale(
-                predictionsLastUpdated = lastPredictions,
-                predictionQuantity = predictions.value?.predictionQuantity() ?: 0,
-                action = {
-                    disconnect()
-                    connect(currentStopIds)
-                }
-            )
+        CoroutineScope(Dispatchers.IO).launch {
+            predictionsRepository.lastUpdated?.let { lastPredictions ->
+                errorBannerViewModel.errorRepository.checkPredictionsStale(
+                    predictionsLastUpdated = lastPredictions,
+                    predictionQuantity = predictions.value?.predictionQuantity() ?: 0,
+                    action = {
+                        disconnect()
+                        connect(currentStopIds)
+                    }
+                )
+            }
         }
     }
 
@@ -120,12 +125,15 @@ class PredictionsViewModel(
 fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject(),
-    errorBannerViewModel: ErrorBannerViewModel
+    errorBannerViewModel: ErrorBannerViewModel,
+    checkPredictionsStaleInterval: Duration = 5.seconds
 ): PredictionsViewModel {
     val viewModel: PredictionsViewModel =
         viewModel(
             factory = PredictionsViewModel.Factory(predictionsRepository, errorBannerViewModel)
         )
+
+    val timer = timer(checkPredictionsStaleInterval)
 
     LifecycleResumeEffect(key1 = stopIds) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -135,5 +143,8 @@ fun subscribeToPredictions(
 
         onPauseOrDispose { viewModel.disconnect() }
     }
+
+    LaunchedEffect(key1 = timer) { viewModel.checkPredictionsStale() }
+
     return viewModel
 }

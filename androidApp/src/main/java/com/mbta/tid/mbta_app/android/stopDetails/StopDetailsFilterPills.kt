@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -135,7 +136,8 @@ fun StopDetailsFilterPills(
             ) {
                 Text(
                     stringResource(R.string.filterShowAll),
-                    Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                    style = MaterialTheme.typography.bodyMedium.merge(colorResource(R.color.fill1)),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                 )
             }
         }
