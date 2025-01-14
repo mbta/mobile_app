@@ -73,6 +73,7 @@
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="search_by_stop">Pesquisar por parada</string>
     <string name="service_ended">Serviço encerrado</string>
+    <string name="setting_elevator_accessibility">Mostrar acessibilidade do elevador</string>
     <string name="setting_toggle_hide_maps">Ocultar mapas</string>
     <string name="settings_link">Configurações</string>
     <string name="shuttle">Ônibus vai-e-vem</string>
