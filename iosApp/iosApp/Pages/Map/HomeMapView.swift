@@ -13,7 +13,7 @@ import shared
 import SwiftUI
 
 struct HomeMapView: View {
-    var analytics: NearbyTransitAnalytics = AnalyticsProvider.shared
+    var analytics: MapAnalytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel

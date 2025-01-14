@@ -23,7 +23,7 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
+    var analytics: StopTripDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
     init(

@@ -29,7 +29,6 @@ struct StopDetailsView: View {
     @ObservedObject var mapVM: MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
-    var analytics: StopDetailsAnalytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
     init(
