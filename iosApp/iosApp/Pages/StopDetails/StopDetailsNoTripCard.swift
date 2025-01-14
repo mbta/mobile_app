@@ -13,6 +13,7 @@ struct StopDetailsNoTripCard: View {
     var status: RealtimePatterns.NoTripsFormat
     var accentColor: Color
     var routeType: RouteType
+    var hideMaps: Bool
 
     var body: some View {
         StopDetailsIconCard(
@@ -25,13 +26,7 @@ struct StopDetailsNoTripCard: View {
 
     var detailText: Text? {
         switch onEnum(of: status) {
-        case .predictionsUnavailable: Text(String(format: NSLocalizedString(
-                "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
-                comment: """
-                Explanation under the 'Predictions unavailable' header in stop details.
-                The interpolated value can be "buses" or "trains".
-                """
-            ), routeType.typeText(isOnly: false)))
+        case .predictionsUnavailable: Text(hideMaps ? predictionsUnavailableStringNoMap : predictionsUnavailableString)
         default: nil
         }
     }
@@ -55,5 +50,22 @@ struct StopDetailsNoTripCard: View {
         case .predictionsUnavailable: Image(.liveDataSlash)
         case .noSchedulesToday, .serviceEndedToday: routeSlashIcon(routeType)
         }
+    }
+
+    var predictionsUnavailableString: String {
+        String(format: NSLocalizedString(
+            "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are.",
+            comment: """
+            Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.
+            The interpolated value can be "buses" or "trains".
+            """
+        ), routeType.typeText(isOnly: false))
+    }
+
+    var predictionsUnavailableStringNoMap: String {
+        NSLocalizedString(
+            "Service is running, but predicted arrival times aren’t available.",
+            comment: "Explanation under the 'Predictions unavailable' header in stop details."
+        )
     }
 }

@@ -274,7 +274,7 @@
       }
     },
     "%@ %@ %@" : {
-      "comment" : "VoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "comment" : "Screen reader text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"\nVoiceOver text for the vehicle status on the trip details page,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard]'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -316,6 +316,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@, selected stop" : {
+      "comment" : "Screen reader text for the vehicle status on the trip details page when the stop is selected,\nex '[train] [approaching] [Alewife]' or '[bus] [now at] [Harvard], selected stop'\nPossible values for the vehicle status are \"Approaching\", \"Next stop\", or \"Now at\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@, selected stop"
           }
         }
       }
@@ -860,7 +871,7 @@
       }
     },
     "%@ scheduled to depart %@" : {
-      "comment" : "VoiceOver text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
+      "comment" : "Screen reader text for the departure status on the trip details page,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard]'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -906,6 +917,17 @@
         }
       }
     },
+    "%@ scheduled to depart %@, selected stop" : {
+      "comment" : "Screen reader text for the departure status on the trip details page when the stop is selected,\nex '[train] scheduled to depart [Alewife]' or '[bus] scheduled to depart [Harvard], selected stop'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ scheduled to depart %2$@, selected stop"
+          }
+        }
+      }
+    },
     "%@ to" : {
       "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]",
       "localizations" : {
@@ -946,6 +968,21 @@
           }
         }
       }
+    },
+    "%@, first stop" : {
+      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line"
+    },
+    "%@, selected stop" : {
+      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the selected one"
+    },
+    "%@, selected stop, first stop" : {
+      "comment" : "Screen reader text for a stop name on the stop details page when that stop is both selected and first"
+    },
+    "%1$@ has departed %2$@" : {
+      "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] has departed [Central]\", \"[bus] has departed [Harvard]\""
+    },
+    "%1$@ to %2$@ has departed %3$@" : {
+      "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] to [Alewife] has departed [Central]\", \"[bus] to [Nubian] has departed [Harvard]\""
     },
     "%ld stops away" : {
       "comment" : "How many stops away the vehicle is from the target stop",
@@ -3146,6 +3183,12 @@
         }
       }
     },
+    "displays more information" : {
+      "comment" : "Screen reader hint for tapping on the trip details header on the stop page"
+    },
+    "displays more information about this trip" : {
+      "comment" : "Screen reader hint for tapping a departure card in stop details"
+    },
     "Dock Closure" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -4169,6 +4212,9 @@
         }
       }
     },
+    "Hides remaining stops" : {
+      "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected when it's already open (closes the accordion listing those stops)"
+    },
     "High Winds" : {
       "comment" : "Possible alert cause",
       "localizations" : {
@@ -4543,6 +4589,9 @@
           }
         }
       }
+    },
+    "Lists remaining stops" : {
+      "comment" : "Screen reader hint explaining what happens when 'x stops away'\nis selected (open an accordion listing those stops)"
     },
     "Live" : {
       "comment" : "Indicates that data is being updated in real-time",
@@ -6908,8 +6957,11 @@
         }
       }
     },
+    "Service is running, but predicted arrival times aren’t available." : {
+      "comment" : "Explanation under the 'Predictions unavailable' header in stop details."
+    },
     "Service is running, but predicted arrival times aren’t available. The map shows where %@ on this route currently are." : {
-      "comment" : "Explanation under the 'Predictions unavailable' header in stop details.\nThe interpolated value can be \"buses\" or \"trains\".",
+      "comment" : "Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.\nThe interpolated value can be \"buses\" or \"trains\".",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8180,6 +8232,9 @@
           }
         }
       }
+    },
+    "switches direction" : {
+      "comment" : "Screen reader hint for the direction toggle action"
     },
     "Technical Problem" : {
       "comment" : "Possible alert cause",
