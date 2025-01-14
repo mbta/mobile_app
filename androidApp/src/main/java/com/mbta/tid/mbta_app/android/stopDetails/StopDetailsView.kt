@@ -26,13 +26,15 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun StopDetailsView(
     modifier: Modifier = Modifier,
-    stop: Stop,
-    filter: StopDetailsFilter?,
+    stopId: String,
+    stopFilter: StopDetailsFilter?,
+    tripFilter: TripDetailsFilter?,
     departures: StopDetailsDepartures?,
     pinnedRoutes: Set<String>,
     togglePinnedRoute: (String) -> Unit,
@@ -43,6 +45,8 @@ fun StopDetailsView(
     val globalResponse = getGlobalData("StopDetailsView.getGlobalData")
     // TODO: Set this from the StopDetailsViewModel based on the feature toggle once the VM exists
     val showElevatorAccessibility = false
+
+    val stop: Stop? = globalResponse?.stops?.get(stopId)
 
     val now = timer(updateInterval = 5.seconds)
 
@@ -65,7 +69,7 @@ fun StopDetailsView(
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         val filterId = pillFilter.id
-        if (filter?.routeId == filterId) {
+        if (stopFilter?.routeId == filterId) {
             updateStopFilter(null)
         } else {
             val patterns = departures?.routes?.find { it.routeIdentifier == filterId }
@@ -80,55 +84,63 @@ fun StopDetailsView(
         }
     }
 
-    Column(modifier) {
-        Column {
-            SheetHeader(onClose = onClose, title = stop.name)
-            if (servedRoutes.size > 1) {
-                StopDetailsFilterPills(
-                    servedRoutes = servedRoutes,
-                    filter = filter,
-                    onTapRoutePill = onTapRoutePill,
-                    onClearFilter = { updateStopFilter(null) }
+    if (stop != null) {
+
+        Column(modifier) {
+            Column {
+                SheetHeader(onClose = onClose, title = stop.name)
+                if (servedRoutes.size > 1) {
+                    StopDetailsFilterPills(
+                        servedRoutes = servedRoutes,
+                        filter = stopFilter,
+                        onTapRoutePill = onTapRoutePill,
+                        onClearFilter = { updateStopFilter(null) }
+                    )
+                }
+                HorizontalDivider(
+                    Modifier.fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .border(2.dp, colorResource(R.color.halo))
                 )
             }
-            HorizontalDivider(
-                Modifier.fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .border(2.dp, colorResource(R.color.halo))
-            )
-        }
 
-        ErrorBanner(errorBannerViewModel)
+            ErrorBanner(errorBannerViewModel)
 
-        if (showElevatorAccessibility && !departures?.elevatorAlerts.isNullOrEmpty()) {
-            Column(
-                Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                departures?.elevatorAlerts?.map {
-                    Column(
-                        Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                            .clip(RoundedCornerShape(8.dp))
-                            .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
-                            .clickable(
-                                onClickLabel = stringResource(R.string.displays_more_info)
-                            ) {}
-                            .padding(end = 8.dp)
-                    ) {
-                        StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
+            if (showElevatorAccessibility && !departures?.elevatorAlerts.isNullOrEmpty()) {
+                Column(
+                    Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    departures?.elevatorAlerts?.map {
+                        Column(
+                            Modifier.background(
+                                colorResource(R.color.fill3),
+                                RoundedCornerShape(8.dp)
+                            )
+                                .clip(RoundedCornerShape(8.dp))
+                                .border(0.dp, Color.Unspecified, shape = RoundedCornerShape(8.dp))
+                                .clickable(
+                                    onClickLabel = stringResource(R.string.displays_more_info)
+                                ) {}
+                                .padding(end = 8.dp)
+                        ) {
+                            StopDetailsAlertHeader(it, Color.Unspecified, showInfoIcon = true)
+                        }
                     }
                 }
             }
-        }
 
-        StopDetailsRoutesView(
-            departures,
-            globalResponse,
-            now,
-            filter ?: departures?.autoStopFilter(),
-            togglePinnedRoute,
-            pinnedRoutes,
-            updateStopFilter
-        )
+            StopDetailsRoutesView(
+                departures,
+                globalResponse,
+                now,
+                stopFilter ?: departures?.autoStopFilter(),
+                tripFilter,
+                togglePinnedRoute,
+                pinnedRoutes,
+                updateStopFilter
+            )
+        }
     }
 }
+

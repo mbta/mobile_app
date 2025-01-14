@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.RealtimePatterns
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -36,11 +37,12 @@ fun StopDetailsFilteredRouteView(
     departures: StopDetailsDepartures,
     global: GlobalResponse?,
     now: Instant,
-    filter: StopDetailsFilter?,
+    stopFilter: StopDetailsFilter?,
+    tripFilter: TripDetailsFilter?,
     updateStopFilter: (StopDetailsFilter?) -> Unit
 ) {
-    val patternsByStop = departures.routes.find { it.routeIdentifier == filter?.routeId }
-    val expectedDirection = filter?.directionId
+    val patternsByStop = departures.routes.find { it.routeIdentifier == stopFilter?.routeId }
+    val expectedDirection = stopFilter?.directionId
     if (patternsByStop == null) {
         return
     }
@@ -71,7 +73,7 @@ fun StopDetailsFilteredRouteView(
         } else {
             RouteHeader(patternsByStop.representativeRoute)
         }
-        DirectionPicker(patternsByStop, filter, updateStopFilter)
+        DirectionPicker(patternsByStop, stopFilter, updateStopFilter)
 
         Spacer(modifier = Modifier.padding(8.dp))
 
