@@ -27,9 +27,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -38,6 +36,8 @@ import com.mapbox.maps.MapboxExperimental
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
 import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.StopFilterParameterType
+import com.mbta.tid.mbta_app.android.TripFilterParameterType
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -56,13 +56,15 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.history.Visit
-import com.mbta.tid.mbta_app.model.StopDetailsDepartures
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.reflect.typeOf
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -108,15 +110,25 @@ fun NearbyTransitPage(
     visitHistoryUsecase: VisitHistoryUsecase = koinInject()
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
+
     val navController = rememberNavController()
-    val currentNavEntry: NavBackStackEntry? by
-        navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
 
     val viewModel: NearbyTransitTabViewModel = viewModel()
+
+    val currentNavEntry: SheetRoutes? =
+        viewModel.currentNavEntry.collectAsState(initial = null).value
+
     val stopDetailsDepartures by viewModel.stopDetailsDepartures.collectAsState()
-    val stopDetailsFilter by viewModel.stopDetailsFilter.collectAsState()
-    var vehiclesData: List<Vehicle> = subscribeToVehicles(routeDirection = stopDetailsFilter)
     val scope = rememberCoroutineScope()
+
+    var vehiclesData: List<Vehicle> =
+        subscribeToVehicles(
+            routeDirection =
+                when (currentNavEntry) {
+                    is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
+                    else -> null
+                }
+        )
 
     var searchExpanded by rememberSaveable { mutableStateOf(false) }
     val searchFocusRequester = remember { FocusRequester() }
@@ -166,10 +178,6 @@ fun NearbyTransitPage(
         )
     }
 
-    fun updateStopFilter(filter: StopDetailsFilter?) {
-        viewModel.setStopDetailsFilter(filter)
-    }
-
     LaunchedEffect(mapViewModel.lastMapboxErrorTimestamp.collectAsState(initial = null).value) {
         mapViewModel.loadConfig()
     }
@@ -182,6 +190,22 @@ fun NearbyTransitPage(
     LaunchedEffect(currentNavEntry) {
         nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
     }
+
+    fun updateStopFilter(stopFilter: StopDetailsFilter?) {
+        viewModel.setStopFilter(
+            currentNavEntry,
+            stopFilter,
+            { navController.popBackStack() },
+            { navController.navigate(it) }
+        )
+    }
+
+
+    val navTypeMap =
+        mapOf(
+            typeOf<StopDetailsFilter?>() to StopFilterParameterType,
+            typeOf<TripDetailsFilter?>() to TripFilterParameterType,
+        )
 
     @Composable
     fun SheetContent(modifier: Modifier = Modifier) {
@@ -196,58 +220,51 @@ fun NearbyTransitPage(
                 )
             }
         ) {
-            composable<SheetRoutes.StopDetails> { backStackEntry ->
+            composable<SheetRoutes.StopDetails>(typeMap = navTypeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-                val stop = nearbyTransit.globalResponse?.stops?.get(navRoute.stopId)
 
-                fun updateStopDepartures(departures: StopDetailsDepartures?) {
-                    viewModel.setStopDetailsDepartures(departures)
-                    if (departures != null && stopDetailsFilter == null) {
-                        updateStopFilter(departures.autoStopFilter())
-                    }
-                }
+                val filters =
+                    StopDetailsPageFilters(
+                        navRoute.stopId,
+                        navRoute.stopFilter,
+                        navRoute.tripFilter
+                    )
 
                 LaunchedEffect(navRoute) {
                     if (navBarVisible) {
                         hideNavBar()
                     }
-
-                    val filter =
-                        if (navRoute.filterRouteId != null && navRoute.filterDirectionId != null)
-                            StopDetailsFilter(navRoute.filterRouteId, navRoute.filterDirectionId)
-                        else null
-                    updateStopFilter(filter)
-
-                    if (filter != null) {
+                    if (filters.stopFilter != null) {
                         analytics.track(AnalyticsScreen.StopDetailsFiltered)
                     } else {
                         analytics.track(AnalyticsScreen.StopDetailsUnfiltered)
                     }
+                    viewModel.recordCurrentNavEntry(navRoute)
+
                 }
 
-                if (stop != null) {
                     StopDetailsPage(
                         modifier = modifier,
-                        stop,
-                        stopDetailsFilter,
+                        filters = filters,
                         nearbyTransit.alertData,
                         onClose = { navController.popBackStack() },
                         updateStopFilter = ::updateStopFilter,
-                        updateDepartures = ::updateStopDepartures,
+                        updateDepartures = { viewModel.setStopDetailsDepartures(it) },
                         errorBannerViewModel = errorBannerViewModel
                     )
+
                 }
-            }
-            composable<SheetRoutes.NearbyTransit> {
+
+
+            composable<SheetRoutes.NearbyTransit>(typeMap = navTypeMap) {
                 // for ViewModel reasons, must be within the `composable` to be the same instance
                 val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
                 LaunchedEffect(true) {
                     if (!navBarVisible && !searchExpanded) {
                         showNavBar()
                     }
-
-                    updateStopFilter(null)
                     analytics.track(AnalyticsScreen.NearbyTransit)
+                    viewModel.recordCurrentNavEntry(SheetRoutes.NearbyTransit)
                 }
 
                 var targetLocation by remember { mutableStateOf<Position?>(null) }
@@ -279,9 +296,7 @@ fun NearbyTransitPage(
                     setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
                     onOpenStopDetails = { stopId, filter ->
                         updateVisitHistory(stopId)
-                        navController.navigate(
-                            SheetRoutes.StopDetails(stopId, filter?.routeId, filter?.directionId)
-                        )
+                        navController.navigate(SheetRoutes.StopDetails(stopId, filter, null))
                     },
                     noNearbyStopsView = {
                         NoNearbyStopsView(
@@ -298,7 +313,8 @@ fun NearbyTransitPage(
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         if (nearbyTransit.hideMaps) {
-            val isNearbyTransit = currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
+            val isNearbyTransit =
+                currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
             SearchBarOverlay(
                 searchExpanded,
                 ::handleSearchExpandedChange,
@@ -351,7 +367,6 @@ fun NearbyTransitPage(
                         handleStopNavigation = ::handleStopNavigation,
                         vehiclesData = vehiclesData,
                         stopDetailsDepartures = stopDetailsDepartures,
-                        stopDetailsFilter = stopDetailsFilter,
                         viewModel = mapViewModel
                     )
                 }
