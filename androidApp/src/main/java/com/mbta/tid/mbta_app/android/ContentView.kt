@@ -44,7 +44,7 @@ fun ContentView(
 ) {
     val navController = rememberNavController()
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
-    val globalResponse = getGlobalData()
+    val globalResponse = getGlobalData("ContentView.getGlobalData")
     val hideMaps by viewModel.hideMaps.collectAsState()
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()

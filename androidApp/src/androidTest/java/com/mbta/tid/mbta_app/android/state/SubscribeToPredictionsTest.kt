@@ -20,7 +20,9 @@ import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -164,5 +166,39 @@ class SubscribeToPredictionsTest {
         composeTestRule.waitUntil { predictions != null }
         assertNotNull(predictions)
         assertTrue(connected)
+    }
+
+    @Test
+    fun testCheckPredictionsStaleCalled() = runTest {
+        val objects = ObjectCollectionBuilder()
+        objects.prediction()
+        val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
+        val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
+
+        predictionsRepo.lastUpdated = Clock.System.now()
+
+        var stopIds = mutableStateOf(listOf("place-a"))
+
+        var checkPredictionsStaleCount = 0
+        val mockErrorRepo =
+            MockErrorBannerStateRepository(
+                onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
+            )
+
+        composeTestRule.setContent {
+            var stopIds by remember { stopIds }
+            subscribeToPredictions(
+                stopIds,
+                predictionsRepo,
+                ErrorBannerViewModel(
+                    false,
+                    mockErrorRepo,
+                    MockSettingsRepository(),
+                ),
+                1.seconds
+            )
+        }
+
+        composeTestRule.waitUntil(timeoutMillis = 3000) { checkPredictionsStaleCount >= 2 }
     }
 }
