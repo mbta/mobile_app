@@ -216,12 +216,21 @@ private fun StandardBottomSheet(
                 .then(nestedScroll)
                 .draggableAnchors(state.anchoredDraggableState, orientation) { _, constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
-                    val newAnchors = DraggableAnchors {
+                    val newTarget =
+                        if (state.currentValue == SheetValue.Hidden) {
+                            SheetValue.Hidden
+                        } else {
+                            state.anchoredDraggableState.targetValue
+                        }
+                    val newAnchors: DraggableAnchors<SheetValue> = DraggableAnchors {
+                        if (newTarget == SheetValue.Hidden) {
+                            SheetValue.Hidden at layoutHeight
+                        }
                         SheetValue.Small at layoutHeight - smallHeightPx
                         SheetValue.Medium at layoutHeight / 2
                         SheetValue.Large at 0f
                     }
-                    val newTarget = state.anchoredDraggableState.targetValue
+
                     return@draggableAnchors newAnchors to newTarget
                 }
                 .anchoredDraggable(
@@ -248,6 +257,7 @@ private fun StandardBottomSheet(
                             // than one anchor to swipe to and swiping is enabled.
                             if (anchoredDraggableState.anchors.size > 1 && sheetSwipeEnabled) {
                                 when (currentValue) {
+                                    SheetValue.Hidden -> {}
                                     SheetValue.Small -> {
                                         expand(expandActionLabel) {
                                             scope.launch { animateTo(SheetValue.Medium) }
@@ -337,6 +347,7 @@ private fun BottomSheetScaffoldLayout(
             val snackbarOffsetX = (layoutWidth - snackbarWidth) / 2
             val snackbarOffsetY =
                 when (sheetState.currentValue) {
+                    SheetValue.Hidden,
                     SheetValue.Small,
                     SheetValue.Medium -> sheetOffset().roundToInt() - snackbarHeight
                     SheetValue.Large -> layoutHeight - snackbarHeight

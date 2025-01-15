@@ -48,6 +48,8 @@ import com.mbta.tid.mbta_app.android.state.getSearchResultsVm
 @ExperimentalMaterial3Api
 @Composable
 fun SearchBarOverlay(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
     currentNavEntry: NavBackStackEntry?,
     inputFieldFocusRequester: FocusRequester,
@@ -57,7 +59,6 @@ fun SearchBarOverlay(
         remember(currentNavEntry) {
             currentNavEntry?.arguments?.getString("stopId")?.isBlank() ?: true
         }
-    var expanded by rememberSaveable { mutableStateOf(false) }
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val globalResponse = getGlobalData("SearchBar.getGlobalData")
     val searchResultsVm = getSearchResultsVm(globalResponse = globalResponse)
@@ -71,6 +72,14 @@ fun SearchBarOverlay(
             disabledContentColor = colorResource(R.color.deemphasized),
         )
     LaunchedEffect(searchInputState, visible) { searchResultsVm.getSearchResults(searchInputState) }
+    LaunchedEffect(visible, expanded) {
+        if (visible) {
+            onExpandedChange(expanded)
+            if (!expanded) {
+                searchInputState = ""
+            }
+        }
+    }
 
     Box(contentAlignment = Alignment.TopCenter) {
         Box(
@@ -106,7 +115,7 @@ fun SearchBarOverlay(
                             placeholder = { Text(stringResource(R.string.search_by_stop)) },
                             expanded = expanded,
                             onQueryChange = { searchInputState = it },
-                            onExpandedChange = { expanded = it },
+                            onExpandedChange = onExpandedChange,
                             modifier = Modifier.focusRequester(inputFieldFocusRequester),
                             onSearch = {},
                             leadingIcon = {
@@ -120,7 +129,7 @@ fun SearchBarOverlay(
                                 if (expanded) {
                                     Button(
                                         colors = buttonColors,
-                                        onClick = { expanded = false },
+                                        onClick = { onExpandedChange(false) },
                                     ) {
                                         Icon(
                                             painterResource(R.drawable.fa_xmark),
